@@ -75,6 +75,7 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
 .msg.typing{color:var(--muted)}
 .msg.img{padding:6px;background:var(--surface);border:1px solid var(--line);align-self:center;max-width:94%}
 .msg.img img{display:block;border-radius:12px;width:100%;min-height:120px;background:var(--surface-2)}
+.msg.img .mrow{margin:2px 0 -2px}
 .msg.img .cap{font-size:12px;color:var(--muted);padding:6px 6px 2px}
 .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
 .swipe{display:flex;align-items:center;gap:2px;margin-top:6px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -227,7 +228,23 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
 .topbar h1{transition:text-shadow .6s,opacity .6s}
 .logo.dark h1{text-shadow:none;opacity:.75}
 .typing-l{display:inline-flex;align-items:center;gap:8px}
-.typing-l .lantern{width:24px;height:38px;margin:-6px 0}
+.typing-l .lantern{width:24px;height:38px;margin:-6px 0;flex:none}
+.lantern .sparks circle{opacity:0;fill:#ffd98a}
+.lantern.seq .flame-g{animation:seqFlame 3.6s infinite ease-in-out}
+.lantern.seq .halo{animation:seqHalo 3.6s infinite ease-in-out}
+.lantern.seq .sparks circle{animation:seqSpark 3.6s infinite ease-out}
+.lantern.seq .sparks circle:nth-child(2){animation-delay:.08s}.lantern.seq .sparks circle:nth-child(3){animation-delay:.16s}.lantern.seq .sparks circle:nth-child(4){animation-delay:.05s}
+.lantern.seq .smoke{animation:seqSmoke 3.6s infinite ease-out}
+.lantern.lit .halo{filter:drop-shadow(0 0 6px rgba(255,200,110,.9));animation:haloIn .7s ease-out both}
+.lantern.lit .flame-g{animation:relight .55s ease-out,flick 1.6s .55s infinite ease-in-out}
+@keyframes seqFlame{0%,28%{transform:scale(0,0)}31%{transform:scale(.35,.25)}33%,41%{transform:scale(0,0)}46%{transform:scale(.5,.6)}52%{transform:scale(1,1.06)}58%{transform:scale(.95,1.05) skewX(-3deg)}64%{transform:scale(1.04,.95) skewX(2deg)}70%{transform:scale(1,1)}76%{transform:scale(.45,.35)}80%,100%{transform:scale(0,0)}}
+@keyframes seqHalo{0%,44%{opacity:0;transform:scale(.6)}52%{opacity:.9;transform:scale(1)}70%{opacity:.85}78%,100%{opacity:0;transform:scale(.7)}}
+@keyframes seqSpark{0%,8%{opacity:0;transform:none}11%{opacity:1;transform:translate(var(--dx),var(--dy))}15%{opacity:0;transform:translate(calc(var(--dx)*1.6),calc(var(--dy)*1.6))}24%{opacity:0;transform:none}28%{opacity:1;transform:translate(calc(var(--dx)*-1),var(--dy))}32%{opacity:0;transform:translate(calc(var(--dx)*-1.6),calc(var(--dy)*1.6))}38%{opacity:0;transform:none}41%{opacity:1;transform:translate(var(--dx),calc(var(--dy)*.7))}45%,100%{opacity:0}}
+@keyframes seqSmoke{0%,78%{opacity:0;transform:translateY(6px)}84%{opacity:.6}96%,100%{opacity:0;transform:translateY(-16px) scaleX(1.4)}}
+.mact{margin-left:auto;padding:0 8px;height:24px;border-radius:8px;color:var(--muted);font-weight:700;letter-spacing:1px;display:inline-flex;align-items:center}
+.mact:active{background:var(--surface-2)}
+.mrow{display:flex;align-items:center;gap:2px;margin-top:4px;margin-bottom:-6px;margin-right:-8px}
+.mrow .swipe{margin-top:0}
 #splash{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(80% 60% at 50% 45%,#2a2140 0%,#16131d 70%);transition:opacity .6s ease}
 #splash.hide{opacity:0;pointer-events:none}
 #splash .sp{display:flex;flex-direction:column;align-items:center;gap:18px}
@@ -242,7 +259,15 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
 .seg button{flex:1;padding:7px 8px;border-radius:999px;color:var(--muted);font-weight:700;font-size:14px;transition:background-color .2s,color .2s}
 .seg button.on{background:var(--surface-2);color:var(--fg);box-shadow:0 2px 8px -4px rgba(0,0,0,.6)}
 .char-card{position:relative;cursor:pointer}
-.char-card .more{position:absolute;top:6px;right:6px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+#charList{gap:8px}
+.char-card{grid-template-columns:48px 1fr;gap:10px;padding:8px 10px}
+.char-card img,.char-card .ph{width:48px;height:60px;border-radius:8px}
+.char-card .name{font-size:16px}
+.char-card .snip{-webkit-line-clamp:1;font-size:13px;margin-top:1px}
+.char-card .tags{margin-top:3px}
+.char-card .tags span{font-size:10px;padding:0 6px}
+.seg button{font-size:13px;padding:7px 4px}
+.char-card .more{position:absolute;top:4px;right:4px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
 .char-card .more:active{background:var(--surface-2)}
 .char-card .name{padding-right:34px}
 .fav-star{color:var(--accent);margin-right:4px}
@@ -299,7 +324,7 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
     <div class="home-scroll">
       <button class="persona-bar" id="personaBar"></button>
       <p class="tagline" id="tagline">Your characters, with memory that holds.</p>
-      <div class="seg" id="homeTabs"><button type="button" data-tab="all" class="on">All</button><button type="button" data-tab="fav">★ Favorites</button><button type="button" data-tab="hidden">Hidden</button></div>
+      <div class="seg" id="homeTabs"><button type="button" data-tab="all" class="on">All</button><button type="button" data-tab="recent">Recent</button><button type="button" data-tab="fav">★ Favorites</button><button type="button" data-tab="hidden">Hidden</button></div>
       <div class="searchrow"><input id="search" type="search" placeholder="Search names or tags" autocomplete="off"><button class="btn small" id="btnTagAll" hidden>✦ Tag untagged</button></div>
       <div class="tagrow" id="tagFilter"></div>
       <div id="charList"></div>
@@ -381,7 +406,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.8 · Oct 12";
+const VERSION = "1.9 · Oct 12";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -401,9 +426,9 @@ const DEFAULTS = {
   imgUrl: "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true&model=flux&safe=true&enhance=false",
   portraits: true, backgrounds: true,
   globalInstr: "", sfxColors: true,
-  sfxRules: "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, farts, stomach gurgles and growls\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses"
+  sfxRules: "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, stomach gurgles and growls\n- #a8875a (brown): farts\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses"
 };
-const S = { settings: { ...DEFAULTS }, chars: [], personas: [], books: [], personaId: null, charId: null, chat: null, busy: false, openActs: null, nextSpeaker: "" };
+const S = { recent: {}, settings: { ...DEFAULTS }, chars: [], personas: [], books: [], personaId: null, charId: null, chat: null, busy: false, openActs: null, nextSpeaker: "" };
 const $ = id => document.getElementById(id);
 const byId = id => S.chars.find(c => c.id === id);
 const char = () => byId(S.charId);
@@ -775,6 +800,7 @@ async function deleteAllChats(cid) {
   await Store.del("chats:" + cid);
 }
 async function saveChars() { await Store.set("chars", S.chars); }
+async function markRecent(cid) { S.recent[cid] = Date.now(); await Store.set("recent", S.recent); }
 async function saveChat() {
   if (!S.charId || !S.chat) return;
   if (!S.chat.id) S.chat.id = uid();
@@ -854,13 +880,15 @@ function renderHome() {
   const shown = S.chars.filter(c => {
     if (HF.tab === "hidden" ? !c.hidden : c.hidden) return false;
     if (HF.tab === "fav" && !c.fav) return false;
+    if (HF.tab === "recent" && !S.recent[c.id]) return false;
     const tg = tagsOf(c);
     if ([...HF.tags].some(t => !tg.includes(t))) return false;
     if (!HF.q) return true;
     return c.name.toLowerCase().includes(HF.q) || tg.some(t => t.includes(HF.q));
   });
+  if (HF.tab === "recent") shown.sort((a, b) => S.recent[b.id] - S.recent[a.id]);
   if (!S.chars.length) list.innerHTML = '<p class="note">Nothing here yet. Tap New to create a character, world or group, or import a character card.</p>';
-  else if (!shown.length) list.innerHTML = `<p class="note">${HF.q || HF.tags.size ? "Nothing matches that search." : HF.tab === "fav" ? "No favorites yet. Tap ⋯ on a card and choose Favorite." : HF.tab === "hidden" ? "No hidden bots. Tap ⋯ on a card and choose Hide." : "Everything is hidden or in another tab."}</p>`;
+  else if (!shown.length) list.innerHTML = `<p class="note">${HF.q || HF.tags.size ? "Nothing matches that search." : HF.tab === "recent" ? "Bots you chat with will show up here, most recent first." : HF.tab === "fav" ? "No favorites yet. Tap ⋯ on a card and choose Favorite." : HF.tab === "hidden" ? "No hidden bots. Tap ⋯ on a card and choose Hide." : "Everything is hidden or in another tab."}</p>`;
   for (const c of shown) {
     const b = document.createElement("div");
     b.className = "char-card"; b.tabIndex = 0; b.setAttribute("role", "button");
@@ -899,6 +927,7 @@ function cardMenu(c) {
   });
 }
 async function deleteBot(id) {
+  delete S.recent[id]; Store.set("recent", S.recent);
   S.chars = S.chars.filter(x => x.id !== id);
   for (const g of S.chars) if (g.members) g.members = g.members.filter(m => m !== id);
   await saveChars(); await deleteAllChats(id);
@@ -960,6 +989,7 @@ async function openChat(id, chatId) {
   $("home").hidden = true; $("chat").hidden = false;
   $("chatName").textContent = c.name;
   S.seen = new Set(S.chat.messages.map(m => m.id));
+  markRecent(id);
   updateStage(); renderMsgs(); renderSpeakers(); setStatus("");
   const need = c.kind === "group" ? members(c) : [c];
   (async () => {
@@ -1009,6 +1039,7 @@ function splitSpeakers(text) {
   return segs.length ? segs : [{ who: null, text }];
 }
 
+function mrowOf(el) { let r = el.querySelector(":scope > .mrow"); if (!r) { r = document.createElement("div"); r.className = "mrow"; el.appendChild(r); } return r; }
 function renderMsgs(keepScroll) {
   const box = $("msgs"), atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   const c = char();
@@ -1021,9 +1052,9 @@ function renderMsgs(keepScroll) {
     let tail = d;
     if (m.role === "image") {
       d.className = "msg img";
-      d.innerHTML = `<img alt="Illustration: ${esc(m.prompt || "")}" loading="lazy"><div class="cap">Illustration · tap for options</div>`;
+      d.innerHTML = `<img alt="Illustration: ${esc(m.prompt || "")}" loading="lazy"><div class="cap">Illustration</div>`;
       const im = d.querySelector("img"); im.src = m.url;
-      im.onerror = () => { d.querySelector(".cap").textContent = "The image failed to load. Tap and choose Redraw."; };
+      im.onerror = () => { d.querySelector(".cap").textContent = "The image failed to load. Tap ⋯ and choose Redraw."; };
     } else if (m.role === "assistant" && c.kind === "group") {
       // speaker headers act as labels
       d.className = "msg-set";
@@ -1048,8 +1079,9 @@ function renderMsgs(keepScroll) {
       const sw = document.createElement("div"); sw.className = "swipe";
       const n = m.alts?.length || 1, a = (m.alt || 0) + 1;
       sw.innerHTML = `<button data-act="prev" ${a <= 1 ? "disabled" : ""} aria-label="Previous version">‹</button><span>${a}/${n}</span><button data-act="next" aria-label="${a < n ? "Next version" : "New version"}">${a < n ? "›" : "↻"}</button>`;
-      tail.appendChild(sw);
+      mrowOf(tail).appendChild(sw);
     }
+    mrowOf(tail).insertAdjacentHTML("beforeend", `<button type="button" class="mact" data-act="menu" aria-label="Message options">⋯</button>`);
     if (S.openActs === m.id) {
       const acts = document.createElement("div"); acts.className = "acts";
       const btns = [];
@@ -1093,7 +1125,8 @@ $("msgs").addEventListener("click", async e => {
   const d = e.target.closest("[data-i]"); if (!d) return;
   const i = +d.dataset.i, m = S.chat.messages[i];
   const act = e.target.closest("[data-act]")?.dataset.act;
-  if (!act) { S.openActs = S.openActs === m.id ? null : m.id; renderMsgs(true); return; }
+  if (!act) return;
+  if (act === "menu") { S.openActs = S.openActs === m.id ? null : m.id; renderMsgs(true); return; }
   if (S.busy) return;
   if (act === "prev") { m.alt = Math.max(0, m.alt - 1); applyAlt(m); }
   else if (act === "next") { if (m.alt < m.alts.length - 1) { m.alt++; applyAlt(m); } else reroll(i); }
@@ -1147,20 +1180,32 @@ async function generate(upto, existing, cont) {
   else { bubble = document.createElement("div"); bubble.className = "msg assistant typing"; $("msgs").appendChild(bubble); }
   if (bubble.classList.contains("msg-set")) { bubble.className = "msg assistant"; }
   const who = c.kind === "world" ? "The narrator" : c.kind === "group" ? (S.nextSpeaker || "The group") : c.name;
-  bubble.innerHTML = `<span class="typing-l">${lanternSVG()}<span>${esc(who)} is writing…</span></span>`; bubble.classList.add("typing");
+  const waiting = verb => `<span class="typing-l"><span>${esc(who)} is ${verb}…</span>${lanternSVG("seq")}</span>`;
+  bubble.innerHTML = waiting("thinking"); bubble.classList.add("typing");
   const box = $("msgs"); box.scrollTop = box.scrollHeight;
   try {
     let p;
+    const pause = matchMedia("(prefers-reduced-motion: reduce)").matches ? 150 : 800;
     for (let attempt = 0; attempt < 2; attempt++) {
+      let latest = "", shown = false, revealP = null;
+      const show = () => { bubble.classList.remove("typing"); bubble.innerHTML = fmt(latest.split("[[")[0]); if (box.scrollHeight - box.scrollTop - box.clientHeight < 140) box.scrollTop = box.scrollHeight; };
       const raw = await ds(buildPrompt(c, chat, upto, cont), {
         thinking: S.settings.thinking,
         temperature: attempt ? Math.min(S.settings.temperature, 0.7) : undefined,
-        onThinking: () => { bubble.innerHTML = `<span class="typing-l">${lanternSVG()}<span>${esc(who)} is thinking…</span></span>`; },
-        onDelta: full => { bubble.classList.remove("typing"); bubble.innerHTML = fmt(full.split("[[")[0]); if (box.scrollHeight - box.scrollTop - box.clientHeight < 140) box.scrollTop = box.scrollHeight; }
+        onThinking: () => {},
+        onDelta: full => {
+          latest = full;
+          if (!revealP) {
+            const l = bubble.querySelector(".lantern");
+            if (l) { l.classList.remove("seq"); l.classList.add("lit"); const t = bubble.querySelector(".typing-l > span"); if (t) t.textContent = `${who} is writing…`; }
+            revealP = new Promise(res => setTimeout(() => { shown = true; show(); res(); }, pause));
+          } else if (shown) show();
+        }
       });
+      if (revealP) await revealP;
       p = parseTag(raw);
       if (!garbled(stripColor(p.text), c)) break;
-      if (attempt === 0) { bubble.classList.add("typing"); bubble.innerHTML = `<span class="typing-l">${lanternSVG()}<span>That reply came out garbled. Trying again…</span></span>`; }
+      if (attempt === 0) { bubble.classList.add("typing"); bubble.innerHTML = `<span class="typing-l"><span>That came out garbled. Trying again…</span>${lanternSVG("seq")}</span>`; }
       else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
@@ -1375,7 +1420,31 @@ function findLoose(text, needle, from) {
   }
   return -1;
 }
-async function splitListings(text, kind, w) {
+async function splitListings(text, kind, w, onPart) {
+  const LIMIT = 9000;
+  if (text.length <= LIMIT) return splitChunk(text, kind, w);
+  const paras = text.split(/\n\s*\n/), chunks = [];
+  let cur = "";
+  for (const p of paras) {
+    if (cur && (cur.length + p.length) > 7000) { chunks.push(cur); cur = ""; }
+    if (p.length > LIMIT) { for (let i = 0; i < p.length; i += 7000) chunks.push(p.slice(i, i + 7000)); continue; }
+    cur += (cur ? "\n\n" : "") + p;
+  }
+  if (cur) chunks.push(cur);
+  const all = { remaining: [], entries: [], tried: 0 };
+  for (let i = 0; i < chunks.length; i++) {
+    onPart && onPart(i + 1, chunks.length);
+    const r = await splitChunk(chunks[i], kind, w);
+    all.tried += r.tried || 0;
+    if (r.remaining) all.remaining.push(r.remaining);
+    for (const e of r.entries) {
+      const same = all.entries.find(x => x.name.toLowerCase() === e.name.toLowerCase());
+      if (same) same.details += "\n\n" + e.details; else all.entries.push(e);
+    }
+  }
+  return { remaining: all.remaining.join("\n\n"), entries: all.entries, tried: all.tried };
+}
+async function splitChunk(text, kind, w) {
   const forGroup = kind === "group";
   const types = forGroup ? '"character"' : '"character", "group" (faction, organization, family, guild), "species" (a race or kind of creature), "location" (city, region, building, landmark), "concept" (magic system, economy, technology, religion, law, history, setting rule)';
   const j = await dsJSON([
@@ -1710,14 +1779,16 @@ function editChar(c, isNew) {
       ${field("World description", `<textarea id="cDesc" data-x="world" style="min-height:180px" placeholder="Geography, history, cultures, factions, magic or technology, tone…">${esc(work.description)}</textarea>${splitRow}`, "Pasted characters, factions, species, places or rules in here? Split into listings moves each into its own listing below.")}
       <div class="group"><h3>World listings</h3>
         <p class="hint" style="margin:0;color:var(--muted);font-size:13px">Characters, factions, species, locations and concepts (magic, economies, setting rules).</p>
-        <div id="cCast" class="stack"></div>
-        <div class="row">${Object.entries(WORLD_TYPES).map(([k, v]) => `<button class="btn small" type="button" data-addcast="${k}">+ ${v.split(" /")[0]}</button>`).join("")}</div>
+        <div class="tabs" id="cCastCats"></div>
+        <div class="tabs" id="cCastItems"></div>
+        <div id="cCastEd" class="stack"></div>
       </div>
       ${field("Opening situation", `<textarea id="cScen" data-x="scenario">${esc(work.scenario)}</textarea>${splitRow}`, "Who {{user}} is in this world and where the story begins.")}
       ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px" placeholder="The narrator's opening">${esc(work.firstMessage)}</textarea>`)}`;
     } else {
       main = `
       <div class="group" style="border:0;padding:0"><h3>Members</h3>
+        <div class="tabs" id="cMemTabs"></div>
         <div id="cMembers" class="stack"></div>
       </div>
       ${field("About this group", `<textarea id="cDesc" data-x="groupdesc" style="min-height:120px" placeholder="How they know each other, their dynamics. You can also paste several character descriptions here and split them.">${esc(work.description)}</textarea>${splitRow}`, "Split into listings turns each character described here into a real character and adds them to the group.")}
@@ -1811,40 +1882,71 @@ function editChar(c, isNew) {
     };
     drawBooks();
 
-    // World cast
+    // World cast (category tabs, then one tab per listing)
+    const CAT_LABEL = { character: "Characters", group: "Groups", species: "Species", location: "Locations", concept: "Concepts" };
+    let castCat = (work.cast[0] && WORLD_TYPES[work.cast[0].type]) ? work.cast[0].type : "character", castSel = -1;
     let drawCast = () => {};
     if (K === "world") {
+      const typeOf = x => WORLD_TYPES[x.type] ? x.type : "character";
       drawCast = () => {
-        const box = $("cCast");
-        box.innerHTML = work.cast.length ? "" : '<p class="note">No listings yet. Add them here, or paste them into the description and tap Split into listings.</p>';
-        work.cast.forEach((x, i) => {
-          const d = document.createElement("div"); d.className = "cast";
-          const ty = WORLD_TYPES[x.type] ? x.type : "character";
-          d.innerHTML = `<div class="row"><input data-k="name" placeholder="Name" value="${esc(x.name)}" style="flex:2;padding:10px 12px;border-radius:10px;border:1px solid var(--line)"><select data-k="type" style="flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--line)">${Object.entries(WORLD_TYPES).map(([k, v]) => `<option value="${k}" ${ty === k ? "selected" : ""}>${v}</option>`).join("")}</select></div><textarea data-k="details" data-x="cast" style="min-height:90px;padding:10px 12px;border-radius:10px;border:1px solid var(--line)" placeholder="${WORLD_HINTS[ty]}">${esc(x.details)}</textarea><div class="xrow"><button type="button" class="btn small danger" data-rm>Remove</button></div>`;
-          d.querySelectorAll("[data-k]").forEach(el => el.addEventListener(el.tagName === "SELECT" ? "change" : "input", () => { x[el.dataset.k] = el.value; }));
-          d.querySelector("[data-rm]").onclick = () => { work.cast.splice(i, 1); drawCast(); };
-          box.appendChild(d);
-          wireExpand(d, () => ctx() + `\nThis listing: ${x.name} (${x.type})`);
+        const counts = {}; work.cast.forEach(x => { counts[typeOf(x)] = (counts[typeOf(x)] || 0) + 1; });
+        $("cCastCats").innerHTML = Object.keys(WORLD_TYPES).map(k => `<button type="button" class="tab ${k === castCat ? "on" : ""}" data-c="${k}">${CAT_LABEL[k]}${counts[k] ? ` · ${counts[k]}` : ""}</button>`).join("");
+        $("cCastCats").querySelectorAll("[data-c]").forEach(x => x.onclick = () => { castCat = x.dataset.c; castSel = -1; drawCast(); });
+        const items = work.cast.map((x, i) => [x, i]).filter(([x]) => typeOf(x) === castCat);
+        if (!items.some(([, i]) => i === castSel)) castSel = items.length ? items[0][1] : -1;
+        $("cCastItems").innerHTML = items.map(([x, i]) => `<button type="button" class="tab ${i === castSel ? "on" : ""}" data-i="${i}">${esc((x.name || "Untitled").slice(0, 18))}</button>`).join("") + `<button type="button" class="tab" data-i="add" aria-label="Add a ${CAT_LABEL[castCat].toLowerCase()} listing">+ New</button>`;
+        $("cCastItems").querySelectorAll("[data-i]").forEach(x => x.onclick = () => {
+          if (x.dataset.i === "add") { work.cast.push({ name: "", type: castCat, details: "" }); castSel = work.cast.length - 1; drawCast(); $("cCastEd").querySelector("input")?.focus(); }
+          else { castSel = +x.dataset.i; drawCast(); }
         });
+        const ed = $("cCastEd");
+        if (castSel < 0) { ed.innerHTML = `<p class="note">No ${CAT_LABEL[castCat].toLowerCase()} yet. Tap + New, or paste them into the description and tap Split into listings.</p>`; return; }
+        const x = work.cast[castSel], ty = typeOf(x);
+        ed.innerHTML = `<div class="cast"><div class="row"><input data-k="name" placeholder="Name" value="${esc(x.name)}" style="flex:2;padding:10px 12px;border-radius:10px;border:1px solid var(--line)"><select data-k="type" style="flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--line)">${Object.entries(WORLD_TYPES).map(([k, v]) => `<option value="${k}" ${ty === k ? "selected" : ""}>${v}</option>`).join("")}</select></div><textarea data-k="details" data-x="cast" style="min-height:130px;padding:10px 12px;border-radius:10px;border:1px solid var(--line)" placeholder="${WORLD_HINTS[ty]}">${esc(x.details)}</textarea><div class="xrow"><button type="button" class="btn small danger" data-rm>Remove listing</button></div></div>`;
+        const nameIn = ed.querySelector('[data-k="name"]');
+        nameIn.addEventListener("input", () => { x.name = nameIn.value; const t = $("cCastItems").querySelector(`[data-i="${castSel}"]`); if (t) t.textContent = (x.name || "Untitled").slice(0, 18); });
+        ed.querySelector('[data-k="type"]').addEventListener("change", e => { x.type = e.target.value; castCat = x.type; drawCast(); });
+        const det = ed.querySelector('[data-k="details"]'); det.addEventListener("input", () => { x.details = det.value; });
+        ed.querySelector("[data-rm]").onclick = () => { work.cast.splice(castSel, 1); castSel = -1; drawCast(); };
+        wireExpand(ed, () => ctx() + `\nThis listing: ${x.name} (${WORLD_TYPES[ty]})`);
       };
       drawCast();
-      b.querySelectorAll("[data-addcast]").forEach(x => x.onclick = () => { work.cast.push({ name: "", type: x.dataset.addcast, details: "" }); drawCast(); $("cCast").lastElementChild?.querySelector("input")?.focus(); });
     }
 
-    // Group members
+    // Group members (one tab per member, plus an Add tab)
+    let memSel = work.members[0] || "add";
+    const memEdits = {};
     let drawMembers = () => {};
     if (K === "group") {
       drawMembers = () => {
+        const ms = work.members.map(id => memEdits[id] || byId(id)).filter(Boolean);
+        if (memSel !== "add" && !work.members.includes(memSel)) memSel = work.members[0] || "add";
+        $("cMemTabs").innerHTML = ms.map(m => `<button type="button" class="tab ${m.id === memSel ? "on" : ""}" data-m="${m.id}">${esc((m.name || "Unnamed").slice(0, 16))}</button>`).join("") + `<button type="button" class="tab ${memSel === "add" ? "on" : ""}" data-m="add">+ Add</button>`;
+        $("cMemTabs").querySelectorAll("[data-m]").forEach(x => x.onclick = () => { memSel = x.dataset.m; drawMembers(); });
         const box = $("cMembers");
-        const pool = S.chars.filter(x => x.kind === "character");
-        box.innerHTML = pool.length ? "" : '<p class="note">No characters yet. Paste their descriptions below and tap Split into listings, or create characters first.</p>';
-        for (const m of pool) {
-          const l = document.createElement("label"); l.className = "checkrow";
-          l.innerHTML = `<input type="checkbox" ${work.members.includes(m.id) ? "checked" : ""}><img alt=""><span>${esc(m.name)}</span>`;
-          setImg(l.querySelector("img"), portraitURL(m), m);
-          l.querySelector("input").onchange = e => { work.members = work.members.filter(x => x !== m.id); if (e.target.checked) work.members.push(m.id); };
-          box.appendChild(l);
+        if (memSel === "add") {
+          const pool = S.chars.filter(x => x.kind === "character" && !work.members.includes(x.id));
+          box.innerHTML = `<button type="button" class="btn small" id="cMemNew">+ Create a new character</button>` + (pool.length ? `<div class="lbl">Or add one you already have</div>` : "");
+          for (const m of pool) {
+            const l = document.createElement("button"); l.type = "button"; l.className = "checkrow"; l.style.textAlign = "left";
+            l.innerHTML = `<img alt=""><span>${esc(m.name)}</span><span class="badge">Add</span>`;
+            setImg(l.querySelector("img"), portraitURL(m), m);
+            l.onclick = () => { work.members.push(m.id); memSel = m.id; drawMembers(); };
+            box.appendChild(l);
+          }
+          $("cMemNew").onclick = async () => { const nc = { ...blankChar("character"), name: "New character" }; S.chars.push(nc); await saveChars(); work.members.push(nc.id); memSel = nc.id; drawMembers(); box.querySelector("input")?.select(); };
+          return;
         }
+        const m = memEdits[memSel] || (memEdits[memSel] = JSON.parse(JSON.stringify(byId(memSel))));
+        box.innerHTML = `
+          <div class="row" style="align-items:center"><img alt="" style="flex:none;width:44px;height:55px;min-width:0;object-fit:cover;border-radius:8px"><input data-k="name" value="${esc(m.name)}" placeholder="Name" style="padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line)"></div>
+          <div class="field"><label>Appearance</label><textarea data-k="appearance" data-x="appearance" style="min-height:70px">${esc(m.appearance)}</textarea></div>
+          <div class="field"><label>Personality & background</label><textarea data-k="description" data-x="personality" style="min-height:130px">${esc(m.description)}</textarea></div>
+          <div class="xrow"><button type="button" class="btn small danger" data-rm>Remove from group</button></div>`;
+        setImg(box.querySelector("img"), portraitURL(byId(memSel) || m), m);
+        box.querySelectorAll("[data-k]").forEach(el => el.addEventListener("input", () => { m[el.dataset.k] = el.value; if (el.dataset.k === "name") { const t = $("cMemTabs").querySelector(`[data-m="${m.id}"]`); if (t) t.textContent = (m.name || "Unnamed").slice(0, 16); } }));
+        box.querySelector("[data-rm]").onclick = () => { work.members = work.members.filter(x => x !== memSel); delete memEdits[memSel]; memSel = work.members[0] || "add"; drawMembers(); };
+        wireExpand(box, () => `Character in the group "${$("cName").value}": ${m.name}\nAppearance: ${m.appearance || "-"}\nPersonality: ${(m.description || "-").slice(0, 1200)}\n${cardContext(work)}`);
       };
       drawMembers();
     }
@@ -1866,14 +1968,16 @@ function editChar(c, isNew) {
         if (!ta.value.trim()) { say("Paste or write some text in that box first.", true); return; }
         if (!hasKey()) { say("Add your API key in Settings first.", true); return; }
         grab();
-        btn.disabled = true; btn.textContent = "Sorting…"; say("Reading the text…");
+        btn.disabled = true; btn.textContent = "Sorting…";
+        say(ta.value.length > 9000 ? `That's a long description (${Math.round(ta.value.length / 1000)}k characters), so it's split in parts. This can take a minute or two…` : "Reading the text…");
         try {
           const prev = ta.value;
-          const r = await splitListings(prev, K, work);
+          const r = await splitListings(prev, K, work, (i, n) => { btn.textContent = `Sorting part ${i} of ${n}…`; });
           if (!r.entries.length) { say(r.tried ? "The AI's split didn't line up with your text. Try again." : `No separate ${K === "world" ? "listings" : "characters"} found in that text.`, true); btn.textContent = "⇆ Split into listings"; return; }
           ta.value = r.remaining; ta.dispatchEvent(new Event("input"));
           if (K === "world") {
             for (const e of r.entries) work.cast.push({ name: e.name, type: WORLD_TYPES[e.type] ? e.type : "character", details: e.details });
+            castCat = WORLD_TYPES[r.entries[0].type] ? r.entries[0].type : "character"; castSel = work.cast.length - r.entries.length;
             drawCast();
             undo = { text: prev, added: r.entries.length };
             say(`Moved ${r.entries.length} listing${r.entries.length === 1 ? "" : "s"} into World listings: ${r.entries.map(e => e.name).join(", ")}.`);
@@ -1883,9 +1987,9 @@ function editChar(c, isNew) {
               const nc = { ...blankChar("character"), name: e.name, description: e.details };
               S.chars.push(nc); created.push(nc.id); work.members.push(nc.id);
             }
-            await saveChars(); drawMembers();
+            memSel = created[0]; await saveChars(); drawMembers();
             undo = { text: prev, created };
-            say(`Created ${created.map(id => byId(id).name).join(", ")} and added them to the group. Edit each from the home screen.`);
+            say(`Created ${created.map(id => byId(id).name).join(", ")} and added them as member tabs above.`);
           }
           btn.textContent = "↶ Undo split";
         } catch (e) { say(e.message, true); btn.textContent = "⇆ Split into listings"; }
@@ -1913,7 +2017,8 @@ function editChar(c, isNew) {
     $("cSave").onclick = async () => {
       grab();
       if (!work.name) { $("cName").focus(); $("cName").placeholder = "A name is required"; return; }
-      if (K === "group" && !work.members.length) { $("cMsg").textContent = "Pick at least one member, or split characters out of the description."; return; }
+      for (const [id, m] of Object.entries(memEdits)) { const c0 = byId(id); if (c0) Object.assign(c0, { name: (m.name || "").trim() || c0.name, appearance: (m.appearance || "").trim(), description: (m.description || "").trim() }); }
+      if (K === "group" && !work.members.length) { $("cMsg").textContent = "Add at least one member with the + Add tab, or split characters out of the description."; return; }
       work.lore = work.lore.filter(l => l.text.trim());
       work.cast = work.cast.filter(x => x.name.trim() || x.details.trim());
       work.altGreetings = (work.altGreetings || []).map(g => g.trim()).filter(Boolean);
@@ -2108,6 +2213,7 @@ function lanternSVG(cls = "") {
   <rect x="21" y="29" width="22" height="43" rx="5" fill="rgba(255,205,130,.10)" stroke="#5b506b" stroke-width="2"/>
   <g class="flame-g"><path d="M32 39c5 8 8.5 14.5 4.5 21.5c-1.7 2.9-7.3 2.9-9 0c-4-7-.5-13.5 4.5-21.5z" fill="url(#${id}f)"/><path d="M32 50c2 4 3 7 1.5 10c-.8 1.3-2.2 1.3-3 0c-1.5-3-.5-6 1.5-10z" fill="#fffbe8"/></g>
   <path class="smoke" d="M32 40c-3-4 3-6 0-10s3-6 0-10" fill="none" stroke="#c8c0d6" stroke-width="2" stroke-linecap="round"/>
+  <g class="sparks"><circle cx="31" cy="58" r="2.2" style="--dx:-7px;--dy:-8px"/><circle cx="33" cy="57" r="1.9" style="--dx:7px;--dy:-9px"/><circle cx="32" cy="59" r="1.7" style="--dx:-2px;--dy:-12px"/><circle cx="34" cy="58.5" r="2" style="--dx:9px;--dy:-4px"/></g>
   <path d="M26.5 29v43M37.5 29v43" stroke="#5b506b" stroke-width="1" opacity=".55"/>
   <rect x="15" y="71" width="34" height="6" rx="2" fill="url(#${id}m)"/>
   <rect x="20" y="77" width="24" height="4" rx="1.5" fill="#3b3346"/>
@@ -2126,7 +2232,8 @@ function lanternSVG(cls = "") {
 
 /* ---------- Sound effects ---------- */
 const SFX_RULES = [
-  ["gas", /(bu+r+p|bel+ch|^u+r+p|hu+r+k|bra+p|pf+t|pf+f+t|^f+r+t|pb+t|thb+t|bw[ao]+r+p|blu+r+p|^hic|^hu+r+p|^bu+r+r+p)/i],
+  ["fart", /(^f+a+r+t|pf+t|pf+f+t|^f+r+t|pb+t|thb+t|bra+p|pfr+t|^fr+p|^too+t|bla+r+t|^pff+)/i],
+  ["gas", /(bu+r+p|bel+ch|^u+r+p|hu+r+k|bw[ao]+r+p|blu+r+p|^hic|^hu+r+p|^bu+r+r+p|^gu+r+p)/i],
   ["bubbles", /(gu+r+g+l|gl+r+k|gl+u+r+k|gr+gl|blo+r+p|glo+r+p|blu+b|bloo+p|gl+u+g|gl+o+r+b|grumbl|gl+o+r+k|blorb)/i],
   ["crack", /(cra+ck|sna+p|cru+n+ch|kra+k|cri+ck|cru+nk|splint|kr+i+k)/i],
   ["boom", /(bo+o+m|ka-?boo+m|bla+m|^ba+n+g|bwoo+m|kra-?boo+m)/i],
@@ -2144,23 +2251,56 @@ const SFX_RULES = [
   ["wave", /(gr+o+w+l|^gr{2,}|ro+a+r|hi+s+s|ho+w+l|awoo+|pu+r+r|me+o+w|^ba+r+k|wo+o+f|scre+e|^aa+h|ah{2,}|^oh+|^mm+|^hm+|ha+h+a|he+h+e|gasp|squea+k|^eep)/i]
 ];
 const FX_ICON = {
-  gas: '<svg viewBox="0 0 20 20"><path d="M5 15a3 3 0 0 1 .4-6A4.2 4.2 0 0 1 13.4 8a3 3 0 0 1 1.6 7z" fill="currentColor" opacity=".55"/><circle cx="15.5" cy="5" r="1.7" fill="currentColor" opacity=".4"/><circle cx="12.5" cy="3" r="1" fill="currentColor" opacity=".3"/></svg>',
-  bubbles: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><circle cx="7" cy="13" r="3.2" stroke-width="1.5"/><circle cx="13.5" cy="7.5" r="2.3" stroke-width="1.4"/><circle cx="15" cy="15" r="1.4" stroke-width="1.2"/><circle cx="8" cy="4" r="1" stroke-width="1"/></svg>',
-  crack: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-linecap="round"><path d="M10 1.5l-2 5 3 2.2-3 4 2 5.8" stroke-width="1.9"/><path d="M8 6.5l-4.5 1M11 8.7l4.5-1.2M8 12.7l-3.5 2.3" stroke-width="1.2"/></svg>',
-  hit: '<svg viewBox="0 0 20 20"><path d="M10 .5l1.9 5.2 5.3-1.9-2.9 4.8 5.2 2-5.4 1.6 2.3 5.1-5-2.8-1.4 5.4-1.6-5.3-4.9 2.6 2.5-5-5.4-1.8 5.3-1.8L3.5 3.9l5 2.2z" fill="currentColor" opacity=".9"/></svg>',
-  slash: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M2.5 17.5C8 12.5 12 8 17.5 2.5" stroke-width="2.3"/><path d="M6.5 18C10.5 14 13.5 11 18 6.5" stroke-width="1" opacity=".5"/><path d="M15.5 1.5l3 3" stroke-width="1.2"/></svg>',
-  boom: '<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="4.2" fill="currentColor"/><path d="M10 .8v3.2M10 16v3.2M.8 10H4M16 10h3.2M3.4 3.4l2.2 2.2M14.4 14.4l2.2 2.2M3.4 16.6l2.2-2.2M14.4 5.6l2.2-2.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
-  kiss: '<svg viewBox="0 0 20 20"><path d="M10 17.5S3.5 13.4 3.5 8.8A3.3 3.3 0 0 1 10 7.3a3.3 3.3 0 0 1 6.5 1.5c0 4.6-6.5 8.7-6.5 8.7z" fill="currentColor"/></svg>',
-  beat: '<svg viewBox="0 0 20 20"><path d="M10 17.5S3.5 13.4 3.5 8.8A3.3 3.3 0 0 1 10 7.3a3.3 3.3 0 0 1 6.5 1.5c0 4.6-6.5 8.7-6.5 8.7z" fill="currentColor" opacity=".9"/><path d="M1 10h4l1.5-2.5 2 5 1.5-2.5h9" fill="none" stroke="#16131d" stroke-width="1.2" opacity=".6"/></svg>',
-  liquid: '<svg viewBox="0 0 20 20"><path d="M10 1.5c3.2 5 5.2 7.6 5.2 10.4a5.2 5.2 0 0 1-10.4 0c0-2.8 2-5.4 5.2-10.4z" fill="currentColor" opacity=".9"/><path d="M7.6 12.2a2.6 2.6 0 0 0 2 2.5" stroke="#fff" stroke-width="1" fill="none" opacity=".5" stroke-linecap="round"/></svg>',
-  fire: '<svg viewBox="0 0 20 20"><path d="M10 1.5c1 4 5.3 5.2 5.3 10.4a5.3 5.3 0 0 1-10.6 0c0-3 2-4.2 2-6.2 2 1 2.2 3 3.2 4 1-3 .1-5.2.1-8.2z" fill="currentColor"/></svg>',
-  zap: '<svg viewBox="0 0 20 20"><path d="M11.5.8L3.8 11.2h5.1L7.8 19.2l8-10.8h-5.3z" fill="currentColor"/></svg>',
-  magic: '<svg viewBox="0 0 20 20"><path d="M9 1.5l1.8 6.2L17 9.5l-6.2 1.8L9 17.5l-1.8-6.2L1 9.5l6.2-1.8z" fill="currentColor"/><path d="M16 1.5l.6 1.9 1.9.6-1.9.6-.6 1.9-.6-1.9-1.9-.6 1.9-.6z" fill="currentColor"/></svg>',
-  zzz: '<svg viewBox="0 0 20 20" fill="currentColor" font-family="Georgia,serif" font-weight="700"><text x="1" y="18" font-size="10">z</text><text x="8" y="11" font-size="8">z</text><text x="14" y="5" font-size="6">z</text></svg>',
-  wind: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 7h10a2.6 2.6 0 1 0-2.6-2.6M1.5 11h14a2.6 2.6 0 1 1-2.6 2.6M1.5 15h7"/></svg>',
-  wave: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 6.5a5 5 0 0 1 0 7M8.5 3.5a9.5 9.5 0 0 1 0 13M13 1a13 13 0 0 1 0 18"/></svg>',
-  stomp: '<svg viewBox="0 0 20 20"><circle cx="5" cy="13.5" r="3" fill="currentColor" opacity=".5"/><circle cx="10" cy="11.5" r="4" fill="currentColor" opacity=".65"/><circle cx="15" cy="13.5" r="3" fill="currentColor" opacity=".5"/><path d="M1.5 18h17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+  gas: ['<svg viewBox="0 0 20 20"><path d="M5 15a3 3 0 0 1 .4-6A4.2 4.2 0 0 1 13.4 8a3 3 0 0 1 1.6 7z" fill="currentColor" opacity=".55"/><circle cx="15.5" cy="5" r="1.7" fill="currentColor" opacity=".4"/><circle cx="12.5" cy="3" r="1" fill="currentColor" opacity=".3"/></svg>',
+    '<svg viewBox="0 0 20 20"><circle cx="7" cy="12" r="4.5" fill="currentColor" opacity=".5"/><circle cx="12.5" cy="9" r="3.5" fill="currentColor" opacity=".45"/><circle cx="15.5" cy="13.5" r="2.5" fill="currentColor" opacity=".4"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M4 15c-2-3 1-6 4-5 0-3 5-4 6-1 3 0 4 4 1 6z" fill="currentColor" fill-opacity=".45" stroke-width="1.2"/><path d="M14 5c1-2 3-2 4-1" stroke-width="1.4" opacity=".6"/><path d="M11 3.5c.5-1.2 1.6-1.6 2.6-1" stroke-width="1.2" opacity=".45"/></svg>'],
+  bubbles: ['<svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><circle cx="7" cy="13" r="3.2" stroke-width="1.5"/><circle cx="13.5" cy="7.5" r="2.3" stroke-width="1.4"/><circle cx="15" cy="15" r="1.4" stroke-width="1.2"/><circle cx="8" cy="4" r="1" stroke-width="1"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><circle cx="10" cy="11" r="5.5" stroke-width="1.6"/><path d="M7.2 8.6a3 3 0 0 1 2.4-1.6" stroke-width="1.2" opacity=".7"/><circle cx="16.5" cy="4.5" r="1.6" stroke-width="1.2"/><circle cx="3.5" cy="4" r="1" stroke-width="1"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="6" cy="14" r="2.8" stroke-width="1.4"/><circle cx="12" cy="13" r="2" stroke-width="1.3"/><path d="M14 6l1.2-2.4M16.5 7.5l2.2-1M13 3.5l-.3-2.2" stroke-width="1.3"/><circle cx="15" cy="7" r=".9" fill="currentColor"/></svg>'],
+  crack: ['<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-linecap="round"><path d="M10 1.5l-2 5 3 2.2-3 4 2 5.8" stroke-width="1.9"/><path d="M8 6.5l-4.5 1M11 8.7l4.5-1.2M8 12.7l-3.5 2.3" stroke-width="1.2"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M10 10L4 5M10 10l7-4M10 10l-1 8M10 10l6 6M10 10l-8 3"/><path d="M6.5 7.3l-1.3 2M13.6 8l1.5 1.6" stroke-width="1"/></svg>',
+    '<svg viewBox="0 0 20 20"><path d="M3.2 2.3a2.2 2.2 0 0 1 3.5 2l3.4 3.4-1.4 1.4L5.3 5.7a2.2 2.2 0 1 1-2.1-3.4zM16.8 17.7a2.2 2.2 0 0 1-3.5-2l-3.4-3.4 1.4-1.4 3.4 3.4a2.2 2.2 0 1 1 2.1 3.4z" fill="currentColor"/><path d="M8.6 9.2l1.2.4.2-1.4 1.2.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>'],
+  hit: ['<svg viewBox="0 0 20 20"><path d="M10 .5l1.9 5.2 5.3-1.9-2.9 4.8 5.2 2-5.4 1.6 2.3 5.1-5-2.8-1.4 5.4-1.6-5.3-4.9 2.6 2.5-5-5.4-1.8 5.3-1.8L3.5 3.9l5 2.2z" fill="currentColor" opacity=".9"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 1.5v4M10 14.5v4M1.5 10h4M14.5 10h4M4 4l2.6 2.6M13.4 13.4L16 16M4 16l2.6-2.6M13.4 6.6L16 4"/><circle cx="10" cy="10" r="1.8" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 20 20"><path d="M10 1l2.3 4 4.5-1-1.6 4.3L19 11l-4.4 1.3.9 4.6-4.1-2.2L8 18.5l-.6-4.6-4.6.6 2.6-3.8L1.5 7.8l4.6-.4-.8-4.6 4 2.4z" fill="currentColor"/><path d="M10 6.5V11" stroke="#16131d" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="13.3" r="1" fill="#16131d"/></svg>'],
+  slash: ['<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M2.5 17.5C8 12.5 12 8 17.5 2.5" stroke-width="2.3"/><path d="M6.5 18C10.5 14 13.5 11 18 6.5" stroke-width="1" opacity=".5"/><path d="M15.5 1.5l3 3" stroke-width="1.2"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l14 14M17 3L3 17"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M2 14C6 5 13 3 18 4" stroke-width="2.2"/><path d="M17 1.5l.6 1.8 1.8.6-1.8.6-.6 1.8-.6-1.8-1.8-.6 1.8-.6z" fill="currentColor" stroke="none"/></svg>'],
+  boom: ['<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="4.2" fill="currentColor"/><path d="M10 .8v3.2M10 16v3.2M.8 10H4M16 10h3.2M3.4 3.4l2.2 2.2M14.4 14.4l2.2 2.2M3.4 16.6l2.2-2.2M14.4 5.6l2.2-2.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+    '<svg viewBox="0 0 20 20"><path d="M10 .8l2 4.4 4.7-2-1.3 4.8 4.4 1.5-4.3 2.2 2.4 4.3-4.9-.9L11.5 19l-2.1-4.4L5 16.8l1.1-4.8L1.4 10l4.5-1.9-2.2-4.4 4.8 1.2z" fill="currentColor"/><circle cx="10" cy="10" r="2.6" fill="#fff" opacity=".55"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><circle cx="10" cy="10" r="5" stroke-width="2"/><circle cx="10" cy="10" r="8.5" stroke-width="1" opacity=".5"/><rect x="16" y="2" width="2.2" height="2.2" fill="currentColor" transform="rotate(25 17 3)"/><rect x="2" y="15" width="2" height="2" fill="currentColor" transform="rotate(-20 3 16)"/></svg>'],
+  kiss: ['<svg viewBox="0 0 20 20"><path d="M10 17.5S3.5 13.4 3.5 8.8A3.3 3.3 0 0 1 10 7.3a3.3 3.3 0 0 1 6.5 1.5c0 4.6-6.5 8.7-6.5 8.7z" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 20 20"><path d="M1.5 9.5C4 6 7 5.5 10 7.5c3-2 6-1.5 8.5 2-2.5 4-5.5 5.5-8.5 5.5s-6-1.5-8.5-5.5z" fill="currentColor"/><path d="M2 9.7c4 1.3 12 1.3 16 0" stroke="#16131d" stroke-width="1" fill="none" opacity=".55"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M7.5 17S2 13.6 2 9.8a2.8 2.8 0 0 1 5.5-1.2A2.8 2.8 0 0 1 13 9.8c0 3.8-5.5 7.2-5.5 7.2z"/><path d="M14.8 9.3s-3.3-2-3.3-4.3a1.7 1.7 0 0 1 3.3-.7A1.7 1.7 0 0 1 18 5c0 2.3-3.2 4.3-3.2 4.3z" opacity=".75"/></svg>'],
+  beat: ['<svg viewBox="0 0 20 20"><path d="M10 17.5S3.5 13.4 3.5 8.8A3.3 3.3 0 0 1 10 7.3a3.3 3.3 0 0 1 6.5 1.5c0 4.6-6.5 8.7-6.5 8.7z" fill="currentColor" opacity=".9"/><path d="M1 10h4l1.5-2.5 2 5 1.5-2.5h9" fill="none" stroke="#16131d" stroke-width="1.2" opacity=".6"/></svg>',
+    '<svg viewBox="0 0 20 20"><path d="M10 17.5S3.5 13.4 3.5 8.8A3.3 3.3 0 0 1 10 7.3a3.3 3.3 0 0 1 6.5 1.5c0 4.6-6.5 8.7-6.5 8.7z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 11h4l2-5 3 10 2.5-7 1.5 2H19"/></svg>'],
+  liquid: ['<svg viewBox="0 0 20 20"><path d="M10 1.5c3.2 5 5.2 7.6 5.2 10.4a5.2 5.2 0 0 1-10.4 0c0-2.8 2-5.4 5.2-10.4z" fill="currentColor" opacity=".9"/><path d="M7.6 12.2a2.6 2.6 0 0 0 2 2.5" stroke="#fff" stroke-width="1" fill="none" opacity=".5" stroke-linecap="round"/></svg>',
+    '<svg viewBox="0 0 20 20"><path d="M2 17c2-1 4-1 8-1s6 0 8 1c-1 1.5-4 2-8 2s-7-.5-8-2z" fill="currentColor" opacity=".7"/><path d="M5 15l-1.5-5 3 3.5L8 7l1.5 6.5L12 6l1 7 3-3.5-1.5 5" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 3c2 3 3.2 4.6 3.2 6.2a3.2 3.2 0 0 1-6.4 0C2.8 7.6 4 6 6 3z"/><path d="M14 8c1.6 2.4 2.6 3.6 2.6 5a2.6 2.6 0 0 1-5.2 0c0-1.4 1-2.6 2.6-5z" opacity=".8"/><path d="M8.5 14c1 1.5 1.6 2.3 1.6 3.1a1.6 1.6 0 0 1-3.2 0c0-.8.6-1.6 1.6-3.1z" opacity=".6"/></svg>'],
+  fire: ['<svg viewBox="0 0 20 20"><path d="M10 1.5c1 4 5.3 5.2 5.3 10.4a5.3 5.3 0 0 1-10.6 0c0-3 2-4.2 2-6.2 2 1 2.2 3 3.2 4 1-3 .1-5.2.1-8.2z" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 2c1 3.6 4.6 4.6 4.6 9.2a4.6 4.6 0 0 1-9.2 0c0-2.6 1.7-3.6 1.7-5.4 1.7.9 1.9 2.6 2.8 3.5.9-2.6.1-4.5.1-7.3z"/><path d="M15 8c.6 2 2.7 2.6 2.7 5.3a2.7 2.7 0 0 1-5.4 0c0-1.5 1-2.1 1-3.1 1 .5 1.1 1.5 1.6 2 .5-1.5.1-2.6.1-4.2z" opacity=".7"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="currentColor"><circle cx="5" cy="15" r="2"/><circle cx="11" cy="10" r="1.5" opacity=".8"/><circle cx="15" cy="5" r="1.1" opacity=".6"/><circle cx="8" cy="5" r=".9" opacity=".5"/><circle cx="16" cy="13" r="1.2" opacity=".7"/></svg>'],
+  zap: ['<svg viewBox="0 0 20 20"><path d="M11.5.8L3.8 11.2h5.1L7.8 19.2l8-10.8h-5.3z" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"><path d="M3 2l5 5-3 2 6 5-2 2 8 3"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 0l1.3 7.2L18 4l-5 5.3 7 .7-7 1.2 4.3 6.3-6.3-4.2L10 20l-1-6.8-6.4 4.4 4.3-6.4L0 10l6.9-.7L2 4l6.7 3.2z"/></svg>'],
+  magic: ['<svg viewBox="0 0 20 20"><path d="M9 1.5l1.8 6.2L17 9.5l-6.2 1.8L9 17.5l-1.8-6.2L1 9.5l6.2-1.8z" fill="currentColor"/><path d="M16 1.5l.6 1.9 1.9.6-1.9.6-.6 1.9-.6-1.9-1.9-.6 1.9-.6z" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.5 5.3 5.8.8-4.2 4 1 5.8L10 14.7l-5.1 2.7 1-5.8-4.2-4 5.8-.8z"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M9 10a1 1 0 1 1 2 0 3 3 0 1 1-6 0 5 5 0 1 1 10 0 7 7 0 0 1-7 7" stroke-width="1.5"/><circle cx="17" cy="4" r="1" fill="currentColor"/><circle cx="3" cy="3" r=".8" fill="currentColor"/></svg>'],
+  zzz: ['<svg viewBox="0 0 20 20" fill="currentColor" font-family="Georgia,serif" font-weight="700"><text x="1" y="18" font-size="10">z</text><text x="8" y="11" font-size="8">z</text><text x="14" y="5" font-size="6">z</text></svg>',
+    '<svg viewBox="0 0 20 20"><path d="M12 3a7 7 0 1 0 5 12A6 6 0 0 1 12 3z" fill="currentColor" opacity=".8"/><text x="13" y="7" font-size="7" font-weight="700" fill="currentColor" font-family="Georgia,serif">z</text></svg>',
+    '<svg viewBox="0 0 20 20"><path d="M4 15a3.5 3.5 0 0 1 .5-7A4.5 4.5 0 0 1 13 7a3.5 3.5 0 0 1 2.5 8z" fill="currentColor" opacity=".35"/><path d="M7 8.5h5l-5 4.5h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg>'],
+  wind: ['<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 7h10a2.6 2.6 0 1 0-2.6-2.6M1.5 11h14a2.6 2.6 0 1 1-2.6 2.6M1.5 15h7"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 12c4 0 6-1 8-3s5-2 6 0-1 4-3 3"/><path d="M3 16h9M5 6h6"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 6h12M4 10h14M1.5 14h10"/></svg>'],
+  wave: ['<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 6.5a5 5 0 0 1 0 7M8.5 3.5a9.5 9.5 0 0 1 0 13M13 1a13 13 0 0 1 0 18"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><circle cx="10" cy="10" r="2.5" stroke-width="1.8"/><circle cx="10" cy="10" r="5.5" stroke-width="1.4" opacity=".7"/><circle cx="10" cy="10" r="8.5" stroke-width="1" opacity=".45"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 3l9-2v11.5a2.5 2.5 0 1 1-1.6-2.3V5L9.6 6.3v8.2A2.5 2.5 0 1 1 8 12.2z"/></svg>'],
+  stomp: ['<svg viewBox="0 0 20 20"><circle cx="5" cy="13.5" r="3" fill="currentColor" opacity=".5"/><circle cx="10" cy="11.5" r="4" fill="currentColor" opacity=".65"/><circle cx="15" cy="13.5" r="3" fill="currentColor" opacity=".5"/><path d="M1.5 18h17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="currentColor"><ellipse cx="10" cy="13" rx="4" ry="5.5"/><circle cx="5.5" cy="5" r="1.5"/><circle cx="8.5" cy="3.3" r="1.5"/><circle cx="12" cy="3.3" r="1.5"/><circle cx="15" cy="5" r="1.5"/></svg>',
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 16h18" stroke-width="1.8"/><path d="M10 16l-2-4 2-3-1-4M10 16l3-3v-3l2-2" stroke-width="1.3"/></svg>']
 };
+FX_ICON.fart = FX_ICON.gas;
 const FX_PART = {
   bubbles: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7"/><path d="M6.5 7.5a4 4 0 0 1 3-2.2" stroke-width="1.2" opacity=".7"/></svg>',
   crack: '<svg viewBox="0 0 20 20"><path d="M2 3l15 5-9 10z" fill="currentColor"/></svg>',
@@ -2188,6 +2328,7 @@ const FX_MOTION = {
   wind: { n: 5, dur: 900, path: () => [-20, r(-14, 14), r(60, 100), r(-10, 10)], scale: [1, 1], ease: "ease-in-out" },
   wave: { n: 0, dur: 900, ring: true, ring2: true, ring3: true }
 };
+FX_MOTION.fart = FX_MOTION.gas;
 function r(a, b) { return a + Math.random() * (b - a); }
 function isSfxText(t) {
   const letters = t.replace(/[^\p{L}]/gu, "");
@@ -2209,7 +2350,8 @@ function decorateSfx(root) {
     const cat = sfxCat(t);
     sp.classList.add("sfx"); sp.dataset.fx = cat;
     sp.setAttribute("role", "button"); sp.setAttribute("aria-label", t + " (sound effect)");
-    sp.insertAdjacentHTML("beforeend", `<span class="fxi fx-${cat}" aria-hidden="true">${FX_ICON[cat]}</span>`);
+    const set = FX_ICON[cat] || FX_ICON.wave;
+    sp.insertAdjacentHTML("beforeend", `<span class="fxi fx-${cat === "fart" ? "gas" : cat}" aria-hidden="true">${set[hash(t) % set.length]}</span>`);
   });
 }
 function burst(sp) {
@@ -2225,10 +2367,11 @@ function burst(sp) {
     document.body.appendChild(ring);
     ring.animate([{ transform: "scale(.3)", opacity: .9 }, { transform: `scale(${cat === "boom" ? 6 : 4})`, opacity: 0 }], { duration: M.dur, delay: k * 140, easing: "ease-out", fill: "both" }).onfinish = () => ring.remove();
   }
-  const shape = FX_PART[cat] || FX_ICON[cat] || FX_ICON.wave;
+  const icons = FX_ICON[cat] || FX_ICON.wave;
   for (let i = 0; i < M.n; i++) {
-    const p = document.createElement("div"); p.className = "fxp"; p.style.color = color; p.innerHTML = shape;
-    const size = cat === "gas" || cat === "stomp" ? r(14, 22) : r(9, 16);
+    const p = document.createElement("div"); p.className = "fxp"; p.style.color = color;
+    p.innerHTML = FX_PART[cat] && Math.random() < 0.6 ? FX_PART[cat] : icons[Math.floor(Math.random() * icons.length)];
+    const size = cat === "gas" || cat === "fart" || cat === "stomp" ? r(14, 22) : r(9, 16);
     p.style.width = p.style.height = size + "px";
     document.body.appendChild(p);
     let x0 = 0, y0 = 0, x1, y1, mid = null;
@@ -2277,8 +2420,10 @@ async function migrateChats() {
     if (S.settings.imgUrl === "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true") S.settings.imgUrl = DEFAULTS.imgUrl;
     Object.assign(S.settings, { temperature: DEFAULTS.temperature, maxTokens: DEFAULTS.maxTokens, contextTokens: DEFAULTS.contextTokens, topK: DEFAULTS.topK, topP: DEFAULTS.topP, repPenalty: DEFAULTS.repPenalty, freqPenalty: DEFAULTS.freqPenalty });
   }
+  if ((S.settings.sfxRules || "").includes("- green: belches, farts, stomach gurgles and growls")) S.settings.sfxRules = DEFAULTS.sfxRules;
   S.settings.v = 4;
   S.chars = (await Store.get("chars")) || [];
+  S.recent = (await Store.get("recent")) || {};
   S.books = (await Store.get("books")) || [];
   S.personas = (await Store.get("personas")) || [];
   if (!S.personas.length) S.personas = [{ id: "default", name: (saved.userName || "").trim() || "Traveler", description: (saved.persona || "").trim() }];
