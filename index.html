@@ -117,6 +117,9 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
 .mood-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .mood-grid figure{margin:0;text-align:center;font-size:12px;color:var(--muted);text-transform:capitalize}
 .mood-grid img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:10px;background:var(--surface-2)}
+.pick button{display:flex;flex-direction:column;gap:4px;padding:3px;border-radius:12px;border:2px solid transparent;color:var(--muted);font-size:12px;align-items:center}
+.pick button.sel{border-color:var(--accent);color:var(--accent)}
+.pick{grid-template-columns:repeat(2,1fr)}
 .note{font-size:13px;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -198,11 +201,11 @@ const Store = {
 /* ---------- Constants & state ---------- */
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const DEFAULTS = {
-  apiKey: "", model: "deepseek-chat", temperature: 1.3, maxTokens: 700,
+  apiKey: "", model: "deepseek-flash", temperature: 1.0, maxTokens: 700, thinking: false, v: 2,
   userName: "", persona: "",
   contextChars: 40000, keepRecent: 16, summarizeAt: 12000, factsEvery: 4,
   imgStyle: "detailed anime illustration, painterly, soft cinematic lighting",
-  imgUrl: "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true",
+  imgUrl: "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true&model=flux&safe=true&enhance=false",
   portraits: true, backgrounds: true
 };
 const S = { settings: {...DEFAULTS}, chars: [], charId: null, chat: null, busy: false, openActs: null, abort: null };
@@ -229,11 +232,35 @@ function imgURL(prompt, w, h, seed) {
   const p = prompt.replace(/\s+/g, " ").trim().slice(0, 900);
   return S.settings.imgUrl.replace("{prompt}", encodeURIComponent(p)).replace("{w}", w).replace("{h}", h).replace("{seed}", seed);
 }
-function looks(c) { return (c.appearance || "").trim() || (c.name + ", " + (c.description || "").slice(0, 160)); }
-function portraitURL(c, mood = "neutral") {
+function looks(c) { return (c.visual || "").trim() || (c.appearance || "").trim() || `a person named ${c.name}`; }
+function portraitURL(c, mood = "neutral", seed) {
   if (c.customPortrait) return c.customPortrait;
   if (!S.settings.portraits) return "";
-  return imgURL(`${S.settings.imgStyle}, character portrait of ${looks(c)}, ${mood} facial expression, upper body, looking at viewer, simple soft background`, 512, 640, c.seed);
+  return imgURL(`${S.settings.imgStyle}, portrait of a single character, ${looks(c)}, ${mood} facial expression, head and shoulders, centered, looking at viewer, clean simple background, well-proportioned, clean linework, tasteful, safe for work`, 512, 640, seed ?? c.seed);
+}
+const cardSig = c => hash([c.name, c.appearance, c.description].join("|"));
+async function ensureVisual(c, force) {
+  if (!S.settings.apiKey || c.customPortrait) return false;
+  if (!force && (c.visualManual || (c.visual && c.visualSrc === cardSig(c)))) return false;
+  const out = (await ds([
+    { role: "system", content: "You turn a character card into a visual description for an image generator. Output 25-50 words of comma-separated visual details: apparent age (always an adult), gender presentation, skin tone, hair, eyes, face, build, clothing, accessories, overall color palette. Only physical appearance, no personality or story. Tasteful and safe for work: fully clothed, no gore, no wounds, no exaggerated anatomy. If the card is vague, invent a coherent, attractive design that fits the character. Output only the description." },
+    { role: "user", content: `Name: ${c.name}\nAppearance notes: ${c.appearance || "(none given)"}\nCard:\n${fill(c.description, c).slice(0, 2500)}` }
+  ], { temperature: 0.4, maxTokens: 160 })).trim().replace(/^["']|["']$/g, "");
+  if (!out) return false;
+  c.visual = out; c.visualSrc = cardSig(c); c.visualManual = false;
+  return true;
+}
+function seedPicker(box, c, onPick) {
+  const draw = () => {
+    const seeds = [c.seed, ...Array.from({ length: 3 }, () => Math.floor(Math.random() * 1e6))];
+    box.innerHTML = `<div class="mood-grid pick">${seeds.map((sd, i) => `<button type="button" data-seed="${sd}" class="${i === 0 ? "sel" : ""}" aria-label="${i === 0 ? "Current look" : "Option " + i}"><img alt="" loading="lazy"><span>${i === 0 ? "Current" : "Option " + i}</span></button>`).join("")}</div><button type="button" class="btn small" data-more>Show 3 new options</button>`;
+    box.querySelectorAll("[data-seed]").forEach(b => {
+      setImg(b.querySelector("img"), portraitURL(c, "neutral", +b.dataset.seed), c);
+      b.onclick = () => { box.querySelectorAll("[data-seed]").forEach(x => x.classList.toggle("sel", x === b)); c.seed = +b.dataset.seed; onPick && onPick(c.seed); };
+    });
+    box.querySelector("[data-more]").onclick = draw;
+  };
+  draw();
 }
 function sceneURL(c, place) {
   return imgURL(`${S.settings.imgStyle}, ${place}, environment art, wide scenery, atmospheric, no people`, 720, 1280, hash(c.id + place.toLowerCase()));
@@ -252,8 +279,9 @@ function setImg(img, url, c) {
 async function ds(messages, o = {}) {
   const st = S.settings;
   if (!st.apiKey) throw new Error("Add your DeepSeek API key in Settings first.");
-  const body = { model: o.model || st.model, messages, max_tokens: o.maxTokens || st.maxTokens, stream: !!o.onDelta };
-  if (!/reasoner/.test(body.model)) body.temperature = o.temperature ?? st.temperature;
+  const think = !!o.thinking;
+  const body = { model: o.model || st.model, messages, max_tokens: (o.maxTokens || st.maxTokens) + (think ? 4000 : 0), stream: !!o.onDelta, thinking: { type: think ? "enabled" : "disabled" } };
+  if (!think) body.temperature = Math.min(o.temperature ?? st.temperature, 1.5);
   if (o.json) body.response_format = { type: "json_object" };
   let r;
   try {
@@ -284,13 +312,33 @@ async function ds(messages, o = {}) {
       if (!l.startsWith("data:")) continue;
       const d = l.slice(5).trim();
       if (d === "[DONE]") continue;
-      try { const c = JSON.parse(d).choices?.[0]?.delta?.content; if (c) { full += c; o.onDelta(full); } } catch {}
+      try {
+        const dl = JSON.parse(d).choices?.[0]?.delta || {};
+        if (dl.reasoning_content && !full) o.onThinking?.();
+        if (dl.content) { full += dl.content; o.onDelta(full); }
+      } catch {}
     }
   }
   return full;
 }
-const AUX = "deepseek-chat";
+const AUX = undefined; // helper calls use your chosen model with thinking off
 
+const FOREIGN = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Cyrillic}\p{Script=Arabic}\p{Script=Thai}\p{Script=Devanagari}]/u;
+function garbled(text, c) {
+  const words = text.split(/\s+/).filter(Boolean);
+  if (words.length < 12) return false;
+  const latinChat = !FOREIGN.test((c.description || "") + (c.firstMessage || ""));
+  let bad = 0;
+  for (const w of words) {
+    const core = w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
+    if (!core) continue;
+    if (core.length > 24) bad++;
+    else if (/\p{L}\p{N}\p{L}|\p{N}\p{L}\p{N}/u.test(core)) bad++;
+    else if (latinChat && FOREIGN.test(core)) bad++;
+    else if (/[^\p{L}\p{N}'’\-.,!?…;:"“”*()—–]/u.test(core)) bad++;
+  }
+  return bad / words.length > 0.1;
+}
 function parseTag(raw) {
   const m = raw.match(/\[\[\s*mood\s*:\s*([a-z]+)\s*(?:\|\s*place\s*:\s*([^\]]*?))?\s*\]\]\s*$/i);
   if (!m) return { text: raw.split("[[")[0].trim(), mood: null, place: null };
@@ -390,6 +438,7 @@ async function openChat(id) {
   updateStage();
   renderMsgs();
   setStatus("");
+  ensureVisual(c).then(changed => { if (changed) { saveChars(); if (S.charId === c.id) updateStage(); } }).catch(() => {});
 }
 function updateStage() {
   const c = char(), ch = S.chat;
@@ -498,10 +547,19 @@ async function generate(upto, existing) {
   bubble.innerHTML = `${esc(c.name)} is writing…`; bubble.classList.add("typing");
   const box = $("msgs"); box.scrollTop = box.scrollHeight;
   try {
-    const raw = await ds(buildPrompt(c, chat, upto), {
-      onDelta: full => { bubble.classList.remove("typing"); bubble.innerHTML = fmt(full.split("[[")[0]); if (box.scrollHeight - box.scrollTop - box.clientHeight < 140) box.scrollTop = box.scrollHeight; }
-    });
-    const p = parseTag(raw);
+    let p;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const raw = await ds(buildPrompt(c, chat, upto), {
+        thinking: S.settings.thinking,
+        temperature: attempt ? Math.min(S.settings.temperature, 0.7) : undefined,
+        onThinking: () => { bubble.innerHTML = `${esc(c.name)} is thinking…`; },
+        onDelta: full => { bubble.classList.remove("typing"); bubble.innerHTML = fmt(full.split("[[")[0]); if (box.scrollHeight - box.scrollTop - box.clientHeight < 140) box.scrollTop = box.scrollHeight; }
+      });
+      p = parseTag(raw);
+      if (!garbled(p.text, c)) break;
+      if (attempt === 0) { bubble.classList.add("typing"); bubble.innerHTML = "That reply came out garbled. Trying again more carefully…"; }
+      else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Creativity in Settings.", true);
+    }
     if (!p.text) throw new Error("DeepSeek sent an empty reply. Tap ↻ to try again.");
     const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place };
     if (existing) {
@@ -609,9 +667,11 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   b.innerHTML = `
     ${field("DeepSeek API key", `<input id="sKey" type="password" value="${esc(st.apiKey)}" placeholder="sk-…">`, "Saved only on this device. Get one at platform.deepseek.com.")}
     <div class="row">
-      ${field("Model", `<input id="sModel" list="models" value="${esc(st.model)}"><datalist id="models"><option value="deepseek-chat"><option value="deepseek-reasoner"></datalist>`)}
-      ${field("Creativity", `<input id="sTemp" type="number" step="0.1" min="0" max="2" value="${st.temperature}">`)}
+      ${field("Model", `<input id="sModel" list="models" value="${esc(st.model)}"><datalist id="models"><option value="deepseek-flash"><option value="deepseek-v4-pro"></datalist>`)}
+      ${field("Creativity", `<input id="sTemp" type="number" step="0.1" min="0" max="1.5" value="${st.temperature}">`)}
     </div>
+    <p class="hint" style="margin:-8px 0 0;color:var(--muted);font-size:13px">Creativity 0.8–1.1 works well. Above 1.2, replies can turn into gibberish.</p>
+    <label class="check"><input type="checkbox" id="sThink" ${st.thinking ? "checked" : ""}> Think before replying (slower, more coherent, ignores Creativity)</label>
     ${field("Max reply length (tokens)", `<input id="sMax" type="number" min="100" max="4000" value="${st.maxTokens}">`)}
     <div class="group"><h3>You</h3>
       ${field("Your name", `<input id="sUser" value="${esc(st.userName)}" placeholder="User">`)}
@@ -643,8 +703,8 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   $("sSave").onclick = async () => {
     const n = (id, d) => { const v = parseFloat($(id).value); return isFinite(v) ? v : d; };
     Object.assign(st, {
-      apiKey: $("sKey").value.trim(), model: $("sModel").value.trim() || "deepseek-chat",
-      temperature: n("sTemp", 1.3), maxTokens: n("sMax", 700),
+      apiKey: $("sKey").value.trim(), model: $("sModel").value.trim() || DEFAULTS.model,
+      temperature: Math.min(n("sTemp", 1.0), 1.5), maxTokens: n("sMax", 700), thinking: $("sThink").checked,
       userName: $("sUser").value.trim(), persona: $("sPersona").value.trim(),
       portraits: $("sPort").checked, backgrounds: $("sBg").checked,
       imgStyle: $("sStyle").value.trim() || DEFAULTS.imgStyle, imgUrl: $("sImg").value.trim() || DEFAULTS.imgUrl,
@@ -691,9 +751,13 @@ function editChar(c, isNew) {
         <button class="btn" id="cAddLore">Add lore entry</button>
       </div>
       <div class="group"><h3>Portrait</h3>
-        <div class="row"><label class="btn" for="cPic">${work.customPortrait ? "Replace uploaded image" : "Upload my own image"}</label>${work.customPortrait ? '<button class="btn" id="cPicClear">Use generated portraits</button>' : ""}</div>
+        ${work.customPortrait ? `<img class="big-portrait" src="${esc(work.customPortrait)}" alt="">` : `
+        ${field("Look used for pictures", `<textarea id="cVis" style="min-height:80px" placeholder="Written automatically from the card. You can edit it.">${esc(work.visual || "")}</textarea>`, "This exact text drives every portrait and illustration. Fix anything that looks wrong here.")}
+        <button class="btn" type="button" id="cVisGen">Write it from the card</button>
+        <div class="lbl">Pick a look</div>
+        <div id="cPick"></div>`}
+        <div class="row"><label class="btn" for="cPic">${work.customPortrait ? "Replace uploaded image" : "Upload my own image instead"}</label>${work.customPortrait ? '<button class="btn" id="cPicClear">Use generated portraits</button>' : ""}</div>
         <input type="file" id="cPic" accept="image/*" hidden>
-        ${work.customPortrait ? "" : '<button class="btn" id="cReseed">Generate a different look</button>'}
       </div>
       <button class="btn primary" id="cSave">${isNew ? "Create character" : "Save changes"}</button>
       ${isNew ? "" : '<button class="btn danger" id="cDel">Delete character</button>'}`;
@@ -710,17 +774,35 @@ function editChar(c, isNew) {
     };
     drawLore();
     $("cAddLore").onclick = () => { work.lore.push({ keys: "", text: "" }); drawLore(); };
-    const grab = () => Object.assign(work, { name: $("cName").value.trim(), appearance: $("cLook").value.trim(), description: $("cDesc").value.trim(), scenario: $("cScen").value.trim(), firstMessage: $("cFirst").value.trim(), startPlace: $("cPlace").value.trim() });
+    const grab = () => {
+      Object.assign(work, { name: $("cName").value.trim(), appearance: $("cLook").value.trim(), description: $("cDesc").value.trim(), scenario: $("cScen").value.trim(), firstMessage: $("cFirst").value.trim(), startPlace: $("cPlace").value.trim() });
+      if ($("cVis")) {
+        const v = $("cVis").value.trim();
+        if (v !== (work.visual || "")) { work.visual = v; work.visualManual = !!v; work.visualSrc = cardSig(work); }
+      }
+    };
+    if ($("cPick")) seedPicker($("cPick"), work);
+    if ($("cVisGen")) $("cVisGen").onclick = async () => {
+      const b2 = $("cVisGen"); grab();
+      if (!S.settings.apiKey) { b2.textContent = "Add your API key in Settings first"; return; }
+      b2.disabled = true; b2.textContent = "Writing…";
+      try { await ensureVisual(work, true); $("cVis").value = work.visual; seedPicker($("cPick"), work); b2.textContent = "Rewritten. Pick a look below."; }
+      catch (e) { b2.textContent = e.message; }
+      finally { b2.disabled = false; }
+    };
     $("cPic").onchange = async e => {
       const f = e.target.files[0]; if (!f) return;
       grab(); work.customPortrait = await shrinkImage(f); editCharKeep(work, isNew);
     };
     if ($("cPicClear")) $("cPicClear").onclick = () => { grab(); work.customPortrait = ""; editCharKeep(work, isNew); };
-    if ($("cReseed")) $("cReseed").onclick = () => { grab(); work.seed = Math.floor(Math.random() * 1e6); editCharKeep(work, isNew); $("cReseed").textContent = "New look picked. Save to keep it."; };
     $("cSave").onclick = async () => {
       grab();
       if (!work.name) { $("cName").focus(); $("cName").placeholder = "A name is required"; return; }
       work.lore = work.lore.filter(l => l.text.trim());
+      if (!work.customPortrait && !work.visualManual && work.visualSrc !== cardSig(work)) {
+        $("cSave").disabled = true; $("cSave").textContent = "Designing their look…";
+        try { await ensureVisual(work); } catch {}
+      }
       if (isNew) S.chars.unshift(work); else Object.assign(char() && char().id === work.id ? char() : S.chars.find(x => x.id === work.id), work);
       await saveChars(); closeSheet();
       if (isNew) openChat(work.id); else if (!$("chat").hidden) { $("chatName").textContent = work.name; updateStage(); } else renderHome();
@@ -824,9 +906,13 @@ $("btnWho").onclick = () => {
   const c = char(), ch = S.chat;
   openSheet(c.name, b => {
     b.innerHTML = `<img class="big-portrait" id="pBig" alt="${esc(c.name)}">
-      ${c.customPortrait ? "" : `<div class="lbl">Expressions</div><div class="mood-grid">${MOODS.map(m => `<figure><img data-m="${m}" alt="" loading="lazy"><figcaption>${m}</figcaption></figure>`).join("")}</div><p class="note">Expressions are drawn the first time they're needed, then cached by your browser.</p>`}`;
+      ${c.customPortrait ? "" : `<p class="note">${esc(looks(c))}</p><div class="lbl">Not right? Pick a different look</div><div id="pPick"></div><div class="lbl">Expressions</div><div class="mood-grid">${MOODS.map(m => `<figure><img data-m="${m}" alt="" loading="lazy"><figcaption>${m}</figcaption></figure>`).join("")}</div><p class="note">Expressions are drawn the first time they're needed, then cached by your browser.</p>`}`;
     setImg($("pBig"), portraitURL(c, ch.mood), c);
     b.querySelectorAll("[data-m]").forEach(im => setImg(im, portraitURL(c, im.dataset.m), c));
+    if ($("pPick")) seedPicker($("pPick"), c, async () => {
+      await saveChars(); setImg($("pBig"), portraitURL(c, ch.mood), c); updateStage();
+      b.querySelectorAll("[data-m]").forEach(im => setImg(im, portraitURL(c, im.dataset.m), c));
+    });
   });
 };
 
@@ -860,7 +946,14 @@ $("btnBack").onclick = () => { if (S.busy) return; $("chat").hidden = true; $("h
 /* ---------- Boot ---------- */
 (async () => {
   await Store.open();
-  S.settings = { ...DEFAULTS, ...((await Store.get("settings")) || {}) };
+  const saved = (await Store.get("settings")) || {};
+  S.settings = { ...DEFAULTS, ...saved };
+  if (saved.apiKey !== undefined && (saved.v || 1) < 2) {
+    if (S.settings.temperature > 1.1) S.settings.temperature = 1.0;
+    if (/^deepseek-(chat|reasoner)$/.test(S.settings.model)) S.settings.model = DEFAULTS.model;
+    if (S.settings.imgUrl === "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true") S.settings.imgUrl = DEFAULTS.imgUrl;
+    S.settings.v = 2; await saveSettings();
+  }
   S.chars = (await Store.get("chars")) || [];
   if (!S.chars.length && !(await Store.get("seeded"))) { S.chars = [sampleChar()]; await saveChars(); await Store.set("seeded", true); }
   renderHome();
