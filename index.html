@@ -121,6 +121,45 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
 .pick button.sel{border-color:var(--accent);color:var(--accent)}
 .pick{grid-template-columns:repeat(2,1fr)}
 .note{font-size:13px;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.badge{display:inline-block;font:700 10px/1.6 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:0 8px;margin-left:6px;vertical-align:middle}
+.persona-bar{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-bottom:14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);text-align:left;font-size:14px;color:var(--muted)}
+.persona-bar b{color:var(--fg)}
+.persona-bar .chg{margin-left:auto;color:var(--accent);font-weight:700}
+.msg-set{display:flex;flex-direction:column;gap:6px;align-self:flex-start;max-width:88%}
+.msg-set .msg{max-width:100%}
+.spk{display:flex;align-items:center;gap:8px;margin-bottom:4px;font:400 15px/1.2 var(--f-display);color:var(--accent)}
+.spk img{width:26px;height:26px;border-radius:50%;object-fit:cover;background:var(--surface-2)}
+.xrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.xbtn{font-size:13px;font-weight:700;color:var(--accent);padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2)}
+.xbtn:disabled{opacity:.6}
+#speakers{position:relative;z-index:1;display:flex;gap:6px;overflow-x:auto;padding:6px 10px 2px}
+.chip{flex:none;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:13px;color:var(--muted)}
+.chip.on{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:700}
+.checkrow{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:15px}
+.checkrow input{width:20px;height:20px;accent-color:var(--accent);flex:none}
+.checkrow img{width:32px;height:32px;border-radius:50%;object-fit:cover;background:var(--surface-2);flex:none}
+.checkrow span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stack{display:flex;flex-direction:column;gap:8px}
+.listrow{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);text-align:left;width:100%}
+.listrow .grow{flex:1;min-width:0}
+.listrow .sub{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.listrow.on{border-color:var(--accent)}
+.kind-opt{display:flex!important;flex-direction:column;align-items:flex-start!important;gap:2px;text-align:left}
+.kind-opt small{font-weight:400;color:var(--muted);font-size:13px}
+.cast{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.cast .row input,.cast select,.cast textarea{background:var(--surface)}
+.range-row{display:flex;flex-direction:column;gap:4px}
+.range-row .top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.range-row .top b{font-size:15px}
+.range-row .val{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums}
+.range-row .desc{font-size:13px;color:var(--muted)}
+.range-row input[type=range]{width:100%;accent-color:var(--accent);height:28px}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);margin-left:6px}
+.warn{font-size:13px;color:#f1c56b;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}
+details.adv summary{cursor:pointer;font-weight:700;color:var(--accent);padding:10px 0;list-style:none}
+details.adv summary::-webkit-details-marker{display:none}
+details.adv[open] .advbody{display:flex}
+.advbody{flex-direction:column;gap:14px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -132,12 +171,14 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
       <button class="icon" id="btnSettings" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </header>
     <div class="home-scroll">
+      <button class="persona-bar" id="personaBar"></button>
       <p class="tagline" id="tagline">Your characters, with memory that holds.</p>
       <div id="charList"></div>
     </div>
     <div class="home-actions">
-      <button class="btn primary" id="btnNewChar">New character</button>
+      <button class="btn primary" id="btnNewChar">New</button>
       <label class="btn" for="importCard">Import card</label>
+      <button class="btn" id="btnBooks">Lorebooks</button>
       <input type="file" id="importCard" accept=".json,.png,application/json,image/png" hidden>
     </div>
   </section>
@@ -155,6 +196,7 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
     </header>
     <div id="msgs" aria-live="polite"></div>
     <div id="status"></div>
+    <div id="speakers" hidden></div>
     <form id="composer" autocomplete="off">
       <button type="button" class="icon" id="btnIllustrate" aria-label="Illustrate this moment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></button>
       <textarea id="input" rows="1" placeholder="Write your reply…"></textarea>
@@ -195,28 +237,48 @@ const Store = {
   async del(k) {
     if (this.db) return new Promise(res => { const tx = this.db.transaction("kv", "readwrite"); tx.objectStore("kv").delete(k); tx.oncomplete = res; tx.onerror = res; });
     try { localStorage.removeItem("lr:" + k); } catch {}
+  },
+  async keys() {
+    if (this.db) return new Promise(res => { const t = this.db.transaction("kv").objectStore("kv").getAllKeys(); t.onsuccess = () => res(t.result.map(String)); t.onerror = () => res([]); });
+    try { return Object.keys(localStorage).filter(k => k.startsWith("lr:")).map(k => k.slice(3)); } catch { return []; }
   }
 };
 
 /* ---------- Constants & state ---------- */
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
+const KINDS = {
+  character: { label: "Character", blurb: "One character you talk to." },
+  world: { label: "World", blurb: "A whole setting. The AI narrates and plays everyone you meet." },
+  group: { label: "Group", blurb: "Several characters together in one scene." }
+};
 const DEFAULTS = {
-  apiKey: "", model: "deepseek-flash", temperature: 1.0, maxTokens: 700, thinking: false, v: 2,
-  userName: "", persona: "",
-  contextChars: 40000, keepRecent: 16, summarizeAt: 12000, factsEvery: 4,
+  v: 4, provider: "deepseek",
+  apiKey: "", model: "deepseek-flash", thinking: false,
+  customUrl: "https://openrouter.ai/api/v1", customKey: "", customModel: "deepseek/deepseek-chat",
+  temperature: 1.65, maxTokens: 1000, contextTokens: 100600,
+  topK: 6, topP: 0.79, repPenalty: 0, freqPenalty: 0.21,
+  keepRecent: 16, summarizeAt: 12000, factsEvery: 4,
   imgStyle: "detailed anime illustration, painterly, soft cinematic lighting",
   imgUrl: "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true&model=flux&safe=true&enhance=false",
   portraits: true, backgrounds: true
 };
-const S = { settings: {...DEFAULTS}, chars: [], charId: null, chat: null, busy: false, openActs: null, abort: null };
+const S = { settings: { ...DEFAULTS }, chars: [], personas: [], books: [], personaId: null, charId: null, chat: null, busy: false, openActs: null, nextSpeaker: "" };
 const $ = id => document.getElementById(id);
-const char = () => S.chars.find(c => c.id === S.charId);
-const uname = () => S.settings.userName.trim() || "User";
+const byId = id => S.chars.find(c => c.id === id);
+const char = () => byId(S.charId);
+const members = c => (c?.members || []).map(byId).filter(Boolean);
+const persona = () => S.personas.find(p => p.id === S.personaId) || S.personas[0] || { id: "default", name: "User", description: "" };
+const uname = () => (persona().name || "").trim() || "User";
+const chatKey = (cid, pid = S.personaId) => `chat:${cid}:${pid}`;
+const speakerLabel = c => c.kind === "world" ? "Narrator" : c.name;
+const isDS = () => S.settings.provider !== "custom";
+const hasKey = () => !!(isDS() ? S.settings.apiKey : S.settings.customKey);
 
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 const hash = s => { let h = 2166136261; for (const ch of s) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return Math.abs(h) % 1000000; };
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
 const fill = (s, c) => String(s || "").replace(/\{\{char\}\}/gi, c?.name || "").replace(/\{\{user\}\}/gi, uname());
+const within = (p, ms = 1500) => Promise.race([p, new Promise(r => setTimeout(r, ms))]);
 
 function fmt(text) {
   let h = String(text).replace(/[&<>]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" }[c]));
@@ -233,56 +295,11 @@ function imgURL(prompt, w, h, seed) {
   return S.settings.imgUrl.replace("{prompt}", encodeURIComponent(p)).replace("{w}", w).replace("{h}", h).replace("{seed}", seed);
 }
 const ART = {
-  human: { label: "Human", subject: "portrait of a single human character" },
-  anthro: { label: "Anthro / furry", subject: "portrait of a single anthropomorphic furry character, anthro, expressive animal face, detailed fur or scales" },
-  feral: { label: "Feral (animal or creature)", subject: "portrait of a single feral animal creature, non-anthropomorphic, natural animal anatomy, expressive animal face, detailed fur or scales" }
+  human: { label: "Human", subject: "portrait of a single human character", word: "a human" },
+  anthro: { label: "Anthro / furry", subject: "portrait of a single anthropomorphic furry character, anthro, expressive animal face, detailed fur or scales", word: "an anthropomorphic (anthro/furry) character" },
+  feral: { label: "Feral (animal or creature)", subject: "portrait of a single feral animal creature, non-anthropomorphic, natural animal anatomy, expressive animal face, detailed fur or scales", word: "a feral animal or creature, not anthropomorphic" }
 };
 const artOf = c => (c.artType && c.artType !== "auto" ? c.artType : c.artDetected) || "human";
-function looks(c) { return (c.visual || "").trim() || (c.appearance || "").trim() || `a person named ${c.name}`; }
-function portraitURL(c, mood = "neutral", seed) {
-  if (c.customPortrait) return c.customPortrait;
-  if (!S.settings.portraits) return "";
-  const t = artOf(c);
-  return imgURL(`${S.settings.imgStyle}, ${ART[t].subject}, ${looks(c)}, ${mood} ${t === "feral" ? "expression" : "facial expression"}, ${t === "feral" ? "head and upper body" : "head and shoulders"}, centered, looking at viewer, clean simple background, well-proportioned, clean linework, tasteful, safe for work`, 512, 640, seed ?? c.seed);
-}
-const cardSig = c => hash([c.name, c.appearance, c.description, c.artType || "auto"].join("|"));
-async function ensureVisual(c, force) {
-  if (!S.settings.apiKey || c.customPortrait) return false;
-  if (!force && (c.visualManual || (c.visual && c.visualSrc === cardSig(c)))) return false;
-  const want = c.artType && c.artType !== "auto" ? c.artType : null;
-  const raw = await ds([
-    { role: "system", content: `You turn a character card into a visual description for an image generator.
-First decide the character's form: "human", "anthro" (an anthropomorphic animal person: furry, scalie, etc.), or "feral" (an animal or creature with natural, non-humanoid anatomy).${want ? ` The user says the form is "${want}".` : ""}
-Then write 25-50 words of comma-separated visual details for that form:
-- human: apparent age (always an adult), gender presentation, skin tone, hair, eyes, face, build, clothing, accessories.
-- anthro: species, fur/scale/feather colors and markings, eyes, muzzle or beak, ears, tail, build, clothing, accessories. Always an adult.
-- feral: species or creature type, size, coat/scale/feather colors and markings, eyes, distinctive features such as horns, wings or tail.
-End with the overall color palette. Only physical appearance, no personality or story. Tasteful and safe for work: no nudity, no sexual content, no gore, no wounds, no exaggerated anatomy. If the card is vague, invent a coherent, appealing design that fits.
-Respond as JSON: {"form": "human|anthro|feral", "description": "..."}` },
-    { role: "user", content: `Name: ${c.name}\nAppearance notes: ${c.appearance || "(none given)"}\nCard:\n${fill(c.description, c).slice(0, 2500)}` }
-  ], { temperature: 0.4, maxTokens: 260, json: true });
-  let j; try { j = JSON.parse(raw); } catch { return false; }
-  const out = String(j.description || "").trim();
-  if (!out) return false;
-  c.artDetected = ART[j.form] ? j.form : "human";
-  c.visual = out; c.visualSrc = cardSig(c); c.visualManual = false;
-  return true;
-}
-function seedPicker(box, c, onPick) {
-  const draw = () => {
-    const seeds = [c.seed, ...Array.from({ length: 3 }, () => Math.floor(Math.random() * 1e6))];
-    box.innerHTML = `<div class="mood-grid pick">${seeds.map((sd, i) => `<button type="button" data-seed="${sd}" class="${i === 0 ? "sel" : ""}" aria-label="${i === 0 ? "Current look" : "Option " + i}"><img alt="" loading="lazy"><span>${i === 0 ? "Current" : "Option " + i}</span></button>`).join("")}</div><button type="button" class="btn small" data-more>Show 3 new options</button>`;
-    box.querySelectorAll("[data-seed]").forEach(b => {
-      setImg(b.querySelector("img"), portraitURL(c, "neutral", +b.dataset.seed), c);
-      b.onclick = () => { box.querySelectorAll("[data-seed]").forEach(x => x.classList.toggle("sel", x === b)); c.seed = +b.dataset.seed; onPick && onPick(c.seed); };
-    });
-    box.querySelector("[data-more]").onclick = draw;
-  };
-  draw();
-}
-function sceneURL(c, place) {
-  return imgURL(`${S.settings.imgStyle}, ${place}, environment art, wide scenery, atmospheric, no people`, 720, 1280, hash(c.id + place.toLowerCase()));
-}
 function initialSVG(c) {
   const l = esc((c?.name || "?")[0].toUpperCase());
   return "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100"><rect width="80" height="100" fill="#2c2739"/><text x="40" y="62" font-family="Georgia,serif" font-size="40" fill="#e8a95b" text-anchor="middle">${l}</text></svg>`);
@@ -292,30 +309,115 @@ function setImg(img, url, c) {
   img.onerror = () => { img.onerror = null; img.src = initialSVG(c); };
   if (img.getAttribute("src") !== url) img.src = url;
 }
+function looks(c) { return (c.visual || "").trim() || (c.appearance || "").trim() || (c.kind === "world" ? (c.description || c.name).slice(0, 300) : `a person named ${c.name}`); }
+function portraitURL(c, mood = "neutral", seed) {
+  if (c.customPortrait) return c.customPortrait;
+  if (!S.settings.portraits) return "";
+  const t = artOf(c);
+  return imgURL(`${S.settings.imgStyle}, ${ART[t].subject}, ${looks(c)}, ${mood} ${t === "feral" ? "expression" : "facial expression"}, ${t === "feral" ? "head and upper body" : "head and shoulders"}, centered, looking at viewer, clean simple background, well-proportioned, clean linework, tasteful, safe for work`, 512, 640, seed ?? c.seed);
+}
+function coverURL(c, seed) {
+  if (c.customPortrait) return c.customPortrait;
+  if (!S.settings.portraits) return "";
+  return imgURL(`${S.settings.imgStyle}, ${looks(c)}, sweeping establishing shot, environment key art, atmospheric, no people, no text`, 640, 800, seed ?? c.seed);
+}
+function memberByName(c, name) {
+  if (!name) return null;
+  const n = name.toLowerCase().trim();
+  const ms = members(c);
+  return ms.find(m => m.name.toLowerCase() === n) || ms.find(m => m.name.toLowerCase().split(/\s+/)[0] === n.split(/\s+/)[0]) || null;
+}
+function thumbURL(c, seed) {
+  if (c.kind === "world") return coverURL(c, seed);
+  if (c.kind === "group") { const m = members(c)[0]; return m ? portraitURL(m) : ""; }
+  return portraitURL(c, "neutral", seed);
+}
+function avatarFor(c, chat) {
+  if (c.kind === "group") { const f = memberByName(c, chat?.focus) || members(c)[0]; return f ? portraitURL(f, chat?.mood || "neutral") : ""; }
+  if (c.kind === "world") return coverURL(c);
+  return portraitURL(c, chat?.mood || "neutral");
+}
+function sceneURL(c, place) {
+  return imgURL(`${S.settings.imgStyle}, ${place}, environment art, wide scenery, atmospheric, no people`, 720, 1280, hash(c.id + place.toLowerCase()));
+}
+const cardSig = c => hash([c.kind, c.name, c.appearance, c.description, c.artType || "auto"].join("|"));
+async function ensureVisual(c, force) {
+  if (!hasKey() || c.customPortrait || c.kind === "group") return false;
+  if (!force && (c.visualManual || (c.visual && c.visualSrc === cardSig(c)))) return false;
+  let sys;
+  if (c.kind === "world") {
+    sys = `You turn a world description into a visual description of its most iconic landscape for an image generator. Output 30-60 words of comma-separated details: terrain, architecture, sky, weather, lighting, colors, mood. No people, no text. Safe for work. Respond as JSON: {"form": "world", "description": "..."}`;
+  } else {
+    const want = c.artType && c.artType !== "auto" ? c.artType : null;
+    sys = `You turn a character card into a visual description for an image generator.
+First decide the character's form: "human", "anthro" (an anthropomorphic animal person: furry, scalie, etc.), or "feral" (an animal or creature with natural, non-humanoid anatomy).${want ? ` The user says the form is "${want}".` : ""}
+Then write 25-50 words of comma-separated visual details for that form:
+- human: apparent age (always an adult), gender presentation, skin tone, hair, eyes, face, build, clothing, accessories.
+- anthro: species, fur/scale/feather colors and markings, eyes, muzzle or beak, ears, tail, build, clothing, accessories. Always an adult.
+- feral: species or creature type, size, coat/scale/feather colors and markings, eyes, distinctive features such as horns, wings or tail.
+End with the overall color palette. Only physical appearance, no personality or story. Tasteful and safe for work: no nudity, no sexual content, no gore, no wounds, no exaggerated anatomy. If the card is vague, invent a coherent, appealing design that fits.
+Respond as JSON: {"form": "human|anthro|feral", "description": "..."}`;
+  }
+  const raw = await ds([
+    { role: "system", content: sys },
+    { role: "user", content: `Name: ${c.name}\nAppearance notes: ${c.appearance || "(none given)"}\nCard:\n${fill(c.description, c).slice(0, 2500)}` }
+  ], { temperature: 0.4, maxTokens: 260, json: true, plain: true });
+  let j; try { j = JSON.parse(raw); } catch { return false; }
+  const out = String(j.description || "").trim();
+  if (!out) return false;
+  if (c.kind !== "world") c.artDetected = ART[j.form] ? j.form : "human";
+  c.visual = out; c.visualSrc = cardSig(c); c.visualManual = false;
+  return true;
+}
+function seedPicker(box, c, onPick) {
+  const draw = () => {
+    const seeds = [c.seed, ...Array.from({ length: 3 }, () => Math.floor(Math.random() * 1e6))];
+    box.innerHTML = `<div class="mood-grid pick">${seeds.map((sd, i) => `<button type="button" data-seed="${sd}" class="${i === 0 ? "sel" : ""}" aria-label="${i === 0 ? "Current look" : "Option " + i}"><img alt="" loading="lazy"><span>${i === 0 ? "Current" : "Option " + i}</span></button>`).join("")}</div><button type="button" class="btn small" data-more>Show 3 new options</button>`;
+    box.querySelectorAll("[data-seed]").forEach(b => {
+      setImg(b.querySelector("img"), thumbURL(c, +b.dataset.seed), c);
+      b.onclick = () => { box.querySelectorAll("[data-seed]").forEach(x => x.classList.toggle("sel", x === b)); c.seed = +b.dataset.seed; onPick && onPick(c.seed); };
+    });
+    box.querySelector("[data-more]").onclick = draw;
+  };
+  draw();
+}
 
-/* ---------- DeepSeek ---------- */
+/* ---------- Model API ---------- */
 async function ds(messages, o = {}) {
-  const st = S.settings;
-  if (!st.apiKey) throw new Error("Add your DeepSeek API key in Settings first.");
-  const think = !!o.thinking;
-  const body = { model: o.model || st.model, messages, max_tokens: (o.maxTokens || st.maxTokens) + (think ? 4000 : 0), stream: !!o.onDelta, thinking: { type: think ? "enabled" : "disabled" } };
-  if (!think) body.temperature = Math.min(o.temperature ?? st.temperature, 1.5);
+  const st = S.settings, deep = isDS();
+  const key = (deep ? st.apiKey : st.customKey).trim();
+  if (!key) throw new Error("Add your API key in Settings first.");
+  const think = deep && !!o.thinking;
+  const body = { model: o.model || (deep ? st.model : st.customModel), messages, max_tokens: (o.maxTokens || st.maxTokens) + (think ? 4000 : 0), stream: !!o.onDelta };
+  const temp = o.temperature ?? st.temperature;
+  if (deep) {
+    body.thinking = { type: think ? "enabled" : "disabled" };
+    if (!think) {
+      body.temperature = temp;
+      if (!o.plain && st.freqPenalty) body.frequency_penalty = st.freqPenalty;
+    } else if (!o.plain && st.topP) body.top_p = st.topP;
+  } else {
+    body.temperature = temp;
+    if (!o.plain) {
+      if (st.topP) body.top_p = st.topP;
+      if (st.topK) body.top_k = st.topK;
+      if (st.repPenalty) body.repetition_penalty = st.repPenalty;
+      if (st.freqPenalty) body.frequency_penalty = st.freqPenalty;
+    }
+  }
   if (o.json) body.response_format = { type: "json_object" };
+  const url = deep ? "https://api.deepseek.com/chat/completions" : st.customUrl.replace(/\/+$/, "") + "/chat/completions";
   let r;
   try {
-    r = await fetch("https://api.deepseek.com/chat/completions", {
-      method: "POST", signal: o.signal,
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + st.apiKey.trim() },
-      body: JSON.stringify(body)
-    });
+    r = await fetch(url, { method: "POST", signal: o.signal, headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key }, body: JSON.stringify(body) });
   } catch (e) {
     if (e.name === "AbortError") throw e;
-    throw new Error("Couldn't reach DeepSeek. Check your internet connection and try again.");
+    throw new Error(`Couldn't reach ${deep ? "DeepSeek" : "the API"}. Check your internet connection and try again.`);
   }
   if (!r.ok) {
     let msg = ""; try { msg = (await r.json()).error?.message || ""; } catch {}
-    const known = { 401: "DeepSeek rejected the API key. Check it in Settings.", 402: "Your DeepSeek balance is empty. Top up at platform.deepseek.com.", 429: "DeepSeek is rate-limiting you. Wait a moment and try again.", 503: "DeepSeek is overloaded right now. Try again shortly." };
-    throw new Error(known[r.status] || `DeepSeek error ${r.status}${msg ? ": " + msg : ""}`);
+    const known = { 401: "The API key was rejected. Check it in Settings.", 402: "Your API balance is empty. Top up your account.", 429: "You're being rate-limited. Wait a moment and try again.", 503: "The model is overloaded right now. Try again shortly." };
+    throw new Error(known[r.status] || `API error ${r.status}${msg ? ": " + msg : ""}`);
   }
   if (!o.onDelta) { const j = await r.json(); return j.choices?.[0]?.message?.content || ""; }
   const reader = r.body.getReader(), dec = new TextDecoder();
@@ -332,14 +434,13 @@ async function ds(messages, o = {}) {
       if (d === "[DONE]") continue;
       try {
         const dl = JSON.parse(d).choices?.[0]?.delta || {};
-        if (dl.reasoning_content && !full) o.onThinking?.();
+        if ((dl.reasoning_content || dl.reasoning) && !full) o.onThinking?.();
         if (dl.content) { full += dl.content; o.onDelta(full); }
       } catch {}
     }
   }
   return full;
 }
-const AUX = undefined; // helper calls use your chosen model with thinking off
 
 const FOREIGN = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Cyrillic}\p{Script=Arabic}\p{Script=Thai}\p{Script=Devanagari}]/u;
 function garbled(text, c) {
@@ -358,35 +459,56 @@ function garbled(text, c) {
   return bad / words.length > 0.1;
 }
 function parseTag(raw) {
-  const m = raw.match(/\[\[\s*mood\s*:\s*([a-z]+)\s*(?:\|\s*place\s*:\s*([^\]]*?))?\s*\]\]\s*$/i);
-  if (!m) return { text: raw.split("[[")[0].trim(), mood: null, place: null };
+  const m = raw.match(/\[\[\s*mood\s*:\s*([a-z]+)\s*(?:\|\s*place\s*:\s*([^\]|]*?))?\s*(?:\|\s*focus\s*:\s*([^\]|]*?))?\s*\]\]\s*$/i);
+  if (!m) return { text: raw.split("[[")[0].trim(), mood: null, place: null, focus: null };
   const mood = MOODS.includes(m[1].toLowerCase()) ? m[1].toLowerCase() : "neutral";
-  return { text: raw.slice(0, m.index).trim(), mood, place: (m[2] || "").trim() || null };
+  return { text: raw.slice(0, m.index).trim(), mood, place: (m[2] || "").trim() || null, focus: (m[3] || "").trim() || null };
 }
 
 /* ---------- Prompt building ---------- */
+function loreSources(c) {
+  const out = [...(c.lore || [])];
+  const ids = new Set(c.bookIds || []);
+  if (c.kind === "group") for (const m of members(c)) { out.push(...(m.lore || [])); (m.bookIds || []).forEach(b => ids.add(b)); }
+  for (const b of S.books) if (ids.has(b.id)) out.push(...(b.entries || []));
+  return out;
+}
 function activeLore(c, msgs) {
   const recent = msgs.filter(m => m.role !== "image").slice(-4).map(m => m.content).join(" ").toLowerCase();
-  return (c.lore || []).filter(l => l.text && l.keys && l.keys.split(",").map(k => k.trim().toLowerCase()).filter(Boolean).some(k => recent.includes(k)));
+  return loreSources(c).filter(l => l.text && l.keys && l.keys.split(",").map(k => k.trim().toLowerCase()).filter(Boolean).some(k => recent.includes(k)));
 }
 function buildPrompt(c, chat, upto) {
-  const st = S.settings, u = uname();
-  let sys = `You are ${c.name} in an ongoing interactive story with ${u}. Stay fully in character. Write actions in *asterisks* and speech in quotes. Never write ${u}'s words, thoughts or actions. Keep replies vivid and focused, usually 1-4 paragraphs. Stay consistent with everything established below.\n\n# ${c.name}\n${fill(c.description, c)}`;
+  const st = S.settings, u = uname(), p = persona();
+  const rules = `Write actions in *asterisks* and speech in quotes. Never write ${u}'s words, thoughts or actions. Keep replies vivid and focused, usually 1-4 paragraphs. Stay consistent with everything established below.`;
+  let sys;
+  if (c.kind === "world") {
+    sys = `You are the narrator and game master of an interactive story set in the world described below. ${u} is the protagonist. Describe what ${u} sees and hears, play every other character they meet (give them names, personalities and distinct voices), and let the world react to ${u}'s choices. ${rules}\n\n# The world: ${c.name}\n${fill(c.description, c)}`;
+    if ((c.cast || []).length) sys += `\n\n# Notable characters and groups in this world\n` + c.cast.map(x => `## ${x.name} (${x.type === "group" ? "group or faction" : "character"})\n${fill(x.details, c)}`).join("\n\n");
+  } else if (c.kind === "group") {
+    const ms = members(c);
+    sys = `You voice several characters in a shared scene with ${u}: ${ms.map(m => m.name).join(", ")}. Each turn, write the responses of the characters who would naturally react, usually one to three of them, and let them talk to each other as well as to ${u}. Start each character's part on a new line with their name in bold followed by a colon, like **${ms[0]?.name || "Name"}:** and keep every character true to their own personality and voice. Brief narration without a name is fine. ${rules}`;
+    if (c.description) sys += `\n\n# About this group\n${fill(c.description, c)}`;
+    sys += ms.map(m => `\n\n# ${m.name} (${ART[artOf(m)].label})\n${fill(m.description, m)}`).join("");
+  } else {
+    sys = `You are ${c.name} in an ongoing interactive story with ${u}. Stay fully in character. ${rules}\n\n# ${c.name}\n${fill(c.description, c)}`;
+  }
   if (c.scenario) sys += `\n\n# Scenario\n${fill(c.scenario, c)}`;
-  if (st.persona) sys += `\n\n# About ${u}\n${fill(st.persona, c)}`;
+  if (p.description) sys += `\n\n# About ${u} (the user's character)\n${fill(p.description, c)}`;
   if (chat.summary) sys += `\n\n# Story so far\n${chat.summary}`;
   if (chat.facts.length) sys += `\n\n# Established facts (never contradict these)\n` + chat.facts.map(f => "- " + f.t).join("\n");
   const lore = activeLore(c, chat.messages.slice(0, upto));
   if (lore.length) sys += `\n\n# World notes\n` + lore.map(l => fill(l.text, c)).join("\n\n");
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location]]`;
+  const focusPart = c.kind === "group" ? " | focus: name of the character who spoke most" : "";
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location${focusPart}]]`;
+  if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
 
   const hist = chat.messages.slice(chat.summarizedUpTo || 0, upto).filter(m => m.role !== "image");
-  let budget = st.contextChars - sys.length;
+  let budget = st.contextTokens * 3.5 - sys.length;
   const out = [];
   for (let i = hist.length - 1; i >= 0; i--) {
     const m = hist[i];
     let content = m.content;
-    if (m.role === "assistant" && m.mood) content += `\n[[mood: ${m.mood} | place: ${m.place || chat.place || "unknown"}]]`;
+    if (m.role === "assistant" && m.mood) content += `\n[[mood: ${m.mood} | place: ${m.place || chat.place || "unknown"}${c.kind === "group" && m.focus ? ` | focus: ${m.focus}` : ""}]]`;
     if (budget - content.length < 0 && out.length >= 2) break;
     budget -= content.length;
     out.unshift({ role: m.role, content });
@@ -398,17 +520,20 @@ function buildPrompt(c, chat, upto) {
 /* ---------- Data ---------- */
 function newChat(c) {
   const first = fill(c.firstMessage, c).trim();
-  return { messages: first ? [{ id: uid(), role: "assistant", content: first, alts: [first], alt: 0, mood: "neutral" }] : [],
-           summary: "", summarizedUpTo: 0, facts: [], turnsSinceFacts: 0, mood: "neutral", place: c.startPlace || "" };
+  const focus = c.kind === "group" ? (members(c)[0]?.name || "") : "";
+  return { messages: first ? [{ id: uid(), role: "assistant", content: first, alts: [first], alt: 0, mood: "neutral", focus }] : [],
+           summary: "", summarizedUpTo: 0, facts: [], turnsSinceFacts: 0, mood: "neutral", place: c.startPlace || "", focus };
 }
 async function saveChars() { await Store.set("chars", S.chars); }
-const within = (p, ms = 1500) => Promise.race([p, new Promise(r => setTimeout(r, ms))]);
-async function saveChat() { if (S.charId && S.chat) await within(Store.set("chat:" + S.charId, S.chat).catch(() => {})); }
+async function saveChat() { if (S.charId && S.chat) await within(Store.set(chatKey(S.charId), S.chat).catch(() => {})); }
 async function saveSettings() { await Store.set("settings", S.settings); }
+async function savePersonas() { await Store.set("personas", S.personas); await Store.set("activePersona", S.personaId); }
+async function saveBooks() { await Store.set("books", S.books); }
+const blankChar = kind => ({ id: uid(), kind, seed: Math.floor(Math.random() * 1e6), name: "", appearance: "", description: "", scenario: "", firstMessage: "", startPlace: "", lore: [], bookIds: [], members: [], cast: [], customPortrait: "", artType: "auto" });
 
 function sampleChar() {
   return {
-    id: uid(), seed: 41207, name: "Wren Calloway",
+    ...blankChar("character"), seed: 41207, name: "Wren Calloway",
     appearance: "young woman with short tousled copper hair, freckles, storm-grey eyes, worn yellow oilskin coat over a knit sweater",
     description: "Wren is the last keeper of the Sallow Point lighthouse, a rock two hours by boat from the nearest town. Dry-humoured, stubborn, practical, secretly lonely. She talks to the lamp like an old friend and hates being pitied. She hears a bell under the water on stormy nights and has never told anyone.",
     scenario: "A storm has driven {{user}}'s small boat onto the rocks below the lighthouse. Wren hauled them out of the surf and up the stairs. The radio is dead until morning.",
@@ -417,51 +542,62 @@ function sampleChar() {
     lore: [
       { keys: "bell, drowned, underwater", text: "The Drowned Bell: locals say a church sank in the bay a century ago. Wren hears its bell during storms and suspects it rings before ships wreck." },
       { keys: "lamp, light, lantern", text: "The great lamp is a 1902 Fresnel lens. Wren calls it 'Old Margaret' and polishes it every dusk." }
-    ],
-    customPortrait: ""
+    ]
   };
 }
 
 /* ---------- Home ---------- */
 function renderHome() {
+  $("personaBar").innerHTML = `Playing as <b>${esc(uname())}</b><span class="chg">Change</span>`;
   const list = $("charList");
   list.innerHTML = "";
-  if (!S.chars.length) { list.innerHTML = '<p class="note">No characters yet. Create one or import a character card.</p>'; }
+  if (!S.chars.length) list.innerHTML = '<p class="note">Nothing here yet. Tap New to create a character, world or group, or import a character card.</p>';
   for (const c of S.chars) {
     const b = document.createElement("button");
     b.className = "char-card";
-    const url = portraitURL(c);
-    b.innerHTML = (url ? `<img alt="" loading="lazy">` : `<div class="ph">${esc(c.name[0] || "?")}</div>`) +
-      `<div><div class="name">${esc(c.name)}</div><div class="snip" data-snip="${c.id}">${esc((c.description || "").slice(0, 140))}</div></div>`;
-    if (url) setImg(b.querySelector("img"), url, c);
+    const url = thumbURL(c);
+    const badge = c.kind === "world" ? '<span class="badge">World</span>' : c.kind === "group" ? `<span class="badge">Group · ${members(c).length}</span>` : "";
+    const sub = c.kind === "group" ? members(c).map(m => m.name).join(", ") : (c.description || "");
+    b.innerHTML = `<img alt="" loading="lazy"><div><div class="name">${esc(c.name)}${badge}</div><div class="snip" data-snip="${c.id}">${esc(sub.slice(0, 140))}</div></div>`;
+    setImg(b.querySelector("img"), url, c);
     b.onclick = () => openChat(c.id);
     list.appendChild(b);
-    Store.get("chat:" + c.id).then(ch => {
+    Store.get(chatKey(c.id)).then(ch => {
       const last = ch?.messages?.filter(m => m.role !== "image").pop();
-      if (last) { const el = list.querySelector(`[data-snip="${c.id}"]`); if (el) el.textContent = (last.role === "user" ? "You: " : "") + last.content.replace(/\*/g, "").slice(0, 140); }
+      if (last) { const el = list.querySelector(`[data-snip="${c.id}"]`); if (el) el.textContent = (last.role === "user" ? uname() + ": " : "") + last.content.replace(/\*/g, "").slice(0, 140); }
     });
   }
-  $("tagline").textContent = S.settings.apiKey ? "Your characters, with memory that holds." : "Start by adding your DeepSeek API key in Settings.";
+  $("tagline").textContent = hasKey() ? "Your characters, with memory that holds." : "Start by adding your API key in Settings.";
 }
+$("personaBar").onclick = () => openPersonas();
+$("btnBooks").onclick = () => openBooks();
+$("btnNewChar").onclick = () => openSheet("Create", b => {
+  b.innerHTML = `<div class="menu">${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
+  b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => editChar(blankChar(x.dataset.k), true));
+});
 
 /* ---------- Chat ---------- */
 async function openChat(id) {
-  S.charId = id;
+  S.charId = id; S.nextSpeaker = "";
   const c = char();
-  S.chat = (await Store.get("chat:" + id)) || newChat(c);
+  S.chat = (await Store.get(chatKey(id))) || newChat(c);
   S.chat.facts = (S.chat.facts || []).map(f => typeof f === "string" ? { t: f, pin: false } : f);
   await saveChat();
   $("home").hidden = true; $("chat").hidden = false;
   $("chatName").textContent = c.name;
-  updateStage();
-  renderMsgs();
-  setStatus("");
-  ensureVisual(c).then(changed => { if (changed) { saveChars(); if (S.charId === c.id) updateStage(); } }).catch(() => {});
+  updateStage(); renderMsgs(); renderSpeakers(); setStatus("");
+  const need = c.kind === "group" ? members(c) : [c];
+  (async () => {
+    let changed = false;
+    for (const m of need) { try { if (await ensureVisual(m)) changed = true; } catch {} }
+    if (changed) { await saveChars(); if (S.charId === c.id) { updateStage(); renderMsgs(true); } }
+  })();
 }
 function updateStage() {
   const c = char(), ch = S.chat;
-  setImg($("avatar"), portraitURL(c, ch.mood || "neutral"), c);
-  $("chatPlace").innerHTML = `<span class="mood-chip">${esc(ch.mood || "neutral")}</span>${esc(ch.place || "")}`;
+  setImg($("avatar"), avatarFor(c, ch), c);
+  const chip = c.kind === "world" ? "world" : c.kind === "group" ? `${ch.focus || members(c)[0]?.name || ""} · ${ch.mood || "neutral"}` : (ch.mood || "neutral");
+  $("chatPlace").innerHTML = `<span class="mood-chip">${esc(chip)}</span>${esc(ch.place || "")}`;
   const sc = $("scene");
   if (S.settings.backgrounds && ch.place) {
     const url = sceneURL(c, ch.place);
@@ -473,30 +609,65 @@ function updateStage() {
     }
   } else { sc.classList.remove("on"); sc.dataset.url = ""; }
 }
+function renderSpeakers() {
+  const c = char(), box = $("speakers");
+  if (!c || c.kind !== "group" || !members(c).length) { box.hidden = true; return; }
+  box.hidden = false;
+  const opts = ["", ...members(c).map(m => m.name)];
+  box.innerHTML = opts.map(n => `<button type="button" class="chip ${S.nextSpeaker === n ? "on" : ""}" data-n="${esc(n)}">${n ? esc(n) : "Anyone replies"}</button>`).join("");
+  box.querySelectorAll(".chip").forEach(b => b.onclick = () => { S.nextSpeaker = b.dataset.n; renderSpeakers(); });
+}
 function setStatus(t, err) { const s = $("status"); s.textContent = t || ""; s.className = err ? "err" : ""; s.style.padding = t ? "" : "0"; }
+
+function splitSpeakers(text) {
+  const re = /(^|\n)[ \t]*\*\*([^*\n]{1,40}?)(?::\*\*|\*\*:)[ \t]*/g;
+  const segs = []; let last = 0, cur = null, m;
+  while ((m = re.exec(text))) {
+    const before = text.slice(last, m.index).trim();
+    if (before) segs.push({ who: cur, text: before });
+    cur = m[2].trim(); last = re.lastIndex;
+  }
+  const rest = text.slice(last).trim();
+  if (rest) segs.push({ who: cur, text: rest });
+  return segs.length ? segs : [{ who: null, text }];
+}
 
 function renderMsgs(keepScroll) {
   const box = $("msgs"), atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  const c = char();
   box.innerHTML = "";
   const msgs = S.chat.messages;
   const lastAsst = msgs.map(m => m.role).lastIndexOf("assistant");
   msgs.forEach((m, i) => {
-    const d = document.createElement("div");
+    let d = document.createElement("div");
     d.dataset.i = i;
+    let tail = d;
     if (m.role === "image") {
       d.className = "msg img";
       d.innerHTML = `<img alt="Illustration: ${esc(m.prompt || "")}" loading="lazy"><div class="cap">Illustration · tap for options</div>`;
       const im = d.querySelector("img"); im.src = m.url;
       im.onerror = () => { d.querySelector(".cap").textContent = "The image failed to load. Tap and choose Redraw."; };
+    } else if (m.role === "assistant" && c.kind === "group") {
+      d.className = "msg-set";
+      for (const seg of splitSpeakers(m.content)) {
+        const b = document.createElement("div"); b.className = "msg assistant";
+        if (seg.who) {
+          const mm = memberByName(c, seg.who);
+          b.innerHTML = `<div class="spk"><img alt=""><span>${esc(mm?.name || seg.who)}</span></div>`;
+          setImg(b.querySelector("img"), mm ? portraitURL(mm, m.focus && mm.name === m.focus ? m.mood : "neutral") : "", mm || { name: seg.who });
+        }
+        b.insertAdjacentHTML("beforeend", fmt(seg.text));
+        d.appendChild(b); tail = b;
+      }
     } else {
       d.className = "msg " + m.role;
       d.innerHTML = fmt(m.content);
-      if (m.role === "assistant" && i === lastAsst && (m.alts?.length > 1 || i === msgs.length - 1)) {
-        const sw = document.createElement("div"); sw.className = "swipe";
-        const n = m.alts?.length || 1, a = (m.alt || 0) + 1;
-        sw.innerHTML = `<button data-act="prev" ${a <= 1 ? "disabled" : ""} aria-label="Previous version">‹</button><span>${a}/${n}</span><button data-act="next" aria-label="${a < n ? "Next version" : "New version"}">${a < n ? "›" : "↻"}</button>`;
-        d.appendChild(sw);
-      }
+    }
+    if (m.role === "assistant" && i === lastAsst && (m.alts?.length > 1 || i === msgs.length - 1)) {
+      const sw = document.createElement("div"); sw.className = "swipe";
+      const n = m.alts?.length || 1, a = (m.alt || 0) + 1;
+      sw.innerHTML = `<button data-act="prev" ${a <= 1 ? "disabled" : ""} aria-label="Previous version">‹</button><span>${a}/${n}</span><button data-act="next" aria-label="${a < n ? "Next version" : "New version"}">${a < n ? "›" : "↻"}</button>`;
+      tail.appendChild(sw);
     }
     if (S.openActs === m.id) {
       const acts = document.createElement("div"); acts.className = "acts";
@@ -506,7 +677,7 @@ function renderMsgs(keepScroll) {
       btns.push(["del", "Delete"]);
       if (m.role === "assistant" && i === lastAsst) btns.push(["reroll", "New version"]);
       acts.innerHTML = btns.map(([a, l]) => `<button type="button" class="btn small ${a === "del" ? "danger" : ""}" data-act="${a}">${l}</button>`).join("");
-      d.appendChild(acts);
+      tail.appendChild(acts);
     }
     box.appendChild(d);
   });
@@ -514,7 +685,7 @@ function renderMsgs(keepScroll) {
 }
 
 $("msgs").addEventListener("click", async e => {
-  const d = e.target.closest(".msg"); if (!d) return;
+  const d = e.target.closest("[data-i]"); if (!d) return;
   const i = +d.dataset.i, m = S.chat.messages[i];
   const act = e.target.closest("[data-act]")?.dataset.act;
   if (!act) { S.openActs = S.openActs === m.id ? null : m.id; renderMsgs(true); return; }
@@ -537,7 +708,6 @@ $("send").addEventListener("click", e => { e.preventDefault(); send(); });
 $("input").addEventListener("input", autoGrow);
 $("input").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && matchMedia("(pointer:fine)").matches) { e.preventDefault(); send(); } });
 function autoGrow() { const t = $("input"); t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, 140) + "px"; }
-
 function setBusy(b) { S.busy = b; $("send").disabled = b; $("btnIllustrate").disabled = b; }
 
 async function send() {
@@ -552,17 +722,16 @@ async function sendInner() {
   await saveChat(); renderMsgs();
   await generate(S.chat.messages.length, null);
 }
-async function reroll(i) {
-  S.openActs = null;
-  await generate(i, S.chat.messages[i]);
-}
+async function reroll(i) { S.openActs = null; await generate(i, S.chat.messages[i]); }
 async function generate(upto, existing) {
   const c = char(), chat = S.chat;
   setBusy(true); setStatus("");
   let bubble;
-  if (existing) { bubble = $("msgs").querySelector(`[data-i="${upto}"]`); }
+  if (existing) bubble = $("msgs").querySelector(`[data-i="${upto}"]`);
   else { bubble = document.createElement("div"); bubble.className = "msg assistant typing"; $("msgs").appendChild(bubble); }
-  bubble.innerHTML = `${esc(c.name)} is writing…`; bubble.classList.add("typing");
+  if (bubble.classList.contains("msg-set")) { bubble.className = "msg assistant"; }
+  const who = c.kind === "world" ? "The narrator" : c.kind === "group" ? (S.nextSpeaker || "The group") : c.name;
+  bubble.innerHTML = `${esc(who)} is writing…`; bubble.classList.add("typing");
   const box = $("msgs"); box.scrollTop = box.scrollHeight;
   try {
     let p;
@@ -570,16 +739,16 @@ async function generate(upto, existing) {
       const raw = await ds(buildPrompt(c, chat, upto), {
         thinking: S.settings.thinking,
         temperature: attempt ? Math.min(S.settings.temperature, 0.7) : undefined,
-        onThinking: () => { bubble.innerHTML = `${esc(c.name)} is thinking…`; },
+        onThinking: () => { bubble.innerHTML = `${esc(who)} is thinking…`; },
         onDelta: full => { bubble.classList.remove("typing"); bubble.innerHTML = fmt(full.split("[[")[0]); if (box.scrollHeight - box.scrollTop - box.clientHeight < 140) box.scrollTop = box.scrollHeight; }
       });
       p = parseTag(raw);
       if (!garbled(p.text, c)) break;
       if (attempt === 0) { bubble.classList.add("typing"); bubble.innerHTML = "That reply came out garbled. Trying again more carefully…"; }
-      else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Creativity in Settings.", true);
+      else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
-    if (!p.text) throw new Error("DeepSeek sent an empty reply. Tap ↻ to try again.");
-    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place };
+    if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
+    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "" };
     if (existing) {
       existing.alts = existing.alts || [existing.content];
       existing.altMeta = existing.altMeta || [];
@@ -589,7 +758,8 @@ async function generate(upto, existing) {
     } else {
       chat.messages.push({ id: uid(), role: "assistant", content: p.text, alts: [p.text], alt: 0, altMeta: [meta], ...meta });
     }
-    chat.mood = meta.mood; if (p.place) chat.place = p.place;
+    chat.mood = meta.mood; if (p.place) chat.place = p.place; if (meta.focus) chat.focus = meta.focus;
+    S.nextSpeaker = ""; renderSpeakers();
     await saveChat();
     renderMsgs(); updateStage();
     if (!existing) maintainMemory(c, chat).catch(e => setStatus("Memory update skipped: " + e.message, true));
@@ -601,15 +771,12 @@ async function generate(upto, existing) {
 
 /* ---------- Memory ---------- */
 async function maintainMemory(c, chat) {
-  const st = S.settings, u = uname();
+  const st = S.settings;
   const start = chat.summarizedUpTo || 0, end = chat.messages.length - st.keepRecent;
   if (end > start) {
     const chunk = chat.messages.slice(start, end).filter(m => m.role !== "image");
     const size = chunk.reduce((a, m) => a + m.content.length, 0);
-    if (size > st.summarizeAt) {
-      setStatus("Saving older events to memory…");
-      await summarize(c, chat, chunk, end);
-    }
+    if (size > st.summarizeAt) { setStatus("Saving older events to memory…"); await summarize(c, chat, chunk, end); }
   }
   chat.turnsSinceFacts = (chat.turnsSinceFacts || 0) + 1;
   if (chat.turnsSinceFacts >= st.factsEvery) { setStatus("Updating remembered facts…"); await updateFacts(c, chat); }
@@ -617,22 +784,22 @@ async function maintainMemory(c, chat) {
 }
 async function summarize(c, chat, chunk, end) {
   const u = uname();
-  const txt = chunk.map(m => `${m.role === "user" ? u : c.name}: ${m.content}`).join("\n\n");
+  const txt = chunk.map(m => `${m.role === "user" ? u : speakerLabel(c)}: ${m.content}`).join("\n\n");
   const sum = await ds([
     { role: "system", content: "You keep the running summary of a long roleplay story. Merge the existing summary and the new events into ONE updated summary in past tense, third person. Preserve names, relationships and how they changed, promises, secrets, injuries, items, decisions, and unresolved threads. Drop filler. Up to 450 words. Output only the summary." },
-    { role: "user", content: `Characters: ${c.name} and ${u}.\n\nExisting summary:\n${chat.summary || "(none yet)"}\n\nNew events:\n${txt}` }
-  ], { model: AUX, temperature: 0.3, maxTokens: 1000 });
+    { role: "user", content: `Story: ${c.name}. Protagonist: ${u}.\n\nExisting summary:\n${chat.summary || "(none yet)"}\n\nNew events:\n${txt}` }
+  ], { temperature: 0.3, maxTokens: 1000, plain: true });
   if (sum.trim()) { chat.summary = sum.trim(); chat.summarizedUpTo = end; await saveChat(); }
 }
 async function updateFacts(c, chat) {
   const u = uname();
   chat.turnsSinceFacts = 0;
-  const recent = chat.messages.filter(m => m.role !== "image").slice(-14).map(m => `${m.role === "user" ? u : c.name}: ${m.content}`).join("\n\n");
+  const recent = chat.messages.filter(m => m.role !== "image").slice(-14).map(m => `${m.role === "user" ? u : speakerLabel(c)}: ${m.content}`).join("\n\n");
   const pinned = chat.facts.filter(f => f.pin), loose = chat.facts.filter(f => !f.pin);
   const out = await ds([
-    { role: "system", content: `You maintain a list of durable facts for continuity in a roleplay between ${c.name} and ${u}. Update the list using the recent conversation: add new important facts, correct facts that changed, merge duplicates, remove facts no longer true. Keep only what matters later: names, relationships and feelings, decisions, promises, secrets revealed, possessions, injuries, appearance changes, places, time of day/date. Each fact under 20 words. At most 30 facts. Do not repeat the pinned facts. Respond as JSON: {"facts": ["...", "..."]}` },
+    { role: "system", content: `You maintain a list of durable facts for continuity in a roleplay (${c.name}) with ${u}. Update the list using the recent conversation: add new important facts, correct facts that changed, merge duplicates, remove facts no longer true. Keep only what matters later: names, relationships and feelings, decisions, promises, secrets revealed, possessions, injuries, appearance changes, places, time of day/date. Each fact under 20 words. At most 30 facts. Do not repeat the pinned facts. Respond as JSON: {"facts": ["...", "..."]}` },
     { role: "user", content: `Pinned facts (keep, don't repeat):\n${pinned.map(f => "- " + f.t).join("\n") || "(none)"}\n\nCurrent facts:\n${loose.map(f => "- " + f.t).join("\n") || "(none)"}\n\nRecent conversation:\n${recent}` }
-  ], { model: AUX, temperature: 0.2, maxTokens: 1200, json: true });
+  ], { temperature: 0.2, maxTokens: 1200, json: true, plain: true });
   let list; try { list = JSON.parse(out).facts; } catch { return; }
   if (Array.isArray(list)) {
     chat.facts = [...pinned, ...list.filter(x => typeof x === "string" && x.trim()).slice(0, 30).map(t => ({ t: t.trim(), pin: false }))];
@@ -646,11 +813,15 @@ async function illustrate() {
   const c = char(), chat = S.chat, u = uname();
   setBusy(true); setStatus("Picturing the scene…");
   try {
-    const recent = chat.messages.filter(m => m.role !== "image").slice(-6).map(m => `${m.role === "user" ? u : c.name}: ${m.content}`).join("\n\n");
+    const recent = chat.messages.filter(m => m.role !== "image").slice(-6).map(m => `${m.role === "user" ? u : speakerLabel(c)}: ${m.content}`).join("\n\n");
+    const who = c.kind === "group" ? members(c).map(m => `${m.name} is ${ART[artOf(m)].word} and looks like: ${looks(m)}`).join("\n")
+      : c.kind === "world" ? `Setting: ${looks(c)}`
+      : `${c.name} is ${ART[artOf(c)].word} and looks like: ${looks(c)}`;
+    const p = persona();
     const prompt = (await ds([
       { role: "system", content: "Write ONE prompt for an image generator showing the current moment of this story. Keep it safe for work: no nudity, no sexual content, no gore. Draw each character in their stated form (human, anthro, or feral). 40-70 words of comma-separated visual details: who is in frame and what they look like, pose, expression, action, setting, lighting, camera framing. No names, no dialogue, no quotation marks. Output only the prompt." },
-      { role: "user", content: `${c.name} is ${artOf(c) === "human" ? "a human" : artOf(c) === "anthro" ? "an anthropomorphic (anthro/furry) character" : "a feral animal or creature, not anthropomorphic"} and looks like: ${looks(c)}\n${S.settings.persona ? u + ": " + S.settings.persona.slice(0, 300) + "\n" : ""}Current location: ${chat.place || "unknown"}\n\nRecent story:\n${recent}` }
-    ], { model: AUX, temperature: 0.7, maxTokens: 200 })).trim().replace(/^["']|["']$/g, "");
+      { role: "user", content: `${who}\n${p.description ? u + ": " + p.description.slice(0, 300) + "\n" : ""}Current location: ${chat.place || "unknown"}\n\nRecent story:\n${recent}` }
+    ], { temperature: 0.7, maxTokens: 200, plain: true })).trim().replace(/^["']|["']$/g, "");
     const full = `${S.settings.imgStyle}, ${prompt}`;
     chat.messages.push({ id: uid(), role: "image", prompt, full, url: imgURL(full, 768, 512, Math.floor(Math.random() * 1e6)) });
     await saveChat(); renderMsgs(); setStatus("Drawing… images can take 10-30 seconds.");
@@ -679,21 +850,138 @@ function confirmBtn(btn, label, fn) {
   });
 }
 
-/* Settings */
+/* ---------- Expand & Split helpers ---------- */
+const EXPAND = {
+  appearance: ["the character's physical appearance: build, face, coloring, hair or fur, clothing, distinctive features", "60-120"],
+  personality: ["the character's personality and background: temperament, history, motivations, fears, quirks, speech style, relationships", "180-350"],
+  scenario: ["the opening scenario: where and when the story starts, the situation, and what is at stake", "90-200"],
+  first: ["the opening message of the roleplay, written in the story's voice with *actions* in asterisks and dialogue in quotes, setting the scene and ending on a hook the user can respond to", "120-250"],
+  world: ["the world or setting: geography, history, cultures, factions, technology or magic, daily life, tone and themes", "250-450"],
+  groupdesc: ["how this group of characters fits together: how they know each other, their dynamics, shared history and tensions", "120-250"],
+  lore: ["a lorebook entry: a self-contained reference note the AI consults when its keywords come up", "60-150"],
+  cast: ["one notable character or faction in this world: who they are, appearance, personality, role and goals", "80-180"],
+  persona: ["the user's own character (persona): name-appropriate appearance, personality and background", "100-220"]
+};
+async function expandText(kind, draft, ctx) {
+  const [what, len] = EXPAND[kind] || ["this text", "100-250"];
+  const out = await ds([
+    { role: "system", content: `You help write cards for an interactive fiction app. Expand the user's draft of ${what}. Keep every detail and the intent of what they wrote and never contradict it. Add specific, vivid, consistent detail that fills the gaps, matching their tone and point of view. Aim for about ${len} words. If the draft is empty, write it from scratch using the context. Output only the finished text: no headings, no commentary, no quotation marks around it.` },
+    { role: "user", content: `Context:\n${ctx || "(none)"}\n\nDraft:\n${draft || "(empty)"}` }
+  ], { temperature: 0.9, maxTokens: 900, plain: true });
+  return out.trim();
+}
+function wireExpand(root, ctxFn) {
+  root.querySelectorAll("textarea[data-x]:not([data-wired])").forEach(ta => {
+    ta.dataset.wired = "1";
+    let row = ta.nextElementSibling;
+    if (!row || !row.classList.contains("xrow")) { row = document.createElement("div"); row.className = "xrow"; ta.after(row); }
+    const btn = document.createElement("button");
+    btn.type = "button"; btn.className = "xbtn"; btn.textContent = "✦ Expand";
+    row.appendChild(btn);
+    let undo = null;
+    ta.addEventListener("input", () => { if (undo !== null) { undo = null; btn.textContent = "✦ Expand"; } });
+    btn.onclick = async () => {
+      if (undo !== null) { const u = undo; ta.value = u; ta.dispatchEvent(new Event("input")); return; }
+      if (!hasKey()) { btn.textContent = "Add your API key in Settings first"; return; }
+      btn.disabled = true; btn.textContent = "Expanding…";
+      try {
+        const prev = ta.value;
+        const out = await expandText(ta.dataset.x, prev, ctxFn ? ctxFn() : "");
+        if (out) { ta.value = out; ta.dispatchEvent(new Event("input")); undo = prev; btn.textContent = "↶ Undo expand"; }
+        else btn.textContent = "✦ Expand";
+      } catch (e) { btn.textContent = e.message; setTimeout(() => { btn.textContent = "✦ Expand"; }, 4000); }
+      finally { btn.disabled = false; }
+    };
+  });
+}
+function cardContext(w) {
+  const parts = [`Type: ${KINDS[w.kind || "character"].label}`, `Name: ${w.name || "(unnamed)"}`];
+  if (w.kind === "character") parts.push(`Form: ${ART[artOf(w)].label}`);
+  if (w.appearance) parts.push(`Appearance: ${w.appearance.slice(0, 800)}`);
+  if (w.description) parts.push(`Description: ${w.description.slice(0, 1500)}`);
+  if (w.scenario) parts.push(`Scenario: ${w.scenario.slice(0, 800)}`);
+  if (w.kind === "group") parts.push("Members:\n" + (w.members || []).map(byId).filter(Boolean).map(m => `- ${m.name}: ${(m.description || "").slice(0, 300)}`).join("\n"));
+  if (w.kind === "world" && (w.cast || []).length) parts.push("Cast: " + w.cast.map(x => x.name).join(", "));
+  parts.push(`User's persona: ${uname()}${persona().description ? " — " + persona().description.slice(0, 300) : ""}`);
+  return parts.join("\n");
+}
+async function splitListings(text, kind, w) {
+  const forGroup = kind === "group";
+  const out = await ds([
+    { role: "system", content: `You organize text for an interactive fiction app. The user pasted text for a ${forGroup ? "group of characters" : "world/setting"} that mixes several ${forGroup ? "characters" : "characters and groups/factions"} together. Pull each distinct ${forGroup ? "character" : "named character or group/faction"} out into its own listing. Keep all of the user's details, moved into the right listing, with no invented facts. Put whatever is not about one specific ${forGroup ? "character" : "character or group"} (the shared setup, relationships, setting) into "remaining".
+Respond as JSON: {"remaining": "...", "entries": [{"name": "...", ${forGroup ? '"appearance": "physical description only, if given", "details": "personality, background and everything else about them"' : '"type": "character" or "group", "details": "everything about them"'}}]}
+If there is only one or zero ${forGroup ? "characters" : "characters or groups"}, still return the JSON with what you found.` },
+    { role: "user", content: `${forGroup ? "Group" : "World"} name: ${w.name || "(unnamed)"}\n\nText:\n${text}` }
+  ], { temperature: 0.2, maxTokens: 4000, json: true, plain: true });
+  const j = JSON.parse(out);
+  return { remaining: String(j.remaining || "").trim(), entries: (Array.isArray(j.entries) ? j.entries : []).filter(e => e && e.name) };
+}
+
+/* ---------- Lore editor (shared by characters and lorebooks) ---------- */
+function loreEditor(box, arr, ctxFn) {
+  const draw = () => {
+    box.innerHTML = arr.length ? "" : '<p class="note">No entries yet.</p>';
+    arr.forEach((l, i) => {
+      const d = document.createElement("div"); d.className = "lore";
+      d.innerHTML = `<input placeholder="Keywords, comma separated" value="${esc(l.keys)}" data-k="keys"><textarea data-x="lore" placeholder="What the AI should know when these come up" data-k="text">${esc(l.text)}</textarea><div class="xrow"><button class="btn small danger" type="button" data-rm>Remove</button></div>`;
+      d.querySelectorAll("[data-k]").forEach(el => el.addEventListener("input", () => { l[el.dataset.k] = el.value; }));
+      d.querySelector("[data-rm]").onclick = () => { arr.splice(i, 1); draw(); };
+      box.appendChild(d);
+      wireExpand(d, () => (ctxFn ? ctxFn() : "") + `\nKeywords for this entry: ${l.keys}`);
+    });
+  };
+  draw();
+  return draw;
+}
+
+/* ---------- Settings ---------- */
+function rangeRow(id, label, desc, min, max, step, val, fmtv, tag) {
+  return `<div class="range-row"><div class="top"><b>${label}${tag ? `<span class="tag">${tag}</span>` : ""}</b><span class="val" id="${id}V">${fmtv(val)}</span></div><div class="desc">${desc}</div><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+}
+const fmtK = v => v >= 1000 ? (Math.round(v / 100) / 10) + "k" : String(v);
 $("btnSettings").onclick = () => openSheet("Settings", b => {
   const st = S.settings;
+  const drawn = () => {
+    const deep = $("sProv").value !== "custom";
+    const think = deep && $("sThink").checked;
+    const tags = {
+      sTemp: think ? "ignored while thinking" : "",
+      sTopK: deep ? "not used by DeepSeek" : "",
+      sTopP: deep ? (think ? "" : "DeepSeek uses it only while thinking") : "",
+      sRep: deep ? "not used by DeepSeek" : "",
+      sFreq: think ? "ignored while thinking" : ""
+    };
+    for (const [id, t] of Object.entries(tags)) { const lab = $(id).closest(".range-row").querySelector(".top b"); lab.querySelector(".tag")?.remove(); if (t) lab.insertAdjacentHTML("beforeend", `<span class="tag">${t}</span>`); }
+    $("dsBox").hidden = !deep; $("cuBox").hidden = deep;
+    $("tempWarn").hidden = !(deep && !think && +$("sTemp").value > 1.3);
+  };
   b.innerHTML = `
-    ${field("DeepSeek API key", `<input id="sKey" type="password" value="${esc(st.apiKey)}" placeholder="sk-…">`, "Saved only on this device. Get one at platform.deepseek.com.")}
-    <div class="row">
+    ${field("AI provider", `<select id="sProv"><option value="deepseek" ${st.provider !== "custom" ? "selected" : ""}>DeepSeek</option><option value="custom" ${st.provider === "custom" ? "selected" : ""}>Other (OpenAI-compatible, e.g. OpenRouter)</option></select>`)}
+    <div id="dsBox" class="stack">
+      ${field("DeepSeek API key", `<input id="sKey" type="password" value="${esc(st.apiKey)}" placeholder="sk-…">`, "Saved only on this device. Get one at platform.deepseek.com.")}
       ${field("Model", `<input id="sModel" list="models" value="${esc(st.model)}"><datalist id="models"><option value="deepseek-flash"><option value="deepseek-v4-pro"></datalist>`)}
-      ${field("Creativity", `<input id="sTemp" type="number" step="0.1" min="0" max="1.5" value="${st.temperature}">`)}
+      <label class="check"><input type="checkbox" id="sThink" ${st.thinking ? "checked" : ""}> Think before replying (slower, more coherent)</label>
     </div>
-    <p class="hint" style="margin:-8px 0 0;color:var(--muted);font-size:13px">Creativity 0.8–1.1 works well. Above 1.2, replies can turn into gibberish.</p>
-    <label class="check"><input type="checkbox" id="sThink" ${st.thinking ? "checked" : ""}> Think before replying (slower, more coherent, ignores Creativity)</label>
-    ${field("Max reply length (tokens)", `<input id="sMax" type="number" min="100" max="4000" value="${st.maxTokens}">`)}
+    <div id="cuBox" class="stack">
+      ${field("API base URL", `<input id="sCUrl" value="${esc(st.customUrl)}">`)}
+      ${field("API key", `<input id="sCKey" type="password" value="${esc(st.customKey)}">`)}
+      ${field("Model", `<input id="sCModel" value="${esc(st.customModel)}">`, "Every sampling setting below is sent to this provider.")}
+    </div>
+    <div class="group"><h3>Model settings</h3>
+      ${rangeRow("sTemp", "Temperature", "Controls randomness. Lower = focused, higher = creative.", 0, 2, 0.05, st.temperature, v => (+v).toFixed(2))}
+      <div class="warn" id="tempWarn">DeepSeek has no Top K, so above about 1.3 replies can turn to gibberish. The app retries garbled replies automatically, or turn on Think before replying.</div>
+      ${rangeRow("sMax", "Max Tokens", "Response length limit.", 100, 4000, 50, st.maxTokens, fmtK)}
+      ${rangeRow("sCtx", "Context Size", "Memory window in tokens. Lower if you get errors.", 8000, 128000, 200, st.contextTokens, fmtK)}
+      <details class="adv"><summary>Advanced Settings ▾</summary><div class="advbody">
+        <div class="warn">Don't touch these if you don't know what they do. "0" uses the model's default settings.</div>
+        ${rangeRow("sTopK", "Top K", "How many word options to consider. Higher = more creative.", 0, 100, 1, st.topK, v => String(+v))}
+        ${rangeRow("sTopP", "Top P", "Picks from most likely words. Lower = more focused answers.", 0, 1, 0.01, st.topP, v => (+v).toFixed(2))}
+        ${rangeRow("sRep", "Repetition Penalty", "Prevents saying the same thing twice. Higher = less repeating.", 0, 2, 0.01, st.repPenalty, v => (+v).toFixed(2))}
+        ${rangeRow("sFreq", "Frequency Penalty", "Reduces frequency of repeated tokens.", 0, 2, 0.01, st.freqPenalty, v => (+v).toFixed(2))}
+      </div></details>
+    </div>
     <div class="group"><h3>You</h3>
-      ${field("Your name", `<input id="sUser" value="${esc(st.userName)}" placeholder="User">`)}
-      ${field("Your persona", `<textarea id="sPersona" placeholder="Who you play in the story, what you look like…">${esc(st.persona)}</textarea>`)}
+      <button class="btn" id="sPersonas">Manage personas (playing as ${esc(uname())})</button>
     </div>
     <div class="group"><h3>Visuals</h3>
       <label class="check"><input type="checkbox" id="sPort" ${st.portraits ? "checked" : ""}> Generated portraits that change with mood</label>
@@ -706,135 +994,385 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
         ${field("Recent messages kept word-for-word", `<input id="sKeep" type="number" min="4" max="80" value="${st.keepRecent}">`)}
         ${field("Update facts every N replies", `<input id="sFacts" type="number" min="1" max="20" value="${st.factsEvery}">`)}
       </div>
-      <div class="row">
-        ${field("Summarize when older text exceeds (chars)", `<input id="sSum" type="number" min="2000" step="1000" value="${st.summarizeAt}">`)}
-        ${field("Context budget (chars)", `<input id="sCtx" type="number" min="8000" step="2000" value="${st.contextChars}">`)}
-      </div>
+      ${field("Summarize when older text exceeds (characters)", `<input id="sSum" type="number" min="2000" step="1000" value="${st.summarizeAt}">`)}
     </div>
     <button class="btn primary" id="sSave">Save settings</button>
+    <button class="btn" id="sReset">Reset model settings to defaults</button>
     <div class="group"><h3>Backup</h3>
       <p class="note">Everything lives in this browser. Export a backup now and then so you never lose a story.</p>
       <div class="row"><button class="btn" id="sExport">Export backup</button><label class="btn" for="sImport">Restore backup</label></div>
       <input type="file" id="sImport" accept=".json,application/json" hidden>
       <div id="sMsg" class="hint"></div>
     </div>`;
+  const fmts = { sTemp: v => (+v).toFixed(2), sMax: fmtK, sCtx: fmtK, sTopK: v => String(+v), sTopP: v => (+v).toFixed(2), sRep: v => (+v).toFixed(2), sFreq: v => (+v).toFixed(2) };
+  for (const id of Object.keys(fmts)) $(id).addEventListener("input", () => { $(id + "V").textContent = fmts[id]($(id).value); drawn(); });
+  $("sProv").onchange = drawn; $("sThink").onchange = drawn;
+  drawn();
+  $("sPersonas").onclick = () => openPersonas();
+  $("sReset").onclick = () => {
+    const d = DEFAULTS, map = { sTemp: d.temperature, sMax: d.maxTokens, sCtx: d.contextTokens, sTopK: d.topK, sTopP: d.topP, sRep: d.repPenalty, sFreq: d.freqPenalty };
+    for (const [id, v] of Object.entries(map)) { $(id).value = v; $(id + "V").textContent = fmts[id](v); }
+    drawn(); $("sReset").textContent = "Defaults loaded. Tap Save settings to keep them.";
+  };
   $("sSave").onclick = async () => {
     const n = (id, d) => { const v = parseFloat($(id).value); return isFinite(v) ? v : d; };
     Object.assign(st, {
-      apiKey: $("sKey").value.trim(), model: $("sModel").value.trim() || DEFAULTS.model,
-      temperature: Math.min(n("sTemp", 1.0), 1.5), maxTokens: n("sMax", 700), thinking: $("sThink").checked,
-      userName: $("sUser").value.trim(), persona: $("sPersona").value.trim(),
+      provider: $("sProv").value,
+      apiKey: $("sKey").value.trim(), model: $("sModel").value.trim() || DEFAULTS.model, thinking: $("sThink").checked,
+      customUrl: $("sCUrl").value.trim() || DEFAULTS.customUrl, customKey: $("sCKey").value.trim(), customModel: $("sCModel").value.trim() || DEFAULTS.customModel,
+      temperature: n("sTemp", DEFAULTS.temperature), maxTokens: n("sMax", DEFAULTS.maxTokens), contextTokens: n("sCtx", DEFAULTS.contextTokens),
+      topK: n("sTopK", 0), topP: n("sTopP", 0), repPenalty: n("sRep", 0), freqPenalty: n("sFreq", 0),
       portraits: $("sPort").checked, backgrounds: $("sBg").checked,
       imgStyle: $("sStyle").value.trim() || DEFAULTS.imgStyle, imgUrl: $("sImg").value.trim() || DEFAULTS.imgUrl,
-      keepRecent: n("sKeep", 16), factsEvery: n("sFacts", 4), summarizeAt: n("sSum", 12000), contextChars: n("sCtx", 40000)
+      keepRecent: n("sKeep", 16), factsEvery: n("sFacts", 4), summarizeAt: n("sSum", 12000)
     });
     await saveSettings(); closeSheet();
     if (!$("chat").hidden) updateStage(); else renderHome();
   };
   $("sExport").onclick = async () => {
-    const data = { app: "lanternroom", v: 1, settings: { ...st, apiKey: "" }, chars: S.chars, chats: {} };
-    for (const c of S.chars) data.chats[c.id] = await Store.get("chat:" + c.id);
+    const data = { app: "lanternroom", v: 2, settings: { ...st, apiKey: "", customKey: "" }, chars: S.chars, personas: S.personas, books: S.books, chats: {} };
+    for (const k of await Store.keys()) if (k.startsWith("chat:")) data.chats[k] = await Store.get(k);
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
     a.download = `lanternroom-backup-${new Date().toISOString().slice(0, 10)}.json`;
     document.body.appendChild(a); a.click(); a.remove();
-    $("sMsg").textContent = "Backup saved (your API key is left out).";
+    $("sMsg").textContent = "Backup saved (your API keys are left out).";
   };
   $("sImport").onchange = async e => {
     const f = e.target.files[0]; if (!f) return;
     try {
       const d = JSON.parse(await f.text());
       if (d.app !== "lanternroom") throw new Error();
-      const ids = new Set(S.chars.map(c => c.id));
-      for (const c of d.chars) { if (!ids.has(c.id)) S.chars.push(c); else Object.assign(S.chars.find(x => x.id === c.id), c); if (d.chats[c.id]) await Store.set("chat:" + c.id, d.chats[c.id]); }
-      await saveChars(); $("sMsg").textContent = `Restored ${d.chars.length} character(s).`; renderHome();
+      const merge = (list, incoming) => { for (const x of incoming || []) { const i = list.findIndex(y => y.id === x.id); if (i < 0) list.push(x); else list[i] = x; } };
+      merge(S.chars, d.chars); merge(S.personas, d.personas); merge(S.books, d.books);
+      for (const [k, v] of Object.entries(d.chats || {})) {
+        if (!v) continue;
+        await Store.set(k.startsWith("chat:") ? k : `chat:${k}:${S.personas[0].id}`, v);
+      }
+      await saveChars(); await savePersonas(); await saveBooks();
+      $("sMsg").textContent = `Restored ${(d.chars || []).length} character(s).`; renderHome();
     } catch { $("sMsg").textContent = "That file isn't a Lanternroom backup."; }
   };
 });
 
-/* Character editor */
+/* ---------- Personas ---------- */
+function openPersonas() {
+  openSheet("Personas", b => {
+    b.innerHTML = `<p class="note">A persona is who you play. Every character, world and group keeps a separate chat for each persona.</p><div class="stack" id="pList"></div><button class="btn primary" id="pNew">New persona</button>`;
+    for (const p of S.personas) {
+      const row = document.createElement("div"); row.className = "listrow" + (p.id === S.personaId ? " on" : "");
+      row.innerHTML = `<div class="grow"><div><b>${esc(p.name || "Unnamed")}</b>${p.id === S.personaId ? '<span class="badge">Active</span>' : ""}</div><div class="sub">${esc((p.description || "No description").slice(0, 90))}</div></div>${p.id === S.personaId ? "" : '<button class="btn small" data-use>Use</button>'}<button class="btn small" data-edit>Edit</button>`;
+      row.querySelector("[data-use]")?.addEventListener("click", () => usePersona(p.id));
+      row.querySelector("[data-edit]").onclick = () => editPersona(p, false);
+      $("pList").appendChild(row);
+    }
+    $("pNew").onclick = () => editPersona({ id: uid(), name: "", description: "" }, true);
+  });
+}
+async function usePersona(id) {
+  S.personaId = id; await savePersonas(); closeSheet();
+  if (!$("chat").hidden && S.charId) await openChat(S.charId); else renderHome();
+}
+function editPersona(p, isNew) {
+  const work = { ...p };
+  openSheet(isNew ? "New persona" : "Edit persona", b => {
+    b.innerHTML = `
+      ${field("Name", `<input id="peName" value="${esc(work.name)}" placeholder="Who you play">`)}
+      ${field("Description", `<textarea id="peDesc" data-x="persona" style="min-height:140px" placeholder="Appearance, personality, background">${esc(work.description)}</textarea>`, "Characters see this, and it's used when illustrating scenes.")}
+      <button class="btn primary" id="peSave">${isNew ? "Create and use" : "Save"}</button>
+      ${!isNew && S.personas.length > 1 ? '<button class="btn danger" id="peDel">Delete persona</button>' : ""}`;
+    wireExpand(b, () => `Persona name: ${$("peName").value}`);
+    $("peSave").onclick = async () => {
+      work.name = $("peName").value.trim(); work.description = $("peDesc").value.trim();
+      if (!work.name) { $("peName").focus(); $("peName").placeholder = "A name is required"; return; }
+      const i = S.personas.findIndex(x => x.id === work.id);
+      if (i < 0) S.personas.push(work); else S.personas[i] = work;
+      if (isNew) S.personaId = work.id;
+      await savePersonas();
+      if (isNew && !$("chat").hidden && S.charId) { closeSheet(); await openChat(S.charId); } else { renderHome(); openPersonas(); }
+    };
+    if ($("peDel")) confirmBtn($("peDel"), "Tap again: deletes this persona and its chats", async () => {
+      S.personas = S.personas.filter(x => x.id !== work.id);
+      for (const k of await Store.keys()) if (k.startsWith("chat:") && k.endsWith(":" + work.id)) await Store.del(k);
+      if (S.personaId === work.id) S.personaId = S.personas[0].id;
+      await savePersonas();
+      if (!$("chat").hidden && S.charId) { closeSheet(); await openChat(S.charId); } else { renderHome(); openPersonas(); }
+    });
+  });
+}
+
+/* ---------- Lorebooks ---------- */
+function openBooks() {
+  openSheet("Lorebooks", b => {
+    b.innerHTML = `<p class="note">A lorebook is a set of entries you can attach to as many characters, worlds and groups as you like. Entries load only when their keywords come up.</p><div class="stack" id="bList"></div><button class="btn primary" id="bNew">New lorebook</button>`;
+    if (!S.books.length) $("bList").innerHTML = '<p class="note">No lorebooks yet.</p>';
+    for (const bk of S.books) {
+      const used = S.chars.filter(c => (c.bookIds || []).includes(bk.id)).length;
+      const row = document.createElement("button"); row.className = "listrow";
+      row.innerHTML = `<div class="grow"><b>${esc(bk.name)}</b><div class="sub">${bk.entries.length} entr${bk.entries.length === 1 ? "y" : "ies"} · used by ${used}</div></div><span class="badge">Edit</span>`;
+      row.onclick = () => editBook(bk, false);
+      $("bList").appendChild(row);
+    }
+    $("bNew").onclick = () => editBook({ id: uid(), name: "", entries: [] }, true);
+  });
+}
+function editBook(bk, isNew, preset) {
+  const work = JSON.parse(JSON.stringify(bk));
+  const chosen = new Set(preset || S.chars.filter(c => (c.bookIds || []).includes(bk.id)).map(c => c.id));
+  openSheet(isNew ? "New lorebook" : "Edit lorebook", b => {
+    b.innerHTML = `
+      ${field("Name", `<input id="bkName" value="${esc(work.name)}" placeholder="e.g. The Sallow Coast">`)}
+      <div class="group"><h3>Entries</h3><div id="bkLore" class="stack"></div><button class="btn" id="bkAdd">Add entry</button></div>
+      <div class="group"><h3>Use with</h3>
+        <div class="row"><button class="btn small" id="bkAll">Select all</button><button class="btn small" id="bkNone">Select none</button></div>
+        <div class="stack" id="bkUse"></div>
+      </div>
+      <button class="btn primary" id="bkSave">${isNew ? "Create lorebook" : "Save lorebook"}</button>
+      ${isNew ? "" : '<button class="btn danger" id="bkDel">Delete lorebook</button>'}`;
+    const redraw = loreEditor($("bkLore"), work.entries, () => `Lorebook: ${$("bkName").value}`);
+    $("bkAdd").onclick = () => { work.entries.push({ keys: "", text: "" }); redraw(); };
+    const drawUse = () => {
+      const box = $("bkUse"); box.innerHTML = S.chars.length ? "" : '<p class="note">Create a character first.</p>';
+      for (const c of S.chars) {
+        const l = document.createElement("label"); l.className = "checkrow";
+        l.innerHTML = `<input type="checkbox" ${chosen.has(c.id) ? "checked" : ""}><img alt=""><span>${esc(c.name)}${c.kind !== "character" ? ` <span class="badge">${KINDS[c.kind].label}</span>` : ""}</span>`;
+        setImg(l.querySelector("img"), thumbURL(c), c);
+        l.querySelector("input").onchange = e => { e.target.checked ? chosen.add(c.id) : chosen.delete(c.id); };
+        box.appendChild(l);
+      }
+    };
+    drawUse();
+    $("bkAll").onclick = () => { S.chars.forEach(c => chosen.add(c.id)); drawUse(); };
+    $("bkNone").onclick = () => { chosen.clear(); drawUse(); };
+    $("bkSave").onclick = async () => {
+      work.name = $("bkName").value.trim();
+      if (!work.name) { $("bkName").focus(); $("bkName").placeholder = "A name is required"; return; }
+      work.entries = work.entries.filter(e => e.text.trim());
+      const i = S.books.findIndex(x => x.id === work.id);
+      if (i < 0) S.books.push(work); else S.books[i] = work;
+      for (const c of S.chars) {
+        c.bookIds = (c.bookIds || []).filter(id => id !== work.id);
+        if (chosen.has(c.id)) c.bookIds.push(work.id);
+      }
+      await saveBooks(); await saveChars();
+      openBooks();
+    };
+    if ($("bkDel")) confirmBtn($("bkDel"), "Tap again to delete this lorebook", async () => {
+      S.books = S.books.filter(x => x.id !== work.id);
+      for (const c of S.chars) c.bookIds = (c.bookIds || []).filter(id => id !== work.id);
+      await saveBooks(); await saveChars(); openBooks();
+    });
+  });
+}
+
+/* ---------- Character / world / group editor ---------- */
 function editChar(c, isNew) {
   const work = JSON.parse(JSON.stringify(c));
-  openSheet(isNew ? "New character" : "Edit character", b => {
-    b.innerHTML = `
-      ${field("Name", `<input id="cName" value="${esc(work.name)}" placeholder="Character name">`)}
+  work.kind = work.kind || "character"; work.lore = work.lore || []; work.bookIds = work.bookIds || []; work.members = work.members || []; work.cast = work.cast || [];
+  const K = work.kind;
+  const title = (isNew ? "New " : "Edit ") + KINDS[K].label.toLowerCase();
+  openSheet(title, b => {
+    const splitRow = `<div class="xrow"><button type="button" class="xbtn" data-split>⇆ Split into listings</button></div>`;
+    let main = "";
+    if (K === "character") {
+      main = `
       ${field("Character type", `<select id="cArt">${[["auto", "Detect from the card"], ...Object.entries(ART).map(([k, v]) => [k, v.label])].map(([k, l]) => `<option value="${k}" ${(work.artType || "auto") === k ? "selected" : ""}>${l}${k === "auto" && work.artDetected ? ` (now: ${ART[work.artDetected].label})` : ""}</option>`).join("")}</select>`, "Tells the pictures whether to draw a person, an anthro character, or an animal.")}
-      ${field("Appearance", `<textarea id="cLook" style="min-height:70px" placeholder="Hair, eyes, build, clothing, notable features">${esc(work.appearance)}</textarea>`, "Used for every portrait and illustration. Be specific so they stay consistent.")}
-      ${field("Personality & background", `<textarea id="cDesc" style="min-height:140px">${esc(work.description)}</textarea>`)}
-      ${field("Scenario", `<textarea id="cScen">${esc(work.scenario)}</textarea>`, "Where the story starts. {{user}} and {{char}} work here.")}
-      ${field("First message", `<textarea id="cFirst" style="min-height:120px">${esc(work.firstMessage)}</textarea>`)}
+      ${field("Appearance", `<textarea id="cLook" data-x="appearance" style="min-height:70px" placeholder="Hair or fur, eyes, build, clothing, notable features">${esc(work.appearance)}</textarea>`)}
+      ${field("Personality & background", `<textarea id="cDesc" data-x="personality" style="min-height:140px">${esc(work.description)}</textarea>`)}
+      ${field("Scenario", `<textarea id="cScen" data-x="scenario">${esc(work.scenario)}</textarea>`, "Where the story starts. {{user}} and {{char}} work here.")}
+      ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px">${esc(work.firstMessage)}</textarea>`)}`;
+    } else if (K === "world") {
+      main = `
+      ${field("World description", `<textarea id="cDesc" data-x="world" style="min-height:180px" placeholder="Geography, history, cultures, factions, magic or technology, tone…">${esc(work.description)}</textarea>${splitRow}`, "Pasted a lot of characters or factions in here? Split into listings moves each into its own entry below.")}
+      <div class="group"><h3>People & factions</h3>
+        <div id="cCast" class="stack"></div>
+        <button class="btn" type="button" id="cAddCast">Add a character or faction</button>
+      </div>
+      ${field("Opening situation", `<textarea id="cScen" data-x="scenario">${esc(work.scenario)}</textarea>${splitRow}`, "Who {{user}} is in this world and where the story begins.")}
+      ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px" placeholder="The narrator's opening">${esc(work.firstMessage)}</textarea>`)}`;
+    } else {
+      main = `
+      <div class="group" style="border:0;padding:0"><h3>Members</h3>
+        <div id="cMembers" class="stack"></div>
+      </div>
+      ${field("About this group", `<textarea id="cDesc" data-x="groupdesc" style="min-height:120px" placeholder="How they know each other, their dynamics. You can also paste several character descriptions here and split them.">${esc(work.description)}</textarea>${splitRow}`, "Split into listings turns each character described here into a real character and adds them to the group.")}
+      ${field("Scenario", `<textarea id="cScen" data-x="scenario">${esc(work.scenario)}</textarea>${splitRow}`)}
+      ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px" placeholder="Optional. Use **Name:** at the start of each character's part.">${esc(work.firstMessage)}</textarea>`)}`;
+    }
+    b.innerHTML = `
+      ${field("Name", `<input id="cName" value="${esc(work.name)}" placeholder="${KINDS[K].label} name">`)}
+      ${main}
       ${field("Starting location", `<input id="cPlace" value="${esc(work.startPlace || "")}" placeholder="e.g. rainy tavern, candlelit">`)}
       <div class="group"><h3>Lorebook</h3>
-        <p class="note">Entries load into the AI's memory only when one of their keywords comes up, so you can store lots of world detail without crowding out the story.</p>
-        <div id="cLore" style="display:flex;flex-direction:column;gap:10px"></div>
-        <button class="btn" id="cAddLore">Add lore entry</button>
+        <p class="note">Entries load into the AI's memory only when one of their keywords comes up.</p>
+        <div id="cLore" class="stack"></div>
+        <button class="btn" type="button" id="cAddLore">Add lore entry</button>
+        <div class="lbl">Shared lorebooks</div>
+        <div id="cBooks" class="stack"></div>
       </div>
-      <div class="group"><h3>Portrait</h3>
+      ${K === "group" ? "" : `<div class="group"><h3>${K === "world" ? "Cover image" : "Portrait"}</h3>
         ${work.customPortrait ? `<img class="big-portrait" src="${esc(work.customPortrait)}" alt="">` : `
-        ${field("Look used for pictures", `<textarea id="cVis" style="min-height:80px" placeholder="Written automatically from the card. You can edit it.">${esc(work.visual || "")}</textarea>`, "This exact text drives every portrait and illustration. Fix anything that looks wrong here.")}
+        ${field("Look used for pictures", `<textarea id="cVis" style="min-height:80px" placeholder="Written automatically from the card. You can edit it.">${esc(work.visual || "")}</textarea>`, "This exact text drives every picture. Fix anything that looks wrong here.")}
         <button class="btn" type="button" id="cVisGen">Write it from the card</button>
         <div class="lbl">Pick a look</div>
         <div id="cPick"></div>`}
-        <div class="row"><label class="btn" for="cPic">${work.customPortrait ? "Replace uploaded image" : "Upload my own image instead"}</label>${work.customPortrait ? '<button class="btn" id="cPicClear">Use generated portraits</button>' : ""}</div>
+        <div class="row"><label class="btn" for="cPic">${work.customPortrait ? "Replace uploaded image" : "Upload my own image instead"}</label>${work.customPortrait ? '<button class="btn" type="button" id="cPicClear">Use generated pictures</button>' : ""}</div>
         <input type="file" id="cPic" accept="image/*" hidden>
-      </div>
-      <button class="btn primary" id="cSave">${isNew ? "Create character" : "Save changes"}</button>
-      ${isNew ? "" : '<button class="btn danger" id="cDel">Delete character</button>'}`;
-    const loreBox = $("cLore");
-    const drawLore = () => {
-      loreBox.innerHTML = "";
-      work.lore.forEach((l, i) => {
-        const d = document.createElement("div"); d.className = "lore";
-        d.innerHTML = `<input placeholder="Keywords, comma separated" value="${esc(l.keys)}" data-k="keys"><textarea placeholder="What the AI should know when these come up" data-k="text">${esc(l.text)}</textarea><button class="btn small danger" type="button">Remove</button>`;
-        d.querySelectorAll("[data-k]").forEach(el => el.oninput = () => { l[el.dataset.k] = el.value; });
-        d.querySelector("button").onclick = () => { work.lore.splice(i, 1); drawLore(); };
-        loreBox.appendChild(d);
-      });
-    };
-    drawLore();
-    $("cAddLore").onclick = () => { work.lore.push({ keys: "", text: "" }); drawLore(); };
+      </div>`}
+      <div id="cMsg" class="hint"></div>
+      <button class="btn primary" id="cSave">${isNew ? "Create " + KINDS[K].label.toLowerCase() : "Save changes"}</button>
+      ${isNew ? "" : `<button class="btn danger" id="cDel">Delete ${KINDS[K].label.toLowerCase()}</button>`}`;
+
     const grab = () => {
-      work.artType = $("cArt").value;
-      Object.assign(work, { name: $("cName").value.trim(), appearance: $("cLook").value.trim(), description: $("cDesc").value.trim(), scenario: $("cScen").value.trim(), firstMessage: $("cFirst").value.trim(), startPlace: $("cPlace").value.trim() });
+      if ($("cArt")) work.artType = $("cArt").value;
+      work.name = $("cName").value.trim();
+      if ($("cLook")) work.appearance = $("cLook").value.trim();
+      work.description = $("cDesc").value.trim(); work.scenario = $("cScen").value.trim();
+      work.firstMessage = $("cFirst").value.trim(); work.startPlace = $("cPlace").value.trim();
       if ($("cVis")) {
         const v = $("cVis").value.trim();
         if (v !== (work.visual || "")) { work.visual = v; work.visualManual = !!v; work.visualSrc = cardSig(work); }
       }
     };
+    const ctx = () => { grab(); return cardContext(work); };
+    wireExpand(b, ctx);
+
+    const redrawLore = loreEditor($("cLore"), work.lore, ctx);
+    $("cAddLore").onclick = () => { work.lore.push({ keys: "", text: "" }); redrawLore(); };
+    const drawBooks = () => {
+      const box = $("cBooks");
+      box.innerHTML = S.books.length ? "" : '<p class="note">No shared lorebooks yet. Create them from Lorebooks on the home screen.</p>';
+      for (const bk of S.books) {
+        const l = document.createElement("label"); l.className = "checkrow";
+        l.innerHTML = `<input type="checkbox" ${work.bookIds.includes(bk.id) ? "checked" : ""}><span>${esc(bk.name)} · ${bk.entries.length} entr${bk.entries.length === 1 ? "y" : "ies"}</span>`;
+        l.querySelector("input").onchange = e => { work.bookIds = work.bookIds.filter(x => x !== bk.id); if (e.target.checked) work.bookIds.push(bk.id); };
+        box.appendChild(l);
+      }
+    };
+    drawBooks();
+
+    // World cast
+    let drawCast = () => {};
+    if (K === "world") {
+      drawCast = () => {
+        const box = $("cCast");
+        box.innerHTML = work.cast.length ? "" : '<p class="note">No listings yet. Add them here, or paste them into the description and tap Split into listings.</p>';
+        work.cast.forEach((x, i) => {
+          const d = document.createElement("div"); d.className = "cast";
+          d.innerHTML = `<div class="row"><input data-k="name" placeholder="Name" value="${esc(x.name)}" style="flex:2;padding:10px 12px;border-radius:10px;border:1px solid var(--line)"><select data-k="type" style="flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--line)"><option value="character" ${x.type !== "group" ? "selected" : ""}>Character</option><option value="group" ${x.type === "group" ? "selected" : ""}>Group / faction</option></select></div><textarea data-k="details" data-x="cast" style="min-height:90px;padding:10px 12px;border-radius:10px;border:1px solid var(--line)" placeholder="Who they are, what they look like, what they want">${esc(x.details)}</textarea><div class="xrow"><button type="button" class="btn small danger" data-rm>Remove</button></div>`;
+          d.querySelectorAll("[data-k]").forEach(el => el.addEventListener(el.tagName === "SELECT" ? "change" : "input", () => { x[el.dataset.k] = el.value; }));
+          d.querySelector("[data-rm]").onclick = () => { work.cast.splice(i, 1); drawCast(); };
+          box.appendChild(d);
+          wireExpand(d, () => ctx() + `\nThis listing: ${x.name} (${x.type})`);
+        });
+      };
+      drawCast();
+      $("cAddCast").onclick = () => { work.cast.push({ name: "", type: "character", details: "" }); drawCast(); };
+    }
+
+    // Group members
+    let drawMembers = () => {};
+    if (K === "group") {
+      drawMembers = () => {
+        const box = $("cMembers");
+        const pool = S.chars.filter(x => x.kind === "character");
+        box.innerHTML = pool.length ? "" : '<p class="note">No characters yet. Paste their descriptions below and tap Split into listings, or create characters first.</p>';
+        for (const m of pool) {
+          const l = document.createElement("label"); l.className = "checkrow";
+          l.innerHTML = `<input type="checkbox" ${work.members.includes(m.id) ? "checked" : ""}><img alt=""><span>${esc(m.name)}</span>`;
+          setImg(l.querySelector("img"), portraitURL(m), m);
+          l.querySelector("input").onchange = e => { work.members = work.members.filter(x => x !== m.id); if (e.target.checked) work.members.push(m.id); };
+          box.appendChild(l);
+        }
+      };
+      drawMembers();
+    }
+
+    // Split into listings
+    b.querySelectorAll("[data-split]").forEach(btn => {
+      const ta = btn.closest(".field").querySelector("textarea");
+      let undo = null;
+      ta.addEventListener("input", () => { if (undo) { undo = null; btn.textContent = "⇆ Split into listings"; } });
+      btn.onclick = async () => {
+        if (undo) {
+          ta.value = undo.text; ta.dispatchEvent(new Event("input"));
+          if (K === "world") { work.cast.splice(work.cast.length - undo.added, undo.added); drawCast(); }
+          else { work.members = work.members.filter(id => !undo.created.includes(id)); S.chars = S.chars.filter(x => !undo.created.includes(x.id)); await saveChars(); drawMembers(); }
+          undo = null; btn.textContent = "⇆ Split into listings"; $("cMsg").textContent = "Split undone."; return;
+        }
+        if (!ta.value.trim()) { $("cMsg").textContent = "Paste or write some text in that box first."; return; }
+        if (!hasKey()) { $("cMsg").textContent = "Add your API key in Settings first."; return; }
+        grab();
+        btn.disabled = true; btn.textContent = "Sorting…";
+        try {
+          const prev = ta.value;
+          const r = await splitListings(prev, K, work);
+          if (!r.entries.length) { $("cMsg").textContent = "No separate characters or factions found in that text."; btn.textContent = "⇆ Split into listings"; return; }
+          ta.value = r.remaining; ta.dispatchEvent(new Event("input"));
+          if (K === "world") {
+            for (const e of r.entries) work.cast.push({ name: String(e.name).trim(), type: e.type === "group" ? "group" : "character", details: String(e.details || "").trim() });
+            drawCast();
+            undo = { text: prev, added: r.entries.length };
+            $("cMsg").textContent = `Moved ${r.entries.length} listing${r.entries.length === 1 ? "" : "s"} into People & factions.`;
+          } else {
+            const created = [];
+            for (const e of r.entries) {
+              const nc = { ...blankChar("character"), name: String(e.name).trim(), appearance: String(e.appearance || "").trim(), description: String(e.details || "").trim() };
+              S.chars.push(nc); created.push(nc.id); work.members.push(nc.id);
+            }
+            await saveChars(); drawMembers();
+            undo = { text: prev, created };
+            $("cMsg").textContent = `Created ${created.length} character${created.length === 1 ? "" : "s"} and added them to the group. You can edit each from the home screen.`;
+          }
+          btn.textContent = "↶ Undo split";
+        } catch (e) { $("cMsg").textContent = e.message.startsWith("Unexpected") ? "The model's answer couldn't be read. Try again." : e.message; btn.textContent = "⇆ Split into listings"; }
+        finally { btn.disabled = false; }
+      };
+    });
+
+    // Pictures
     if ($("cPick")) seedPicker($("cPick"), work);
-    $("cArt").onchange = () => { if ($("cVisGen")) $("cVisGen").click(); };
+    if ($("cArt")) $("cArt").onchange = () => { if ($("cVisGen")) $("cVisGen").click(); };
     if ($("cVisGen")) $("cVisGen").onclick = async () => {
       const b2 = $("cVisGen"); grab();
-      if (!S.settings.apiKey) { b2.textContent = "Add your API key in Settings first"; return; }
+      if (!hasKey()) { b2.textContent = "Add your API key in Settings first"; return; }
       b2.disabled = true; b2.textContent = "Writing…";
-      try { await ensureVisual(work, true); $("cVis").value = work.visual; seedPicker($("cPick"), work); b2.textContent = "Rewritten. Pick a look below."; }
+      try { await ensureVisual(work, true); $("cVis").value = work.visual || ""; seedPicker($("cPick"), work); b2.textContent = "Rewritten. Pick a look below."; }
       catch (e) { b2.textContent = e.message; }
       finally { b2.disabled = false; }
     };
-    $("cPic").onchange = async e => {
+    if ($("cPic")) $("cPic").onchange = async e => {
       const f = e.target.files[0]; if (!f) return;
-      grab(); work.customPortrait = await shrinkImage(f); editCharKeep(work, isNew);
+      grab(); work.customPortrait = await shrinkImage(f); editChar(work, isNew);
     };
-    if ($("cPicClear")) $("cPicClear").onclick = () => { grab(); work.customPortrait = ""; editCharKeep(work, isNew); };
+    if ($("cPicClear")) $("cPicClear").onclick = () => { grab(); work.customPortrait = ""; editChar(work, isNew); };
+
     $("cSave").onclick = async () => {
       grab();
       if (!work.name) { $("cName").focus(); $("cName").placeholder = "A name is required"; return; }
+      if (K === "group" && !work.members.length) { $("cMsg").textContent = "Pick at least one member, or split characters out of the description."; return; }
       work.lore = work.lore.filter(l => l.text.trim());
-      if (!work.customPortrait && !work.visualManual && work.visualSrc !== cardSig(work)) {
-        $("cSave").disabled = true; $("cSave").textContent = "Designing their look…";
+      work.cast = work.cast.filter(x => x.name.trim() || x.details.trim());
+      if (K !== "group" && !work.customPortrait && !work.visualManual && work.visualSrc !== cardSig(work)) {
+        $("cSave").disabled = true; $("cSave").textContent = K === "world" ? "Picturing the world…" : "Designing their look…";
         try { await ensureVisual(work); } catch {}
       }
-      if (isNew) S.chars.unshift(work); else Object.assign(char() && char().id === work.id ? char() : S.chars.find(x => x.id === work.id), work);
+      const i = S.chars.findIndex(x => x.id === work.id);
+      if (i < 0) S.chars.unshift(work); else S.chars[i] = work;
       await saveChars(); closeSheet();
-      if (isNew) openChat(work.id); else if (!$("chat").hidden) { $("chatName").textContent = work.name; updateStage(); } else renderHome();
+      if (isNew) openChat(work.id);
+      else if (!$("chat").hidden && S.charId === work.id) { $("chatName").textContent = work.name; updateStage(); renderMsgs(true); renderSpeakers(); }
+      else renderHome();
     };
     if ($("cDel")) confirmBtn($("cDel"), "Tap again to delete forever", async () => {
-      S.chars = S.chars.filter(x => x.id !== work.id); await saveChars(); await Store.del("chat:" + work.id);
+      S.chars = S.chars.filter(x => x.id !== work.id);
+      for (const g of S.chars) if (g.members) g.members = g.members.filter(id => id !== work.id);
+      await saveChars();
+      for (const k of await Store.keys()) if (k.startsWith(`chat:${work.id}:`)) await Store.del(k);
       closeSheet(); S.charId = null; $("chat").hidden = true; $("home").hidden = false; renderHome();
     });
   });
 }
-function editCharKeep(work, isNew) { editChar(work, isNew); }
 async function shrinkImage(file, max = 768) {
   const url = URL.createObjectURL(file);
   const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
@@ -844,9 +1382,8 @@ async function shrinkImage(file, max = 768) {
   URL.revokeObjectURL(url);
   return cv.toDataURL("image/jpeg", 0.85);
 }
-$("btnNewChar").onclick = () => editChar({ id: uid(), seed: Math.floor(Math.random() * 1e6), name: "", appearance: "", description: "", scenario: "", firstMessage: "", startPlace: "", lore: [], customPortrait: "" }, true);
 
-/* Import character cards (TavernAI / Janitor-style JSON or PNG) */
+/* ---------- Import character cards (Tavern-style JSON or PNG) ---------- */
 function readPngCard(buf) {
   const dv = new DataView(buf); let p = 8, found = {};
   while (p + 8 <= dv.byteLength) {
@@ -871,15 +1408,19 @@ $("importCard").onchange = async e => {
     if (/png$/i.test(f.type) || /\.png$/i.test(f.name)) { card = readPngCard(await f.arrayBuffer()); pic = await shrinkImage(f); }
     else card = JSON.parse(await f.text());
     if (!card) throw new Error();
+    if (card.app === "lanternroom" && card.char) {
+      const c = { ...blankChar("character"), ...card.char, id: uid() };
+      S.chars.unshift(c); await saveChars(); renderHome(); editChar(c, false); return;
+    }
     const d = card.data || card;
     const desc = [d.description, d.personality ? "Personality: " + d.personality : "", d.mes_example ? "Example dialogue:\n" + d.mes_example : ""].filter(Boolean).join("\n\n");
     const lore = (d.character_book?.entries || []).map(x => ({ keys: (x.keys || []).join(", "), text: x.content || "" })).filter(l => l.text);
-    const c = { id: uid(), seed: Math.floor(Math.random() * 1e6), name: d.name || "Imported", appearance: "", description: desc, scenario: d.scenario || "", firstMessage: d.first_mes || "", startPlace: "", lore, customPortrait: pic };
+    const c = { ...blankChar("character"), name: d.name || "Imported", description: desc, scenario: d.scenario || "", firstMessage: d.first_mes || "", lore, customPortrait: pic };
     S.chars.unshift(c); await saveChars(); renderHome(); editChar(c, false);
   } catch { $("tagline").textContent = "That file doesn't look like a character card (PNG or JSON)."; }
 };
 
-/* Memory sheet */
+/* ---------- Memory sheet ---------- */
 $("btnMemory").onclick = () => openMemory();
 function openMemory() {
   const c = char(), ch = S.chat;
@@ -887,12 +1428,12 @@ function openMemory() {
     const lore = activeLore(c, ch.messages);
     const kept = ch.messages.length - (ch.summarizedUpTo || 0);
     b.innerHTML = `
-      <p class="note">The AI always sees: this summary, the facts below, matching lorebook entries, and the latest ${kept} message${kept === 1 ? "" : "s"} word-for-word. Edit anything it got wrong.</p>
+      <p class="note">The AI always sees: this summary, the facts below, matching lorebook entries, and the latest ${kept} message${kept === 1 ? "" : "s"} word-for-word. This memory belongs to your chat as ${esc(uname())}. Edit anything it got wrong.</p>
       ${field("Story so far", `<textarea id="mSum" style="min-height:160px" placeholder="Nothing summarized yet. This fills in automatically as the chat grows.">${esc(ch.summary)}</textarea>`)}
       <button class="btn" id="mSumSave">Save summary</button>
       <div class="group"><h3>Facts</h3>
         <p class="hint" style="margin:0;color:var(--muted);font-size:13px">Pinned facts (★) are never changed by the AI.</p>
-        <div id="mFacts" style="display:flex;flex-direction:column;gap:8px"></div>
+        <div id="mFacts" class="stack"></div>
         <div class="row" style="align-items:center"><input id="mNew" style="flex:3;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line)" placeholder="Add a fact…"><button class="btn" id="mAdd" style="flex:1">Add</button></div>
         <button class="btn" id="mRefresh">Update facts from recent chat</button>
       </div>
@@ -922,32 +1463,49 @@ function openMemory() {
   });
 }
 
-/* Portrait sheet */
-$("btnWho").onclick = () => {
-  const c = char(), ch = S.chat;
+/* ---------- Portrait sheet ---------- */
+$("btnWho").onclick = () => openPortrait(char());
+function openPortrait(c) {
+  const ch = S.chat;
+  const host = char();
   openSheet(c.name, b => {
+    if (c.kind === "group") {
+      b.innerHTML = `<p class="note">Tap a member to see their portrait and pick a different look.</p><div class="mood-grid">${members(c).map(m => `<button type="button" data-id="${m.id}" style="display:flex;flex-direction:column;gap:4px;align-items:center;color:var(--muted);font-size:12px"><img alt="" style="width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:10px;background:var(--surface-2)"><span>${esc(m.name)}</span></button>`).join("")}</div>`;
+      b.querySelectorAll("[data-id]").forEach(x => { const m = byId(x.dataset.id); setImg(x.querySelector("img"), portraitURL(m), m); x.onclick = () => openPortrait(m); });
+      return;
+    }
+    const mood = host && host.id === c.id ? ch?.mood || "neutral" : (host?.kind === "group" && ch?.focus === c.name ? ch.mood : "neutral");
+    const big = c.kind === "world" ? coverURL(c) : portraitURL(c, mood);
     b.innerHTML = `<img class="big-portrait" id="pBig" alt="${esc(c.name)}">
-      ${c.customPortrait ? "" : `<p class="note">${esc(looks(c))}</p><div class="lbl">Not right? Pick a different look</div><div id="pPick"></div><div class="lbl">Expressions</div><div class="mood-grid">${MOODS.map(m => `<figure><img data-m="${m}" alt="" loading="lazy"><figcaption>${m}</figcaption></figure>`).join("")}</div><p class="note">Expressions are drawn the first time they're needed, then cached by your browser.</p>`}`;
-    setImg($("pBig"), portraitURL(c, ch.mood), c);
+      ${c.customPortrait ? "" : `<p class="note">${esc(looks(c))}</p><div class="lbl">Not right? Pick a different look</div><div id="pPick"></div>
+      ${c.kind === "world" ? "" : `<div class="lbl">Expressions</div><div class="mood-grid">${MOODS.map(m => `<figure><img data-m="${m}" alt="" loading="lazy"><figcaption>${m}</figcaption></figure>`).join("")}</div><p class="note">Expressions are drawn the first time they're needed, then cached by your browser.</p>`}`}
+      ${host && host.id !== c.id ? '<button class="btn" id="pBack">Back to the group</button>' : ""}`;
+    setImg($("pBig"), big, c);
     b.querySelectorAll("[data-m]").forEach(im => setImg(im, portraitURL(c, im.dataset.m), c));
+    if ($("pBack")) $("pBack").onclick = () => openPortrait(host);
     if ($("pPick")) seedPicker($("pPick"), c, async () => {
-      await saveChars(); setImg($("pBig"), portraitURL(c, ch.mood), c); updateStage();
+      await saveChars();
+      setImg($("pBig"), c.kind === "world" ? coverURL(c) : portraitURL(c, mood), c);
       b.querySelectorAll("[data-m]").forEach(im => setImg(im, portraitURL(c, im.dataset.m), c));
+      updateStage(); renderMsgs(true);
     });
   });
-};
+}
 
-/* More menu */
+/* ---------- More menu ---------- */
 $("btnMore").onclick = () => openSheet("Options", b => {
+  const c = char();
   b.innerHTML = `<div class="menu">
     <button class="btn" id="oIll">Illustrate this moment</button>
-    <button class="btn" id="oEdit">Edit character & lorebook</button>
+    <button class="btn" id="oEdit">Edit ${KINDS[c.kind || "character"].label.toLowerCase()} & lorebook</button>
     <button class="btn" id="oMem">View memory</button>
+    <button class="btn" id="oPer">Playing as ${esc(uname())} · switch persona</button>
     <button class="btn danger" id="oReset">Start a new chat</button></div>
-    <p class="note">Starting a new chat erases this conversation and its memory. Export a backup in Settings first if you want to keep it.</p>`;
+    <p class="note">Starting a new chat erases this conversation (as ${esc(uname())}) and its memory. Export a backup in Settings first if you want to keep it.</p>`;
   $("oIll").onclick = () => { closeSheet(); illustrate(); };
   $("oEdit").onclick = () => editChar(char(), false);
   $("oMem").onclick = openMemory;
+  $("oPer").onclick = () => openPersonas();
   confirmBtn($("oReset"), "Tap again to erase this chat", async () => { S.chat = newChat(char()); await saveChat(); closeSheet(); updateStage(); renderMsgs(); });
 });
 
@@ -964,21 +1522,35 @@ function editMessage(i) {
 
 $("btnBack").onclick = () => { if (S.busy) return; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; renderHome(); };
 
-/* ---------- Boot ---------- */
+/* ---------- Boot & migrations ---------- */
 (async () => {
   await Store.open();
   const saved = (await Store.get("settings")) || {};
   S.settings = { ...DEFAULTS, ...saved };
-  if (saved.apiKey !== undefined && (saved.v || 1) < 2) {
-    if (S.settings.temperature > 1.1) S.settings.temperature = 1.0;
+  const fresh = saved.apiKey === undefined;
+  if (!fresh && (saved.v || 1) < 4) {
     if (/^deepseek-(chat|reasoner)$/.test(S.settings.model)) S.settings.model = DEFAULTS.model;
     if (S.settings.imgUrl === "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true") S.settings.imgUrl = DEFAULTS.imgUrl;
-    S.settings.v = 2; await saveSettings();
+    Object.assign(S.settings, { temperature: DEFAULTS.temperature, maxTokens: DEFAULTS.maxTokens, contextTokens: DEFAULTS.contextTokens, topK: DEFAULTS.topK, topP: DEFAULTS.topP, repPenalty: DEFAULTS.repPenalty, freqPenalty: DEFAULTS.freqPenalty });
   }
+  S.settings.v = 4;
   S.chars = (await Store.get("chars")) || [];
-  if (!S.chars.length && !(await Store.get("seeded"))) { S.chars = [sampleChar()]; await saveChars(); await Store.set("seeded", true); }
+  S.books = (await Store.get("books")) || [];
+  S.personas = (await Store.get("personas")) || [];
+  if (!S.personas.length) S.personas = [{ id: "default", name: (saved.userName || "").trim() || "Traveler", description: (saved.persona || "").trim() }];
+  delete S.settings.userName; delete S.settings.persona; delete S.settings.contextChars;
+  S.personaId = (await Store.get("activePersona")) || S.personas[0].id;
+  if (!S.personas.some(p => p.id === S.personaId)) S.personaId = S.personas[0].id;
+  for (const c of S.chars) {
+    c.kind = c.kind || "character"; c.bookIds = c.bookIds || []; c.lore = c.lore || [];
+    const old = await Store.get("chat:" + c.id);
+    if (old) { if (!(await Store.get(chatKey(c.id, "default")))) await Store.set(chatKey(c.id, "default"), old); await Store.del("chat:" + c.id); }
+  }
+  if (!S.chars.length && !(await Store.get("seeded"))) { S.chars = [sampleChar()]; await Store.set("seeded", true); }
+  await saveSettings(); await saveChars(); await savePersonas();
   renderHome();
 })();
+
 </script>
 </body>
 </html>
