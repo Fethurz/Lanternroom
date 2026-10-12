@@ -207,6 +207,79 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
 .tags span{font-size:11px;padding:1px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
 .xnote{font-size:13px;color:var(--accent);text-align:right}
 .xnote.err{color:var(--danger)}
+/* lantern */
+.lantern{display:inline-block;overflow:visible}
+.lantern .flame-g{transform-origin:32px 62px;animation:flick 1.6s infinite ease-in-out}
+.lantern .halo{transform-origin:32px 56px;animation:halo 2.3s infinite ease-in-out}
+.lantern .smoke{opacity:0}
+.lantern.out .flame-g{animation:none;transform:scale(0,0);opacity:0;transition:transform .45s ease-in,opacity .45s}
+.lantern.out .halo{animation:none;opacity:0;transition:opacity .6s}
+.lantern.out .smoke{animation:smoke 1.6s ease-out}
+.lantern.relit .flame-g{animation:relight .55s ease-out,flick 1.6s .55s infinite ease-in-out}
+.lantern.relit .halo{animation:haloIn .7s ease-out,halo 2.3s .7s infinite ease-in-out}
+@keyframes flick{0%,100%{transform:scale(1,1) skewX(0)}15%{transform:scale(.95,1.07) skewX(-3deg)}30%{transform:scale(1.04,.94) skewX(2deg)}45%{transform:scale(.98,1.05) skewX(-1deg)}60%{transform:scale(1.02,.97) skewX(3deg)}80%{transform:scale(.96,1.04) skewX(-2deg)}}
+@keyframes halo{0%,100%{opacity:.9;transform:scale(1)}20%{opacity:.7;transform:scale(.96)}35%{opacity:1;transform:scale(1.02)}55%{opacity:.8;transform:scale(1.04)}70%{opacity:.95;transform:scale(.99)}}
+@keyframes smoke{0%{opacity:0;transform:translateY(6px)}25%{opacity:.75}100%{opacity:0;transform:translateY(-18px) scaleX(1.4)}}
+@keyframes relight{0%{transform:scale(0,0)}55%{transform:scale(1.35,1.45)}100%{transform:scale(1,1)}}
+@keyframes haloIn{0%{opacity:0;transform:scale(.5)}60%{opacity:1;transform:scale(1.2)}100%{opacity:.9;transform:scale(1)}}
+.logo{display:flex;align-items:center;gap:8px;padding:0;color:inherit}
+.logo .lantern{width:26px;height:40px;margin-top:-4px}
+.topbar h1{transition:text-shadow .6s,opacity .6s}
+.logo.dark h1{text-shadow:none;opacity:.75}
+.typing-l{display:inline-flex;align-items:center;gap:8px}
+.typing-l .lantern{width:24px;height:38px;margin:-6px 0}
+#splash{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(80% 60% at 50% 45%,#2a2140 0%,#16131d 70%);transition:opacity .6s ease}
+#splash.hide{opacity:0;pointer-events:none}
+#splash .sp{display:flex;flex-direction:column;align-items:center;gap:18px}
+#splash .lantern{width:84px;height:131px;animation:spIn 1s ease-out both}
+#splash .sp-t{font:400 34px var(--f-display);letter-spacing:.02em;display:flex}
+#splash .sp-t span{display:inline-block;animation:letterIn .5s ease-out both}
+#splash .sp-t .a{color:var(--accent);text-shadow:0 0 24px rgba(232,169,91,.4)}
+@keyframes spIn{from{opacity:0;transform:translateY(10px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes letterIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* home tabs & card menu */
+.seg{display:flex;gap:4px;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;margin-bottom:10px}
+.seg button{flex:1;padding:7px 8px;border-radius:999px;color:var(--muted);font-weight:700;font-size:14px;transition:background-color .2s,color .2s}
+.seg button.on{background:var(--surface-2);color:var(--fg);box-shadow:0 2px 8px -4px rgba(0,0,0,.6)}
+.char-card{position:relative;cursor:pointer}
+.char-card .more{position:absolute;top:6px;right:6px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.char-card .more:active{background:var(--surface-2)}
+.char-card .name{padding-right:34px}
+.fav-star{color:var(--accent);margin-right:4px}
+/* images */
+#attach{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:8px 12px 0}
+#attach img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.uimg{display:block;max-width:100%;max-height:260px;border-radius:12px;margin:4px 0 6px;object-fit:cover}
+/* sound effects */
+.sfx{display:inline-block;cursor:pointer;white-space:nowrap}
+.fxi{display:inline-block;width:1.05em;height:1.05em;vertical-align:-.15em;margin-left:3px}
+.fxi svg{width:100%;height:100%;overflow:visible;display:block}
+.fx-gas svg{animation:fxDrift 3.2s infinite ease-in-out}
+.fx-bubbles svg{animation:fxRise 2.4s infinite ease-in-out}
+.fx-hit svg,.fx-boom svg{animation:fxThrob 1.8s infinite ease-in-out}
+.fx-kiss svg,.fx-beat svg{animation:fxBeat 1.1s infinite ease-in-out}
+.fx-zap svg{animation:fxZap 1.6s infinite steps(1)}
+.fx-magic svg{animation:fxTwinkle 2.2s infinite ease-in-out}
+.fx-fire svg{animation:flick 1.2s infinite ease-in-out;transform-origin:50% 90%}
+.fx-liquid svg{animation:fxDrip 2s infinite ease-in}
+.fx-wind svg{animation:fxSlide 2.4s infinite ease-in-out}
+.fx-wave svg{animation:fxPulse 1.6s infinite ease-in-out}
+.fx-zzz svg{animation:fxFloat 2.6s infinite ease-in-out}
+.fx-stomp svg,.fx-crack svg{animation:fxShake 2.6s infinite}
+.fxp{position:fixed;left:0;top:0;width:14px;height:14px;pointer-events:none;z-index:30}
+.fxp svg{width:100%;height:100%;overflow:visible;display:block}
+.fxring{position:fixed;border:2px solid currentColor;border-radius:50%;pointer-events:none;z-index:30}
+@keyframes fxDrift{0%,100%{transform:translate(0,0);opacity:.85}50%{transform:translate(2px,-3px);opacity:.55}}
+@keyframes fxRise{0%{transform:translateY(2px);opacity:.5}50%{opacity:1}100%{transform:translateY(-3px);opacity:.5}}
+@keyframes fxThrob{0%,100%{transform:scale(.9)}50%{transform:scale(1.12)}}
+@keyframes fxBeat{0%,40%,100%{transform:scale(1)}20%{transform:scale(1.22)}30%{transform:scale(1.05)}}
+@keyframes fxZap{0%,100%{opacity:1}30%{opacity:.3}35%{opacity:1}60%{opacity:.5}}
+@keyframes fxTwinkle{0%,100%{transform:scale(.85) rotate(0);opacity:.7}50%{transform:scale(1.1) rotate(20deg);opacity:1}}
+@keyframes fxDrip{0%{transform:translateY(-2px);opacity:0}30%{opacity:1}100%{transform:translateY(3px);opacity:.3}}
+@keyframes fxSlide{0%,100%{transform:translateX(-1px)}50%{transform:translateX(2px)}}
+@keyframes fxPulse{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes fxFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-3px)}}
+@keyframes fxShake{0%,90%,100%{transform:none}92%{transform:translateX(-1px) rotate(-4deg)}95%{transform:translateX(1px) rotate(4deg)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
 @keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -220,12 +293,13 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
 <div id="app">
   <section id="home" class="screen">
     <header class="topbar">
-      <h1>Lantern<span>room</span></h1>
+      <button class="logo" id="logoBtn" aria-label="Lanternroom: tap to put out or light the lantern"><span id="logoLantern"></span><h1>Lantern<span>room</span></h1></button>
       <button class="icon" id="btnSettings" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </header>
     <div class="home-scroll">
       <button class="persona-bar" id="personaBar"></button>
       <p class="tagline" id="tagline">Your characters, with memory that holds.</p>
+      <div class="seg" id="homeTabs"><button type="button" data-tab="all" class="on">All</button><button type="button" data-tab="fav">★ Favorites</button><button type="button" data-tab="hidden">Hidden</button></div>
       <div class="searchrow"><input id="search" type="search" placeholder="Search names or tags" autocomplete="off"><button class="btn small" id="btnTagAll" hidden>✦ Tag untagged</button></div>
       <div class="tagrow" id="tagFilter"></div>
       <div id="charList"></div>
@@ -247,12 +321,17 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
         <div class="t"><div class="n" id="chatName"></div><div class="p" id="chatPlace"></div></div>
       </button>
       <button class="icon" id="btnMemory" aria-label="Memory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3 3 3 0 0 0 3-2V5a3 3 0 0 0-3-2zM15 3a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-3 3 3 3 0 0 1-3-2"/></svg></button>
+      <button class="icon" id="btnChats" aria-label="Chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M18 9h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1v3l-4-3h-4"/></svg></button>
       <button class="icon" id="btnMore" aria-label="More"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
     </header>
     <div id="msgs" aria-live="polite"></div>
     <div id="status"></div>
     <div id="speakers" hidden></div>
+    <div id="attach" hidden><img id="attachImg" alt="Image to send"><span class="hint" style="flex:1;color:var(--muted);font-size:13px">Image attached. Add a message or just send.</span><button type="button" class="icon" id="attachX" aria-label="Remove image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <form id="composer" autocomplete="off">
+      <button type="button" class="icon" id="btnAttach" aria-label="Send an image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.5l-8.3 8.3a5 5 0 0 1-7.1-7.1l8.6-8.6a3.3 3.3 0 0 1 4.7 4.7L10.3 18.4a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/></svg></button>
+      <input type="file" id="imgCam" accept="image/*" capture="environment" hidden>
+      <input type="file" id="imgPick" accept="image/*" hidden>
       <button type="button" class="icon" id="btnIllustrate" aria-label="Illustrate this moment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></button>
       <textarea id="input" rows="1" placeholder="Write your reply…"></textarea>
       <button type="button" class="icon" id="btnCont" aria-label="Continue without replying" title="Continue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6l6 6-6 6M12 6l6 6-6 6"/></svg></button>
@@ -261,6 +340,7 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
   </section>
 </div>
 
+<div id="splash"><div class="sp"><span id="spLantern"></span><div class="sp-t" id="spTitle"></div></div></div>
 <div id="sheet" hidden>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
     <div class="panel-head"><h2 id="sheetTitle"></h2><button class="icon" id="sheetClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -301,7 +381,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.7 · Oct 12";
+const VERSION = "1.8 · Oct 12";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -328,7 +408,8 @@ const $ = id => document.getElementById(id);
 const byId = id => S.chars.find(c => c.id === id);
 const char = () => byId(S.charId);
 const members = c => (c?.members || []).map(byId).filter(Boolean);
-const persona = () => S.personas.find(p => p.id === S.personaId) || S.personas[0] || { id: "default", name: "User", description: "" };
+const persona = () => { const pid = (S.chat && S.chat.personaId) || S.personaId; return S.personas.find(p => p.id === pid) || S.personas[0] || { id: "default", name: "User", description: "" }; };
+const personaName = pid => (S.personas.find(p => p.id === pid)?.name) || "Unknown persona";
 const uname = () => (persona().name || "").trim() || "User";
 const chatKey = (cid, pid = S.personaId) => `chat:${cid}:${pid}`;
 const speakerLabel = c => c.kind === "world" ? "Narrator" : c.name;
@@ -637,9 +718,18 @@ function buildPrompt(c, chat, upto, cont) {
   const hist = chat.messages.slice(chat.summarizedUpTo || 0, upto).filter(m => m.role !== "image");
   let budget = st.contextTokens * 3.5 - sys.length;
   const out = [];
+  let imgs = 0;
   for (let i = hist.length - 1; i >= 0; i--) {
     const m = hist[i];
     let content = m.content;
+    if (m.image) {
+      if (imgs < 3) {
+        imgs++; budget -= 3500;
+        out.unshift({ role: "user", content: [{ type: "text", text: (m.content || "") + `\n[${u} shares an image. Look at it closely, work out what it shows, and react to it in character, in the context of the scene.]` }, { type: "image_url", image_url: { url: m.image } }] });
+        continue;
+      }
+      content = (m.content ? m.content + "\n" : "") + `[${u} shared an image${m.caption ? ": " + m.caption : ""}]`;
+    }
     if (m.role === "assistant" && m.mood) content += `\n[[mood: ${m.mood} | place: ${m.place || chat.place || "unknown"}${c.kind === "group" && m.focus ? ` | focus: ${m.focus}` : ""}]]`;
     if (budget - content.length < 0 && out.length >= 2) break;
     budget -= content.length;
@@ -652,15 +742,46 @@ function buildPrompt(c, chat, upto, cont) {
 
 /* ---------- Data ---------- */
 const greetingsOf = c => [c.firstMessage, ...(c.altGreetings || [])].map(g => fill(g, c).trim()).filter(Boolean);
-function newChat(c) {
+function newChat(c, pid) {
+  const prev = S.chat; S.chat = { personaId: pid || S.personaId };
   const greets = greetingsOf(c);
+  S.chat = prev;
   const focus = c.kind === "group" ? (members(c)[0]?.name || "") : "";
   const meta = { mood: "neutral", focus, place: c.startPlace || "" };
   return { messages: greets.length ? [{ id: uid(), role: "assistant", greeting: true, content: greets[0], alts: greets, alt: 0, altMeta: greets.map(() => ({ ...meta })), ...meta }] : [],
-           summary: "", summarizedUpTo: 0, facts: [], turnsSinceFacts: 0, mood: "neutral", place: c.startPlace || "", focus };
+           summary: "", summarizedUpTo: 0, facts: [], turnsSinceFacts: 0, mood: "neutral", place: c.startPlace || "", focus,
+           id: uid(), personaId: pid || S.personaId, created: Date.now() };
+}
+async function getIndex(cid) { return (await Store.get("chats:" + cid)) || []; }
+function chatPreview(chat) {
+  const last = [...chat.messages].reverse().find(m => m.role !== "image");
+  if (!last) return "";
+  const t = stripColor(last.content).replace(/\*/g, "").trim() || (last.image ? "📷 Image" : "");
+  return ((last.role === "user" ? personaName(chat.personaId) + ": " : "") + t).slice(0, 120);
+}
+async function touchIndex(cid, chat) {
+  const idx = await getIndex(cid);
+  const e = { id: chat.id, personaId: chat.personaId, created: chat.created || Date.now(), updated: Date.now(), count: chat.messages.filter(m => m.role !== "image").length, preview: chatPreview(chat) };
+  const i = idx.findIndex(x => x.id === chat.id);
+  if (i < 0) idx.push(e); else idx[i] = e;
+  await Store.set("chats:" + cid, idx);
+}
+async function deleteChat(cid, id) {
+  await Store.del("c2:" + id);
+  await Store.set("chats:" + cid, (await getIndex(cid)).filter(x => x.id !== id));
+}
+async function deleteAllChats(cid) {
+  for (const e of await getIndex(cid)) await Store.del("c2:" + e.id);
+  await Store.del("chats:" + cid);
 }
 async function saveChars() { await Store.set("chars", S.chars); }
-async function saveChat() { if (S.charId && S.chat) await within(Store.set(chatKey(S.charId), S.chat).catch(() => {})); }
+async function saveChat() {
+  if (!S.charId || !S.chat) return;
+  if (!S.chat.id) S.chat.id = uid();
+  if (!S.chat.personaId) S.chat.personaId = S.personaId;
+  await within(Store.set("c2:" + S.chat.id, S.chat).catch(() => {}));
+  await within(touchIndex(S.charId, S.chat).catch(() => {}));
+}
 async function saveSettings() { await Store.set("settings", S.settings); }
 async function savePersonas() { await Store.set("personas", S.personas); await Store.set("activePersona", S.personaId); }
 async function saveBooks() { await Store.set("books", S.books); }
@@ -703,7 +824,8 @@ Only tags supported by the card. Respond as JSON: {"tags": ["..."]}` },
   ], { temperature: 0.2, maxTokens: 200, plain: true });
   return parseTags((j.tags || []).join(","));
 }
-const HF = { q: "", tags: new Set() };
+const HF = { q: "", tags: new Set(), tab: "all" };
+$("homeTabs").querySelectorAll("[data-tab]").forEach(b => b.onclick = () => { HF.tab = b.dataset.tab; $("homeTabs").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); renderHome(); });
 $("search").addEventListener("input", e => { HF.q = e.target.value.trim().toLowerCase(); renderHome(); });
 $("btnTagAll").onclick = async () => {
   const todo = S.chars.filter(c => !(c.tags || []).length);
@@ -730,32 +852,86 @@ function renderHome() {
   $("btnTagAll").hidden = !(untagged && hasKey());
   if (!$("btnTagAll").disabled) $("btnTagAll").textContent = `✦ Tag ${untagged} untagged`;
   const shown = S.chars.filter(c => {
+    if (HF.tab === "hidden" ? !c.hidden : c.hidden) return false;
+    if (HF.tab === "fav" && !c.fav) return false;
     const tg = tagsOf(c);
     if ([...HF.tags].some(t => !tg.includes(t))) return false;
     if (!HF.q) return true;
     return c.name.toLowerCase().includes(HF.q) || tg.some(t => t.includes(HF.q));
   });
   if (!S.chars.length) list.innerHTML = '<p class="note">Nothing here yet. Tap New to create a character, world or group, or import a character card.</p>';
-  else if (!shown.length) list.innerHTML = '<p class="note">Nothing matches that search.</p>';
+  else if (!shown.length) list.innerHTML = `<p class="note">${HF.q || HF.tags.size ? "Nothing matches that search." : HF.tab === "fav" ? "No favorites yet. Tap ⋯ on a card and choose Favorite." : HF.tab === "hidden" ? "No hidden bots. Tap ⋯ on a card and choose Hide." : "Everything is hidden or in another tab."}</p>`;
   for (const c of shown) {
-    const b = document.createElement("button");
-    b.className = "char-card";
+    const b = document.createElement("div");
+    b.className = "char-card"; b.tabIndex = 0; b.setAttribute("role", "button");
     const url = thumbURL(c);
     const badge = c.kind === "world" ? '<span class="badge">World</span>' : c.kind === "group" ? `<span class="badge">Group · ${members(c).length}</span>` : "";
     const sub = c.kind === "group" ? members(c).map(m => m.name).join(", ") : (c.description || "");
     const tg = tagsOf(c).filter(t => t !== "world" && t !== "group").slice(0, 5);
-    b.innerHTML = `<img alt="" loading="lazy"><div><div class="name">${esc(c.name)}${badge}</div><div class="snip" data-snip="${c.id}">${esc(stripColor(sub).slice(0, 140))}</div>${tg.length ? `<div class="tags">${tg.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}</div>`;
+    b.innerHTML = `<img alt="" loading="lazy"><div><div class="name">${c.fav ? '<span class="fav-star">★</span>' : ""}${esc(c.name)}${badge}</div><div class="snip" data-snip="${c.id}">${esc(stripColor(sub).slice(0, 140))}</div>${tg.length ? `<div class="tags">${tg.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}</div>`;
+    b.insertAdjacentHTML("beforeend", `<button type="button" class="more" aria-label="Options for ${esc(c.name)}"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>`);
     setImg(b.querySelector("img"), url, c);
-    b.onclick = () => openChat(c.id);
+    b.onclick = e => { if (e.target.closest(".more")) { cardMenu(c); return; } openChat(c.id); };
+    b.onkeydown = e => { if (e.key === "Enter") openChat(c.id); };
     list.appendChild(b);
-    Store.get(chatKey(c.id)).then(ch => {
-      const last = ch?.messages?.filter(m => m.role !== "image").pop();
-      if (last) { const el = list.querySelector(`[data-snip="${c.id}"]`); if (el) el.textContent = (last.role === "user" ? uname() + ": " : "") + stripColor(last.content).replace(/\*/g, "").slice(0, 140); }
+    getIndex(c.id).then(idx => {
+      const last = idx.sort((x, y) => y.updated - x.updated)[0];
+      if (last?.preview) { const el = list.querySelector(`[data-snip="${c.id}"]`); if (el) el.textContent = last.preview + (idx.length > 1 ? ` · ${idx.length} chats` : ""); }
     });
   }
   $("tagline").textContent = hasKey() ? "Your characters, with memory that holds." : "Start by adding your API key in Settings.";
 }
 $("personaBar").onclick = () => openPersonas();
+function cardMenu(c) {
+  openSheet(c.name, b => {
+    b.innerHTML = `<div class="menu">
+      <button class="btn" id="cmChats">Chats</button>
+      <button class="btn" id="cmFav">${c.fav ? "☆ Remove from favorites" : "★ Favorite"}</button>
+      <button class="btn" id="cmHide">${c.hidden ? "Unhide" : "Hide"}</button>
+      <button class="btn" id="cmEdit">Edit</button>
+      <button class="btn danger" id="cmDel">Delete ${KINDS[c.kind || "character"].label.toLowerCase()}</button></div>
+      <p class="note">Deleting removes this ${KINDS[c.kind || "character"].label.toLowerCase()} and all of its chats. Hiding keeps everything but moves it to the Hidden tab.</p>`;
+    $("cmChats").onclick = () => openChats(c.id);
+    $("cmFav").onclick = async () => { c.fav = !c.fav; await saveChars(); closeSheet(); renderHome(); };
+    $("cmHide").onclick = async () => { c.hidden = !c.hidden; await saveChars(); closeSheet(); renderHome(); };
+    $("cmEdit").onclick = () => editChar(c, false);
+    confirmBtn($("cmDel"), "Tap again to delete forever", () => deleteBot(c.id));
+  });
+}
+async function deleteBot(id) {
+  S.chars = S.chars.filter(x => x.id !== id);
+  for (const g of S.chars) if (g.members) g.members = g.members.filter(m => m !== id);
+  await saveChars(); await deleteAllChats(id);
+  closeSheet(); S.charId = null; S.chat = null; $("chat").hidden = true; $("home").hidden = false; renderHome();
+}
+const fmtWhen = ts => { const d = new Date(ts), now = new Date(); return d.toDateString() === now.toDateString() ? d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : d.toLocaleDateString([], { month: "short", day: "numeric" }); };
+async function openChats(cid) {
+  const c = byId(cid);
+  const idx = (await getIndex(cid)).sort((a, b) => b.updated - a.updated);
+  openSheet(`Chats · ${c.name}`, b => {
+    b.innerHTML = `<div class="row" style="align-items:center"><select id="ncP" style="flex:2;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line)">${S.personas.map(p => `<option value="${p.id}" ${p.id === S.personaId ? "selected" : ""}>As ${esc(p.name)}</option>`).join("")}</select><button class="btn primary" id="ncGo" style="flex:1">New chat</button></div><div class="stack" id="chList"></div>`;
+    const box = $("chList");
+    if (!idx.length) box.innerHTML = '<p class="note">No chats yet. Start one above.</p>';
+    for (const e of idx) {
+      const row = document.createElement("div"); row.className = "listrow" + (S.chat && S.chat.id === e.id ? " on" : "");
+      row.innerHTML = `<button type="button" class="grow" style="text-align:left;padding:0" data-open><div><b>${esc(personaName(e.personaId))}</b><span class="badge">${e.count} message${e.count === 1 ? "" : "s"}</span>${S.chat && S.chat.id === e.id ? '<span class="badge">Open</span>' : ""}</div><div class="sub">${fmtWhen(e.updated)} · ${esc(e.preview || "No messages yet")}</div></button><button type="button" class="btn small danger" data-del>Delete</button>`;
+      row.querySelector("[data-open]").onclick = () => { closeSheet(); openChat(cid, e.id); };
+      confirmBtn(row.querySelector("[data-del]"), "Sure?", async () => {
+        await deleteChat(cid, e.id);
+        if (S.chat && S.chat.id === e.id) { S.chat = null; closeSheet(); await openChat(cid); } else { openChats(cid); }
+        if ($("chat").hidden) renderHome();
+      });
+      box.appendChild(row);
+    }
+    $("ncGo").onclick = async () => {
+      const pid = $("ncP").value;
+      S.personaId = pid; await savePersonas();
+      const ch = newChat(c, pid);
+      S.charId = cid; S.chat = ch; await saveChat();
+      closeSheet(); await openChat(cid, ch.id);
+    };
+  });
+}
 $("btnBooks").onclick = () => openBooks();
 $("btnNewChar").onclick = () => openSheet("Create", b => {
   b.innerHTML = `<div class="menu">${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
@@ -763,10 +939,17 @@ $("btnNewChar").onclick = () => openSheet("Create", b => {
 });
 
 /* ---------- Chat ---------- */
-async function openChat(id) {
-  S.charId = id; S.nextSpeaker = "";
+async function openChat(id, chatId) {
+  S.charId = id; S.nextSpeaker = ""; S.chat = null; clearAttach();
   const c = char();
-  S.chat = (await Store.get(chatKey(id))) || newChat(c);
+  let chat = chatId ? await Store.get("c2:" + chatId) : null;
+  if (!chat) {
+    const idx = (await getIndex(id)).sort((a, b) => b.updated - a.updated);
+    const pick = idx.find(e => e.personaId === S.personaId);
+    if (pick) chat = await Store.get("c2:" + pick.id);
+  }
+  S.chat = chat || newChat(c);
+  if (!S.chat.personaId) S.chat.personaId = S.personaId;
   S.chat.facts = (S.chat.facts || []).map(f => typeof f === "string" ? { t: f, pin: false } : f);
   const g0 = S.chat.messages[0], greets = greetingsOf(c);
   if (S.chat.messages.length === 1 && g0.role === "assistant" && greets.length > 1 && greets.includes(g0.content) && (g0.alts || []).every(a => greets.includes(a))) {
@@ -858,7 +1041,7 @@ function renderMsgs(keepScroll) {
     } else {
       d.className = "msg " + m.role;
       const label = m.role === "user" ? uname() : c.kind === "world" ? `${c.name} · Narrator` : c.name;
-      d.innerHTML = `<div class="who-l">${esc(label)}</div>` + fmt(m.content);
+      d.innerHTML = `<div class="who-l">${esc(label)}</div>` + (m.image ? `<img class="uimg" src="${esc(m.image)}" alt="Image you sent">` : "") + fmt(m.content);
     }
     if (S.seen && !S.seen.has(m.id)) { d.classList.add("enter"); S.seen.add(m.id); }
     if (m.role === "assistant" && i === lastAsst && (m.alts?.length > 1 || i === msgs.length - 1)) {
@@ -879,6 +1062,7 @@ function renderMsgs(keepScroll) {
     }
     box.appendChild(d);
   });
+  decorateSfx(box);
   if (!keepScroll || atBottom) box.scrollTop = box.scrollHeight;
 }
 
@@ -905,6 +1089,7 @@ $("msgs").addEventListener("pointermove", e => { if (pressXY && Math.hypot(e.cli
 $("msgs").addEventListener("contextmenu", e => { if (e.target.closest("[data-i]")) e.preventDefault(); });
 $("msgs").addEventListener("click", async e => {
   if (suppressClick) { suppressClick = false; return; }
+  const sf = e.target.closest(".sfx"); if (sf) { burst(sf); return; }
   const d = e.target.closest("[data-i]"); if (!d) return;
   const i = +d.dataset.i, m = S.chat.messages[i];
   const act = e.target.closest("[data-act]")?.dataset.act;
@@ -932,7 +1117,7 @@ function setBusy(b) { S.busy = b; $("send").disabled = b; $("btnIllustrate").dis
 $("btnCont").onclick = async () => {
   if (S.busy || !S.chat) return;
   const t = $("input").value.trim();
-  if (t) { await send(); return; }
+  if (t || S.pendingImage) { await send(); return; }
   S.openActs = null;
   try { await generate(S.chat.messages.length, null, true); } catch (e) { setBusy(false); setStatus(e.message, true); }
 };
@@ -943,7 +1128,11 @@ async function send() {
 async function sendInner() {
   if (S.busy) return;
   const t = $("input").value.trim();
-  if (t) { S.chat.messages.push({ id: uid(), role: "user", content: t }); $("input").value = ""; autoGrow(); }
+  if (t || S.pendingImage) {
+    const m = { id: uid(), role: "user", content: t };
+    if (S.pendingImage) m.image = S.pendingImage;
+    S.chat.messages.push(m); $("input").value = ""; autoGrow(); clearAttach();
+  }
   else if (!S.chat.messages.length || S.chat.messages.at(-1).role === "assistant") return;
   S.openActs = null;
   await saveChat(); renderMsgs();
@@ -958,7 +1147,7 @@ async function generate(upto, existing, cont) {
   else { bubble = document.createElement("div"); bubble.className = "msg assistant typing"; $("msgs").appendChild(bubble); }
   if (bubble.classList.contains("msg-set")) { bubble.className = "msg assistant"; }
   const who = c.kind === "world" ? "The narrator" : c.kind === "group" ? (S.nextSpeaker || "The group") : c.name;
-  bubble.innerHTML = `${esc(who)} is writing<span class="dots"><i></i><i></i><i></i></span>`; bubble.classList.add("typing");
+  bubble.innerHTML = `<span class="typing-l">${lanternSVG()}<span>${esc(who)} is writing…</span></span>`; bubble.classList.add("typing");
   const box = $("msgs"); box.scrollTop = box.scrollHeight;
   try {
     let p;
@@ -966,12 +1155,12 @@ async function generate(upto, existing, cont) {
       const raw = await ds(buildPrompt(c, chat, upto, cont), {
         thinking: S.settings.thinking,
         temperature: attempt ? Math.min(S.settings.temperature, 0.7) : undefined,
-        onThinking: () => { bubble.innerHTML = `${esc(who)} is thinking<span class="dots"><i></i><i></i><i></i></span>`; },
+        onThinking: () => { bubble.innerHTML = `<span class="typing-l">${lanternSVG()}<span>${esc(who)} is thinking…</span></span>`; },
         onDelta: full => { bubble.classList.remove("typing"); bubble.innerHTML = fmt(full.split("[[")[0]); if (box.scrollHeight - box.scrollTop - box.clientHeight < 140) box.scrollTop = box.scrollHeight; }
       });
       p = parseTag(raw);
       if (!garbled(stripColor(p.text), c)) break;
-      if (attempt === 0) { bubble.classList.add("typing"); bubble.innerHTML = "That reply came out garbled. Trying again more carefully…"; }
+      if (attempt === 0) { bubble.classList.add("typing"); bubble.innerHTML = `<span class="typing-l">${lanternSVG()}<span>That reply came out garbled. Trying again…</span></span>`; }
       else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
@@ -990,10 +1179,35 @@ async function generate(upto, existing, cont) {
     await saveChat();
     renderMsgs(); updateStage();
     if (!existing) maintainMemory(c, chat).catch(e => setStatus("Memory update skipped: " + e.message, true));
+    captionImages(chat).catch(() => {});
   } catch (e) {
     if (!existing) bubble.remove(); else renderMsgs(true);
     setStatus(e.message, true);
   } finally { setBusy(false); }
+}
+
+/* ---------- Images from the user ---------- */
+function clearAttach() { S.pendingImage = null; if ($("attach")) { $("attach").hidden = true; $("attachImg").removeAttribute("src"); } }
+async function takeImage(f) {
+  if (!f) return;
+  try { S.pendingImage = await shrinkImage(f, 1280); $("attachImg").src = S.pendingImage; $("attach").hidden = false; $("input").focus(); }
+  catch { setStatus("That image couldn't be opened. Try a JPG or PNG.", true); }
+}
+$("imgCam").onchange = e => { takeImage(e.target.files[0]); e.target.value = ""; };
+$("imgPick").onchange = e => { takeImage(e.target.files[0]); e.target.value = ""; };
+$("attachX").onclick = clearAttach;
+$("btnAttach").onclick = () => openSheet("Send an image", b => {
+  b.innerHTML = `<div class="menu"><label class="btn" for="imgCam">📷 Take a photo</label><label class="btn" for="imgPick">🖼 Choose from gallery or files</label></div>
+    <p class="note">Photos taken here go straight into the chat and aren't saved to your phone's gallery. The bot looks at the image and reacts in character.</p>`;
+  b.querySelectorAll("label").forEach(l => l.addEventListener("click", () => setTimeout(closeSheet, 300)));
+});
+async function captionImages(chat) {
+  for (const m of chat.messages) {
+    if (!m.image || m.caption) continue;
+    const t = await ds([{ role: "user", content: [{ type: "text", text: "Describe this image in one plain sentence (under 25 words) so it can be remembered later. Output only the sentence." }, { type: "image_url", image_url: { url: m.image } }] }], { temperature: 0.2, maxTokens: 80, plain: true });
+    m.caption = t.trim().slice(0, 200);
+    if (S.chat === chat) await saveChat();
+  }
 }
 
 /* ---------- Memory ---------- */
@@ -1011,7 +1225,7 @@ async function maintainMemory(c, chat) {
 }
 async function summarize(c, chat, chunk, end) {
   const u = uname();
-  const txt = chunk.map(m => `${m.role === "user" ? u : speakerLabel(c)}: ${m.content}`).join("\n\n");
+  const txt = chunk.map(m => `${m.role === "user" ? u : speakerLabel(c)}: ${m.content}${m.image ? ` [shared an image${m.caption ? ": " + m.caption : ""}]` : ""}`).join("\n\n");
   const sum = await ds([
     { role: "system", content: "You keep the running summary of a long roleplay story. Merge the existing summary and the new events into ONE updated summary in past tense, third person. Preserve names, relationships and how they changed, promises, secrets, injuries, items, decisions, and unresolved threads. Drop filler. Up to 450 words. Output only the summary." },
     { role: "user", content: `Story: ${c.name}. Protagonist: ${u}.\n\nExisting summary:\n${chat.summary || "(none yet)"}\n\nNew events:\n${txt}` }
@@ -1317,7 +1531,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   };
   $("sExport").onclick = async () => {
     const data = { app: "lanternroom", v: 2, settings: { ...st, apiKey: "", customKey: "" }, chars: S.chars, personas: S.personas, books: S.books, chats: {} };
-    for (const k of await Store.keys()) if (k.startsWith("chat:")) data.chats[k] = await Store.get(k);
+    for (const k of await Store.keys()) if (/^(chat:|c2:|chats:)/.test(k)) data.chats[k] = await Store.get(k);
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
     a.download = `lanternroom-backup-${new Date().toISOString().slice(0, 10)}.json`;
@@ -1333,9 +1547,9 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       merge(S.chars, d.chars); merge(S.personas, d.personas); merge(S.books, d.books);
       for (const [k, v] of Object.entries(d.chats || {})) {
         if (!v) continue;
-        await Store.set(k.startsWith("chat:") ? k : `chat:${k}:${S.personas[0].id}`, v);
+        await Store.set(/^(chat:|c2:|chats:)/.test(k) ? k : `chat:${k}:${S.personas[0].id}`, v);
       }
-      await saveChars(); await savePersonas(); await saveBooks();
+      await saveChars(); await savePersonas(); await saveBooks(); await migrateChats();
       $("sMsg").textContent = `Restored ${(d.chars || []).length} character(s).`; renderHome();
     } catch { $("sMsg").textContent = "That file isn't a Lanternroom backup."; }
   };
@@ -1358,6 +1572,7 @@ function openPersonas() {
 async function usePersona(id) {
   S.personaId = id; await savePersonas(); closeSheet();
   if (!$("chat").hidden && S.charId) await openChat(S.charId); else renderHome();
+  if (!$("chat").hidden) toast(`Playing as ${personaName(id)}`);
 }
 function editPersona(p, isNew) {
   const work = { ...p };
@@ -1379,7 +1594,7 @@ function editPersona(p, isNew) {
     };
     if ($("peDel")) confirmBtn($("peDel"), "Tap again: deletes this persona and its chats", async () => {
       S.personas = S.personas.filter(x => x.id !== work.id);
-      for (const k of await Store.keys()) if (k.startsWith("chat:") && k.endsWith(":" + work.id)) await Store.del(k);
+      for (const c of S.chars) { const idx = await getIndex(c.id); for (const e of idx.filter(x => x.personaId === work.id)) await deleteChat(c.id, e.id); }
       if (S.personaId === work.id) S.personaId = S.personas[0].id;
       await savePersonas();
       if (!$("chat").hidden && S.charId) { closeSheet(); await openChat(S.charId); } else { renderHome(); openPersonas(); }
@@ -1717,7 +1932,7 @@ function editChar(c, isNew) {
       S.chars = S.chars.filter(x => x.id !== work.id);
       for (const g of S.chars) if (g.members) g.members = g.members.filter(id => id !== work.id);
       await saveChars();
-      for (const k of await Store.keys()) if (k.startsWith(`chat:${work.id}:`)) await Store.del(k);
+      await deleteAllChats(work.id);
       closeSheet(); S.charId = null; $("chat").hidden = true; $("home").hidden = false; renderHome();
     });
   });
@@ -1845,17 +2060,21 @@ function openPortrait(c) {
 $("btnMore").onclick = () => openSheet("Options", b => {
   const c = char();
   b.innerHTML = `<div class="menu">
+    <button class="btn" id="oChats">Chats with ${esc(c.name)}</button>
+    <button class="btn" id="oNew">New chat as ${esc(uname())}</button>
     <button class="btn" id="oIll">Illustrate this moment</button>
     <button class="btn" id="oEdit">Edit ${KINDS[c.kind || "character"].label.toLowerCase()} & lorebook</button>
     <button class="btn" id="oMem">View memory</button>
     <button class="btn" id="oPer">Playing as ${esc(uname())} · switch persona</button>
-    <button class="btn danger" id="oReset">Start a new chat</button></div>
-    <p class="note">Starting a new chat erases this conversation (as ${esc(uname())}) and its memory. Export a backup in Settings first if you want to keep it.</p>`;
+    <button class="btn danger" id="oReset">Clear this chat</button></div>
+    <p class="note">New chat keeps this one in your chat list. Clear this chat erases this conversation and its memory.</p>`;
   $("oIll").onclick = () => { closeSheet(); illustrate(); };
+  $("oChats").onclick = () => openChats(S.charId);
+  $("oNew").onclick = async () => { const ch = newChat(c, S.chat.personaId); S.chat = ch; await saveChat(); closeSheet(); await openChat(S.charId, ch.id); };
   $("oEdit").onclick = () => editChar(char(), false);
   $("oMem").onclick = openMemory;
   $("oPer").onclick = () => openPersonas();
-  confirmBtn($("oReset"), "Tap again to erase this chat", async () => { S.chat = newChat(char()); await saveChat(); closeSheet(); updateStage(); renderMsgs(); });
+  confirmBtn($("oReset"), "Tap again to erase this chat", async () => { const keep = { id: S.chat.id, personaId: S.chat.personaId, created: S.chat.created }; S.chat = { ...newChat(char(), keep.personaId), ...keep }; await saveChat(); closeSheet(); S.seen = new Set(S.chat.messages.map(m => m.id)); updateStage(); renderMsgs(); });
 });
 
 function editMessage(i) {
@@ -1869,9 +2088,185 @@ function editMessage(i) {
   });
 }
 
+$("btnChats").onclick = () => openChats(S.charId);
 $("btnBack").onclick = () => { if (S.busy) return; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; renderHome(); };
 
+/* ---------- Lantern ---------- */
+let LID = 0;
+function lanternSVG(cls = "") {
+  const id = "ln" + (++LID);
+  return `<svg class="lantern ${cls}" viewBox="0 0 64 100" aria-hidden="true">
+  <defs>
+    <radialGradient id="${id}g" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffd98a" stop-opacity=".9"/><stop offset=".45" stop-color="#f0a24a" stop-opacity=".35"/><stop offset="1" stop-color="#e8a95b" stop-opacity="0"/></radialGradient>
+    <linearGradient id="${id}f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6cf"/><stop offset=".45" stop-color="#ffc35a"/><stop offset="1" stop-color="#ff7a2e"/></linearGradient>
+    <linearGradient id="${id}m" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a2433"/><stop offset=".5" stop-color="#6a5e7c"/><stop offset="1" stop-color="#2a2433"/></linearGradient>
+  </defs>
+  <circle class="halo" cx="32" cy="54" r="34" fill="url(#${id}g)"/>
+  <path d="M32 2.5a6 6 0 1 1 0 12a6 6 0 1 1 0-12zm0 3a3 3 0 1 0 0 6a3 3 0 1 0 0-6z" fill="url(#${id}m)"/>
+  <path d="M19 26h26l-5-11H24z" fill="url(#${id}m)"/>
+  <rect x="17" y="25" width="30" height="4" rx="2" fill="#7a6d8e"/>
+  <rect x="21" y="29" width="22" height="43" rx="5" fill="rgba(255,205,130,.10)" stroke="#5b506b" stroke-width="2"/>
+  <g class="flame-g"><path d="M32 39c5 8 8.5 14.5 4.5 21.5c-1.7 2.9-7.3 2.9-9 0c-4-7-.5-13.5 4.5-21.5z" fill="url(#${id}f)"/><path d="M32 50c2 4 3 7 1.5 10c-.8 1.3-2.2 1.3-3 0c-1.5-3-.5-6 1.5-10z" fill="#fffbe8"/></g>
+  <path class="smoke" d="M32 40c-3-4 3-6 0-10s3-6 0-10" fill="none" stroke="#c8c0d6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M26.5 29v43M37.5 29v43" stroke="#5b506b" stroke-width="1" opacity=".55"/>
+  <rect x="15" y="71" width="34" height="6" rx="2" fill="url(#${id}m)"/>
+  <rect x="20" y="77" width="24" height="4" rx="1.5" fill="#3b3346"/>
+</svg>`;
+}
+(function initLanterns() {
+  $("logoLantern").innerHTML = lanternSVG();
+  $("spLantern").innerHTML = lanternSVG();
+  $("spTitle").innerHTML = [..."Lantern"].map((ch, i) => `<span style="animation-delay:${0.35 + i * 0.05}s">${ch}</span>`).join("") + [..."room"].map((ch, i) => `<span class="a" style="animation-delay:${0.7 + i * 0.05}s">${ch}</span>`).join("");
+  $("logoBtn").onclick = () => {
+    const l = $("logoLantern").querySelector(".lantern"), btn = $("logoBtn");
+    if (l.classList.contains("out")) { l.classList.remove("out"); void l.getBoundingClientRect(); l.classList.add("relit"); btn.classList.remove("dark"); }
+    else { l.classList.remove("relit"); l.classList.add("out"); btn.classList.add("dark"); }
+  };
+})();
+
+/* ---------- Sound effects ---------- */
+const SFX_RULES = [
+  ["gas", /(bu+r+p|bel+ch|^u+r+p|hu+r+k|bra+p|pf+t|pf+f+t|^f+r+t|pb+t|thb+t|bw[ao]+r+p|blu+r+p|^hic|^hu+r+p|^bu+r+r+p)/i],
+  ["bubbles", /(gu+r+g+l|gl+r+k|gl+u+r+k|gr+gl|blo+r+p|glo+r+p|blu+b|bloo+p|gl+u+g|gl+o+r+b|grumbl|gl+o+r+k|blorb)/i],
+  ["crack", /(cra+ck|sna+p|cru+n+ch|kra+k|cri+ck|cru+nk|splint|kr+i+k)/i],
+  ["boom", /(bo+o+m|ka-?boo+m|bla+m|^ba+n+g|bwoo+m|kra-?boo+m)/i],
+  ["hit", /(thwa+ck|sma+ck|wha+m|^ba+m+|^po+w|thu+d|sla+m|wha+ck|bo+n+k|pu+nch|thwu+m+p|whu+m+p|ka-?pow|^oo+f|^wa+p)/i],
+  ["slash", /(shi+n+g|sla+sh|swi+sh|shi+n+k|cla+ng|cla+sh|schwi+n+g|sli+ce|whi+sh|tsing|shk)/i],
+  ["kiss", /(mwa+h|smo+o+ch|^chu+$|mu+a+h|^kiss)/i],
+  ["liquid", /(spla+sh|splo+sh|dri+p|pli+p|spla+t|sque+l+ch|squi+sh|slu+r+p|gu+l+p|schlo+r+p|slo+sh|spu+r+t|sploo+t|^plo+p|^glu+g|sloo+p|shli+ck|splo+r+t|squi+r+t|splu+r+t|dribbl|plink|sploo+sh)/i],
+  ["fire", /(fwoo+sh|fwoo+m|cra+ckl|sizzl|fwa+h|whoo+mp)/i],
+  ["zap", /(^za+p|bz+t|^z+t|bzz+|kzz+t|kr+zz)/i],
+  ["magic", /(shi+m+er|twi+n+kl|vwoo+m|fwi+n+g|^ti+n+g|^di+n+g|chi+me|sparkl|vwi+p|shwi+n+g|^hu+m+m+$)/i],
+  ["beat", /(ba-?du+m|thu+m+p|^doki|lub-?dub|thu-?thump)/i],
+  ["zzz", /^(z{2,}|sno+re|sn+r+k|hnnn+g?)$/i],
+  ["stomp", /(sto+m+p|tho+o+m|cra+sh|ru+m+bl|clo+m+p|kru+mp|thu+n+k)/i],
+  ["wind", /(whoo+sh|wo+o+sh|swoo+sh|whi+r+r|^whoo+$|fwip)/i],
+  ["wave", /(gr+o+w+l|^gr{2,}|ro+a+r|hi+s+s|ho+w+l|awoo+|pu+r+r|me+o+w|^ba+r+k|wo+o+f|scre+e|^aa+h|ah{2,}|^oh+|^mm+|^hm+|ha+h+a|he+h+e|gasp|squea+k|^eep)/i]
+];
+const FX_ICON = {
+  gas: '<svg viewBox="0 0 20 20"><path d="M5 15a3 3 0 0 1 .4-6A4.2 4.2 0 0 1 13.4 8a3 3 0 0 1 1.6 7z" fill="currentColor" opacity=".55"/><circle cx="15.5" cy="5" r="1.7" fill="currentColor" opacity=".4"/><circle cx="12.5" cy="3" r="1" fill="currentColor" opacity=".3"/></svg>',
+  bubbles: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><circle cx="7" cy="13" r="3.2" stroke-width="1.5"/><circle cx="13.5" cy="7.5" r="2.3" stroke-width="1.4"/><circle cx="15" cy="15" r="1.4" stroke-width="1.2"/><circle cx="8" cy="4" r="1" stroke-width="1"/></svg>',
+  crack: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-linecap="round"><path d="M10 1.5l-2 5 3 2.2-3 4 2 5.8" stroke-width="1.9"/><path d="M8 6.5l-4.5 1M11 8.7l4.5-1.2M8 12.7l-3.5 2.3" stroke-width="1.2"/></svg>',
+  hit: '<svg viewBox="0 0 20 20"><path d="M10 .5l1.9 5.2 5.3-1.9-2.9 4.8 5.2 2-5.4 1.6 2.3 5.1-5-2.8-1.4 5.4-1.6-5.3-4.9 2.6 2.5-5-5.4-1.8 5.3-1.8L3.5 3.9l5 2.2z" fill="currentColor" opacity=".9"/></svg>',
+  slash: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M2.5 17.5C8 12.5 12 8 17.5 2.5" stroke-width="2.3"/><path d="M6.5 18C10.5 14 13.5 11 18 6.5" stroke-width="1" opacity=".5"/><path d="M15.5 1.5l3 3" stroke-width="1.2"/></svg>',
+  boom: '<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="4.2" fill="currentColor"/><path d="M10 .8v3.2M10 16v3.2M.8 10H4M16 10h3.2M3.4 3.4l2.2 2.2M14.4 14.4l2.2 2.2M3.4 16.6l2.2-2.2M14.4 5.6l2.2-2.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  kiss: '<svg viewBox="0 0 20 20"><path d="M10 17.5S3.5 13.4 3.5 8.8A3.3 3.3 0 0 1 10 7.3a3.3 3.3 0 0 1 6.5 1.5c0 4.6-6.5 8.7-6.5 8.7z" fill="currentColor"/></svg>',
+  beat: '<svg viewBox="0 0 20 20"><path d="M10 17.5S3.5 13.4 3.5 8.8A3.3 3.3 0 0 1 10 7.3a3.3 3.3 0 0 1 6.5 1.5c0 4.6-6.5 8.7-6.5 8.7z" fill="currentColor" opacity=".9"/><path d="M1 10h4l1.5-2.5 2 5 1.5-2.5h9" fill="none" stroke="#16131d" stroke-width="1.2" opacity=".6"/></svg>',
+  liquid: '<svg viewBox="0 0 20 20"><path d="M10 1.5c3.2 5 5.2 7.6 5.2 10.4a5.2 5.2 0 0 1-10.4 0c0-2.8 2-5.4 5.2-10.4z" fill="currentColor" opacity=".9"/><path d="M7.6 12.2a2.6 2.6 0 0 0 2 2.5" stroke="#fff" stroke-width="1" fill="none" opacity=".5" stroke-linecap="round"/></svg>',
+  fire: '<svg viewBox="0 0 20 20"><path d="M10 1.5c1 4 5.3 5.2 5.3 10.4a5.3 5.3 0 0 1-10.6 0c0-3 2-4.2 2-6.2 2 1 2.2 3 3.2 4 1-3 .1-5.2.1-8.2z" fill="currentColor"/></svg>',
+  zap: '<svg viewBox="0 0 20 20"><path d="M11.5.8L3.8 11.2h5.1L7.8 19.2l8-10.8h-5.3z" fill="currentColor"/></svg>',
+  magic: '<svg viewBox="0 0 20 20"><path d="M9 1.5l1.8 6.2L17 9.5l-6.2 1.8L9 17.5l-1.8-6.2L1 9.5l6.2-1.8z" fill="currentColor"/><path d="M16 1.5l.6 1.9 1.9.6-1.9.6-.6 1.9-.6-1.9-1.9-.6 1.9-.6z" fill="currentColor"/></svg>',
+  zzz: '<svg viewBox="0 0 20 20" fill="currentColor" font-family="Georgia,serif" font-weight="700"><text x="1" y="18" font-size="10">z</text><text x="8" y="11" font-size="8">z</text><text x="14" y="5" font-size="6">z</text></svg>',
+  wind: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 7h10a2.6 2.6 0 1 0-2.6-2.6M1.5 11h14a2.6 2.6 0 1 1-2.6 2.6M1.5 15h7"/></svg>',
+  wave: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 6.5a5 5 0 0 1 0 7M8.5 3.5a9.5 9.5 0 0 1 0 13M13 1a13 13 0 0 1 0 18"/></svg>',
+  stomp: '<svg viewBox="0 0 20 20"><circle cx="5" cy="13.5" r="3" fill="currentColor" opacity=".5"/><circle cx="10" cy="11.5" r="4" fill="currentColor" opacity=".65"/><circle cx="15" cy="13.5" r="3" fill="currentColor" opacity=".5"/><path d="M1.5 18h17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+};
+const FX_PART = {
+  bubbles: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7"/><path d="M6.5 7.5a4 4 0 0 1 3-2.2" stroke-width="1.2" opacity=".7"/></svg>',
+  crack: '<svg viewBox="0 0 20 20"><path d="M2 3l15 5-9 10z" fill="currentColor"/></svg>',
+  slash: '<svg viewBox="0 0 20 20"><path d="M2 10h16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>',
+  zzz: '<svg viewBox="0 0 20 20" fill="currentColor" font-family="Georgia,serif" font-weight="700"><text x="4" y="16" font-size="16">z</text></svg>',
+  stomp: '<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="currentColor" opacity=".55"/></svg>',
+  wind: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 10h12a3 3 0 1 0-3-3"/></svg>'
+};
+// motion profiles: n particles, spread, travel, gravity, duration, extras
+const FX_MOTION = {
+  gas: { n: 7, dur: 1500, path: () => [r(-12, 12), r(-6, 0), r(-45, 45), r(-75, -35)], scale: [0.5, 2.1], ease: "ease-out" },
+  bubbles: { n: 10, dur: 1300, path: () => [r(-14, 14), 0, r(-30, 30), r(-90, -40)], scale: [0.4, 1.1], ease: "ease-out", pop: true },
+  crack: { n: 9, dur: 700, radial: [40, 80], scale: [1, 0.5], spin: true, shake: true },
+  hit: { n: 8, dur: 650, radial: [35, 70], scale: [1.2, 0.3], shake: true, ring: true },
+  boom: { n: 12, dur: 900, radial: [50, 110], scale: [1.4, 0.2], shake: true, ring: true, ring2: true },
+  slash: { n: 6, dur: 500, radial: [40, 90], scale: [1, 0.2], align: true },
+  kiss: { n: 7, dur: 1600, path: () => [r(-16, 16), 0, r(-40, 40), r(-95, -50)], scale: [0.6, 1.3], ease: "ease-out", sway: true },
+  beat: { n: 1, dur: 900, path: () => [0, 0, 0, 0], scale: [1, 3], ring: true, ring2: true },
+  liquid: { n: 9, dur: 1000, splash: true, scale: [1, 0.6] },
+  fire: { n: 9, dur: 1100, path: () => [r(-12, 12), 0, r(-18, 18), r(-70, -35)], scale: [1, 0.2], ease: "ease-in", flicker: true },
+  zap: { n: 6, dur: 500, radial: [30, 70], scale: [1.2, 0.6], flicker: true },
+  magic: { n: 10, dur: 1200, radial: [30, 75], scale: [0.3, 1.2], spin: true, twinkle: true },
+  zzz: { n: 4, dur: 1800, path: i => [0, 0, 20 + i * 12, -30 - i * 18], scale: [0.6, 1.4], ease: "ease-out", stagger: 220 },
+  stomp: { n: 8, dur: 900, path: () => [r(-8, 8), 6, r(-55, 55), r(-18, 4)], scale: [0.6, 1.8], ease: "ease-out", shake: true },
+  wind: { n: 5, dur: 900, path: () => [-20, r(-14, 14), r(60, 100), r(-10, 10)], scale: [1, 1], ease: "ease-in-out" },
+  wave: { n: 0, dur: 900, ring: true, ring2: true, ring3: true }
+};
+function r(a, b) { return a + Math.random() * (b - a); }
+function isSfxText(t) {
+  const letters = t.replace(/[^\p{L}]/gu, "");
+  if (!letters || t.length > 32) return false;
+  const up = letters.replace(/[^\p{Lu}]/gu, "").length / letters.length;
+  return up >= 0.7 || (t.length <= 18 && SFX_RULES.some(([, re]) => re.test(letters)));
+}
+function sfxCat(t) {
+  const w = t.replace(/[^\p{L}\s-]/gu, "").trim();
+  for (const [cat, re] of SFX_RULES) if (re.test(w)) return cat;
+  for (const part of w.split(/[\s-]+/)) for (const [cat, re] of SFX_RULES) if (re.test(part)) return cat;
+  return "wave";
+}
+function decorateSfx(root) {
+  root.querySelectorAll(".cx:not(.sfx-done)").forEach(sp => {
+    sp.classList.add("sfx-done");
+    const t = sp.textContent.trim();
+    if (!isSfxText(t)) return;
+    const cat = sfxCat(t);
+    sp.classList.add("sfx"); sp.dataset.fx = cat;
+    sp.setAttribute("role", "button"); sp.setAttribute("aria-label", t + " (sound effect)");
+    sp.insertAdjacentHTML("beforeend", `<span class="fxi fx-${cat}" aria-hidden="true">${FX_ICON[cat]}</span>`);
+  });
+}
+function burst(sp) {
+  const cat = sp.dataset.fx || "wave", M = FX_MOTION[cat] || FX_MOTION.wave;
+  sp.animate([{ transform: "scale(1)" }, { transform: "scale(1.28) rotate(-3deg)" }, { transform: "scale(1)" }], { duration: 320, easing: "ease-out" });
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const rc = sp.getBoundingClientRect(), cx = rc.left + rc.width / 2, cy = rc.top + rc.height / 2, color = getComputedStyle(sp).color;
+  if (M.shake) { const m = sp.closest(".msg"); m && m.animate([{ transform: "none" }, { transform: "translateX(-4px)" }, { transform: "translateX(4px)" }, { transform: "translateX(-2px)" }, { transform: "none" }], { duration: 300 }); }
+  const rings = [M.ring, M.ring2, M.ring3].filter(Boolean).length;
+  for (let k = 0; k < rings; k++) {
+    const ring = document.createElement("div"); ring.className = "fxring"; ring.style.color = color;
+    ring.style.left = cx - 10 + "px"; ring.style.top = cy - 10 + "px"; ring.style.width = ring.style.height = "20px";
+    document.body.appendChild(ring);
+    ring.animate([{ transform: "scale(.3)", opacity: .9 }, { transform: `scale(${cat === "boom" ? 6 : 4})`, opacity: 0 }], { duration: M.dur, delay: k * 140, easing: "ease-out", fill: "both" }).onfinish = () => ring.remove();
+  }
+  const shape = FX_PART[cat] || FX_ICON[cat] || FX_ICON.wave;
+  for (let i = 0; i < M.n; i++) {
+    const p = document.createElement("div"); p.className = "fxp"; p.style.color = color; p.innerHTML = shape;
+    const size = cat === "gas" || cat === "stomp" ? r(14, 22) : r(9, 16);
+    p.style.width = p.style.height = size + "px";
+    document.body.appendChild(p);
+    let x0 = 0, y0 = 0, x1, y1, mid = null;
+    if (M.radial) { const a = Math.random() * Math.PI * 2, d = r(M.radial[0], M.radial[1]); x1 = Math.cos(a) * d; y1 = Math.sin(a) * d; }
+    else if (M.splash) { const a = r(-Math.PI * 0.9, -Math.PI * 0.1), d = r(25, 55); mid = [Math.cos(a) * d, Math.sin(a) * d]; x1 = mid[0] * 1.5; y1 = r(25, 50); }
+    else { [x0, y0, x1, y1] = M.path(i); }
+    const rot = M.align && M.radial ? Math.atan2(y1, x1) * 180 / Math.PI : M.spin ? r(-200, 200) : 0;
+    const base = (x, y, s, o, ro) => ({ transform: `translate(${cx - size / 2 + x}px, ${cy - size / 2 + y}px) scale(${s}) rotate(${ro}deg)`, opacity: o });
+    const frames = mid
+      ? [base(0, 0, M.scale[0], 1, 0), base(mid[0], mid[1], M.scale[0], 1, 0), base(x1, y1, M.scale[1], 0, 0)]
+      : M.sway
+        ? [base(x0, y0, M.scale[0], 0, 0), base((x0 + x1) / 2 + r(-15, 15), (y0 + y1) / 2, (M.scale[0] + M.scale[1]) / 2, 1, r(-15, 15)), base(x1, y1, M.scale[1], 0, r(-20, 20))]
+        : M.twinkle
+          ? [base(x0, y0, M.scale[0], 0, 0), base(x1 * .6, y1 * .6, M.scale[1], 1, rot / 2), base(x1, y1, 0.1, 0, rot)]
+          : [base(x0, y0, M.scale[0], 1, 0), base(x1, y1, M.scale[1], 0, rot)];
+    const anim = p.animate(frames, { duration: M.dur * r(0.8, 1.2), delay: (M.stagger || 0) * i + (M.flicker ? r(0, 120) : 0), easing: M.ease || "cubic-bezier(.2,.8,.3,1)", fill: "both" });
+    if (M.flicker) p.animate([{ filter: "brightness(1)" }, { filter: "brightness(1.8)" }, { filter: "brightness(.8)" }], { duration: 120, iterations: Math.ceil(M.dur / 120) });
+    anim.onfinish = () => {
+      if (M.pop) { const ring = document.createElement("div"); ring.className = "fxring"; ring.style.color = color; const box = p.getBoundingClientRect(); ring.style.left = box.left + "px"; ring.style.top = box.top + "px"; ring.style.width = ring.style.height = box.width + "px"; document.body.appendChild(ring); ring.animate([{ transform: "scale(.6)", opacity: .8 }, { transform: "scale(1.6)", opacity: 0 }], { duration: 220 }).onfinish = () => ring.remove(); }
+      p.remove();
+    };
+  }
+}
+
 /* ---------- Boot & migrations ---------- */
+async function migrateChats() {
+  for (const k of await Store.keys()) {
+    if (!k.startsWith("chat:")) continue;
+    const [, cid, pid] = k.split(":");
+    const old = await Store.get(k);
+    if (cid && old && old.messages && byId(cid)) {
+      old.id = uid(); old.personaId = pid || S.personaId; old.created = old.created || Date.now();
+      await Store.set("c2:" + old.id, old);
+      await touchIndex(cid, old);
+    }
+    await Store.del(k);
+  }
+}
 (async () => {
   await Store.open();
   const saved = (await Store.get("settings")) || {};
@@ -1892,12 +2287,12 @@ $("btnBack").onclick = () => { if (S.busy) return; $("chat").hidden = true; $("h
   if (!S.personas.some(p => p.id === S.personaId)) S.personaId = S.personas[0].id;
   for (const c of S.chars) {
     c.kind = c.kind || "character"; c.bookIds = c.bookIds || []; c.lore = c.lore || [];
-    const old = await Store.get("chat:" + c.id);
-    if (old) { if (!(await Store.get(chatKey(c.id, "default")))) await Store.set(chatKey(c.id, "default"), old); await Store.del("chat:" + c.id); }
   }
+  await migrateChats();
   if (!S.chars.length && !(await Store.get("seeded"))) { S.chars = [sampleChar()]; await Store.set("seeded", true); }
   await saveSettings(); await saveChars(); await savePersonas();
   renderHome();
+  setTimeout(() => { $("splash").classList.add("hide"); setTimeout(() => $("splash").remove(), 700); }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 1900);
 })();
 
 </script>
