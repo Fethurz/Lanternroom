@@ -50,7 +50,7 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
 .char-card .snip{color:var(--muted);font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:4px}
 .char-card > div{min-width:0}
 .home-actions{display:flex;flex-wrap:wrap;gap:10px;padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--bg)}
-.home-actions .btn{flex:1}
+.home-actions .btn{flex:1;white-space:nowrap;padding-inline:12px}
 .ph{display:grid;place-items:center;font:400 28px var(--f-display);color:var(--accent)}
 
 /* Chat */
@@ -160,7 +160,60 @@ details.adv summary{cursor:pointer;font-weight:700;color:var(--accent);padding:1
 details.adv summary::-webkit-details-marker{display:none}
 details.adv[open] .advbody{display:flex}
 .advbody{flex-direction:column;gap:14px}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* ---- polish ---- */
+body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) fixed,var(--bg)}
+.btn{transition:transform .12s ease,background-color .2s,box-shadow .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.btn:active,.icon:active,.chip:active,.xbtn:active,.tab:active{transform:scale(.95)}
+.btn.primary{background:linear-gradient(180deg,#f2b96e,#d9944a);box-shadow:0 4px 18px -6px rgba(232,169,91,.55),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn:hover{border-color:#4d4560}
+.icon{transition:transform .12s ease,background-color .2s}
+.topbar h1{text-shadow:0 0 24px rgba(232,169,91,.25)}
+.char-card{background:linear-gradient(160deg,var(--surface) 0%,#1b1824 100%);transition:transform .15s ease,border-color .2s,box-shadow .2s}
+.char-card:active{transform:scale(.985)}
+.char-card:hover{border-color:#4d4560;box-shadow:0 8px 24px -14px rgba(0,0,0,.7)}
+.char-card img{box-shadow:0 0 0 1px rgba(255,255,255,.06),0 6px 16px -8px rgba(0,0,0,.8)}
+.avatar{box-shadow:0 0 0 3px rgba(22,19,29,.8),0 0 16px -2px var(--ring,var(--accent));border-color:var(--ring,var(--accent));transition:border-color .5s,box-shadow .5s}
+#sheet{animation:fadeIn .18s ease}
+.panel{animation:slideUp .26s cubic-bezier(.2,.9,.3,1);box-shadow:0 -20px 50px -20px rgba(0,0,0,.8)}
+.panel-head::before{content:"";position:absolute;left:50%;top:6px;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:var(--line)}
+.panel-head{position:relative}
+.msg.enter,.msg-set.enter{animation:msgIn .28s ease-out}
+.msg.user{background:linear-gradient(160deg,#43395d,#352d4a)}
+.msg.assistant{box-shadow:0 6px 18px -12px rgba(0,0,0,.8)}
+.who-l{font:700 11px/1.3 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;opacity:.9}
+.msg.user .who-l{color:#cfc4ec;text-align:right}
+.dots{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:dot 1.1s infinite ease-in-out}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+#input{transition:border-color .2s,box-shadow .2s}
+#input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,169,91,.18)}
+#send{box-shadow:0 4px 14px -4px rgba(232,169,91,.6);transition:transform .12s,opacity .2s}
+#send.busy{animation:pulse 1.2s infinite ease-in-out}
+#btnCont{color:var(--accent)}
+.chip{transition:background-color .2s,color .2s,transform .12s}
+.cx{font-weight:700}
+#msgs .msg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--surface-2);border:1px solid var(--line);color:var(--fg);padding:8px 16px;border-radius:999px;font-size:14px;z-index:20;animation:toast 1.6s ease forwards;pointer-events:none}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{min-width:36px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);color:var(--muted);font-weight:700;font-size:13px;transition:background-color .2s,color .2s,transform .12s}
+.tab.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.tab.rm{margin-left:auto;color:var(--danger)}
+.searchrow{display:flex;gap:8px;margin-bottom:10px}
+.searchrow input{flex:1;min-width:0;padding:10px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+.searchrow input:focus{outline:none;border-color:var(--accent)}
+.tagrow{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:4px}
+.tagrow:empty{display:none}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.tags span{font-size:11px;padding:1px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.xnote{font-size:13px;color:var(--accent);text-align:right}
+.xnote.err{color:var(--danger)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes dot{0%,80%,100%{transform:scale(.5);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,169,91,.5)}50%{box-shadow:0 0 0 8px rgba(232,169,91,0)}}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,8px)}12%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
@@ -173,6 +226,8 @@ details.adv[open] .advbody{display:flex}
     <div class="home-scroll">
       <button class="persona-bar" id="personaBar"></button>
       <p class="tagline" id="tagline">Your characters, with memory that holds.</p>
+      <div class="searchrow"><input id="search" type="search" placeholder="Search names or tags" autocomplete="off"><button class="btn small" id="btnTagAll" hidden>✦ Tag untagged</button></div>
+      <div class="tagrow" id="tagFilter"></div>
       <div id="charList"></div>
     </div>
     <div class="home-actions">
@@ -200,6 +255,7 @@ details.adv[open] .advbody{display:flex}
     <form id="composer" autocomplete="off">
       <button type="button" class="icon" id="btnIllustrate" aria-label="Illustrate this moment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></button>
       <textarea id="input" rows="1" placeholder="Write your reply…"></textarea>
+      <button type="button" class="icon" id="btnCont" aria-label="Continue without replying" title="Continue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6l6 6-6 6M12 6l6 6-6 6"/></svg></button>
       <button type="button" class="icon" id="send" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </form>
   </section>
@@ -245,8 +301,10 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.6 · Oct 12";
+const VERSION = "1.7 · Oct 12";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
+const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
+const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
 const KINDS = {
   character: { label: "Character", blurb: "One character you talk to." },
   world: { label: "World", blurb: "A whole setting. The AI narrates and plays everyone you meet." },
@@ -261,7 +319,9 @@ const DEFAULTS = {
   keepRecent: 16, summarizeAt: 12000, factsEvery: 4,
   imgStyle: "detailed anime illustration, painterly, soft cinematic lighting",
   imgUrl: "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true&model=flux&safe=true&enhance=false",
-  portraits: true, backgrounds: true
+  portraits: true, backgrounds: true,
+  globalInstr: "", sfxColors: true,
+  sfxRules: "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, farts, stomach gurgles and growls\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses"
 };
 const S = { settings: { ...DEFAULTS }, chars: [], personas: [], books: [], personaId: null, charId: null, chat: null, busy: false, openActs: null, nextSpeaker: "" };
 const $ = id => document.getElementById(id);
@@ -281,8 +341,15 @@ const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&l
 const fill = (s, c) => String(s || "").replace(/\{\{char\}\}/gi, c?.name || "").replace(/\{\{user\}\}/gi, uname());
 const within = (p, ms = 1500) => Promise.race([p, new Promise(r => setTimeout(r, ms))]);
 
+const stripColor = s => String(s || "").replace(/\[\/?colou?r[^\]]*\]/gi, "");
+const okColor = c => /^#[0-9a-f]{3,8}$/i.test(c) || /^[a-z]{3,24}$/i.test(c);
+// brighter versions of basic color names so they read well on the dark background
+const NAMED = { green: "#6fdc6a", darkgreen: "#4fbf5a", red: "#ff5d52", darkred: "#e0483f", blue: "#6fa8ff", darkblue: "#5b8cf0", navy: "#6f8cff", purple: "#c49bff", brown: "#c9a27e", black: "#a9a3b3", maroon: "#e0605a", olive: "#b8c25a", teal: "#4fd1c5", gray: "#b8b2c4", grey: "#b8b2c4" };
+const colorOf = c => NAMED[c.toLowerCase()] || c;
 function fmt(text) {
   let h = String(text).replace(/[&<>]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" }[c]));
+  h = h.replace(/\[colou?r=["']?([#\w]{1,24})["']?\]([\s\S]*?)\[\/colou?r\]/gi, (m, col, inner) => okColor(col) ? `<span class=cx style=color:${colorOf(col)}>${inner}</span>` : inner)
+       .replace(/\[colou?r=[^\]]*\]$|\[\/?colou?r[^\]]*\]/gi, "");
   h = h.replace(/("[^"\n]+"|“[^”\n]+”)/g, "<span class=q>$1</span>")
        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
        .replace(/\*([^*\n]+)\*/g, "<em class=act>$1</em>")
@@ -443,6 +510,21 @@ async function ds(messages, o = {}) {
   return full;
 }
 
+function parseJSONLoose(raw) {
+  if (!raw) return null;
+  const t = String(raw).trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "");
+  try { return JSON.parse(t); } catch {}
+  const a = t.indexOf("{"), b = t.lastIndexOf("}");
+  if (a >= 0 && b > a) { try { return JSON.parse(t.slice(a, b + 1)); } catch {} }
+  return null;
+}
+async function dsJSON(messages, o = {}) {
+  let j = null;
+  try { j = parseJSONLoose(await ds(messages, { ...o, json: true })); } catch (e) { if (/key|balance|reach|rate/i.test(e.message)) throw e; }
+  if (j == null) j = parseJSONLoose(await ds(messages, { ...o, json: false }));
+  if (j == null) throw new Error("The model's answer couldn't be read. Try again.");
+  return j;
+}
 const FOREIGN = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Cyrillic}\p{Script=Arabic}\p{Script=Thai}\p{Script=Devanagari}]/u;
 function garbled(text, c) {
   const words = text.split(/\s+/).filter(Boolean);
@@ -524,13 +606,13 @@ function parseLorebook(raw) {
   entries.sort((a, b) => a.order - b.order);
   return { name: (d && d.name) || "", entries };
 }
-function buildPrompt(c, chat, upto) {
+function buildPrompt(c, chat, upto, cont) {
   const st = S.settings, u = uname(), p = persona();
   const rules = `Write actions in *asterisks* and speech in quotes. Never write ${u}'s words, thoughts or actions. Keep replies vivid and focused, usually 1-4 paragraphs. Stay consistent with everything established below.`;
   let sys;
   if (c.kind === "world") {
     sys = `You are the narrator and game master of an interactive story set in the world described below. ${u} is the protagonist. Describe what ${u} sees and hears, play every other character they meet (give them names, personalities and distinct voices), and let the world react to ${u}'s choices. ${rules}\n\n# The world: ${c.name}\n${fill(c.description, c)}`;
-    if ((c.cast || []).length) sys += `\n\n# Notable characters and groups in this world\n` + c.cast.map(x => `## ${x.name} (${x.type === "group" ? "group or faction" : "character"})\n${fill(x.details, c)}`).join("\n\n");
+    if ((c.cast || []).length) sys += `\n\n# Characters, groups, species, places and concepts of this world\n` + c.cast.map(x => `## ${x.name} (${(WORLD_TYPES[x.type] || "Character").toLowerCase()})\n${fill(x.details, c)}`).join("\n\n");
   } else if (c.kind === "group") {
     const ms = members(c);
     sys = `You voice several characters in a shared scene with ${u}: ${ms.map(m => m.name).join(", ")}. Each turn, write the responses of the characters who would naturally react, usually one to three of them, and let them talk to each other as well as to ${u}. Start each character's part on a new line with their name in bold followed by a colon, like **${ms[0]?.name || "Name"}:** and keep every character true to their own personality and voice. Brief narration without a name is fine. ${rules}`;
@@ -545,6 +627,9 @@ function buildPrompt(c, chat, upto) {
   if (chat.facts.length) sys += `\n\n# Established facts (never contradict these)\n` + chat.facts.map(f => "- " + f.t).join("\n");
   const lore = activeLore(c, chat.messages.slice(0, upto));
   if (lore.length) sys += `\n\n# World notes\n` + lore.map(l => fill(l.text, c)).join("\n");
+  if (c.instructions) sys += `\n\n# Special instructions for this story\n${fill(c.instructions, c)}`;
+  if ((st.globalInstr || "").trim()) sys += `\n\n# The user's instructions for every chat (always follow)\n${fill(st.globalInstr, c)}`;
+  sys += `\n\n# Text colors\nThe app shows [color=NAME or #hex]text[/color] as colored text. Use it whenever instructions ask for colored text.` + (st.sfxColors ? `\n${st.sfxRules}` : "");
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke most" : "";
   sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location${focusPart}]]`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
@@ -561,6 +646,7 @@ function buildPrompt(c, chat, upto) {
     out.unshift({ role: m.role, content });
   }
   if (!out.length || out[0].role !== "user") out.unshift({ role: "user", content: "(The scene begins.)" });
+  if (cont) out.push({ role: "user", content: `[Continue the scene from where it left off, without waiting for ${u}. Write the next message as you think the story should go: advance the moment, have characters act or speak, but never write ${u}'s words or actions. Do not repeat earlier text.]` });
   return [{ role: "system", content: sys }, ...out];
 }
 
@@ -578,7 +664,7 @@ async function saveChat() { if (S.charId && S.chat) await within(Store.set(chatK
 async function saveSettings() { await Store.set("settings", S.settings); }
 async function savePersonas() { await Store.set("personas", S.personas); await Store.set("activePersona", S.personaId); }
 async function saveBooks() { await Store.set("books", S.books); }
-const blankChar = kind => ({ id: uid(), kind, seed: Math.floor(Math.random() * 1e6), name: "", appearance: "", description: "", scenario: "", firstMessage: "", startPlace: "", lore: [], bookIds: [], members: [], cast: [], customPortrait: "", artType: "auto" });
+const blankChar = kind => ({ id: uid(), kind, seed: Math.floor(Math.random() * 1e6), name: "", appearance: "", description: "", scenario: "", firstMessage: "", altGreetings: [], startPlace: "", instructions: "", tags: [], lore: [], bookIds: [], members: [], cast: [], customPortrait: "", artType: "auto" });
 
 function sampleChar() {
   return {
@@ -596,24 +682,75 @@ function sampleChar() {
 }
 
 /* ---------- Home ---------- */
+const FORM_TAG = { human: "human", anthro: "furry", feral: "feral" };
+function tagsOf(c) {
+  const t = new Set((c.tags || []).map(x => x.toLowerCase()));
+  if (c.kind === "world") t.add("world"); else if (c.kind === "group") t.add("group");
+  else if (c.artType && c.artType !== "auto" || c.artDetected) t.add(FORM_TAG[artOf(c)]);
+  return [...t];
+}
+const parseTags = s => [...new Set(String(s || "").split(",").map(x => x.trim().toLowerCase()).filter(Boolean))].slice(0, 20);
+async function suggestTags(c) {
+  const j = await dsJSON([
+    { role: "system", content: `You tag characters for a roleplay app's library so people can search them. Choose 4 to 10 short lowercase tags that are true of this ${KINDS[c.kind || "character"].label.toLowerCase()}. Use these where they apply:
+- gender: male, female, nonbinary, mixed genders
+- form: human, furry, feral, monster, robot, alien, demon, angel, elf, slime, dragon
+- age range (adults only): young adult, adult, middle-aged, elderly, ageless
+- genre: fantasy, sci-fi, modern, historical, horror, romance, comedy, adventure, mystery, slice of life, post-apocalyptic
+- notable themes, roles or kinks the card itself describes, e.g. vore, villain, mentor, royalty, magic
+Only tags supported by the card. Respond as JSON: {"tags": ["..."]}` },
+    { role: "user", content: cardContext(c) + (c.lore || []).slice(0, 5).map(l => `\nLore keywords: ${l.keys}`).join("") }
+  ], { temperature: 0.2, maxTokens: 200, plain: true });
+  return parseTags((j.tags || []).join(","));
+}
+const HF = { q: "", tags: new Set() };
+$("search").addEventListener("input", e => { HF.q = e.target.value.trim().toLowerCase(); renderHome(); });
+$("btnTagAll").onclick = async () => {
+  const todo = S.chars.filter(c => !(c.tags || []).length);
+  const btn = $("btnTagAll"); btn.disabled = true;
+  let done = 0;
+  for (const c of todo) {
+    btn.textContent = `Tagging ${++done}/${todo.length}…`;
+    try { c.tags = await suggestTags(c); await saveChars(); } catch (e) { $("tagline").textContent = e.message; break; }
+  }
+  btn.disabled = false; renderHome();
+};
 function renderHome() {
   $("personaBar").innerHTML = `Playing as <b>${esc(uname())}</b><span class="chg">Change</span>`;
   const list = $("charList");
   list.innerHTML = "";
+  // tag filter chips
+  const counts = {};
+  S.chars.forEach(c => tagsOf(c).forEach(t => { counts[t] = (counts[t] || 0) + 1; }));
+  const allTags = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b)).slice(0, 40);
+  for (const t of [...HF.tags]) if (!counts[t]) HF.tags.delete(t);
+  $("tagFilter").innerHTML = allTags.map(t => `<button type="button" class="chip ${HF.tags.has(t) ? "on" : ""}" data-t="${esc(t)}">${esc(t)}</button>`).join("");
+  $("tagFilter").querySelectorAll("[data-t]").forEach(b => b.onclick = () => { const t = b.dataset.t; HF.tags.has(t) ? HF.tags.delete(t) : HF.tags.add(t); renderHome(); });
+  const untagged = S.chars.filter(c => !(c.tags || []).length).length;
+  $("btnTagAll").hidden = !(untagged && hasKey());
+  if (!$("btnTagAll").disabled) $("btnTagAll").textContent = `✦ Tag ${untagged} untagged`;
+  const shown = S.chars.filter(c => {
+    const tg = tagsOf(c);
+    if ([...HF.tags].some(t => !tg.includes(t))) return false;
+    if (!HF.q) return true;
+    return c.name.toLowerCase().includes(HF.q) || tg.some(t => t.includes(HF.q));
+  });
   if (!S.chars.length) list.innerHTML = '<p class="note">Nothing here yet. Tap New to create a character, world or group, or import a character card.</p>';
-  for (const c of S.chars) {
+  else if (!shown.length) list.innerHTML = '<p class="note">Nothing matches that search.</p>';
+  for (const c of shown) {
     const b = document.createElement("button");
     b.className = "char-card";
     const url = thumbURL(c);
     const badge = c.kind === "world" ? '<span class="badge">World</span>' : c.kind === "group" ? `<span class="badge">Group · ${members(c).length}</span>` : "";
     const sub = c.kind === "group" ? members(c).map(m => m.name).join(", ") : (c.description || "");
-    b.innerHTML = `<img alt="" loading="lazy"><div><div class="name">${esc(c.name)}${badge}</div><div class="snip" data-snip="${c.id}">${esc(sub.slice(0, 140))}</div></div>`;
+    const tg = tagsOf(c).filter(t => t !== "world" && t !== "group").slice(0, 5);
+    b.innerHTML = `<img alt="" loading="lazy"><div><div class="name">${esc(c.name)}${badge}</div><div class="snip" data-snip="${c.id}">${esc(stripColor(sub).slice(0, 140))}</div>${tg.length ? `<div class="tags">${tg.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}</div>`;
     setImg(b.querySelector("img"), url, c);
     b.onclick = () => openChat(c.id);
     list.appendChild(b);
     Store.get(chatKey(c.id)).then(ch => {
       const last = ch?.messages?.filter(m => m.role !== "image").pop();
-      if (last) { const el = list.querySelector(`[data-snip="${c.id}"]`); if (el) el.textContent = (last.role === "user" ? uname() + ": " : "") + last.content.replace(/\*/g, "").slice(0, 140); }
+      if (last) { const el = list.querySelector(`[data-snip="${c.id}"]`); if (el) el.textContent = (last.role === "user" ? uname() + ": " : "") + stripColor(last.content).replace(/\*/g, "").slice(0, 140); }
     });
   }
   $("tagline").textContent = hasKey() ? "Your characters, with memory that holds." : "Start by adding your API key in Settings.";
@@ -639,6 +776,7 @@ async function openChat(id) {
   await saveChat();
   $("home").hidden = true; $("chat").hidden = false;
   $("chatName").textContent = c.name;
+  S.seen = new Set(S.chat.messages.map(m => m.id));
   updateStage(); renderMsgs(); renderSpeakers(); setStatus("");
   const need = c.kind === "group" ? members(c) : [c];
   (async () => {
@@ -647,9 +785,11 @@ async function openChat(id) {
     if (changed) { await saveChars(); if (S.charId === c.id) { updateStage(); renderMsgs(true); } }
   })();
 }
+const MOOD_COLOR = { neutral: "#e8a95b", happy: "#f5d06b", sad: "#7aa2e8", angry: "#e2766f", surprised: "#f0a3e0", flirty: "#ff8fb1", scared: "#9fd3c7", thoughtful: "#b49cf0", embarrassed: "#f29a8a" };
 function updateStage() {
   const c = char(), ch = S.chat;
   setImg($("avatar"), avatarFor(c, ch), c);
+  $("avatar").style.setProperty("--ring", MOOD_COLOR[ch.mood] || "var(--accent)");
   const chip = c.kind === "world" ? "world" : c.kind === "group" ? `${ch.focus || members(c)[0]?.name || ""} · ${ch.mood || "neutral"}` : (ch.mood || "neutral");
   $("chatPlace").innerHTML = `<span class="mood-chip">${esc(chip)}</span>${esc(ch.place || "")}`;
   const sc = $("scene");
@@ -702,6 +842,7 @@ function renderMsgs(keepScroll) {
       const im = d.querySelector("img"); im.src = m.url;
       im.onerror = () => { d.querySelector(".cap").textContent = "The image failed to load. Tap and choose Redraw."; };
     } else if (m.role === "assistant" && c.kind === "group") {
+      // speaker headers act as labels
       d.className = "msg-set";
       for (const seg of splitSpeakers(m.content)) {
         const b = document.createElement("div"); b.className = "msg assistant";
@@ -710,13 +851,16 @@ function renderMsgs(keepScroll) {
           b.innerHTML = `<div class="spk"><img alt=""><span>${esc(mm?.name || seg.who)}</span></div>`;
           setImg(b.querySelector("img"), mm ? portraitURL(mm, m.focus && mm.name === m.focus ? m.mood : "neutral") : "", mm || { name: seg.who });
         }
+        if (!seg.who) b.innerHTML = `<div class="who-l">${esc(c.name)}</div>`;
         b.insertAdjacentHTML("beforeend", fmt(seg.text));
         d.appendChild(b); tail = b;
       }
     } else {
       d.className = "msg " + m.role;
-      d.innerHTML = fmt(m.content);
+      const label = m.role === "user" ? uname() : c.kind === "world" ? `${c.name} · Narrator` : c.name;
+      d.innerHTML = `<div class="who-l">${esc(label)}</div>` + fmt(m.content);
     }
+    if (S.seen && !S.seen.has(m.id)) { d.classList.add("enter"); S.seen.add(m.id); }
     if (m.role === "assistant" && i === lastAsst && (m.alts?.length > 1 || i === msgs.length - 1)) {
       const sw = document.createElement("div"); sw.className = "swipe";
       const n = m.alts?.length || 1, a = (m.alt || 0) + 1;
@@ -738,7 +882,29 @@ function renderMsgs(keepScroll) {
   if (!keepScroll || atBottom) box.scrollTop = box.scrollHeight;
 }
 
+let pressT = null, pressXY = null, suppressClick = false;
+function toast(t) { const el = document.createElement("div"); el.className = "toast"; el.textContent = t; document.body.appendChild(el); setTimeout(() => el.remove(), 1700); }
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); return true; } catch {}
+  try { const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); const ok = document.execCommand("copy"); ta.remove(); return ok; } catch { return false; }
+}
+$("msgs").addEventListener("pointerdown", e => {
+  const d = e.target.closest("[data-i]"); if (!d || e.target.closest("button")) return;
+  pressXY = [e.clientX, e.clientY];
+  clearTimeout(pressT);
+  pressT = setTimeout(async () => {
+    const m = S.chat.messages[+d.dataset.i]; if (!m) return;
+    suppressClick = true;
+    const ok = await copyText(m.role === "image" ? (m.url || "") : stripColor(m.content));
+    try { navigator.vibrate?.(12); } catch {}
+    toast(ok ? (m.role === "image" ? "Image link copied" : "Message copied") : "Couldn't copy on this device");
+  }, 520);
+});
+for (const ev of ["pointerup", "pointercancel", "pointerleave"]) $("msgs").addEventListener(ev, () => clearTimeout(pressT));
+$("msgs").addEventListener("pointermove", e => { if (pressXY && Math.hypot(e.clientX - pressXY[0], e.clientY - pressXY[1]) > 10) clearTimeout(pressT); });
+$("msgs").addEventListener("contextmenu", e => { if (e.target.closest("[data-i]")) e.preventDefault(); });
 $("msgs").addEventListener("click", async e => {
+  if (suppressClick) { suppressClick = false; return; }
   const d = e.target.closest("[data-i]"); if (!d) return;
   const i = +d.dataset.i, m = S.chat.messages[i];
   const act = e.target.closest("[data-act]")?.dataset.act;
@@ -762,7 +928,14 @@ $("send").addEventListener("click", e => { e.preventDefault(); send(); });
 $("input").addEventListener("input", autoGrow);
 $("input").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && matchMedia("(pointer:fine)").matches) { e.preventDefault(); send(); } });
 function autoGrow() { const t = $("input"); t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, 140) + "px"; }
-function setBusy(b) { S.busy = b; $("send").disabled = b; $("btnIllustrate").disabled = b; }
+function setBusy(b) { S.busy = b; $("send").disabled = b; $("btnIllustrate").disabled = b; $("btnCont").disabled = b; $("send").classList.toggle("busy", b); }
+$("btnCont").onclick = async () => {
+  if (S.busy || !S.chat) return;
+  const t = $("input").value.trim();
+  if (t) { await send(); return; }
+  S.openActs = null;
+  try { await generate(S.chat.messages.length, null, true); } catch (e) { setBusy(false); setStatus(e.message, true); }
+};
 
 async function send() {
   try { await sendInner(); } catch (e) { setBusy(false); setStatus("Something went wrong: " + e.message, true); }
@@ -776,8 +949,8 @@ async function sendInner() {
   await saveChat(); renderMsgs();
   await generate(S.chat.messages.length, null);
 }
-async function reroll(i) { S.openActs = null; await generate(i, S.chat.messages[i]); }
-async function generate(upto, existing) {
+async function reroll(i) { S.openActs = null; await generate(i, S.chat.messages[i], !!S.chat.messages[i].cont); }
+async function generate(upto, existing, cont) {
   const c = char(), chat = S.chat;
   setBusy(true); setStatus("");
   let bubble;
@@ -785,19 +958,19 @@ async function generate(upto, existing) {
   else { bubble = document.createElement("div"); bubble.className = "msg assistant typing"; $("msgs").appendChild(bubble); }
   if (bubble.classList.contains("msg-set")) { bubble.className = "msg assistant"; }
   const who = c.kind === "world" ? "The narrator" : c.kind === "group" ? (S.nextSpeaker || "The group") : c.name;
-  bubble.innerHTML = `${esc(who)} is writing…`; bubble.classList.add("typing");
+  bubble.innerHTML = `${esc(who)} is writing<span class="dots"><i></i><i></i><i></i></span>`; bubble.classList.add("typing");
   const box = $("msgs"); box.scrollTop = box.scrollHeight;
   try {
     let p;
     for (let attempt = 0; attempt < 2; attempt++) {
-      const raw = await ds(buildPrompt(c, chat, upto), {
+      const raw = await ds(buildPrompt(c, chat, upto, cont), {
         thinking: S.settings.thinking,
         temperature: attempt ? Math.min(S.settings.temperature, 0.7) : undefined,
-        onThinking: () => { bubble.innerHTML = `${esc(who)} is thinking…`; },
+        onThinking: () => { bubble.innerHTML = `${esc(who)} is thinking<span class="dots"><i></i><i></i><i></i></span>`; },
         onDelta: full => { bubble.classList.remove("typing"); bubble.innerHTML = fmt(full.split("[[")[0]); if (box.scrollHeight - box.scrollTop - box.clientHeight < 140) box.scrollTop = box.scrollHeight; }
       });
       p = parseTag(raw);
-      if (!garbled(p.text, c)) break;
+      if (!garbled(stripColor(p.text), c)) break;
       if (attempt === 0) { bubble.classList.add("typing"); bubble.innerHTML = "That reply came out garbled. Trying again more carefully…"; }
       else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
@@ -810,7 +983,7 @@ async function generate(upto, existing) {
       existing.altMeta[existing.alt] = meta;
       existing.content = p.text; Object.assign(existing, meta);
     } else {
-      chat.messages.push({ id: uid(), role: "assistant", content: p.text, alts: [p.text], alt: 0, altMeta: [meta], ...meta });
+      chat.messages.push({ id: uid(), role: "assistant", content: p.text, alts: [p.text], alt: 0, altMeta: [meta], ...meta, ...(cont ? { cont: true } : {}) });
     }
     chat.mood = meta.mood; if (p.place) chat.place = p.place; if (meta.focus) chat.focus = meta.focus;
     S.nextSpeaker = ""; renderSpeakers();
@@ -913,7 +1086,7 @@ const EXPAND = {
   world: ["the world or setting: geography, history, cultures, factions, technology or magic, daily life, tone and themes", "250-450"],
   groupdesc: ["how this group of characters fits together: how they know each other, their dynamics, shared history and tensions", "120-250"],
   lore: ["a lorebook entry: a self-contained reference note the AI consults when its keywords come up", "60-150"],
-  cast: ["one notable character or faction in this world: who they are, appearance, personality, role and goals", "80-180"],
+  cast: ["one listing in this world (a character, faction, species, location or concept, as named in the context): its key details, appearance or nature, role in the world, and how it works or what it wants", "80-200"],
   persona: ["the user's own character (persona): name-appropriate appearance, personality and background", "100-220"]
 };
 async function expandText(kind, draft, ctx) {
@@ -955,20 +1128,67 @@ function cardContext(w) {
   if (w.description) parts.push(`Description: ${w.description.slice(0, 1500)}`);
   if (w.scenario) parts.push(`Scenario: ${w.scenario.slice(0, 800)}`);
   if (w.kind === "group") parts.push("Members:\n" + (w.members || []).map(byId).filter(Boolean).map(m => `- ${m.name}: ${(m.description || "").slice(0, 300)}`).join("\n"));
-  if (w.kind === "world" && (w.cast || []).length) parts.push("Cast: " + w.cast.map(x => x.name).join(", "));
+  if (w.kind === "world" && (w.cast || []).length) parts.push("World listings: " + w.cast.map(x => `${x.name} (${(WORLD_TYPES[x.type] || "Character").toLowerCase()})`).join(", "));
+  if ((w.tags || []).length) parts.push("Tags: " + w.tags.join(", "));
   parts.push(`User's persona: ${uname()}${persona().description ? " — " + persona().description.slice(0, 300) : ""}`);
   return parts.join("\n");
 }
+function findLoose(text, needle, from) {
+  const words = needle.replace(/[“”]/g, '"').replace(/[‘’]/g, "'").split(/\s+/).filter(Boolean).slice(0, 12);
+  if (!words.length) return -1;
+  const pat = words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/"/g, '["“”]').replace(/'/g, "['‘’]")).join("\\s+");
+  for (let n = words.length; n >= Math.min(3, words.length); n--) {
+    const re = new RegExp(pat.split("\\s+").slice(0, n).join("\\s+"), "gi");
+    re.lastIndex = from; let m = re.exec(text);
+    if (!m && from) { re.lastIndex = 0; m = re.exec(text); }
+    if (m) return m.index;
+  }
+  // fuzzy fallback: compare letters and digits only
+  const map = [], chars = [];
+  let sp = true;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i].toLowerCase();
+    if (/[\p{L}\p{N}]/u.test(ch)) { chars.push(ch); map.push(i); sp = false; }
+    else if (!sp) { chars.push(" "); map.push(i); sp = true; }
+  }
+  const hay = chars.join("");
+  const nw = needle.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim().split(" ").filter(Boolean);
+  for (let n = Math.min(nw.length, 10); n >= Math.min(3, nw.length); n--) {
+    const q = nw.slice(0, n).join(" ");
+    let k = hay.indexOf(q, Math.max(0, map.findIndex(x => x >= from)));
+    if (k < 0) k = hay.indexOf(q);
+    if (k >= 0 && (k === 0 || hay[k - 1] === " ")) return map[k];
+  }
+  return -1;
+}
 async function splitListings(text, kind, w) {
   const forGroup = kind === "group";
-  const out = await ds([
-    { role: "system", content: `You organize text for an interactive fiction app. The user pasted text for a ${forGroup ? "group of characters" : "world/setting"} that mixes several ${forGroup ? "characters" : "characters and groups/factions"} together. Pull each distinct ${forGroup ? "character" : "named character or group/faction"} out into its own listing. Keep all of the user's details, moved into the right listing, with no invented facts. Put whatever is not about one specific ${forGroup ? "character" : "character or group"} (the shared setup, relationships, setting) into "remaining".
-Respond as JSON: {"remaining": "...", "entries": [{"name": "...", ${forGroup ? '"appearance": "physical description only, if given", "details": "personality, background and everything else about them"' : '"type": "character" or "group", "details": "everything about them"'}}]}
-If there is only one or zero ${forGroup ? "characters" : "characters or groups"}, still return the JSON with what you found.` },
-    { role: "user", content: `${forGroup ? "Group" : "World"} name: ${w.name || "(unnamed)"}\n\nText:\n${text}` }
-  ], { temperature: 0.2, maxTokens: 4000, json: true, plain: true });
-  const j = JSON.parse(out);
-  return { remaining: String(j.remaining || "").trim(), entries: (Array.isArray(j.entries) ? j.entries : []).filter(e => e && e.name) };
+  const types = forGroup ? '"character"' : '"character", "group" (faction, organization, family, guild), "species" (a race or kind of creature), "location" (city, region, building, landmark), "concept" (magic system, economy, technology, religion, law, history, setting rule)';
+  const j = await dsJSON([
+    { role: "system", content: `You divide text for an interactive fiction app. The text describes a ${forGroup ? "group of characters" : "world"} and mixes several separate subjects together. Break it into consecutive parts, in order. Each part is either one distinct subject with its own description (allowed types: ${types}) or "general" for text that is not about one specific subject.
+For every part give its name, its type, and "start": the EXACT first 6 to 10 words where that part begins, copied character for character from the text. A part runs until the next part starts, so together the parts must cover the whole text.
+Respond as JSON: {"parts": [{"name": "...", "type": "...", "start": "..."}]}` },
+    { role: "user", content: text }
+  ], { temperature: 0.1, maxTokens: 2000, plain: true });
+  const parts = Array.isArray(j.parts) ? j.parts : Array.isArray(j.entries) ? j.entries : [];
+  const locs = []; let from = 0;
+  for (const p of parts) {
+    const st = String(p.start || "").trim(); if (!st) continue;
+    const idx = findLoose(text, st, from); if (idx < 0) continue;
+    if (locs.some(l => l.idx === idx)) continue;
+    locs.push({ name: String(p.name || "").trim(), type: String(p.type || "general").toLowerCase(), idx }); from = idx + 1;
+  }
+  locs.sort((a, b) => a.idx - b.idx);
+  if (!locs.length) return { remaining: text, entries: [], tried: parts.length };
+  const remaining = [text.slice(0, locs[0].idx)], entries = [];
+  locs.forEach((p, i) => {
+    const seg = text.slice(p.idx, i + 1 < locs.length ? locs[i + 1].idx : text.length).trim();
+    const valid = forGroup ? p.type === "character" : WORLD_TYPES[p.type];
+    if (!valid || !p.name || p.type === "general") { remaining.push(seg); return; }
+    const same = entries.find(e => e.name.toLowerCase() === p.name.toLowerCase());
+    if (same) same.details += "\n\n" + seg; else entries.push({ name: p.name, type: p.type, details: seg });
+  });
+  return { remaining: remaining.map(x => x.trim()).filter(Boolean).join("\n\n"), entries, tried: parts.length };
 }
 
 /* ---------- Lore editor (shared by characters and lorebooks) ---------- */
@@ -1038,6 +1258,12 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
     <div class="group"><h3>You</h3>
       <button class="btn" id="sPersonas">Manage personas (playing as ${esc(uname())})</button>
     </div>
+    <div class="group"><h3>All chats</h3>
+      ${field("Instructions for every chat", `<textarea id="sGlobal" style="min-height:100px" placeholder="e.g. Write in third person. Keep replies under 4 paragraphs. Describe smells and sounds.">${esc(st.globalInstr || "")}</textarea>`, "Applied to every character, world and group. Colored text works with [color=red]text[/color].")}
+      <label class="check"><input type="checkbox" id="sSfx" ${st.sfxColors ? "checked" : ""}> Colored sound effects</label>
+      ${field("Sound effect colors", `<textarea id="sSfxRules" style="min-height:120px">${esc(st.sfxRules || "")}</textarea>`, "Edit freely. Any color name or #hex code works.")}
+      <button class="btn small" type="button" id="sSfxReset">Restore default colors</button>
+    </div>
     <div class="group"><h3>Visuals</h3>
       <label class="check"><input type="checkbox" id="sPort" ${st.portraits ? "checked" : ""}> Generated portraits that change with mood</label>
       <label class="check"><input type="checkbox" id="sBg" ${st.backgrounds ? "checked" : ""}> Scene backgrounds that follow the location</label>
@@ -1067,6 +1293,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   $("sProv").onchange = drawn; $("sThink").onchange = drawn;
   drawn();
   $("sPersonas").onclick = () => openPersonas();
+  $("sSfxReset").onclick = () => { $("sSfxRules").value = DEFAULTS.sfxRules; };
   $("sReset").onclick = () => {
     const d = DEFAULTS, map = { sTemp: d.temperature, sMax: d.maxTokens, sCtx: d.contextTokens, sTopK: d.topK, sTopP: d.topP, sRep: d.repPenalty, sFreq: d.freqPenalty };
     for (const [id, v] of Object.entries(map)) { $(id).value = v; $(id + "V").textContent = fmts[id](v); }
@@ -1082,7 +1309,8 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       topK: n("sTopK", 0), topP: n("sTopP", 0), repPenalty: n("sRep", 0), freqPenalty: n("sFreq", 0),
       portraits: $("sPort").checked, backgrounds: $("sBg").checked,
       imgStyle: $("sStyle").value.trim() || DEFAULTS.imgStyle, imgUrl: $("sImg").value.trim() || DEFAULTS.imgUrl,
-      keepRecent: n("sKeep", 16), factsEvery: n("sFacts", 4), summarizeAt: n("sSum", 12000)
+      keepRecent: n("sKeep", 16), factsEvery: n("sFacts", 4), summarizeAt: n("sSum", 12000),
+      globalInstr: $("sGlobal").value.trim(), sfxColors: $("sSfx").checked, sfxRules: $("sSfxRules").value.trim() || DEFAULTS.sfxRules
     });
     await saveSettings(); closeSheet();
     if (!$("chat").hidden) updateStage(); else renderHome();
@@ -1264,10 +1492,11 @@ function editChar(c, isNew) {
       ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px">${esc(work.firstMessage)}</textarea>`)}`;
     } else if (K === "world") {
       main = `
-      ${field("World description", `<textarea id="cDesc" data-x="world" style="min-height:180px" placeholder="Geography, history, cultures, factions, magic or technology, tone…">${esc(work.description)}</textarea>${splitRow}`, "Pasted a lot of characters or factions in here? Split into listings moves each into its own entry below.")}
-      <div class="group"><h3>People & factions</h3>
+      ${field("World description", `<textarea id="cDesc" data-x="world" style="min-height:180px" placeholder="Geography, history, cultures, factions, magic or technology, tone…">${esc(work.description)}</textarea>${splitRow}`, "Pasted characters, factions, species, places or rules in here? Split into listings moves each into its own listing below.")}
+      <div class="group"><h3>World listings</h3>
+        <p class="hint" style="margin:0;color:var(--muted);font-size:13px">Characters, factions, species, locations and concepts (magic, economies, setting rules).</p>
         <div id="cCast" class="stack"></div>
-        <button class="btn" type="button" id="cAddCast">Add a character or faction</button>
+        <div class="row">${Object.entries(WORLD_TYPES).map(([k, v]) => `<button class="btn small" type="button" data-addcast="${k}">+ ${v.split(" /")[0]}</button>`).join("")}</div>
       </div>
       ${field("Opening situation", `<textarea id="cScen" data-x="scenario">${esc(work.scenario)}</textarea>${splitRow}`, "Who {{user}} is in this world and where the story begins.")}
       ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px" placeholder="The narrator's opening">${esc(work.firstMessage)}</textarea>`)}`;
@@ -1282,7 +1511,9 @@ function editChar(c, isNew) {
     }
     b.innerHTML = `
       ${field("Name", `<input id="cName" value="${esc(work.name)}" placeholder="${KINDS[K].label} name">`)}
+      ${field("Tags", `<input id="cTags" value="${esc((work.tags || []).join(", "))}" placeholder="e.g. female, furry, fantasy"><div class="xrow"><button type="button" class="xbtn" id="cTagGen">✦ Suggest tags</button></div>`, "Comma separated. Used for searching and filtering on the home screen.")}
       ${main}
+      ${field("Special instructions", `<textarea id="cInstr" style="min-height:70px" placeholder="Optional rules for this ${KINDS[K].label.toLowerCase()} only, e.g. write ${K === "group" ? "Mira's" : "their"} thoughts in [color=violet]purple[/color]">${esc(work.instructions || "")}</textarea>`, "Always followed in this chat. Colored text works anywhere with [color=red]text[/color].")}
       ${field("Starting location", `<input id="cPlace" value="${esc(work.startPlace || "")}" placeholder="e.g. rainy tavern, candlelit">`)}
       <div class="group"><h3>Lorebook</h3>
         <p class="note">Entries load into the AI's memory only when one of their keywords comes up.</p>
@@ -1304,12 +1535,16 @@ function editChar(c, isNew) {
       <button class="btn primary" id="cSave">${isNew ? "Create " + KINDS[K].label.toLowerCase() : "Save changes"}</button>
       ${isNew ? "" : `<button class="btn danger" id="cDel">Delete ${KINDS[K].label.toLowerCase()}</button>`}`;
 
+    const greets = [work.firstMessage || "", ...(work.altGreetings || [])];
+    let gi = 0;
     const grab = () => {
       if ($("cArt")) work.artType = $("cArt").value;
       work.name = $("cName").value.trim();
       if ($("cLook")) work.appearance = $("cLook").value.trim();
       work.description = $("cDesc").value.trim(); work.scenario = $("cScen").value.trim();
-      work.firstMessage = $("cFirst").value.trim(); work.startPlace = $("cPlace").value.trim();
+      greets[gi] = $("cFirst").value; work.firstMessage = (greets[0] || "").trim(); work.altGreetings = greets.slice(1);
+      work.startPlace = $("cPlace").value.trim();
+      work.tags = parseTags($("cTags").value); work.instructions = $("cInstr").value.trim();
       if ($("cVis")) {
         const v = $("cVis").value.trim();
         if (v !== (work.visual || "")) { work.visual = v; work.visualManual = !!v; work.visualSrc = cardSig(work); }
@@ -1317,23 +1552,36 @@ function editChar(c, isNew) {
     };
     const ctx = () => { grab(); return cardContext(work); };
     wireExpand(b, ctx);
-    work.altGreetings = work.altGreetings || [];
-    $("cFirst").closest(".field").insertAdjacentHTML("afterend", `<div class="stack" id="cAlts"></div><div class="row"><button class="btn small" type="button" id="cAddAlt">Add another first message</button></div><p class="hint" style="margin:-8px 0 0;color:var(--muted);font-size:13px">With more than one, a new chat lets you swipe ‹ › between them before you reply.</p>`);
-    const drawAlts = () => {
-      const box = $("cAlts"); box.innerHTML = "";
-      work.altGreetings.forEach((g, i) => {
-        const d = document.createElement("div"); d.className = "field";
-        d.innerHTML = `<label>First message ${i + 2}</label><textarea data-x="first" style="min-height:110px">${esc(g)}</textarea><div class="xrow"><button type="button" class="btn small danger" data-rm>Remove</button></div>`;
-        const ta = d.querySelector("textarea");
-        ta.addEventListener("input", () => { work.altGreetings[i] = ta.value; });
-        d.querySelector("[data-rm]").onclick = () => { work.altGreetings.splice(i, 1); drawAlts(); };
-        box.appendChild(d);
-        wireExpand(d, () => ctx() + "\nThis is an alternate opening: make it a clearly different starting moment from the main first message.");
-      });
-    };
-    drawAlts();
-    $("cAddAlt").onclick = () => { work.altGreetings.push(""); drawAlts(); };
+    {
+      const ta = $("cFirst"), fl = ta.closest(".field");
+      fl.querySelector("label").textContent = "Opening messages";
+      fl.querySelector("label").insertAdjacentHTML("afterend", `<div class="tabs" id="cTabs"></div>`);
+      fl.insertAdjacentHTML("beforeend", `<div class="hint">Tap + to add another opening. New chats let you swipe between them.</div>`);
+      const swap = i => { greets[gi] = ta.value; gi = i; ta.value = greets[gi] || ""; ta.dispatchEvent(new Event("input")); drawTabs(); };
+      const drawTabs = () => {
+        const box = $("cTabs");
+        box.innerHTML = greets.map((g, i) => `<button type="button" class="tab ${i === gi ? "on" : ""}" data-t="${i}" aria-label="Opening ${i + 1}">${i + 1}</button>`).join("")
+          + `<button type="button" class="tab" data-t="add" aria-label="Add an opening">+</button>`
+          + (greets.length > 1 ? `<button type="button" class="tab rm" data-t="rm">Remove #${gi + 1}</button>` : "");
+        box.querySelectorAll("[data-t]").forEach(x => x.onclick = () => {
+          const t = x.dataset.t;
+          if (t === "add") { greets[gi] = ta.value; greets.push(""); swap(greets.length - 1); ta.focus(); }
+          else if (t === "rm") { greets.splice(gi, 1); gi = Math.max(0, gi - 1); ta.value = greets[gi] || ""; ta.dispatchEvent(new Event("input")); drawTabs(); }
+          else swap(+t);
+        });
+      };
+      ta.addEventListener("input", () => { greets[gi] = ta.value; });
+      drawTabs();
+    }
 
+    $("cTagGen").onclick = async () => {
+      const b2 = $("cTagGen"); grab();
+      if (!hasKey()) { b2.textContent = "Add your API key in Settings first"; return; }
+      b2.disabled = true; b2.textContent = "Thinking…";
+      try { const t = await suggestTags(work); $("cTags").value = [...new Set([...(work.tags || []), ...t])].join(", "); b2.textContent = "✦ Suggest tags"; }
+      catch (e) { b2.textContent = e.message; }
+      finally { b2.disabled = false; }
+    };
     const redrawLore = loreEditor($("cLore"), work.lore, ctx);
     $("cAddLore").onclick = () => { work.lore.push({ keys: "", text: "" }); redrawLore(); };
     const drawBooks = () => {
@@ -1356,7 +1604,8 @@ function editChar(c, isNew) {
         box.innerHTML = work.cast.length ? "" : '<p class="note">No listings yet. Add them here, or paste them into the description and tap Split into listings.</p>';
         work.cast.forEach((x, i) => {
           const d = document.createElement("div"); d.className = "cast";
-          d.innerHTML = `<div class="row"><input data-k="name" placeholder="Name" value="${esc(x.name)}" style="flex:2;padding:10px 12px;border-radius:10px;border:1px solid var(--line)"><select data-k="type" style="flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--line)"><option value="character" ${x.type !== "group" ? "selected" : ""}>Character</option><option value="group" ${x.type === "group" ? "selected" : ""}>Group / faction</option></select></div><textarea data-k="details" data-x="cast" style="min-height:90px;padding:10px 12px;border-radius:10px;border:1px solid var(--line)" placeholder="Who they are, what they look like, what they want">${esc(x.details)}</textarea><div class="xrow"><button type="button" class="btn small danger" data-rm>Remove</button></div>`;
+          const ty = WORLD_TYPES[x.type] ? x.type : "character";
+          d.innerHTML = `<div class="row"><input data-k="name" placeholder="Name" value="${esc(x.name)}" style="flex:2;padding:10px 12px;border-radius:10px;border:1px solid var(--line)"><select data-k="type" style="flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--line)">${Object.entries(WORLD_TYPES).map(([k, v]) => `<option value="${k}" ${ty === k ? "selected" : ""}>${v}</option>`).join("")}</select></div><textarea data-k="details" data-x="cast" style="min-height:90px;padding:10px 12px;border-radius:10px;border:1px solid var(--line)" placeholder="${WORLD_HINTS[ty]}">${esc(x.details)}</textarea><div class="xrow"><button type="button" class="btn small danger" data-rm>Remove</button></div>`;
           d.querySelectorAll("[data-k]").forEach(el => el.addEventListener(el.tagName === "SELECT" ? "change" : "input", () => { x[el.dataset.k] = el.value; }));
           d.querySelector("[data-rm]").onclick = () => { work.cast.splice(i, 1); drawCast(); };
           box.appendChild(d);
@@ -1364,7 +1613,7 @@ function editChar(c, isNew) {
         });
       };
       drawCast();
-      $("cAddCast").onclick = () => { work.cast.push({ name: "", type: "character", details: "" }); drawCast(); };
+      b.querySelectorAll("[data-addcast]").forEach(x => x.onclick = () => { work.cast.push({ name: "", type: x.dataset.addcast, details: "" }); drawCast(); $("cCast").lastElementChild?.querySelector("input")?.focus(); });
     }
 
     // Group members
@@ -1388,6 +1637,8 @@ function editChar(c, isNew) {
     // Split into listings
     b.querySelectorAll("[data-split]").forEach(btn => {
       const ta = btn.closest(".field").querySelector("textarea");
+      const note = document.createElement("div"); note.className = "xnote"; btn.parentElement.after(note);
+      const say = (t, err) => { note.textContent = t; note.classList.toggle("err", !!err); };
       let undo = null;
       ta.addEventListener("input", () => { if (undo) { undo = null; btn.textContent = "⇆ Split into listings"; } });
       btn.onclick = async () => {
@@ -1395,34 +1646,34 @@ function editChar(c, isNew) {
           ta.value = undo.text; ta.dispatchEvent(new Event("input"));
           if (K === "world") { work.cast.splice(work.cast.length - undo.added, undo.added); drawCast(); }
           else { work.members = work.members.filter(id => !undo.created.includes(id)); S.chars = S.chars.filter(x => !undo.created.includes(x.id)); await saveChars(); drawMembers(); }
-          undo = null; btn.textContent = "⇆ Split into listings"; $("cMsg").textContent = "Split undone."; return;
+          undo = null; btn.textContent = "⇆ Split into listings"; say("Split undone."); return;
         }
-        if (!ta.value.trim()) { $("cMsg").textContent = "Paste or write some text in that box first."; return; }
-        if (!hasKey()) { $("cMsg").textContent = "Add your API key in Settings first."; return; }
+        if (!ta.value.trim()) { say("Paste or write some text in that box first.", true); return; }
+        if (!hasKey()) { say("Add your API key in Settings first.", true); return; }
         grab();
-        btn.disabled = true; btn.textContent = "Sorting…";
+        btn.disabled = true; btn.textContent = "Sorting…"; say("Reading the text…");
         try {
           const prev = ta.value;
           const r = await splitListings(prev, K, work);
-          if (!r.entries.length) { $("cMsg").textContent = "No separate characters or factions found in that text."; btn.textContent = "⇆ Split into listings"; return; }
+          if (!r.entries.length) { say(r.tried ? "The AI's split didn't line up with your text. Try again." : `No separate ${K === "world" ? "listings" : "characters"} found in that text.`, true); btn.textContent = "⇆ Split into listings"; return; }
           ta.value = r.remaining; ta.dispatchEvent(new Event("input"));
           if (K === "world") {
-            for (const e of r.entries) work.cast.push({ name: String(e.name).trim(), type: e.type === "group" ? "group" : "character", details: String(e.details || "").trim() });
+            for (const e of r.entries) work.cast.push({ name: e.name, type: WORLD_TYPES[e.type] ? e.type : "character", details: e.details });
             drawCast();
             undo = { text: prev, added: r.entries.length };
-            $("cMsg").textContent = `Moved ${r.entries.length} listing${r.entries.length === 1 ? "" : "s"} into People & factions.`;
+            say(`Moved ${r.entries.length} listing${r.entries.length === 1 ? "" : "s"} into World listings: ${r.entries.map(e => e.name).join(", ")}.`);
           } else {
             const created = [];
             for (const e of r.entries) {
-              const nc = { ...blankChar("character"), name: String(e.name).trim(), appearance: String(e.appearance || "").trim(), description: String(e.details || "").trim() };
+              const nc = { ...blankChar("character"), name: e.name, description: e.details };
               S.chars.push(nc); created.push(nc.id); work.members.push(nc.id);
             }
             await saveChars(); drawMembers();
             undo = { text: prev, created };
-            $("cMsg").textContent = `Created ${created.length} character${created.length === 1 ? "" : "s"} and added them to the group. You can edit each from the home screen.`;
+            say(`Created ${created.map(id => byId(id).name).join(", ")} and added them to the group. Edit each from the home screen.`);
           }
           btn.textContent = "↶ Undo split";
-        } catch (e) { $("cMsg").textContent = e.message.startsWith("Unexpected") ? "The model's answer couldn't be read. Try again." : e.message; btn.textContent = "⇆ Split into listings"; }
+        } catch (e) { say(e.message, true); btn.textContent = "⇆ Split into listings"; }
         finally { btn.disabled = false; }
       };
     });
