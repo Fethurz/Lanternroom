@@ -473,9 +473,55 @@ function loreSources(c) {
   for (const b of S.books) if (ids.has(b.id)) out.push(...(b.entries || []));
   return out;
 }
+const splitKeys = s => String(s || "").split(",").map(k => k.trim()).filter(Boolean);
+function keyHit(text, key, whole, cs) {
+  const t = cs ? text : text.toLowerCase(), k = cs ? key : key.toLowerCase();
+  if (!whole) return t.includes(k);
+  const re = new RegExp(`(^|[^\\p{L}\\p{N}_])${k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=$|[^\\p{L}\\p{N}_])`, "u");
+  return re.test(t);
+}
+function loreActive(l, recent) {
+  if (!l.text || l.enabled === false) return false;
+  if (l.constant) return true;
+  const hit = k => keyHit(recent, k, !!l.whole, !!l.cs);
+  if (!splitKeys(l.keys).some(hit)) return false;
+  const sec = splitKeys(l.secondary);
+  if (!sec.length) return true;
+  const n = sec.filter(hit).length;
+  switch (l.logic || 0) {
+    case 1: return n < sec.length;   // not all
+    case 2: return n === 0;          // none
+    case 3: return n === sec.length; // all
+    default: return n > 0;           // any
+  }
+}
 function activeLore(c, msgs) {
-  const recent = msgs.filter(m => m.role !== "image").slice(-4).map(m => m.content).join(" ").toLowerCase();
-  return loreSources(c).filter(l => l.text && l.keys && l.keys.split(",").map(k => k.trim().toLowerCase()).filter(Boolean).some(k => recent.includes(k)));
+  const recent = msgs.filter(m => m.role !== "image").slice(-4).map(m => m.content).join("\n");
+  return loreSources(c).filter(l => loreActive(l, recent)).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+}
+// Accepts Janitor / SillyTavern world-info JSON, Tavern character_book, or Lanternroom books
+function parseLorebook(raw) {
+  let d = typeof raw === "string" ? JSON.parse(raw) : raw;
+  if (d && d.app === "lanternroom" && d.book) d = d.book;
+  if (d && d.data) d = d.data;
+  if (d && d.character_book) d = d.character_book;
+  let list = Array.isArray(d) ? d : d && d.entries ? (Array.isArray(d.entries) ? d.entries : Object.values(d.entries)) : null;
+  if (!list) throw new Error("No lorebook entries found in that text.");
+  const arr = v => Array.isArray(v) ? v.join(", ") : String(v || "");
+  const entries = list.map((e, i) => ({
+    name: e.name || e.comment || "",
+    keys: arr(e.key ?? e.keys ?? e.keysRaw ?? e.keywordsRaw),
+    secondary: arr(e.keysecondary ?? e.secondary_keys),
+    logic: +(e.selectiveLogic ?? 0) || 0,
+    text: String(e.content ?? e.text ?? ""),
+    constant: !!e.constant,
+    whole: e.matchWholeWords ?? e.match_whole_words ?? e.extensions?.match_whole_words ?? true,
+    cs: !!(e.case_sensitive ?? e.caseSensitive ?? e.extensions?.case_sensitive),
+    enabled: e.enabled !== false && !e.disable,
+    order: +(e.insertion_order ?? e.order ?? (i + 1) * 100)
+  })).filter(e => e.text.trim());
+  entries.sort((a, b) => a.order - b.order);
+  return { name: (d && d.name) || "", entries };
 }
 function buildPrompt(c, chat, upto) {
   const st = S.settings, u = uname(), p = persona();
@@ -497,7 +543,7 @@ function buildPrompt(c, chat, upto) {
   if (chat.summary) sys += `\n\n# Story so far\n${chat.summary}`;
   if (chat.facts.length) sys += `\n\n# Established facts (never contradict these)\n` + chat.facts.map(f => "- " + f.t).join("\n");
   const lore = activeLore(c, chat.messages.slice(0, upto));
-  if (lore.length) sys += `\n\n# World notes\n` + lore.map(l => fill(l.text, c)).join("\n\n");
+  if (lore.length) sys += `\n\n# World notes\n` + lore.map(l => fill(l.text, c)).join("\n");
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke most" : "";
   sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location${focusPart}]]`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
@@ -923,8 +969,9 @@ function loreEditor(box, arr, ctxFn) {
     box.innerHTML = arr.length ? "" : '<p class="note">No entries yet.</p>';
     arr.forEach((l, i) => {
       const d = document.createElement("div"); d.className = "lore";
-      d.innerHTML = `<input placeholder="Keywords, comma separated" value="${esc(l.keys)}" data-k="keys"><textarea data-x="lore" placeholder="What the AI should know when these come up" data-k="text">${esc(l.text)}</textarea><div class="xrow"><button class="btn small danger" type="button" data-rm>Remove</button></div>`;
+      d.innerHTML = `${l.name ? `<div class="lbl">${esc(l.name)}</div>` : ""}<input placeholder="Keywords, comma separated" value="${esc(l.keys)}" data-k="keys"><input placeholder="Only if one of these is also mentioned (optional)" value="${esc(l.secondary || "")}" data-k="secondary"><textarea data-x="lore" placeholder="What the AI should know when these come up" data-k="text">${esc(l.text)}</textarea><label class="check" style="font-size:14px"><input type="checkbox" data-c="constant" ${l.constant ? "checked" : ""}> Always on (ignore keywords)</label><label class="check" style="font-size:14px"><input type="checkbox" data-c="enabled" ${l.enabled !== false ? "checked" : ""}> Enabled</label><div class="xrow"><button class="btn small danger" type="button" data-rm>Remove</button></div>`;
       d.querySelectorAll("[data-k]").forEach(el => el.addEventListener("input", () => { l[el.dataset.k] = el.value; }));
+      d.querySelectorAll("[data-c]").forEach(el => el.addEventListener("change", () => { l[el.dataset.c] = el.checked; }));
       d.querySelector("[data-rm]").onclick = () => { arr.splice(i, 1); draw(); };
       box.appendChild(d);
       wireExpand(d, () => (ctxFn ? ctxFn() : "") + `\nKeywords for this entry: ${l.keys}`);
@@ -1104,7 +1151,7 @@ function editPersona(p, isNew) {
 /* ---------- Lorebooks ---------- */
 function openBooks() {
   openSheet("Lorebooks", b => {
-    b.innerHTML = `<p class="note">A lorebook is a set of entries you can attach to as many characters, worlds and groups as you like. Entries load only when their keywords come up.</p><div class="stack" id="bList"></div><button class="btn primary" id="bNew">New lorebook</button>`;
+    b.innerHTML = `<p class="note">A lorebook is a set of entries you can attach to as many characters, worlds and groups as you like. Entries load only when their keywords come up.</p><div class="stack" id="bList"></div><button class="btn primary" id="bNew">New lorebook</button><button class="btn" id="bImport">Import lorebook (Janitor / SillyTavern)</button>`;
     if (!S.books.length) $("bList").innerHTML = '<p class="note">No lorebooks yet.</p>';
     for (const bk of S.books) {
       const used = S.chars.filter(c => (c.bookIds || []).includes(bk.id)).length;
@@ -1114,6 +1161,29 @@ function openBooks() {
       $("bList").appendChild(row);
     }
     $("bNew").onclick = () => editBook({ id: uid(), name: "", entries: [] }, true);
+    $("bImport").onclick = importBook;
+  });
+}
+function importBook() {
+  openSheet("Import lorebook", b => {
+    b.innerHTML = `
+      <p class="note">Paste a lorebook exported from Janitor AI or SillyTavern (the text starting with [ or {), or choose the file. Always-on entries, secondary keywords, whole-word matching and entry order carry over.</p>
+      ${field("Name", `<input id="ibName" placeholder="e.g. Vore">`)}
+      ${field("Lorebook JSON", `<textarea id="ibText" style="min-height:200px;font-family:ui-monospace,monospace;font-size:13px" placeholder="[ { &quot;key&quot;: [...], &quot;content&quot;: &quot;...&quot; } ]"></textarea>`)}
+      <div class="row"><label class="btn" for="ibFile">Choose file instead</label></div>
+      <input type="file" id="ibFile" accept=".json,application/json,text/plain" hidden>
+      <div id="ibMsg" class="hint"></div>
+      <button class="btn primary" id="ibGo">Import</button>`;
+    $("ibFile").onchange = async e => { const f = e.target.files[0]; if (f) { $("ibText").value = await f.text(); if (!$("ibName").value) $("ibName").value = f.name.replace(/\.json$/i, ""); } };
+    $("ibGo").onclick = () => {
+      try {
+        const r = parseLorebook($("ibText").value.trim());
+        if (!r.entries.length) throw new Error("That lorebook has no entries with text.");
+        const bk = { id: uid(), name: $("ibName").value.trim() || r.name || "Imported lorebook", entries: r.entries };
+        editBook(bk, true);
+        $("sheetBody").insertAdjacentHTML("afterbegin", `<p class="note">Read ${r.entries.length} entries (${r.entries.filter(e => e.constant).length} always on). Tick who should use it, then tap Create lorebook.</p>`);
+      } catch (e) { $("ibMsg").textContent = e instanceof SyntaxError ? "That isn't valid JSON. Make sure you copied all of it, from the first [ to the last ]." : e.message; }
+    };
   });
 }
 function editBook(bk, isNew, preset) {
@@ -1414,7 +1484,7 @@ $("importCard").onchange = async e => {
     }
     const d = card.data || card;
     const desc = [d.description, d.personality ? "Personality: " + d.personality : "", d.mes_example ? "Example dialogue:\n" + d.mes_example : ""].filter(Boolean).join("\n\n");
-    const lore = (d.character_book?.entries || []).map(x => ({ keys: (x.keys || []).join(", "), text: x.content || "" })).filter(l => l.text);
+    let lore = []; try { if (d.character_book) lore = parseLorebook(d.character_book).entries; } catch {}
     const c = { ...blankChar("character"), name: d.name || "Imported", description: desc, scenario: d.scenario || "", firstMessage: d.first_mes || "", lore, customPortrait: pic };
     S.chars.unshift(c); await saveChars(); renderHome(); editChar(c, false);
   } catch { $("tagline").textContent = "That file doesn't look like a character card (PNG or JSON)."; }
@@ -1438,7 +1508,7 @@ function openMemory() {
         <button class="btn" id="mRefresh">Update facts from recent chat</button>
       </div>
       <div class="group"><h3>Lore active right now</h3>
-        <p class="note">${lore.length ? lore.map(l => esc(l.keys)).join("<br>") : "None. Lore loads when its keywords appear in the last few messages."}</p>
+        <p class="note">${lore.length ? lore.map(l => esc(l.name || l.keys || "(always on)") + (l.constant ? " · always on" : "")).join("<br>") : "None. Lore loads when its keywords appear in the last few messages."}</p>
       </div>`;
     const draw = () => {
       const box = $("mFacts"); box.innerHTML = ch.facts.length ? "" : '<p class="note">No facts yet. They build up automatically every few replies.</p>';
