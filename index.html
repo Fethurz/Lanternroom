@@ -232,21 +232,39 @@ function imgURL(prompt, w, h, seed) {
   const p = prompt.replace(/\s+/g, " ").trim().slice(0, 900);
   return S.settings.imgUrl.replace("{prompt}", encodeURIComponent(p)).replace("{w}", w).replace("{h}", h).replace("{seed}", seed);
 }
+const ART = {
+  human: { label: "Human", subject: "portrait of a single human character" },
+  anthro: { label: "Anthro / furry", subject: "portrait of a single anthropomorphic furry character, anthro, expressive animal face, detailed fur or scales" },
+  feral: { label: "Feral (animal or creature)", subject: "portrait of a single feral animal creature, non-anthropomorphic, natural animal anatomy, expressive animal face, detailed fur or scales" }
+};
+const artOf = c => (c.artType && c.artType !== "auto" ? c.artType : c.artDetected) || "human";
 function looks(c) { return (c.visual || "").trim() || (c.appearance || "").trim() || `a person named ${c.name}`; }
 function portraitURL(c, mood = "neutral", seed) {
   if (c.customPortrait) return c.customPortrait;
   if (!S.settings.portraits) return "";
-  return imgURL(`${S.settings.imgStyle}, portrait of a single character, ${looks(c)}, ${mood} facial expression, head and shoulders, centered, looking at viewer, clean simple background, well-proportioned, clean linework, tasteful, safe for work`, 512, 640, seed ?? c.seed);
+  const t = artOf(c);
+  return imgURL(`${S.settings.imgStyle}, ${ART[t].subject}, ${looks(c)}, ${mood} ${t === "feral" ? "expression" : "facial expression"}, ${t === "feral" ? "head and upper body" : "head and shoulders"}, centered, looking at viewer, clean simple background, well-proportioned, clean linework, tasteful, safe for work`, 512, 640, seed ?? c.seed);
 }
-const cardSig = c => hash([c.name, c.appearance, c.description].join("|"));
+const cardSig = c => hash([c.name, c.appearance, c.description, c.artType || "auto"].join("|"));
 async function ensureVisual(c, force) {
   if (!S.settings.apiKey || c.customPortrait) return false;
   if (!force && (c.visualManual || (c.visual && c.visualSrc === cardSig(c)))) return false;
-  const out = (await ds([
-    { role: "system", content: "You turn a character card into a visual description for an image generator. Output 25-50 words of comma-separated visual details: apparent age (always an adult), gender presentation, skin tone, hair, eyes, face, build, clothing, accessories, overall color palette. Only physical appearance, no personality or story. Tasteful and safe for work: fully clothed, no gore, no wounds, no exaggerated anatomy. If the card is vague, invent a coherent, attractive design that fits the character. Output only the description." },
+  const want = c.artType && c.artType !== "auto" ? c.artType : null;
+  const raw = await ds([
+    { role: "system", content: `You turn a character card into a visual description for an image generator.
+First decide the character's form: "human", "anthro" (an anthropomorphic animal person: furry, scalie, etc.), or "feral" (an animal or creature with natural, non-humanoid anatomy).${want ? ` The user says the form is "${want}".` : ""}
+Then write 25-50 words of comma-separated visual details for that form:
+- human: apparent age (always an adult), gender presentation, skin tone, hair, eyes, face, build, clothing, accessories.
+- anthro: species, fur/scale/feather colors and markings, eyes, muzzle or beak, ears, tail, build, clothing, accessories. Always an adult.
+- feral: species or creature type, size, coat/scale/feather colors and markings, eyes, distinctive features such as horns, wings or tail.
+End with the overall color palette. Only physical appearance, no personality or story. Tasteful and safe for work: no nudity, no sexual content, no gore, no wounds, no exaggerated anatomy. If the card is vague, invent a coherent, appealing design that fits.
+Respond as JSON: {"form": "human|anthro|feral", "description": "..."}` },
     { role: "user", content: `Name: ${c.name}\nAppearance notes: ${c.appearance || "(none given)"}\nCard:\n${fill(c.description, c).slice(0, 2500)}` }
-  ], { temperature: 0.4, maxTokens: 160 })).trim().replace(/^["']|["']$/g, "");
+  ], { temperature: 0.4, maxTokens: 260, json: true });
+  let j; try { j = JSON.parse(raw); } catch { return false; }
+  const out = String(j.description || "").trim();
   if (!out) return false;
+  c.artDetected = ART[j.form] ? j.form : "human";
   c.visual = out; c.visualSrc = cardSig(c); c.visualManual = false;
   return true;
 }
@@ -630,8 +648,8 @@ async function illustrate() {
   try {
     const recent = chat.messages.filter(m => m.role !== "image").slice(-6).map(m => `${m.role === "user" ? u : c.name}: ${m.content}`).join("\n\n");
     const prompt = (await ds([
-      { role: "system", content: "Write ONE prompt for an image generator showing the current moment of this story. 40-70 words of comma-separated visual details: who is in frame and what they look like, pose, expression, action, setting, lighting, camera framing. No names, no dialogue, no quotation marks. Output only the prompt." },
-      { role: "user", content: `${c.name} looks like: ${looks(c)}\n${S.settings.persona ? u + ": " + S.settings.persona.slice(0, 300) + "\n" : ""}Current location: ${chat.place || "unknown"}\n\nRecent story:\n${recent}` }
+      { role: "system", content: "Write ONE prompt for an image generator showing the current moment of this story. Keep it safe for work: no nudity, no sexual content, no gore. Draw each character in their stated form (human, anthro, or feral). 40-70 words of comma-separated visual details: who is in frame and what they look like, pose, expression, action, setting, lighting, camera framing. No names, no dialogue, no quotation marks. Output only the prompt." },
+      { role: "user", content: `${c.name} is ${artOf(c) === "human" ? "a human" : artOf(c) === "anthro" ? "an anthropomorphic (anthro/furry) character" : "a feral animal or creature, not anthropomorphic"} and looks like: ${looks(c)}\n${S.settings.persona ? u + ": " + S.settings.persona.slice(0, 300) + "\n" : ""}Current location: ${chat.place || "unknown"}\n\nRecent story:\n${recent}` }
     ], { model: AUX, temperature: 0.7, maxTokens: 200 })).trim().replace(/^["']|["']$/g, "");
     const full = `${S.settings.imgStyle}, ${prompt}`;
     chat.messages.push({ id: uid(), role: "image", prompt, full, url: imgURL(full, 768, 512, Math.floor(Math.random() * 1e6)) });
@@ -740,6 +758,7 @@ function editChar(c, isNew) {
   openSheet(isNew ? "New character" : "Edit character", b => {
     b.innerHTML = `
       ${field("Name", `<input id="cName" value="${esc(work.name)}" placeholder="Character name">`)}
+      ${field("Character type", `<select id="cArt">${[["auto", "Detect from the card"], ...Object.entries(ART).map(([k, v]) => [k, v.label])].map(([k, l]) => `<option value="${k}" ${(work.artType || "auto") === k ? "selected" : ""}>${l}${k === "auto" && work.artDetected ? ` (now: ${ART[work.artDetected].label})` : ""}</option>`).join("")}</select>`, "Tells the pictures whether to draw a person, an anthro character, or an animal.")}
       ${field("Appearance", `<textarea id="cLook" style="min-height:70px" placeholder="Hair, eyes, build, clothing, notable features">${esc(work.appearance)}</textarea>`, "Used for every portrait and illustration. Be specific so they stay consistent.")}
       ${field("Personality & background", `<textarea id="cDesc" style="min-height:140px">${esc(work.description)}</textarea>`)}
       ${field("Scenario", `<textarea id="cScen">${esc(work.scenario)}</textarea>`, "Where the story starts. {{user}} and {{char}} work here.")}
@@ -775,6 +794,7 @@ function editChar(c, isNew) {
     drawLore();
     $("cAddLore").onclick = () => { work.lore.push({ keys: "", text: "" }); drawLore(); };
     const grab = () => {
+      work.artType = $("cArt").value;
       Object.assign(work, { name: $("cName").value.trim(), appearance: $("cLook").value.trim(), description: $("cDesc").value.trim(), scenario: $("cScen").value.trim(), firstMessage: $("cFirst").value.trim(), startPlace: $("cPlace").value.trim() });
       if ($("cVis")) {
         const v = $("cVis").value.trim();
@@ -782,6 +802,7 @@ function editChar(c, isNew) {
       }
     };
     if ($("cPick")) seedPicker($("cPick"), work);
+    $("cArt").onchange = () => { if ($("cVisGen")) $("cVisGen").click(); };
     if ($("cVisGen")) $("cVisGen").onclick = async () => {
       const b2 = $("cVisGen"); grab();
       if (!S.settings.apiKey) { b2.textContent = "Add your API key in Settings first"; return; }
