@@ -245,6 +245,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
+const VERSION = "1.6 · Oct 12";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const KINDS = {
   character: { label: "Character", blurb: "One character you talk to." },
@@ -564,10 +565,12 @@ function buildPrompt(c, chat, upto) {
 }
 
 /* ---------- Data ---------- */
+const greetingsOf = c => [c.firstMessage, ...(c.altGreetings || [])].map(g => fill(g, c).trim()).filter(Boolean);
 function newChat(c) {
-  const first = fill(c.firstMessage, c).trim();
+  const greets = greetingsOf(c);
   const focus = c.kind === "group" ? (members(c)[0]?.name || "") : "";
-  return { messages: first ? [{ id: uid(), role: "assistant", content: first, alts: [first], alt: 0, mood: "neutral", focus }] : [],
+  const meta = { mood: "neutral", focus, place: c.startPlace || "" };
+  return { messages: greets.length ? [{ id: uid(), role: "assistant", greeting: true, content: greets[0], alts: greets, alt: 0, altMeta: greets.map(() => ({ ...meta })), ...meta }] : [],
            summary: "", summarizedUpTo: 0, facts: [], turnsSinceFacts: 0, mood: "neutral", place: c.startPlace || "", focus };
 }
 async function saveChars() { await Store.set("chars", S.chars); }
@@ -628,6 +631,11 @@ async function openChat(id) {
   const c = char();
   S.chat = (await Store.get(chatKey(id))) || newChat(c);
   S.chat.facts = (S.chat.facts || []).map(f => typeof f === "string" ? { t: f, pin: false } : f);
+  const g0 = S.chat.messages[0], greets = greetingsOf(c);
+  if (S.chat.messages.length === 1 && g0.role === "assistant" && greets.length > 1 && greets.includes(g0.content) && (g0.alts || []).every(a => greets.includes(a))) {
+    g0.greeting = true; g0.alts = greets; g0.alt = greets.indexOf(g0.content);
+    g0.altMeta = greets.map(() => ({ mood: "neutral", focus: g0.focus || "", place: c.startPlace || "" }));
+  }
   await saveChat();
   $("home").hidden = true; $("chat").hidden = false;
   $("chatName").textContent = c.name;
@@ -1050,6 +1058,9 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       <div class="row"><button class="btn" id="sExport">Export backup</button><label class="btn" for="sImport">Restore backup</label></div>
       <input type="file" id="sImport" accept=".json,application/json" hidden>
       <div id="sMsg" class="hint"></div>
+    </div>
+    <p class="hint" style="text-align:center;color:var(--muted);font-size:12px;margin:0">Lanternroom version ${VERSION}</p>
+    <div>
     </div>`;
   const fmts = { sTemp: v => (+v).toFixed(2), sMax: fmtK, sCtx: fmtK, sTopK: v => String(+v), sTopP: v => (+v).toFixed(2), sRep: v => (+v).toFixed(2), sFreq: v => (+v).toFixed(2) };
   for (const id of Object.keys(fmts)) $(id).addEventListener("input", () => { $(id + "V").textContent = fmts[id]($(id).value); drawn(); });
@@ -1306,6 +1317,22 @@ function editChar(c, isNew) {
     };
     const ctx = () => { grab(); return cardContext(work); };
     wireExpand(b, ctx);
+    work.altGreetings = work.altGreetings || [];
+    $("cFirst").closest(".field").insertAdjacentHTML("afterend", `<div class="stack" id="cAlts"></div><div class="row"><button class="btn small" type="button" id="cAddAlt">Add another first message</button></div><p class="hint" style="margin:-8px 0 0;color:var(--muted);font-size:13px">With more than one, a new chat lets you swipe ‹ › between them before you reply.</p>`);
+    const drawAlts = () => {
+      const box = $("cAlts"); box.innerHTML = "";
+      work.altGreetings.forEach((g, i) => {
+        const d = document.createElement("div"); d.className = "field";
+        d.innerHTML = `<label>First message ${i + 2}</label><textarea data-x="first" style="min-height:110px">${esc(g)}</textarea><div class="xrow"><button type="button" class="btn small danger" data-rm>Remove</button></div>`;
+        const ta = d.querySelector("textarea");
+        ta.addEventListener("input", () => { work.altGreetings[i] = ta.value; });
+        d.querySelector("[data-rm]").onclick = () => { work.altGreetings.splice(i, 1); drawAlts(); };
+        box.appendChild(d);
+        wireExpand(d, () => ctx() + "\nThis is an alternate opening: make it a clearly different starting moment from the main first message.");
+      });
+    };
+    drawAlts();
+    $("cAddAlt").onclick = () => { work.altGreetings.push(""); drawAlts(); };
 
     const redrawLore = loreEditor($("cLore"), work.lore, ctx);
     $("cAddLore").onclick = () => { work.lore.push({ keys: "", text: "" }); redrawLore(); };
@@ -1423,6 +1450,7 @@ function editChar(c, isNew) {
       if (K === "group" && !work.members.length) { $("cMsg").textContent = "Pick at least one member, or split characters out of the description."; return; }
       work.lore = work.lore.filter(l => l.text.trim());
       work.cast = work.cast.filter(x => x.name.trim() || x.details.trim());
+      work.altGreetings = (work.altGreetings || []).map(g => g.trim()).filter(Boolean);
       if (K !== "group" && !work.customPortrait && !work.visualManual && work.visualSrc !== cardSig(work)) {
         $("cSave").disabled = true; $("cSave").textContent = K === "world" ? "Picturing the world…" : "Designing their look…";
         try { await ensureVisual(work); } catch {}
@@ -1485,7 +1513,7 @@ $("importCard").onchange = async e => {
     const d = card.data || card;
     const desc = [d.description, d.personality ? "Personality: " + d.personality : "", d.mes_example ? "Example dialogue:\n" + d.mes_example : ""].filter(Boolean).join("\n\n");
     let lore = []; try { if (d.character_book) lore = parseLorebook(d.character_book).entries; } catch {}
-    const c = { ...blankChar("character"), name: d.name || "Imported", description: desc, scenario: d.scenario || "", firstMessage: d.first_mes || "", lore, customPortrait: pic };
+    const c = { ...blankChar("character"), name: d.name || "Imported", description: desc, scenario: d.scenario || "", firstMessage: d.first_mes || "", altGreetings: (d.alternate_greetings || []).filter(g => typeof g === "string" && g.trim()), lore, customPortrait: pic };
     S.chars.unshift(c); await saveChars(); renderHome(); editChar(c, false);
   } catch { $("tagline").textContent = "That file doesn't look like a character card (PNG or JSON)."; }
 };
