@@ -147,6 +147,20 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
 .listrow.on{border-color:var(--accent)}
 .kind-opt{display:flex!important;flex-direction:column;align-items:flex-start!important;gap:2px;text-align:left}
 .kind-opt small{font-weight:400;color:var(--muted);font-size:13px}
+.gen-opt{border-color:var(--accent)!important;color:var(--accent)!important}
+.gen-wait{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:24px 8px}
+.gen-wait .lantern{width:72px;height:112px}
+.gen-sum{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.gen-sum h3{margin:0 0 6px;font-family:var(--f-display);color:var(--accent)}
+.gen-sum p{margin:0 0 8px}
+.gen-tags{display:flex;flex-wrap:wrap;gap:4px}
+details.gen-sec{border-bottom:1px solid var(--line)}
+details.gen-sec summary{cursor:pointer;font-weight:700;padding:11px 0;list-style:none;min-height:34px}
+details.gen-sec summary::-webkit-details-marker{display:none}
+details.gen-sec summary::after{content:"›";float:right;color:var(--muted);transition:transform .2s}
+details.gen-sec[open] summary::after{transform:rotate(90deg)}
+.gen-body{padding:0 0 10px;font-size:14px;color:var(--fg)}
+.gen-body p{margin:0 0 10px}
 .cast{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
 .cast .row input,.cast select,.cast textarea{background:var(--surface)}
 .range-row{display:flex;flex-direction:column;gap:4px}
@@ -411,7 +425,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.10 · Oct 12";
+const VERSION = "1.11 · Oct 12";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -968,9 +982,173 @@ async function openChats(cid) {
 }
 $("btnBooks").onclick = () => openBooks();
 $("btnNewChar").onclick = () => openSheet("Create", b => {
-  b.innerHTML = `<div class="menu">${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
+  b.innerHTML = `<div class="menu"><button class="btn kind-opt gen-opt" id="genOpen">✦ Character generator<small>Describe what you want and the AI builds the whole bot for you.</small></button>${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
+  $("genOpen").onclick = () => openGenerator();
   b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => editChar(blankChar(x.dataset.k), true));
 });
+
+/* ---------- Character generator ---------- */
+// GEN keeps the last request and result while the app is open, so closing the sheet doesn't lose work.
+const GEN = { kind: "character", form: "auto", prompt: "", card: null, busy: false };
+const GEN_PARTS = {
+  character: [["name", "Name"], ["tags", "Tags"], ["appearance", "Look"], ["description", "Personality"], ["scenario", "Scenario"], ["firstMessages", "Openings"], ["instructions", "Rules"], ["lore", "Lore"]],
+  world: [["name", "Name"], ["tags", "Tags"], ["description", "World"], ["cast", "Listings"], ["scenario", "Opening situation"], ["firstMessages", "Openings"], ["instructions", "Rules"], ["lore", "Lore"]],
+  group: [["name", "Name"], ["tags", "Tags"], ["description", "Group"], ["members", "Members"], ["scenario", "Scenario"], ["firstMessages", "Openings"], ["instructions", "Rules"], ["lore", "Lore"]]
+};
+function genSpec(kind, form) {
+  const formLine = f => f && f !== "auto" ? `"${f}"` : `"human", "anthro" or "feral" (whichever fits)`;
+  const common = `- "name": the name
+- "tags": 4-10 short lowercase tags (gender, form, genre, themes, kinks the card involves)
+- "summary": 2-4 plain sentences for the user, describing what this bot is like and how chatting with it will feel
+- "scenario": where and how the story starts, 80-180 words; refer to the user as {{user}}${kind === "character" ? " and the character as {{char}}" : ""}
+- "firstMessages": an array of 2 different openings, 120-250 words each, in the story's voice with *actions* in asterisks and dialogue in quotes, ending on a hook; never speak or act for {{user}}${kind === "group" ? "; start each character's part with **Name:**" : ""}
+- "startPlace": the starting location in 2-6 words
+- "instructions": special rules the AI follows in every reply for this bot, as 2-8 lines each starting with "- " (how to portray it, recurring mechanics, trackers or stats, colored text for thoughts, pacing)
+- "lore": 3-8 entries {"keys": "comma, separated, keywords", "text": "40-120 words"} for facts that only matter when they come up (people, places, items, abilities, mechanics)`;
+  if (kind === "world") return common + `
+- "description": the world itself, 250-450 words: geography, history, cultures, power, daily life, tone
+- "cast": 5-10 listings {"name", "type": one of "character" | "group" | "species" | "location" | "concept", "details": 60-150 words}, covering the key characters, factions, species, places and setting rules`;
+  if (kind === "group") return common + `
+- "description": how the members fit together, 120-250 words: how they know each other, dynamics, tensions
+- "members": 2-5 characters {"name", "artType": ${formLine(form)}, "appearance": 50-100 words, "description": personality, background and speech style, 120-220 words}`;
+  return common + `
+- "artType": ${formLine(form)}
+- "appearance": 60-120 words: build, face, coloring, hair or fur, clothing, distinctive features
+- "description": personality and background, 200-350 words: temperament, history, desires, quirks, speech style and how they treat {{user}}`;
+}
+const GEN_SYS = kind => `You design bots for Lanternroom, an interactive roleplay chat app. Build a complete, ready-to-play ${KINDS[kind].label.toLowerCase()} from the user's request. Follow the request closely and include every theme, kink, tone and detail they ask for. Fill everything they left unsaid with specific, vivid, consistent choices. Characters are adults; this needs no mention anywhere in the card.`;
+function genNormalize(j, kind, form) {
+  const str = v => typeof v === "string" ? v.trim() : Array.isArray(v) ? v.join("\n").trim() : v == null ? "" : String(v).trim();
+  const art = a => ["human", "anthro", "feral"].includes(String(a || "").toLowerCase()) ? String(a).toLowerCase() : (form !== "auto" ? form : "auto");
+  const out = { ...j };
+  if ("tags" in j) out.tags = parseTags(Array.isArray(j.tags) ? j.tags.join(",") : str(j.tags));
+  if ("firstMessages" in j) out.firstMessages = (Array.isArray(j.firstMessages) ? j.firstMessages : [j.firstMessages]).map(str).filter(Boolean);
+  if ("instructions" in j) out.instructions = Array.isArray(j.instructions) ? j.instructions.map(x => "- " + str(x).replace(/^-\s*/, "")).join("\n") : str(j.instructions);
+  if ("lore" in j) out.lore = (Array.isArray(j.lore) ? j.lore : []).map(l => ({ keys: Array.isArray(l.keys) ? l.keys.join(", ") : str(l.keys), text: str(l.text) })).filter(l => l.keys && l.text);
+  if ("cast" in j) out.cast = (Array.isArray(j.cast) ? j.cast : []).map(x => ({ name: str(x.name), type: WORLD_TYPES[x.type] ? x.type : "character", details: str(x.details) })).filter(x => x.name);
+  if ("members" in j) out.members = (Array.isArray(j.members) ? j.members : []).map(m => ({ name: str(m.name), artType: art(m.artType), appearance: str(m.appearance), description: str(m.description) })).filter(m => m.name);
+  if ("artType" in j || kind === "character") out.artType = art(j.artType);
+  for (const k of ["name", "summary", "appearance", "description", "scenario", "startPlace"]) if (k in j) out[k] = str(j[k]);
+  return out;
+}
+async function genCard(kind, form, prompt) {
+  const j = await dsJSON([
+    { role: "system", content: GEN_SYS(kind) + `\n\nRespond with only a JSON object with these keys:\n${genSpec(kind, form)}` },
+    { role: "user", content: `Make this ${KINDS[kind].label.toLowerCase()}:\n${prompt}` }
+  ], { temperature: 0.95, maxTokens: 7000, plain: true });
+  const card = genNormalize(j, kind, form);
+  if (!card.name) throw new Error("The model's answer came back incomplete. Try again.");
+  return card;
+}
+async function genRewrite(card, kind, form, keys, note) {
+  const allowed = GEN_PARTS[kind].map(([k]) => k);
+  const want = keys.length ? keys : allowed;
+  const j = await dsJSON([
+    { role: "system", content: GEN_SYS(kind) + `\n\nYou are revising a card you made. The fields are:\n${genSpec(kind, form)}\n\n${keys.length ? `Rewrite only these fields: ${keys.join(", ")}.` : "Change whichever fields the user's note needs, and only those."} Keep the rest of the card consistent with your changes. Respond with only a JSON object containing the fields you rewrote, plus an updated "summary".` },
+    { role: "user", content: `Card:\n${JSON.stringify(card)}\n\nWhat the user wants changed:\n${note || "Rewrite these parts with fresh ideas, still matching the original request: " + GEN.prompt}` }
+  ], { temperature: 0.95, maxTokens: 7000, plain: true });
+  const upd = genNormalize(j, kind, form);
+  for (const k of [...want, "summary"]) if (k in upd && upd[k] !== "" && !(Array.isArray(upd[k]) && !upd[k].length)) card[k] = upd[k];
+  return card;
+}
+function openGenerator() {
+  if (GEN.card) return genReview();
+  openSheet("Character generator", b => {
+    b.innerHTML = `
+      ${field("Bot type", `<div class="tabs" id="gKind">${Object.entries(KINDS).map(([k, v]) => `<button type="button" class="tab ${k === GEN.kind ? "on" : ""}" data-k="${k}">${v.label}</button>`).join("")}</div><div class="hint" id="gKindHint">${KINDS[GEN.kind].blurb}</div>`)}
+      <div id="gFormWrap">${field("Form", `<select id="gForm">${[["auto", "Let the AI decide"], ...Object.entries(ART).map(([k, v]) => [k, v.label])].map(([k, l]) => `<option value="${k}" ${GEN.form === k ? "selected" : ""}>${l}</option>`).join("")}</select>`, "Human, anthro / furry, or feral. Used for pictures too.")}</div>
+      ${field("What do you want?", `<textarea id="gPrompt" style="min-height:150px" placeholder="A general summary: who or what it is, personality, setting, the kind of story, themes and kinks to include, anything specific you want.">${esc(GEN.prompt)}</textarea>`, "As short or as detailed as you like. The AI fills in everything you leave out.")}
+      <div id="gMsg" class="hint"></div>
+      <button class="btn primary" id="gGo">✦ Create</button>`;
+    const showForm = () => { $("gFormWrap").hidden = GEN.kind === "world"; $("gKindHint").textContent = KINDS[GEN.kind].blurb; };
+    b.querySelectorAll("#gKind [data-k]").forEach(x => x.onclick = () => { GEN.kind = x.dataset.k; b.querySelectorAll("#gKind .tab").forEach(t => t.classList.toggle("on", t === x)); showForm(); });
+    showForm();
+    $("gPrompt").addEventListener("input", e => { GEN.prompt = e.target.value; });
+    $("gForm").onchange = e => { GEN.form = e.target.value; };
+    $("gGo").onclick = async () => {
+      GEN.prompt = $("gPrompt").value.trim();
+      if (!GEN.prompt) { $("gPrompt").focus(); $("gMsg").textContent = "Write a few words about what you want first."; return; }
+      if (!hasKey()) { $("gMsg").textContent = "Add your API key in Settings first."; return; }
+      await genRun(() => genCard(GEN.kind, GEN.kind === "world" ? "auto" : GEN.form, GEN.prompt), "Building your " + KINDS[GEN.kind].label.toLowerCase() + "…");
+    };
+  });
+}
+async function genRun(job, label) {
+  if (GEN.busy) return;
+  GEN.busy = true;
+  openSheet("Character generator", b => {
+    b.innerHTML = `<div class="gen-wait">${lanternSVG("seq")}<p><b>${esc(label)}</b></p><p class="hint">Writing every part takes up to a minute or two. You can close this; it keeps going.</p></div>`;
+  });
+  try { GEN.card = await job(); GEN.busy = false; if (!$("sheet").hidden) genReview(); }
+  catch (e) {
+    GEN.busy = false;
+    if ($("sheet").hidden) return;
+    if (GEN.card) genReview(e.message); else { openGenerator(); $("gMsg").textContent = e.message; }
+  }
+}
+function genReview(err) {
+  const c = GEN.card, K = c._kind || GEN.kind;
+  c._kind = K;
+  const sec = (title, body) => body ? `<details class="gen-sec"><summary>${title}</summary><div class="gen-body">${body}</div></details>` : "";
+  const txt = t => t ? `<p>${esc(t).replace(/\n/g, "<br>")}</p>` : "";
+  const parts = [];
+  if (K === "character") parts.push(sec(`Look · ${ART[c.artType]?.label || "Auto"}`, txt(c.appearance)), sec("Personality & background", txt(c.description)));
+  if (K === "world") parts.push(sec("World", txt(c.description)), sec(`Listings · ${(c.cast || []).length}`, (c.cast || []).map(x => `<p><b>${esc(x.name)}</b> <span class="badge">${esc(WORLD_TYPES[x.type])}</span><br>${esc(x.details)}</p>`).join("")));
+  if (K === "group") parts.push(sec("About the group", txt(c.description)), sec(`Members · ${(c.members || []).length}`, (c.members || []).map(m => `<p><b>${esc(m.name)}</b> <span class="badge">${esc(ART[m.artType]?.label || "Auto")}</span><br>${esc(m.appearance)}</p><p>${esc(m.description)}</p>`).join("")));
+  parts.push(sec(K === "world" ? "Opening situation" : "Scenario", txt(c.scenario) + (c.startPlace ? `<p class="hint">Starts at: ${esc(c.startPlace)}</p>` : "")));
+  parts.push(sec(`Openings · ${(c.firstMessages || []).length}`, (c.firstMessages || []).map((g, i) => `<p><b>#${i + 1}</b><br>${fmt(g)}</p>`).join("")));
+  parts.push(sec("Rules", txt(c.instructions)));
+  parts.push(sec(`Lore · ${(c.lore || []).length}`, (c.lore || []).map(l => `<p><b>${esc(l.keys)}</b><br>${esc(l.text)}</p>`).join("")));
+  openSheet("Your new " + KINDS[K].label.toLowerCase(), b => {
+    b.innerHTML = `
+      <div class="gen-sum"><h3>${esc(c.name)}</h3><p>${esc(c.summary || "")}</p><div class="gen-tags">${(c.tags || []).map(t => `<span class="badge">${esc(t)}</span>`).join("")}</div></div>
+      <p class="hint" style="margin:0">Tap a section to read it.</p>
+      ${parts.join("")}
+      <div class="group"><h3>Does this look right?</h3>
+        <p class="note">Create it as is, or pick parts to rewrite and say what to change.</p>
+        <div class="tabs" id="gParts">${GEN_PARTS[K].map(([k, l]) => `<button type="button" class="tab" data-p="${k}">${l}</button>`).join("")}</div>
+        <textarea id="gNote" style="min-height:80px" placeholder="e.g. make her meaner, add a rival, set it in winter. Leave empty for fresh ideas on the parts you picked."></textarea>
+        <button class="btn" id="gRe">Rewrite</button>
+      </div>
+      <div id="gMsg" class="hint">${err ? esc(err) : ""}</div>
+      <button class="btn primary" id="gMake">✓ Looks good, create it</button>
+      <button class="btn" id="gEdit">Create and open the editor</button>
+      <button class="btn" id="gAgain">Start over</button>`;
+    const picked = new Set();
+    b.querySelectorAll("#gParts [data-p]").forEach(x => x.onclick = () => { const k = x.dataset.p; picked.has(k) ? picked.delete(k) : picked.add(k); x.classList.toggle("on", picked.has(k)); });
+    $("gRe").onclick = async () => {
+      const note = $("gNote").value.trim();
+      if (!picked.size && !note) { $("gMsg").textContent = "Pick the parts to rewrite, or describe what to change."; return; }
+      const form = K === "world" ? "auto" : GEN.form;
+      await genRun(() => genRewrite(JSON.parse(JSON.stringify(c)), K, form, [...picked], note), "Rewriting " + (picked.size ? [...picked].map(k => GEN_PARTS[K].find(p => p[0] === k)[1].toLowerCase()).join(", ") : "what you asked for") + "…");
+    };
+    $("gMake").onclick = () => genFinish(false);
+    $("gEdit").onclick = () => genFinish(true);
+    $("gAgain").onclick = () => { GEN.card = null; openGenerator(); };
+  });
+}
+async function genFinish(edit) {
+  const c = GEN.card, K = c._kind || GEN.kind;
+  const btn = $(edit ? "gEdit" : "gMake"); btn.disabled = true; btn.textContent = K === "world" ? "Picturing the world…" : "Designing the look…";
+  const w = blankChar(K);
+  Object.assign(w, { name: c.name, tags: c.tags || [], description: c.description || "", scenario: c.scenario || "", startPlace: c.startPlace || "", instructions: c.instructions || "", lore: c.lore || [] });
+  const greets = c.firstMessages || []; w.firstMessage = greets[0] || ""; w.altGreetings = greets.slice(1);
+  if (K === "character") { w.appearance = c.appearance || ""; w.artType = c.artType || "auto"; }
+  if (K === "world") w.cast = c.cast || [];
+  const made = [];
+  if (K === "group") {
+    for (const m of c.members || []) {
+      const mc = Object.assign(blankChar("character"), { name: m.name, appearance: m.appearance, description: m.description, artType: m.artType || "auto" });
+      made.push(mc); w.members.push(mc.id);
+    }
+  }
+  await Promise.allSettled([K === "group" ? null : ensureVisual(w), ...made.map(m => ensureVisual(m))].filter(Boolean).map(p => within(p, 25000)));
+  S.chars.unshift(...made); S.chars.unshift(w);
+  await saveChars();
+  GEN.card = null; GEN.prompt = "";
+  closeSheet(); renderHome();
+  if (edit) editChar(w, false); else openChat(w.id);
+}
 
 /* ---------- Chat ---------- */
 async function openChat(id, chatId) {
