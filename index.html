@@ -233,6 +233,7 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
 #btnAmb.muted .x{display:inline}
 #btnAmb.muted .w1,#btnAmb.muted .w2{display:none}
 #btnAmb.muted{color:var(--muted)}
+#sAccount input{width:100%;margin-top:6px}
 .snd-built{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .snd-built a{color:var(--accent)}
 .snd-help{background:var(--surface-2);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:8px}
@@ -455,14 +456,17 @@ const Store = {
     try { const v = localStorage.getItem("lr:" + k); return v ? JSON.parse(v) : undefined; } catch { return undefined; }
   },
   async set(k, v) {
+    if (typeof Sync !== "undefined") Sync.mark(k);
     if (this.db) return new Promise(res => { const tx = this.db.transaction("kv", "readwrite"); tx.objectStore("kv").put(JSON.parse(JSON.stringify(v)), k); tx.oncomplete = res; tx.onerror = res; });
     try { localStorage.setItem("lr:" + k, JSON.stringify(v)); } catch {}
   },
   async setRaw(k, v) { // stores Blobs as-is (IndexedDB only)
+    if (typeof Sync !== "undefined") Sync.mark(k);
     if (!this.db) throw new Error("This browser can't store sound files.");
     return new Promise((res, rej) => { const tx = this.db.transaction("kv", "readwrite"); tx.objectStore("kv").put(v, k); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
   },
   async del(k) {
+    if (typeof Sync !== "undefined") Sync.mark(k);
     if (this.db) return new Promise(res => { const tx = this.db.transaction("kv", "readwrite"); tx.objectStore("kv").delete(k); tx.oncomplete = res; tx.onerror = res; });
     try { localStorage.removeItem("lr:" + k); } catch {}
   },
@@ -473,7 +477,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.15 · Oct 12";
+const VERSION = "1.16 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1845,6 +1849,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
     $("tempWarn").hidden = !(deep && !think && +$("sTemp").value > 1.3);
   };
   b.innerHTML = `
+    <div class="group" id="sAccount"></div>
     ${field("AI provider", `<select id="sProv"><option value="deepseek" ${st.provider !== "custom" ? "selected" : ""}>DeepSeek</option><option value="custom" ${st.provider === "custom" ? "selected" : ""}>Other (OpenAI-compatible, e.g. OpenRouter)</option></select>`)}
     <div id="dsBox" class="stack">
       ${field("DeepSeek API key", `<input id="sKey" type="password" value="${esc(st.apiKey)}" placeholder="sk-…">`, "Saved only on this device. Get one at platform.deepseek.com.")}
@@ -1916,6 +1921,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   drawn();
   $("sPersonas").onclick = () => openPersonas();
   ruleTabs($("sGlobal"));
+  drawAccount($("sAccount"));
   $("sPack").onclick = async () => { await $("sSave").onclick(); openSoundPack(); }; // keep any settings changes first
   $("sSfxReset").onclick = () => { $("sSfxRules").value = DEFAULTS.sfxRules; };
   $("sReset").onclick = () => {
@@ -2924,6 +2930,7 @@ async function soundsOf(type) { return [...(await sndIndex()).filter(x => x.type
 async function poolFor(types) { for (const t of types) { const f = await soundsOf(t); if (f.length) return f; } return []; }
 async function sndURL(id) {
   if (id.startsWith("b:")) return "sounds/jeschke/" + id.slice(2);
+  if (!SND_URLS[id] && Sync.on() && !(await Store.get("snd:" + id))) await Sync.fetchSound(id);
   if (SND_URLS[id]) return SND_URLS[id];
   const blob = await Store.get("snd:" + id);
   if (!blob) return null;
@@ -3267,6 +3274,191 @@ function startActivity(kind) {
   return { stop() { stopped = true; clearTimeout(timer); if (cur) cur.pause(); if (bed) { const b = bed; let v = b.volume; const t = setInterval(() => { v -= 0.03; if (v <= 0.01) { b.pause(); clearInterval(t); } else b.volume = v; }, 60); } } };
 }
 
+
+/* ---------- Account & sync (Supabase) ---------- */
+// One account per Lanternroom. Data stays in IndexedDB on each device; Sync mirrors it to the owner's `kv` table
+// (one row per Store key) and their own sound files to the private `sounds` bucket.
+// API keys never leave the device: they are stripped before upload and kept from the local copy on download.
+const SB = { url: "https://kttzglvsaxvzcbzfwfju.supabase.co", key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0dHpnbHZzYXh2emNiemZ3Zmp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4NTI2MzQsImV4cCI6MjEwNzQyODYzNH0.liIa5B_3_QSZiqYzuv1h6KiIuZFBciXsYPkmG33bLd8" };
+const LOCAL_ONLY = ["apiKey", "customKey"];
+const stripLocal = v => { const o = { ...(v || {}) }; for (const k of LOCAL_ONLY) delete o[k]; return o; };
+const keepLocal = async v => { const mine = (await Store.get("settings")) || {}; const o = { ...(v || {}) }; for (const k of LOCAL_ONLY) o[k] = mine[k] || ""; return o; };
+const Sync = {
+  st: (() => { try { return JSON.parse(localStorage.getItem("lr_sync") || "{}"); } catch { return {}; } })(),
+  applying: false, timer: null, busy: false, status: "",
+  save() { try { localStorage.setItem("lr_sync", JSON.stringify(this.st)); } catch {} },
+  on() { return !!this.st.refresh; },
+  synced: k => /^(settings|chars|personas|activePersona|books|recent|seeded|sounds|chats:|c2:|snd:)/.test(k),
+  mark(k) {
+    if (this.applying || !this.on() || !this.synced(k)) return;
+    const d = new Set(this.st.dirty || []); d.add(k); this.st.dirty = [...d]; this.save();
+    clearTimeout(this.timer); this.timer = setTimeout(() => this.push(), 1500);
+  },
+  async req(path, opt = {}, retry = true) {
+    await this.fresh();
+    const h = { apikey: SB.key, Authorization: "Bearer " + (this.st.access || SB.key), ...(opt.headers || {}) };
+    const r = await fetch(SB.url + path, { ...opt, headers: h });
+    if (r.status === 401 && retry && this.st.refresh) { this.st.exp = 0; return this.req(path, opt, false); }
+    return r;
+  },
+  async auth(grant, body) {
+    const r = await fetch(`${SB.url}/auth/v1/token?grant_type=${grant}`, { method: "POST", headers: { apikey: SB.key, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(/invalid login/i.test(j.error_description || j.msg || "") ? "Wrong email or password." : (j.error_description || j.msg || "Couldn't log in. Check your connection."));
+    Object.assign(this.st, { access: j.access_token, refresh: j.refresh_token, exp: Date.now() + (j.expires_in || 3600) * 1000, uid: j.user?.id || this.st.uid, email: j.user?.email || this.st.email });
+    this.save();
+  },
+  async fresh() {
+    if (!this.st.refresh || Date.now() < (this.st.exp || 0) - 60000) return;
+    try { await this.auth("refresh_token", { refresh_token: this.st.refresh }); }
+    catch (e) { if (/expired|invalid|not found/i.test(e.message)) { this.st = { email: this.st.email }; this.save(); this.status = "Logged out: please log in again."; } throw e; }
+  },
+  async signUp(email, password) {
+    const r = await fetch(`${SB.url}/functions/v1/create-account`, { method: "POST", headers: { apikey: SB.key, Authorization: "Bearer " + SB.key, "Content-Type": "application/json" }, body: JSON.stringify({ email: email.trim().toLowerCase(), password }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || "Couldn't create the account. Try again.");
+  },
+  async logIn(email, password) { await this.auth("password", { email: email.trim().toLowerCase(), password }); await this.first(); },
+  logOut() { this.st = { email: this.st.email }; this.save(); },
+  async put(k, v) { this.applying = true; try { if (v === undefined) await Store.del(k); else await Store.set(k, k === "settings" ? await keepLocal(v) : v); } finally { this.applying = false; } },
+  // first login on a device: merge what's here with what's in the account, then upload the rest
+  async first() {
+    this.status = "Merging this device with your account…";
+    const remote = await this.pullAll(true);
+    const local = (await Store.keys()).filter(k => this.synced(k));
+    const toPush = [];
+    for (const k of local) {
+      if (k.startsWith("snd:")) { if (!(remote.get("sounds") || []).some(x => "snd:" + x.id === k)) toPush.push(k); continue; }
+      const mine = await Store.get(k);
+      if (!remote.has(k) || remote.get(k) === undefined) { toPush.push(k); continue; }
+      const theirs = remote.get(k);
+      let merged = this.merge(k, mine, theirs);
+      if (k === "chars") {
+        // drop this device's copy of a bot the account already has (e.g. the starter bot), unless it has chats
+        const sig = c => [c.kind, c.name, c.description].join("|"), have = new Map((theirs || []).map(c => [sig(c), c.id]));
+        const keep = [];
+        for (const c of merged) { const twin = have.get(sig(c)); if (twin && twin !== c.id && !((await Store.get("chats:" + c.id)) || []).length) continue; keep.push(c); }
+        merged = keep;
+      }
+      if (JSON.stringify(k === "settings" ? stripLocal(merged) : merged) !== JSON.stringify(theirs)) toPush.push(k);
+      await this.put(k, merged);
+    }
+    for (const [k, v] of remote) if (!local.includes(k) && v !== undefined) await this.put(k, v);
+    this.st.dirty = [...new Set([...(this.st.dirty || []), ...toPush])]; this.save();
+    await this.reload();
+    await this.push();
+  },
+  merge(k, mine, theirs) {
+    const byId = (a, b) => { const m = new Map(); for (const x of a || []) if (x && x.id) m.set(x.id, x); for (const x of b || []) if (x && x.id) m.set(x.id, x); return [...m.values()]; };
+    if (k === "chars" || k === "personas" || k === "books" || k === "sounds" || k.startsWith("chats:")) return byId(mine, theirs); // the account's copy wins for the same id
+    if (k === "recent") { const o = { ...(mine || {}) }; for (const [id, t] of Object.entries(theirs || {})) o[id] = Math.max(o[id] || 0, t); return o; }
+    if (k === "settings") return { ...(mine || {}), ...(theirs || {}) };
+    return theirs;
+  },
+  async pullAll(all) {
+    const out = new Map(); let from = 0;
+    for (;;) {
+      const r = await this.req(`/rest/v1/kv?select=key,value,deleted,updated_at&order=updated_at.asc` + (all ? "" : `&updated_at=gt.${encodeURIComponent(this.st.pulled || "1970-01-01T00:00:00Z")}`), { headers: { Range: `${from}-${from + 199}` } });
+      if (!r.ok) throw new Error("Couldn't reach your account.");
+      const rows = await r.json();
+      for (const row of rows) { out.set(row.key, row.deleted ? undefined : row.value); this.st.pulled = row.updated_at; }
+      if (rows.length < 200) break; from += 200;
+    }
+    this.save();
+    return out;
+  },
+  // fetch changes made on other devices since the last pull and apply them here
+  async pull() {
+    if (!this.on() || this.busy) return;
+    this.busy = true;
+    try {
+      const got = await this.pullAll(false), dirty = new Set(this.st.dirty || []), changed = [];
+      for (const [k, v] of got) { if (dirty.has(k)) continue; await this.put(k, v); changed.push(k); } // an unsent change here wins
+      if (changed.length) await this.reload(changed);
+      this.status = "Synced " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    } catch (e) { this.status = e.message; }
+    finally { this.busy = false; }
+  },
+  async push() {
+    if (!this.on() || !(this.st.dirty || []).length) return;
+    clearTimeout(this.timer);
+    const keys = [...this.st.dirty], done = [];
+    try {
+      const rows = [];
+      for (const k of keys) {
+        if (k.startsWith("snd:")) {
+          const blob = await Store.get(k), path = `/storage/v1/object/sounds/${this.st.uid}/${encodeURIComponent(k.slice(4))}`;
+          const r = blob ? await this.req(path, { method: "POST", headers: { "x-upsert": "true", "Content-Type": blob.type || "application/octet-stream" }, body: blob }) : await this.req(path, { method: "DELETE" });
+          if (r.ok || !blob) done.push(k);
+          continue;
+        }
+        let v = await Store.get(k);
+        if (k === "settings" && v) v = stripLocal(v);
+        rows.push({ user_id: this.st.uid, key: k, value: v === undefined ? null : v, deleted: v === undefined });
+      }
+      for (let i = 0; i < rows.length; i += 10) {
+        const part = rows.slice(i, i + 10);
+        const r = await this.req("/rest/v1/kv?on_conflict=user_id,key", { method: "POST", headers: { "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(part) });
+        if (!r.ok) throw new Error("Couldn't save to your account (" + r.status + ").");
+        done.push(...part.map(x => x.key));
+      }
+      this.status = "Synced " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    } catch (e) { this.status = "Not synced yet: " + e.message; clearTimeout(this.timer); this.timer = setTimeout(() => this.push(), 30000); }
+    const left = new Set(this.st.dirty || []); for (const k of done) left.delete(k);
+    this.st.dirty = [...left]; this.save();
+  },
+  async fetchSound(id) {
+    try {
+      const r = await this.req(`/storage/v1/object/authenticated/sounds/${this.st.uid}/${encodeURIComponent(id)}`);
+      if (!r.ok) return;
+      const blob = await r.blob();
+      this.applying = true; await Store.setRaw("snd:" + id, blob);
+    } catch {} finally { this.applying = false; }
+  },
+  // reload app state from storage after other devices' changes landed
+  async reload(keys) {
+    const any = re => !keys || keys.some(k => re.test(k));
+    if (any(/^settings$/)) S.settings = { ...DEFAULTS, ...((await Store.get("settings")) || {}) };
+    if (any(/^chars$/)) S.chars = (await Store.get("chars")) || [];
+    if (any(/^(personas|activePersona)$/)) { S.personas = (await Store.get("personas")) || S.personas; S.personaId = (await Store.get("activePersona")) || S.personaId; }
+    if (any(/^books$/)) S.books = (await Store.get("books")) || [];
+    if (any(/^recent$/)) S.recent = (await Store.get("recent")) || {};
+    if (any(/^sounds$/)) SND = null;
+    if (!$("chat").hidden && S.chat && S.chat.id && !S.busy && any(new RegExp("^c2:" + S.chat.id + "$"))) { const c = await Store.get("c2:" + S.chat.id); if (c) { S.chat = c; renderMsgs(true); updateStage(); } }
+    if (!$("home").hidden && $("sheet").hidden) renderHome();
+  }
+};
+document.addEventListener("visibilitychange", () => { if (!Sync.on()) return; if (document.hidden) Sync.push(); else Sync.pull(); });
+setInterval(() => { if (Sync.on() && !document.hidden) Sync.pull(); }, 60000);
+function drawAccount(box) {
+  if (!box) return;
+  if (Sync.on()) {
+    box.innerHTML = `<h3>Account</h3><p class="note" style="margin:0">Logged in as <b>${esc(Sync.st.email || "")}</b>. Bots, chats, personas, lorebooks, rules, settings and your own sounds sync to every device where you log in. Your API key stays on each device.</p>
+      <div class="hint" id="acStat">${esc(Sync.status || "Syncing…")}</div>
+      <div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn small" type="button" id="acNow">Sync now</button><button class="btn small" type="button" id="acOut">Log out</button></div>`;
+    $("acNow").onclick = async () => { $("acStat").textContent = "Syncing…"; await Sync.push(); await Sync.pull(); $("acStat").textContent = Sync.status; };
+    confirmBtn($("acOut"), "Tap again: this device keeps its copy", () => { Sync.logOut(); drawAccount(box); });
+    return;
+  }
+  box.innerHTML = `<h3>Account</h3><p class="note" style="margin:0">Log in to keep your bots, chats, settings and sounds the same on every phone and computer. Your API key is entered once per device and stays there.</p>
+    <input id="acEmail" type="email" autocomplete="username" placeholder="Email" value="${esc(Sync.st.email || "")}">
+    <input id="acPass" type="password" autocomplete="current-password" placeholder="Password (8+ characters)">
+    <div class="hint" id="acStat">${esc(Sync.status || "")}</div>
+    <div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn primary small" type="button" id="acIn">Log in</button><button class="btn small" type="button" id="acNew">Create my account</button></div>`;
+  const go = async create => {
+    const email = $("acEmail").value.trim(), pass = $("acPass").value;
+    if (!email || pass.length < 8) { $("acStat").textContent = "Enter your email and a password of at least 8 characters."; return; }
+    $("acIn").disabled = $("acNew").disabled = true; $("acStat").textContent = create ? "Creating your account…" : "Logging in…";
+    try {
+      if (create) await Sync.signUp(email, pass);
+      $("acStat").textContent = "Merging this device with your account…";
+      await Sync.logIn(email, pass);
+      closeSheet(); renderHome(); $("btnSettings").click();
+    } catch (e) { $("acStat").textContent = e.message; $("acIn").disabled = $("acNew").disabled = false; }
+  };
+  $("acIn").onclick = () => go(false); $("acNew").onclick = () => go(true);
+}
+
 /* ---------- Boot & migrations ---------- */
 async function migrateChats() {
   for (const k of await Store.keys()) {
@@ -3310,6 +3502,7 @@ async function migrateChats() {
   if (!S.chars.length && !(await Store.get("seeded"))) { S.chars = [sampleChar()]; await Store.set("seeded", true); }
   await saveSettings(); await saveChars(); await savePersonas();
   renderHome();
+  if (Sync.on()) Sync.push().then(() => Sync.pull());
   setTimeout(() => { $("splash").classList.add("hide"); setTimeout(() => $("splash").remove(), 700); }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 1900);
 })();
 
