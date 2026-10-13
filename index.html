@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
 <meta name="theme-color" content="#16131d">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lanternroom">
 <title>Lanternroom</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22g%22%20cx%3D%2250%25%22%20cy%3D%2258%25%22%20r%3D%2250%25%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd98a%22%20stop-opacity%3D%22.95%22/%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%23f0a24a%22%20stop-opacity%3D%22.35%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e8a95b%22%20stop-opacity%3D%220%22/%3E%3C/radialGradient%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff6cf%22/%3E%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%23ffc35a%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff7a2e%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2237%22%20r%3D%2226%22%20fill%3D%22url%28%23g%29%22/%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%227%22%20r%3D%224.2%22%20fill%3D%22none%22%20stroke%3D%22%23c9bbd9%22%20stroke-width%3D%222.6%22/%3E%3Cpath%20d%3D%22M20%2014h24l-3%206H23z%22%20fill%3D%22%234a3f5c%22/%3E%3Crect%20x%3D%2219%22%20y%3D%2220%22%20width%3D%2226%22%20height%3D%2230%22%20rx%3D%225%22%20fill%3D%22%232a2433%22%20stroke%3D%22%238d7ea3%22%20stroke-width%3D%222.6%22/%3E%3Cpath%20d%3D%22M32%2026c4%205%206%208%206%2012a6%206%200%200%201-12%200c0-4%202-7%206-12z%22%20fill%3D%22url%28%23f%29%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2250%22%20width%3D%2232%22%20height%3D%226%22%20rx%3D%223%22%20fill%3D%22%234a3f5c%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -654,7 +660,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.23 · Oct 13";
+const VERSION = "1.24 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2235,6 +2241,8 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       <h3 style="margin-top:6px">Display size (this device)</h3>
       ${rangeRow("sScale", "Interface size", "Scales the whole app proportionally. Changes as you drag.", 50, 250, 5, Math.round(UIZ * 100), v => v + "%")}
       <label class="check"><input type="checkbox" id="sScaleAuto" ${(st.uiScale || "auto") === "auto" ? "checked" : ""}> Automatic (picks a size from the window)</label>
+      <h3 style="margin-top:6px">App</h3>
+      <div id="sInstall" class="stack"></div>
     </div>
     ${field("AI provider", `<select id="sProv"><option value="deepseek" ${st.provider !== "custom" ? "selected" : ""}>DeepSeek</option><option value="custom" ${st.provider === "custom" ? "selected" : ""}>Other (OpenAI-compatible, e.g. OpenRouter)</option></select>`)}
     <div id="dsBox" class="stack">
@@ -2316,7 +2324,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   $("sScaleAuto").onchange = async e => { S.settings.uiScale = e.target.checked ? "auto" : String(UIZ); applyScale(); $("sScale").value = Math.round(UIZ * 100); $("sScaleV").textContent = Math.round(UIZ * 100) + "%"; await saveSettings(); };
   for (const id of ["sVol", "sAmbVol", "sActVol"]) $(id).addEventListener("input", () => { $(id + "V").textContent = Math.round($(id).value * 100) + "%"; });
   // theme and accent apply instantly and are saved right away (they sync to your other devices)
-  b.querySelector(".tp-lan").innerHTML = lanternSVG();
+  b.querySelector(".tp-lan").innerHTML = lanternSVG(); drawInstall();
   const markAccent = () => { const cur = (S.settings.accent || (THEMES[S.settings.theme] || THEMES.lantern).accent).toLowerCase(); b.querySelectorAll("#sAccent .acc[data-c]").forEach(x => x.classList.toggle("on", x.dataset.c === cur)); $("sAccentPick").value = cur; };
   b.querySelectorAll("#sTheme [data-theme]").forEach(x => x.onclick = async () => { S.settings.theme = x.dataset.theme; S.settings.accent = ""; applyTheme(); b.querySelectorAll("#sTheme .theme-opt").forEach(y => y.classList.toggle("on", y === x)); markAccent(); await saveSettings(); });
   b.querySelectorAll("#sAccent [data-c]").forEach(x => x.onclick = async () => { S.settings.accent = x.dataset.c; applyTheme(); markAccent(); await saveSettings(); });
@@ -2944,7 +2952,41 @@ function editMessage(i) {
 }
 
 $("btnChats").onclick = () => openChats(S.charId);
-$("btnBack").onclick = () => { if (S.busy) return; $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; renderHome(); };
+$("btnBack").onclick = () => { if (S.busy) return; leaveChat(); };
+function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; renderHome(); };
+
+/* ---------- Installed app: back button, offline, install ---------- */
+// The phone's back button (and the browser's) closes the open window first, then leaves the chat, and only exits from Home.
+// While anything is open the app keeps one extra history entry; going back uses it up and we undo one step.
+let POP_IGNORE = 0, WANT_GUARD = false;
+function syncNav() {
+  const away = !$("sheet").hidden || !$("chat").hidden, has = history.state && history.state.lr === "in";
+  if (away && !has) { if (POP_IGNORE) WANT_GUARD = true; else history.pushState({ lr: "in" }, ""); }
+  else if (!away && has && !POP_IGNORE) { POP_IGNORE++; history.back(); }
+}
+addEventListener("popstate", () => {
+  if (POP_IGNORE) { POP_IGNORE--; if (WANT_GUARD) { WANT_GUARD = false; syncNav(); } return; }
+  if (!$("ambPop").hidden) $("ambPop").hidden = true;
+  else if (!$("sheet").hidden) closeSheet();
+  else if (!$("chat").hidden && !S.busy) leaveChat();
+  syncNav();
+});
+new MutationObserver(() => queueMicrotask(syncNav)).observe($("sheet"), { attributes: true, attributeFilter: ["hidden"] });
+new MutationObserver(() => queueMicrotask(syncNav)).observe($("chat"), { attributes: true, attributeFilter: ["hidden"] });
+// offline support + updates: the service worker keeps the app and built-in sounds on the device
+const isApp = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+let INSTALL = null;
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); INSTALL = e; drawInstall(); });
+addEventListener("appinstalled", () => { INSTALL = null; drawInstall(); });
+function drawInstall() {
+  const box = $("sInstall"); if (!box) return;
+  if (isApp()) box.innerHTML = `<p class="note" style="margin:0">✓ Lanternroom is running as an installed app.</p>`;
+  else if (INSTALL) {
+    box.innerHTML = `<button type="button" class="btn primary" id="sInstallGo">Install Lanternroom as an app</button><p class="hint" style="margin:0">Adds it to your home screen and app drawer. It opens full-screen, works offline and still updates itself.</p>`;
+    $("sInstallGo").onclick = async () => { const p = INSTALL; INSTALL = null; p.prompt(); try { await p.userChoice; } catch {} drawInstall(); };
+  } else box.innerHTML = `<p class="note" style="margin:0">To install: in Chrome, open the ⋮ menu and choose <b>Add to Home screen</b> (or <b>Install app</b>). On a computer, use the install icon at the right of the address bar.</p>`;
+}
 
 /* ---------- Computer layout: bot rail (left) and scene panel (right) ---------- */
 var RAIL = { q: "" };
