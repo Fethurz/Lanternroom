@@ -1,0 +1,304 @@
+{
+"files": [
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b01.ogg",
+"d": 0.31,
+"n": "kiss-cartoon-b01"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b02.ogg",
+"d": 0.71,
+"n": "kiss-cartoon-b02"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b03.ogg",
+"d": 0.47,
+"n": "kiss-cartoon-b03"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b04.ogg",
+"d": 0.31,
+"n": "kiss-cartoon-b04"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b05.ogg",
+"d": 0.39,
+"n": "kiss-cartoon-b05"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b06.ogg",
+"d": 0.39,
+"n": "kiss-cartoon-b06"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b07.ogg",
+"d": 0.69,
+"n": "kiss-cartoon-b07"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b08.ogg",
+"d": 0.39,
+"n": "kiss-cartoon-b08"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b09.ogg",
+"d": 0.39,
+"n": "kiss-cartoon-b09"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b10.ogg",
+"d": 0.63,
+"n": "kiss-cartoon-b10"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b11.ogg",
+"d": 0.55,
+"n": "kiss-cartoon-b11"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b12.ogg",
+"d": 0.37,
+"n": "kiss-cartoon-b12"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b13.ogg",
+"d": 0.41,
+"n": "kiss-cartoon-b13"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b14.ogg",
+"d": 0.51,
+"n": "kiss-cartoon-b14"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b15.ogg",
+"d": 0.27,
+"n": "kiss-cartoon-b15"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-cartoon-b16.ogg",
+"d": 0.33,
+"n": "kiss-cartoon-b16"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-real01.ogg",
+"d": 0.3,
+"n": "kiss-real01"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-real04.ogg",
+"d": 0.34,
+"n": "kiss-real04"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-real05.ogg",
+"d": 0.26,
+"n": "kiss-real05"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-real06.ogg",
+"d": 0.26,
+"n": "kiss-real06"
+},
+{
+"t": "kiss",
+"p": "kiss/kiss-real07.ogg",
+"d": 0.26,
+"n": "kiss-real07"
+},
+{
+"t": "shit",
+"p": "shit/plop-1-01.ogg",
+"d": 2.18,
+"n": "plop-1-01"
+},
+{
+"t": "shit",
+"p": "shit/plop-3-01.ogg",
+"d": 1.23,
+"n": "plop-3-01"
+},
+{
+"t": "shit",
+"p": "shit/plop-3-02.ogg",
+"d": 1.21,
+"n": "plop-3-02"
+},
+{
+"t": "shit",
+"p": "shit/plop-4-01.ogg",
+"d": 0.85,
+"n": "plop-4-01"
+},
+{
+"t": "shit",
+"p": "shit/plop-4-02.ogg",
+"d": 1.07,
+"n": "plop-4-02"
+},
+{
+"t": "shit",
+"p": "shit/plop-4-03.ogg",
+"d": 0.55,
+"n": "plop-4-03"
+},
+{
+"t": "shit",
+"p": "shit/plop-5-01.ogg",
+"d": 2.91,
+"n": "plop-5-01"
+},
+{
+"t": "shit",
+"p": "shit/plop-6-01.ogg",
+"d": 2.57,
+"n": "plop-6-01"
+},
+{
+"t": "shit",
+"p": "shit/plop-6-02.ogg",
+"d": 2.09,
+"n": "plop-6-02"
+},
+{
+"t": "fart",
+"p": "fart/fart-flabby01.ogg",
+"d": 1.14,
+"n": "fart-flabby01"
+},
+{
+"t": "fart",
+"p": "fart/fart-flabby02.ogg",
+"d": 0.9,
+"n": "fart-flabby02"
+},
+{
+"t": "fart",
+"p": "fart/fart-flabby03.ogg",
+"d": 2.46,
+"n": "fart-flabby03"
+},
+{
+"t": "fart",
+"p": "fart/fart-flabby04.ogg",
+"d": 2.4,
+"n": "fart-flabby04"
+},
+{
+"t": "fart",
+"p": "fart/fart-flabby05.ogg",
+"d": 1.0,
+"n": "fart-flabby05"
+},
+{
+"t": "fart",
+"p": "fart/fart-flabby06.ogg",
+"d": 1.04,
+"n": "fart-flabby06"
+},
+{
+"t": "fart",
+"p": "fart/fart-flabby07.ogg",
+"d": 0.96,
+"n": "fart-flabby07"
+},
+{
+"t": "fart",
+"p": "fart/fart-short.ogg",
+"d": 0.94,
+"n": "fart-short"
+},
+{
+"t": "fart",
+"p": "fart/fart-long.ogg",
+"d": 1.97,
+"n": "fart-long"
+},
+{
+"t": "flush",
+"p": "flush/toilet-flush.ogg",
+"d": 13.4,
+"n": "toilet-flush"
+},
+{
+"t": "loop_sex",
+"p": "loop_sex/sex_steady.ogg",
+"d": 57.61,
+"n": "Sex loop \u00b7 steady"
+},
+{
+"t": "loop_sex",
+"p": "loop_sex/sex_fast.ogg",
+"d": 58.34,
+"n": "Sex loop \u00b7 hard & fast"
+},
+{
+"t": "loop_sex",
+"p": "loop_sex/sex_slow.ogg",
+"d": 60.01,
+"n": "Sex loop \u00b7 slow & deep"
+},
+{
+"t": "loop_sex",
+"p": "loop_sex/sex_waves.ogg",
+"d": 60.01,
+"n": "Sex loop \u00b7 waves"
+},
+{
+"t": "loop_oral",
+"p": "loop_oral/oral_kiss_quick.ogg",
+"d": 36.01,
+"n": "Oral loop \u00b7 quick"
+},
+{
+"t": "loop_oral",
+"p": "loop_oral/oral_kiss_pops.ogg",
+"d": 40.01,
+"n": "Oral loop \u00b7 pops and gulps"
+},
+{
+"t": "loop_kiss",
+"p": "loop_kiss/kiss_pecks.ogg",
+"d": 36.01,
+"n": "Kissing loop \u00b7 playful pecks"
+},
+{
+"t": "loop_shit",
+"p": "loop_shit/shit_plops.ogg",
+"d": 60.01,
+"n": "Shitting loop \u00b7 plops"
+},
+{
+"t": "loop_shit",
+"p": "loop_shit/shit_farts.ogg",
+"d": 60.01,
+"n": "Shitting loop \u00b7 plops with farts"
+},
+{
+"t": "loop_shit",
+"p": "loop_shit/shit_heavy.ogg",
+"d": 60.01,
+"n": "Shitting loop \u00b7 heavy"
+}
+]
+}
