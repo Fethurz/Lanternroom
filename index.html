@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
 <meta name="theme-color" content="#16131d">
 <title>Lanternroom</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22g%22%20cx%3D%2250%25%22%20cy%3D%2258%25%22%20r%3D%2250%25%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd98a%22%20stop-opacity%3D%22.95%22/%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%23f0a24a%22%20stop-opacity%3D%22.35%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e8a95b%22%20stop-opacity%3D%220%22/%3E%3C/radialGradient%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff6cf%22/%3E%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%23ffc35a%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff7a2e%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2237%22%20r%3D%2226%22%20fill%3D%22url%28%23g%29%22/%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%227%22%20r%3D%224.2%22%20fill%3D%22none%22%20stroke%3D%22%23c9bbd9%22%20stroke-width%3D%222.6%22/%3E%3Cpath%20d%3D%22M20%2014h24l-3%206H23z%22%20fill%3D%22%234a3f5c%22/%3E%3Crect%20x%3D%2219%22%20y%3D%2220%22%20width%3D%2226%22%20height%3D%2230%22%20rx%3D%225%22%20fill%3D%22%232a2433%22%20stroke%3D%22%238d7ea3%22%20stroke-width%3D%222.6%22/%3E%3Cpath%20d%3D%22M32%2026c4%205%206%208%206%2012a6%206%200%200%201-12%200c0-4%202-7%206-12z%22%20fill%3D%22url%28%23f%29%22/%3E%3Crect%20x%3D%2216%22%20y%3D%2250%22%20width%3D%2232%22%20height%3D%226%22%20rx%3D%223%22%20fill%3D%22%234a3f5c%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
@@ -84,7 +85,7 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
 #status{font-size:12px;color:var(--muted);padding:0 16px 4px;min-height:0}
 #status.err{color:var(--danger)}
 #composer{display:flex;align-items:flex-end;gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:rgba(22,19,29,.9);border-top:1px solid var(--line)}
-#input{flex:1;min-width:0;resize:none;max-height:45vh;min-height:44px;transition:height .18s ease;padding:10px 14px;border-radius:22px;background:var(--surface);border:1px solid var(--line);line-height:1.4}
+#input{flex:1;min-width:0;resize:none;max-height:calc(45vh / var(--z, 1));min-height:44px;transition:height .18s ease;padding:10px 14px;border-radius:22px;background:var(--surface);border:1px solid var(--line);line-height:1.4}
 #send{background:var(--accent);color:var(--accent-ink)}
 #send:disabled{opacity:.5}
 
@@ -234,15 +235,30 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
 #btnAmb.muted .w1,#btnAmb.muted .w2{display:none}
 #btnAmb.muted{color:var(--muted)}
 #sAccount input{width:100%;margin-top:6px}
+/* desktop: centred column, room around it */
+html.wide body{background:radial-gradient(ellipse at 50% 0%,#231d30 0%,var(--bg) 70%)}
+html.wide #app{max-width:860px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line);box-shadow:0 0 60px -20px rgba(0,0,0,.8)}
+html.wide #charList{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
+html.wide .panel{max-width:720px;border-radius:22px;margin-bottom:24px;border-bottom:1px solid var(--line)}
+html.wide #sheet{align-items:center}
+.desk-only{display:none}
+html.wide .desk-only{display:inline}
+.snd-drop{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;transition:border-color .2s,background-color .2s}
+.snd-drop.over{border-color:var(--accent);background:rgba(232,169,91,.08)}
+details.snd-sec{border:1px solid var(--line);border-radius:12px;padding:4px 10px;margin-top:8px}
+details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:34px}
+.linkish{color:var(--accent);text-decoration:underline;padding:0;font-size:inherit}
 .snd-built{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .snd-built a{color:var(--accent)}
 .snd-help{background:var(--surface-2);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:8px}
 .tab .mine{font-weight:400;opacity:.8}
 #spTypes .lbl{margin-top:8px}
-.snd-row{align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--line)}
+.snd-row{display:grid!important;grid-template-columns:34px minmax(0,1fr) auto 34px;gap:8px!important;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--line)}
 .snd-row .snd-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
 .snd-row select{max-width:120px;padding:6px 8px;border-radius:10px;font-size:13px}
 .snd-row .icon{width:34px;height:34px}
+.snd-row > *{flex:none!important;min-width:0}
+.snd-row .snd-name{text-align:left}
 .msg.blank-open p{margin:4px 0 0}
 #input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,169,91,.18)}
 #send{box-shadow:0 4px 14px -4px rgba(232,169,91,.6);transition:transform .12s,opacity .2s}
@@ -439,6 +455,22 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
 
 <script>
 "use strict";
+/* ---------- Display size ---------- */
+// Phones stay at 100%. On computers the whole app is scaled up with the window (CSS zoom on <body>) and
+// centred in a column, so it doesn't look tiny and stretched. Settings → Display size overrides it per device.
+let UIZ = 1;
+function applyScale() {
+  const pick = (S && S.settings && S.settings.uiScale) || "auto";
+  const desk = matchMedia("(pointer: fine)").matches && innerWidth >= 760;
+  let z = pick === "auto" ? (desk ? Math.min(2.2, Math.max(1, innerHeight / 700)) : 1) : +pick || 1;
+  z = Math.max(1, Math.min(z, innerWidth / 380)); // always leave room for the phone layout
+  UIZ = Math.round(z * 100) / 100;
+  document.body.style.zoom = UIZ;
+  document.documentElement.style.setProperty("--z", UIZ);
+  document.documentElement.classList.toggle("wide", innerWidth / UIZ >= 780);
+}
+addEventListener("resize", () => applyScale());
+
 /* ---------- Storage (IndexedDB, falls back to localStorage) ---------- */
 const Store = {
   db: null,
@@ -477,7 +509,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.18 · Oct 13";
+const VERSION = "1.19 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1422,7 +1454,7 @@ $("input").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftK
 function autoGrow() {
   const t = $("input"), open = $("composer").classList.contains("open");
   t.style.height = "auto";
-  t.style.height = (open ? Math.min(t.scrollHeight, Math.max(140, Math.round(innerHeight * 0.45))) : Math.min(t.scrollHeight, 44)) + "px";
+  t.style.height = (open ? Math.min(t.scrollHeight, Math.max(140, Math.round(innerHeight * 0.45 / UIZ))) : Math.min(t.scrollHeight, 44)) + "px";
   if (!open) t.scrollTop = 0;
 }
 function composerOpen(on) { $("composer").classList.toggle("open", on); autoGrow(); }
@@ -1850,6 +1882,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   };
   b.innerHTML = `
     <div class="group" id="sAccount"></div>
+    ${field("Display size (this device)", `<select id="sScale">${[["auto", "Automatic (bigger on computers)"], ["1", "100%"], ["1.15", "115%"], ["1.3", "130%"], ["1.5", "150%"], ["1.75", "175%"], ["2", "200%"]].map(([v, l]) => `<option value="${v}" ${String(st.uiScale || "auto") === v ? "selected" : ""}>${l}</option>`).join("")}</select>`, "Scales the whole app. Changes right away.")}
     ${field("AI provider", `<select id="sProv"><option value="deepseek" ${st.provider !== "custom" ? "selected" : ""}>DeepSeek</option><option value="custom" ${st.provider === "custom" ? "selected" : ""}>Other (OpenAI-compatible, e.g. OpenRouter)</option></select>`)}
     <div id="dsBox" class="stack">
       ${field("DeepSeek API key", `<input id="sKey" type="password" value="${esc(st.apiKey)}" placeholder="sk-…">`, "Saved only on this device. Get one at platform.deepseek.com.")}
@@ -1922,6 +1955,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   $("sPersonas").onclick = () => openPersonas();
   ruleTabs($("sGlobal"));
   drawAccount($("sAccount"));
+  $("sScale").onchange = async e => { S.settings.uiScale = e.target.value; applyScale(); await saveSettings(); };
   $("sPack").onclick = async () => { await $("sSave").onclick(); openSoundPack(); }; // keep any settings changes first
   $("sSfxReset").onclick = () => { $("sSfxRules").value = DEFAULTS.sfxRules; };
   $("sReset").onclick = () => {
@@ -2813,7 +2847,7 @@ function burst(sp) {
   playSfx(cat, sp.textContent.trim());
   sp.animate([{ transform: "scale(1)" }, { transform: "scale(1.28) rotate(-3deg)" }, { transform: "scale(1)" }], { duration: 320, easing: "ease-out" });
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const rc = sp.getBoundingClientRect(), cx = rc.left + rc.width / 2, cy = rc.top + rc.height / 2, color = getComputedStyle(sp).color;
+  const rc = sp.getBoundingClientRect(), cx = (rc.left + rc.width / 2) / UIZ, cy = (rc.top + rc.height / 2) / UIZ, color = getComputedStyle(sp).color;
   if (M.shake) { const m = sp.closest(".msg"); m && m.animate([{ transform: "none" }, { transform: "translateX(-4px)" }, { transform: "translateX(4px)" }, { transform: "translateX(-2px)" }, { transform: "none" }], { duration: 300 }); }
   const rings = [M.ring, M.ring2, M.ring3].filter(Boolean).length;
   for (let k = 0; k < rings; k++) {
@@ -2845,7 +2879,7 @@ function burst(sp) {
     const anim = p.animate(frames, { duration: M.dur * r(0.8, 1.2), delay: (M.stagger || 0) * i + (M.flicker ? r(0, 120) : 0), easing: M.ease || "cubic-bezier(.2,.8,.3,1)", fill: "both" });
     if (M.flicker) p.animate([{ filter: "brightness(1)" }, { filter: "brightness(1.8)" }, { filter: "brightness(.8)" }], { duration: 120, iterations: Math.ceil(M.dur / 120) });
     anim.onfinish = () => {
-      if (M.pop) { const ring = document.createElement("div"); ring.className = "fxring"; ring.style.color = color; const box = p.getBoundingClientRect(); ring.style.left = box.left + "px"; ring.style.top = box.top + "px"; ring.style.width = ring.style.height = box.width + "px"; document.body.appendChild(ring); ring.animate([{ transform: "scale(.6)", opacity: .8 }, { transform: "scale(1.6)", opacity: 0 }], { duration: 220 }).onfinish = () => ring.remove(); }
+      if (M.pop) { const ring = document.createElement("div"); ring.className = "fxring"; ring.style.color = color; const box = p.getBoundingClientRect(); ring.style.left = box.left / UIZ + "px"; ring.style.top = box.top / UIZ + "px"; ring.style.width = ring.style.height = box.width / UIZ + "px"; document.body.appendChild(ring); ring.animate([{ transform: "scale(.6)", opacity: .8 }, { transform: "scale(1.6)", opacity: 0 }], { duration: 220 }).onfinish = () => ring.remove(); }
       p.remove();
     };
   }
@@ -2914,6 +2948,13 @@ function audioLength(blob) {
   });
 }
 let SND = null, AC = null; const SND_URLS = {};
+// every sound the app starts is tracked so it can all be cut at once (leaving a chat, switching apps)
+const LIVE = new Set();
+const trackAudio = a => { LIVE.add(a); a.addEventListener("ended", () => LIVE.delete(a)); a.addEventListener("pause", () => LIVE.delete(a)); return a; };
+function hushAll() {
+  for (const a of [...LIVE]) { try { a.pause(); a.src = ""; } catch {} } LIVE.clear();
+  if (AC && AC.state === "running") { const old = AC; AC = null; NOISE = null; old.close().catch(() => {}); }
+}
 async function sndIndex() { if (!SND) SND = (await Store.get("sounds")) || []; return SND; }
 async function sndSave() { await Store.set("sounds", SND); }
 // Built-in pack: Jeschke's vore sounds, sorted and compressed, hosted next to the app (sounds/jeschke)
@@ -2925,8 +2966,13 @@ async function builtinSounds() {
   return BUILTIN;
 }
 const builtinOn = () => S.settings.builtinPack !== false;
+// the owner's changes to built-in sounds: removed ones and ones moved to another type (synced as "sndfix")
+let SNDFIX = null;
+async function sndFix() { if (!SNDFIX) { const f = (await Store.get("sndfix")) || {}; SNDFIX = { hidden: f.hidden || {}, moved: f.moved || {} }; } return SNDFIX; }
+async function saveFix() { await Store.set("sndfix", SNDFIX); }
+async function builtinView() { const f = await sndFix(); return (await builtinSounds()).filter(x => !f.hidden[x.id]).map(x => f.moved[x.id] ? { ...x, type: f.moved[x.id] } : x); }
 // every sound of a type: the user's own plus the built-in ones
-async function soundsOf(type) { return [...(await sndIndex()).filter(x => x.type === type), ...(builtinOn() ? (await builtinSounds()).filter(x => x.type === type) : [])]; }
+async function soundsOf(type) { return [...(await sndIndex()).filter(x => x.type === type), ...(builtinOn() ? (await builtinView()).filter(x => x.type === type) : [])]; }
 async function poolFor(types) { for (const t of types) { const f = await soundsOf(t); if (f.length) return f; } return []; }
 async function sndURL(id) {
   if (id.startsWith("b:")) return "sounds/jeschke/" + id.slice(2);
@@ -2974,7 +3020,7 @@ async function playSfx(cat, text) {
     const pool = await poolFor(order);
     if (pool.length) {
       const pick = pool[Math.floor(Math.random() * pool.length)], url = await sndURL(pick.id);
-      if (url) { const a = new Audio(url); a.volume = vol; await a.play(); capAudio(a, vol); return; }
+      if (url) { const a = trackAudio(new Audio(url)); a.volume = vol; await a.play(); capAudio(a, vol); return; }
     }
   } catch {}
   synthSfx(sub && SYNTH[sub] ? sub : cat, vol);
@@ -2988,7 +3034,7 @@ function sTone(ac, out, { type = "sine", f0, f1 = f0, t = 0, dur, g = 0.5, vib =
   e.gain.setValueAtTime(0.0001, at); e.gain.exponentialRampToValueAtTime(g, at + Math.min(0.02, dur / 4)); e.gain.exponentialRampToValueAtTime(0.0001, at + dur);
   o.connect(e).connect(out); o.start(at); o.stop(at + dur + 0.02);
 }
-let NOISE = null;
+var NOISE = null;
 function sNoise(ac, out, { t = 0, dur, g = 0.4, type = "bandpass", f0 = 800, f1 = f0, q = 1 }) {
   if (!NOISE) { NOISE = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate); const d = NOISE.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
   const n = ac.createBufferSource(), f = ac.createBiquadFilter(), e = ac.createGain(), at = ac.currentTime + t;
@@ -3032,34 +3078,81 @@ function synthSfx(cat, vol) {
   const out = ac.createGain(); out.gain.value = vol; out.connect(ac.destination);
   (SYNTH[cat] || SYNTH[FX_CSS[cat]] || SYNTH.wave)(ac, out);
 }
+// audio files picked one by one, as a whole folder, or dropped onto the screen; zips are unpacked; anything else is ignored
+async function importSounds(items, say) {
+  let added = 0, failed = 0, skipped = 0, other = 0;
+  await sndIndex();
+  const have = new Set(SND.map(x => x.path || x.name));
+  const addOne = async (path, blob) => {
+    if (!AUDIO_EXT.test(path) && !/^audio\//.test(blob.type || "")) { other++; return; }
+    if (have.has(path)) { skipped++; return; }
+    try {
+      const id = uid(); await Store.setRaw("snd:" + id, blob);
+      const len = await audioLength(blob);
+      SND.push({ id, path, name: path.split("/").pop().replace(/\.[^.]+$/, ""), type: sndTypeForFile(path, len > 15), len: Math.round(len) }); have.add(path); added++;
+      if (added % 10 === 0) { say(`Added ${added} sounds…`); await sndSave(); }
+    } catch { failed++; }
+  };
+  for (const { file: f, path } of items) {
+    if (/\.zip$/i.test(f.name) || f.type === "application/zip") {
+      say(`Unpacking ${f.name}…`);
+      try { await unzipAudio(f, path.replace(/\.zip$/i, "") + "/", addOne); }
+      catch (err) { failed++; say(`${f.name} couldn't be opened (${err.message}).`); }
+    } else await addOne(path, f);
+  }
+  await sndSave();
+  say(`Added ${added} sound${added === 1 ? "" : "s"}.` + (skipped ? ` ${skipped} were already in your pack.` : "") + (other ? ` ${other} non-audio file${other === 1 ? " was" : "s were"} ignored.` : "") + (failed ? ` ${failed} couldn't be saved (the device may be out of space).` : "") + (added ? " Check the types and move any that landed in the wrong one." : ""));
+  return added ? SND.at(-1).type : null;
+}
+// folders dropped on desktop: walk them and keep each file's folder path for sorting
+async function droppedFiles(dt) {
+  const out = [], walk = async (entry, dir) => {
+    if (entry.isFile) { const f = await new Promise((res, rej) => entry.file(res, rej)).catch(() => null); if (f) out.push({ file: f, path: dir + f.name }); return; }
+    if (!entry.isDirectory) return;
+    const reader = entry.createReader();
+    for (;;) { const batch = await new Promise(res => reader.readEntries(res, () => res([]))); if (!batch.length) break; for (const e of batch) await walk(e, dir + entry.name + "/"); }
+  };
+  const entries = [...(dt.items || [])].map(it => it.webkitGetAsEntry && it.webkitGetAsEntry()).filter(Boolean);
+  if (entries.length) for (const e of entries) await walk(e, "");
+  else for (const f of dt.files || []) out.push({ file: f, path: f.name });
+  return out;
+}
 function openSoundPack() {
   openSheet("Sound pack", async b => {
-    await sndIndex(); const built = await builtinSounds();
+    await sndIndex(); const built = await builtinSounds(); await sndFix();
     const norm = t => String(t || "").toLowerCase().replace(/\.[^.]+$/, "").replace(/[^a-z0-9]/g, "");
+    const say = t => { const el = $("spMsg"); if (el) el.textContent = t; };
     let tab = null;
     b.innerHTML = `
       <div class="snd-built"><label class="check"><input type="checkbox" id="spBuilt" ${builtinOn() ? "checked" : ""}> <b>Built-in: Jeschke vore pack</b> · ${built.length} sounds</label>
         <p class="hint" style="margin:2px 0 0">Gurgles, growls, gulps, burps, sloshes, squelches, struggling and long stomach beds, already sorted. Sound Assets by <a href="https://jeschke.itch.io/vore-sound-pack2024" target="_blank" rel="noopener">Jeschke</a> (<a href="https://ko-fi.com/jeschke" target="_blank" rel="noopener">tip them</a>).</p></div>
-      <p class="note">Add your own audio files or whole .zip packs from your Downloads. They're sorted by folder and file name and play alongside the built-in sounds. Tap a type to hear it, see what it's for, and move or remove your own files.</p>
-      <div class="row" style="flex-wrap:wrap;gap:6px"><label class="btn primary small" for="spFiles">+ Add sound files</label><button type="button" class="btn small" id="spResort">Sort my sounds again</button><button type="button" class="btn small danger" id="spDupes" hidden></button></div>
+      <div class="snd-drop" id="spDrop">
+        <p class="note" style="margin:0 0 8px">Add audio files, whole folders or .zip packs. Everything is sorted by folder and file name and plays alongside the built-in sounds.<span class="desk-only"> You can also drag folders onto this box.</span></p>
+        <div class="row" style="flex-wrap:wrap;gap:6px"><label class="btn primary small" for="spFiles">+ Add files</label><label class="btn primary small" for="spDir">+ Add a folder</label><button type="button" class="btn small" id="spResort">Sort my sounds again</button><button type="button" class="btn small danger" id="spDupes" hidden></button></div>
+      </div>
       <input type="file" id="spFiles" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac,.zip,application/zip" multiple hidden>
+      <input type="file" id="spDir" webkitdirectory directory multiple hidden>
       <div id="spMsg" class="hint"></div><div id="spTypes"></div><div id="spList" class="stack"></div>`;
     $("spBuilt").onchange = async e => { S.settings.builtinPack = e.target.checked; await saveSettings(); draw(); };
     $("spResort").onclick = async () => {
       let moved = 0;
       for (const x of SND) { const t = sndTypeForFile(x.path || x.name, (x.len || 0) > 15); if (t !== x.type) { x.type = t; moved++; } }
-      await sndSave(); $("spMsg").textContent = moved ? `Moved ${moved} of your sound${moved === 1 ? "" : "s"} into better types.` : "Your sounds are already sorted."; draw();
+      await sndSave(); say(moved ? `Moved ${moved} of your sound${moved === 1 ? "" : "s"} into better types.` : "Your sounds are already sorted."); draw();
     };
     const builtNames = new Set(built.map(x => norm(x.name)));
     const dupes = () => SND.filter(x => builtNames.has(norm(x.name)));
     confirmBtn($("spDupes"), "Tap again to remove them", async () => {
       const d = dupes(); for (const x of d) { await Store.del("snd:" + x.id); delete SND_URLS[x.id]; }
-      SND = SND.filter(x => !d.includes(x)); await sndSave(); $("spMsg").textContent = `Removed ${d.length} duplicate${d.length === 1 ? "" : "s"}. The built-in copies stay.`; draw();
+      SND = SND.filter(x => !d.includes(x)); await sndSave(); say(`Removed ${d.length} duplicate${d.length === 1 ? "" : "s"}. The built-in copies stay.`); draw();
     });
-    const draw = () => {
+    const typeSelect = cur => `<select data-type aria-label="Sound type">${SND_GROUPS.map(([gl, ts]) => `<optgroup label="${esc(gl)}">${ts.map(k => `<option value="${k}" ${k === cur ? "selected" : ""}>${esc(SND_TYPES[k])}</option>`).join("")}</optgroup>`).join("")}</select>`;
+    const playOne = async x => { const u = await sndURL(x.id); if (u) { const a = trackAudio(new Audio(u)); a.volume = S.settings.sfxVolume ?? 0.7; a.play().catch(() => {}); capAudio(a, a.volume); say("Playing: " + x.name); } };
+    const open = { mine: true, built: false };
+    const draw = async () => {
+      const view = builtinOn() ? await builtinView() : [];
       const mine = {}, theirs = {};
       for (const x of SND) mine[x.type] = (mine[x.type] || 0) + 1;
-      if (builtinOn()) for (const x of built) theirs[x.type] = (theirs[x.type] || 0) + 1;
+      for (const x of view) theirs[x.type] = (theirs[x.type] || 0) + 1;
       const total = t => (mine[t] || 0) + (theirs[t] || 0);
       const d = dupes(); $("spDupes").hidden = !d.length; $("spDupes").textContent = `Remove ${d.length} duplicate${d.length === 1 ? "" : "s"} of built-in sounds`;
       if (!tab || !total(tab)) tab = Object.keys(SND_TYPES).find(t => total(t)) || "bubbles";
@@ -3069,49 +3162,44 @@ function openSoundPack() {
         return `<div class="lbl">${label}</div><div class="tabs" style="flex-wrap:wrap">${has.map(t => `<button type="button" class="tab ${t === tab ? "on" : ""}" data-t="${t}">${esc(SND_TYPES[t])} · ${total(t)}${mine[t] ? ` <span class="mine">(${mine[t]} yours)</span>` : ""}</button>`).join("")}</div>`;
       }).join("") || '<p class="note">No sounds yet.</p>';
       $("spTypes").querySelectorAll("[data-t]").forEach(x => x.onclick = () => { tab = x.dataset.t; draw(); });
-      const rows = SND.filter(x => x.type === tab);
+      const rows = SND.filter(x => x.type === tab), brows = view.filter(x => x.type === tab);
+      const hiddenN = Object.keys(SNDFIX.hidden).length, movedN = Object.keys(SNDFIX.moved).length;
+      const row = (x, kind) => `<div class="row snd-row" data-id="${esc(x.id)}" data-kind="${kind}"><button type="button" class="icon" data-play aria-label="Play ${esc(x.name)}">▶</button><span class="grow snd-name" title="${esc(x.path || x.name)}">${esc(x.name)}</span>${typeSelect(x.type)}<button type="button" class="icon" data-rm aria-label="Remove ${esc(x.name)} from this type">✕</button></div>`;
       $("spList").innerHTML = `<div class="snd-help"><b>${esc(SND_TYPES[tab])}</b> · ${esc(SND_HELP[tab] || (tab.startsWith("amb_") ? "Plays in the background when the scene is here." : "Plays when you tap this kind of sound."))}
-          <div class="row" style="gap:6px;margin-top:6px"><button type="button" class="btn small" id="spRand">▶ Play a random one</button>${theirs[tab] ? `<span class="hint">${theirs[tab]} built-in</span>` : ""}</div></div>`
-        + (rows.length ? `<div class="lbl">Your sounds</div>` + rows.map(x => `<div class="row snd-row" data-id="${x.id}"><button type="button" class="icon" data-play aria-label="Play ${esc(x.name)}">▶</button><span class="grow snd-name">${esc(x.name)}</span><select data-type aria-label="Sound type">${SND_GROUPS.map(([gl, ts]) => `<optgroup label="${esc(gl)}">${ts.map(k => `<option value="${k}" ${k === x.type ? "selected" : ""}>${esc(SND_TYPES[k])}</option>`).join("")}</optgroup>`).join("")}</select><button type="button" class="icon" data-rm aria-label="Remove ${esc(x.name)}">✕</button></div>`).join("") : "")
-        + (rows.length > 1 ? `<button type="button" class="btn small danger" id="spClear">Remove all ${rows.length} of yours here</button>` : "");
-      $("spRand").onclick = async () => { const pool = await soundsOf(tab); if (!pool.length) return; const f = pool[Math.floor(Math.random() * pool.length)], u = await sndURL(f.id); if (u) { const a = new Audio(u); a.volume = S.settings.sfxVolume ?? 0.7; a.play().catch(() => {}); capAudio(a, a.volume); $("spMsg").textContent = "Playing: " + f.name; } };
+          <div class="row" style="gap:6px;margin-top:6px"><button type="button" class="btn small" id="spRand">▶ Play a random one</button></div></div>
+        ${rows.length ? `<details class="snd-sec" data-sec="mine" ${open.mine ? "open" : ""}><summary>Your sounds · ${rows.length}</summary>${rows.map(x => row(x, "mine")).join("")}${rows.length > 1 ? `<button type="button" class="btn small danger" id="spClear">Remove all ${rows.length} of yours here</button>` : ""}</details>` : ""}
+        ${brows.length ? `<details class="snd-sec" data-sec="built" ${open.built ? "open" : ""}><summary>Built-in · ${brows.length}</summary>${brows.map(x => row(x, "built")).join("")}</details>` : ""}
+        ${hiddenN || movedN ? `<p class="hint">${hiddenN ? `${hiddenN} built-in sound${hiddenN === 1 ? "" : "s"} removed` : ""}${hiddenN && movedN ? " · " : ""}${movedN ? `${movedN} moved to another type` : ""}. <button type="button" class="linkish" id="spRestore">Restore built-ins to how they came</button></p>` : ""}`;
+      $("spList").querySelectorAll("details.snd-sec").forEach(dt => dt.addEventListener("toggle", () => { open[dt.dataset.sec] = dt.open; }));
+      $("spRand").onclick = async () => { const pool = await soundsOf(tab); if (pool.length) playOne(pool[Math.floor(Math.random() * pool.length)]); };
       $("spList").querySelectorAll(".snd-row").forEach(r => {
-        const x = SND.find(y => y.id === r.dataset.id);
-        r.querySelector("[data-play]").onclick = async () => { const u = await sndURL(x.id); if (u) { const a = new Audio(u); a.volume = S.settings.sfxVolume ?? 0.7; a.play().catch(() => {}); } };
-        r.querySelector("[data-type]").onchange = async e => { x.type = e.target.value; await sndSave(); $("spMsg").textContent = `Moved ${x.name} to ${SND_TYPES[x.type]}.`; draw(); };
-        r.querySelector("[data-rm]").onclick = async () => { SND = SND.filter(y => y !== x); await Store.del("snd:" + x.id); if (SND_URLS[x.id]) URL.revokeObjectURL(SND_URLS[x.id]); delete SND_URLS[x.id]; await sndSave(); draw(); };
+        const id = r.dataset.id, isMine = r.dataset.kind === "mine", x = isMine ? SND.find(y => y.id === id) : brows.find(y => y.id === id);
+        r.querySelector("[data-play]").onclick = () => playOne(x);
+        r.querySelector("[data-type]").onchange = async e => {
+          const t = e.target.value;
+          if (isMine) { x.type = t; await sndSave(); }
+          else { const orig = built.find(y => y.id === id)?.type; if (t === orig) delete SNDFIX.moved[id]; else SNDFIX.moved[id] = t; await saveFix(); }
+          say(`Moved ${x.name} to ${SND_TYPES[t]}.`); draw();
+        };
+        r.querySelector("[data-rm]").onclick = async () => {
+          if (isMine) { SND = SND.filter(y => y !== x); await Store.del("snd:" + id); if (SND_URLS[id]) URL.revokeObjectURL(SND_URLS[id]); delete SND_URLS[id]; await sndSave(); say(`Removed ${x.name}.`); }
+          else { SNDFIX.hidden[id] = 1; delete SNDFIX.moved[id]; await saveFix(); say(`Removed ${x.name} from the built-in sounds. You can restore it below.`); }
+          draw();
+        };
       });
       if ($("spClear")) confirmBtn($("spClear"), "Tap again to remove them all", async () => { for (const x of rows) { await Store.del("snd:" + x.id); delete SND_URLS[x.id]; } SND = SND.filter(x => !rows.includes(x)); await sndSave(); draw(); });
+      if ($("spRestore")) confirmBtn($("spRestore"), "Tap again to restore", async () => { SNDFIX.hidden = {}; SNDFIX.moved = {}; await saveFix(); say("Built-in sounds restored."); draw(); });
     };
-    $("spFiles").onchange = async e => {
-      const files = [...e.target.files]; e.target.value = "";
-      let added = 0, failed = 0, skipped = 0;
-      const have = new Set(SND.map(x => x.path || x.name));
-      const addOne = async (path, blob) => {
-        if (have.has(path)) { skipped++; return; }
-        try {
-          const id = uid(); await Store.setRaw("snd:" + id, blob);
-          const len = await audioLength(blob);
-          SND.push({ id, path, name: path.split("/").pop().replace(/\.[^.]+$/, ""), type: sndTypeForFile(path, len > 15), len: Math.round(len) }); have.add(path); added++;
-          if (added % 10 === 0) { $("spMsg").textContent = `Added ${added} sounds…`; await sndSave(); }
-        } catch { failed++; }
-      };
-      for (const f of files) {
-        if (/\.zip$/i.test(f.name) || f.type === "application/zip") {
-          $("spMsg").textContent = `Unpacking ${f.name}…`;
-          try { await unzipAudio(f, f.name.replace(/\.zip$/i, "") + "/", addOne); }
-          catch (err) { failed++; $("spMsg").textContent = `${f.name} couldn't be opened (${err.message}).`; }
-        } else await addOne(f.name, f);
-      }
-      await sndSave();
-      $("spMsg").textContent = `Added ${added} sound${added === 1 ? "" : "s"}.` + (skipped ? ` ${skipped} were already in your pack.` : "") + (failed ? ` ${failed} couldn't be saved (the phone may be out of space).` : "") + (added ? " Check the tabs and move any that landed in the wrong type." : "");
-      if (added) tab = SND.at(-1).type;
-      draw();
-    };
+    const run = async items => { if (!items.length) return; const t = await importSounds(items, say); if (t) tab = t; draw(); };
+    $("spFiles").onchange = e => { const items = [...e.target.files].map(f => ({ file: f, path: f.name })); e.target.value = ""; run(items); };
+    $("spDir").onchange = e => { const items = [...e.target.files].map(f => ({ file: f, path: f.webkitRelativePath || f.name })); e.target.value = ""; run(items); };
+    const drop = $("spDrop");
+    drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("over"); });
+    drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+    drop.addEventListener("drop", async e => { e.preventDefault(); drop.classList.remove("over"); say("Reading what you dropped…"); run(await droppedFiles(e.dataTransfer)); });
     draw();
   });
 }
-
 
 /* ---------- Ambience: background soundscape + activity loops ---------- */
 // The model labels each reply with [[... | ambience: x | activity: y]]; older replies fall back to keyword guesses.
@@ -3150,6 +3238,10 @@ async function ambienceStep() {
   const wantAmb = inChat && st.ambOn !== false && !st.ambMuted && amb !== "none" ? amb : null;
   const wantAct = inChat && st.actOn !== false && !st.ambMuted && act !== "none" ? act : null;
   if (btn) btn.title = "Background: " + (AMB_LABEL[amb] || "none") + (act !== "none" ? ` · ${act}` : "") + (st.ambMuted ? " (muted)" : "");
+  if (!inChat && (AMBS.amb || AMBS.act || LIVE.size)) {
+    // left the chat or the app: everything stops at once, no fade
+    AMBS.bed?.stop(); AMBS.loop?.stop(); AMBS.bed = AMBS.loop = null; AMBS.amb = AMBS.act = null; hushAll(); return;
+  }
   if (wantAmb !== AMBS.amb) { AMBS.bed?.stop(); AMBS.amb = wantAmb; AMBS.bed = wantAmb ? await startBed(wantAmb) : null; }
   else AMBS.bed?.setVol(st.ambVol ?? 0.35);
   if (wantAct !== AMBS.act) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.loop = wantAct ? startActivity(wantAct) : null; }
@@ -3172,7 +3264,7 @@ async function startBed(key) {
     const next = async () => {
       if (stopped) return;
       const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id); if (!url || stopped) return;
-      a = new Audio(url); a.volume = 0; a.loop = files.length === 1;
+      a = trackAudio(new Audio(url)); a.volume = 0; a.loop = files.length === 1;
       a.onended = next; a.play().then(() => ramp(a, vol(), 1500)).catch(() => {});
     };
     next();
@@ -3247,7 +3339,7 @@ function startActivity(kind) {
     const playBed = async () => {
       if (stopped) return;
       const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id); if (!url || stopped) return;
-      bed = new Audio(url); bed.volume = 0; bed.onended = playBed;
+      bed = trackAudio(new Audio(url)); bed.volume = 0; bed.onended = playBed;
       await bed.play().catch(() => {});
       const target = vol() * 0.55; let v = 0; const t = setInterval(() => { v = Math.min(target, v + target / 20); if (bed) bed.volume = v; if (v >= target) clearInterval(t); }, 75);
     };
@@ -3260,7 +3352,7 @@ function startActivity(kind) {
     let wait = rr(...plan.gap);
     if (files.length) {
       const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id);
-      if (url && !stopped) { cur = new Audio(url); cur.volume = vol(); await cur.play().catch(() => {}); capAudio(cur, vol()); wait += Math.min(4, isFinite(cur.duration) ? cur.duration : 1); }
+      if (url && !stopped) { cur = trackAudio(new Audio(url)); cur.volume = vol(); await cur.play().catch(() => {}); capAudio(cur, vol()); wait += Math.min(4, isFinite(cur.duration) ? cur.duration : 1); }
     } else {
       const ac = acx(); if (ac) { const out = ac.createGain(); out.gain.value = vol(); out.connect(ac.destination);
         if (kind === "vore") { (Math.random() < 0.3 ? SYNTH.churn : SYNTH.bubbles)(ac, out); wait += 1; }
@@ -3280,7 +3372,7 @@ function startActivity(kind) {
 // (one row per Store key) and their own sound files to the private `sounds` bucket.
 // API keys never leave the device: they are stripped before upload and kept from the local copy on download.
 const SB = { url: "https://kttzglvsaxvzcbzfwfju.supabase.co", key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0dHpnbHZzYXh2emNiemZ3Zmp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4NTI2MzQsImV4cCI6MjEwNzQyODYzNH0.liIa5B_3_QSZiqYzuv1h6KiIuZFBciXsYPkmG33bLd8" };
-const LOCAL_ONLY = ["apiKey", "customKey"];
+const LOCAL_ONLY = ["apiKey", "customKey", "uiScale"]; // per-device: keys and display size
 const stripLocal = v => { const o = { ...(v || {}) }; for (const k of LOCAL_ONLY) delete o[k]; return o; };
 const keepLocal = async v => { const mine = (await Store.get("settings")) || {}; const o = { ...(v || {}) }; for (const k of LOCAL_ONLY) o[k] = mine[k] || ""; return o; };
 const Sync = {
@@ -3288,7 +3380,7 @@ const Sync = {
   applying: false, timer: null, busy: false, status: "",
   save() { try { localStorage.setItem("lr_sync", JSON.stringify(this.st)); } catch {} },
   on() { return !!this.st.refresh; },
-  synced: k => /^(settings|chars|personas|activePersona|books|recent|seeded|sounds|chats:|c2:|snd:)/.test(k),
+  synced: k => /^(settings|chars|personas|activePersona|books|recent|seeded|sounds|sndfix|chats:|c2:|snd:)/.test(k),
   mark(k) {
     if (this.applying || !this.on() || !this.synced(k)) return;
     const d = new Set(this.st.dirty || []); d.add(k); this.st.dirty = [...d]; this.save();
@@ -3487,6 +3579,7 @@ const Sync = {
     if (any(/^books$/)) S.books = (await Store.get("books")) || [];
     if (any(/^recent$/)) S.recent = (await Store.get("recent")) || {};
     if (any(/^sounds$/)) SND = null;
+    if (any(/^sndfix$/)) SNDFIX = null;
     if (!$("chat").hidden && S.chat && S.chat.id && !S.busy && any(new RegExp("^c2:" + S.chat.id + "$"))) { const c = await Store.get("c2:" + S.chat.id); if (c) { S.chat = c; renderMsgs(true); updateStage(); } }
     if (!$("home").hidden && $("sheet").hidden) renderHome();
   }
@@ -3550,6 +3643,7 @@ async function migrateChats() {
   if (S.settings.sfxRules === "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, stomach gurgles and growls\n- #a8875a (brown): farts\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses\n- #f1ebda (cream): cum, ejaculation and semen sounds, and the sloshing or gurgling of full balls or cum-filled bellies\n- #ff6fae (pink): sex sounds, like hips slapping and thrusting") S.settings.sfxRules = DEFAULTS.sfxRules;
   if (S.settings.sfxRules === "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, stomach gurgles and growls\n- #a8875a (brown): farts\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses") S.settings.sfxRules = DEFAULTS.sfxRules;
   S.settings.v = 4;
+  applyScale();
   S.chars = (await Store.get("chars")) || [];
   S.recent = (await Store.get("recent")) || {};
   S.books = (await Store.get("books")) || [];
