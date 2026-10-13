@@ -1,0 +1,12 @@
+Sound Assets by Jeschke
+2024 Vore Sound Pack — https://jeschke.itch.io/vore-sound-pack2024
+Tip the creator: https://ko-fi.com/jeschke · https://www.furaffinity.net/user/jeschke/
+
+Used in Lanternroom (a personal vore-friendly chat app) under the creator's terms:
+free to use for vore projects, attribution appreciated.
+
+These are re-encoded copies (mono Opus) sorted into Lanternroom's sound types:
+bubbles (gurgles, blorps), churn (growls, groans), vorebed (long passive stomach/squish beds),
+struggle (prey movement), squelch (pumpkin squeezes), cumbub (water-bottle sloshes),
+liquid (tub splashes), swallow (gulps), gas (belches), fart.
+Takes the creator marked "needs lowpass/highpass" were filtered; test and "sounds iffy" takes were left out.
