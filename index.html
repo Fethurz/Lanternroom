@@ -229,6 +229,10 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
 #charList .char-card .ticons{display:flex;flex-wrap:wrap;gap:2px;margin-top:3px;font-size:11px;line-height:1}
 #charList .char-card .more{top:0!important;right:0!important;width:30px!important;height:30px!important;background:rgba(22,19,29,.6);color:var(--fg)!important}
 .chip .ti{margin-right:4px}
+#btnAmb .x{display:none}
+#btnAmb.muted .x{display:inline}
+#btnAmb.muted .w1,#btnAmb.muted .w2{display:none}
+#btnAmb.muted{color:var(--muted)}
 .snd-row{align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--line)}
 .snd-row .snd-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
 .snd-row select{max-width:120px;padding:6px 8px;border-radius:10px;font-size:13px}
@@ -397,6 +401,7 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
         <img class="avatar" id="avatar" alt="">
         <div class="t"><div class="n" id="chatName"></div><div class="p" id="chatPlace"></div></div>
       </button>
+      <button class="icon" id="btnAmb" aria-label="Mute background sounds" title="Background sounds"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" fill-opacity=".25"/><path class="w1" d="M15.5 9a4 4 0 0 1 0 6"/><path class="w2" d="M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="x" d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
       <button class="icon" id="btnMemory" aria-label="Memory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3 3 3 0 0 0 3-2V5a3 3 0 0 0-3-2zM15 3a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-3 3 3 3 0 0 1-3-2"/></svg></button>
       <button class="icon" id="btnChats" aria-label="Chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M18 9h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1v3l-4-3h-4"/></svg></button>
       <button class="icon" id="btnMore" aria-label="More"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
@@ -463,7 +468,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.13 · Oct 12";
+const VERSION = "1.14 · Oct 12";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -482,7 +487,7 @@ const DEFAULTS = {
   imgStyle: "detailed anime illustration, painterly, soft cinematic lighting",
   imgUrl: "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true&model=flux&safe=true&enhance=false",
   portraits: true, backgrounds: true,
-  globalInstr: "", sfxColors: true, sfxSound: true, sfxVolume: 0.7,
+  globalInstr: "", sfxColors: true, sfxSound: true, sfxVolume: 0.7, ambOn: true, ambVol: 0.35, actOn: true, actVol: 0.5, ambMuted: false,
   sfxRules: "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, stomach gurgles and growls (never breathing)\n- white: breathing, panting, sighs, huffs, gasps and exhales\n- #a8875a (brown): farts\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses\n- #f1ebda (cream): cum, ejaculation and semen sounds, and the sloshing or gurgling of full balls or cum-filled bellies\n- #ff6fae (pink): sex sounds, like hips slapping and thrusting"
 };
 const S = { recent: {}, settings: { ...DEFAULTS }, chars: [], personas: [], books: [], personaId: null, charId: null, chat: null, busy: false, openActs: null, nextSpeaker: "" };
@@ -707,10 +712,18 @@ function garbled(text, c) {
   return bad / words.length > 0.1;
 }
 function parseTag(raw) {
-  const m = raw.match(/\[\[\s*mood\s*:\s*([a-z]+)\s*(?:\|\s*place\s*:\s*([^\]|]*?))?\s*(?:\|\s*focus\s*:\s*([^\]|]*?))?\s*\]\]\s*$/i);
-  if (!m) return { text: raw.split("[[")[0].trim(), mood: null, place: null, focus: null };
-  const mood = MOODS.includes(m[1].toLowerCase()) ? m[1].toLowerCase() : "neutral";
-  return { text: raw.slice(0, m.index).trim(), mood, place: (m[2] || "").trim() || null, focus: (m[3] || "").trim() || null };
+  const m = raw.match(/\[\[([^\[\]]*)\]\]\s*$/);
+  if (!m || !/mood\s*:/i.test(m[1])) return { text: raw.split("[[")[0].trim(), mood: null, place: null, focus: null, amb: null, act: null };
+  const f = {};
+  for (const part of m[1].split("|")) { const i = part.indexOf(":"); if (i > 0) f[part.slice(0, i).trim().toLowerCase()] = part.slice(i + 1).trim(); }
+  const low = k => (f[k] || "").toLowerCase().replace(/[^a-z]/g, "");
+  return {
+    text: raw.slice(0, m.index).trim(),
+    mood: MOODS.includes(low("mood")) ? low("mood") : "neutral",
+    place: f.place || null, focus: f.focus || null,
+    amb: AMB_KEYS.includes(low("ambience")) ? low("ambience") : null,
+    act: ACT_KEYS.includes(low("activity")) ? low("activity") : null
+  };
 }
 
 /* ---------- Prompt building ---------- */
@@ -797,7 +810,7 @@ function buildPrompt(c, chat, upto, cont) {
   if ((st.globalInstr || "").trim()) sys += `\n\n# The user's instructions for every chat (always follow)\n${fill(st.globalInstr, c)}`;
   sys += `\n\n# Text colors\nThe app shows [color=NAME or #hex]text[/color] as colored text. Use it whenever instructions ask for colored text.` + (st.sfxColors ? `\n${st.sfxRules}` : "");
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke most" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location${focusPart}]]`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")}${focusPart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is vore while anyone is inside a stomach or being digested, sex during penetrative sex, oral during oral sex, otherwise none.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
 
   const blankStart = chat.messages[0]?.greeting && !chat.messages[0].content;
@@ -943,6 +956,7 @@ const TAG_ICONS = [
 ];
 function tagIcon(t) { const s = String(t || "").toLowerCase(); for (const [re, ic] of TAG_ICONS) if (re.test(s)) return ic; return ""; }
 function renderHome() {
+  updateAmbience();
   $("personaBar").innerHTML = `Playing as <b>${esc(uname())}</b><span class="chg">Change</span>`;
   const list = $("charList");
   list.innerHTML = "";
@@ -1345,6 +1359,7 @@ function renderMsgs(keepScroll) {
   });
   decorateSfx(box);
   if (!keepScroll || atBottom) box.scrollTop = box.scrollHeight;
+  updateAmbience();
 }
 
 let pressT = null, pressXY = null, suppressClick = false;
@@ -1478,7 +1493,7 @@ async function generate(upto, existing, cont) {
       else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
-    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "" };
+    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null };
     if (existing) {
       existing.alts = existing.alts || [existing.content];
       existing.altMeta = existing.altMeta || [];
@@ -1859,6 +1874,11 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       <button class="btn small" type="button" id="sSfxReset">Restore default colors</button>
       <label class="check"><input type="checkbox" id="sSound" ${st.sfxSound !== false ? "checked" : ""}> Play a sound when I tap a sound effect</label>
       ${rangeRow("sVol", "Sound volume", "How loud tapped sound effects play.", 0, 1, 0.05, st.sfxVolume ?? 0.7, v => Math.round(v * 100) + "%")}
+      <label class="check"><input type="checkbox" id="sAmb" ${st.ambOn !== false ? "checked" : ""}> Background sounds that match the scene (campfire, city, forest, combat…)</label>
+      ${rangeRow("sAmbVol", "Background volume", "Loudness of the scene's background sounds.", 0, 1, 0.05, st.ambVol ?? 0.35, v => Math.round(v * 100) + "%")}
+      <label class="check"><input type="checkbox" id="sAct" ${st.actOn !== false ? "checked" : ""}> Activity sounds (gurgling during vore, sex, oral)</label>
+      ${rangeRow("sActVol", "Activity volume", "Loudness of the activity sounds.", 0, 1, 0.05, st.actVol ?? 0.5, v => Math.round(v * 100) + "%")}
+      <p class="note" style="margin:0">The 🔊 button at the top of a chat mutes and unmutes these.</p>
       <button class="btn small" type="button" id="sPack">Sound pack · add your own audio files</button>
     </div>
     <div class="group"><h3>Visuals</h3>
@@ -1909,9 +1929,9 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       portraits: $("sPort").checked, backgrounds: $("sBg").checked,
       imgStyle: $("sStyle").value.trim() || DEFAULTS.imgStyle, imgUrl: $("sImg").value.trim() || DEFAULTS.imgUrl,
       keepRecent: n("sKeep", 16), factsEvery: n("sFacts", 4), summarizeAt: n("sSum", 12000),
-      globalInstr: $("sGlobal").value.trim(), sfxColors: $("sSfx").checked, sfxSound: $("sSound").checked, sfxVolume: n("sVol", 0.7), sfxRules: $("sSfxRules").value.trim() || DEFAULTS.sfxRules
+      globalInstr: $("sGlobal").value.trim(), sfxColors: $("sSfx").checked, sfxSound: $("sSound").checked, sfxVolume: n("sVol", 0.7), ambOn: $("sAmb").checked, ambVol: n("sAmbVol", 0.35), actOn: $("sAct").checked, actVol: n("sActVol", 0.5), sfxRules: $("sSfxRules").value.trim() || DEFAULTS.sfxRules
     });
-    await saveSettings(); closeSheet();
+    await saveSettings(); closeSheet(); updateAmbience();
     if (!$("chat").hidden) updateStage(); else renderHome();
   };
   $("sExport").onclick = async () => {
@@ -2828,17 +2848,41 @@ const SND_TYPES = {
   bubbles: "Gurgles", churn: "Stomach churns", swallow: "Swallows & gulps", gas: "Burps", fart: "Farts", liquid: "Wet & sloshing",
   cumbub: "Ball sloshing", cum: "Cum", condom: "Condom squelch", shit: "Plops", shitbones: "Bone plops", sex: "Sex", kiss: "Kisses",
   beat: "Heartbeats", struggle: "Muffled struggling", crack: "Cracks & crunches", hit: "Hits", stomp: "Stomps & thuds", boom: "Booms",
-  slash: "Slashes", fire: "Fire", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", wave: "Other"
+  slash: "Slashes", fire: "Fire", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
+  amb_campfire: "Bg · Campfire", amb_fireplace: "Bg · Fireplace", amb_tavern: "Bg · Tavern", amb_market: "Bg · Crowd & market", amb_city: "Bg · City",
+  amb_village: "Bg · Village", amb_office: "Bg · Office", amb_combat: "Bg · Combat", amb_forest: "Bg · Forest", amb_nature: "Bg · Nature",
+  amb_night: "Bg · Night", amb_rain: "Bg · Rain", amb_storm: "Bg · Storm", amb_beach: "Bg · Beach & ocean", amb_river: "Bg · River & water",
+  amb_cave: "Bg · Cave", amb_dungeon: "Bg · Dungeon", amb_snow: "Bg · Snow & wind", amb_underwater: "Bg · Underwater", amb_spaceship: "Bg · Spaceship",
+  amb_indoors: "Bg · Quiet room", wave: "Other"
 };
 // words that pick a finer audio type than their icon category
 const SND_SUB = [["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ["struggle", /(mmph|mmf+|mrph|thu+m+p+.*thu+m+p|squir+m|kick)/i]];
 // file names → sound type, for adding a whole pack at once
-const SND_NAMES = [["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i], ["churn", /churn|growl|rumbl|digest.*(long|ambien)|ambien/i], ["bubbles", /blorp|blurb|glorp|gurgl|stomach|belly|digest|tummy|bubbl|innard|gut/i],
+const AMB_NAMES = [["amb_campfire", /campfire|bonfire|camp.?fire|ember|torch/i], ["amb_fireplace", /fireplace|hearth|crkl/i], ["amb_storm", /thunder|storm|\bthun/i], ["amb_rain", /\brain/i],
+  ["amb_tavern", /tavern|\binn\b|\bpub\b|bar.?room|restaurant|\bcafe/i], ["amb_market", /market|bazaar|crowd|walla|festival/i], ["amb_city", /city|urban|traffic|street|downtown|\btraf|suburb|construction|train.?station/i],
+  ["amb_village", /village|hamlet|\bfarm|\btown/i], ["amb_office", /office|cubicle|room.?tone|fluorescent|keyboard|typing|hvac|ventilat/i], ["amb_combat", /battle|combat|\bwar\b|sword.?fight|gunfire/i],
+  ["amb_beach", /beach|ocean|\bsea\b|\bwaves?\b|shore|coast|\bgull/i], ["amb_river", /river|stream|creek|waterfall|brook|\blake/i], ["amb_underwater", /underwater|undwtr/i], ["amb_cave", /\bcave|cavern|\bmines?\b|underground/i],
+  ["amb_dungeon", /dungeon|crypt|catacomb|prison|horror|hell/i], ["amb_spaceship", /spaceship|space.?ship|starship|sci.?fi|engine.?room|turbine|astral/i], ["amb_snow", /snow|blizzard|winter|arctic|tundra|howl/i],
+  ["amb_night", /night|cricket|\bowl|evening/i], ["amb_forest", /forest|woods|jungle|\bforst|tropical|swamp|\bpine/i], ["amb_nature", /nature|meadow|field|park|garden|bird|\bwind|mountain|desert|mist|fog|clearing/i]];
+const SND_NAMES = [["oral", /\bsuck|blow.?job|\bbj\b|deep.?throat|\bgag|fellat|throat.?fuck/i], ["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i], ["churn", /churn|growl|rumbl|digest.*(long|ambien)|ambien/i], ["bubbles", /blorp|blurb|glorp|gurgl|stomach|belly|digest|tummy|bubbl|innard|gut/i],
   ["gas", /burp|belch|bel[ck]h?/i], ["fart", /fart|flatul|toot/i], ["beat", /heart|beat|pulse|thump/i], ["struggle", /struggl|muffl|squirm|kick|pound|knock|trapped/i],
   ["cumbub", /\bballs?\b|testic|scrot|\bnuts?\b/i], ["cum", /cum|ejacul|spurt|jizz|semen/i], ["condom", /condom|rubber/i], ["shit", /plop|poop|scat|shit|toilet|defecat|turd/i],
   ["crack", /crunch|bone|crack|snap|break/i], ["liquid", /slosh|squelch|\bwet|slime|squish|slurp|\blick|drip|splash|saliva|drool|\bgoo|liquid|acid|pumpkin|water.?bottle|cheek/i],
   ["sex", /sex|plap|thrust|slap/i], ["kiss", /kiss|smooch|mwah/i], ["hit", /\bhits?\b|punch|smack|impact/i], ["stomp", /stomp|thud|step|foot/i], ["boom", /boom|explo/i], ["breath", /breath|pant|sigh|exhal|inhal/i]];
-const sndTypeForFile = name => (SND_NAMES.find(([, re]) => re.test(name)) || ["wave"])[0];
+// long recordings, or names that say "ambience", are matched as background first; short ones as tap sounds first
+const sndTypeForFile = (name, long) => {
+  const near = name.split("/").slice(-2).join("/"); // the file and its own folder, not the zip it came in
+  const ambFirst = long || /ambien|atmos|\bamb[a-z_ ]|^amb|loop|room.?tone|background|soundscape|environment/i.test(near);
+  const order = ambFirst ? [...AMB_NAMES, ...SND_NAMES] : [...SND_NAMES, ...AMB_NAMES];
+  return (order.find(([, re]) => re.test(name)) || ["wave"])[0];
+};
+function audioLength(blob) {
+  return new Promise(res => {
+    const u = URL.createObjectURL(blob), a = new Audio(); let done = false;
+    const fin = v => { if (done) return; done = true; URL.revokeObjectURL(u); res(v); };
+    a.preload = "metadata"; a.onloadedmetadata = () => fin(isFinite(a.duration) ? a.duration : 0); a.onerror = () => fin(0); setTimeout(() => fin(0), 3000); a.src = u;
+  });
+}
 let SND = null, AC = null; const SND_URLS = {};
 async function sndIndex() { if (!SND) SND = (await Store.get("sounds")) || []; return SND; }
 async function sndSave() { await Store.set("sounds", SND); }
@@ -2980,7 +3024,8 @@ function openSoundPack() {
         if (have.has(path)) { skipped++; return; }
         try {
           const id = uid(); await Store.setRaw("snd:" + id, blob);
-          SND.push({ id, path, name: path.split("/").pop().replace(/\.[^.]+$/, ""), type: sndTypeForFile(path) }); have.add(path); added++;
+          const len = await audioLength(blob);
+          SND.push({ id, path, name: path.split("/").pop().replace(/\.[^.]+$/, ""), type: sndTypeForFile(path, len > 15), len: Math.round(len) }); have.add(path); added++;
           if (added % 10 === 0) { $("spMsg").textContent = `Added ${added} sounds…`; await sndSave(); }
         } catch { failed++; }
       };
@@ -2998,6 +3043,150 @@ function openSoundPack() {
     };
     draw();
   });
+}
+
+
+/* ---------- Ambience: background soundscape + activity loops ---------- */
+// The model labels each reply with [[... | ambience: x | activity: y]]; older replies fall back to keyword guesses.
+const AMB_KEYS = ["campfire", "fireplace", "tavern", "market", "city", "village", "office", "combat", "forest", "nature", "night", "rain", "storm", "beach", "river", "cave", "dungeon", "snow", "underwater", "spaceship", "indoors", "none"];
+const ACT_KEYS = ["none", "vore", "sex", "oral"];
+const AMB_LABEL = { campfire: "Campfire", fireplace: "Fireplace", tavern: "Tavern", market: "Crowd", city: "City", village: "Village", office: "Office", combat: "Combat", forest: "Forest", nature: "Nature", night: "Night", rain: "Rain", storm: "Storm", beach: "Beach", river: "River", cave: "Cave", dungeon: "Dungeon", snow: "Snow & wind", underwater: "Underwater", spaceship: "Spaceship", indoors: "Quiet room" };
+const AMB_GUESS = [["combat", /\b(battle|combat|fight(ing)?|swords? clash|ambush|gunfire|skirmish|duel)\b/i], ["campfire", /campfire|bonfire|\bcamp\b/i], ["fireplace", /fireplace|hearth/i],
+  ["tavern", /tavern|\binn\b|\bpub\b|\bbar\b|saloon/i], ["office", /office|cubicle|workplace/i], ["spaceship", /spaceship|starship|space station|cockpit/i], ["underwater", /underwater|beneath the waves/i],
+  ["dungeon", /dungeon|crypt|catacomb|prison cell/i], ["cave", /\bcave|cavern|\bmine\b|tunnel/i], ["market", /market|bazaar|festival|crowd/i], ["city", /\bcity|street|downtown|alley|traffic/i],
+  ["village", /village|hamlet|\bfarm/i], ["beach", /beach|shore|ocean|\bsea\b|coast|harbou?r|\bdock/i], ["river", /river|stream|creek|waterfall|\blake/i], ["forest", /forest|\bwoods|jungle|grove/i],
+  ["snow", /snow|blizzard|tundra|frozen/i], ["storm", /thunder|storm/i], ["rain", /\brain(ing|y)?\b/i], ["night", /\bnight/i], ["nature", /meadow|field|garden|\bpark\b|hill|mountain|outdoors/i],
+  ["indoors", /bedroom|room|house|home|kitchen|apartment|cabin|lighthouse|bath/i]];
+function guessAct(msgs) {
+  const t2 = msgs.slice(-2).map(msgText).join("\n"), t6 = msgs.slice(-6).map(msgText).join("\n");
+  if (/\b(blow.?job|deep.?throat\w*|fellatio|cunnilingus|gag(s|ging|ged)? on|sucks? (on )?(his|her|their|my|your) (cock|dick|shaft|length|clit)|(cock|dick|shaft) (in|down) (her|his|their|my|your) (mouth|throat)|eats? (her|him|them) out)\b/i.test(t2)) return "oral";
+  if (/\b(thrust(s|ing)?|fuck(s|ing|ed)?|pound(s|ing)?|rid(es|ing) (him|her|them)|penetrat\w*|hips slap\w*|bounc(es|ing) on)\b/i.test(t2)) return "sex";
+  if (VORE.swallow.test(t6) && /\b(stomach|belly|gut|inside)\b/i.test(t6) && !/\b(spat|spits? (him|her|them) out|escap\w*|freed|regurgitat\w*|came out|pushed out)\b/i.test(t2)) return "vore";
+  return "none";
+}
+function sceneNow() {
+  const msgs = (S.chat?.messages || []).filter(m => m.role !== "image" && m.content);
+  const last = [...msgs].reverse().find(m => m.role === "assistant");
+  let amb = last?.amb, act = last?.act;
+  if (!amb) { const t = `${S.chat?.place || ""}\n${msgText(last)}`; amb = (AMB_GUESS.find(([, re]) => re.test(t)) || ["none"])[0]; }
+  if (!act) act = guessAct(msgs);
+  return { amb, act };
+}
+const AMBS = { amb: null, act: null, bed: null, loop: null };
+// calls are queued so quick re-renders never start two soundscapes at once
+let AMB_Q = Promise.resolve();
+function updateAmbience() { AMB_Q = AMB_Q.then(ambienceStep).catch(() => {}); return AMB_Q; }
+async function ambienceStep() {
+  const st = S.settings, inChat = S.chat && !$("chat").hidden && !document.hidden;
+  const btn = $("btnAmb"); if (btn) { btn.hidden = st.ambOn === false && st.actOn === false; btn.classList.toggle("muted", !!st.ambMuted); }
+  const { amb, act } = inChat ? sceneNow() : { amb: "none", act: "none" };
+  const wantAmb = inChat && st.ambOn !== false && !st.ambMuted && amb !== "none" ? amb : null;
+  const wantAct = inChat && st.actOn !== false && !st.ambMuted && act !== "none" ? act : null;
+  if (btn) btn.title = "Background: " + (AMB_LABEL[amb] || "none") + (act !== "none" ? ` · ${act}` : "") + (st.ambMuted ? " (muted)" : "");
+  if (wantAmb !== AMBS.amb) { AMBS.bed?.stop(); AMBS.amb = wantAmb; AMBS.bed = wantAmb ? await startBed(wantAmb) : null; }
+  else AMBS.bed?.setVol(st.ambVol ?? 0.35);
+  if (wantAct !== AMBS.act) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.loop = wantAct ? startActivity(wantAct) : null; }
+}
+$("btnAmb").onclick = async () => { S.settings.ambMuted = !S.settings.ambMuted; await saveSettings(); acx(); updateAmbience(); };
+document.addEventListener("visibilitychange", () => updateAmbience());
+// first tap anywhere unlocks audio on phones
+document.addEventListener("pointerdown", () => { if (AC?.state === "suspended") AC.resume(); }, { passive: true });
+
+// user files for a sound type (with sensible stand-ins)
+const AMB_FALLBACK = { nature: ["forest"], forest: ["nature"], night: ["forest", "nature"], storm: ["rain"], rain: ["storm"], fireplace: ["campfire"], campfire: ["fireplace"], market: ["tavern", "city"], tavern: ["market"], village: ["nature", "city"], dungeon: ["cave"], cave: ["dungeon"], snow: ["nature"], river: ["beach"], beach: ["river"] };
+async function packFiles(types) { const l = await sndIndex(); for (const t of types) { const f = l.filter(x => x.type === t); if (f.length) return f; } return []; }
+async function startBed(key) {
+  const vol = () => S.settings.ambVol ?? 0.35;
+  const files = await packFiles(["amb_" + key, ...(AMB_FALLBACK[key] || []).map(k => "amb_" + k)]);
+  if (files.length) {
+    // play the user's recordings back to back, crossfading in and out
+    let a = null, stopped = false, fade = null;
+    const ramp = (el, to, ms, then) => { const from = el.volume, t0 = performance.now(); clearInterval(fade); fade = setInterval(() => { const k = Math.min(1, (performance.now() - t0) / ms); el.volume = Math.max(0, Math.min(1, from + (to - from) * k)); if (k >= 1) { clearInterval(fade); then && then(); } }, 50); };
+    const next = async () => {
+      if (stopped) return;
+      const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id); if (!url || stopped) return;
+      a = new Audio(url); a.volume = 0; a.loop = files.length === 1;
+      a.onended = next; a.play().then(() => ramp(a, vol(), 1500)).catch(() => {});
+    };
+    next();
+    return { stop() { stopped = true; const el = a; if (el) ramp(el, 0, 1200, () => el.pause()); }, setVol(v) { if (a && !stopped) a.volume = v; } };
+  }
+  return synthBed(key, vol());
+}
+function noiseBuf(ac) { if (!NOISE) { NOISE = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate); const d = NOISE.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; } return NOISE; }
+function synthBed(key, vol) {
+  const ac = acx(); if (!ac) return null;
+  const out = ac.createGain(); out.gain.value = 0.0001; out.connect(ac.destination);
+  out.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), ac.currentTime + 2);
+  const nodes = [], timers = [];
+  const bed = (type, f, q, g, lfoRate = 0, lfoDepth = 0) => {
+    const n = ac.createBufferSource(), fl = ac.createBiquadFilter(), gn = ac.createGain();
+    n.buffer = noiseBuf(ac); n.loop = true; fl.type = type; fl.frequency.value = f; fl.Q.value = q; gn.gain.value = g;
+    n.connect(fl).connect(gn).connect(out); n.start(0, Math.random() * 2); nodes.push(n);
+    if (lfoRate) { const l = ac.createOscillator(), lg = ac.createGain(); l.frequency.value = lfoRate; lg.gain.value = lfoDepth; l.connect(lg).connect(gn.gain); l.start(); nodes.push(l); }
+  };
+  const hum = (f, g) => { const o = ac.createOscillator(), gn = ac.createGain(); o.frequency.value = f; gn.gain.value = g; o.connect(gn).connect(out); o.start(); nodes.push(o); };
+  const every = (a, b, fn) => { const tick = () => { try { fn(); } catch {} timers.push(setTimeout(tick, rr(a, b) * 1000)); }; timers.push(setTimeout(tick, rr(a, b) * 1000)); };
+  const bird = () => { const n = 2 + Math.floor(Math.random() * 4), f = rr(2400, 4600); for (let i = 0; i < n; i++) sTone(ac, out, { f0: f * rr(0.9, 1.1), f1: f * rr(0.7, 1.4), t: i * rr(0.08, 0.16), dur: rr(0.05, 0.1), g: 0.07 }); };
+  const crowd = g => [330, 520, 760, 1050].forEach(f => bed("bandpass", f, 3, g, rr(0.6, 2.2), g * 0.8));
+  const crackle = (a, b) => every(a, b, () => sNoise(ac, out, { dur: rr(0.008, 0.035), g: rr(0.08, 0.4), type: "highpass", f0: rr(1500, 4500) }));
+  const R = {
+    campfire: () => { bed("lowpass", 450, 0.7, 0.3, 0.3, 0.12); crackle(0.03, 0.3); every(1.5, 5, () => sTone(ac, out, { f0: 320, f1: 80, dur: 0.05, g: 0.25 })); },
+    fireplace: () => { bed("lowpass", 380, 0.7, 0.22, 0.25, 0.08); crackle(0.06, 0.45); },
+    rain: () => { bed("highpass", 1400, 0.5, 0.32, 0.2, 0.05); bed("lowpass", 320, 0.7, 0.14); every(0.03, 0.15, () => sNoise(ac, out, { dur: 0.01, g: rr(0.02, 0.08), type: "highpass", f0: rr(3000, 6000) })); },
+    storm: () => { R.rain(); bed("bandpass", 600, 0.8, 0.12, 0.08, 0.1); every(9, 22, () => { sNoise(ac, out, { dur: rr(2.5, 4), g: 0.55, type: "lowpass", f0: 900, f1: 60 }); sTone(ac, out, { f0: 60, f1: 30, dur: 2.5, g: 0.35 }); }); },
+    forest: () => { bed("bandpass", 520, 0.6, 0.1, 0.07, 0.07); every(1.2, 4.5, bird); every(6, 14, bird); },
+    nature: () => { bed("bandpass", 700, 0.5, 0.12, 0.05, 0.09); every(3, 8, bird); every(12, 30, () => sTone(ac, out, { type: "sawtooth", f0: 230, f1: 210, dur: 1.2, g: 0.012, vib: 12, vibF: 30 })); },
+    night: () => { bed("bandpass", 450, 0.6, 0.06, 0.05, 0.04); every(0.4, 1.1, () => { for (let i = 0; i < 3; i++) sTone(ac, out, { f0: 4400, t: i * 0.055, dur: 0.03, g: 0.035 }); }); every(10, 25, () => { sTone(ac, out, { f0: 410, f1: 380, dur: 0.35, g: 0.06 }); sTone(ac, out, { f0: 400, f1: 370, t: 0.5, dur: 0.5, g: 0.05 }); }); },
+    beach: () => { bed("lowpass", 700, 0.5, 0.25, 0.09, 0.22); bed("highpass", 2500, 0.4, 0.05, 0.09, 0.04); every(7, 16, () => sTone(ac, out, { f0: 1900, f1: 1200, dur: 0.35, g: 0.04, vib: 60, vibF: 9 })); },
+    river: () => { bed("bandpass", 1500, 0.6, 0.25, 0.5, 0.05); bed("lowpass", 420, 0.5, 0.12); every(0.2, 0.9, () => sTone(ac, out, { f0: rr(500, 900), f1: rr(1200, 2000), dur: 0.04, g: 0.03 })); },
+    cave: () => { hum(55, 0.04); bed("lowpass", 200, 0.7, 0.08); every(1.2, 4, () => { const f = rr(900, 1500); sTone(ac, out, { f0: f, f1: f * 1.6, dur: 0.05, g: 0.2 }); sTone(ac, out, { f0: f, f1: f * 1.6, t: 0.28, dur: 0.05, g: 0.06 }); }); },
+    dungeon: () => { R.cave(); every(5, 14, () => { for (let i = 0; i < 4; i++) sNoise(ac, out, { t: i * rr(0.05, 0.12), dur: 0.08, g: 0.12, f0: rr(2500, 3800), q: 15 }); }); },
+    tavern: () => { crowd(0.05); bed("lowpass", 300, 0.5, 0.05); every(0.8, 3.5, () => { const f = rr(2000, 3300); sTone(ac, out, { f0: f, dur: 0.3, g: 0.04 }); sTone(ac, out, { f0: f * 2.7, dur: 0.15, g: 0.015 }); }); },
+    market: () => { crowd(0.08); every(2, 6, bird); },
+    city: () => { bed("lowpass", 260, 0.6, 0.3, 0.05, 0.08); every(2.5, 8, () => sNoise(ac, out, { dur: rr(2, 3.5), g: 0.18, f0: 300, f1: 900, q: 1.2 })); every(15, 40, () => { sTone(ac, out, { type: "square", f0: 420, dur: 0.25, g: 0.025 }); sTone(ac, out, { type: "square", f0: 525, dur: 0.25, g: 0.02 }); }); },
+    village: () => { bed("bandpass", 600, 0.5, 0.07, 0.05, 0.05); every(3, 9, bird); every(10, 25, () => { for (let i = 0; i < 4; i++) sTone(ac, out, { f0: 320, f1: 150, t: i * 0.26, dur: 0.04, g: 0.08 }); }); every(4, 10, () => sNoise(ac, out, { dur: rr(0.6, 1.4), g: 0.04, f0: rr(400, 900), q: 3 })); },
+    office: () => { bed("lowpass", 260, 0.6, 0.07); hum(120, 0.008); every(2, 7, () => { const n = 4 + Math.floor(Math.random() * 10); let t = 0; for (let i = 0; i < n; i++) { sNoise(ac, out, { t, dur: 0.015, g: 0.07, type: "highpass", f0: rr(2500, 4000) }); t += rr(0.07, 0.16); } }); },
+    combat: () => { bed("lowpass", 220, 0.6, 0.16, 0.2, 0.06); every(0.3, 1.3, () => { sNoise(ac, out, { dur: 0.3, g: 0.22, f0: rr(2500, 4200), q: 18 }); sTone(ac, out, { f0: 130, f1: 50, dur: 0.12, g: 0.22 }); }); every(2, 6, () => sNoise(ac, out, { dur: rr(0.4, 0.8), g: 0.08, f0: rr(500, 900), f1: rr(300, 600), q: 2 })); },
+    snow: () => { bed("bandpass", 700, 0.8, 0.22, 0.1, 0.15); bed("bandpass", 1400, 1.2, 0.08, 0.13, 0.06); },
+    underwater: () => { bed("lowpass", 240, 0.7, 0.28, 0.1, 0.06); every(0.5, 2, () => sTone(ac, out, { f0: rr(250, 400), f1: rr(700, 1100), dur: 0.06, g: 0.1 })); },
+    spaceship: () => { hum(60, 0.05); hum(90, 0.025); bed("lowpass", 320, 0.6, 0.06); every(6, 15, () => { sTone(ac, out, { type: "square", f0: 1200, dur: 0.08, g: 0.02 }); sTone(ac, out, { type: "square", f0: 1500, t: 0.12, dur: 0.08, g: 0.02 }); }); },
+    indoors: () => bed("lowpass", 300, 0.5, 0.035)
+  };
+  (R[key] || (() => {}))();
+  return {
+    setVol(v) { out.gain.setTargetAtTime(Math.max(0.0002, v), ac.currentTime, 0.2); },
+    stop() { timers.forEach(clearTimeout); timers.length = 0; out.gain.setTargetAtTime(0.0001, ac.currentTime, 0.4); setTimeout(() => { nodes.forEach(n => { try { n.stop(); } catch {} }); out.disconnect(); }, 2000); }
+  };
+}
+// Activity: repeated one-shots (the user's files if any, else synthesised) at a rhythm that fits
+const ACT_PLAN = { vore: { types: ["churn", "bubbles", "cumbub"], gap: [0.6, 3.5] }, sex: { types: ["sex"], gap: [0.03, 0.18] }, oral: { types: ["oral"], gap: [0.15, 0.9] } };
+SYNTH.plap = (ac, o) => { sNoise(ac, o, { dur: 0.07, g: 0.45, type: "lowpass", f0: 1500, f1: 500 }); sTone(ac, o, { f0: 170, f1: 90, dur: 0.08, g: 0.3 }); sNoise(ac, o, { t: 0.02, dur: 0.06, g: 0.12, f0: 900, q: 3 }); };
+SYNTH.oral = (ac, o) => {
+  sNoise(ac, o, { dur: rr(0.22, 0.35), g: 0.3, f0: rr(250, 400), f1: rr(900, 1400), q: 4 }); sTone(ac, o, { f0: rr(120, 160), f1: 90, dur: 0.25, g: 0.12, vib: 15, vibF: 18 });
+  if (Math.random() < 0.18) { sTone(ac, o, { type: "sawtooth", t: 0.3, f0: rr(130, 160), f1: 85, dur: 0.3, g: 0.12, vib: 25, vibF: 24 }); sNoise(ac, o, { t: 0.3, dur: 0.25, g: 0.15, type: "lowpass", f0: 700, f1: 250 }); }
+};
+function startActivity(kind) {
+  const plan = ACT_PLAN[kind]; if (!plan) return null;
+  let stopped = false, timer = null, cur = null;
+  const vol = () => S.settings.actVol ?? 0.5;
+  const step = async () => {
+    if (stopped) return;
+    const files = await packFiles(plan.types);
+    let wait = rr(...plan.gap);
+    if (files.length) {
+      const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id);
+      if (url && !stopped) { cur = new Audio(url); cur.volume = vol(); await cur.play().catch(() => {}); capAudio(cur, vol()); wait += Math.min(4, isFinite(cur.duration) ? cur.duration : 1); }
+    } else {
+      const ac = acx(); if (ac) { const out = ac.createGain(); out.gain.value = vol(); out.connect(ac.destination);
+        if (kind === "vore") { (Math.random() < 0.3 ? SYNTH.churn : SYNTH.bubbles)(ac, out); wait += 1; }
+        else if (kind === "sex") { SYNTH.plap(ac, out); wait = rr(0.38, 0.62); }
+        else { SYNTH.oral(ac, out); wait += 0.35; } }
+    }
+    if (!stopped) timer = setTimeout(step, wait * 1000);
+  };
+  step();
+  return { stop() { stopped = true; clearTimeout(timer); if (cur) cur.pause(); } };
 }
 
 /* ---------- Boot & migrations ---------- */
