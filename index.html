@@ -463,7 +463,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.12 · Oct 12";
+const VERSION = "1.13 · Oct 12";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2833,11 +2833,11 @@ const SND_TYPES = {
 // words that pick a finer audio type than their icon category
 const SND_SUB = [["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ["struggle", /(mmph|mmf+|mrph|thu+m+p+.*thu+m+p|squir+m|kick)/i]];
 // file names → sound type, for adding a whole pack at once
-const SND_NAMES = [["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i], ["churn", /churn|growl|rumbl|digest.*(long|ambien)|ambien/i], ["bubbles", /gurgl|stomach|belly|digest|tummy|bubbl|innard|gut/i],
+const SND_NAMES = [["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i], ["churn", /churn|growl|rumbl|digest.*(long|ambien)|ambien/i], ["bubbles", /blorp|blurb|glorp|gurgl|stomach|belly|digest|tummy|bubbl|innard|gut/i],
   ["gas", /burp|belch|bel[ck]h?/i], ["fart", /fart|flatul|toot/i], ["beat", /heart|beat|pulse|thump/i], ["struggle", /struggl|muffl|squirm|kick|pound|knock|trapped/i],
-  ["cumbub", /ball|testic|scrot|nut/i], ["cum", /cum|ejacul|spurt|jizz|semen/i], ["condom", /condom|rubber/i], ["shit", /plop|poop|scat|shit|toilet|defecat|turd/i],
-  ["crack", /crunch|bone|crack|snap|break/i], ["liquid", /slosh|squelch|wet|slime|squish|slurp|lick|drip|splash|saliva|drool|goo|liquid|acid/i],
-  ["sex", /sex|plap|thrust|slap/i], ["kiss", /kiss|smooch|mwah/i], ["hit", /hit|punch|smack|impact/i], ["stomp", /stomp|thud|step|foot/i], ["boom", /boom|explo/i], ["breath", /breath|pant|sigh|exhal|inhal/i]];
+  ["cumbub", /\bballs?\b|testic|scrot|\bnuts?\b/i], ["cum", /cum|ejacul|spurt|jizz|semen/i], ["condom", /condom|rubber/i], ["shit", /plop|poop|scat|shit|toilet|defecat|turd/i],
+  ["crack", /crunch|bone|crack|snap|break/i], ["liquid", /slosh|squelch|\bwet|slime|squish|slurp|\blick|drip|splash|saliva|drool|\bgoo|liquid|acid|pumpkin|water.?bottle|cheek/i],
+  ["sex", /sex|plap|thrust|slap/i], ["kiss", /kiss|smooch|mwah/i], ["hit", /\bhits?\b|punch|smack|impact/i], ["stomp", /stomp|thud|step|foot/i], ["boom", /boom|explo/i], ["breath", /breath|pant|sigh|exhal|inhal/i]];
 const sndTypeForFile = name => (SND_NAMES.find(([, re]) => re.test(name)) || ["wave"])[0];
 let SND = null, AC = null; const SND_URLS = {};
 async function sndIndex() { if (!SND) SND = (await Store.get("sounds")) || []; return SND; }
@@ -2847,6 +2847,35 @@ async function sndURL(id) {
   const blob = await Store.get("snd:" + id);
   if (!blob) return null;
   return (SND_URLS[id] = URL.createObjectURL(blob));
+}
+// long recordings fade out after ~4 seconds so a tap never drones on
+function capAudio(a, vol) {
+  setTimeout(() => { if (a.paused) return; let v = vol; const t = setInterval(() => { v -= vol / 8; if (v <= 0.02) { a.pause(); clearInterval(t); } else a.volume = v; }, 60); }, 4000);
+}
+// ---- zip support: sound packs arrive as .zip files (sometimes zips inside zips); unpack them in the browser
+const AUDIO_EXT = /\.(wav|mp3|ogg|oga|m4a|aac|flac|opus|webm|aif|aiff)$/i;
+const AUDIO_MIME = { wav: "audio/wav", mp3: "audio/mpeg", ogg: "audio/ogg", oga: "audio/ogg", m4a: "audio/mp4", aac: "audio/aac", flac: "audio/flac", opus: "audio/ogg", webm: "audio/webm", aif: "audio/aiff", aiff: "audio/aiff" };
+async function unzipAudio(blob, prefix, onFile, depth = 0) {
+  const u8 = async (a, b) => new Uint8Array(await blob.slice(a, b).arrayBuffer());
+  const tailLen = Math.min(blob.size, 65557), tail = await u8(blob.size - tailLen, blob.size);
+  let e = -1; for (let i = tail.length - 22; i >= 0; i--) if (tail[i] === 0x50 && tail[i + 1] === 0x4b && tail[i + 2] === 5 && tail[i + 3] === 6) { e = i; break; }
+  if (e < 0) throw new Error("not a zip file");
+  const dv = new DataView(tail.buffer, tail.byteOffset), count = dv.getUint16(e + 10, true), cdSize = dv.getUint32(e + 12, true), cdOff = dv.getUint32(e + 16, true);
+  const cd = await u8(cdOff, cdOff + cdSize), cv = new DataView(cd.buffer), dec = new TextDecoder();
+  let p = 0;
+  for (let n = 0; n < count && p + 46 <= cd.length; n++) {
+    const method = cv.getUint16(p + 10, true), csize = cv.getUint32(p + 20, true), nlen = cv.getUint16(p + 28, true), xlen = cv.getUint16(p + 30, true), clen = cv.getUint16(p + 32, true), lho = cv.getUint32(p + 42, true);
+    const name = dec.decode(cd.subarray(p + 46, p + 46 + nlen)); p += 46 + nlen + xlen + clen;
+    if (name.endsWith("/") || /(^|\/)(__MACOSX|\.)/.test(name)) continue;
+    const isZip = /\.zip$/i.test(name), ext = (name.match(AUDIO_EXT) || [])[1];
+    if (!isZip && !ext) continue;
+    const lh = new DataView((await u8(lho, lho + 30)).buffer), start = lho + 30 + lh.getUint16(26, true) + lh.getUint16(28, true);
+    let data = blob.slice(start, start + csize);
+    if (method === 8) data = await new Response(data.stream().pipeThrough(new DecompressionStream("deflate-raw"))).blob();
+    else if (method !== 0) continue;
+    if (isZip) { if (depth < 3) await unzipAudio(data, prefix + name.replace(/\.zip$/i, "") + "/", onFile, depth + 1); continue; }
+    await onFile(prefix + name, new Blob([data], { type: AUDIO_MIME[ext.toLowerCase()] || "audio/*" }));
+  }
 }
 async function playSfx(cat, text) {
   const st = S.settings; if (st.sfxSound === false) return;
@@ -2860,7 +2889,7 @@ async function playSfx(cat, text) {
       if (!mine.length) continue;
       const pick = mine[Math.floor(Math.random() * mine.length)], url = await sndURL(pick.id);
       if (!url) continue;
-      const a = new Audio(url); a.volume = vol; await a.play(); return;
+      const a = new Audio(url); a.volume = vol; await a.play(); capAudio(a, vol); return;
     }
   } catch {}
   synthSfx(sub && SYNTH[sub] ? sub : cat, vol);
@@ -2922,8 +2951,8 @@ function openSoundPack() {
   openSheet("Sound pack", async b => {
     const list = await sndIndex();
     let tab = list[0]?.type || "bubbles";
-    b.innerHTML = `<p class="note">Add audio files (MP3, WAV, OGG, M4A) from your phone. Choose many at once: each file is sorted into a sound type by its name, like gurgle, burp or swallow. Your files play instead of the built-in sounds; with several in one type, one is picked at random each tap.</p>
-      <label class="btn primary" for="spFiles">+ Add sound files</label><input type="file" id="spFiles" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac" multiple hidden>
+    b.innerHTML = `<p class="note">Add audio files (MP3, WAV, OGG, M4A) or whole sound packs as .zip files, straight from your Downloads. Choose many at once: each sound is sorted into a type by its folder and file name, like gurgle, burp or swallow. Your files play instead of the built-in sounds; with several in one type, one is picked at random each tap.</p>
+      <label class="btn primary" for="spFiles">+ Add sound files</label><input type="file" id="spFiles" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac,.zip,application/zip" multiple hidden>
       <div id="spMsg" class="hint"></div><div class="tabs" id="spTabs" style="flex-wrap:wrap"></div><div id="spList" class="stack"></div>`;
     const draw = () => {
       const counts = {}; for (const x of SND) counts[x.type] = (counts[x.type] || 0) + 1;
@@ -2934,23 +2963,36 @@ function openSoundPack() {
       const rows = SND.filter(x => x.type === tab);
       $("spList").innerHTML = rows.length ? rows.map(x => `<div class="row snd-row" data-id="${x.id}"><button type="button" class="icon" data-play aria-label="Play ${esc(x.name)}">▶</button><span class="grow snd-name">${esc(x.name)}</span><select data-type>${Object.entries(SND_TYPES).map(([k, v]) => `<option value="${k}" ${k === x.type ? "selected" : ""}>${v}</option>`).join("")}</select><button type="button" class="icon" data-rm aria-label="Remove ${esc(x.name)}">✕</button></div>`).join("")
         : '<p class="note">No sounds added yet. Every sound effect uses its built-in sound until you add your own.</p>';
+      if (rows.length > 1) $("spList").insertAdjacentHTML("beforeend", `<button type="button" class="btn small danger" id="spClear">Remove all ${rows.length} ${esc(SND_TYPES[tab].toLowerCase())}</button>`);
       $("spList").querySelectorAll(".snd-row").forEach(r => {
         const x = SND.find(y => y.id === r.dataset.id);
         r.querySelector("[data-play]").onclick = async () => { const u = await sndURL(x.id); if (u) { const a = new Audio(u); a.volume = S.settings.sfxVolume ?? 0.7; a.play().catch(() => {}); } };
         r.querySelector("[data-type]").onchange = async e => { x.type = e.target.value; await sndSave(); draw(); };
         r.querySelector("[data-rm]").onclick = async () => { SND = SND.filter(y => y !== x); await Store.del("snd:" + x.id); if (SND_URLS[x.id]) URL.revokeObjectURL(SND_URLS[x.id]); delete SND_URLS[x.id]; await sndSave(); draw(); };
       });
+      if ($("spClear")) confirmBtn($("spClear"), "Tap again to remove them all", async () => { for (const x of rows) { await Store.del("snd:" + x.id); delete SND_URLS[x.id]; } SND = SND.filter(x => !rows.includes(x)); await sndSave(); draw(); });
     };
     $("spFiles").onchange = async e => {
       const files = [...e.target.files]; e.target.value = "";
-      let added = 0, failed = 0;
+      let added = 0, failed = 0, skipped = 0;
+      const have = new Set(SND.map(x => x.path || x.name));
+      const addOne = async (path, blob) => {
+        if (have.has(path)) { skipped++; return; }
+        try {
+          const id = uid(); await Store.setRaw("snd:" + id, blob);
+          SND.push({ id, path, name: path.split("/").pop().replace(/\.[^.]+$/, ""), type: sndTypeForFile(path) }); have.add(path); added++;
+          if (added % 10 === 0) { $("spMsg").textContent = `Added ${added} sounds…`; await sndSave(); }
+        } catch { failed++; }
+      };
       for (const f of files) {
-        $("spMsg").textContent = `Adding ${added + failed + 1} of ${files.length}…`;
-        try { const id = uid(); await Store.setRaw("snd:" + id, f); SND.push({ id, name: f.name.replace(/\.[^.]+$/, ""), type: sndTypeForFile(f.name) }); added++; }
-        catch { failed++; }
+        if (/\.zip$/i.test(f.name) || f.type === "application/zip") {
+          $("spMsg").textContent = `Unpacking ${f.name}…`;
+          try { await unzipAudio(f, f.name.replace(/\.zip$/i, "") + "/", addOne); }
+          catch (err) { failed++; $("spMsg").textContent = `${f.name} couldn't be opened (${err.message}).`; }
+        } else await addOne(f.name, f);
       }
       await sndSave();
-      $("spMsg").textContent = `Added ${added} sound${added === 1 ? "" : "s"}.` + (failed ? ` ${failed} couldn't be saved (the phone may be out of space).` : "") + " Check the tabs and change any that landed in the wrong type.";
+      $("spMsg").textContent = `Added ${added} sound${added === 1 ? "" : "s"}.` + (skipped ? ` ${skipped} were already in your pack.` : "") + (failed ? ` ${failed} couldn't be saved (the phone may be out of space).` : "") + (added ? " Check the tabs and move any that landed in the wrong type." : "");
       if (added) tab = SND.at(-1).type;
       draw();
     };
