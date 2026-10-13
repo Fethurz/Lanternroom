@@ -503,6 +503,95 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 50%,transparent)}50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--accent) 0%,transparent)}}
 @keyframes toast{0%{opacity:0;transform:translate(-50%,8px)}12%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* v1.27 play features: screen effects, gauges, pacer, dice */
+#fxCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.fx-vig{position:absolute;inset:0;z-index:2;pointer-events:none;transition:box-shadow 1.2s ease,background 1.2s ease;--vc:0,0,0;--va:0}
+.fx-vig::before,.fx-vig::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1s}
+/* weather & light */
+.fx-vig.w-rain{background:linear-gradient(180deg,rgba(60,80,120,.16),transparent 60%)}
+.fx-vig.w-storm{background:linear-gradient(180deg,rgba(40,50,90,.28),transparent 70%);box-shadow:inset 0 0 120px rgba(10,12,30,.55)}
+.fx-vig.w-snow{background:linear-gradient(180deg,rgba(200,220,255,.10),transparent 60%)}
+.fx-vig.w-embers{background:radial-gradient(120% 70% at 50% 110%,rgba(255,140,50,.20),transparent 60%)}
+.fx-vig.w-fireflies{box-shadow:inset 0 0 140px rgba(5,5,25,.6);background:linear-gradient(180deg,rgba(20,25,70,.18),transparent)}
+.fx-vig.w-motes{background:radial-gradient(90% 60% at 30% -10%,rgba(220,255,170,.12),transparent 60%)}
+.fx-vig.w-dust{box-shadow:inset 0 0 150px rgba(0,0,0,.7)}
+.fx-vig.w-bubbles{background:linear-gradient(180deg,rgba(40,120,170,.18),rgba(10,40,80,.22));box-shadow:inset 0 0 120px rgba(0,30,60,.5)}
+.fx-vig.w-bubbles::before{opacity:1;background:repeating-linear-gradient(100deg,transparent 0 40px,rgba(170,220,255,.05) 40px 70px);animation:fxCaustic 9s linear infinite}
+.fx-vig.w-glints{background:linear-gradient(180deg,rgba(255,220,160,.08),transparent 50%)}
+.fx-vig.w-combat{box-shadow:inset 0 0 90px rgba(120,10,10,.35)}
+.fx-vig.flash::after{background:rgba(220,230,255,.55);animation:fxFlash 1.1s ease-out forwards}
+.fx-vig.hitflash::after{background:radial-gradient(circle,transparent 40%,rgba(200,20,20,.45));animation:fxFlash .6s ease-out forwards}
+/* what's happening */
+.fx-vig.a-sex::before{opacity:1;box-shadow:inset 0 0 110px rgba(255,80,160,.55);animation:fxPulse .62s ease-in-out infinite}
+.fx-vig.a-oral::before{opacity:1;box-shadow:inset 0 0 100px rgba(255,110,170,.42);animation:fxPulse 1.1s ease-in-out infinite}
+.fx-vig.a-kiss::before{opacity:1;box-shadow:inset 0 0 120px rgba(255,140,190,.35);animation:fxPulse 2.4s ease-in-out infinite}
+.fx-vig.a-vore::before{opacity:1;box-shadow:inset 0 0 130px rgba(140,20,30,.7);animation:fxThrob 2.6s ease-in-out infinite}
+.fx-vig.a-struggle::before{opacity:1;box-shadow:inset 0 0 120px rgba(170,25,35,.75);animation:fxThrob .9s ease-in-out infinite}
+.fx-vig.a-swallow::before{opacity:1;background:radial-gradient(ellipse at 50% 50%,transparent 35%,rgba(70,5,15,.85) 85%);animation:fxGulp 2.2s ease-in infinite}
+.fx-vig.a-shit::before{opacity:1;box-shadow:inset 0 0 110px rgba(110,80,40,.45)}
+.fx-vig.climax::after{background:radial-gradient(circle,rgba(255,255,255,.65),rgba(255,120,190,.35) 50%,transparent 80%);animation:fxClimax 1.6s ease-out forwards}
+.fx-vig.lv-subtle{opacity:.55}
+.fx-vig.lv-off{display:none}
+.fx-vig.lv-still::before,.fx-vig.lv-still::after{animation:none!important}
+@keyframes fxPulse{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes fxThrob{0%,100%{opacity:.6;transform:scale(1)}40%{opacity:1;transform:scale(1.02)}}
+@keyframes fxGulp{0%{opacity:0;transform:scale(1.25)}60%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.95)}}
+@keyframes fxFlash{0%{opacity:0}8%{opacity:1}20%{opacity:.2}30%{opacity:.8}100%{opacity:0}}
+@keyframes fxClimax{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
+@keyframes fxCaustic{to{background-position:300px 0}}
+/* status gauges */
+#gauges{position:relative;z-index:3;display:flex;flex-wrap:wrap;gap:4px 12px;padding:6px 12px;background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.gauge{position:relative;flex:1 1 140px;min-width:0;display:flex;align-items:center;gap:6px;font-size:12px;transition:transform .3s}
+.gauge .gn{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42%}
+.gauge .gbar{flex:1;height:7px;border-radius:99px;background:color-mix(in srgb,var(--gc) 16%,var(--surface-2));overflow:hidden}
+.gauge .gbar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,color-mix(in srgb,var(--gc) 70%,#000),var(--gc));box-shadow:0 0 8px color-mix(in srgb,var(--gc) 60%,transparent);transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.gauge .gv{min-width:24px;text-align:right;font-variant-numeric:tabular-nums;color:var(--gc);font-weight:700}
+.gauge.bump{transform:scale(1.04)}
+.gdelta{position:absolute;right:0;top:-4px;font-size:11px;font-weight:700;animation:gUp 1.4s ease-out forwards;pointer-events:none}
+.gdelta.up{color:#8fe08a}.gdelta.down{color:#ff8a80}
+@keyframes gUp{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-14px)}}
+.gauge-row{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.gauge-sw{display:flex;flex-wrap:wrap;gap:6px}
+.gauge-sw .acc{width:30px;height:30px}
+/* stroke pacer */
+#pacer{position:absolute;right:8px;top:140px;z-index:4;width:46px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 0 6px;border-radius:24px;background:color-mix(in srgb,var(--bg) 72%,transparent);border:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);--pd:1s}
+#pacer .pc-track{position:relative;width:12px;height:150px;border-radius:99px;background:linear-gradient(180deg,color-mix(in srgb,#ff6fae 35%,var(--surface-2)),var(--surface-2))}
+#pacer .pc-bead{position:absolute;left:50%;top:0;width:24px;height:24px;margin-left:-12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#ff8fc0 45%,#d93d84);box-shadow:0 0 14px rgba(255,111,174,.8);animation:pcStroke var(--pd) ease-in-out infinite alternate}
+#pacer .pc-cue{font-size:11px;line-height:1.15;text-align:center;color:#ffb3d4;font-weight:700;max-width:44px;min-height:26px}
+#pacer .pc-min{width:34px;height:34px;border-radius:50%;color:var(--muted);font-size:13px}
+#pacer[data-pace="stop"] .pc-bead{animation:none;top:126px;opacity:.55;box-shadow:none}
+#pacer[data-pace="stop"] .pc-cue{color:var(--muted)}
+#pacer[data-pace="edge"] .pc-bead{animation:pcEdge 1.2s ease-in-out infinite;top:0}
+#pacer[data-pace="edge"] .pc-track{box-shadow:0 0 0 2px rgba(255,111,174,.6);animation:pcRing 1.2s ease-in-out infinite}
+#pacer[data-pace="cum"] .pc-bead{background:radial-gradient(circle at 35% 35%,#fff,#fff3d6 45%,#ffb347)}
+#pacer.pc-change .pc-cue{animation:pcCue .7s ease-out}
+#pacer .pc-burst{position:absolute;left:50%;top:40%;width:60px;height:60px;margin:-30px;border-radius:50%;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(255,245,225,.95),rgba(255,111,174,.5) 45%,transparent 70%)}
+#chat.pacing #msgs{padding-right:58px}
+#pacer .pc-burst.go{animation:pcBurst 1.2s ease-out}
+@keyframes pcStroke{from{top:0}to{top:126px}}
+@keyframes pcEdge{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@keyframes pcRing{50%{box-shadow:0 0 0 6px rgba(255,111,174,.15)}}
+@keyframes pcCue{0%{transform:scale(1.5);opacity:0}100%{transform:none;opacity:1}}
+@keyframes pcBurst{0%{opacity:1;transform:scale(.2)}100%{opacity:0;transform:scale(4)}}
+/* dice */
+.dline{margin-top:6px}
+.dchip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px 2px 3px;border-radius:999px;font-size:12px;font-weight:700;background:var(--surface-2);border:1px solid var(--line)}
+.dchip .die{width:24px;height:24px}
+.dchip.d-criticalfail{color:#ff8a80;border-color:#ff8a80}
+.dchip.d-fail{color:#f2a08e}
+.dchip.d-partial{color:#f5d06b}
+.dchip.d-success{color:#8fe08a}
+.dchip.d-criticalsuccess{color:#7fe7ff;border-color:#7fe7ff;box-shadow:0 0 10px rgba(127,231,255,.35)}
+#rollNow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:8px 12px 0;font-size:13px}
+#rollNow[hidden]{display:none}
+#rollNow .hint{flex:1;color:var(--muted)}
+.roll-fx{position:absolute;left:50%;top:45%;z-index:20;width:110px;height:110px;margin:-55px;pointer-events:none;animation:rollSpin .7s linear infinite;filter:drop-shadow(0 8px 24px rgba(0,0,0,.6))}
+.roll-fx .die{width:100%;height:100%}
+.roll-fx.done{animation:rollLand .65s cubic-bezier(.2,1.6,.4,1) forwards}
+@keyframes rollSpin{0%{transform:rotate(0) scale(.9)}50%{transform:rotate(180deg) scale(1.05)}100%{transform:rotate(360deg) scale(.9)}}
+@keyframes rollLand{0%{transform:scale(1.4)}40%{transform:scale(1)}85%{opacity:1}100%{opacity:0;transform:scale(1) translateY(-20px)}}
+.badge.br{color:#c49bff}
+@media (prefers-reduced-motion: reduce){.fx-vig::before,.fx-vig::after,#pacer .pc-bead,#pacer .pc-track{animation:none!important}}
 </style>
 </head>
 <body>
@@ -542,6 +631,8 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 
   <section id="chat" class="screen" hidden>
     <div id="scene"></div>
+    <canvas id="fxCanvas" aria-hidden="true"></canvas>
+    <div id="fxVig" class="fx-vig" aria-hidden="true"></div>
     <header class="chatbar">
       <button class="icon" id="btnBack" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
       <button class="who" id="btnWho" aria-label="Show portrait">
@@ -553,16 +644,20 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
       <button class="icon" id="btnChats" aria-label="Chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M18 9h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1v3l-4-3h-4"/></svg></button>
       <button class="icon" id="btnMore" aria-label="More"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
     </header>
+    <div id="gauges" hidden aria-label="Status"></div>
     <div id="ambPop" hidden role="dialog" aria-label="Sounds in this chat"></div>
+    <div id="pacer" hidden aria-label="Stroke pacer"><div class="pc-track"><div class="pc-bead"></div></div><div class="pc-cue"></div><div class="pc-burst"></div><button type="button" class="pc-min" aria-label="Hide the pacer for this chat">✕</button></div>
     <div id="msgs" aria-live="polite"></div>
     <div id="status"></div>
     <div id="speakers" hidden></div>
     <div id="attach" hidden><img id="attachImg" alt="Image to send"><span class="hint" style="flex:1;color:var(--muted);font-size:13px">Image attached. Add a message or just send.</span><button type="button" class="icon" id="attachX" aria-label="Remove image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div id="rollNow" hidden></div>
     <form id="composer" autocomplete="off">
       <button type="button" class="icon" id="btnAttach" aria-label="Send an image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.5l-8.3 8.3a5 5 0 0 1-7.1-7.1l8.6-8.6a3.3 3.3 0 0 1 4.7 4.7L10.3 18.4a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/></svg></button>
       <input type="file" id="imgCam" accept="image/*" capture="environment" hidden>
       <input type="file" id="imgPick" accept="image/*" hidden>
       <button type="button" class="icon" id="btnIllustrate" aria-label="Illustrate this moment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></button>
+      <button type="button" class="icon" id="btnDice" hidden aria-label="Roll a d20 for your next action" title="Roll the die"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 2.5l8.5 4.9v9.2L12 21.5l-8.5-4.9V7.4z"/><path d="M3.5 7.4L12 10l8.5-2.6M12 10v11.5"/><path d="M12 2.5L7.5 9M12 2.5L16.5 9"/></svg></button>
       <textarea id="input" rows="1" placeholder="Write your reply…"></textarea>
       <button type="button" class="icon" id="btnMin" aria-label="Minimize the message box" title="Minimize"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
       <button type="button" class="icon" id="btnCont" aria-label="Continue without replying" title="Continue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6l6 6-6 6M12 6l6 6-6 6"/></svg></button>
@@ -664,7 +759,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.26 · Oct 13";
+const VERSION = "1.27 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -708,7 +803,7 @@ const within = (p, ms = 1500) => Promise.race([p, new Promise(r => setTimeout(r,
 const stripColor = s => String(s || "").replace(/\[\/?colou?r[^\]]*\]/gi, "");
 const okColor = c => /^#[0-9a-f]{3,8}$/i.test(c) || /^[a-z]{3,24}$/i.test(c);
 // brighter versions of basic color names so they read well on the dark background
-const NAMED = { green: "#6fdc6a", darkgreen: "#4fbf5a", red: "#ff5d52", darkred: "#e0483f", blue: "#6fa8ff", darkblue: "#5b8cf0", navy: "#6f8cff", purple: "#c49bff", brown: "#c9a27e", black: "#a9a3b3", maroon: "#e0605a", olive: "#b8c25a", teal: "#4fd1c5", gray: "#b8b2c4", grey: "#b8b2c4" };
+const NAMED = { green: "#6fdc6a", darkgreen: "#4fbf5a", red: "#ff5d52", darkred: "#e0483f", blue: "#6fa8ff", darkblue: "#5b8cf0", navy: "#6f8cff", purple: "#c49bff", brown: "#b5895c", black: "#a9a3b3", maroon: "#e0605a", olive: "#b8c25a", teal: "#4fd1c5", gray: "#b8b2c4", grey: "#b8b2c4" };
 const colorOf = c => NAMED[c.toLowerCase()] || c;
 function fmt(text) {
   let h = String(text).replace(/[&<>]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" }[c]));
@@ -910,7 +1005,7 @@ function garbled(text, c) {
 }
 function parseTag(raw) {
   const m = raw.match(/\[\[([^\[\]]*)\]\]\s*$/);
-  if (!m || !/mood\s*:/i.test(m[1])) return { text: raw.split("[[")[0].trim(), mood: null, place: null, focus: null, amb: null, act: null };
+  if (!m || !/mood\s*:/i.test(m[1])) return { text: raw.split("[[")[0].trim(), mood: null, place: null, focus: null, amb: null, act: null, gauges: null, pace: null };
   const f = {};
   for (const part of m[1].split("|")) { const i = part.indexOf(":"); if (i > 0) f[part.slice(0, i).trim().toLowerCase()] = part.slice(i + 1).trim(); }
   const low = k => (f[k] || "").toLowerCase().replace(/[^a-z]/g, "");
@@ -919,7 +1014,9 @@ function parseTag(raw) {
     mood: MOODS.includes(low("mood")) ? low("mood") : "neutral",
     place: f.place || null, focus: f.focus || null,
     amb: AMB_KEYS.includes(low("ambience")) ? low("ambience") : null,
-    act: ACT_KEYS.includes(low("activity")) ? low("activity") : null
+    act: ACT_KEYS.includes(low("activity")) ? low("activity") : null,
+    gauges: f.gauges || null,
+    pace: PACES.includes(low("pace")) ? low("pace") : null
   };
 }
 
@@ -1006,9 +1103,14 @@ function buildPrompt(c, chat, upto, cont) {
   if (c.instructions) sys += `\n\n# Special instructions for this story\n${fill(c.instructions, c)}`;
   if ((st.globalInstr || "").trim()) sys += `\n\n# The user's instructions for every chat (always follow)\n${fill(st.globalInstr, c)}`;
   sys += `\n\n# Text colors\nThe app shows [color=NAME or #hex]text[/color] as colored text. Use it whenever instructions ask for colored text.` + (st.sfxColors ? `\n${st.sfxRules}` : "");
+  sys += gaugePrompt(c, chat);
+  const gs = gaugesOf(c), gaugePart = gs.length ? ` | gauges: ${gs.map(g => g.name + "=number").join(", ")}` : "";
+  const pacePart = pacerOn() ? " | pace: one of " + PACES.join("/") : "";
+  if (pacePart) sys += `\n\n# Pace\nThe user follows an on-screen stroke pacer that your pace field controls. Set it from the scene's sexual intensity: stop when nothing sexual is happening or for a pause, slow for teasing and build-up, steady for ongoing sex, fast as things get intense, edge to make ${u} hold right at the brink (use it for denial and teasing near the peak), cum at the moment of climax. Build up naturally over several replies and use edge before cum when it fits.`;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")}${focusPart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is swallow while someone is being swallowed or gulped down, struggle while living prey is squirming inside a stomach, vore while anyone is inside a stomach or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none.`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")}${focusPart}${gaugePart}${pacePart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is swallow while someone is being swallowed or gulped down, struggle while living prey is squirming inside a stomach, vore while anyone is inside a stomach or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
+  if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a d20 roll, the outcome of what ${u} tries follows the roll (1 critical fail, 2-6 fail, 7-11 partial, 12-19 success, 20 critical success), even if that means ${u} fails. The fate die decides how well the other characters' key actions go.`;
 
   const blankStart = chat.messages[0]?.greeting && !chat.messages[0].content;
   if (blankStart) sys += `\n\nThere is no written opening: ${u}'s first message sets the scene. Take it exactly as ${u} wrote it and continue naturally from there.`;
@@ -1028,7 +1130,8 @@ function buildPrompt(c, chat, upto, cont) {
       content = (m.content ? m.content + "\n" : "") + `[${u} shared an image${m.caption ? ": " + m.caption : ""}]`;
     }
     if (m.role === "assistant" && m.turn && m.speaker) content = `**${m.speaker}:** ${content}`;
-    if (m.role === "assistant" && m.mood && !(m.turn && hist[i + 1]?.turn === m.turn)) content += `\n[[mood: ${m.mood} | place: ${m.place || chat.place || "unknown"}${c.kind === "group" && m.focus ? ` | focus: ${m.focus}` : ""}]]`;
+    if (m.role === "user" && m.roll && diceOn()) content = (content || "") + rollNote(m, u);
+    if (m.role === "assistant" && m.mood && !(m.turn && hist[i + 1]?.turn === m.turn)) content += `\n[[mood: ${m.mood} | place: ${m.place || chat.place || "unknown"}${c.kind === "group" && m.focus ? ` | focus: ${m.focus}` : ""}${m.gauges && gs.length ? " | gauges: " + Object.entries(m.gauges).map(([k, v]) => k + "=" + v).join(", ") : ""}${m.pace && pacePart ? " | pace: " + m.pace : ""}]]`;
     if (budget - content.length < 0 && out.length >= 2) break;
     budget -= content.length;
     // the separate parts of one group reply go back to the model as one reply
@@ -1038,6 +1141,7 @@ function buildPrompt(c, chat, upto, cont) {
   if (!out.length || out[0].role !== "user") out.unshift({ role: "user", content: "(The scene begins.)" });
   const remind = st.sfxColors ? `\n\n[Reminder: write every sound effect in bold capitals inside a color tag, like [color=green]**BWOORP**[/color], following the color rules.]` : "";
   if (remind && !cont) { const last = out[out.length - 1]; if (last.role === "user" && typeof last.content === "string") last.content += remind; else if (last.role === "user" && Array.isArray(last.content)) last.content[0].text += remind; }
+  if (S.fate && diceOn()) { const fn = "\n\n" + fateNote(S.fate); const last = out[out.length - 1]; if (last.role === "user" && typeof last.content === "string") last.content += fn; else if (last.role === "user" && Array.isArray(last.content)) last.content[0].text += fn; else out.push({ role: "user", content: fn.trim() }); }
   for (const o of out) delete o.turn;
   if (cont) out.push({ role: "user", content: `[Continue the scene from where it left off, without waiting for ${u}. Write the next message as you think the story should go: advance the moment, have characters act or speak, but never write ${u}'s words or actions. Do not repeat earlier text.]` + remind });
   return [{ role: "system", content: sys }, ...out];
@@ -1066,7 +1170,7 @@ function chatPreview(chat) {
 }
 async function touchIndex(cid, chat) {
   const idx = await getIndex(cid);
-  const e = { id: chat.id, personaId: chat.personaId, created: chat.created || Date.now(), updated: Date.now(), count: chat.messages.filter(m => m.role !== "image").length, preview: chatPreview(chat) };
+  const e = { id: chat.id, personaId: chat.personaId, created: chat.created || Date.now(), updated: Date.now(), count: chat.messages.filter(m => m.role !== "image").length, preview: chatPreview(chat), ...(chat.branchOf ? { branch: true } : {}) };
   const i = idx.findIndex(x => x.id === chat.id);
   if (i < 0) idx.push(e); else idx[i] = e;
   await Store.set("chats:" + cid, idx);
@@ -1323,7 +1427,7 @@ async function openProfile(id) {
     box.innerHTML = idx.length ? "" : '<p class="note">No chats yet.</p>';
     for (const e of idx.slice(0, 12)) {
       const r = document.createElement("button"); r.type = "button"; r.className = "listrow" + (S.chat && S.chat.id === e.id ? " on" : "");
-      r.innerHTML = `<span class="grow"><b>${esc(personaName(e.personaId))}</b> <span class="badge">${e.count}</span><span class="sub">${fmtWhen(e.updated)} · ${esc(e.preview || "No messages yet")}</span></span>`;
+      r.innerHTML = `<span class="grow"><b>${esc(personaName(e.personaId))}</b> <span class="badge">${e.count}</span>${e.branch ? ' <span class="badge br">⑂ Branch</span>' : ""}<span class="sub">${fmtWhen(e.updated)} · ${esc(e.preview || "No messages yet")}</span></span>`;
       r.onclick = () => { closeSheet(); openChat(id, e.id); };
       box.appendChild(r);
     }
@@ -1342,7 +1446,7 @@ async function openChats(cid) {
     if (!idx.length) box.innerHTML = '<p class="note">No chats yet. Start one above.</p>';
     for (const e of idx) {
       const row = document.createElement("div"); row.className = "listrow" + (S.chat && S.chat.id === e.id ? " on" : "");
-      row.innerHTML = `<button type="button" class="grow" style="text-align:left;padding:0" data-open><div><b>${esc(personaName(e.personaId))}</b><span class="badge">${e.count} message${e.count === 1 ? "" : "s"}</span>${S.chat && S.chat.id === e.id ? '<span class="badge">Open</span>' : ""}</div><div class="sub">${fmtWhen(e.updated)} · ${esc(e.preview || "No messages yet")}</div></button><button type="button" class="btn small danger" data-del>Delete</button>`;
+      row.innerHTML = `<button type="button" class="grow" style="text-align:left;padding:0" data-open><div><b>${esc(personaName(e.personaId))}</b><span class="badge">${e.count} message${e.count === 1 ? "" : "s"}</span>${e.branch ? '<span class="badge br">⑂ Branch</span>' : ""}${S.chat && S.chat.id === e.id ? '<span class="badge">Open</span>' : ""}</div><div class="sub">${fmtWhen(e.updated)} · ${esc(e.preview || "No messages yet")}</div></button><button type="button" class="btn small danger" data-del>Delete</button>`;
       row.querySelector("[data-open]").onclick = () => { closeSheet(); openChat(cid, e.id); };
       confirmBtn(row.querySelector("[data-del]"), "Sure?", async () => {
         await deleteChat(cid, e.id);
@@ -1618,7 +1722,8 @@ async function openChat(id, chatId) {
   $("chatName").textContent = c.name;
   S.seen = new Set(S.chat.messages.map(m => m.id));
   markRecent(id);
-  updateStage(); renderMsgs(); renderSpeakers(); setStatus("");
+  S.pendingRoll = null; drawPendingRoll(); syncPlay();
+  updateStage(); renderMsgs(); renderSpeakers(); setStatus(""); renderGauges(); renderPacer();
   const need = c.kind === "group" ? members(c) : [c];
   (async () => {
     let changed = false;
@@ -1713,6 +1818,8 @@ function renderMsgs(keepScroll) {
       const label = m.role === "user" ? uname() : c.kind === "world" ? `${c.name} · Narrator` : c.name;
       d.innerHTML = `<div class="who-l">${esc(label)}</div>` + (m.image ? `<img class="uimg" src="${esc(m.image)}" alt="Image you sent">` : "") + fmt(m.content);
     }
+    if (m.roll && m.role === "user") d.insertAdjacentHTML("beforeend", `<div class="dline">${diceChip(m.roll, "")}</div>`);
+    if (m.fate && m.role === "assistant" && diceOn() && !(m.turn && msgs[i + 1]?.turn === m.turn)) tail.insertAdjacentHTML("beforeend", `<div class="dline">${diceChip({ n: m.fate }, "Fate")}</div>`);
     if (S.seen && !S.seen.has(m.id)) { d.classList.add("enter"); S.seen.add(m.id); }
     if (m.role === "assistant" && i === lastAsst && m.turn) {
       const sw = document.createElement("div"); sw.className = "swipe";
@@ -1733,6 +1840,7 @@ function renderMsgs(keepScroll) {
       const after = msgs.length - 1 - i;
       btns.push(["del", S.confirmDel === m.id ? (after ? `Tap again: delete this and ${after} after it` : "Tap again to delete") : (after ? `Delete (and ${after} after)` : "Delete")]);
       if (m.role === "assistant" && i === lastAsst) btns.push(["reroll", "New version"]);
+      if (m.role !== "image") btns.push(["branch", "⑂ Branch from here"]);
       acts.innerHTML = btns.map(([a, l]) => `<button type="button" class="btn small ${a === "del" ? "danger" : ""}" data-act="${a}">${l}</button>`).join("");
       tail.appendChild(acts);
     }
@@ -1785,9 +1893,10 @@ $("msgs").addEventListener("click", async e => {
     S.openActs = null; await saveChat(); renderMsgs(true);
   }
   else if (act === "edit") editMessage(i);
+  else if (act === "branch") branchFrom(i);
   else if (act === "redraw") { m.url = imgURL(m.full || m.prompt, 768, 512, Math.floor(Math.random() * 1e6)); await saveChat(); renderMsgs(true); }
 });
-async function applyAlt(m) { m.content = m.alts[m.alt]; if (m.altMeta?.[m.alt]) { Object.assign(m, m.altMeta[m.alt]); if (m.speaker && m.altMeta[m.alt].focus) m.speaker = m.altMeta[m.alt].focus; } await saveChat(); renderMsgs(true); }
+async function applyAlt(m) { m.content = m.alts[m.alt]; if (m.altMeta?.[m.alt]) { Object.assign(m, m.altMeta[m.alt]); if (m.speaker && m.altMeta[m.alt].focus) m.speaker = m.altMeta[m.alt].focus; if (m.gauges) S.chat.gauges = { ...m.gauges }; } await saveChat(); renderMsgs(true); renderGauges(); renderPacer(); }
 
 $("composer").addEventListener("submit", e => { e.preventDefault(); send(); });
 $("send").addEventListener("click", e => { e.preventDefault(); send(); });
@@ -1829,6 +1938,7 @@ async function sendInner() {
   if (t || S.pendingImage) {
     const m = { id: uid(), role: "user", content: t };
     if (S.pendingImage) m.image = S.pendingImage;
+    if (diceOn()) { const pre = S.pendingRoll; m.roll = pre || { n: d20() }; S.pendingRoll = null; drawPendingRoll(); if (!pre) { setBusy(true); try { await rollAnim(m.roll.n); } finally { setBusy(false); } } }
     S.chat.messages.push(m); $("input").value = ""; autoGrow(); clearAttach();
   }
   else if (!S.chat.messages.length || S.chat.messages.at(-1).role === "assistant") return;
@@ -1848,6 +1958,7 @@ async function reroll(i) {
 async function generate(upto, existing, cont) {
   const c = char(), chat = S.chat;
   setBusy(true); setStatus("");
+  S.fate = diceOn() ? d20() : null; const fate = S.fate;
   let bubble;
   if (existing) bubble = $("msgs").querySelector(`[data-i="${upto}"]`);
   else { bubble = document.createElement("div"); bubble.className = "msg assistant typing"; bubble.dataset.i = upto; $("msgs").appendChild(bubble); }
@@ -1886,6 +1997,9 @@ async function generate(upto, existing, cont) {
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
     const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null };
+    const gv = parseGauges(p.gauges, c); if (gv) { meta.gauges = { ...gaugeValues(c, chat), ...gv }; chat.gauges = { ...meta.gauges }; }
+    if (p.pace) meta.pace = p.pace; else if (pacerOn()) meta.pace = null;
+    if (fate) meta.fate = fate; else meta.fate = null;
     const segs = c.kind === "group" ? splitSpeakers(p.text).filter(x => x.text.trim()) : [];
     const multi = segs.filter(x => x.who).length >= 2 || (segs.length >= 2 && segs.some(x => x.who));
     if (!multi && segs.length === 1 && segs[0].who) { meta.focus = memberByName(c, segs[0].who)?.name || segs[0].who; p.text = segs[0].text.trim(); } // one speaker: no label needed
@@ -1908,14 +2022,14 @@ async function generate(upto, existing, cont) {
     chat.mood = meta.mood; if (p.place) chat.place = p.place; if (meta.focus) chat.focus = meta.focus;
     S.nextSpeaker = ""; renderSpeakers();
     await saveChat();
-    renderMsgs(true); updateStage();
+    renderMsgs(true); updateStage(); renderGauges(); renderPacer();
     showMsgTop(existing ? upto : multi ? upto : chat.messages.length - 1);
     if (!existing) maintainMemory(c, chat).catch(e => setStatus("Memory update skipped: " + e.message, true));
     captionImages(chat).catch(() => {});
   } catch (e) {
     if (!existing) bubble.remove(); else renderMsgs(true);
     setStatus(e.message, true);
-  } finally { setBusy(false); }
+  } finally { S.fate = null; setBusy(false); }
 }
 
 /* ---------- Images from the user ---------- */
@@ -2258,6 +2372,7 @@ function settingsTabs(b) {
   if (allChats && !allChats.querySelector("input,textarea,select,button")) allChats.remove();
   put("look", $("sLook")); put("look", g("sPort"));
   put("backup", g("sExport")); put("backup", [...b.querySelectorAll("p.hint")].find(p => /Lanternroom version/.test(p.textContent)));
+  playSettings(panels);
   bar.innerHTML = T.map(([k, l]) => `<button type="button" class="tab ${k === SET_TAB ? "on" : ""}" data-k="${k}">${l}</button>`).join("");
   b.prepend(...[bar, ...T.map(([k]) => panels[k])]);
   const show = k => { SET_TAB = k; bar.querySelectorAll(".tab").forEach(t => t.classList.toggle("on", t.dataset.k === k)); for (const [kk, p] of Object.entries(panels)) p.hidden = kk !== k; };
@@ -2626,11 +2741,13 @@ function editChar(c, isNew, fromDraft) {
         <div class="row"><label class="btn" for="cPic">${work.customPortrait ? "Replace uploaded image" : "Upload my own image instead"}</label>${work.customPortrait ? '<button class="btn" type="button" id="cPicClear">Use generated pictures</button>' : ""}</div>
         <input type="file" id="cPic" accept="image/*" hidden>
       </div>`}
+      <div class="group"><h3>Status gauges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Bars at the top of the chat (fullness, arousal, health…) that the AI moves as the story goes.</p><div id="cGauges" class="stack"></div></div>
       <div id="cMsg" class="hint"></div>
       <button class="btn primary" id="cSave">${isNew ? "Create " + KINDS[K].label.toLowerCase() : "Save changes"}</button>
       ${isNew ? "" : `<button class="btn danger" id="cDel">Delete ${KINDS[K].label.toLowerCase()}</button>`}`;
 
     ruleTabs($("cInstr"));
+    gaugeEditor(work);
     const greets = [work.firstMessage || "", ...(work.altGreetings || [])];
     let gi = 0;
     const grab = () => {
@@ -2841,6 +2958,7 @@ function editChar(c, isNew, fromDraft) {
       if (K === "group" && !work.members.length) { $("cMsg").textContent = "Add at least one member with the + Add tab, or split characters out of the description."; return; }
       work.lore = work.lore.filter(l => l.text.trim());
       work.cast = work.cast.filter(x => x.name.trim() || x.details.trim());
+      work.gauges = (work.gauges || []).filter(g => (g.name || "").trim()).map(g => ({ ...g, name: g.name.trim() }));
       work.altGreetings = (work.altGreetings || []).map(g => g.trim()).filter(Boolean);
       if (K !== "group" && !work.customPortrait && !work.visualManual && work.visualSrc !== cardSig(work)) {
         $("cSave").disabled = true; $("cSave").textContent = K === "world" ? "Picturing the world…" : "Designing their look…";
@@ -2991,6 +3109,8 @@ $("btnMore").onclick = () => openSheet("Options", b => {
     <button class="btn" id="oEdit">Edit ${KINDS[c.kind || "character"].label.toLowerCase()} & lorebook</button>
     <button class="btn" id="oMem">View memory</button>
     <button class="btn" id="oPer">Playing as ${esc(uname())} · switch persona</button>
+    <button class="btn" id="oDice">🎲 Dice rolls: ${diceOn() ? "on" : "off"}</button>
+    <button class="btn" id="oPacer">〰 Stroke pacer: ${pacerOn() ? "on" : "off"}</button>
     <button class="btn danger" id="oReset">Clear this chat</button></div>
     <p class="note">New chat keeps this one in your chat list. Clear this chat erases this conversation and its memory.</p>`;
   $("oIll").onclick = () => { closeSheet(); illustrate(); };
@@ -2999,6 +3119,8 @@ $("btnMore").onclick = () => openSheet("Options", b => {
   $("oEdit").onclick = () => editChar(char(), false);
   $("oMem").onclick = openMemory;
   $("oPer").onclick = () => openPersonas();
+  $("oDice").onclick = async () => { S.chat.dice = !diceOn(); if (!S.chat.dice) { S.pendingRoll = null; drawPendingRoll(); } await saveChat(); syncPlay(); renderMsgs(true); $("oDice").textContent = `🎲 Dice rolls: ${diceOn() ? "on" : "off"}`; toast(diceOn() ? "Dice on: your actions get a d20 roll" : "Dice off for this chat"); };
+  $("oPacer").onclick = async () => { S.chat.pacer = !pacerOn(); await saveChat(); renderPacer(); $("oPacer").textContent = `〰 Stroke pacer: ${pacerOn() ? "on" : "off"}`; };
   confirmBtn($("oReset"), "Tap again to erase this chat", async () => { const keep = { id: S.chat.id, personaId: S.chat.personaId, created: S.chat.created }; S.chat = { ...newChat(char(), keep.personaId), ...keep }; await saveChat(); closeSheet(); S.seen = new Set(S.chat.messages.map(m => m.id)); updateStage(); renderMsgs(); });
 });
 
@@ -3016,7 +3138,7 @@ function editMessage(i) {
 
 $("btnChats").onclick = () => openChats(S.charId);
 $("btnBack").onclick = () => { if (S.busy) return; leaveChat(); };
-function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; renderHome(); };
+function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; S.pendingRoll = null; drawPendingRoll(); updateFx(null); renderPacer(); renderGauges(); renderHome(); };
 
 /* ---------- Installed app: back button, offline, install ---------- */
 // The phone's back button (and the browser's) closes the open window first, then leaves the chat, and only exits from Home.
@@ -3106,6 +3228,216 @@ $("railBooks").onclick = () => $("btnBooks").click();
 $("railSet").onclick = () => $("btnSettings").click();
 $("railPersona").onclick = () => openPersonas();
 $("railQ").oninput = e => { RAIL.q = e.target.value.trim().toLowerCase(); renderRail(); };
+
+/* ---------- Play features: branches, dice, status gauges, screen effects, stroke pacer ---------- */
+
+// --- Branches: a copy of the chat up to a message, opened as its own chat
+async function branchFrom(i) {
+  const src = S.chat, n = i + 1;
+  const ch = JSON.parse(JSON.stringify({ ...src, messages: src.messages.slice(0, n) }));
+  Object.assign(ch, { id: uid(), created: Date.now(), branchOf: { chat: src.id, n, at: Date.now() } });
+  if ((src.summarizedUpTo || 0) > n) { ch.summary = ""; ch.summarizedUpTo = 0; ch.facts = (src.facts || []).filter(f => f.pin); } // the summary may already know what happened later
+  const lastG = [...ch.messages].reverse().find(m => m.gauges); ch.gauges = lastG ? { ...lastG.gauges } : undefined;
+  S.chat = ch; await saveChat(); S.openActs = null;
+  toast(`Branched at message ${n}. The original chat is unchanged.`);
+  await openChat(S.charId, ch.id);
+}
+
+// --- Dice: when on, every action you send gets a d20 roll; the other characters get a "fate" roll for their turn
+const DICE_OUT = [[1, 1, "Critical fail", "it goes badly, embarrassingly or dangerously wrong"], [2, 6, "Fail", "it doesn't work"], [7, 11, "Partial", "it half works, or works with a cost or complication"], [12, 19, "Success", "it works"], [20, 20, "Critical success", "it works spectacularly, better than hoped"]];
+const diceOut = n => DICE_OUT.find(([a, b]) => n >= a && n <= b);
+const diceOn = () => !!(S.chat && (S.chat.dice ?? S.settings.diceDefault));
+const d20 = () => 1 + Math.floor((crypto.getRandomValues(new Uint32Array(1))[0] / 4294967296) * 20);
+const DIE_SVG = n => `<svg viewBox="0 0 40 40" class="die" aria-hidden="true"><path d="M20 2 37 11v18L20 38 3 29V11z" fill="var(--accent)"/><path d="M20 2 37 11 20 16 3 11zM20 16v22M3 11l17 5 17-5" fill="none" stroke="var(--accent-ink)" stroke-opacity=".35" stroke-width="1.2"/><text x="20" y="27" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent-ink)" font-family="var(--f-body)">${n}</text></svg>`;
+function diceChip(r, who) { const o = diceOut(r.n); return `<span class="dchip d-${o[2].toLowerCase().replace(/\s/g, "")}" title="${esc(o[3])}">${DIE_SVG(r.n)}<span>${who ? esc(who) + " " : ""}${r.n} · ${esc(o[2])}</span></span>`; }
+// a short tumbling-die moment in the middle of the chat
+function rollAnim(n) {
+  return new Promise(res => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return res();
+    const el = document.createElement("div"); el.className = "roll-fx"; $("chat").appendChild(el);
+    let k = 0; const t = setInterval(() => { el.innerHTML = DIE_SVG(k++ < 9 ? d20() : n); if (k > 9) { clearInterval(t); el.classList.add("done"); try { navigator.vibrate?.([12, 40, 24]); } catch {} setTimeout(() => { el.remove(); res(); }, 650); } }, 70);
+  });
+}
+async function preRoll() { if (!S.chat || S.busy) return; S.pendingRoll = { n: d20() }; await rollAnim(S.pendingRoll.n); drawPendingRoll(); }
+function drawPendingRoll() {
+  const box = $("rollNow"); if (!box) return;
+  box.hidden = !S.pendingRoll; if (S.pendingRoll) box.innerHTML = `${diceChip(S.pendingRoll, "You rolled")}<span class="hint">It goes with your next message.</span><button type="button" class="icon" id="rollX" aria-label="Discard this roll">✕</button>`;
+  if ($("rollX")) $("rollX").onclick = () => { S.pendingRoll = null; drawPendingRoll(); };
+}
+function rollNote(m, u) { const o = diceOut(m.roll.n); return `\n[Dice: ${u} rolled ${m.roll.n} on a d20 for what they just tried (${o[2].toLowerCase()}): ${o[3]}. Narrate the outcome of ${u}'s action to match this result.]`; }
+function fateNote(n) { const o = diceOut(n); return `[Fate die for the other characters' important actions this turn: ${n} on a d20 (${o[2].toLowerCase()}): ${o[3]}. Let it decide how well their key actions go.]`; }
+
+// --- Status gauges: set up per bot; the AI updates them in the hidden line at the end of each reply
+const GAUGE_COLORS = ["#e8a95b", "#ff6fae", "#e2766f", "#6fdc6a", "#7fb2ff", "#c49bff", "#f1ebda", "#a8875a"];
+const GAUGE_PRESETS = {
+  Vore: [{ name: "Fullness", desc: "how full and stretched the predator's belly is", color: "#e8a95b" }, { name: "Digestion", desc: "how far digestion of whoever is inside has progressed (0 = just swallowed, 100 = fully digested)", color: "#6fdc6a" }, { name: "Struggle", desc: "how hard the prey inside is fighting", color: "#e2766f" }],
+  Romance: [{ name: "Affection", desc: "how much {{char}} cares for {{user}} right now", color: "#ff6fae" }, { name: "Arousal", desc: "how turned on {{char}} is", color: "#c49bff" }],
+  Adventure: [{ name: "Health", desc: "{{user}}'s health (100 = unhurt)", color: "#6fdc6a", start: 100 }, { name: "Stamina", desc: "{{user}}'s energy left", color: "#7fb2ff", start: 100 }]
+};
+const gaugesOf = c => (S.settings.gaugesOn !== false && c && c.gaugesOn && Array.isArray(c.gauges)) ? c.gauges.filter(g => g.name && g.name.trim()) : [];
+function gaugeValues(c, chat) {
+  const out = {}; for (const g of gaugesOf(c)) out[g.name] = Math.max(0, Math.min(100, +(chat.gauges || {})[g.name] ?? NaN));
+  for (const g of gaugesOf(c)) if (!Number.isFinite(out[g.name])) out[g.name] = Math.max(0, Math.min(100, +g.start || 0));
+  return out;
+}
+function gaugePrompt(c, chat) {
+  const gs = gaugesOf(c); if (!gs.length) return "";
+  const v = gaugeValues(c, chat);
+  return `\n\n# Status gauges\nTrack these values from 0 to 100 and update them after every reply as the story changes them (small steps for small changes, big jumps for big moments):\n${gs.map(g => `- ${g.name}: ${fill(g.desc || "", c) || "as the name says"} (now ${v[g.name]})`).join("\n")}`;
+}
+function parseGauges(str, c) {
+  const out = {}, gs = gaugesOf(c); if (!str || !gs.length) return null;
+  for (const part of str.split(/[,;]/)) { const m = part.match(/^\s*([^=:]+?)\s*[=:]\s*(-?\d+(?:\.\d+)?)/); if (!m) continue; const g = gs.find(x => x.name.toLowerCase() === m[1].trim().toLowerCase()); if (g) out[g.name] = Math.max(0, Math.min(100, Math.round(+m[2]))); }
+  return Object.keys(out).length ? out : null;
+}
+let GAUGE_PREV = {};
+function renderGauges() {
+  const box = $("gauges"); if (!box) return;
+  const c = char(), gs = S.chat && !$("chat").hidden ? gaugesOf(c) : [];
+  if (!gs.length) { box.hidden = true; box.innerHTML = ""; GAUGE_PREV = {}; return; }
+  const v = gaugeValues(c, S.chat), key = S.chat.id;
+  box.hidden = false;
+  box.innerHTML = gs.map(g => `<div class="gauge" style="--gc:${esc(g.color || "#e8a95b")}" title="${esc(fill(g.desc || "", c))}"><span class="gn">${esc(g.name)}</span><span class="gbar"><i style="width:${(GAUGE_PREV[key + g.name] ?? v[g.name])}%"></i></span><span class="gv">${v[g.name]}</span></div>`).join("");
+  requestAnimationFrame(() => box.querySelectorAll(".gauge").forEach((el, i) => {
+    const g = gs[i], before = GAUGE_PREV[key + g.name], now = v[g.name];
+    el.querySelector("i").style.width = now + "%";
+    if (before != null && before !== now) { const d = document.createElement("span"); d.className = "gdelta " + (now > before ? "up" : "down"); d.textContent = (now > before ? "+" : "") + (now - before); el.appendChild(d); el.classList.add("bump"); setTimeout(() => { d.remove(); el.classList.remove("bump"); }, 1400); }
+    GAUGE_PREV[key + g.name] = now;
+  }));
+}
+function gaugeEditor(work) {
+  // the "Status gauges" part of the bot editor
+  const box = $("cGauges"); if (!box) return;
+  work.gauges = Array.isArray(work.gauges) ? work.gauges : [];
+  const draw = () => {
+    box.innerHTML = `<label class="check"><input type="checkbox" id="cGOn" ${work.gaugesOn ? "checked" : ""}> Show status gauges in this bot's chats</label>
+      <div class="row" style="gap:6px">${Object.keys(GAUGE_PRESETS).map(k => `<button type="button" class="btn small" data-preset="${k}">+ ${k}</button>`).join("")}</div>
+      ${work.gauges.map((g, i) => `<div class="gauge-row" data-i="${i}"><div class="row" style="gap:6px;align-items:center"><input data-f="name" value="${esc(g.name)}" placeholder="Name, e.g. Fullness" aria-label="Gauge name" style="flex:2"><input data-f="start" type="number" min="0" max="100" value="${esc(g.start ?? 0)}" aria-label="Starting value" title="Starting value" style="flex:0 0 64px;min-width:64px"><button type="button" class="icon" data-rm aria-label="Remove gauge">✕</button></div>
+        <input data-f="desc" value="${esc(g.desc || "")}" placeholder="What it measures, so the AI knows how to move it"><div class="gauge-sw">${GAUGE_COLORS.map(col => `<button type="button" class="acc ${col === (g.color || "#e8a95b") ? "on" : ""}" data-col="${col}" style="--c:${col}" aria-label="Colour ${col}"></button>`).join("")}</div></div>`).join("")}
+      <button type="button" class="btn small" id="cGAdd">+ Add a gauge</button>`;
+    $("cGOn").onchange = e => { work.gaugesOn = e.target.checked; };
+    box.querySelectorAll("[data-preset]").forEach(b => b.onclick = () => { for (const g of GAUGE_PRESETS[b.dataset.preset]) if (!work.gauges.some(x => x.name === g.name)) work.gauges.push({ ...g }); work.gaugesOn = true; draw(); box.dispatchEvent(new Event("change", { bubbles: true })); });
+    $("cGAdd").onclick = () => { work.gauges.push({ name: "", desc: "", color: GAUGE_COLORS[work.gauges.length % GAUGE_COLORS.length], start: 0 }); work.gaugesOn = true; draw(); };
+    box.querySelectorAll(".gauge-row").forEach(r => {
+      const g = work.gauges[+r.dataset.i];
+      r.querySelectorAll("[data-f]").forEach(inp => inp.addEventListener("input", () => { g[inp.dataset.f] = inp.dataset.f === "start" ? Math.max(0, Math.min(100, +inp.value || 0)) : inp.value; }));
+      r.querySelectorAll("[data-col]").forEach(b => b.onclick = () => { g.color = b.dataset.col; draw(); box.dispatchEvent(new Event("change", { bubbles: true })); });
+      r.querySelector("[data-rm]").onclick = () => { work.gauges.splice(+r.dataset.i, 1); draw(); box.dispatchEvent(new Event("change", { bubbles: true })); };
+    });
+  };
+  draw();
+}
+
+// --- Screen effects: weather and light from where the scene is, plus effects for what's happening
+const FX = { amb: null, act: null, raf: 0, parts: [], last: 0, nextFlash: 0, nextShake: 0, pace: null };
+const fxLevel = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "still" : (S.settings.fxLevel || "full");
+const WEATHER = { rain: "rain", storm: "storm", snow: "snow", campfire: "embers", fireplace: "embers", night: "fireflies", forest: "motes", nature: "motes", underwater: "bubbles", cave: "dust", dungeon: "dust", beach: "glints", river: "glints", combat: "combat" };
+function updateFx(sc) {
+  const on = S.chat && !$("chat").hidden && !document.hidden, lvl = fxLevel();
+  const amb = on && S.settings.fxWeather !== false && lvl !== "off" ? (WEATHER[sc?.amb] || null) : null;
+  const act = on && S.settings.fxScene !== false && lvl !== "off" ? (sc?.act && sc.act !== "none" ? sc.act : null) : null;
+  const vig = $("fxVig"); if (!vig) return;
+  vig.className = ["fx-vig", amb ? "w-" + amb : "", act ? "a-" + act : "", "lv-" + lvl].filter(Boolean).join(" ");
+  if (amb !== FX.amb || act !== FX.act) { FX.parts = []; FX.amb = amb; FX.act = act; }
+  if ((amb || act) && lvl !== "still") { if (!FX.raf) FX.raf = requestAnimationFrame(fxFrame); }
+  else { cancelAnimationFrame(FX.raf); FX.raf = 0; const cv = $("fxCanvas"); cv.getContext("2d").clearRect(0, 0, cv.width, cv.height); }
+}
+function fxFrame(t) {
+  FX.raf = 0;
+  const cv = $("fxCanvas"); if (!cv || $("chat").hidden || document.hidden) return;
+  const w = cv.clientWidth, h = cv.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
+  if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+  const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+  const dt = Math.min(50, t - (FX.last || t)) / 16.7; FX.last = t;
+  const full = fxLevel() === "full", R = Math.random, P = FX.parts;
+  const want = { rain: full ? 140 : 70, storm: full ? 220 : 110, snow: full ? 90 : 45, embers: full ? 45 : 22, fireflies: full ? 22 : 12, motes: full ? 30 : 15, bubbles: full ? 30 : 15, dust: full ? 26 : 12, glints: full ? 18 : 9, combat: 0 }[FX.amb] || 0;
+  const hearts = FX.act === "kiss" ? (full ? 10 : 5) : FX.act === "sex" && full ? 6 : 0;
+  const drips = (FX.act === "vore" || FX.act === "struggle" || FX.act === "swallow") && full ? 7 : 0;
+  const count = k => P.filter(p => p.k === k).length;
+  const spawn = (k, n, mk) => { for (let i = count(k); i < n; i++) P.push({ k, ...mk(i < n * 0.6 && !FX.seeded) }); };
+  const kind = FX.amb === "storm" ? "rain" : FX.amb;
+  if (want) spawn(kind, want, any => ({ x: R() * w, y: any ? R() * h : kind === "embers" || kind === "bubbles" ? h + 10 : -10, s: R(), a: R() * 6.28 }));
+  if (hearts) spawn("heart", hearts, any => ({ x: R() * w, y: any ? R() * h : h + 10, s: R(), a: R() * 6.28 }));
+  if (drips) spawn("drip", drips, any => ({ x: R() * w, y: -6, s: R(), a: 0, wait: R() * 300 }));
+  FX.seeded = true;
+  for (let i = P.length - 1; i >= 0; i--) {
+    const p = P[i]; let dead = false;
+    switch (p.k) {
+      case "rain": { const sp = (FX.amb === "storm" ? 13 : 9) + p.s * 6; p.x += -1.6 * dt; p.y += sp * dt; g.strokeStyle = `rgba(200,215,255,${0.18 + p.s * 0.22})`; g.lineWidth = 1; g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(p.x + 2.2, p.y - sp * 1.4); g.stroke(); dead = p.y > h + 20; break; }
+      case "snow": { p.a += 0.02 * dt; p.x += Math.sin(p.a) * 0.6 * dt; p.y += (0.6 + p.s * 0.9) * dt; g.fillStyle = `rgba(255,255,255,${0.5 + p.s * 0.4})`; g.beginPath(); g.arc(p.x, p.y, 1.2 + p.s * 2.2, 0, 7); g.fill(); dead = p.y > h + 10; break; }
+      case "embers": { p.a += 0.05 * dt; p.x += Math.sin(p.a) * 0.7 * dt; p.y -= (0.7 + p.s * 1.3) * dt; const life = Math.max(0, p.y / h); g.fillStyle = `rgba(255,${150 + p.s * 80 | 0},60,${0.25 + life * 0.6})`; g.beginPath(); g.arc(p.x, p.y, 0.8 + p.s * 1.8, 0, 7); g.fill(); dead = p.y < -10; break; }
+      case "fireflies": { p.a += 0.02 * dt; p.x += Math.cos(p.a * 1.3) * 0.4 * dt; p.y += Math.sin(p.a) * 0.3 * dt; const gl = 0.25 + 0.75 * Math.max(0, Math.sin(t / 600 + p.s * 9)); g.fillStyle = `rgba(214,255,120,${gl * 0.85})`; g.shadowColor = "rgba(214,255,120,.9)"; g.shadowBlur = 8; g.beginPath(); g.arc(p.x, p.y, 1.6, 0, 7); g.fill(); g.shadowBlur = 0; dead = p.x < -10 || p.x > w + 10 || p.y < -10 || p.y > h + 10; break; }
+      case "motes": case "dust": { p.a += 0.01 * dt; p.x += Math.cos(p.a) * 0.25 * dt; p.y += (p.k === "dust" ? 0.15 : -0.1 + Math.sin(p.a) * 0.2) * dt; g.fillStyle = p.k === "dust" ? `rgba(220,210,190,${0.12 + p.s * 0.2})` : `rgba(230,240,190,${0.15 + p.s * 0.25})`; g.beginPath(); g.arc(p.x, p.y, 0.8 + p.s * 1.6, 0, 7); g.fill(); dead = p.y < -10 || p.y > h + 10; break; }
+      case "bubbles": { p.a += 0.06 * dt; p.x += Math.sin(p.a) * 0.5 * dt; p.y -= (0.8 + p.s * 1.6) * dt; g.strokeStyle = `rgba(190,230,255,${0.35 + p.s * 0.3})`; g.lineWidth = 1.2; g.beginPath(); g.arc(p.x, p.y, 2 + p.s * 4, 0, 7); g.stroke(); dead = p.y < -10; break; }
+      case "glints": { const gl = Math.max(0, Math.sin(t / 400 + p.s * 20)); g.fillStyle = `rgba(255,255,255,${gl * 0.5})`; g.beginPath(); g.arc(p.x, h * 0.55 + p.y * 0.45, 0.6 + gl * 1.6, 0, 7); g.fill(); break; }
+      case "heart": { p.a += 0.04 * dt; p.x += Math.sin(p.a) * 0.6 * dt; p.y -= (0.6 + p.s * 0.8) * dt; const al = Math.min(1, p.y / h * 1.5) * 0.7, z = 5 + p.s * 6; g.fillStyle = `rgba(255,111,174,${al})`; g.beginPath(); g.moveTo(p.x, p.y + z * 0.35); g.bezierCurveTo(p.x - z, p.y - z * 0.4, p.x - z * 0.4, p.y - z, p.x, p.y - z * 0.35); g.bezierCurveTo(p.x + z * 0.4, p.y - z, p.x + z, p.y - z * 0.4, p.x, p.y + z * 0.35); g.fill(); dead = p.y < -12; break; }
+      case "drip": { if (p.wait > 0) { p.wait -= dt; g.fillStyle = "rgba(190,70,80,.5)"; g.beginPath(); g.ellipse(p.x, 0, 3 + p.s * 2, 2 + (300 - p.wait) / 300 * 4, 0, 0, 7); g.fill(); break; } p.y += (2 + p.s * 3) * dt; g.fillStyle = "rgba(200,80,90,.55)"; g.beginPath(); g.ellipse(p.x, p.y, 2.2, 4, 0, 0, 7); g.fill(); dead = p.y > h + 10; break; }
+    }
+    if (dead) P.splice(i, 1);
+  }
+  // lightning, rumbles and shakes
+  const vig = $("fxVig");
+  if (FX.amb === "storm" && t > FX.nextFlash) { if (FX.nextFlash) { vig.classList.remove("flash"); void vig.offsetWidth; vig.classList.add("flash"); } FX.nextFlash = t + 5000 + R() * 9000; }
+  if (FX.amb === "combat" && t > FX.nextFlash) { if (FX.nextFlash) { vig.classList.remove("hitflash"); void vig.offsetWidth; vig.classList.add("hitflash"); } FX.nextFlash = t + 3500 + R() * 6000; }
+  if (full && (FX.act === "vore" || FX.act === "struggle") && t > FX.nextShake) { if (FX.nextShake) shakeChat(FX.act === "struggle" ? 6 : 3); FX.nextShake = t + (FX.act === "struggle" ? 1800 + R() * 2500 : 5000 + R() * 7000); }
+  FX.raf = requestAnimationFrame(fxFrame);
+}
+function shakeChat(px) { const m = $("msgs"); if (!m || matchMedia("(prefers-reduced-motion: reduce)").matches) return; m.animate([{ transform: "none" }, { transform: `translate(${-px}px,${px / 2}px)` }, { transform: `translate(${px}px,${-px / 2}px)` }, { transform: `translate(${-px / 2}px,0)` }, { transform: "none" }], { duration: 420, easing: "ease-out" }); }
+document.addEventListener("visibilitychange", () => { if (!document.hidden && S.chat) updateFx(sceneNow()); });
+
+// --- Stroke pacer: an abstract rhythm guide the story sets the pace for
+const PACES = ["stop", "slow", "steady", "fast", "edge", "cum"];
+const PACE_INFO = { stop: ["Rest", 0], slow: ["Slow…", 1.7], steady: ["Steady", 1.05], fast: ["Faster", 0.55], edge: ["Edge, hold it…", 0], cum: ["Now!", 0.32] };
+const pacerOn = () => !!(S.chat && S.chat.pacer);
+function currentPace() {
+  const msgs = (S.chat?.messages || []).filter(m => m.role === "assistant");
+  const last = msgs.at(-1); if (last && last.pace) return last.pace === "cum" && msgs.length && last.paceSeen ? "stop" : last.pace;
+  const a = sceneNow().act; return a === "sex" ? "steady" : a === "oral" ? "slow" : "stop";
+}
+function renderPacer() {
+  const el = $("pacer"); if (!el) return;
+  $("chat").classList.toggle("pacing", pacerOn() && !$("chat").hidden);
+  if (!pacerOn() || $("chat").hidden) { el.hidden = true; el.dataset.pace = ""; return; }
+  const p = currentPace(), [cue, dur] = PACE_INFO[p] || PACE_INFO.stop;
+  el.hidden = false;
+  if (el.dataset.pace === p) return;
+  const was = el.dataset.pace; el.dataset.pace = p;
+  el.style.setProperty("--pd", (dur || 1) + "s");
+  el.querySelector(".pc-cue").textContent = cue;
+  if (was) { el.classList.remove("pc-change"); void el.offsetWidth; el.classList.add("pc-change"); }
+  if (p === "cum") { const b = el.querySelector(".pc-burst"); b.classList.remove("go"); void b.offsetWidth; b.classList.add("go"); try { navigator.vibrate?.([60, 40, 60, 40, 120]); } catch {} const v = $("fxVig"); if (v && S.settings.fxScene !== false) { v.classList.remove("climax"); void v.offsetWidth; v.classList.add("climax"); } }
+}
+function pacerBuzz() { if (S.settings.pacerBuzz !== false && pacerOn() && !document.hidden && ["slow", "steady", "fast", "cum"].includes($("pacer")?.dataset.pace)) { try { navigator.vibrate?.(14); } catch {} } }
+
+// --- Play settings: in Settings → Chats (dice, gauges, pacer) and Settings → Look (screen effects)
+function playSettings(panels) {
+  const st = S.settings, save = () => { saveSettings(); if (S.chat) { renderGauges(); updateFx(sceneNow()); renderPacer(); } };
+  const a = document.createElement("div"); a.className = "group"; a.id = "sPlay";
+  a.innerHTML = `<h3>Play</h3>
+    <label class="check"><input type="checkbox" id="sDice" ${st.diceDefault ? "checked" : ""}> 🎲 Dice rolls on in new chats (each chat has its own switch under ⋯)</label>
+    <label class="check"><input type="checkbox" id="sGauges" ${st.gaugesOn !== false ? "checked" : ""}> Show status gauges (set them up per bot in its editor)</label>
+    <label class="check"><input type="checkbox" id="sPacerBuzz" ${st.pacerBuzz !== false ? "checked" : ""}> Stroke pacer buzzes the phone with each stroke (switch the pacer on per chat under ⋯)</label>`;
+  panels.chats.appendChild(a);
+  a.querySelector("#sDice").onchange = e => { st.diceDefault = e.target.checked; save(); };
+  a.querySelector("#sGauges").onchange = e => { st.gaugesOn = e.target.checked; save(); };
+  a.querySelector("#sPacerBuzz").onchange = e => { st.pacerBuzz = e.target.checked; save(); };
+  const f = document.createElement("div"); f.className = "group"; f.id = "sFx";
+  f.innerHTML = `<h3>Screen effects</h3>
+    <label class="check"><input type="checkbox" id="sFxW" ${st.fxWeather !== false ? "checked" : ""}> Weather and light from the scene (rain, snow, embers, fireflies, bubbles…)</label>
+    <label class="check"><input type="checkbox" id="sFxS" ${st.fxScene !== false ? "checked" : ""}> Effects for what's happening (pulses and vignettes for sex, oral, kissing, vore…)</label>
+    <div class="field"><label>Strength</label><div class="tabs" id="sFxL">${[["off", "Off"], ["subtle", "Subtle"], ["full", "Full"]].map(([k, l]) => `<button type="button" class="tab ${(st.fxLevel || "full") === k ? "on" : ""}" data-l="${k}">${l}</button>`).join("")}</div></div>`;
+  panels.look.insertBefore(f, panels.look.children[1] || null);
+  f.querySelector("#sFxW").onchange = e => { st.fxWeather = e.target.checked; save(); };
+  f.querySelector("#sFxS").onchange = e => { st.fxScene = e.target.checked; save(); };
+  f.querySelectorAll("#sFxL [data-l]").forEach(b => b.onclick = () => { st.fxLevel = b.dataset.l; f.querySelectorAll("#sFxL .tab").forEach(x => x.classList.toggle("on", x === b)); save(); });
+}
+
+// the 🎲 button shows only in chats with dice on
+function syncPlay() { const b = $("btnDice"); if (b) b.hidden = !diceOn(); }
+$("btnDice").onclick = () => preRoll();
+$("btnDice").addEventListener("pointerdown", e => { if ($("composer").classList.contains("open")) e.preventDefault(); });
+document.querySelector("#pacer .pc-min").onclick = async () => { if (!S.chat) return; S.chat.pacer = false; await saveChat(); renderPacer(); toast("Pacer off. Switch it back on under ⋯"); };
+document.querySelector("#pacer .pc-bead").addEventListener("animationiteration", pacerBuzz);
 
 /* ---------- Lantern ---------- */
 let LID = 0;
@@ -3296,7 +3628,9 @@ const VORE = {
   balls: /\b(balls|testicles?|ballsack|scrotum|nuts)\b/i,
   stomach: /\b(stomach|belly|gut|tummy)\b/i,
   remains: /\b(remains|bones?|skull|ribs?|skeleton|what (was|is) left|leftovers|prey|bits of|scraps)\b/i,
-  condom: /\b(condoms?|rubbers?)\b/i
+  condom: /\b(condoms?|rubbers?)\b/i,
+  // pooping is only meant when the text is about it (swearing like "holy shit" or "this shit" doesn't count)
+  scat: /\b(shitting|shits? (out|into|in the|on the|himself|herself|themselves|itself)|took a (shit|dump)|tak(es|ing) a (shit|dump)|poop\w*|scat\b|defecat\w*|toilet|bowels?|bowel movement|turds?|logs? (of|slid|slip|drop|plop|fell|coil)|dump(s|ed|ing)? (out|a load|its load|her load|his load)|feces|faeces|excret\w*|dung|anus|asshole|squat\w* (over|down)|disposal|crap(s|ping|ped)? (out|into)|pinch(es|ing|ed)? (off|out)|push(es|ing|ed)? out (a|the|another) (log|load)|push(es|ing|ed)? (it )?(all )?out|needs? to go|relieve (him|her|them|it)sel(f|ves))\b/i
 };
 const msgText = m => !m || m.role === "image" ? "" : stripColor(m.content || "");
 function sfxCtx(i) {
@@ -3304,7 +3638,9 @@ function sfxCtx(i) {
   const all = msgs.slice(0, i).map(msgText).join("\n") + "\n" + cur;
   const recent = msgs.slice(Math.max(0, i - 6), i).map(msgText).join("\n") + "\n" + cur;
   const cv = VORE.cockvore.test(recent), ballsNow = VORE.balls.test(cur);
+  const near = msgs.slice(Math.max(0, i - 2), i).map(msgText).join("\n") + "\n" + cur, act = msgs[i]?.act || "";
   return {
+    scat: act === "shit" || VORE.scat.test(near),
     digested: VORE.swallow.test(all) && VORE.digest.test(all) && VORE.dead.test(all),
     cvDisposal: cv && (VORE.remains.test(cur) || VORE.digest.test(recent)),
     condom: VORE.condom.test(cur),
@@ -3319,11 +3655,13 @@ function sfxPick(sp, t) {
   const c = rgbOf(sp), w = t.toLowerCase();
   const cream = c && Math.min(...c) >= 200 && Math.max(...c) - Math.min(...c) <= 60 && c[0] - c[2] >= 10;
   const gurgly = cat === "bubbles" || /(slo+sh|swa+sh|glo+sh|sqlo+sh)/.test(w);
-  if (cat !== "fart" && cat !== "gas" && cat !== "kiss" && nearRGB(c, [201, 162, 126], 45)) cat = "shit";
+  const ruleBrown = cat !== "fart" && cat !== "gas" && cat !== "kiss" && nearRGB(c, [201, 162, 126], 30);
+  if (ruleBrown) cat = "shit";
   else if (cat !== "kiss" && nearRGB(c, [255, 111, 174], 50)) cat = "sex";
   else if (cream && (gurgly || ["liquid", "wave", "hit", "stomp", "cum"].includes(cat))) cat = gurgly ? "cumbub" : "cum";
   if (!["shit", "cum", "cumbub", "bubbles", "liquid"].includes(cat)) return cat;
   const holder = sp.closest("[data-i]"), ctx = sfxCtx(holder ? +holder.dataset.i : 1e9);
+  if (cat === "shit" && !ctx.scat && !ruleBrown) { const plain = sfxCat(t.replace(/^(plo|plu|flo|splu|splo)/i, "spla")); cat = plain === "shit" || plain === "wave" ? "liquid" : plain; } // a splat, not a plop
   if (cat === "shit") return ctx.digested ? "shitbones" : "shit";
   if (cat === "cum") return ctx.condom || ctx.cvDisposal ? "condom" : "cum";
   if (gurgly && ctx.gurgleCum) return "cumbub";
@@ -3876,7 +4214,7 @@ function guessAct(msgs) {
   if (/\b(blow.?job|deep.?throat\w*|fellatio|cunnilingus|gag(s|ging|ged)? on|sucks? (on )?(his|her|their|my|your) (cock|dick|shaft|length|clit)|(cock|dick|shaft) (in|down) (her|his|their|my|your) (mouth|throat)|eats? (her|him|them) out)\b/i.test(t2)) return "oral";
   if (/\b(swallow(s|ing)?|gulp(s|ing)?|slid(es|ing)? down (her|his|their|its|the) (throat|gullet))\b/i.test(msgText(msgs.at(-1))) && !/\b(stomach|belly)\b/i.test(msgText(msgs.at(-1)))) return "swallow";
   if (/\b(thrust(s|ing)?|fuck(s|ing|ed)?|pound(s|ing)?|rid(es|ing) (him|her|them)|penetrat\w*|hips slap\w*|bounc(es|ing) on)\b/i.test(t2)) return "sex";
-  if (/\b(shit(s|ting)?|poop(s|ing|ed)?|defecat\w*|bowel movement|tak(es|ing) a dump|dump(s|ing)? (a|her|his|its|their) load|logs? (slides?|slips?|drops?|plops?)|plop(s|ping)? into the (water|bowl|toilet))\b/i.test(t2) && !/\b(holy shit|shit!|oh shit|piece of shit|shit,)/i.test(t2)) return "shit";
+  if (VORE.scat.test(msgText(msgs.at(-1)))) return "shit";
   if (VORE.swallow.test(t6) && /\b(stomach|belly|gut|inside)\b/i.test(t6) && !/\b(spat|spits? (him|her|them) out|escap\w*|freed|regurgitat\w*|came out|pushed out)\b/i.test(t2)) return /\b(squirm\w*|struggl\w*|thrash\w*|kick(s|ing)?|wriggl\w*|writh\w*|pound(s|ing)? (on|against))\b/i.test(t2) ? "struggle" : "vore";
   if (/\b(kiss(es|ing|ed)?|making out|make out|smooch\w*|lips (lock|press|meet|crash)\w*|tongues? (dance|tangle|swirl)\w*)\b/i.test(msgText(msgs.at(-1)))) return "kiss";
   return "none";
@@ -3899,6 +4237,7 @@ async function ambienceStep() {
   const { amb, act } = inChat ? sceneNow() : { amb: "none", act: "none" };
   const wantAmb = inChat && st.ambOn !== false && !st.ambMuted && amb !== "none" ? amb : null;
   const wantAct = inChat && st.actOn !== false && !st.ambMuted && act !== "none" ? act : null;
+  try { updateFx(inChat ? { amb, act } : null); renderPacer(); } catch {}
   if (btn) btn.title = "Background: " + (AMB_LABEL[amb] || "none") + (act !== "none" ? ` · ${act}` : "") + (st.ambMuted ? " (muted)" : "");
   if (!inChat && (AMBS.amb || AMBS.act || LIVE.size)) {
     // left the chat or the app: everything stops at once, no fade
