@@ -235,10 +235,66 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
 #btnAmb.muted .w1,#btnAmb.muted .w2{display:none}
 #btnAmb.muted{color:var(--muted)}
 #sAccount input{width:100%;margin-top:6px}
-/* desktop: centred column, room around it */
-html.wide body{background:radial-gradient(ellipse at 50% 0%,#231d30 0%,var(--bg) 70%)}
-html.wide #app{max-width:860px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line);box-shadow:0 0 60px -20px rgba(0,0,0,.8)}
-html.wide #charList{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
+/* computers: the app fills the window. Bot rail on the left, the screen in the middle, the scene panel on the right */
+#rail,#side{display:none}
+html.wide #app{display:grid;grid-template-columns:232px minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+html.wider #app{grid-template-columns:232px minmax(0,1fr) 300px}
+html.wide #rail{display:flex;grid-column:1;grid-row:1}
+html.wider #side{display:flex;grid-column:3;grid-row:1}
+html.wide #home,html.wide #chat{grid-column:2;grid-row:1;min-width:0;border-left:1px solid var(--line)}
+html.wider #home,html.wider #chat{border-right:1px solid var(--line)}
+html.wide #home .topbar,html.wide .home-actions,html.wide #personaBar{display:none}
+html.wide .home-scroll{padding:16px 20px 24px}
+html.wide #charList{grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px}
+html.wide #msgs{padding-inline:max(14px,calc((100% - 880px) / 2))}
+html.wide #composer{padding-inline:max(10px,calc((100% - 900px) / 2))}
+html.wide .msg,html.wide .msg-set{max-width:min(88%,760px)}
+#rail{flex-direction:column;gap:10px;padding:14px 12px 12px;background:rgba(14,12,19,.55);min-height:0}
+.rail-logo{display:flex;align-items:center;gap:8px;padding:2px 4px 6px;color:inherit;text-align:left}
+.rail-logo .lantern{width:22px;height:34px}
+.rl-t{font:400 22px/1 var(--f-display);text-shadow:0 0 24px rgba(232,169,91,.25)}
+.rl-t span{color:var(--accent)}
+.rail-acts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.rbtn{display:flex;align-items:center;justify-content:center;min-height:34px;padding:6px 8px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-size:13px;font-weight:700;cursor:pointer;transition:border-color .2s,background-color .2s}
+.rbtn:hover{border-color:#4d4560}
+.rbtn.primary{background:linear-gradient(180deg,#f2b96e,#d9944a);color:var(--accent-ink);border-color:transparent}
+#railQ{padding:8px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);min-width:0}
+#railQ:focus{outline:none;border-color:var(--accent)}
+#railList{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin:0 -6px;padding:0 6px;min-height:0}
+#railList .rl-h{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 6px 4px}
+.rrow{display:flex;align-items:center;gap:9px;width:100%;padding:5px 6px;border-radius:10px;text-align:left;min-height:40px;border-left:3px solid transparent;transition:background-color .15s}
+.rrow:hover{background:var(--surface)}
+.rrow.on{background:var(--surface-2);border-left-color:var(--kc,var(--accent))}
+.rrow.k-character{--kc:var(--k-character)}.rrow.k-world{--kc:var(--k-world)}.rrow.k-group{--kc:var(--k-group)}
+.rrow img{width:30px;height:30px;border-radius:50%;object-fit:cover;background:var(--surface-2);flex:none;box-shadow:0 0 0 2px color-mix(in srgb,var(--kc,var(--accent)) 40%,transparent)}
+.rrow .rn{flex:1;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rrow .rw{font-size:11px;color:var(--muted);flex:none}
+#railPersona{margin:0;font-size:13px}
+#side{flex-direction:column;gap:14px;padding:16px 16px 20px;overflow-y:auto;background:rgba(14,12,19,.55);min-height:0}
+#side h3{margin:0;font:400 17px var(--f-display);color:var(--accent)}
+.sd-port{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);cursor:pointer;background:var(--surface-2);box-shadow:0 0 0 3px rgba(22,19,29,.8),0 0 28px -6px var(--ring,var(--accent));transition:box-shadow .5s}
+.sd-port img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
+.sd-port .sd-name{position:absolute;left:0;right:0;bottom:0;padding:28px 12px 10px;background:linear-gradient(transparent,rgba(14,12,19,.92));font:400 21px/1.15 var(--f-display)}
+.sd-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;color:var(--muted)}
+.sd-meta .mood-chip{margin:0}
+.sd-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.sd-card .lbl{font-size:11px}
+.sd-sum{display:-webkit-box;-webkit-line-clamp:9;-webkit-box-orient:vertical;overflow:hidden;color:#d9d2e6;line-height:1.45}
+.sd-facts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+.sd-facts li{padding-left:14px;position:relative;line-height:1.35}
+.sd-facts li::before{content:"•";position:absolute;left:2px;color:var(--muted)}
+.sd-facts li.pin::before{content:"★";color:var(--accent);left:0;font-size:11px;top:1px}
+.sd-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sd-mem{display:flex;flex-wrap:wrap;gap:6px}
+.sd-mem button{display:flex;align-items:center;gap:6px;padding:3px 10px 3px 3px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:13px}
+.sd-mem button.on{border-color:var(--accent);color:var(--accent)}
+.sd-mem img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+.sd-rec{display:flex;flex-direction:column;gap:6px}
+.sd-rec button{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:center;text-align:left;padding:6px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.sd-rec button:hover{border-color:#4d4560}
+.sd-rec img{width:40px;height:50px;border-radius:8px;object-fit:cover;background:var(--surface-2)}
+.sd-rec b{display:block;font:400 15px/1.2 var(--f-display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sd-rec small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--muted);font-size:12px;line-height:1.3}
 html.wide .panel{max-width:720px;border-radius:22px;margin-bottom:24px;border-bottom:1px solid var(--line)}
 html.wide #sheet{align-items:center}
 .desk-only{display:none}
@@ -396,6 +452,18 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 </head>
 <body>
 <div id="app">
+  <aside id="rail" aria-label="Your bots">
+    <button type="button" class="rail-logo" id="railHome" aria-label="Home"><span id="railLantern"></span><span class="rl-t">Lantern<span>room</span></span></button>
+    <div class="rail-acts">
+      <button type="button" class="rbtn primary" id="railNew">＋ New</button>
+      <label class="rbtn" for="importCard">Import card</label>
+      <button type="button" class="rbtn" id="railBooks">Lorebooks</button>
+      <button type="button" class="rbtn" id="railSet">⚙ Settings</button>
+    </div>
+    <input id="railQ" type="search" placeholder="Find a bot" autocomplete="off" aria-label="Find a bot">
+    <div id="railList"></div>
+    <button type="button" class="persona-bar" id="railPersona"></button>
+  </aside>
   <section id="home" class="screen">
     <header class="topbar">
       <button class="logo" id="logoBtn" aria-label="Lanternroom: tap to put out or light the lantern"><span id="logoLantern"></span><h1>Lantern<span>room</span></h1></button>
@@ -445,6 +513,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
       <button type="button" class="icon" id="send" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </form>
   </section>
+  <aside id="side" aria-label="Scene"></aside>
 </div>
 
 <div id="splash"><div class="sp"><span id="spLantern"></span><div class="sp-t" id="spTitle"></div></div></div>
@@ -464,12 +533,15 @@ let UIZ = 1;
 function applyScale() {
   const pick = (S && S.settings && S.settings.uiScale) || "auto";
   const desk = matchMedia("(pointer: fine)").matches && innerWidth >= 760;
-  let z = pick === "auto" ? (desk ? Math.min(1.5, Math.max(1, innerHeight / 980)) : 1) : +pick || 1;
+  let z = pick === "auto" ? (desk ? Math.min(1.6, Math.max(1.15, innerHeight / 870)) : 1) : +pick || 1;
   z = Math.max(0.5, Math.min(z, innerWidth / 360)); // always leave room for the phone layout
   UIZ = Math.round(z * 100) / 100;
   document.body.style.zoom = UIZ;
   document.documentElement.style.setProperty("--z", UIZ);
+  const was = document.documentElement.className;
   document.documentElement.classList.toggle("wide", innerWidth / UIZ >= 780);
+  document.documentElement.classList.toggle("wider", innerWidth / UIZ >= 1180);
+  if (was !== document.documentElement.className && typeof renderPanes === "function") renderPanes();
 }
 addEventListener("resize", () => applyScale());
 
@@ -511,7 +583,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.20 · Oct 13";
+const VERSION = "1.21 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -879,7 +951,9 @@ function buildPrompt(c, chat, upto, cont) {
     out.unshift({ role: m.role, content });
   }
   if (!out.length || out[0].role !== "user") out.unshift({ role: "user", content: "(The scene begins.)" });
-  if (cont) out.push({ role: "user", content: `[Continue the scene from where it left off, without waiting for ${u}. Write the next message as you think the story should go: advance the moment, have characters act or speak, but never write ${u}'s words or actions. Do not repeat earlier text.]` });
+  const remind = st.sfxColors ? `\n\n[Reminder: write every sound effect in bold capitals inside a color tag, like [color=green]**BWOORP**[/color], following the color rules.]` : "";
+  if (remind && !cont) { const last = out[out.length - 1]; if (last.role === "user" && typeof last.content === "string") last.content += remind; else if (last.role === "user" && Array.isArray(last.content)) last.content[0].text += remind; }
+  if (cont) out.push({ role: "user", content: `[Continue the scene from where it left off, without waiting for ${u}. Write the next message as you think the story should go: advance the moment, have characters act or speak, but never write ${u}'s words or actions. Do not repeat earlier text.]` + remind });
   return [{ role: "system", content: sys }, ...out];
 }
 
@@ -927,6 +1001,7 @@ async function saveChat() {
   if (!S.chat.personaId) S.chat.personaId = S.personaId;
   await within(Store.set("c2:" + S.chat.id, S.chat).catch(() => {}));
   await within(touchIndex(S.charId, S.chat).catch(() => {}));
+  if (typeof renderPanes === "function") renderPanes();
 }
 async function saveSettings() { await Store.set("settings", S.settings); }
 async function savePersonas() { await Store.set("personas", S.personas); await Store.set("activePersona", S.personaId); }
@@ -1047,6 +1122,7 @@ function renderHome() {
     });
   }
   $("tagline").textContent = hasKey() ? "Your characters, with memory that holds." : "Start by adding your API key in Settings.";
+  renderPanes();
 }
 $("personaBar").onclick = () => openPersonas();
 function cardMenu(c) {
@@ -1318,6 +1394,7 @@ function updateStage() {
       im.src = url;
     }
   } else { sc.classList.remove("on"); sc.dataset.url = ""; }
+  renderPanes();
 }
 function renderSpeakers() {
   const c = char(), box = $("speakers");
@@ -1654,7 +1731,7 @@ function openSheet(title, build) {
 }
 function closeSheet() { $("sheet").hidden = true; $("sheetBody").innerHTML = ""; }
 $("sheetClose").onclick = closeSheet;
-$("sheet").addEventListener("click", e => { if (e.target.id === "sheet") closeSheet(); });
+$("sheet").addEventListener("click", e => { if (e.target.id === "sheet" && !$("sheetBody").querySelector("textarea")) closeSheet(); });
 function field(label, html, hint) { return `<div class="field"><label>${label}</label>${html}${hint ? `<div class="hint">${hint}</div>` : ""}</div>`; }
 function confirmBtn(btn, label, fn) {
   btn.addEventListener("click", () => {
@@ -2608,7 +2685,8 @@ function editMessage(i) {
   openSheet("Edit message", b => {
     b.innerHTML = `${field("Text", `<textarea id="eTxt" style="min-height:220px">${esc(m.content)}</textarea>`)}<button class="btn primary" id="eSave">Save</button>`;
     $("eSave").onclick = async () => {
-      m.content = $("eTxt").value; if (m.alts) m.alts[m.alt || 0] = m.content;
+      const cur = (S.chat && S.chat.messages.find(x => x.id === m.id)) || m;
+      cur.content = $("eTxt").value; if (cur.alts) cur.alts[cur.alt || 0] = cur.content;
       S.openActs = null; await saveChat(); closeSheet(); renderMsgs(true);
     };
   });
@@ -2616,6 +2694,62 @@ function editMessage(i) {
 
 $("btnChats").onclick = () => openChats(S.charId);
 $("btnBack").onclick = () => { if (S.busy) return; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; renderHome(); };
+
+/* ---------- Computer layout: bot rail (left) and scene panel (right) ---------- */
+var RAIL = { q: "" };
+const ACT_LABEL = { swallow: "Swallowing", vore: "In a stomach", struggle: "Struggling inside", sex: "Sex", oral: "Oral" };
+var PANES_T = 0;
+function renderPanes() { cancelAnimationFrame(PANES_T); PANES_T = requestAnimationFrame(() => { try { renderRail(); renderSide(); } catch (e) { console.warn(e); } }); }
+function renderRail() {
+  const html = document.documentElement; if (!html.classList.contains("wide")) return;
+  if (!$("railLantern").firstChild) $("railLantern").innerHTML = lanternSVG();
+  $("railPersona").innerHTML = `Playing as <b>${esc(uname())}</b><span class="chg">Change</span>`;
+  const q = RAIL.q, cur = !$("chat").hidden ? S.charId : null;
+  const vis = S.chars.filter(c => !c.hidden && (!q || c.name.toLowerCase().includes(q) || tagsOf(c).some(t => t.includes(q))));
+  const recent = vis.filter(c => S.recent[c.id]).sort((a, b) => S.recent[b.id] - S.recent[a.id]).slice(0, 12);
+  const rest = vis.filter(c => !recent.includes(c)).sort((a, b) => (b.fav ? 1 : 0) - (a.fav ? 1 : 0) || a.name.localeCompare(b.name));
+  const row = c => `<button type="button" class="rrow k-${c.kind || "character"} ${c.id === cur ? "on" : ""}" data-id="${esc(c.id)}" title="${esc(c.name)}"><img alt="" loading="lazy"><span class="rn">${c.fav ? '<span class="fav-star">★</span>' : ""}${esc(c.name)}</span>${S.recent[c.id] ? `<span class="rw">${esc(fmtWhen(S.recent[c.id]))}</span>` : ""}</button>`;
+  const box = $("railList");
+  box.innerHTML = (recent.length ? `<div class="rl-h">Recent</div>${recent.map(row).join("")}` : "") + (rest.length ? `<div class="rl-h">${recent.length ? "All bots" : "Your bots"}</div>${rest.map(row).join("")}` : "") || `<p class="hint" style="padding:6px">${q ? "No bot matches." : "No bots yet."}</p>`;
+  box.querySelectorAll(".rrow").forEach(b => { const c = byId(b.dataset.id); setImg(b.querySelector("img"), thumbURL(c), c); b.onclick = () => { if (S.busy && S.charId !== c.id) return; closeSheet(); openChat(c.id); }; });
+}
+function renderSide() {
+  const box = $("side"); if (!document.documentElement.classList.contains("wider")) return;
+  const c = char();
+  if (S.chat && c && !$("chat").hidden) {
+    const ch = S.chat, sc = sceneNow(), facts = [...(ch.facts || [])].sort((a, b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0)).slice(0, 10);
+    const focus = c.kind === "group" ? (memberByName(c, ch.focus) || members(c)[0]) : null;
+    const mood = c.kind === "world" ? "world" : (ch.mood || "neutral");
+    const sound = [sc.amb && sc.amb !== "none" ? "🔊 " + (AMB_LABEL[sc.amb] || sc.amb) : "", sc.act && sc.act !== "none" ? (ACT_LABEL[sc.act] || sc.act) : ""].filter(Boolean).join(" · ");
+    box.innerHTML = `<div class="sd-port" id="sdPort" style="--ring:${MOOD_COLOR[ch.mood] || "var(--accent)"}" role="button" tabindex="0" aria-label="Show portrait"><img alt=""><div class="sd-name">${esc(focus ? focus.name : c.name)}</div></div>
+      <div class="sd-meta"><span class="mood-chip">${esc(mood)}</span>${ch.place ? `<span>📍 ${esc(ch.place)}</span>` : ""}</div>
+      ${c.kind === "group" ? `<div><span class="lbl">Who replies next</span><div class="sd-mem" style="margin-top:6px">${["", ...members(c).map(m => m.name)].map(n => `<button type="button" data-n="${esc(n)}" class="${S.nextSpeaker === n ? "on" : ""}">${n ? `<img alt="">` : ""}${n ? esc(n) : "Anyone"}</button>`).join("")}</div></div>` : ""}
+      ${sound ? `<div class="sd-card"><span class="lbl">Scene sounds</span><div>${esc(sound)}${S.settings.ambMuted ? " (muted)" : ""}</div></div>` : ""}
+      ${ch.summary ? `<div class="sd-card"><span class="lbl">Story so far</span><div class="sd-sum">${esc(ch.summary)}</div></div>` : ""}
+      ${facts.length ? `<div class="sd-card"><span class="lbl">Facts</span><ul class="sd-facts">${facts.map(f => `<li class="${f.pin ? "pin" : ""}">${esc(f.t)}</li>`).join("")}</ul></div>` : ""}
+      ${!ch.summary && !facts.length ? `<p class="hint" style="margin:0">The story so far and key facts show up here as the chat grows.</p>` : ""}
+      <div class="sd-btns"><button type="button" class="rbtn" id="sdMem">Memory</button><button type="button" class="rbtn" id="sdChats">Chats</button><button type="button" class="rbtn" id="sdEdit">Edit bot</button><button type="button" class="rbtn" id="sdMore">Options</button></div>`;
+    setImg(box.querySelector("#sdPort img"), focus ? portraitURL(focus) : c.kind === "world" ? coverURL(c) : portraitURL(c), focus || c);
+    $("sdPort").onclick = () => openPortrait(char());
+    box.querySelectorAll(".sd-mem button").forEach(b => { const m = b.dataset.n && memberByName(c, b.dataset.n); if (m) setImg(b.querySelector("img"), portraitURL(m), m); b.onclick = () => { S.nextSpeaker = b.dataset.n; renderSpeakers(); renderSide(); }; });
+    $("sdMem").onclick = () => openMemory(); $("sdChats").onclick = () => openChats(S.charId); $("sdEdit").onclick = () => editChar(char(), false); $("sdMore").onclick = () => $("btnMore").click();
+    return;
+  }
+  // home: pick up where you left off
+  const rec = S.chars.filter(c => S.recent[c.id] && !c.hidden).sort((a, b) => S.recent[b.id] - S.recent[a.id]).slice(0, 8);
+  box.innerHTML = `<h3>Continue</h3>${rec.length ? `<div class="sd-rec">${rec.map(c => `<button type="button" data-id="${esc(c.id)}"><img alt=""><span><b>${esc(c.name)}</b><small data-prev="${esc(c.id)}">${esc(fmtWhen(S.recent[c.id]))}</small></span></button>`).join("")}</div>` : `<p class="hint" style="margin:0">Bots you chat with show up here so you can jump back in.</p>`}
+`;
+  box.querySelectorAll(".sd-rec button").forEach(b => {
+    const c = byId(b.dataset.id); setImg(b.querySelector("img"), thumbURL(c), c); b.onclick = () => openChat(c.id);
+    getIndex(c.id).then(idx => { const last = idx.sort((x, y) => y.updated - x.updated)[0]; const el = b.querySelector("small"); if (el && last?.preview) el.textContent = `${fmtWhen(S.recent[c.id])} · ${last.preview}`; });
+  });
+}
+$("railHome").onclick = () => { if (S.busy) return; closeSheet(); if (!$("chat").hidden) $("btnBack").click(); };
+$("railNew").onclick = () => $("btnNewChar").click();
+$("railBooks").onclick = () => $("btnBooks").click();
+$("railSet").onclick = () => $("btnSettings").click();
+$("railPersona").onclick = () => openPersonas();
+$("railQ").oninput = e => { RAIL.q = e.target.value.trim().toLowerCase(); renderRail(); };
 
 /* ---------- Lantern ---------- */
 let LID = 0;
@@ -2656,7 +2790,7 @@ const SFX_RULES = [
   ["sex", /(^pla+p|^pa+p+$|^fa+p+$|^thru+st)/i],
   ["shit", /(^plo+r+p|^plu+r+p|^plo+m+p|^flo+m+p|^splu+d|splo+r+t?ch|^plu+r+t)/i],
   ["cum", /(^spoo+ge|^jiz+|^cu+m+$|^sploo+ge|^spe+r+t)/i],
-  ["fart", /(^f+a+r+t|pf+t|pf+f+t|^f+r+t|pb+t|thb+t|bra+p|pfr+t|^fr+p|^too+t|bla+r+t|^pff+)/i],
+  ["fart", /(^f+a+r+t|^p+r+t|^p+r{2,}|^b+r+a+p|^b+r{2,}a+p|^p+b+t|pf+t|pf+f+t|^f+r+t|pb+t|thb+t|bra+p|pfr+t|^fr+p|^too+t|bla+r+t|^pff+)/i],
   ["gas", /(bu+r+p|bel+ch|^u+r+p|hu+r+k|bw[ao]+r+p|blu+r+p|^hic|^hu+r+p|^bu+r+r+p|^gu+r+p)/i],
   ["bubbles", /(gu+r+g+l|gl+r+k|gl+u+r+k|gr+gl|blo+r+p|glo+r+p|blu+b|bloo+p|gl+u+g|gl+o+r+b|grumbl|gl+o+r+k|blorb)/i],
   ["crack", /(cra+ck|sna+p|cru+n+ch|kra+k|cri+ck|cru+nk|splint|kr+i+k)/i],
@@ -2880,7 +3014,30 @@ function decorateSfx(root) {
     // a colored phrase with a bold sound inside it: decorate just the sound
     for (const st of strongs) { const s2 = st.textContent.trim(); if (s2.split(/\s+/).length <= 4 && isSfxText(s2, true)) mark(st); }
   });
+  // The model sometimes forgets the color tags and writes sounds as plain bold (***BWOORP***).
+  // Those still become sound effects, colored the way the color rules would have colored them.
+  if (S.settings.sfxColors === false) return;
+  root.querySelectorAll("strong:not(.sfx-done)").forEach(st => {
+    st.classList.add("sfx-done");
+    if (st.closest(".cx,.sfx,.who-l,.spk")) return;
+    const t = st.textContent.trim();
+    if (!looksLikeSound(t)) return;
+    st.classList.add("cx", "sfx-auto"); st.style.color = autoSfxColor(isBreath(t) ? "breath" : sfxCat(t));
+    mark(st);
+    const c2 = autoSfxColor(st.dataset.fx); if (c2) st.style.color = c2;
+  });
 }
+// a bold word or two that is clearly a sound: a known sound word, or a stretched-out one (BWOOOORP, mmmrrrph)
+function looksLikeSound(t) {
+  if (/[:?]$/.test(t) || !isSfxText(t, true)) return false;
+  const words = t.split(/\s+/).filter(Boolean); if (words.length > 5) return false;
+  const known = words.some(w => { const l = w.replace(/[^\p{L}]/gu, ""); return l.length > 1 && (isBreath(l) || SFX_RULES.some(([c, re]) => c !== "wave" && re.test(l))); });
+  return known || /(\p{L})\1\1/iu.test(t.replace(/[^\p{L}]/gu, ""));
+}
+const AUTO_SFX_COLOR = { gas: "#6fdc6a", bubbles: "#6fdc6a", fart: "#a8875a", shit: "#c9a27e", shitbones: "#c9a27e", cum: "#f1ebda", cumbub: "#f1ebda", condom: "#f1ebda",
+  sex: "#ff6fae", breath: "#f3f0f8", hit: "#ff5d52", crack: "#ff5d52", boom: "#ff5d52", slash: "#ff5d52", stomp: "#ff5d52", liquid: "#87cefa", kiss: "#ff69b4",
+  fire: "#ffa94d", zap: "#ffd700", magic: "#ffd700", beat: "#ff7b8a", zzz: "#b8b2c4", wind: "#cfe8ff", wave: "#e8c47a" };
+const autoSfxColor = cat => AUTO_SFX_COLOR[cat] || "";
 function burst(sp) {
   const cat = sp.dataset.fx || "wave", M = FX_MOTION[cat] || FX_MOTION.wave;
   playSfx(cat, sp.textContent.trim());
@@ -2931,7 +3088,7 @@ function burst(sp) {
 const SND_TYPES = {
   bubbles: "Gurgles", churn: "Stomach churns", swallow: "Swallows & gulps", gas: "Burps", fart: "Farts", liquid: "Splashes & wet",
   cumbub: "Sloshing", squelch: "Squelches & squishes", vorebed: "Inside a stomach (bed)",
-  gag: "Gagging", plap: "Plapping & slaps", moan: "Moans", grunt: "Grunts & strain", scream: "Screams", cough: "Coughs & chokes",
+  gag: "Gagging", plap: "Plapping & slaps",
   loop_vore: "Loop · gurgling", loop_swallow: "Loop · swallowing", loop_sex: "Loop · sex", loop_oral: "Loop · oral", cum: "Cum", condom: "Condom squelch", shit: "Plops", shitbones: "Bone plops", sex: "Wet sex sounds", kiss: "Kisses",
   beat: "Heartbeats", struggle: "Muffled struggling", crack: "Cracks & crunches", hit: "Hits", stomp: "Stomps & thuds", boom: "Booms",
   slash: "Slashes", fire: "Fire", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
@@ -2946,8 +3103,7 @@ const SND_TYPES = {
 const SND_GROUPS = [
   ["Tap sounds · vore & body", ["bubbles", "churn", "swallow", "gas", "fart", "struggle", "squelch", "cumbub", "liquid", "beat"]],
   ["Tap sounds · adult", ["plap", "sex", "oral", "gag", "cum", "condom", "shit", "shitbones", "kiss"]],
-  ["Voices", ["moan", "grunt", "scream", "cough", "breath"]],
-  ["Tap sounds · other", ["crack", "hit", "stomp", "boom", "slash", "fire", "zap", "magic", "zzz", "wind", "wave"]],
+  ["Tap sounds · other", ["breath", "crack", "hit", "stomp", "boom", "slash", "fire", "zap", "magic", "zzz", "wind", "wave"]],
   ["Scene loops", ["loop_vore", "loop_swallow", "loop_sex", "loop_oral", "vorebed"]],
   ["Backgrounds", Object.keys(SND_TYPES).filter(k => k.startsWith("amb_"))]
 ];
@@ -2957,15 +3113,15 @@ const SND_HELP = {
   squelch: "Squishy, squelchy flesh. Plays for squelches, and stands in for condom and plop sounds.", cumbub: "Sloshing fluid. Plays for sloshes, full balls and cum-filled bellies.",
   liquid: "Splashes and wet movement.", vorebed: "Long, quiet squishing and gurgling that loops underneath vore scenes.", oral: "Sucking and slurping during oral scenes.", sex: "Wet strokes and squelches during sex, and for sex sounds.",
   gag: "Gagging and choking during oral. Plays for GLUK, GAG, HURK sounds.", plap: "Skin slaps and plapping. Plays for PLAP, SMACK, CLAP sounds and drives the sex rhythm.",
-  moan: "Moans and voiced pleasure sounds.", grunt: "Grunts and straining.", scream: "Screams and shrieks.", cough: "Coughs and sputters.",
+  breath: "Breaths, pants and exhales (the only voice sounds the app keeps).",
   loop_vore: "A seamless loop that plays continuously while someone is in a stomach.", loop_swallow: "A seamless loop that plays while someone is being swallowed.",
   loop_sex: "A seamless loop that plays continuously during sex.", loop_oral: "A seamless loop that plays continuously during oral.",
   wave: "Sounds the app couldn't place. Move them with the dropdown."
 };
-const SND_CHAIN_EXTRA = { gag: ["oral", "cough"], plap: ["sex"], sex: ["plap"], moan: ["breath"], grunt: ["moan"], scream: ["moan"], cough: ["gag"] };
+const SND_CHAIN_EXTRA = { gag: ["oral"], plap: ["sex"], sex: ["plap"] };
 const SND_CHAIN = { cumbub: ["liquid"], condom: ["squelch", "cum"], shit: ["squelch"], shitbones: ["shit", "squelch", "crack"], churn: ["bubbles"], bubbles: ["churn"], liquid: ["cumbub", "squelch"], fart: ["gas"], cum: ["liquid"], struggle: ["squelch"] };
 const SND_SUB = [["gag", /(^ga+g|^gla+[ck]|^glu+ck|^gwa+[ck]|^hu?r+k|^ghk|^hl+k|cho+k|^gck|^gu+[ck]k)/i], ["plap", /(^pla+p|^pa+p+$|^cla+p|^sma+ck|^thwa+p|^sla+p)/i],
-  ["cough", /(co+u+gh|^ko+f|^khu+|^hck|sputt)/i], ["scream", /(^a{3,}h*!*$|^scre+a+m|^e{2,}k|shrie+k|^ya{2,}h)/i], ["moan", /(moa+n|^mm+h*$|^nn+g?h*$|^a+h+n+|^o+h{2,}|^hnn+|^ngh+|^a+n+$)/i], ["grunt", /(gru+nt|^hng+|^hu+n+g+h*|^nngh|^ugh+$)/i], ["squelch", /(sque+l+ch|squi+sh|squo+r?ch|squi+ck|shlo+r?ck|splo+r?ch|squee+z|squi+r?k)/i], ["cumbub", /(slo+sh|swa+sh|slo+r+sh|slu+sh)/i], ["struggle", /(thra+sh|wri+th|squi+r+m|ki+ck|mmph|mmf+|mrph|thu+m+p+.*thu+m+p)/i], ["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ]; // swallow and churn words above are listed after the new ones
+  ["squelch", /(sque+l+ch|squi+sh|squo+r?ch|squi+ck|shlo+r?ck|splo+r?ch|squee+z|squi+r?k)/i], ["cumbub", /(slo+sh|swa+sh|slo+r+sh|slu+sh)/i], ["struggle", /(thra+sh|wri+th|squi+r+m|ki+ck|mmph|mmf+|mrph|thu+m+p+.*thu+m+p)/i], ["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ]; // swallow and churn words above are listed after the new ones
 // file names → sound type, for adding a whole pack at once
 const AMB_NAMES = [["amb_campfire", /campfire|bonfire|camp.?fire|ember|torch/i], ["amb_fireplace", /fireplace|hearth|crkl/i], ["amb_storm", /thunder|storm|\bthun/i], ["amb_rain", /\brain/i],
   ["amb_tavern", /tavern|\binn\b|\bpub\b|bar.?room|restaurant|\bcafe/i], ["amb_market", /market|bazaar|crowd|walla|festival/i], ["amb_city", /city|urban|traffic|street|downtown|\btraf|suburb|construction|train.?station/i],
@@ -2973,7 +3129,7 @@ const AMB_NAMES = [["amb_campfire", /campfire|bonfire|camp.?fire|ember|torch/i],
   ["amb_beach", /beach|ocean|\bsea\b|\bwaves?\b|shore|coast|\bgull/i], ["amb_river", /river|stream|creek|waterfall|brook|\blake/i], ["amb_underwater", /underwater|undwtr/i], ["amb_cave", /\bcave|cavern|\bmines?\b|underground/i],
   ["amb_dungeon", /dungeon|crypt|catacomb|prison|horror|hell/i], ["amb_spaceship", /spaceship|space.?ship|starship|sci.?fi|engine.?room|turbine|astral/i], ["amb_snow", /snow|blizzard|winter|arctic|tundra|howl/i],
   ["amb_night", /night|cricket|\bowl|evening/i], ["amb_forest", /forest|woods|jungle|\bforst|tropical|swamp|\bpine/i], ["amb_nature", /nature|meadow|field|park|garden|bird|\bwind|mountain|desert|mist|fog|clearing/i]];
-const SND_NAMES = [["gag", /\bgag|choke|gluck/i], ["plap", /\bslap|smack|plap|bed.?pound/i], ["moan", /moan/i], ["grunt", /grunt/i], ["scream", /scream|shriek/i], ["cough", /cough/i], ["breath", /\bpant/i], ["oral", /\bsuck|blow.?job|\bbj\b|deep.?throat|\bgag|fellat|throat.?fuck/i], ["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i],
+const SND_NAMES = [["gag", /\bgag|gluck/i], ["plap", /\bslap|smack|plap|bed.?pound/i], ["breath", /\bpant/i], ["oral", /\bsuck|blow.?job|\bbj\b|deep.?throat|\bgag|fellat|throat.?fuck/i], ["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i],
   ["fart", /fart|flatul|toot/i], ["gas", /burp|belch|bel[ck]h?/i], ["struggle", /between.?cheeks|lmovement|thrash|\bkick|squirm|struggl|trapped|thump/i],
   ["churn", /churn|growl|groan|grooo|rumbl|grumbl|whin|hunger|hungry|clench|strain|digest.*(long|ambien)|ambien/i], ["bubbles", /blorp|blurb|glorp|blrp|blrt|blrg|burbl|brbl|gurgl|squirt|stomach|belly|digest|tummy|bubbl|innard|\bgut/i],
   ["cumbub", /slosh|shaking|\bballs?\b|testic|scrot|\bnuts?\b/i], ["squelch", /squeez|squelch|squish|pumpkin|pull.?apart/i], ["cum", /\bcum|ejacul|spurt|jizz|semen/i], ["condom", /condom|rubber/i],
@@ -2995,16 +3151,58 @@ function audioLength(blob) {
     a.preload = "metadata"; a.onloadedmetadata = () => fin(isFinite(a.duration) ? a.duration : 0); a.onerror = () => fin(0); setTimeout(() => fin(0), 3000); a.src = u;
   });
 }
-let SND = null, AC = null; const SND_URLS = {};
+let SND = null, AC = null, SP_DRAW = null; const SND_URLS = {};
 // every sound the app starts is tracked so it can all be cut at once (leaving a chat, switching apps)
 const LIVE = new Set();
-const trackAudio = a => { LIVE.add(a); a.addEventListener("ended", () => LIVE.delete(a)); a.addEventListener("pause", () => LIVE.delete(a)); return a; };
+// finished sounds give their media player back right away (browsers only allow so many at once)
+const freeAudio = a => { try { a.removeAttribute("src"); a.load(); } catch {} };
+const trackAudio = a => { LIVE.add(a); a.addEventListener("ended", () => { LIVE.delete(a); if (!a.loop) freeAudio(a); }); a.addEventListener("pause", () => LIVE.delete(a)); return a; };
 function hushAll() {
   for (const a of [...LIVE]) { try { a.pause(); a.src = ""; } catch {} } LIVE.clear();
   if (AC && AC.state === "running") { const old = AC; AC = null; NOISE = null; old.close().catch(() => {}); }
 }
-async function sndIndex() { if (!SND) SND = (await Store.get("sounds")) || []; return SND; }
-async function sndSave() { await Store.set("sounds", SND); }
+// The list of the owner's sounds. It is never replaced by "nothing": a missing or broken copy leaves the list as it was.
+async function sndIndex() { if (!Array.isArray(SND)) { const v = await Store.get("sounds"); SND = Array.isArray(v) ? v : []; } return SND; }
+async function sndSave() { if (Array.isArray(SND)) await Store.set("sounds", SND); }
+// Sounds the owner removed, by path → id (synced as "sndgone"). Only these files are ever deleted from other devices,
+// and importing the same pack again skips them.
+const sndTail = p => String(p || "").toLowerCase().split("/").slice(-2).join("/");
+async function sndGone() { return (await Store.get("sndgone")) || {}; }
+async function sndForget(list) {
+  if (!list.length) return;
+  const g = await sndGone(); for (const x of list) g[x.path || x.name] = x.id; await Store.set("sndgone", g);
+  for (const x of list) { await Store.del("snd:" + x.id); if (SND_URLS[x.id]) URL.revokeObjectURL(SND_URLS[x.id]); delete SND_URLS[x.id]; }
+}
+// voices are left out on purpose (breaths and pants are kept); SDT takes are low quality
+const VOICE_FILE = /(^|\/)(moans?|grunts?|screams?|coughs?|chokes?|dialogue|voices?|vo)(\/|$)|moan|grunt|scream|shriek|cough|dialog/i;
+const POOR_FILE = /(^|\/)sdt[a-z]/i;
+// Quality check for one recording, decoded on the device. Flags hiss under the sound, clipping, near silence and low sample rates.
+// Long beds and backgrounds are only checked for clipping and silence (they are meant to be steady).
+async function sndQuality(blob, type) {
+  if (!blob || blob.size > 12e6) return { ok: true };
+  try {
+    const head = new DataView(await blob.slice(0, Math.min(blob.size, 4096)).arrayBuffer()), tag = o => String.fromCharCode(...[0, 1, 2, 3].map(i => head.getUint8(o + i)));
+    if (head.byteLength > 44 && tag(0) === "RIFF" && tag(8) === "WAVE") {
+      for (let o = 12; o + 24 <= head.byteLength;) { const id = tag(o), len = head.getUint32(o + 4, true);
+        if (id === "fmt ") { const rate = head.getUint32(o + 12, true), bits = head.getUint16(o + 22, true); if (rate < (/^(amb_|loop_)|vorebed/.test(type || "") ? 16000 : 22000)) return { ok: false, why: `low sample rate (${Math.round(rate / 1000)} kHz)` }; if (bits === 8) return { ok: false, why: "8-bit" }; break; }
+        o += 8 + len + (len & 1); }
+    }
+    const ctx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 1, 44100);
+    const buf = await ctx.decodeAudioData(await blob.arrayBuffer());
+    const n = buf.length, ch = buf.numberOfChannels, d = new Float32Array(n);
+    for (let c = 0; c < ch; c++) { const x = buf.getChannelData(c); for (let i = 0; i < n; i++) d[i] += x[i] / ch; }
+    let clip = 0; for (let i = 0; i < n; i++) if (Math.abs(d[i]) > 0.985) clip++;
+    const F = 1024, frames = Math.floor(n / F), db = [];
+    for (let f = 0; f < frames; f++) { let e = 0; for (let i = f * F; i < f * F + F; i++) e += d[i] * d[i]; const v = 10 * Math.log10(e / F + 1e-12); if (v > -90) db.push(v); }
+    if (db.length < 3) return { ok: false, why: "silent" };
+    db.sort((a, b) => a - b); const pc = q => db[Math.min(db.length - 1, Math.floor(q * db.length))];
+    const loud = pc(0.95), floor = pc(0.1), steady = /^(amb_|loop_)|vorebed/.test(type || "") || buf.duration > 15;
+    if (clip / n > 0.003) return { ok: false, why: "distorted (clipping)" };
+    if (loud < -45) return { ok: false, why: "nearly silent" };
+    if (!steady && buf.duration > 0.6 && loud - floor < 12) return { ok: false, why: "hiss or noise under the sound" };
+    return { ok: true };
+  } catch { return { ok: true }; } // couldn't decode here: keep it
+}
 // Built-in pack: Jeschke's vore sounds, sorted and compressed, hosted next to the app (sounds/jeschke)
 let BUILTIN = null;
 async function builtinSounds() {
@@ -3032,7 +3230,7 @@ async function sndURL(id) {
 }
 // long recordings fade out after ~4 seconds so a tap never drones on
 function capAudio(a, vol) {
-  setTimeout(() => { if (a.paused) return; let v = vol; const t = setInterval(() => { v -= vol / 8; if (v <= 0.02) { a.pause(); clearInterval(t); } else a.volume = v; }, 60); }, 4000);
+  setTimeout(() => { if (a.paused) return; let v = vol; const t = setInterval(() => { v -= vol / 8; if (v <= 0.02) { a.pause(); clearInterval(t); freeAudio(a); } else a.volume = v; }, 60); }, 4000);
 }
 // ---- zip support: sound packs arrive as .zip files (sometimes zips inside zips); unpack them in the browser
 const AUDIO_EXT = /\.(wav|mp3|ogg|oga|m4a|aac|flac|opus|webm|aif|aiff)$/i;
@@ -3131,17 +3329,28 @@ function synthSfx(cat, vol) {
 }
 // audio files picked one by one, as a whole folder, or dropped onto the screen; zips are unpacked; anything else is ignored
 async function importSounds(items, say) {
-  let added = 0, failed = 0, skipped = 0, other = 0;
+  let added = 0, failed = 0, skipped = 0, other = 0, voice = 0, poor = 0, removed = 0, refilled = 0, seen = 0;
   await sndIndex();
-  const have = new Set(SND.map(x => x.path || x.name));
+  const have = new Map(SND.map(x => [sndTail(x.path || x.name), x]));
+  const gone = new Set(Object.keys(await sndGone()).map(sndTail));
   const addOne = async (path, blob) => {
     if (!AUDIO_EXT.test(path) && !/^audio\//.test(blob.type || "")) { other++; return; }
-    if (have.has(path)) { skipped++; return; }
+    if (++seen % 25 === 0) say(`Checking sounds… ${seen} looked at, ${added} added`);
+    const tail = sndTail(path), had = have.get(tail);
+    if (had) { // already in the pack: fill in the file if this device lost it
+      if (!(await Store.get("snd:" + had.id))) { try { await Store.setRaw("snd:" + had.id, blob); refilled++; } catch { failed++; } } else skipped++;
+      return;
+    }
+    if (gone.has(tail)) { removed++; return; }
+    if (VOICE_FILE.test(path)) { voice++; return; }
+    if (POOR_FILE.test(path)) { poor++; return; }
     try {
+      const len = await audioLength(blob), type = sndTypeForFile(path, len > 15);
+      const q = await sndQuality(blob, type); if (!q.ok) { poor++; return; }
       const id = uid(); await Store.setRaw("snd:" + id, blob);
-      const len = await audioLength(blob);
-      SND.push({ id, path, name: path.split("/").pop().replace(/\.[^.]+$/, ""), type: sndTypeForFile(path, len > 15), len: Math.round(len) }); have.add(path); added++;
-      if (added % 10 === 0) { say(`Added ${added} sounds…`); await sndSave(); }
+      const x = { id, path, name: path.split("/").pop().replace(/\.[^.]+$/, ""), type, len: Math.round(len) };
+      SND.push(x); have.set(tail, x); added++;
+      if (added % 10 === 0) await sndSave();
     } catch { failed++; }
   };
   for (const { file: f, path } of items) {
@@ -3152,7 +3361,8 @@ async function importSounds(items, say) {
     } else await addOne(path, f);
   }
   await sndSave();
-  say(`Added ${added} sound${added === 1 ? "" : "s"}.` + (skipped ? ` ${skipped} were already in your pack.` : "") + (other ? ` ${other} non-audio file${other === 1 ? " was" : "s were"} ignored.` : "") + (failed ? ` ${failed} couldn't be saved (the device may be out of space).` : "") + (added ? " Check the types and move any that landed in the wrong one." : ""));
+  say(`Added ${added} sound${added === 1 ? "" : "s"}.` + (refilled ? ` ${refilled} missing file${refilled === 1 ? " was" : "s were"} put back.` : "") + (skipped ? ` ${skipped} were already in your pack.` : "") +
+    (voice ? ` ${voice} voice recording${voice === 1 ? " was" : "s were"} left out (only breaths are kept).` : "") + (poor ? ` ${poor} low-quality take${poor === 1 ? " was" : "s were"} left out.` : "") + (removed ? ` ${removed} you removed before stayed out.` : "") + (other ? ` ${other} non-audio file${other === 1 ? " was" : "s were"} ignored.` : "") + (failed ? ` ${failed} couldn't be saved (the device may be out of space).` : "") + (added ? " Check the types and move any that landed in the wrong one." : ""));
   return added ? SND.at(-1).type : null;
 }
 // folders dropped on desktop: walk them and keep each file's folder path for sorting
@@ -3179,37 +3389,56 @@ function openSoundPack() {
         <p class="hint" style="margin:2px 0 0">Gurgles, growls, gulps, burps, sloshes, squelches, struggling and long stomach beds, already sorted. Sound Assets by <a href="https://jeschke.itch.io/vore-sound-pack2024" target="_blank" rel="noopener">Jeschke</a> (<a href="https://ko-fi.com/jeschke" target="_blank" rel="noopener">tip them</a>).</p></div>
       <div class="snd-drop" id="spDrop">
         <p class="note" style="margin:0 0 8px">Add audio files, whole folders or .zip packs. Everything is sorted by folder and file name and plays alongside the built-in sounds.<span class="desk-only"> You can also drag folders onto this box.</span></p>
-        <div class="row" style="flex-wrap:wrap;gap:6px"><label class="btn primary small" for="spFiles">+ Add files</label><label class="btn primary small" for="spDir">+ Add a folder</label><button type="button" class="btn small" id="spResort">Sort my sounds again</button><button type="button" class="btn small danger" id="spDupes" hidden></button></div>
+        <div class="row" style="flex-wrap:wrap;gap:6px"><label class="btn primary small" for="spFiles">+ Add files</label><label class="btn primary small" for="spDir">+ Add a folder</label><button type="button" class="btn small" id="spResort">Sort my sounds again</button><button type="button" class="btn small" id="spQual">Check quality</button><button type="button" class="btn small danger" id="spDupes" hidden></button></div>
       </div>
       <input type="file" id="spFiles" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac,.zip,application/zip" multiple hidden>
       <input type="file" id="spDir" webkitdirectory directory multiple hidden>
       <div id="spMsg" class="hint"></div><div id="spTypes"></div><div id="spList" class="stack"></div>`;
     $("spBuilt").onchange = async e => { S.settings.builtinPack = e.target.checked; await saveSettings(); draw(); };
     $("spResort").onclick = async () => {
-      let moved = 0;
+      let moved = 0; await sndIndex();
       for (const x of SND) { const t = sndTypeForFile(x.path || x.name, (x.len || 0) > 15); if (t !== x.type) { x.type = t; moved++; } }
       await sndSave(); say(moved ? `Moved ${moved} of your sound${moved === 1 ? "" : "s"} into better types.` : "Your sounds are already sorted."); draw();
+    };
+    let flagged = null; // [{x, why}] from the last quality check
+    $("spQual").onclick = async () => {
+      await sndIndex(); const list = [...SND]; flagged = [];
+      const btn = $("spQual"); btn.disabled = true;
+      for (let i = 0; i < list.length; i++) {
+        const x = list[i];
+        if (i % 10 === 0) say(`Checking quality… ${i} of ${list.length}`);
+        const blob = await Store.get("snd:" + x.id); if (!blob) continue;
+        const q = await sndQuality(blob, x.type); if (!q.ok) flagged.push({ x, why: q.why });
+      }
+      btn.disabled = false;
+      say(flagged.length ? `${flagged.length} of your sounds sound low quality. They're listed below: play them, then remove them all or keep any you like.` : "All of your sounds on this device passed the quality check.");
+      draw();
     };
     const builtNames = new Set(built.map(x => norm(x.name)));
     const dupes = () => SND.filter(x => builtNames.has(norm(x.name)));
     confirmBtn($("spDupes"), "Tap again to remove them", async () => {
-      const d = dupes(); for (const x of d) { await Store.del("snd:" + x.id); delete SND_URLS[x.id]; }
-      SND = SND.filter(x => !d.includes(x)); await sndSave(); say(`Removed ${d.length} duplicate${d.length === 1 ? "" : "s"}. The built-in copies stay.`); draw();
+      await sndIndex(); const d = dupes(); await sndForget(d);
+      const ids = new Set(d.map(x => x.id)); SND = SND.filter(x => !ids.has(x.id)); await sndSave(); say(`Removed ${d.length} duplicate${d.length === 1 ? "" : "s"}. The built-in copies stay.`); draw();
     });
     const typeSelect = cur => `<select data-type aria-label="Sound type">${SND_GROUPS.map(([gl, ts]) => `<optgroup label="${esc(gl)}">${ts.map(k => `<option value="${k}" ${k === cur ? "selected" : ""}>${esc(SND_TYPES[k])}</option>`).join("")}</optgroup>`).join("")}</select>`;
     let now = null; // the preview playing right now: tap its ▶ again to pause it
+    const player = new Audio(); // one player for every preview, so long sessions never run out of them
     const playOne = async (x, btn) => {
       if (now && now.id === x.id && !now.a.paused) { now.a.pause(); if (now.btn) now.btn.textContent = "▶"; now = null; say("Paused."); return; }
       if (now) { now.a.pause(); if (now.btn) now.btn.textContent = "▶"; now = null; }
-      const u = await sndURL(x.id); if (!u) return;
-      const a = trackAudio(new Audio(u)); a.volume = S.settings.sfxVolume ?? 0.7;
-      now = { id: x.id, a, btn }; if (btn) btn.textContent = "⏸";
-      a.onended = a.onpause = () => { if (now && now.a === a) { if (btn) btn.textContent = "▶"; now = null; } };
-      a.play().catch(() => {}); if (!/^Loop/.test(SND_TYPES[x.type] || "")) capAudio(a, a.volume);
+      const u = await sndURL(x.id); if (!u) { say(`${x.name} isn't on this device and couldn't be downloaded. Add it again to bring it back.`); return; }
+      const a = player; a.loop = false; a.src = u; LIVE.add(a); a.volume = S.settings.sfxVolume ?? 0.7;
+      const me = now = { id: x.id, a, btn }; if (btn) btn.textContent = "⏸";
+      a.onended = a.onpause = () => { if (now === me) { if (btn) btn.textContent = "▶"; now = null; } };
+      a.play().catch(() => {});
+      // long recordings fade out after ~4 s (only if this preview is still the one playing)
+      if (!/^Loop/.test(SND_TYPES[x.type] || "")) setTimeout(() => { if (now !== me || a.paused) return; let v = a.volume; const t = setInterval(() => { if (now !== me) return clearInterval(t); v -= 0.09; if (v <= 0.02) { clearInterval(t); a.pause(); } else a.volume = v; }, 60); }, 4000);
       say("Playing: " + x.name);
     };
     const open = { mine: true, built: false };
-    const draw = async () => {
+    const draw = SP_DRAW = async () => {
+      if (!$("spList")) return;
+      await sndIndex();
       const view = builtinOn() ? await builtinView() : [];
       const mine = {}, theirs = {};
       for (const x of SND) mine[x.type] = (mine[x.type] || 0) + 1;
@@ -3224,31 +3453,38 @@ function openSoundPack() {
       }).join("") || '<p class="note">No sounds yet.</p>';
       $("spTypes").querySelectorAll("[data-t]").forEach(x => x.onclick = () => { tab = x.dataset.t; draw(); });
       const rows = SND.filter(x => x.type === tab), brows = view.filter(x => x.type === tab);
-      const hiddenN = Object.keys(SNDFIX.hidden).length, movedN = Object.keys(SNDFIX.moved).length;
+      const hiddenN = Object.keys(SNDFIX.hidden).length, movedN = Object.keys(SNDFIX.moved).length, goneN = Object.keys(await sndGone()).length;
+      if (flagged) flagged = flagged.filter(f => SND.some(y => y.id === f.x.id));
       const row = (x, kind) => `<div class="row snd-row" data-id="${esc(x.id)}" data-kind="${kind}"><button type="button" class="icon" data-play aria-label="Play ${esc(x.name)}">▶</button><span class="grow snd-name" title="${esc(x.path || x.name)}">${esc(x.name)}</span>${typeSelect(x.type)}<button type="button" class="icon" data-rm aria-label="Remove ${esc(x.name)} from this type">✕</button></div>`;
       $("spList").innerHTML = `<div class="snd-help"><b>${esc(SND_TYPES[tab])}</b> · ${esc(SND_HELP[tab] || (tab.startsWith("amb_") ? "Plays in the background when the scene is here." : "Plays when you tap this kind of sound."))}
           <div class="row" style="gap:6px;margin-top:6px"><button type="button" class="btn small" id="spRand">▶ Play a random one</button></div></div>
         ${rows.length ? `<details class="snd-sec" data-sec="mine" ${open.mine ? "open" : ""}><summary>Your sounds · ${rows.length}</summary>${rows.map(x => row(x, "mine")).join("")}${rows.length > 1 ? `<button type="button" class="btn small danger" id="spClear">Remove all ${rows.length} of yours here</button>` : ""}</details>` : ""}
         ${brows.length ? `<details class="snd-sec" data-sec="built" ${open.built ? "open" : ""}><summary>Built-in · ${brows.length}</summary>${brows.map(x => row(x, "built")).join("")}</details>` : ""}
+        ${flagged && flagged.length ? `<details class="snd-sec" data-sec="flag" open><summary>Low quality · ${flagged.length}</summary>${flagged.map(f => row(f.x, "mine").replace('<span class="grow snd-name"', `<span class="grow snd-name" data-why="${esc(f.why)}"`).replace(/(<span class="grow snd-name"[^>]*>)([^<]*)/, `$1$2 <small class="hint">· ${esc(f.why)}</small>`)).join("")}<button type="button" class="btn small danger" id="spFlagRm">Remove all ${flagged.length}</button></details>` : ""}
+        ${goneN ? `<p class="hint">${goneN} sound${goneN === 1 ? "" : "s"} you removed stay out when you import the same pack again. <button type="button" class="linkish" id="spGoneClr">Let them back in</button></p>` : ""}
         ${hiddenN || movedN ? `<p class="hint">${hiddenN ? `${hiddenN} built-in sound${hiddenN === 1 ? "" : "s"} removed` : ""}${hiddenN && movedN ? " · " : ""}${movedN ? `${movedN} moved to another type` : ""}. <button type="button" class="linkish" id="spRestore">Restore built-ins to how they came</button></p>` : ""}`;
       $("spList").querySelectorAll("details.snd-sec").forEach(dt => dt.addEventListener("toggle", () => { open[dt.dataset.sec] = dt.open; }));
       $("spRand").onclick = async e => { const pool = await soundsOf(tab); if (pool.length) playOne(pool[Math.floor(Math.random() * pool.length)], null); };
       $("spList").querySelectorAll(".snd-row").forEach(r => {
-        const id = r.dataset.id, isMine = r.dataset.kind === "mine", x = isMine ? SND.find(y => y.id === id) : brows.find(y => y.id === id);
-        r.querySelector("[data-play]").onclick = e => playOne(x, e.currentTarget);
+        // the owner's sounds are looked up again on every tap: the list may have been refreshed from the account meanwhile
+        const id = r.dataset.id, isMine = r.dataset.kind === "mine", mineNow = () => SND.find(y => y.id === id), x = isMine ? mineNow() || { id, name: "" } : brows.find(y => y.id === id);
+        r.querySelector("[data-play]").onclick = e => playOne(isMine ? mineNow() || x : x, e.currentTarget);
         r.querySelector("[data-type]").onchange = async e => {
           const t = e.target.value;
-          if (isMine) { x.type = t; await sndSave(); }
+          if (isMine) { await sndIndex(); const cur = mineNow(); if (!cur) { draw(); return; } cur.type = t; await sndSave(); }
           else { const orig = built.find(y => y.id === id)?.type; if (t === orig) delete SNDFIX.moved[id]; else SNDFIX.moved[id] = t; await saveFix(); }
           say(`Moved ${x.name} to ${SND_TYPES[t]}.`); draw();
         };
         r.querySelector("[data-rm]").onclick = async () => {
-          if (isMine) { SND = SND.filter(y => y !== x); await Store.del("snd:" + id); if (SND_URLS[id]) URL.revokeObjectURL(SND_URLS[id]); delete SND_URLS[id]; await sndSave(); say(`Removed ${x.name}.`); }
+          if (isMine) { await sndIndex(); const cur = mineNow(); if (cur) { await sndForget([cur]); SND = SND.filter(y => y.id !== id); await sndSave(); say(`Removed ${cur.name}.`); } }
           else { SNDFIX.hidden[id] = 1; delete SNDFIX.moved[id]; await saveFix(); say(`Removed ${x.name} from the built-in sounds. You can restore it below.`); }
           draw();
         };
       });
-      if ($("spClear")) confirmBtn($("spClear"), "Tap again to remove them all", async () => { for (const x of rows) { await Store.del("snd:" + x.id); delete SND_URLS[x.id]; } SND = SND.filter(x => !rows.includes(x)); await sndSave(); draw(); });
+      const rmMany = async list => { await sndIndex(); const ids = new Set(list.map(x => x.id)); await sndForget(SND.filter(x => ids.has(x.id))); SND = SND.filter(x => !ids.has(x.id)); await sndSave(); say(`Removed ${ids.size} sound${ids.size === 1 ? "" : "s"}.`); draw(); };
+      if ($("spClear")) confirmBtn($("spClear"), "Tap again to remove them all", () => rmMany(rows));
+      if ($("spFlagRm")) confirmBtn($("spFlagRm"), "Tap again to remove them", async () => { const l = flagged.map(f => f.x); flagged = null; await rmMany(l); });
+      if ($("spGoneClr")) confirmBtn($("spGoneClr"), "Tap again: removed sounds can be imported again", async () => { await Store.set("sndgone", {}); say("Sounds you removed can be added again now."); draw(); });
       if ($("spRestore")) confirmBtn($("spRestore"), "Tap again to restore", async () => { SNDFIX.hidden = {}; SNDFIX.moved = {}; await saveFix(); say("Built-in sounds restored."); draw(); });
     };
     const run = async items => { if (!items.length) return; const t = await importSounds(items, say); if (t) tab = t; draw(); };
@@ -3308,6 +3544,7 @@ async function ambienceStep() {
   else AMBS.bed?.setVol(st.ambVol ?? 0.35);
   if (wantAct !== AMBS.act) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.loop = wantAct ? startActivity(wantAct) : null; }
   else AMBS.loop?.setVol?.(st.actVol ?? 0.5);
+  renderPanes();
 }
 $("btnAmb").onclick = async () => { S.settings.ambMuted = !S.settings.ambMuted; await saveSettings(); acx(); updateAmbience(); };
 document.addEventListener("visibilitychange", () => updateAmbience());
@@ -3388,8 +3625,8 @@ const ACT_PLAN = {
   vore: { loop: ["loop_vore"], bed: ["vorebed"], mix: [[["churn"], 0.45], [["bubbles"], 0.45], [["cumbub", "liquid"], 0.1]], gap: [0.8, 4], gapLoop: [5, 12] },
   struggle: { loop: ["loop_vore"], bed: ["vorebed"], mix: [[["struggle"], 0.6], [["churn"], 0.2], [["bubbles"], 0.2]], gap: [0.3, 1.8], gapLoop: [0.8, 3] },
   swallow: { loop: ["loop_swallow"], mix: [[["swallow"], 0.8], [["bubbles"], 0.2]], gap: [1.2, 2.6], gapLoop: [8, 16] },
-  sex: { loop: ["loop_sex"], mix: [[["plap"], 0.75], [["sex"], 0.15], [["moan"], 0.1]], gap: [0.03, 0.18], gapLoop: [3, 8], loopMix: [[["moan"], 1]] },
-  oral: { loop: ["loop_oral"], mix: [[["oral"], 0.7], [["gag"], 0.2], [["moan"], 0.1]], gap: [0.15, 0.9], gapLoop: [3, 9], loopMix: [[["gag"], 0.6], [["moan"], 0.4]] }
+  sex: { loop: ["loop_sex"], mix: [[["plap"], 0.8], [["sex"], 0.2]], gap: [0.03, 0.18], gapLoop: [3, 8], loopMix: [[["plap"], 0.5], [["sex"], 0.5]] },
+  oral: { loop: ["loop_oral"], mix: [[["oral"], 0.8], [["gag"], 0.2]], gap: [0.15, 0.9], gapLoop: [3, 9], loopMix: [[["gag"], 0.7], [["oral"], 0.3]] }
 };
 const LOOP_BUF = new Map();
 // seamless loop through Web Audio (an <audio loop> leaves a small gap on phones)
@@ -3465,14 +3702,17 @@ function startActivity(kind) {
 // API keys never leave the device: they are stripped before upload and kept from the local copy on download.
 const SB = { url: "https://kttzglvsaxvzcbzfwfju.supabase.co", key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0dHpnbHZzYXh2emNiemZ3Zmp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4NTI2MzQsImV4cCI6MjEwNzQyODYzNH0.liIa5B_3_QSZiqYzuv1h6KiIuZFBciXsYPkmG33bLd8" };
 const LOCAL_ONLY = ["apiKey", "customKey", "uiScale"]; // per-device: keys and display size
+// JSON with object keys sorted, so the same data compares equal however the server ordered it
+const stableJSON = v => JSON.stringify(v, (k, x) => x && typeof x === "object" && !Array.isArray(x) ? Object.fromEntries(Object.keys(x).sort().map(n => [n, x[n]])) : x);
 const stripLocal = v => { const o = { ...(v || {}) }; for (const k of LOCAL_ONLY) delete o[k]; return o; };
 const keepLocal = async v => { const mine = (await Store.get("settings")) || {}; const o = { ...(v || {}) }; for (const k of LOCAL_ONLY) o[k] = mine[k] || ""; return o; };
 const Sync = {
   st: (() => { try { return JSON.parse(localStorage.getItem("lr_sync") || "{}"); } catch { return {}; } })(),
-  applying: false, timer: null, busy: false, status: "",
+  applying: false, timer: null, busy: false, status: "", sent: {},
   save() { try { localStorage.setItem("lr_sync", JSON.stringify(this.st)); } catch {} },
   on() { return !!this.st.refresh; },
-  synced: k => /^(settings|chars|personas|activePersona|books|recent|seeded|sounds|sndfix|chats:|c2:|snd:)/.test(k),
+  synced: k => /^(settings|chars|personas|activePersona|books|recent|seeded|sounds|sndfix|sndgone|chats:|c2:|snd:)/.test(k),
+  listKey: k => /^(chars|personas|books|sounds|chats:)/.test(k),
   mark(k) {
     if (this.applying || !this.on() || !this.synced(k)) return;
     const d = new Set(this.st.dirty || []); d.add(k); this.st.dirty = [...d]; this.save();
@@ -3554,10 +3794,15 @@ const Sync = {
   // fetch changes made on other devices since the last pull and apply them here
   async pull() {
     if (!this.on() || this.busy) return;
-    this.busy = true;
+    this.busy = true; const started = Date.now();
     try {
       const got = await this.pullAll(false), dirty = new Set(this.st.dirty || []), changed = [];
-      for (const [k, v] of got) { if (dirty.has(k)) continue; await this.put(k, v); changed.push(k); } // an unsent change here wins
+      for (const [k, v] of got) {
+        if (dirty.has(k) || (this.sent[k] || 0) > started) continue; // an unsent change here wins, and so does one sent while this pull ran
+        if (v === null || (this.listKey(k) && v !== undefined && !Array.isArray(v))) continue; // never take a broken or empty value
+        if (v !== undefined) { const cur = await Store.get(k); if (stableJSON(k === "settings" ? stripLocal(cur) : cur) === stableJSON(v)) continue; } // our own change coming back
+        await this.put(k, v); changed.push(k);
+      }
       if (changed.length) await this.reload(changed);
       this.status = "Synced " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
     } catch (e) { this.status = e.message; }
@@ -3613,11 +3858,12 @@ const Sync = {
         if (!batch.length) return;
         const r = await this.req("/rest/v1/kv?on_conflict=user_id,key", { method: "POST", headers: { "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(batch) });
         if (!r.ok) throw new Error("Couldn't save to your account (" + r.status + ").");
-        for (const x of batch) this.doneKey(x.key);
+        for (const x of batch) { this.doneKey(x.key); this.sent[x.key] = Date.now(); }
         batch = []; size = 0;
       };
       for (const k of data) {
         let v = await Store.get(k);
+        if (v === null || (this.listKey(k) && v !== undefined && !Array.isArray(v))) { this.doneKey(k); continue; } // nothing sane to send
         if (k === "settings" && v) v = stripLocal(v);
         const row = { user_id: this.st.uid, key: k, value: v === undefined ? null : v, deleted: v === undefined }, n = JSON.stringify(row).length;
         if (batch.length && (size + n > 700000 || batch.length >= 20)) await send();
@@ -3670,14 +3916,19 @@ const Sync = {
     if (any(/^(personas|activePersona)$/)) { S.personas = (await Store.get("personas")) || S.personas; S.personaId = (await Store.get("activePersona")) || S.personaId; }
     if (any(/^books$/)) S.books = (await Store.get("books")) || [];
     if (any(/^recent$/)) S.recent = (await Store.get("recent")) || {};
-    if (any(/^sounds$/)) {
-      SND = null;
-      const keep = new Set(((await Store.get("sounds")) || []).map(x => "snd:" + x.id));
-      for (const k of await Store.keys()) if (k.startsWith("snd:") && !keep.has(k)) { await Store.del(k); delete SND_URLS[k.slice(4)]; }
+    if (any(/^(sounds|sndgone)$/)) {
+      const v = await Store.get("sounds"); if (Array.isArray(v)) SND = v; // the list is swapped, never emptied
+      // only files the owner removed on purpose are deleted here
+      const gone = new Set(Object.values(await sndGone()));
+      this.applying = true;
+      try { for (const k of await Store.keys()) if (k.startsWith("snd:") && gone.has(k.slice(4))) { await Store.del(k); if (SND_URLS[k.slice(4)]) URL.revokeObjectURL(SND_URLS[k.slice(4)]); delete SND_URLS[k.slice(4)]; } }
+      finally { this.applying = false; }
+      if (typeof SP_DRAW === "function" && $("spList")) SP_DRAW();
     }
     if (any(/^sndfix$/)) SNDFIX = null;
     if (!$("chat").hidden && S.chat && S.chat.id && !S.busy && any(new RegExp("^c2:" + S.chat.id + "$"))) { const c = await Store.get("c2:" + S.chat.id); if (c) { S.chat = c; renderMsgs(true); updateStage(); } }
     if (!$("home").hidden && $("sheet").hidden) renderHome();
+    renderPanes();
   }
 };
 document.addEventListener("visibilitychange", () => { if (!Sync.on()) return; if (document.hidden) Sync.push(); else Sync.pull(); });
