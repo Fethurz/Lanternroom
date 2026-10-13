@@ -477,7 +477,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.17 · Oct 13";
+const VERSION = "1.18 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -3379,6 +3379,42 @@ const Sync = {
     } catch (e) { this.status = e.message; }
     finally { this.busy = false; }
   },
+  // Supabase's free plan takes files up to 50 MB. Big WAVs (long ambience recordings) are shrunk on the device
+  // to mono 16-bit at a lower sample rate before upload; the device keeps its full-quality original.
+  async shrinkWav(blob, maxBytes) {
+    const head = new DataView(await blob.slice(0, Math.min(blob.size, 1 << 16)).arrayBuffer()), tag = o => String.fromCharCode(...[0, 1, 2, 3].map(i => head.getUint8(o + i)));
+    if (head.byteLength < 44 || tag(0) !== "RIFF" || tag(8) !== "WAVE") return null;
+    let o = 12, fmt = null, dataOff = 0, dataLen = 0;
+    while (o + 8 <= head.byteLength) {
+      const id = tag(o), len = head.getUint32(o + 4, true);
+      if (id === "fmt ") { let f = head.getUint16(o + 8, true); if (f === 0xfffe) f = head.getUint16(o + 32, true); fmt = { f, ch: head.getUint16(o + 10, true), rate: head.getUint32(o + 12, true), bits: head.getUint16(o + 22, true) }; }
+      if (id === "data") { dataOff = o + 8; dataLen = Math.min(len, blob.size - dataOff); break; }
+      o += 8 + len + (len & 1);
+    }
+    if (!fmt || !dataOff || !(fmt.f === 1 && [8, 16, 24, 32].includes(fmt.bits) || fmt.f === 3 && fmt.bits === 32)) return null;
+    const bps = fmt.bits / 8, frame = bps * fmt.ch, frames = Math.floor(dataLen / frame), dur = frames / fmt.rate;
+    const rate = Math.min(fmt.rate, 32000, Math.floor((maxBytes - 1000) / (dur * 2)));
+    if (rate < 8000) return null;
+    const read = (dv, i) => fmt.f === 3 ? dv.getFloat32(i, true) : bps === 2 ? dv.getInt16(i, true) / 32768 : bps === 3 ? ((dv.getUint8(i) | dv.getUint8(i + 1) << 8 | dv.getInt8(i + 2) << 16) / 8388608) : bps === 4 ? dv.getInt32(i, true) / 2147483648 : (dv.getUint8(i) - 128) / 128;
+    const step = fmt.rate / rate, parts = [];
+    let acc = 0, cnt = 0, next = step, pos = 0;
+    const chunkFrames = Math.floor((1 << 20) / frame);
+    for (let f0 = 0; f0 < frames; f0 += chunkFrames) {
+      const n = Math.min(chunkFrames, frames - f0), dv = new DataView(await blob.slice(dataOff + f0 * frame, dataOff + (f0 + n) * frame).arrayBuffer());
+      const out = new Int16Array(Math.ceil(n / step) + 2); let k = 0;
+      for (let j = 0; j < n; j++) {
+        let v = 0; for (let c = 0; c < fmt.ch; c++) v += read(dv, j * frame + c * bps);
+        acc += v / fmt.ch; cnt++; pos++;
+        if (pos >= next) { out[k++] = Math.max(-32768, Math.min(32767, Math.round(acc / cnt * 32767))); acc = 0; cnt = 0; next += step; }
+      }
+      parts.push(out.subarray(0, k));
+    }
+    const bytes = parts.reduce((a, p) => a + p.byteLength, 0), h = new DataView(new ArrayBuffer(44)), w = (i, t) => [...t].forEach((c, j) => h.setUint8(i + j, c.charCodeAt(0)));
+    w(0, "RIFF"); h.setUint32(4, 36 + bytes, true); w(8, "WAVE"); w(12, "fmt "); h.setUint32(16, 16, true); h.setUint16(20, 1, true); h.setUint16(22, 1, true);
+    h.setUint32(24, rate, true); h.setUint32(28, rate * 2, true); h.setUint16(32, 2, true); h.setUint16(34, 16, true); w(36, "data"); h.setUint32(40, bytes, true);
+    return new Blob([h, ...parts], { type: "audio/wav" });
+  },
+  skip(k, m) { this.doneKey(k); const s = new Set(this.st.skipped || []); s.add(m?.name || k.slice(4)); this.st.skipped = [...s]; this.save(); },
   // queue bookkeeping: each key leaves the queue as soon as it has landed, so an interruption never starts over
   doneKey(k) { const d = new Set(this.st.dirty || []); d.delete(k); this.st.dirty = [...d]; this.save(); },
   async push() {
@@ -3412,15 +3448,24 @@ const Sync = {
         const one = async k => {
           const id = k.slice(4), m = meta.get(id);
           if (m && built.has(String(m.name || "").toLowerCase().replace(/[^a-z0-9]/g, ""))) { this.doneKey(k); n++; return; }
-          const blob = await Store.get(k), path = `/storage/v1/object/sounds/${this.st.uid}/${encodeURIComponent(id)}`;
+          let blob = await Store.get(k); const path = `/storage/v1/object/sounds/${this.st.uid}/${encodeURIComponent(id)}`;
+          const LIMIT = 48 * 1024 * 1024;
+          if (blob && blob.size > LIMIT) {
+            this.status = `Shrinking ${m?.name || "a big sound"} to fit your account…`; const el = $("acStat"); if (el) el.textContent = this.status;
+            const small = await this.shrinkWav(blob, LIMIT).catch(() => null);
+            if (!small) { this.skip(k, m); n++; return; }
+            blob = small;
+          }
           const r = blob ? await this.req(path, { method: "POST", headers: { "x-upsert": "true", "Content-Type": blob.type || "application/octet-stream" }, body: blob }) : await this.req(path, { method: "DELETE" });
           if (r.ok || !blob) this.doneKey(k);
+          else if (r.status >= 400 && r.status < 500 && r.status !== 401 && r.status !== 429) this.skip(k, m); // the server won't take it: stop retrying
           n++; this.status = `Uploading your sounds: ${n} of ${total}`; const el = $("acStat"); if (el) el.textContent = this.status;
         };
         const queue = [...blobs];
         await Promise.all([0, 1, 2].map(async () => { while (queue.length) await one(queue.shift()); }));
       }
       this.status = (this.st.dirty || []).length ? "Some items didn't upload yet; retrying shortly." : "Synced " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      if ((this.st.skipped || []).length) this.status += ` · ${this.st.skipped.length} sound${this.st.skipped.length === 1 ? "" : "s"} too big to sync (still on this device): ${this.st.skipped.slice(0, 3).join(", ")}${this.st.skipped.length > 3 ? "…" : ""}`;
       if ((this.st.dirty || []).length) this.timer = setTimeout(() => this.push(), 30000);
     } catch (e) { this.status = "Not synced yet: " + e.message; this.timer = setTimeout(() => this.push(), 30000); }
     finally { this.pushing = false; const el = $("acStat"); if (el) el.textContent = this.status; if (this.again) this.push(); }
