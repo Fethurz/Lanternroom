@@ -84,7 +84,7 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
 #status{font-size:12px;color:var(--muted);padding:0 16px 4px;min-height:0}
 #status.err{color:var(--danger)}
 #composer{display:flex;align-items:flex-end;gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:rgba(22,19,29,.9);border-top:1px solid var(--line)}
-#input{flex:1;min-width:0;resize:none;max-height:140px;min-height:44px;padding:10px 14px;border-radius:22px;background:var(--surface);border:1px solid var(--line);line-height:1.4}
+#input{flex:1;min-width:0;resize:none;max-height:45vh;min-height:44px;transition:height .18s ease;padding:10px 14px;border-radius:22px;background:var(--surface);border:1px solid var(--line);line-height:1.4}
 #send{background:var(--accent);color:var(--accent-ink)}
 #send:disabled{opacity:.5}
 
@@ -200,7 +200,40 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
 .dots{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle}
 .dots i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:dot 1.1s infinite ease-in-out}
 .dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
-#input{transition:border-color .2s,box-shadow .2s}
+#input{transition:border-color .2s,box-shadow .2s,height .18s ease}
+#btnMin{display:none;width:34px;height:34px;color:var(--muted)}
+#composer.open #btnMin{display:inline-grid}
+#composer.open{flex-wrap:wrap;row-gap:6px}
+#composer.open #input{order:-1;flex:1 1 100%;width:100%}
+#composer.open #btnMin{margin-left:auto}
+#composer:not(.open) #input{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.msg.blank-open{border-style:dashed;opacity:.9}
+/* v1.12: more text on screen */
+#msgs{gap:8px;padding:12px 10px 6px}
+#msgs .msg{font-size:14.5px;line-height:1.42;padding:8px 12px;border-radius:16px}
+#msgs .msg .who-l{font-size:11px}
+.rtabs,.ltabs{margin-bottom:6px}
+.rtabs .tabs,.ltabs{flex-wrap:wrap}
+.rtabs textarea{width:100%;margin-top:6px}
+/* v1.12: compact bot grid, colors per kind */
+:root{--k-character:#e8a95b;--k-world:#4fd1c5;--k-group:#c49bff}
+#charList{grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:6px}
+#charList > .note{grid-column:1/-1}
+#charList .char-card{display:flex!important;flex-direction:column;gap:0;padding:0;overflow:hidden;border-width:1px;border-top:3px solid var(--kc)}
+#charList .char-card.k-character{--kc:var(--k-character)}#charList .char-card.k-world{--kc:var(--k-world)}#charList .char-card.k-group{--kc:var(--k-group)}
+#charList .char-card .ph-wrap{position:relative}
+#charList .char-card img,#charList .char-card .ph{width:100%;height:auto;aspect-ratio:4/5;border-radius:0;display:block}
+#charList .char-card .kind-pill{position:absolute;left:5px;bottom:5px;font-size:9px;font-weight:700;letter-spacing:.02em;padding:0 6px;border-radius:999px;background:rgba(22,19,29,.82);color:var(--kc);border:1px solid color-mix(in srgb,var(--kc) 45%,transparent)}
+#charList .char-card .cbody{padding:4px 6px 6px;min-width:0}
+#charList .char-card .name{font-size:12.5px!important;line-height:1.2;padding-right:0!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--fg)}
+#charList .char-card .ticons{display:flex;flex-wrap:wrap;gap:2px;margin-top:3px;font-size:11px;line-height:1}
+#charList .char-card .more{top:0!important;right:0!important;width:30px!important;height:30px!important;background:rgba(22,19,29,.6);color:var(--fg)!important}
+.chip .ti{margin-right:4px}
+.snd-row{align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--line)}
+.snd-row .snd-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.snd-row select{max-width:120px;padding:6px 8px;border-radius:10px;font-size:13px}
+.snd-row .icon{width:34px;height:34px}
+.msg.blank-open p{margin:4px 0 0}
 #input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,169,91,.18)}
 #send{box-shadow:0 4px 14px -4px rgba(232,169,91,.6);transition:transform .12s,opacity .2s}
 #send.busy{animation:pulse 1.2s infinite ease-in-out}
@@ -290,7 +323,7 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
 #attach img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
 .uimg{display:block;max-width:100%;max-height:260px;border-radius:12px;margin:4px 0 6px;object-fit:cover}
 /* sound effects */
-.sfx{display:inline-block;cursor:pointer;white-space:nowrap}
+.sfx{display:inline-block;cursor:pointer;white-space:normal}
 .fxi{display:inline-block;width:1.05em;height:1.05em;vertical-align:-.15em;margin-left:3px}
 .fxi svg{width:100%;height:100%;overflow:visible;display:block}
 .fx-gas svg{animation:fxDrift 3.2s infinite ease-in-out}
@@ -378,6 +411,7 @@ body{background:radial-gradient(120% 70% at 50% -10%,#2a2140 0%,var(--bg) 55%) f
       <input type="file" id="imgPick" accept="image/*" hidden>
       <button type="button" class="icon" id="btnIllustrate" aria-label="Illustrate this moment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></button>
       <textarea id="input" rows="1" placeholder="Write your reply…"></textarea>
+      <button type="button" class="icon" id="btnMin" aria-label="Minimize the message box" title="Minimize"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
       <button type="button" class="icon" id="btnCont" aria-label="Continue without replying" title="Continue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6l6 6-6 6M12 6l6 6-6 6"/></svg></button>
       <button type="button" class="icon" id="send" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </form>
@@ -414,6 +448,10 @@ const Store = {
     if (this.db) return new Promise(res => { const tx = this.db.transaction("kv", "readwrite"); tx.objectStore("kv").put(JSON.parse(JSON.stringify(v)), k); tx.oncomplete = res; tx.onerror = res; });
     try { localStorage.setItem("lr:" + k, JSON.stringify(v)); } catch {}
   },
+  async setRaw(k, v) { // stores Blobs as-is (IndexedDB only)
+    if (!this.db) throw new Error("This browser can't store sound files.");
+    return new Promise((res, rej) => { const tx = this.db.transaction("kv", "readwrite"); tx.objectStore("kv").put(v, k); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+  },
   async del(k) {
     if (this.db) return new Promise(res => { const tx = this.db.transaction("kv", "readwrite"); tx.objectStore("kv").delete(k); tx.oncomplete = res; tx.onerror = res; });
     try { localStorage.removeItem("lr:" + k); } catch {}
@@ -425,7 +463,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.11 · Oct 12";
+const VERSION = "1.12 · Oct 12";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -444,8 +482,8 @@ const DEFAULTS = {
   imgStyle: "detailed anime illustration, painterly, soft cinematic lighting",
   imgUrl: "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true&model=flux&safe=true&enhance=false",
   portraits: true, backgrounds: true,
-  globalInstr: "", sfxColors: true,
-  sfxRules: "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, stomach gurgles and growls\n- #a8875a (brown): farts\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses\n- #f1ebda (cream): cum, ejaculation and semen sounds, and the sloshing or gurgling of full balls or cum-filled bellies\n- #ff6fae (pink): sex sounds, like hips slapping and thrusting"
+  globalInstr: "", sfxColors: true, sfxSound: true, sfxVolume: 0.7,
+  sfxRules: "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, stomach gurgles and growls (never breathing)\n- white: breathing, panting, sighs, huffs, gasps and exhales\n- #a8875a (brown): farts\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses\n- #f1ebda (cream): cum, ejaculation and semen sounds, and the sloshing or gurgling of full balls or cum-filled bellies\n- #ff6fae (pink): sex sounds, like hips slapping and thrusting"
 };
 const S = { recent: {}, settings: { ...DEFAULTS }, chars: [], personas: [], books: [], personaId: null, charId: null, chat: null, busy: false, openActs: null, nextSpeaker: "" };
 const $ = id => document.getElementById(id);
@@ -503,7 +541,9 @@ function setImg(img, url, c) {
   if (img.getAttribute("src") !== url) img.src = url;
 }
 function looks(c) { return (c.visual || "").trim() || (c.appearance || "").trim() || (c.kind === "world" ? (c.description || c.name).slice(0, 300) : `a person named ${c.name}`); }
-function portraitURL(c, mood = "neutral", seed) {
+// One portrait per character: mood shows only as the ring around it, never as a different picture.
+function portraitURL(c, _mood, seed) {
+  const mood = "neutral";
   if (c.customPortrait) return c.customPortrait;
   if (!S.settings.portraits) return "";
   const t = artOf(c);
@@ -733,7 +773,7 @@ function parseLorebook(raw) {
 }
 function buildPrompt(c, chat, upto, cont) {
   const st = S.settings, u = uname(), p = persona();
-  const rules = `Write actions in *asterisks* and speech in quotes. Never write ${u}'s words, thoughts or actions. Keep replies vivid and focused, usually 1-4 paragraphs. Stay consistent with everything established below.`;
+  const rules = `Write actions in *asterisks* and speech in quotes. Never write ${u}'s words, thoughts or actions. Keep replies vivid and focused, usually 1-4 paragraphs. Stay consistent with everything established below. End each reply where the moment naturally ends: never close with a question, cliffhanger or prompt aimed at ${u} just to get a response (no "What do you do?", no lingering "…?"). Characters only ask ${u} things they would genuinely ask right then.`;
   let sys;
   if (c.kind === "world") {
     sys = `You are the narrator and game master of an interactive story set in the world described below. ${u} is the protagonist. Describe what ${u} sees and hears, play every other character they meet (give them names, personalities and distinct voices), and let the world react to ${u}'s choices. ${rules}\n\n# The world: ${c.name}\n${fill(c.description, c)}`;
@@ -746,6 +786,7 @@ function buildPrompt(c, chat, upto, cont) {
   } else {
     sys = `You are ${c.name} in an ongoing interactive story with ${u}. Stay fully in character. ${rules}\n\n# ${c.name}\n${fill(c.description, c)}`;
   }
+  if (c.kind === "group") sys += `\n\nEnd each reply where the moment naturally ends: never close with a question, cliffhanger or prompt aimed at ${u} just to get a response.`;
   if (c.scenario) sys += `\n\n# Scenario\n${fill(c.scenario, c)}`;
   if (p.description) sys += `\n\n# About ${u} (the user's character)\n${fill(p.description, c)}`;
   if (chat.summary) sys += `\n\n# Story so far\n${chat.summary}`;
@@ -759,7 +800,9 @@ function buildPrompt(c, chat, upto, cont) {
   sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location${focusPart}]]`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
 
-  const hist = chat.messages.slice(chat.summarizedUpTo || 0, upto).filter(m => m.role !== "image");
+  const blankStart = chat.messages[0]?.greeting && !chat.messages[0].content;
+  if (blankStart) sys += `\n\nThere is no written opening: ${u}'s first message sets the scene. Take it exactly as ${u} wrote it and continue naturally from there.`;
+  const hist = chat.messages.slice(chat.summarizedUpTo || 0, upto).filter(m => m.role !== "image" && (m.content || m.image));
   let budget = st.contextTokens * 3.5 - sys.length;
   const out = [];
   let imgs = 0;
@@ -786,9 +829,11 @@ function buildPrompt(c, chat, upto, cont) {
 
 /* ---------- Data ---------- */
 const greetingsOf = c => [c.firstMessage, ...(c.altGreetings || [])].map(g => fill(g, c).trim()).filter(Boolean);
+// every bot also offers a blank opening (empty text) as its last choice: the user sets the scene
+const openingsOf = c => { const g = greetingsOf(c); return g.length ? [...g, ""] : []; };
 function newChat(c, pid) {
   const prev = S.chat; S.chat = { personaId: pid || S.personaId };
-  const greets = greetingsOf(c);
+  const greets = openingsOf(c);
   S.chat = prev;
   const focus = c.kind === "group" ? (members(c)[0]?.name || "") : "";
   const meta = { mood: "neutral", focus, place: c.startPlace || "" };
@@ -882,6 +927,21 @@ $("btnTagAll").onclick = async () => {
   }
   btn.disabled = false; renderHome();
 };
+// small icons that make tags recognisable at a glance
+const TAG_ICONS = [
+  [/^(female|woman|girl|lady|feminine|futa|futanari)$/, "♀️"], [/^(male|man|boy|guy|masculine)$/, "♂️"], [/^(nonbinary|non-binary|enby|androgynous|genderfluid)$/, "⚧️"], [/^(mixed genders|multiple|harem)$/, "👥"],
+  [/vore|devour|swallow|digest|stomach|belly|predator|\bprey/, "👄"], [/scat|poop|shit|disposal/, "💩"], [/inflation|cum|seed|breed/, "💦"], [/pregnan|preg\b|belly ?stuff/, "🤰"], [/macro|giant|giantess|size|micro|tiny|shrink/, "📏"],
+  [/dragon|wyvern|drake/, "🐉"], [/wolf|dog|canine|fox|vulpine|werewolf/, "🐺"], [/\bcats?\b|cat(girl|boy)|neko|feline|\blion|tiger|leopard|panther/, "🐱"], [/snake|naga|lamia|serpent|reptile|lizard|kobold|scal/, "🐍"],
+  [/bird|avian|harpy|griffin|gryphon/, "🪶"], [/horse|equine|centaur|unicorn|pony/, "🐴"], [/fish|shark|mermaid|merfolk|aquatic|ocean|sea/, "🌊"], [/\b(bugs?|insects?|spiders?|arachnids?|bees?|ants?)\b/, "🕷️"],
+  [/furry|anthro|feral|beast|animal|paw/, "🐾"], [/monster|creature|kaiju/, "👹"], [/demon|devil|succubus|incubus|hell/, "😈"], [/angel|holy|divine|god|goddess|deity/, "😇"],
+  [/slime|goo|blob|ooze/, "🫧"], [/robot|android|cyborg|\bai\b|\bmech|machine|synth/, "🤖"], [/alien|xeno|\bspace|sci-?fi|\bstar(ship)?s?\b/, "👽"], [/\b(elf|elves|elven|fae|fairy|fey)\b/, "🧝"],
+  [/vampire|undead|zombie|ghost|horror|spooky/, "🧛"], [/witch|wizard|mage|magic|sorcer|spell/, "🪄"], [/fantasy|medieval|knight|kingdom|sword/, "⚔️"], [/royal|royalty|queen|king|princess|prince|noble/, "👑"],
+  [/romance|love|lover|wholesome|dating|girlfriend|boyfriend|wife|husband/, "💕"], [/nsfw|smut|lewd|sex|erotic|kink|fetish|dom|sub|bdsm/, "🔥"], [/villain|evil|yandere|dark|cruel|sadist/, "🖤"], [/comedy|funny|silly|humor/, "😂"],
+  [/adventure|quest|explor|travel/, "🧭"], [/mystery|detective|noir/, "🔍"], [/modern|city|urban|contemporary|office|school|college/, "🏙️"], [/historical|history|victorian|ancient/, "🏛️"],
+  [/post-?apoc|apocalypse|wasteland|survival/, "☢️"], [/slice of life|cozy|daily|domestic/, "☕"], [/mentor|teacher|professor|tutor/, "📚"], [/milf|mother|mom|dilf|father|dad|mature|older|middle-aged|elderly/, "🧓"],
+  [/\badult|ageless/, "🌙"], [/\bhuman/, "🧑"], [/\bworld|setting|\brpg\b|\bgame/, "🗺️"], [/\bgroup|\bparty|\bteam|\bcrew/, "👥"]
+];
+function tagIcon(t) { const s = String(t || "").toLowerCase(); for (const [re, ic] of TAG_ICONS) if (re.test(s)) return ic; return ""; }
 function renderHome() {
   $("personaBar").innerHTML = `Playing as <b>${esc(uname())}</b><span class="chg">Change</span>`;
   const list = $("charList");
@@ -891,7 +951,7 @@ function renderHome() {
   S.chars.forEach(c => tagsOf(c).forEach(t => { counts[t] = (counts[t] || 0) + 1; }));
   const allTags = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b)).slice(0, 40);
   for (const t of [...HF.tags]) if (!counts[t]) HF.tags.delete(t);
-  $("tagFilter").innerHTML = allTags.map(t => `<button type="button" class="chip ${HF.tags.has(t) ? "on" : ""}" data-t="${esc(t)}">${esc(t)}</button>`).join("");
+  $("tagFilter").innerHTML = allTags.map(t => `<button type="button" class="chip ${HF.tags.has(t) ? "on" : ""}" data-t="${esc(t)}">${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</button>`).join("");
   $("tagFilter").querySelectorAll("[data-t]").forEach(b => b.onclick = () => { const t = b.dataset.t; HF.tags.has(t) ? HF.tags.delete(t) : HF.tags.add(t); renderHome(); });
   const untagged = S.chars.filter(c => !(c.tags || []).length).length;
   $("btnTagAll").hidden = !(untagged && hasKey());
@@ -912,10 +972,13 @@ function renderHome() {
     const b = document.createElement("div");
     b.className = "char-card"; b.tabIndex = 0; b.setAttribute("role", "button");
     const url = thumbURL(c);
-    const badge = c.kind === "world" ? '<span class="badge">World</span>' : c.kind === "group" ? `<span class="badge">Group · ${members(c).length}</span>` : "";
+    const kind = c.kind || "character";
+    b.classList.add("k-" + kind);
     const sub = c.kind === "group" ? members(c).map(m => m.name).join(", ") : (c.description || "");
-    const tg = tagsOf(c).filter(t => t !== "world" && t !== "group").slice(0, 5);
-    b.innerHTML = `<img alt="" loading="lazy"><div><div class="name">${c.fav ? '<span class="fav-star">★</span>' : ""}${esc(c.name)}${badge}</div><div class="snip" data-snip="${c.id}">${esc(stripColor(sub).slice(0, 140))}</div>${tg.length ? `<div class="tags">${tg.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}</div>`;
+    const tg = tagsOf(c).filter(t => t !== "world" && t !== "group");
+    const icons = [...new Map(tg.map(t => [tagIcon(t), t])).entries()].filter(([ic]) => ic).slice(0, 5);
+    b.title = stripColor(sub).slice(0, 200);
+    b.innerHTML = `<div class="ph-wrap"><img alt="" loading="lazy"><span class="kind-pill">${kind === "world" ? "World" : kind === "group" ? `Group ${members(c).length}` : "Char"}</span></div><div class="cbody"><div class="name">${c.fav ? '<span class="fav-star">★</span>' : ""}${esc(c.name)}</div>${icons.length ? `<div class="ticons">${icons.map(([ic, t]) => `<span title="${esc(t)}">${ic}</span>`).join("")}</div>` : ""}<div class="snip" data-snip="${c.id}" hidden></div></div>`;
     b.insertAdjacentHTML("beforeend", `<button type="button" class="more" aria-label="Options for ${esc(c.name)}"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>`);
     setImg(b.querySelector("img"), url, c);
     b.onclick = e => { if (e.target.closest(".more")) { cardMenu(c); return; } openChat(c.id); };
@@ -1001,7 +1064,7 @@ function genSpec(kind, form) {
 - "tags": 4-10 short lowercase tags (gender, form, genre, themes, kinks the card involves)
 - "summary": 2-4 plain sentences for the user, describing what this bot is like and how chatting with it will feel
 - "scenario": where and how the story starts, 80-180 words; refer to the user as {{user}}${kind === "character" ? " and the character as {{char}}" : ""}
-- "firstMessages": an array of 2 different openings, 120-250 words each, in the story's voice with *actions* in asterisks and dialogue in quotes, ending on a hook; never speak or act for {{user}}${kind === "group" ? "; start each character's part with **Name:**" : ""}
+- "firstMessages": an array of 2 different openings, 120-250 words each, in the story's voice with *actions* in asterisks and dialogue in quotes, ending where the moment naturally pauses, never with a question or prompt aimed at {{user}} just to get a reply; never speak or act for {{user}}${kind === "group" ? "; start each character's part with **Name:**" : ""}
 - "startPlace": the starting location in 2-6 words
 - "instructions": special rules the AI follows in every reply for this bot, as 2-8 lines each starting with "- " (how to portray it, recurring mechanics, trackers or stats, colored text for thoughts, pacing)
 - "lore": 3-8 entries {"keys": "comma, separated, keywords", "text": "40-120 words"} for facts that only matter when they come up (people, places, items, abilities, mechanics)`;
@@ -1023,7 +1086,7 @@ function genNormalize(j, kind, form) {
   const out = { ...j };
   if ("tags" in j) out.tags = parseTags(Array.isArray(j.tags) ? j.tags.join(",") : str(j.tags));
   if ("firstMessages" in j) out.firstMessages = (Array.isArray(j.firstMessages) ? j.firstMessages : [j.firstMessages]).map(str).filter(Boolean);
-  if ("instructions" in j) out.instructions = Array.isArray(j.instructions) ? j.instructions.map(x => "- " + str(x).replace(/^-\s*/, "")).join("\n") : str(j.instructions);
+  if ("instructions" in j) out.instructions = (Array.isArray(j.instructions) ? j.instructions.map(str) : parseRules(str(j.instructions))).map(x => x.replace(/^[-•]\s*/, "")).filter(Boolean).join("\n\n");
   if ("lore" in j) out.lore = (Array.isArray(j.lore) ? j.lore : []).map(l => ({ keys: Array.isArray(l.keys) ? l.keys.join(", ") : str(l.keys), text: str(l.text) })).filter(l => l.keys && l.text);
   if ("cast" in j) out.cast = (Array.isArray(j.cast) ? j.cast : []).map(x => ({ name: str(x.name), type: WORLD_TYPES[x.type] ? x.type : "character", details: str(x.details) })).filter(x => x.name);
   if ("members" in j) out.members = (Array.isArray(j.members) ? j.members : []).map(m => ({ name: str(m.name), artType: art(m.artType), appearance: str(m.appearance), description: str(m.description) })).filter(m => m.name);
@@ -1163,8 +1226,8 @@ async function openChat(id, chatId) {
   S.chat = chat || newChat(c);
   if (!S.chat.personaId) S.chat.personaId = S.personaId;
   S.chat.facts = (S.chat.facts || []).map(f => typeof f === "string" ? { t: f, pin: false } : f);
-  const g0 = S.chat.messages[0], greets = greetingsOf(c);
-  if (S.chat.messages.length === 1 && g0.role === "assistant" && greets.length > 1 && greets.includes(g0.content) && (g0.alts || []).every(a => greets.includes(a))) {
+  const g0 = S.chat.messages[0], greets = openingsOf(c);
+  if (S.chat.messages.length === 1 && g0.role === "assistant" && greets.length > 1 && greets.includes(g0.content) && (g0.alts || []).every(a => greets.includes(a)) && (g0.alts || []).join("\u0000") !== greets.join("\u0000")) {
     g0.greeting = true; g0.alts = greets; g0.alt = greets.indexOf(g0.content);
     g0.altMeta = greets.map(() => ({ mood: "neutral", focus: g0.focus || "", place: c.startPlace || "" }));
   }
@@ -1252,6 +1315,9 @@ function renderMsgs(keepScroll) {
         b.insertAdjacentHTML("beforeend", fmt(seg.text));
         d.appendChild(b); tail = b;
       }
+    } else if (m.greeting && !m.content) {
+      d.className = "msg assistant blank-open";
+      d.innerHTML = `<div class="who-l">Blank start</div><p>Set the scene yourself. Write the opening as your first message and ${esc(c.name)} will pick it up from there.</p><p class="hint">Swipe ‹ for the written openings.</p>`;
     } else {
       d.className = "msg " + m.role;
       const label = m.role === "user" ? uname() : c.kind === "world" ? `${c.name} · Narrator` : c.name;
@@ -1328,7 +1394,24 @@ $("composer").addEventListener("submit", e => { e.preventDefault(); send(); });
 $("send").addEventListener("click", e => { e.preventDefault(); send(); });
 $("input").addEventListener("input", autoGrow);
 $("input").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && matchMedia("(pointer:fine)").matches) { e.preventDefault(); send(); } });
-function autoGrow() { const t = $("input"); t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, 140) + "px"; }
+// The box grows to ~45% of the screen while typing; minimized it shows one line and keeps the draft.
+function autoGrow() {
+  const t = $("input"), open = $("composer").classList.contains("open");
+  t.style.height = "auto";
+  t.style.height = (open ? Math.min(t.scrollHeight, Math.max(140, Math.round(innerHeight * 0.45))) : Math.min(t.scrollHeight, 44)) + "px";
+  if (!open) t.scrollTop = 0;
+}
+function composerOpen(on) { $("composer").classList.toggle("open", on); autoGrow(); }
+$("input").addEventListener("focus", () => composerOpen(true));
+$("input").addEventListener("blur", () => setTimeout(() => { if (document.activeElement !== $("input")) composerOpen(false); }, 120));
+// buttons in the bar shouldn't steal focus from the box
+for (const id of ["btnMin", "send", "btnCont"]) $(id).addEventListener("pointerdown", e => { if (id !== "btnMin" || $("composer").classList.contains("open")) e.preventDefault(); });
+$("btnMin").onclick = () => { $("input").blur(); composerOpen(false); };
+addEventListener("resize", () => { if ($("composer").classList.contains("open")) autoGrow(); });
+function showMsgTop(i) {
+  const box = $("msgs"), el = box.querySelector(`[data-i="${i}"]`);
+  if (el) box.scrollTop = Math.max(0, el.offsetTop - 8);
+}
 function setBusy(b) { S.busy = b; $("send").disabled = b; $("btnIllustrate").disabled = b; $("btnCont").disabled = b; $("send").classList.toggle("busy", b); }
 $("btnCont").onclick = async () => {
   if (S.busy || !S.chat) return;
@@ -1360,18 +1443,21 @@ async function generate(upto, existing, cont) {
   setBusy(true); setStatus("");
   let bubble;
   if (existing) bubble = $("msgs").querySelector(`[data-i="${upto}"]`);
-  else { bubble = document.createElement("div"); bubble.className = "msg assistant typing"; $("msgs").appendChild(bubble); }
+  else { bubble = document.createElement("div"); bubble.className = "msg assistant typing"; bubble.dataset.i = upto; $("msgs").appendChild(bubble); }
   if (bubble.classList.contains("msg-set")) { bubble.className = "msg assistant"; }
   const who = c.kind === "world" ? "The narrator" : c.kind === "group" ? (S.nextSpeaker || "The group") : c.name;
   const waiting = verb => `<span class="typing-l"><span>${esc(who)} is ${verb}…</span>${lanternSVG("seq")}</span>`;
   bubble.innerHTML = waiting("thinking"); bubble.classList.add("typing");
   const box = $("msgs"); box.scrollTop = box.scrollHeight;
+  // follow the new reply down only until its first line reaches the top, so it can be read from the start
+  let follow = true; const stopFollow = () => { follow = false; };
+  box.addEventListener("touchstart", stopFollow, { once: true, passive: true }); box.addEventListener("wheel", stopFollow, { once: true, passive: true });
   try {
     let p;
     const pause = matchMedia("(prefers-reduced-motion: reduce)").matches ? 150 : 800;
     for (let attempt = 0; attempt < 2; attempt++) {
       let latest = "", shown = false, revealP = null;
-      const show = () => { bubble.classList.remove("typing"); bubble.innerHTML = fmt(latest.split("[[")[0]); if (box.scrollHeight - box.scrollTop - box.clientHeight < 140) box.scrollTop = box.scrollHeight; };
+      const show = () => { bubble.classList.remove("typing"); bubble.innerHTML = fmt(latest.split("[[")[0]); decorateSfx(bubble); if (follow) { const target = Math.min(box.scrollHeight - box.clientHeight, bubble.offsetTop - 8); if (target > box.scrollTop) box.scrollTop = target; } };
       const raw = await ds(buildPrompt(c, chat, upto, cont), {
         thinking: S.settings.thinking,
         temperature: attempt ? Math.min(S.settings.temperature, 0.7) : undefined,
@@ -1405,7 +1491,8 @@ async function generate(upto, existing, cont) {
     chat.mood = meta.mood; if (p.place) chat.place = p.place; if (meta.focus) chat.focus = meta.focus;
     S.nextSpeaker = ""; renderSpeakers();
     await saveChat();
-    renderMsgs(); updateStage();
+    renderMsgs(true); updateStage();
+    showMsgTop(existing ? upto : chat.messages.length - 1);
     if (!existing) maintainMemory(c, chat).catch(e => setStatus("Memory update skipped: " + e.message, true));
     captionImages(chat).catch(() => {});
   } catch (e) {
@@ -1524,7 +1611,7 @@ const EXPAND = {
   appearance: ["the character's physical appearance: build, face, coloring, hair or fur, clothing, distinctive features", "60-120"],
   personality: ["the character's personality and background: temperament, history, motivations, fears, quirks, speech style, relationships", "180-350"],
   scenario: ["the opening scenario: where and when the story starts, the situation, and what is at stake", "90-200"],
-  first: ["the opening message of the roleplay, written in the story's voice with *actions* in asterisks and dialogue in quotes, setting the scene and ending on a hook the user can respond to", "120-250"],
+  first: ["the opening message of the roleplay, written in the story's voice with *actions* in asterisks and dialogue in quotes, setting the scene and ending where the moment naturally pauses, without questions or prompts aimed at the user", "120-250"],
   world: ["the world or setting: geography, history, cultures, factions, technology or magic, daily life, tone and themes", "250-450"],
   groupdesc: ["how this group of characters fits together: how they know each other, their dynamics, shared history and tensions", "120-250"],
   lore: ["a lorebook entry: a self-contained reference note the AI consults when its keywords come up", "60-150"],
@@ -1659,20 +1746,61 @@ Respond as JSON: {"parts": [{"name": "...", "type": "...", "start": "..."}]}` },
 
 /* ---------- Lore editor (shared by characters and lorebooks) ---------- */
 function loreEditor(box, arr, ctxFn) {
+  // one tab per entry, plus + New; only the selected entry is shown
+  let sel = 0, seen = arr.length;
+  const label = (l, i) => (l.name || splitKeys(l.keys)[0] || `Entry ${i + 1}`).slice(0, 16);
   const draw = () => {
-    box.innerHTML = arr.length ? "" : '<p class="note">No entries yet.</p>';
-    arr.forEach((l, i) => {
-      const d = document.createElement("div"); d.className = "lore";
-      d.innerHTML = `${l.name ? `<div class="lbl">${esc(l.name)}</div>` : ""}<input placeholder="Keywords, comma separated" value="${esc(l.keys)}" data-k="keys"><input placeholder="Only if one of these is also mentioned (optional)" value="${esc(l.secondary || "")}" data-k="secondary"><textarea data-x="lore" placeholder="What the AI should know when these come up" data-k="text">${esc(l.text)}</textarea><label class="check" style="font-size:14px"><input type="checkbox" data-c="constant" ${l.constant ? "checked" : ""}> Always on (ignore keywords)</label><label class="check" style="font-size:14px"><input type="checkbox" data-c="enabled" ${l.enabled !== false ? "checked" : ""}> Enabled</label><div class="xrow"><button class="btn small danger" type="button" data-rm>Remove</button></div>`;
-      d.querySelectorAll("[data-k]").forEach(el => el.addEventListener("input", () => { l[el.dataset.k] = el.value; }));
-      d.querySelectorAll("[data-c]").forEach(el => el.addEventListener("change", () => { l[el.dataset.c] = el.checked; }));
-      d.querySelector("[data-rm]").onclick = () => { arr.splice(i, 1); draw(); };
-      box.appendChild(d);
-      wireExpand(d, () => (ctxFn ? ctxFn() : "") + `\nKeywords for this entry: ${l.keys}`);
+    if (arr.length > seen) sel = arr.length - 1;
+    seen = arr.length; sel = Math.min(sel, arr.length - 1);
+    box.innerHTML = `<div class="tabs ltabs">${arr.map((l, i) => `<button type="button" class="tab ${i === sel ? "on" : ""}" data-i="${i}">${esc(label(l, i))}</button>`).join("")}<button type="button" class="tab" data-i="add">+ New</button></div>`;
+    box.querySelectorAll(".ltabs [data-i]").forEach(t => t.onclick = () => {
+      if (t.dataset.i === "add") { arr.push({ keys: "", text: "" }); draw(); box.querySelector('[data-k="keys"]')?.focus(); }
+      else { sel = +t.dataset.i; draw(); }
     });
+    if (!arr.length) { box.insertAdjacentHTML("beforeend", '<p class="note">No entries yet. Tap + New.</p>'); return; }
+    const l = arr[sel], i = sel;
+    const d = document.createElement("div"); d.className = "lore";
+    d.innerHTML = `${l.name ? `<div class="lbl">${esc(l.name)}</div>` : ""}<input placeholder="Keywords, comma separated" value="${esc(l.keys)}" data-k="keys"><input placeholder="Only if one of these is also mentioned (optional)" value="${esc(l.secondary || "")}" data-k="secondary"><textarea data-x="lore" placeholder="What the AI should know when these come up" data-k="text">${esc(l.text)}</textarea><label class="check" style="font-size:14px"><input type="checkbox" data-c="constant" ${l.constant ? "checked" : ""}> Always on (ignore keywords)</label><label class="check" style="font-size:14px"><input type="checkbox" data-c="enabled" ${l.enabled !== false ? "checked" : ""}> Enabled</label><div class="xrow"><button class="btn small danger" type="button" data-rm>Remove entry</button></div>`;
+    d.querySelectorAll("[data-k]").forEach(el => el.addEventListener("input", () => {
+      l[el.dataset.k] = el.value;
+      if (el.dataset.k === "keys") { const t = box.querySelector(`.ltabs [data-i="${i}"]`); if (t) t.textContent = label(l, i); }
+    }));
+    d.querySelectorAll("[data-c]").forEach(el => el.addEventListener("change", () => { l[el.dataset.c] = el.checked; }));
+    d.querySelector("[data-rm]").onclick = () => { arr.splice(i, 1); seen = arr.length; sel = Math.max(0, i - 1); draw(); };
+    box.appendChild(d);
+    wireExpand(d, () => (ctxFn ? ctxFn() : "") + `\nKeywords for this entry: ${l.keys}`);
   };
   draw();
   return draw;
+}
+// Rules: one tab per rule. The original textarea stays (hidden) and holds the joined text, so saving code is unchanged.
+function parseRules(text) {
+  const t = String(text || "").replace(/\r/g, "").trim();
+  if (!t) return [];
+  if (/\n\s*\n/.test(t)) return t.split(/\n\s*\n/).map(x => x.trim()).filter(Boolean);
+  return t.split("\n").map(x => x.trim()).filter(Boolean);
+}
+function ruleTabs(ta) {
+  if (!ta || ta.dataset.tabbed) return;
+  ta.dataset.tabbed = "1"; ta.hidden = true;
+  const wrap = document.createElement("div"); wrap.className = "rtabs"; ta.after(wrap);
+  const rules = parseRules(ta.value); let sel = 0;
+  const label = (r, i) => (r.replace(/^[-•*\d.)\s]+/, "").replace(/\[\/?colou?r[^\]]*\]/gi, "").slice(0, 14) || `Rule ${i + 1}`);
+  const sync = () => { ta.value = rules.map(r => r.trim()).filter(Boolean).join("\n\n"); };
+  const draw = () => {
+    sel = Math.min(sel, rules.length - 1);
+    wrap.innerHTML = `<div class="tabs">${rules.map((r, i) => `<button type="button" class="tab ${i === sel ? "on" : ""}" data-i="${i}">${esc(label(r, i))}</button>`).join("")}<button type="button" class="tab" data-i="add">+ New rule</button></div>`
+      + (rules.length ? `<textarea style="min-height:90px" placeholder="${esc(ta.placeholder || "A rule the AI always follows")}">${esc(rules[sel])}</textarea><div class="xrow"><button type="button" class="btn small danger" data-rm>Remove rule</button></div>` : `<p class="note">No rules yet. Tap + New rule.</p>`);
+    wrap.querySelectorAll("[data-i]").forEach(t => t.onclick = () => {
+      if (t.dataset.i === "add") { rules.push(""); sel = rules.length - 1; draw(); wrap.querySelector("textarea")?.focus(); }
+      else { sel = +t.dataset.i; draw(); }
+    });
+    const ed = wrap.querySelector("textarea");
+    if (ed) ed.addEventListener("input", () => { rules[sel] = ed.value; sync(); const t = wrap.querySelector(`[data-i="${sel}"]`); if (t) t.textContent = label(ed.value, sel); });
+    const rm = wrap.querySelector("[data-rm]");
+    if (rm) rm.onclick = () => { rules.splice(sel, 1); sel = Math.max(0, sel - 1); sync(); draw(); };
+  };
+  draw();
 }
 
 /* ---------- Settings ---------- */
@@ -1725,10 +1853,13 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       <button class="btn" id="sPersonas">Manage personas (playing as ${esc(uname())})</button>
     </div>
     <div class="group"><h3>All chats</h3>
-      ${field("Instructions for every chat", `<textarea id="sGlobal" style="min-height:100px" placeholder="e.g. Write in third person. Keep replies under 4 paragraphs. Describe smells and sounds.">${esc(st.globalInstr || "")}</textarea>`, "Applied to every character, world and group. Colored text works with [color=red]text[/color].")}
+      ${field("Rules for every chat", `<textarea id="sGlobal" style="min-height:100px" placeholder="e.g. Write in third person. Keep replies under 4 paragraphs. Describe smells and sounds.">${esc(st.globalInstr || "")}</textarea>`, "Applied to every character, world and group. Colored text works with [color=red]text[/color].")}
       <label class="check"><input type="checkbox" id="sSfx" ${st.sfxColors ? "checked" : ""}> Colored sound effects</label>
       ${field("Sound effect colors", `<textarea id="sSfxRules" style="min-height:120px">${esc(st.sfxRules || "")}</textarea>`, "Edit freely. Any color name or #hex code works.")}
       <button class="btn small" type="button" id="sSfxReset">Restore default colors</button>
+      <label class="check"><input type="checkbox" id="sSound" ${st.sfxSound !== false ? "checked" : ""}> Play a sound when I tap a sound effect</label>
+      ${rangeRow("sVol", "Sound volume", "How loud tapped sound effects play.", 0, 1, 0.05, st.sfxVolume ?? 0.7, v => Math.round(v * 100) + "%")}
+      <button class="btn small" type="button" id="sPack">Sound pack · add your own audio files</button>
     </div>
     <div class="group"><h3>Visuals</h3>
       <label class="check"><input type="checkbox" id="sPort" ${st.portraits ? "checked" : ""}> Generated portraits that change with mood</label>
@@ -1759,6 +1890,8 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   $("sProv").onchange = drawn; $("sThink").onchange = drawn;
   drawn();
   $("sPersonas").onclick = () => openPersonas();
+  ruleTabs($("sGlobal"));
+  $("sPack").onclick = async () => { await $("sSave").onclick(); openSoundPack(); }; // keep any settings changes first
   $("sSfxReset").onclick = () => { $("sSfxRules").value = DEFAULTS.sfxRules; };
   $("sReset").onclick = () => {
     const d = DEFAULTS, map = { sTemp: d.temperature, sMax: d.maxTokens, sCtx: d.contextTokens, sTopK: d.topK, sTopP: d.topP, sRep: d.repPenalty, sFreq: d.freqPenalty };
@@ -1776,7 +1909,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       portraits: $("sPort").checked, backgrounds: $("sBg").checked,
       imgStyle: $("sStyle").value.trim() || DEFAULTS.imgStyle, imgUrl: $("sImg").value.trim() || DEFAULTS.imgUrl,
       keepRecent: n("sKeep", 16), factsEvery: n("sFacts", 4), summarizeAt: n("sSum", 12000),
-      globalInstr: $("sGlobal").value.trim(), sfxColors: $("sSfx").checked, sfxRules: $("sSfxRules").value.trim() || DEFAULTS.sfxRules
+      globalInstr: $("sGlobal").value.trim(), sfxColors: $("sSfx").checked, sfxSound: $("sSound").checked, sfxVolume: n("sVol", 0.7), sfxRules: $("sSfxRules").value.trim() || DEFAULTS.sfxRules
     });
     await saveSettings(); closeSheet();
     if (!$("chat").hidden) updateStage(); else renderHome();
@@ -1982,7 +2115,7 @@ function editChar(c, isNew) {
       ${field("Name", `<input id="cName" value="${esc(work.name)}" placeholder="${KINDS[K].label} name">`)}
       ${field("Tags", `<input id="cTags" value="${esc((work.tags || []).join(", "))}" placeholder="e.g. female, furry, fantasy"><div class="xrow"><button type="button" class="xbtn" id="cTagGen">✦ Suggest tags</button></div>`, "Comma separated. Used for searching and filtering on the home screen.")}
       ${main}
-      ${field("Special instructions", `<textarea id="cInstr" style="min-height:70px" placeholder="Optional rules for this ${KINDS[K].label.toLowerCase()} only, e.g. write ${K === "group" ? "Mira's" : "their"} thoughts in [color=violet]purple[/color]">${esc(work.instructions || "")}</textarea>`, "Always followed in this chat. Colored text works anywhere with [color=red]text[/color].")}
+      ${field("Rules (special instructions)", `<textarea id="cInstr" style="min-height:70px" placeholder="Optional rules for this ${KINDS[K].label.toLowerCase()} only, e.g. write ${K === "group" ? "Mira's" : "their"} thoughts in [color=violet]purple[/color]">${esc(work.instructions || "")}</textarea>`, "Always followed in this chat. Colored text works anywhere with [color=red]text[/color].")}
       ${field("Starting location", `<input id="cPlace" value="${esc(work.startPlace || "")}" placeholder="e.g. rainy tavern, candlelit">`)}
       <div class="group"><h3>Lorebook</h3>
         <p class="note">Entries load into the AI's memory only when one of their keywords comes up.</p>
@@ -2004,6 +2137,7 @@ function editChar(c, isNew) {
       <button class="btn primary" id="cSave">${isNew ? "Create " + KINDS[K].label.toLowerCase() : "Save changes"}</button>
       ${isNew ? "" : `<button class="btn danger" id="cDel">Delete ${KINDS[K].label.toLowerCase()}</button>`}`;
 
+    ruleTabs($("cInstr"));
     const greets = [work.firstMessage || "", ...(work.altGreetings || [])];
     let gi = 0;
     const grab = () => {
@@ -2487,6 +2621,8 @@ const FX_ICON = {
     '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 16h18" stroke-width="1.8"/><path d="M10 16l-2-4 2-3-1-4M10 16l3-3v-3l2-2" stroke-width="1.3"/></svg>']
 };
 FX_ICON.fart = FX_ICON.gas;
+FX_ICON.breath = FX_ICON.wind;
+const FX_CSS = { fart: "gas", breath: "wind" };
 
 /* Adult sound sets (v1.10): picked by text color + what has happened in the chat. Shared clip shapes live in FX_DEFS. */
 const FX_DEFS = "<clipPath id=\"lrfx-p15060\"><path d=\"M3.4 20.6 C2.4 19.4 3 17.2 4.8 16.6 C4.2 15.2 5.4 13.4 7.4 13.2 C7.2 11.4 8.6 9.8 10.6 9.8 C10.8 8 12.2 6.6 14 6.2 C14.6 5 15.6 4.4 16.4 4.6 C16 5.6 16.4 6.8 15.6 7.8 C16.8 8.4 17 9.8 16.2 10.6 C18.2 11 19.2 12.6 18.4 14 C20.6 14.6 21.6 16.8 20.8 18.8 C20.4 20.6 18.6 21.2 16.6 21.2 L6 21.2 C4.8 21.2 3.9 21.1 3.4 20.6Z\"/></clipPath><clipPath id=\"lrfx-p12397\"><path d=\"M2.6 20.4 C1.8 18.6 3 16.8 5 16.6 C5 14.6 6.8 13 9 13.2 C9.6 11.2 11.6 10.2 13.4 10.8 C14.4 9.4 16 9.2 16.6 10.2 C17 11 16.6 11.8 16 12.2 C18.2 12.2 19.6 13.8 19.4 15.4 C21.4 15.6 22.4 17.8 21.6 19.6 C21.2 20.8 19.8 21.2 18.2 21.2 L5 21.2 C3.8 21.2 3 21 2.6 20.4Z\"/></clipPath><clipPath id=\"lrfx-p14702\"><path d=\"M3 20.8 C2 19.6 2.4 17.6 4.2 17 C3.4 15.4 4.4 13.6 6.6 13.4 C6 11.8 7 10.2 8.8 10.4 C8.6 9.2 7.6 8.6 6.6 8.8 C7.6 7.2 10 7 11.4 8.4 C12.4 7.8 13.8 8.4 14 9.8 C15.6 10.4 16.4 12 15.8 13.4 C18.6 13.4 20.6 15.4 20.2 17.4 C21.8 17.8 22 20 20.6 20.8 C19.8 21.2 18.6 21.2 17.4 21.2 L4.6 21.2 C3.8 21.2 3.3 21.1 3 20.8Z\"/></clipPath><clipPath id=\"lrfx-hc\"><path d=\"M12 21 C12 21 3 15.5 3 9.5 A4.5 4.5 0 0 1 12 7.2 A4.5 4.5 0 0 1 21 9.5 C21 15.5 12 21 12 21Z\" transform=\"translate(0 -1.4)\"/></clipPath>";
@@ -2538,6 +2674,7 @@ const FX_MOTION = {
   wave: { n: 0, dur: 900, ring: true, ring2: true, ring3: true }
 };
 FX_MOTION.fart = FX_MOTION.gas;
+FX_MOTION.breath = { n: 4, dur: 1200, path: () => [-6, r(-6, 6), r(30, 60), r(-20, -4)], scale: [0.6, 1.2], ease: "ease-out" };
 Object.assign(FX_PART, {
   shit: '<svg viewBox="0 0 20 20"><ellipse cx="10" cy="11" rx="7" ry="5.5" fill="#86653F"/><ellipse cx="8" cy="9" rx="2.6" ry="1.4" fill="#9C7A4E"/></svg>',
   shitbones: '<svg viewBox="0 0 20 20"><path d="M5 15L15 5" stroke="#EDE6D6" stroke-width="3" stroke-linecap="round"/><circle cx="3.6" cy="14.6" r="2" fill="#EDE6D6"/><circle cx="5.4" cy="16.4" r="2" fill="#EDE6D6"/><circle cx="14.6" cy="3.6" r="2" fill="#EDE6D6"/><circle cx="16.4" cy="5.4" r="2" fill="#EDE6D6"/></svg>',
@@ -2583,9 +2720,10 @@ function sfxCtx(i) {
 function rgbOf(el) { const m = getComputedStyle(el).color.match(/[\d.]+/g); return m ? m.slice(0, 3).map(Number) : null; }
 const nearRGB = (c, t, d) => c && Math.abs(c[0] - t[0]) + Math.abs(c[1] - t[1]) + Math.abs(c[2] - t[2]) <= d;
 function sfxPick(sp, t) {
+  if (isBreath(t)) return "breath";
   let cat = sfxCat(t);
   const c = rgbOf(sp), w = t.toLowerCase();
-  const cream = c && Math.min(...c) >= 200 && Math.max(...c) - Math.min(...c) <= 60;
+  const cream = c && Math.min(...c) >= 200 && Math.max(...c) - Math.min(...c) <= 60 && c[0] - c[2] >= 10;
   const gurgly = cat === "bubbles" || /(slo+sh|swa+sh|glo+sh|sqlo+sh)/.test(w);
   if (cat !== "fart" && cat !== "gas" && cat !== "kiss" && nearRGB(c, [201, 162, 126], 45)) cat = "shit";
   else if (cat !== "kiss" && nearRGB(c, [255, 111, 174], 50)) cat = "sex";
@@ -2598,11 +2736,19 @@ function sfxPick(sp, t) {
   return cat;
 }
 function r(a, b) { return a + Math.random() * (b - a); }
-function isSfxText(t) {
+// breathing sounds: always shown soft white, never green
+const BREATH = /^(h+a+h+$|h+a+$|ha{2,}h*|hu+f+|hf+|pa+n+t|phe+w|ph+ew|si+gh|fwu+h|fu+h+$|ffu+h|hu+h+$|h{3,}|whe+w|exha+l|inha+l|sni+f+|hhf+|gaa*sp)/i;
+const isBreath = t => BREATH.test(t.replace(/[^\p{L}\s]/gu, "").trim().split(/\s+/)[0] || "");
+function isSfxText(t, bold) {
   const letters = t.replace(/[^\p{L}]/gu, "");
-  if (!letters || t.length > 32) return false;
+  if (letters.length < 2) return false;
+  const words = t.split(/\s+/).filter(Boolean);
+  if (t.length > 60 || words.length > 8) return false;
   const up = letters.replace(/[^\p{Lu}]/gu, "").length / letters.length;
-  return up >= 0.7 || (t.length <= 18 && SFX_RULES.some(([, re]) => re.test(letters)));
+  if (up >= 0.6) return true;
+  if (words.length > 4) return false;
+  if (bold) return true;
+  return words.some(w => { const l = w.replace(/[^\p{L}]/gu, ""); return isBreath(l) || SFX_RULES.some(([, re]) => re.test(l)); });
 }
 function sfxCat(t) {
   const w = t.replace(/[^\p{L}\s-]/gu, "").trim();
@@ -2612,19 +2758,28 @@ function sfxCat(t) {
 }
 function decorateSfx(root) {
   if (!document.getElementById("lrfxDefs")) document.body.insertAdjacentHTML("beforeend", `<svg id="lrfxDefs" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${FX_DEFS}</defs></svg>`);
+  const mark = el => {
+    const t = el.textContent.trim();
+    if (isBreath(t)) { const c = rgbOf(el); if (c && c[1] > c[0] + 30 && c[1] > c[2] + 30) el.style.color = "#f3f0f8"; }
+    const cat = sfxPick(el, t);
+    el.classList.add("sfx"); el.dataset.fx = cat;
+    el.setAttribute("role", "button"); el.setAttribute("aria-label", t + " (sound effect)");
+    const set = FX_ICON[cat] || FX_ICON.wave;
+    el.insertAdjacentHTML("beforeend", `<span class="fxi fx-${FX_CSS[cat] || cat}" aria-hidden="true">${set[hash(t) % set.length]}</span>`);
+  };
   root.querySelectorAll(".cx:not(.sfx-done)").forEach(sp => {
     sp.classList.add("sfx-done");
-    const t = sp.textContent.trim();
-    if (!isSfxText(t)) return;
-    const cat = sfxPick(sp, t);
-    sp.classList.add("sfx"); sp.dataset.fx = cat;
-    sp.setAttribute("role", "button"); sp.setAttribute("aria-label", t + " (sound effect)");
-    const set = FX_ICON[cat] || FX_ICON.wave;
-    sp.insertAdjacentHTML("beforeend", `<span class="fxi fx-${cat === "fart" ? "gas" : cat}" aria-hidden="true">${set[hash(t) % set.length]}</span>`);
+    if (sp.closest(".sfx")) return;
+    const t = sp.textContent.trim(), strongs = [...sp.querySelectorAll("strong")];
+    const allBold = !!sp.closest("strong") || (strongs.length === 1 && strongs[0].textContent.trim() === t);
+    if (isSfxText(t, allBold)) return mark(sp);
+    // a colored phrase with a bold sound inside it: decorate just the sound
+    for (const st of strongs) { const s2 = st.textContent.trim(); if (s2.split(/\s+/).length <= 4 && isSfxText(s2, true)) mark(st); }
   });
 }
 function burst(sp) {
   const cat = sp.dataset.fx || "wave", M = FX_MOTION[cat] || FX_MOTION.wave;
+  playSfx(cat, sp.textContent.trim());
   sp.animate([{ transform: "scale(1)" }, { transform: "scale(1.28) rotate(-3deg)" }, { transform: "scale(1)" }], { duration: 320, easing: "ease-out" });
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const rc = sp.getBoundingClientRect(), cx = rc.left + rc.width / 2, cy = rc.top + rc.height / 2, color = getComputedStyle(sp).color;
@@ -2665,6 +2820,144 @@ function burst(sp) {
   }
 }
 
+
+/* ---------- Sound effect audio ---------- */
+// Tapping a sound effect plays the user's own file for that sound type if they added one (Settings → Sound pack),
+// otherwise a small sound synthesised on the phone. Sound types are the visual categories plus a few audio-only ones.
+const SND_TYPES = {
+  bubbles: "Gurgles", churn: "Stomach churns", swallow: "Swallows & gulps", gas: "Burps", fart: "Farts", liquid: "Wet & sloshing",
+  cumbub: "Ball sloshing", cum: "Cum", condom: "Condom squelch", shit: "Plops", shitbones: "Bone plops", sex: "Sex", kiss: "Kisses",
+  beat: "Heartbeats", struggle: "Muffled struggling", crack: "Cracks & crunches", hit: "Hits", stomp: "Stomps & thuds", boom: "Booms",
+  slash: "Slashes", fire: "Fire", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", wave: "Other"
+};
+// words that pick a finer audio type than their icon category
+const SND_SUB = [["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ["struggle", /(mmph|mmf+|mrph|thu+m+p+.*thu+m+p|squir+m|kick)/i]];
+// file names → sound type, for adding a whole pack at once
+const SND_NAMES = [["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i], ["churn", /churn|growl|rumbl|digest.*(long|ambien)|ambien/i], ["bubbles", /gurgl|stomach|belly|digest|tummy|bubbl|innard|gut/i],
+  ["gas", /burp|belch|bel[ck]h?/i], ["fart", /fart|flatul|toot/i], ["beat", /heart|beat|pulse|thump/i], ["struggle", /struggl|muffl|squirm|kick|pound|knock|trapped/i],
+  ["cumbub", /ball|testic|scrot|nut/i], ["cum", /cum|ejacul|spurt|jizz|semen/i], ["condom", /condom|rubber/i], ["shit", /plop|poop|scat|shit|toilet|defecat|turd/i],
+  ["crack", /crunch|bone|crack|snap|break/i], ["liquid", /slosh|squelch|wet|slime|squish|slurp|lick|drip|splash|saliva|drool|goo|liquid|acid/i],
+  ["sex", /sex|plap|thrust|slap/i], ["kiss", /kiss|smooch|mwah/i], ["hit", /hit|punch|smack|impact/i], ["stomp", /stomp|thud|step|foot/i], ["boom", /boom|explo/i], ["breath", /breath|pant|sigh|exhal|inhal/i]];
+const sndTypeForFile = name => (SND_NAMES.find(([, re]) => re.test(name)) || ["wave"])[0];
+let SND = null, AC = null; const SND_URLS = {};
+async function sndIndex() { if (!SND) SND = (await Store.get("sounds")) || []; return SND; }
+async function sndSave() { await Store.set("sounds", SND); }
+async function sndURL(id) {
+  if (SND_URLS[id]) return SND_URLS[id];
+  const blob = await Store.get("snd:" + id);
+  if (!blob) return null;
+  return (SND_URLS[id] = URL.createObjectURL(blob));
+}
+async function playSfx(cat, text) {
+  const st = S.settings; if (st.sfxSound === false) return;
+  const vol = Math.max(0, Math.min(1, st.sfxVolume ?? 0.7)); if (!vol) return;
+  const sub = (SND_SUB.find(([, re]) => re.test(text || "")) || [])[0];
+  const order = [sub, cat, cat === "cumbub" ? "bubbles" : cat === "shitbones" ? "shit" : cat === "condom" ? "cum" : cat === "churn" ? "bubbles" : null].filter(Boolean);
+  try {
+    const list = await sndIndex();
+    for (const t of order) {
+      const mine = list.filter(x => x.type === t);
+      if (!mine.length) continue;
+      const pick = mine[Math.floor(Math.random() * mine.length)], url = await sndURL(pick.id);
+      if (!url) continue;
+      const a = new Audio(url); a.volume = vol; await a.play(); return;
+    }
+  } catch {}
+  synthSfx(sub && SYNTH[sub] ? sub : cat, vol);
+}
+// --- tiny synthesiser (Web Audio). Each sound is a few envelopes on tones and filtered noise.
+function acx() { if (!AC) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); } if (AC.state === "suspended") AC.resume(); return AC; }
+function sTone(ac, out, { type = "sine", f0, f1 = f0, t = 0, dur, g = 0.5, vib = 0, vibF = 8 }) {
+  const o = ac.createOscillator(), e = ac.createGain(), at = ac.currentTime + t;
+  o.type = type; o.frequency.setValueAtTime(f0, at); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), at + dur);
+  if (vib) { const l = ac.createOscillator(), lg = ac.createGain(); l.frequency.value = vibF; lg.gain.value = vib; l.connect(lg).connect(o.frequency); l.start(at); l.stop(at + dur); }
+  e.gain.setValueAtTime(0.0001, at); e.gain.exponentialRampToValueAtTime(g, at + Math.min(0.02, dur / 4)); e.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+  o.connect(e).connect(out); o.start(at); o.stop(at + dur + 0.02);
+}
+let NOISE = null;
+function sNoise(ac, out, { t = 0, dur, g = 0.4, type = "bandpass", f0 = 800, f1 = f0, q = 1 }) {
+  if (!NOISE) { NOISE = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate); const d = NOISE.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+  const n = ac.createBufferSource(), f = ac.createBiquadFilter(), e = ac.createGain(), at = ac.currentTime + t;
+  n.buffer = NOISE; f.type = type; f.Q.value = q; f.frequency.setValueAtTime(f0, at); f.frequency.exponentialRampToValueAtTime(Math.max(30, f1), at + dur);
+  e.gain.setValueAtTime(0.0001, at); e.gain.exponentialRampToValueAtTime(g, at + Math.min(0.015, dur / 4)); e.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+  n.connect(f).connect(e).connect(out); n.start(at, Math.random()); n.stop(at + dur + 0.02);
+}
+const rr = (a, b) => a + Math.random() * (b - a);
+const gurgle = (ac, o, n, low) => { let t = 0; for (let i = 0; i < n; i++) { const d = rr(0.05, 0.14), f = rr(low ? 90 : 160, low ? 260 : 520); sTone(ac, o, { f0: f, f1: f * rr(1.4, 2.4), t, dur: d, g: 0.35 }); sNoise(ac, o, { t, dur: d, g: 0.12, f0: f * 2, q: 6 }); t += d * rr(0.5, 1.1); } };
+const SYNTH = {
+  bubbles: (ac, o) => gurgle(ac, o, 9, true),
+  cumbub: (ac, o) => { gurgle(ac, o, 7, false); sNoise(ac, o, { dur: 0.5, g: 0.15, type: "lowpass", f0: 900, f1: 300 }); },
+  churn: (ac, o) => { sTone(ac, o, { type: "sawtooth", f0: 60, f1: 45, dur: 1.1, g: 0.18, vib: 12, vibF: 5 }); sNoise(ac, o, { dur: 1.1, g: 0.2, type: "lowpass", f0: 300, f1: 140, q: 3 }); gurgle(ac, o, 4, true); },
+  swallow: (ac, o) => { sTone(ac, o, { f0: 420, f1: 120, dur: 0.22, g: 0.5 }); sNoise(ac, o, { t: 0.02, dur: 0.18, g: 0.25, f0: 700, f1: 200, q: 4 }); sTone(ac, o, { f0: 90, f1: 60, t: 0.18, dur: 0.25, g: 0.5 }); },
+  gas: (ac, o) => { sTone(ac, o, { type: "sawtooth", f0: rr(85, 110), f1: 65, dur: 0.55, g: 0.35, vib: 18, vibF: 22 }); sNoise(ac, o, { dur: 0.5, g: 0.15, type: "lowpass", f0: 500, f1: 250 }); },
+  fart: (ac, o) => { sTone(ac, o, { type: "sawtooth", f0: rr(70, 95), f1: 50, dur: 0.6, g: 0.35, vib: 25, vibF: 30 }); sNoise(ac, o, { dur: 0.6, g: 0.25, type: "lowpass", f0: 350, f1: 150 }); },
+  liquid: (ac, o) => { for (let i = 0; i < 3; i++) sTone(ac, o, { f0: rr(300, 500), f1: rr(900, 1400), t: i * 0.09, dur: 0.07, g: 0.35 }); sNoise(ac, o, { dur: 0.25, g: 0.12, f0: 1200, f1: 500, q: 2 }); },
+  cum: (ac, o) => { sNoise(ac, o, { dur: 0.22, g: 0.35, type: "lowpass", f0: 1600, f1: 400 }); sTone(ac, o, { f0: 260, f1: 700, t: 0.04, dur: 0.1, g: 0.25 }); sNoise(ac, o, { t: 0.25, dur: 0.18, g: 0.25, type: "lowpass", f0: 1200, f1: 300 }); },
+  condom: (ac, o) => { sNoise(ac, o, { dur: 0.45, g: 0.35, f0: 300, f1: 900, q: 5 }); sTone(ac, o, { f0: 140, f1: 90, dur: 0.4, g: 0.3, vib: 20, vibF: 12 }); },
+  shit: (ac, o) => { sTone(ac, o, { f0: 220, f1: 55, dur: 0.18, g: 0.6 }); sNoise(ac, o, { t: 0.04, dur: 0.25, g: 0.18, type: "lowpass", f0: 900, f1: 200 }); },
+  shitbones: (ac, o) => { SYNTH.shit(ac, o); for (let i = 0; i < 3; i++) sNoise(ac, o, { t: 0.08 + i * 0.05, dur: 0.03, g: 0.25, type: "highpass", f0: 2500 }); },
+  sex: (ac, o) => { for (let i = 0; i < 2; i++) { sNoise(ac, o, { t: i * 0.22, dur: 0.08, g: 0.45, type: "lowpass", f0: 1400, f1: 500 }); sTone(ac, o, { f0: 160, f1: 90, t: i * 0.22, dur: 0.08, g: 0.3 }); } },
+  kiss: (ac, o) => { sTone(ac, o, { f0: 700, f1: 1500, dur: 0.07, g: 0.3 }); sNoise(ac, o, { t: 0.05, dur: 0.04, g: 0.3, type: "highpass", f0: 2000 }); },
+  beat: (ac, o) => { sTone(ac, o, { f0: 70, f1: 45, dur: 0.14, g: 0.8 }); sTone(ac, o, { f0: 65, f1: 42, t: 0.22, dur: 0.16, g: 0.65 }); },
+  struggle: (ac, o) => { for (let i = 0; i < 3; i++) { sTone(ac, o, { f0: rr(70, 100), f1: 45, t: i * rr(0.12, 0.2), dur: 0.12, g: 0.5 }); sNoise(ac, o, { t: i * 0.15, dur: 0.1, g: 0.15, type: "lowpass", f0: 400 }); } },
+  crack: (ac, o) => { for (let i = 0; i < 4; i++) sNoise(ac, o, { t: i * rr(0.02, 0.05), dur: 0.035, g: 0.45, type: "highpass", f0: rr(1500, 3500) }); },
+  hit: (ac, o) => { sNoise(ac, o, { dur: 0.12, g: 0.5, type: "lowpass", f0: 2500, f1: 400 }); sTone(ac, o, { f0: 140, f1: 55, dur: 0.15, g: 0.6 }); },
+  stomp: (ac, o) => { sTone(ac, o, { f0: 90, f1: 35, dur: 0.3, g: 0.8 }); sNoise(ac, o, { dur: 0.25, g: 0.25, type: "lowpass", f0: 600, f1: 120 }); },
+  boom: (ac, o) => { sTone(ac, o, { f0: 80, f1: 28, dur: 1.0, g: 0.8 }); sNoise(ac, o, { dur: 1.2, g: 0.5, type: "lowpass", f0: 1800, f1: 80 }); },
+  slash: (ac, o) => sNoise(ac, o, { dur: 0.25, g: 0.4, type: "highpass", f0: 1200, f1: 6000 }),
+  fire: (ac, o) => { sNoise(ac, o, { dur: 0.7, g: 0.25, f0: 500, f1: 1600, q: 0.7 }); for (let i = 0; i < 6; i++) sNoise(ac, o, { t: rr(0, 0.6), dur: 0.02, g: 0.3, type: "highpass", f0: 3000 }); },
+  zap: (ac, o) => sTone(ac, o, { type: "square", f0: 1100, f1: 160, dur: 0.25, g: 0.18, vib: 200, vibF: 60 }),
+  magic: (ac, o) => [880, 1175, 1480, 1760].forEach((f, i) => sTone(ac, o, { f0: f, t: i * 0.06, dur: 0.35, g: 0.18 })),
+  zzz: (ac, o) => sTone(ac, o, { f0: 180, f1: 150, dur: 0.8, g: 0.15, vib: 4, vibF: 3 }),
+  wind: (ac, o) => sNoise(ac, o, { dur: 0.9, g: 0.3, f0: 400, f1: 900, q: 1.5 }),
+  breath: (ac, o) => sNoise(ac, o, { dur: 0.7, g: 0.22, f0: 900, f1: 500, q: 0.8 }),
+  wave: (ac, o) => sTone(ac, o, { f0: 400, f1: 700, dur: 0.12, g: 0.25 })
+};
+function synthSfx(cat, vol) {
+  const ac = acx(); if (!ac) return;
+  const out = ac.createGain(); out.gain.value = vol; out.connect(ac.destination);
+  (SYNTH[cat] || SYNTH[FX_CSS[cat]] || SYNTH.wave)(ac, out);
+}
+function openSoundPack() {
+  openSheet("Sound pack", async b => {
+    const list = await sndIndex();
+    let tab = list[0]?.type || "bubbles";
+    b.innerHTML = `<p class="note">Add audio files (MP3, WAV, OGG, M4A) from your phone. Choose many at once: each file is sorted into a sound type by its name, like gurgle, burp or swallow. Your files play instead of the built-in sounds; with several in one type, one is picked at random each tap.</p>
+      <label class="btn primary" for="spFiles">+ Add sound files</label><input type="file" id="spFiles" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac" multiple hidden>
+      <div id="spMsg" class="hint"></div><div class="tabs" id="spTabs" style="flex-wrap:wrap"></div><div id="spList" class="stack"></div>`;
+    const draw = () => {
+      const counts = {}; for (const x of SND) counts[x.type] = (counts[x.type] || 0) + 1;
+      const types = Object.keys(SND_TYPES).filter(t => counts[t]);
+      if (!counts[tab]) tab = types[0] || tab;
+      $("spTabs").innerHTML = types.map(t => `<button type="button" class="tab ${t === tab ? "on" : ""}" data-t="${t}">${SND_TYPES[t]} · ${counts[t]}</button>`).join("");
+      $("spTabs").querySelectorAll("[data-t]").forEach(x => x.onclick = () => { tab = x.dataset.t; draw(); });
+      const rows = SND.filter(x => x.type === tab);
+      $("spList").innerHTML = rows.length ? rows.map(x => `<div class="row snd-row" data-id="${x.id}"><button type="button" class="icon" data-play aria-label="Play ${esc(x.name)}">▶</button><span class="grow snd-name">${esc(x.name)}</span><select data-type>${Object.entries(SND_TYPES).map(([k, v]) => `<option value="${k}" ${k === x.type ? "selected" : ""}>${v}</option>`).join("")}</select><button type="button" class="icon" data-rm aria-label="Remove ${esc(x.name)}">✕</button></div>`).join("")
+        : '<p class="note">No sounds added yet. Every sound effect uses its built-in sound until you add your own.</p>';
+      $("spList").querySelectorAll(".snd-row").forEach(r => {
+        const x = SND.find(y => y.id === r.dataset.id);
+        r.querySelector("[data-play]").onclick = async () => { const u = await sndURL(x.id); if (u) { const a = new Audio(u); a.volume = S.settings.sfxVolume ?? 0.7; a.play().catch(() => {}); } };
+        r.querySelector("[data-type]").onchange = async e => { x.type = e.target.value; await sndSave(); draw(); };
+        r.querySelector("[data-rm]").onclick = async () => { SND = SND.filter(y => y !== x); await Store.del("snd:" + x.id); if (SND_URLS[x.id]) URL.revokeObjectURL(SND_URLS[x.id]); delete SND_URLS[x.id]; await sndSave(); draw(); };
+      });
+    };
+    $("spFiles").onchange = async e => {
+      const files = [...e.target.files]; e.target.value = "";
+      let added = 0, failed = 0;
+      for (const f of files) {
+        $("spMsg").textContent = `Adding ${added + failed + 1} of ${files.length}…`;
+        try { const id = uid(); await Store.setRaw("snd:" + id, f); SND.push({ id, name: f.name.replace(/\.[^.]+$/, ""), type: sndTypeForFile(f.name) }); added++; }
+        catch { failed++; }
+      }
+      await sndSave();
+      $("spMsg").textContent = `Added ${added} sound${added === 1 ? "" : "s"}.` + (failed ? ` ${failed} couldn't be saved (the phone may be out of space).` : "") + " Check the tabs and change any that landed in the wrong type.";
+      if (added) tab = SND.at(-1).type;
+      draw();
+    };
+    draw();
+  });
+}
+
 /* ---------- Boot & migrations ---------- */
 async function migrateChats() {
   for (const k of await Store.keys()) {
@@ -2690,6 +2983,7 @@ async function migrateChats() {
     Object.assign(S.settings, { temperature: DEFAULTS.temperature, maxTokens: DEFAULTS.maxTokens, contextTokens: DEFAULTS.contextTokens, topK: DEFAULTS.topK, topP: DEFAULTS.topP, repPenalty: DEFAULTS.repPenalty, freqPenalty: DEFAULTS.freqPenalty });
   }
   if ((S.settings.sfxRules || "").includes("- green: belches, farts, stomach gurgles and growls")) S.settings.sfxRules = DEFAULTS.sfxRules;
+  if (S.settings.sfxRules === "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, stomach gurgles and growls\n- #a8875a (brown): farts\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses\n- #f1ebda (cream): cum, ejaculation and semen sounds, and the sloshing or gurgling of full balls or cum-filled bellies\n- #ff6fae (pink): sex sounds, like hips slapping and thrusting") S.settings.sfxRules = DEFAULTS.sfxRules;
   if (S.settings.sfxRules === "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, stomach gurgles and growls\n- #a8875a (brown): farts\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses") S.settings.sfxRules = DEFAULTS.sfxRules;
   S.settings.v = 4;
   S.chars = (await Store.get("chars")) || [];
