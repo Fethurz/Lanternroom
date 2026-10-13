@@ -443,6 +443,10 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .char-card .more:active{background:var(--surface-2)}
 .char-card .name{padding-right:34px}
 .fav-star{color:var(--accent);margin-right:4px}
+.sheet-confirm{margin:0 16px 8px;padding:10px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--accent);display:flex;flex-direction:column;gap:8px;font-size:14px;animation:fadeIn .15s ease}
+.sheet-confirm .row > *{flex:0 0 auto;min-width:0}
+.draft-note{border-color:var(--accent)}
+.draft-row .btn{flex:none}
 .pf-top{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:start}
 .pf-img{width:96px;aspect-ratio:4/5;object-fit:cover;border-radius:12px;background:var(--surface-2);border:1px solid var(--line)}
 .pf-kind{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--kc,var(--accent))}
@@ -660,7 +664,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.24 · Oct 13";
+const VERSION = "1.25 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1358,8 +1362,15 @@ async function openChats(cid) {
 }
 $("btnBooks").onclick = () => openBooks();
 $("btnNewChar").onclick = () => openSheet("Create", b => {
-  b.innerHTML = `<div class="menu"><button class="btn kind-opt gen-opt" id="genOpen">✦ Character generator<small>Describe what you want and the AI builds the whole bot for you.</small></button><button class="btn kind-opt gen-opt" id="genSurprise">🎲 Surprise me<small>Pick a few tags and get a brand-new bot built around them.</small></button>${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
-  $("genOpen").onclick = () => openGenerator();
+  const ds = Object.entries(DRAFTS || {}).filter(([id, d]) => d && (d.type === "gen" ? (d.prompt || "").trim() || d.card : d.type === "edit" && d.isNew)).sort((a, b) => b[1].at - a[1].at);
+  const dName = d => d.type === "gen" ? `${d.card?.name || "Generator draft"} · ${KINDS[d.card?._kind || d.kind]?.label || "Bot"} (generator)` : `${d.work?.name || "Untitled " + (KINDS[d.kind]?.label || "bot").toLowerCase()}`;
+  b.innerHTML = `${ds.length ? `<div class="stack"><div class="lbl">Unfinished</div>${ds.map(([id, d]) => `<div class="listrow draft-row" data-id="${esc(id)}"><span class="grow"><b>${esc(dName(d))}</b><span class="sub">Saved ${esc(fmtWhen(d.at))}</span></span><button type="button" class="btn small primary" data-go>Continue</button><button type="button" class="btn small danger" data-rm>Discard</button></div>`).join("")}</div>` : ""}<div class="menu"><button class="btn kind-opt gen-opt" id="genOpen">✦ Character generator<small>Describe what you want and the AI builds the whole bot for you.</small></button><button class="btn kind-opt gen-opt" id="genSurprise">🎲 Surprise me<small>Pick a few tags and get a brand-new bot built around them.</small></button>${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
+  $("genOpen").onclick = async () => { await genRestore(); openGenerator(); };
+  b.querySelectorAll(".draft-row").forEach(r => {
+    const id = r.dataset.id, d = DRAFTS[id];
+    r.querySelector("[data-go]").onclick = async () => { if (d.type === "gen") { await genRestore(); openGenerator(); } else editChar(d.work, true, d); };
+    confirmBtn(r.querySelector("[data-rm]"), "Sure?", async () => { await dropDraft(id); if (id === "gen") { GEN.card = null; GEN.prompt = ""; } r.remove(); });
+  });
   $("genSurprise").onclick = () => openSurprise();
   b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => editChar(blankChar(x.dataset.k), true));
 });
@@ -1367,6 +1378,15 @@ $("btnNewChar").onclick = () => openSheet("Create", b => {
 /* ---------- Character generator ---------- */
 // GEN keeps the last request and result while the app is open, so closing the sheet doesn't lose work.
 const GEN = { kind: "character", form: "auto", prompt: "", card: null, busy: false };
+// Unfinished bots are kept as drafts (Store key "drafts", synced) until they're created or discarded,
+// so closing the generator or the editor never loses what was written.
+let DRAFTS = null;
+async function drafts() { if (!DRAFTS) DRAFTS = (await Store.get("drafts")) || {}; return DRAFTS; }
+const draftT = {};
+function saveDraft(id, d) { clearTimeout(draftT[id]); draftT[id] = setTimeout(async () => { const all = await drafts(); all[id] = { ...JSON.parse(JSON.stringify(d)), at: Date.now() }; await Store.set("drafts", all); }, 500); }
+async function dropDraft(id) { clearTimeout(draftT[id]); const all = await drafts(); if (all[id]) { delete all[id]; await Store.set("drafts", all); } }
+const genKeep = () => { if (GEN.prompt.trim() || GEN.card) saveDraft("gen", { type: "gen", kind: GEN.kind, form: GEN.form, prompt: GEN.prompt, card: GEN.card }); };
+async function genRestore() { const d = (await drafts()).gen; if (d && !GEN.prompt && !GEN.card) Object.assign(GEN, { kind: d.kind || "character", form: d.form || "auto", prompt: d.prompt || "", card: d.card || null }); }
 const GEN_PARTS = {
   character: [["name", "Name"], ["tags", "Tags"], ["appearance", "Look"], ["description", "Personality"], ["scenario", "Scenario"], ["firstMessages", "Openings"], ["instructions", "Rules"], ["lore", "Lore"]],
   world: [["name", "Name"], ["tags", "Tags"], ["description", "World"], ["cast", "Listings"], ["scenario", "Opening situation"], ["firstMessages", "Openings"], ["instructions", "Rules"], ["lore", "Lore"]],
@@ -1431,6 +1451,7 @@ async function genRewrite(card, kind, form, keys, note) {
 function openGenerator() {
   if (GEN.card) return genReview();
   openSheet("Character generator", b => {
+    S.sheetGuard = "gen";
     b.innerHTML = `
       ${field("Bot type", `<div class="tabs" id="gKind">${Object.entries(KINDS).map(([k, v]) => `<button type="button" class="tab ${k === GEN.kind ? "on" : ""}" data-k="${k}">${v.label}</button>`).join("")}</div><div class="hint" id="gKindHint">${KINDS[GEN.kind].blurb}</div>`)}
       <div id="gFormWrap">${field("Form", `<select id="gForm">${[["auto", "Let the AI decide"], ...Object.entries(ART).map(([k, v]) => [k, v.label])].map(([k, l]) => `<option value="${k}" ${GEN.form === k ? "selected" : ""}>${l}</option>`).join("")}</select>`, "Human, anthro / furry, or feral. Used for pictures too.")}</div>
@@ -1438,10 +1459,10 @@ function openGenerator() {
       <div id="gMsg" class="hint"></div>
       <button class="btn primary" id="gGo">✦ Create</button>`;
     const showForm = () => { $("gFormWrap").hidden = GEN.kind === "world"; $("gKindHint").textContent = KINDS[GEN.kind].blurb; };
-    b.querySelectorAll("#gKind [data-k]").forEach(x => x.onclick = () => { GEN.kind = x.dataset.k; b.querySelectorAll("#gKind .tab").forEach(t => t.classList.toggle("on", t === x)); showForm(); });
+    b.querySelectorAll("#gKind [data-k]").forEach(x => x.onclick = () => { GEN.kind = x.dataset.k; genKeep(); b.querySelectorAll("#gKind .tab").forEach(t => t.classList.toggle("on", t === x)); showForm(); });
     showForm();
-    $("gPrompt").addEventListener("input", e => { GEN.prompt = e.target.value; });
-    $("gForm").onchange = e => { GEN.form = e.target.value; };
+    $("gPrompt").addEventListener("input", e => { GEN.prompt = e.target.value; genKeep(); });
+    $("gForm").onchange = e => { GEN.form = e.target.value; genKeep(); };
     $("gGo").onclick = async () => {
       GEN.prompt = $("gPrompt").value.trim();
       if (!GEN.prompt) { $("gPrompt").focus(); $("gMsg").textContent = "Write a few words about what you want first."; return; }
@@ -1487,7 +1508,7 @@ async function genRun(job, label) {
   openSheet("Character generator", b => {
     b.innerHTML = `<div class="gen-wait">${lanternSVG("seq")}<p><b>${esc(label)}</b></p><p class="hint">Writing every part takes up to a minute or two. You can close this; it keeps going.</p></div>`;
   });
-  try { GEN.card = await job(); GEN.busy = false; if (!$("sheet").hidden) genReview(); }
+  try { GEN.card = await job(); GEN.busy = false; genKeep(); if (!$("sheet").hidden) genReview(); }
   catch (e) {
     GEN.busy = false;
     if ($("sheet").hidden) return;
@@ -1508,6 +1529,7 @@ function genReview(err) {
   parts.push(sec("Rules", txt(c.instructions)));
   parts.push(sec(`Lore · ${(c.lore || []).length}`, (c.lore || []).map(l => `<p><b>${esc(l.keys)}</b><br>${esc(l.text)}</p>`).join("")));
   openSheet("Your new " + KINDS[K].label.toLowerCase(), b => {
+    S.sheetGuard = "gen";
     b.innerHTML = `
       <div class="gen-sum"><h3>${esc(c.name)}</h3><p>${esc(c.summary || "")}</p><div class="gen-tags">${(c.tags || []).map(t => `<span class="badge">${esc(t)}</span>`).join("")}</div></div>
       <p class="hint" style="margin:0">Tap a section to read it.</p>
@@ -1532,7 +1554,7 @@ function genReview(err) {
     };
     $("gMake").onclick = () => genFinish(false);
     $("gEdit").onclick = () => genFinish(true);
-    $("gAgain").onclick = () => { GEN.card = null; openGenerator(); };
+    $("gAgain").onclick = () => { GEN.card = null; genKeep(); if (!GEN.prompt.trim()) dropDraft("gen"); openGenerator(); };
   });
 }
 async function genFinish(edit) {
@@ -1553,7 +1575,7 @@ async function genFinish(edit) {
   await Promise.allSettled([K === "group" ? null : ensureVisual(w), ...made.map(m => ensureVisual(m))].filter(Boolean).map(p => within(p, 25000)));
   S.chars.unshift(...made); S.chars.unshift(w);
   await saveChars();
-  GEN.card = null; GEN.prompt = "";
+  GEN.card = null; GEN.prompt = ""; dropDraft("gen");
   closeSheet(); renderHome();
   if (edit) editChar(w, false); else openChat(w.id);
 }
@@ -1969,14 +1991,27 @@ $("btnIllustrate").onclick = illustrate;
 
 /* ---------- Sheets ---------- */
 function openSheet(title, build) {
+  S.sheetGuard = null; $("sheetConfirm")?.remove();
+  // listeners a window adds to the shared body go away with that window
+  S.sheetAC?.abort(); S.sheetAC = new AbortController();
   $("sheetTitle").textContent = title;
   const body = $("sheetBody"); body.innerHTML = "";
   build(body);
   $("sheet").hidden = false; body.scrollTop = 0;
 }
-function closeSheet() { $("sheet").hidden = true; $("sheetBody").innerHTML = ""; }
-$("sheetClose").onclick = closeSheet;
-$("sheet").addEventListener("click", e => { if (e.target.id === "sheet" && !$("sheetBody").querySelector("textarea")) closeSheet(); });
+function closeSheet() { $("sheet").hidden = true; $("sheetBody").innerHTML = ""; S.sheetGuard = null; $("sheetConfirm")?.remove(); S.sheetAC?.abort(); S.sheetAC = null; }
+// what the user does to close (✕, back button, tapping outside): the bot creator and editor ask first
+function userClose() {
+  if (!S.sheetGuard) { closeSheet(); return true; }
+  if ($("sheetConfirm")) return false;
+  (S.sheetGuard === "gen" ? genKeep() : $("sheetBody").dispatchEvent(new Event("input")));
+  $("sheetBody").insertAdjacentHTML("beforebegin", `<div id="sheetConfirm" class="sheet-confirm" role="alertdialog" aria-label="Close?"><span>Close? What you wrote is saved as a draft. Pick it up any time from <b>New</b>.</span><div class="row"><button type="button" class="btn small primary" id="scKeep">Keep editing</button><button type="button" class="btn small" id="scClose">Close</button></div></div>`);
+  $("scKeep").onclick = () => $("sheetConfirm").remove();
+  $("scClose").onclick = () => closeSheet();
+  return false;
+}
+$("sheetClose").onclick = userClose;
+$("sheet").addEventListener("click", e => { if (e.target.id === "sheet" && !S.sheetGuard && !$("sheetBody").querySelector("textarea")) closeSheet(); });
 function field(label, html, hint) { return `<div class="field"><label>${label}</label>${html}${hint ? `<div class="hint">${hint}</div>` : ""}</div>`; }
 function confirmBtn(btn, label, fn) {
   btn.addEventListener("click", () => {
@@ -2515,8 +2550,8 @@ function editBook(bk, isNew, preset) {
 }
 
 /* ---------- Character / world / group editor ---------- */
-function editChar(c, isNew) {
-  const work = JSON.parse(JSON.stringify(c));
+function editChar(c, isNew, fromDraft) {
+  const work = JSON.parse(JSON.stringify(fromDraft ? fromDraft.work : c));
   work.kind = work.kind || "character"; work.lore = work.lore || []; work.bookIds = work.bookIds || []; work.members = work.members || []; work.cast = work.cast || [];
   const K = work.kind;
   const title = (isNew ? "New " : "Edit ") + KINDS[K].label.toLowerCase();
@@ -2672,7 +2707,7 @@ function editChar(c, isNew) {
 
     // Group members (one tab per member, plus an Add tab)
     let memSel = work.members[0] || "add";
-    const memEdits = {};
+    const memEdits = fromDraft && fromDraft.memEdits ? JSON.parse(JSON.stringify(fromDraft.memEdits)) : {};
     let drawMembers = () => {};
     if (K === "group") {
       drawMembers = () => {
@@ -2771,6 +2806,16 @@ function editChar(c, isNew) {
     };
     if ($("cPicClear")) $("cPicClear").onclick = () => { grab(); work.customPortrait = ""; editChar(work, isNew); };
 
+    // everything typed is kept as a draft until it's saved; closing asks first
+    S.sheetGuard = "edit";
+    const keep = () => { try { grab(); saveDraft(work.id, { type: "edit", isNew: !!isNew, kind: K, work, memEdits }); } catch {} };
+    b.addEventListener("input", keep, { signal: S.sheetAC.signal }); b.addEventListener("change", keep, { signal: S.sheetAC.signal });
+    const older = !fromDraft && (DRAFTS || {})[work.id];
+    if (older && older.type === "edit") {
+      b.insertAdjacentHTML("afterbegin", `<div class="note draft-note" id="cDraftNote">You have unsaved changes from ${esc(fmtWhen(older.at))}. <button type="button" class="linkish" id="cDraftUse">Restore them</button> · <button type="button" class="linkish" id="cDraftDrop">Discard</button></div>`);
+      $("cDraftUse").onclick = () => editChar(c, older.isNew, older);
+      confirmBtn($("cDraftDrop"), "Tap again to discard", async () => { await dropDraft(work.id); $("cDraftNote").remove(); });
+    }
     $("cSave").onclick = async () => {
       grab();
       if (!work.name) { $("cName").focus(); $("cName").placeholder = "A name is required"; return; }
@@ -2785,7 +2830,7 @@ function editChar(c, isNew) {
       }
       const i = S.chars.findIndex(x => x.id === work.id);
       if (i < 0) S.chars.unshift(work); else S.chars[i] = work;
-      await saveChars(); closeSheet();
+      await saveChars(); await dropDraft(work.id); closeSheet();
       if (isNew) openChat(work.id);
       else if (!$("chat").hidden && S.charId === work.id) { $("chatName").textContent = work.name; updateStage(); renderMsgs(true); renderSpeakers(); }
       else renderHome();
@@ -2794,7 +2839,7 @@ function editChar(c, isNew) {
       S.chars = S.chars.filter(x => x.id !== work.id);
       for (const g of S.chars) if (g.members) g.members = g.members.filter(id => id !== work.id);
       await saveChars();
-      await deleteAllChats(work.id);
+      await deleteAllChats(work.id); await dropDraft(work.id);
       closeSheet(); S.charId = null; $("chat").hidden = true; $("home").hidden = false; renderHome();
     });
   });
@@ -2967,7 +3012,7 @@ function syncNav() {
 addEventListener("popstate", () => {
   if (POP_IGNORE) { POP_IGNORE--; if (WANT_GUARD) { WANT_GUARD = false; syncNav(); } return; }
   if (!$("ambPop").hidden) $("ambPop").hidden = true;
-  else if (!$("sheet").hidden) closeSheet();
+  else if (!$("sheet").hidden) userClose();
   else if (!$("chat").hidden && !S.busy) leaveChat();
   syncNav();
 });
@@ -4034,7 +4079,7 @@ const Sync = {
   applying: false, timer: null, busy: false, status: "", sent: {},
   save() { try { localStorage.setItem("lr_sync", JSON.stringify(this.st)); } catch {} },
   on() { return !!this.st.refresh; },
-  synced: k => /^(settings|chars|personas|activePersona|books|recent|seeded|sounds|sndfix|sndgone|chats:|c2:|snd:)/.test(k),
+  synced: k => /^(settings|chars|personas|activePersona|books|recent|seeded|sounds|sndfix|sndgone|drafts|chats:|c2:|snd:)/.test(k),
   listKey: k => /^(chars|personas|books|sounds|chats:)/.test(k),
   mark(k) {
     if (this.applying || !this.on() || !this.synced(k)) return;
@@ -4249,6 +4294,7 @@ const Sync = {
       if (typeof SP_DRAW === "function" && $("spList")) SP_DRAW();
     }
     if (any(/^sndfix$/)) SNDFIX = null;
+    if (any(/^drafts$/)) DRAFTS = (await Store.get("drafts")) || {};
     if (!$("chat").hidden && S.chat && S.chat.id && !S.busy && any(new RegExp("^c2:" + S.chat.id + "$"))) { const c = await Store.get("c2:" + S.chat.id); if (c) { S.chat = c; renderMsgs(true); updateStage(); } }
     if (!$("home").hidden && $("sheet").hidden) renderHome();
     renderPanes();
@@ -4316,6 +4362,7 @@ async function migrateChats() {
   S.settings.v = 4;
   applyScale(); applyTheme();
   S.chars = (await Store.get("chars")) || [];
+  await drafts();
   S.recent = (await Store.get("recent")) || {};
   S.books = (await Store.get("books")) || [];
   S.personas = (await Store.get("personas")) || [];
