@@ -248,6 +248,8 @@ html.wide .desk-only{display:inline}
 details.snd-sec{border:1px solid var(--line);border-radius:12px;padding:4px 10px;margin-top:8px}
 details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:34px}
 .linkish{color:var(--accent);text-decoration:underline;padding:0;font-size:inherit}
+.set-tabs{flex-wrap:wrap;position:sticky;top:-4px;z-index:2;background:var(--surface);padding:6px 0}
+.set-panel{gap:16px}
 .snd-built{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .snd-built a{color:var(--accent)}
 .snd-help{background:var(--surface-2);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:8px}
@@ -462,8 +464,8 @@ let UIZ = 1;
 function applyScale() {
   const pick = (S && S.settings && S.settings.uiScale) || "auto";
   const desk = matchMedia("(pointer: fine)").matches && innerWidth >= 760;
-  let z = pick === "auto" ? (desk ? Math.min(2.2, Math.max(1, innerHeight / 700)) : 1) : +pick || 1;
-  z = Math.max(1, Math.min(z, innerWidth / 380)); // always leave room for the phone layout
+  let z = pick === "auto" ? (desk ? Math.min(1.5, Math.max(1, innerHeight / 980)) : 1) : +pick || 1;
+  z = Math.max(0.5, Math.min(z, innerWidth / 360)); // always leave room for the phone layout
   UIZ = Math.round(z * 100) / 100;
   document.body.style.zoom = UIZ;
   document.documentElement.style.setProperty("--z", UIZ);
@@ -509,7 +511,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.19 · Oct 13";
+const VERSION = "1.20 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -851,7 +853,7 @@ function buildPrompt(c, chat, upto, cont) {
   if ((st.globalInstr || "").trim()) sys += `\n\n# The user's instructions for every chat (always follow)\n${fill(st.globalInstr, c)}`;
   sys += `\n\n# Text colors\nThe app shows [color=NAME or #hex]text[/color] as colored text. Use it whenever instructions ask for colored text.` + (st.sfxColors ? `\n${st.sfxRules}` : "");
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke most" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")}${focusPart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is struggle while living prey is squirming inside a stomach, vore while anyone is inside a stomach or being digested and not struggling, sex during penetrative sex, oral during oral sex, otherwise none.`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")}${focusPart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is swallow while someone is being swallowed or gulped down, struggle while living prey is squirming inside a stomach, vore while anyone is inside a stomach or being digested and not struggling, sex during penetrative sex, oral during oral sex, otherwise none.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
 
   const blankStart = chat.messages[0]?.greeting && !chat.messages[0].content;
@@ -1860,6 +1862,33 @@ function ruleTabs(ta) {
 }
 
 /* ---------- Settings ---------- */
+// The settings sheet is one long form; this splits it into tabs by moving existing sections into panels.
+let SET_TAB = "account";
+function settingsTabs(b) {
+  const T = [["account", "Account"], ["ai", "AI model"], ["chats", "Chats"], ["sounds", "Sounds"], ["look", "Look"], ["backup", "Backup"]];
+  const bar = document.createElement("div"); bar.className = "tabs set-tabs";
+  const panels = {};
+  for (const [k] of T) { const p = document.createElement("div"); p.className = "set-panel stack"; p.dataset.k = k; panels[k] = p; }
+  const put = (k, el) => { if (el) panels[k].appendChild(el); };
+  const g = id => $(id) && $(id).closest(".group"), f = id => $(id) && ($(id).closest(".field") || $(id).closest(".range-row") || $(id).closest("label"));
+  const allChats = g("sGlobal");
+  put("account", $("sAccount"));
+  put("ai", f("sProv")); put("ai", $("dsBox")); put("ai", $("cuBox")); put("ai", g("sTemp")); put("ai", $("sReset"));
+  put("chats", g("sPersonas")); put("chats", f("sGlobal")); put("chats", g("sKeep"));
+  const snd = document.createElement("div"); snd.className = "group"; snd.innerHTML = "<h3>Sound effects</h3>";
+  for (const id of ["sSfx", "sSfxRules", "sSfxReset", "sSound", "sVol", "sAmb", "sAmbVol", "sAct", "sActVol"]) { const el = id === "sSfxReset" ? $(id) : f(id); if (el) snd.appendChild(el); }
+  const note = allChats && [...allChats.querySelectorAll("p.note")].find(p => /🔊/.test(p.textContent)); if (note) snd.appendChild(note);
+  snd.appendChild($("sPack"));
+  put("sounds", snd);
+  if (allChats && !allChats.querySelector("input,textarea,select,button")) allChats.remove();
+  put("look", $("sLook")); put("look", g("sPort"));
+  put("backup", g("sExport")); put("backup", [...b.querySelectorAll("p.hint")].find(p => /Lanternroom version/.test(p.textContent)));
+  bar.innerHTML = T.map(([k, l]) => `<button type="button" class="tab ${k === SET_TAB ? "on" : ""}" data-k="${k}">${l}</button>`).join("");
+  b.prepend(...[bar, ...T.map(([k]) => panels[k])]);
+  const show = k => { SET_TAB = k; bar.querySelectorAll(".tab").forEach(t => t.classList.toggle("on", t.dataset.k === k)); for (const [kk, p] of Object.entries(panels)) p.hidden = kk !== k; };
+  bar.querySelectorAll(".tab").forEach(t => t.onclick = () => show(t.dataset.k));
+  show(SET_TAB);
+}
 function rangeRow(id, label, desc, min, max, step, val, fmtv, tag) {
   return `<div class="range-row"><div class="top"><b>${label}${tag ? `<span class="tag">${tag}</span>` : ""}</b><span class="val" id="${id}V">${fmtv(val)}</span></div><div class="desc">${desc}</div><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
 }
@@ -1882,7 +1911,10 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   };
   b.innerHTML = `
     <div class="group" id="sAccount"></div>
-    ${field("Display size (this device)", `<select id="sScale">${[["auto", "Automatic (bigger on computers)"], ["1", "100%"], ["1.15", "115%"], ["1.3", "130%"], ["1.5", "150%"], ["1.75", "175%"], ["2", "200%"]].map(([v, l]) => `<option value="${v}" ${String(st.uiScale || "auto") === v ? "selected" : ""}>${l}</option>`).join("")}</select>`, "Scales the whole app. Changes right away.")}
+    <div class="group" id="sLook"><h3>Display size (this device)</h3>
+      ${rangeRow("sScale", "Interface size", "Scales the whole app proportionally. Changes as you drag.", 50, 250, 5, Math.round(UIZ * 100), v => v + "%")}
+      <label class="check"><input type="checkbox" id="sScaleAuto" ${(st.uiScale || "auto") === "auto" ? "checked" : ""}> Automatic (picks a size from the window)</label>
+    </div>
     ${field("AI provider", `<select id="sProv"><option value="deepseek" ${st.provider !== "custom" ? "selected" : ""}>DeepSeek</option><option value="custom" ${st.provider === "custom" ? "selected" : ""}>Other (OpenAI-compatible, e.g. OpenRouter)</option></select>`)}
     <div id="dsBox" class="stack">
       ${field("DeepSeek API key", `<input id="sKey" type="password" value="${esc(st.apiKey)}" placeholder="sk-…">`, "Saved only on this device. Get one at platform.deepseek.com.")}
@@ -1955,7 +1987,14 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   $("sPersonas").onclick = () => openPersonas();
   ruleTabs($("sGlobal"));
   drawAccount($("sAccount"));
-  $("sScale").onchange = async e => { S.settings.uiScale = e.target.value; applyScale(); await saveSettings(); };
+  let scaleT = null;
+  $("sScale").addEventListener("input", () => {
+    const v = +$("sScale").value; $("sScaleV").textContent = v + "%"; $("sScaleAuto").checked = false;
+    S.settings.uiScale = String(v / 100); clearTimeout(scaleT); scaleT = setTimeout(() => { applyScale(); saveSettings(); }, 120);
+  });
+  $("sScaleAuto").onchange = async e => { S.settings.uiScale = e.target.checked ? "auto" : String(UIZ); applyScale(); $("sScale").value = Math.round(UIZ * 100); $("sScaleV").textContent = Math.round(UIZ * 100) + "%"; await saveSettings(); };
+  for (const id of ["sVol", "sAmbVol", "sActVol"]) $(id).addEventListener("input", () => { $(id + "V").textContent = Math.round($(id).value * 100) + "%"; });
+  settingsTabs(b);
   $("sPack").onclick = async () => { await $("sSave").onclick(); openSoundPack(); }; // keep any settings changes first
   $("sSfxReset").onclick = () => { $("sSfxRules").value = DEFAULTS.sfxRules; };
   $("sReset").onclick = () => {
@@ -2891,7 +2930,9 @@ function burst(sp) {
 // otherwise a small sound synthesised on the phone. Sound types are the visual categories plus a few audio-only ones.
 const SND_TYPES = {
   bubbles: "Gurgles", churn: "Stomach churns", swallow: "Swallows & gulps", gas: "Burps", fart: "Farts", liquid: "Splashes & wet",
-  cumbub: "Sloshing", squelch: "Squelches & squishes", vorebed: "Inside a stomach (bed)", cum: "Cum", condom: "Condom squelch", shit: "Plops", shitbones: "Bone plops", sex: "Sex", kiss: "Kisses",
+  cumbub: "Sloshing", squelch: "Squelches & squishes", vorebed: "Inside a stomach (bed)",
+  gag: "Gagging", plap: "Plapping & slaps", moan: "Moans", grunt: "Grunts & strain", scream: "Screams", cough: "Coughs & chokes",
+  loop_vore: "Loop · gurgling", loop_swallow: "Loop · swallowing", loop_sex: "Loop · sex", loop_oral: "Loop · oral", cum: "Cum", condom: "Condom squelch", shit: "Plops", shitbones: "Bone plops", sex: "Wet sex sounds", kiss: "Kisses",
   beat: "Heartbeats", struggle: "Muffled struggling", crack: "Cracks & crunches", hit: "Hits", stomp: "Stomps & thuds", boom: "Booms",
   slash: "Slashes", fire: "Fire", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
   amb_campfire: "Bg · Campfire", amb_fireplace: "Bg · Fireplace", amb_tavern: "Bg · Tavern", amb_market: "Bg · Crowd & market", amb_city: "Bg · City",
@@ -2904,20 +2945,27 @@ const SND_TYPES = {
 // what each sound type is for, grouped the way the Sound pack screen shows them
 const SND_GROUPS = [
   ["Tap sounds · vore & body", ["bubbles", "churn", "swallow", "gas", "fart", "struggle", "squelch", "cumbub", "liquid", "beat"]],
-  ["Tap sounds · adult", ["cum", "condom", "shit", "shitbones", "sex", "oral", "kiss"]],
-  ["Tap sounds · other", ["crack", "hit", "stomp", "boom", "slash", "fire", "zap", "magic", "zzz", "wind", "breath", "wave"]],
-  ["Scene loops", ["vorebed"]],
+  ["Tap sounds · adult", ["plap", "sex", "oral", "gag", "cum", "condom", "shit", "shitbones", "kiss"]],
+  ["Voices", ["moan", "grunt", "scream", "cough", "breath"]],
+  ["Tap sounds · other", ["crack", "hit", "stomp", "boom", "slash", "fire", "zap", "magic", "zzz", "wind", "wave"]],
+  ["Scene loops", ["loop_vore", "loop_swallow", "loop_sex", "loop_oral", "vorebed"]],
   ["Backgrounds", Object.keys(SND_TYPES).filter(k => k.startsWith("amb_"))]
 ];
 const SND_HELP = {
   bubbles: "Short gurgles and blorps. Plays for gurgling sounds, and during vore scenes.", churn: "Growls, groans and churning. Plays for rumbles and growls, and during vore scenes.",
   swallow: "Gulps. Plays for GULP, GLUK and swallowing sounds.", gas: "Burps and belches.", fart: "Farts.", struggle: "Prey squirming, kicking and thrashing. Plays for struggle sounds and while prey is alive inside.",
   squelch: "Squishy, squelchy flesh. Plays for squelches, and stands in for condom and plop sounds.", cumbub: "Sloshing fluid. Plays for sloshes, full balls and cum-filled bellies.",
-  liquid: "Splashes and wet movement.", vorebed: "Long, quiet squishing and gurgling that loops underneath vore scenes.", oral: "Sucking and gagging during oral scenes.", sex: "Plapping during sex, and for sex sounds.",
+  liquid: "Splashes and wet movement.", vorebed: "Long, quiet squishing and gurgling that loops underneath vore scenes.", oral: "Sucking and slurping during oral scenes.", sex: "Wet strokes and squelches during sex, and for sex sounds.",
+  gag: "Gagging and choking during oral. Plays for GLUK, GAG, HURK sounds.", plap: "Skin slaps and plapping. Plays for PLAP, SMACK, CLAP sounds and drives the sex rhythm.",
+  moan: "Moans and voiced pleasure sounds.", grunt: "Grunts and straining.", scream: "Screams and shrieks.", cough: "Coughs and sputters.",
+  loop_vore: "A seamless loop that plays continuously while someone is in a stomach.", loop_swallow: "A seamless loop that plays while someone is being swallowed.",
+  loop_sex: "A seamless loop that plays continuously during sex.", loop_oral: "A seamless loop that plays continuously during oral.",
   wave: "Sounds the app couldn't place. Move them with the dropdown."
 };
+const SND_CHAIN_EXTRA = { gag: ["oral", "cough"], plap: ["sex"], sex: ["plap"], moan: ["breath"], grunt: ["moan"], scream: ["moan"], cough: ["gag"] };
 const SND_CHAIN = { cumbub: ["liquid"], condom: ["squelch", "cum"], shit: ["squelch"], shitbones: ["shit", "squelch", "crack"], churn: ["bubbles"], bubbles: ["churn"], liquid: ["cumbub", "squelch"], fart: ["gas"], cum: ["liquid"], struggle: ["squelch"] };
-const SND_SUB = [["squelch", /(sque+l+ch|squi+sh|squo+r?ch|squi+ck|shlo+r?ck|splo+r?ch|squee+z|squi+r?k)/i], ["cumbub", /(slo+sh|swa+sh|slo+r+sh|slu+sh)/i], ["struggle", /(thra+sh|wri+th|squi+r+m|ki+ck|mmph|mmf+|mrph|thu+m+p+.*thu+m+p)/i], ["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ]; // swallow and churn words above are listed after the new ones
+const SND_SUB = [["gag", /(^ga+g|^gla+[ck]|^glu+ck|^gwa+[ck]|^hu?r+k|^ghk|^hl+k|cho+k|^gck|^gu+[ck]k)/i], ["plap", /(^pla+p|^pa+p+$|^cla+p|^sma+ck|^thwa+p|^sla+p)/i],
+  ["cough", /(co+u+gh|^ko+f|^khu+|^hck|sputt)/i], ["scream", /(^a{3,}h*!*$|^scre+a+m|^e{2,}k|shrie+k|^ya{2,}h)/i], ["moan", /(moa+n|^mm+h*$|^nn+g?h*$|^a+h+n+|^o+h{2,}|^hnn+|^ngh+|^a+n+$)/i], ["grunt", /(gru+nt|^hng+|^hu+n+g+h*|^nngh|^ugh+$)/i], ["squelch", /(sque+l+ch|squi+sh|squo+r?ch|squi+ck|shlo+r?ck|splo+r?ch|squee+z|squi+r?k)/i], ["cumbub", /(slo+sh|swa+sh|slo+r+sh|slu+sh)/i], ["struggle", /(thra+sh|wri+th|squi+r+m|ki+ck|mmph|mmf+|mrph|thu+m+p+.*thu+m+p)/i], ["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ]; // swallow and churn words above are listed after the new ones
 // file names → sound type, for adding a whole pack at once
 const AMB_NAMES = [["amb_campfire", /campfire|bonfire|camp.?fire|ember|torch/i], ["amb_fireplace", /fireplace|hearth|crkl/i], ["amb_storm", /thunder|storm|\bthun/i], ["amb_rain", /\brain/i],
   ["amb_tavern", /tavern|\binn\b|\bpub\b|bar.?room|restaurant|\bcafe/i], ["amb_market", /market|bazaar|crowd|walla|festival/i], ["amb_city", /city|urban|traffic|street|downtown|\btraf|suburb|construction|train.?station/i],
@@ -2925,7 +2973,7 @@ const AMB_NAMES = [["amb_campfire", /campfire|bonfire|camp.?fire|ember|torch/i],
   ["amb_beach", /beach|ocean|\bsea\b|\bwaves?\b|shore|coast|\bgull/i], ["amb_river", /river|stream|creek|waterfall|brook|\blake/i], ["amb_underwater", /underwater|undwtr/i], ["amb_cave", /\bcave|cavern|\bmines?\b|underground/i],
   ["amb_dungeon", /dungeon|crypt|catacomb|prison|horror|hell/i], ["amb_spaceship", /spaceship|space.?ship|starship|sci.?fi|engine.?room|turbine|astral/i], ["amb_snow", /snow|blizzard|winter|arctic|tundra|howl/i],
   ["amb_night", /night|cricket|\bowl|evening/i], ["amb_forest", /forest|woods|jungle|\bforst|tropical|swamp|\bpine/i], ["amb_nature", /nature|meadow|field|park|garden|bird|\bwind|mountain|desert|mist|fog|clearing/i]];
-const SND_NAMES = [["oral", /\bsuck|blow.?job|\bbj\b|deep.?throat|\bgag|fellat|throat.?fuck/i], ["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i],
+const SND_NAMES = [["gag", /\bgag|choke|gluck/i], ["plap", /\bslap|smack|plap|bed.?pound/i], ["moan", /moan/i], ["grunt", /grunt/i], ["scream", /scream|shriek/i], ["cough", /cough/i], ["breath", /\bpant/i], ["oral", /\bsuck|blow.?job|\bbj\b|deep.?throat|\bgag|fellat|throat.?fuck/i], ["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i],
   ["fart", /fart|flatul|toot/i], ["gas", /burp|belch|bel[ck]h?/i], ["struggle", /between.?cheeks|lmovement|thrash|\bkick|squirm|struggl|trapped|thump/i],
   ["churn", /churn|growl|groan|grooo|rumbl|grumbl|whin|hunger|hungry|clench|strain|digest.*(long|ambien)|ambien/i], ["bubbles", /blorp|blurb|glorp|blrp|blrt|blrg|burbl|brbl|gurgl|squirt|stomach|belly|digest|tummy|bubbl|innard|\bgut/i],
   ["cumbub", /slosh|shaking|\bballs?\b|testic|scrot|\bnuts?\b/i], ["squelch", /squeez|squelch|squish|pumpkin|pull.?apart/i], ["cum", /\bcum|ejacul|spurt|jizz|semen/i], ["condom", /condom|rubber/i],
@@ -3014,8 +3062,11 @@ async function unzipAudio(blob, prefix, onFile, depth = 0) {
 async function playSfx(cat, text) {
   const st = S.settings; if (st.sfxSound === false) return;
   const vol = Math.max(0, Math.min(1, st.sfxVolume ?? 0.7)); if (!vol) return;
-  const sub = (SND_SUB.find(([, re]) => re.test(text || "")) || [])[0];
-  const order = [...new Set([sub, ...(SND_CHAIN[sub] || []), cat, ...(SND_CHAIN[cat] || [])].filter(Boolean))];
+  let sub = (SND_SUB.find(([, re]) => re.test(text || "")) || [])[0];
+  // GLUK / GLK / GULK: a gag during oral scenes, a gulp otherwise
+  if (sub === "swallow" && /^g+u?l+u?c?k+/i.test(text || "") && (AMBS.act === "oral" || sceneNow().act === "oral")) sub = "gag";
+  const chain = t => [...(SND_CHAIN[t] || []), ...(SND_CHAIN_EXTRA[t] || [])];
+  const order = [...new Set([sub, ...chain(sub), cat, ...chain(cat)].filter(Boolean))];
   try {
     const pool = await poolFor(order);
     if (pool.length) {
@@ -3146,7 +3197,17 @@ function openSoundPack() {
       SND = SND.filter(x => !d.includes(x)); await sndSave(); say(`Removed ${d.length} duplicate${d.length === 1 ? "" : "s"}. The built-in copies stay.`); draw();
     });
     const typeSelect = cur => `<select data-type aria-label="Sound type">${SND_GROUPS.map(([gl, ts]) => `<optgroup label="${esc(gl)}">${ts.map(k => `<option value="${k}" ${k === cur ? "selected" : ""}>${esc(SND_TYPES[k])}</option>`).join("")}</optgroup>`).join("")}</select>`;
-    const playOne = async x => { const u = await sndURL(x.id); if (u) { const a = trackAudio(new Audio(u)); a.volume = S.settings.sfxVolume ?? 0.7; a.play().catch(() => {}); capAudio(a, a.volume); say("Playing: " + x.name); } };
+    let now = null; // the preview playing right now: tap its ▶ again to pause it
+    const playOne = async (x, btn) => {
+      if (now && now.id === x.id && !now.a.paused) { now.a.pause(); if (now.btn) now.btn.textContent = "▶"; now = null; say("Paused."); return; }
+      if (now) { now.a.pause(); if (now.btn) now.btn.textContent = "▶"; now = null; }
+      const u = await sndURL(x.id); if (!u) return;
+      const a = trackAudio(new Audio(u)); a.volume = S.settings.sfxVolume ?? 0.7;
+      now = { id: x.id, a, btn }; if (btn) btn.textContent = "⏸";
+      a.onended = a.onpause = () => { if (now && now.a === a) { if (btn) btn.textContent = "▶"; now = null; } };
+      a.play().catch(() => {}); if (!/^Loop/.test(SND_TYPES[x.type] || "")) capAudio(a, a.volume);
+      say("Playing: " + x.name);
+    };
     const open = { mine: true, built: false };
     const draw = async () => {
       const view = builtinOn() ? await builtinView() : [];
@@ -3171,10 +3232,10 @@ function openSoundPack() {
         ${brows.length ? `<details class="snd-sec" data-sec="built" ${open.built ? "open" : ""}><summary>Built-in · ${brows.length}</summary>${brows.map(x => row(x, "built")).join("")}</details>` : ""}
         ${hiddenN || movedN ? `<p class="hint">${hiddenN ? `${hiddenN} built-in sound${hiddenN === 1 ? "" : "s"} removed` : ""}${hiddenN && movedN ? " · " : ""}${movedN ? `${movedN} moved to another type` : ""}. <button type="button" class="linkish" id="spRestore">Restore built-ins to how they came</button></p>` : ""}`;
       $("spList").querySelectorAll("details.snd-sec").forEach(dt => dt.addEventListener("toggle", () => { open[dt.dataset.sec] = dt.open; }));
-      $("spRand").onclick = async () => { const pool = await soundsOf(tab); if (pool.length) playOne(pool[Math.floor(Math.random() * pool.length)]); };
+      $("spRand").onclick = async e => { const pool = await soundsOf(tab); if (pool.length) playOne(pool[Math.floor(Math.random() * pool.length)], null); };
       $("spList").querySelectorAll(".snd-row").forEach(r => {
         const id = r.dataset.id, isMine = r.dataset.kind === "mine", x = isMine ? SND.find(y => y.id === id) : brows.find(y => y.id === id);
-        r.querySelector("[data-play]").onclick = () => playOne(x);
+        r.querySelector("[data-play]").onclick = e => playOne(x, e.currentTarget);
         r.querySelector("[data-type]").onchange = async e => {
           const t = e.target.value;
           if (isMine) { x.type = t; await sndSave(); }
@@ -3204,7 +3265,7 @@ function openSoundPack() {
 /* ---------- Ambience: background soundscape + activity loops ---------- */
 // The model labels each reply with [[... | ambience: x | activity: y]]; older replies fall back to keyword guesses.
 const AMB_KEYS = ["campfire", "fireplace", "tavern", "market", "city", "village", "office", "combat", "forest", "nature", "night", "rain", "storm", "beach", "river", "cave", "dungeon", "snow", "underwater", "spaceship", "indoors", "none"];
-const ACT_KEYS = ["none", "vore", "struggle", "sex", "oral"];
+const ACT_KEYS = ["none", "swallow", "vore", "struggle", "sex", "oral"];
 const AMB_LABEL = { campfire: "Campfire", fireplace: "Fireplace", tavern: "Tavern", market: "Crowd", city: "City", village: "Village", office: "Office", combat: "Combat", forest: "Forest", nature: "Nature", night: "Night", rain: "Rain", storm: "Storm", beach: "Beach", river: "River", cave: "Cave", dungeon: "Dungeon", snow: "Snow & wind", underwater: "Underwater", spaceship: "Spaceship", indoors: "Quiet room" };
 const AMB_GUESS = [["combat", /\b(battle|combat|fight(ing)?|swords? clash|ambush|gunfire|skirmish|duel)\b/i], ["campfire", /campfire|bonfire|\bcamp\b/i], ["fireplace", /fireplace|hearth/i],
   ["tavern", /tavern|\binn\b|\bpub\b|\bbar\b|saloon/i], ["office", /office|cubicle|workplace/i], ["spaceship", /spaceship|starship|space station|cockpit/i], ["underwater", /underwater|beneath the waves/i],
@@ -3215,6 +3276,7 @@ const AMB_GUESS = [["combat", /\b(battle|combat|fight(ing)?|swords? clash|ambush
 function guessAct(msgs) {
   const t2 = msgs.slice(-2).map(msgText).join("\n"), t6 = msgs.slice(-6).map(msgText).join("\n");
   if (/\b(blow.?job|deep.?throat\w*|fellatio|cunnilingus|gag(s|ging|ged)? on|sucks? (on )?(his|her|their|my|your) (cock|dick|shaft|length|clit)|(cock|dick|shaft) (in|down) (her|his|their|my|your) (mouth|throat)|eats? (her|him|them) out)\b/i.test(t2)) return "oral";
+  if (/\b(swallow(s|ing)?|gulp(s|ing)?|slid(es|ing)? down (her|his|their|its|the) (throat|gullet))\b/i.test(msgText(msgs.at(-1))) && !/\b(stomach|belly)\b/i.test(msgText(msgs.at(-1)))) return "swallow";
   if (/\b(thrust(s|ing)?|fuck(s|ing|ed)?|pound(s|ing)?|rid(es|ing) (him|her|them)|penetrat\w*|hips slap\w*|bounc(es|ing) on)\b/i.test(t2)) return "sex";
   if (VORE.swallow.test(t6) && /\b(stomach|belly|gut|inside)\b/i.test(t6) && !/\b(spat|spits? (him|her|them) out|escap\w*|freed|regurgitat\w*|came out|pushed out)\b/i.test(t2)) return /\b(squirm\w*|struggl\w*|thrash\w*|kick(s|ing)?|wriggl\w*|writh\w*|pound(s|ing)? (on|against))\b/i.test(t2) ? "struggle" : "vore";
   return "none";
@@ -3245,6 +3307,7 @@ async function ambienceStep() {
   if (wantAmb !== AMBS.amb) { AMBS.bed?.stop(); AMBS.amb = wantAmb; AMBS.bed = wantAmb ? await startBed(wantAmb) : null; }
   else AMBS.bed?.setVol(st.ambVol ?? 0.35);
   if (wantAct !== AMBS.act) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.loop = wantAct ? startActivity(wantAct) : null; }
+  else AMBS.loop?.setVol?.(st.actVol ?? 0.5);
 }
 $("btnAmb").onclick = async () => { S.settings.ambMuted = !S.settings.ambMuted; await saveSettings(); acx(); updateAmbience(); };
 document.addEventListener("visibilitychange", () => updateAmbience());
@@ -3320,10 +3383,26 @@ function synthBed(key, vol) {
 }
 // Activity: repeated one-shots (the user's files if any, else synthesised) at a rhythm that fits
 const ACT_PLAN = {
-  vore: { bed: ["vorebed"], mix: [[["churn"], 0.45], [["bubbles"], 0.45], [["cumbub", "liquid"], 0.1]], gap: [0.8, 4] },
-  struggle: { bed: ["vorebed"], mix: [[["struggle"], 0.5], [["churn"], 0.25], [["bubbles"], 0.25]], gap: [0.3, 1.8] },
-  sex: { mix: [[["sex"], 1]], gap: [0.03, 0.18] }, oral: { mix: [[["oral"], 1]], gap: [0.15, 0.9] }
+  // loop: a seamless file played continuously (Web Audio, no gap); bed: long recordings used when there's no loop;
+  // mix: one-shots on top (sparser when a loop is playing)
+  vore: { loop: ["loop_vore"], bed: ["vorebed"], mix: [[["churn"], 0.45], [["bubbles"], 0.45], [["cumbub", "liquid"], 0.1]], gap: [0.8, 4], gapLoop: [5, 12] },
+  struggle: { loop: ["loop_vore"], bed: ["vorebed"], mix: [[["struggle"], 0.6], [["churn"], 0.2], [["bubbles"], 0.2]], gap: [0.3, 1.8], gapLoop: [0.8, 3] },
+  swallow: { loop: ["loop_swallow"], mix: [[["swallow"], 0.8], [["bubbles"], 0.2]], gap: [1.2, 2.6], gapLoop: [8, 16] },
+  sex: { loop: ["loop_sex"], mix: [[["plap"], 0.75], [["sex"], 0.15], [["moan"], 0.1]], gap: [0.03, 0.18], gapLoop: [3, 8], loopMix: [[["moan"], 1]] },
+  oral: { loop: ["loop_oral"], mix: [[["oral"], 0.7], [["gag"], 0.2], [["moan"], 0.1]], gap: [0.15, 0.9], gapLoop: [3, 9], loopMix: [[["gag"], 0.6], [["moan"], 0.4]] }
 };
+const LOOP_BUF = new Map();
+// seamless loop through Web Audio (an <audio loop> leaves a small gap on phones)
+async function startLoop(url, vol) {
+  const ac = acx(); if (!ac) return null;
+  let buf = LOOP_BUF.get(url);
+  if (!buf) { buf = await ac.decodeAudioData(await (await fetch(url)).arrayBuffer()); LOOP_BUF.set(url, buf); }
+  if (AC !== ac) return null; // the sound was cut while loading
+  const src = ac.createBufferSource(), g = ac.createGain();
+  src.buffer = buf; src.loop = true; g.gain.value = 0.0001; src.connect(g).connect(ac.destination); src.start();
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), ac.currentTime + 1.2);
+  return { stop() { try { g.gain.setTargetAtTime(0.0001, ac.currentTime, 0.15); setTimeout(() => { try { src.stop(); } catch {} }, 600); } catch {} }, setVol(v) { g.gain.setTargetAtTime(Math.max(0.0002, v), ac.currentTime, 0.2); } };
+}
 SYNTH.plap = (ac, o) => { sNoise(ac, o, { dur: 0.07, g: 0.45, type: "lowpass", f0: 1500, f1: 500 }); sTone(ac, o, { f0: 170, f1: 90, dur: 0.08, g: 0.3 }); sNoise(ac, o, { t: 0.02, dur: 0.06, g: 0.12, f0: 900, q: 3 }); };
 SYNTH.oral = (ac, o) => {
   sNoise(ac, o, { dur: rr(0.22, 0.35), g: 0.3, f0: rr(250, 400), f1: rr(900, 1400), q: 4 }); sTone(ac, o, { f0: rr(120, 160), f1: 90, dur: 0.25, g: 0.12, vib: 15, vibF: 18 });
@@ -3331,10 +3410,18 @@ SYNTH.oral = (ac, o) => {
 };
 function startActivity(kind) {
   const plan = ACT_PLAN[kind]; if (!plan) return null;
-  let stopped = false, timer = null, cur = null, bed = null;
+  let stopped = false, timer = null, cur = null, bed = null, loop = null, looping = false;
   const vol = () => S.settings.actVol ?? 0.5;
-  // a quiet looping bed underneath (long stomach recordings), when there are any
-  if (plan.bed) poolFor(plan.bed).then(files => {
+  // 1) a seamless loop if one exists for this activity; 2) otherwise long recordings played back to back
+  (async () => {
+    const lf = plan.loop ? await poolFor(plan.loop) : [];
+    if (stopped) return;
+    if (lf.length) {
+      const f = lf[Math.floor(Math.random() * lf.length)], url = await sndURL(f.id);
+      if (url && !stopped) { loop = await startLoop(url, vol()).catch(() => null); looping = !!loop; if (stopped && loop) loop.stop(); }
+      if (looping) return;
+    }
+    const files = plan.bed ? await poolFor(plan.bed) : [];
     if (stopped || !files.length) return;
     const playBed = async () => {
       if (stopped) return;
@@ -3344,26 +3431,31 @@ function startActivity(kind) {
       const target = vol() * 0.55; let v = 0; const t = setInterval(() => { v = Math.min(target, v + target / 20); if (bed) bed.volume = v; if (v >= target) clearInterval(t); }, 75);
     };
     playBed();
-  });
-  const pickTypes = () => { let r = Math.random(); for (const [types, w] of plan.mix) { if ((r -= w) <= 0) return types; } return plan.mix[0][0]; };
+  })();
+  const pickTypes = mix => { let r = Math.random(); for (const [types, w] of mix) { if ((r -= w) <= 0) return types; } return mix[0][0]; };
   const step = async () => {
     if (stopped) return;
-    const files = await poolFor(pickTypes());
-    let wait = rr(...plan.gap);
+    const mix = looping ? (plan.loopMix || plan.mix) : plan.mix;
+    const files = await poolFor(pickTypes(mix));
+    let wait = rr(...(looping ? plan.gapLoop : plan.gap));
     if (files.length) {
       const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id);
-      if (url && !stopped) { cur = trackAudio(new Audio(url)); cur.volume = vol(); await cur.play().catch(() => {}); capAudio(cur, vol()); wait += Math.min(4, isFinite(cur.duration) ? cur.duration : 1); }
-    } else {
+      if (url && !stopped) { cur = trackAudio(new Audio(url)); cur.volume = vol() * (looping ? 0.8 : 1); await cur.play().catch(() => {}); capAudio(cur, cur.volume); wait += Math.min(4, isFinite(cur.duration) ? cur.duration : 1); }
+    } else if (!looping) {
       const ac = acx(); if (ac) { const out = ac.createGain(); out.gain.value = vol(); out.connect(ac.destination);
         if (kind === "vore") { (Math.random() < 0.3 ? SYNTH.churn : SYNTH.bubbles)(ac, out); wait += 1; }
         else if (kind === "struggle") { (Math.random() < 0.5 ? SYNTH.struggle : SYNTH.bubbles)(ac, out); wait += 0.4; }
+        else if (kind === "swallow") { SYNTH.swallow(ac, out); wait += 0.6; }
         else if (kind === "sex") { SYNTH.plap(ac, out); wait = rr(0.38, 0.62); }
         else { SYNTH.oral(ac, out); wait += 0.35; } }
     }
     if (!stopped) timer = setTimeout(step, wait * 1000);
   };
-  step();
-  return { stop() { stopped = true; clearTimeout(timer); if (cur) cur.pause(); if (bed) { const b = bed; let v = b.volume; const t = setInterval(() => { v -= 0.03; if (v <= 0.01) { b.pause(); clearInterval(t); } else b.volume = v; }, 60); } } };
+  setTimeout(step, 1200); // let the loop start first
+  return {
+    stop() { stopped = true; clearTimeout(timer); if (cur) cur.pause(); if (loop) loop.stop(); if (bed) { const b = bed; let v = b.volume; const t = setInterval(() => { v -= 0.03; if (v <= 0.01) { b.pause(); clearInterval(t); } else b.volume = v; }, 60); } },
+    setVol(v) { if (loop) loop.setVol(v); }
+  };
 }
 
 
@@ -3578,7 +3670,11 @@ const Sync = {
     if (any(/^(personas|activePersona)$/)) { S.personas = (await Store.get("personas")) || S.personas; S.personaId = (await Store.get("activePersona")) || S.personaId; }
     if (any(/^books$/)) S.books = (await Store.get("books")) || [];
     if (any(/^recent$/)) S.recent = (await Store.get("recent")) || {};
-    if (any(/^sounds$/)) SND = null;
+    if (any(/^sounds$/)) {
+      SND = null;
+      const keep = new Set(((await Store.get("sounds")) || []).map(x => "snd:" + x.id));
+      for (const k of await Store.keys()) if (k.startsWith("snd:") && !keep.has(k)) { await Store.del(k); delete SND_URLS[k.slice(4)]; }
+    }
     if (any(/^sndfix$/)) SNDFIX = null;
     if (!$("chat").hidden && S.chat && S.chat.id && !S.busy && any(new RegExp("^c2:" + S.chat.id + "$"))) { const c = await Store.get("c2:" + S.chat.id); if (c) { S.chat = c; renderMsgs(true); updateStage(); } }
     if (!$("home").hidden && $("sheet").hidden) renderHome();
