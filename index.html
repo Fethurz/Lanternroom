@@ -477,7 +477,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.16 · Oct 13";
+const VERSION = "1.17 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -3379,33 +3379,51 @@ const Sync = {
     } catch (e) { this.status = e.message; }
     finally { this.busy = false; }
   },
+  // queue bookkeeping: each key leaves the queue as soon as it has landed, so an interruption never starts over
+  doneKey(k) { const d = new Set(this.st.dirty || []); d.delete(k); this.st.dirty = [...d]; this.save(); },
   async push() {
     if (!this.on() || !(this.st.dirty || []).length) return;
-    clearTimeout(this.timer);
-    const keys = [...this.st.dirty], done = [];
+    if (this.pushing) { this.again = true; return; }
+    this.pushing = true; this.again = false; clearTimeout(this.timer);
     try {
-      const rows = [];
-      for (const k of keys) {
-        if (k.startsWith("snd:")) {
-          const blob = await Store.get(k), path = `/storage/v1/object/sounds/${this.st.uid}/${encodeURIComponent(k.slice(4))}`;
-          const r = blob ? await this.req(path, { method: "POST", headers: { "x-upsert": "true", "Content-Type": blob.type || "application/octet-stream" }, body: blob }) : await this.req(path, { method: "DELETE" });
-          if (r.ok || !blob) done.push(k);
-          continue;
-        }
+      const keys = [...this.st.dirty], data = keys.filter(k => !k.startsWith("snd:")), blobs = keys.filter(k => k.startsWith("snd:"));
+      // 1) bots, chats, settings and lists first, in batches of at most ~700 KB
+      let batch = [], size = 0;
+      const send = async () => {
+        if (!batch.length) return;
+        const r = await this.req("/rest/v1/kv?on_conflict=user_id,key", { method: "POST", headers: { "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(batch) });
+        if (!r.ok) throw new Error("Couldn't save to your account (" + r.status + ").");
+        for (const x of batch) this.doneKey(x.key);
+        batch = []; size = 0;
+      };
+      for (const k of data) {
         let v = await Store.get(k);
         if (k === "settings" && v) v = stripLocal(v);
-        rows.push({ user_id: this.st.uid, key: k, value: v === undefined ? null : v, deleted: v === undefined });
+        const row = { user_id: this.st.uid, key: k, value: v === undefined ? null : v, deleted: v === undefined }, n = JSON.stringify(row).length;
+        if (batch.length && (size + n > 700000 || batch.length >= 20)) await send();
+        batch.push(row); size += n;
       }
-      for (let i = 0; i < rows.length; i += 10) {
-        const part = rows.slice(i, i + 10);
-        const r = await this.req("/rest/v1/kv?on_conflict=user_id,key", { method: "POST", headers: { "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(part) });
-        if (!r.ok) throw new Error("Couldn't save to your account (" + r.status + ").");
-        done.push(...part.map(x => x.key));
+      await send();
+      // 2) then the user's own sound files, a few at a time; copies of built-in sounds are skipped
+      if (blobs.length) {
+        const built = new Set((await builtinSounds()).map(x => x.name.toLowerCase().replace(/[^a-z0-9]/g, "")));
+        const meta = new Map(((await Store.get("sounds")) || []).map(x => [x.id, x]));
+        let n = 0; const total = blobs.length;
+        const one = async k => {
+          const id = k.slice(4), m = meta.get(id);
+          if (m && built.has(String(m.name || "").toLowerCase().replace(/[^a-z0-9]/g, ""))) { this.doneKey(k); n++; return; }
+          const blob = await Store.get(k), path = `/storage/v1/object/sounds/${this.st.uid}/${encodeURIComponent(id)}`;
+          const r = blob ? await this.req(path, { method: "POST", headers: { "x-upsert": "true", "Content-Type": blob.type || "application/octet-stream" }, body: blob }) : await this.req(path, { method: "DELETE" });
+          if (r.ok || !blob) this.doneKey(k);
+          n++; this.status = `Uploading your sounds: ${n} of ${total}`; const el = $("acStat"); if (el) el.textContent = this.status;
+        };
+        const queue = [...blobs];
+        await Promise.all([0, 1, 2].map(async () => { while (queue.length) await one(queue.shift()); }));
       }
-      this.status = "Synced " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-    } catch (e) { this.status = "Not synced yet: " + e.message; clearTimeout(this.timer); this.timer = setTimeout(() => this.push(), 30000); }
-    const left = new Set(this.st.dirty || []); for (const k of done) left.delete(k);
-    this.st.dirty = [...left]; this.save();
+      this.status = (this.st.dirty || []).length ? "Some items didn't upload yet; retrying shortly." : "Synced " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      if ((this.st.dirty || []).length) this.timer = setTimeout(() => this.push(), 30000);
+    } catch (e) { this.status = "Not synced yet: " + e.message; this.timer = setTimeout(() => this.push(), 30000); }
+    finally { this.pushing = false; const el = $("acStat"); if (el) el.textContent = this.status; if (this.again) this.push(); }
   },
   async fetchSound(id) {
     try {
