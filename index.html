@@ -664,7 +664,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.25 · Oct 13";
+const VERSION = "1.26 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1377,16 +1377,22 @@ $("btnNewChar").onclick = () => openSheet("Create", b => {
 
 /* ---------- Character generator ---------- */
 // GEN keeps the last request and result while the app is open, so closing the sheet doesn't lose work.
-const GEN = { kind: "character", form: "auto", prompt: "", card: null, busy: false };
+const GEN = { kind: "character", form: "auto", prompt: "", card: null, busy: false, note: "", parts: [] };
 // Unfinished bots are kept as drafts (Store key "drafts", synced) until they're created or discarded,
 // so closing the generator or the editor never loses what was written.
 let DRAFTS = null;
 async function drafts() { if (!DRAFTS) DRAFTS = (await Store.get("drafts")) || {}; return DRAFTS; }
-const draftT = {};
-function saveDraft(id, d) { clearTimeout(draftT[id]); draftT[id] = setTimeout(async () => { const all = await drafts(); all[id] = { ...JSON.parse(JSON.stringify(d)), at: Date.now() }; await Store.set("drafts", all); }, 500); }
-async function dropDraft(id) { clearTimeout(draftT[id]); const all = await drafts(); if (all[id]) { delete all[id]; await Store.set("drafts", all); } }
-const genKeep = () => { if (GEN.prompt.trim() || GEN.card) saveDraft("gen", { type: "gen", kind: GEN.kind, form: GEN.form, prompt: GEN.prompt, card: GEN.card }); };
-async function genRestore() { const d = (await drafts()).gen; if (d && !GEN.prompt && !GEN.card) Object.assign(GEN, { kind: d.kind || "character", form: d.form || "auto", prompt: d.prompt || "", card: d.card || null }); }
+const draftT = {}, draftPending = {};
+async function writeDraft(id) { const d = draftPending[id]; if (!d) return; delete draftPending[id]; clearTimeout(draftT[id]); const all = await drafts(); all[id] = { ...d, at: Date.now() }; await Store.set("drafts", all); }
+function saveDraft(id, d, now) { draftPending[id] = JSON.parse(JSON.stringify(d)); clearTimeout(draftT[id]); if (now) return writeDraft(id); draftT[id] = setTimeout(() => writeDraft(id), 400); }
+async function dropDraft(id) { clearTimeout(draftT[id]); delete draftPending[id]; const all = await drafts(); if (all[id]) { delete all[id]; await Store.set("drafts", all); } }
+// the app may be swiped away right after typing: write any pending draft as soon as it leaves the screen
+const flushDrafts = () => { for (const id of Object.keys(draftPending)) writeDraft(id); };
+document.addEventListener("visibilitychange", () => { if (document.hidden) flushDrafts(); });
+addEventListener("pagehide", flushDrafts);
+// the generator's draft: what was asked for, the result, and any rewrite note / picked parts on the review
+const genKeep = now => { if (GEN.prompt.trim() || GEN.card) return saveDraft("gen", { type: "gen", kind: GEN.kind, form: GEN.form, prompt: GEN.prompt, card: GEN.card, note: GEN.note || "", parts: GEN.parts || [] }, now); };
+async function genRestore() { const d = (await drafts()).gen; if (d && !GEN.prompt && !GEN.card) Object.assign(GEN, { kind: d.kind || "character", form: d.form || "auto", prompt: d.prompt || "", card: d.card || null, note: d.note || "", parts: d.parts || [] }); }
 const GEN_PARTS = {
   character: [["name", "Name"], ["tags", "Tags"], ["appearance", "Look"], ["description", "Personality"], ["scenario", "Scenario"], ["firstMessages", "Openings"], ["instructions", "Rules"], ["lore", "Lore"]],
   world: [["name", "Name"], ["tags", "Tags"], ["description", "World"], ["cast", "Listings"], ["scenario", "Opening situation"], ["firstMessages", "Openings"], ["instructions", "Rules"], ["lore", "Lore"]],
@@ -1506,12 +1512,18 @@ async function genRun(job, label) {
   if (GEN.busy) return;
   GEN.busy = true;
   openSheet("Character generator", b => {
-    b.innerHTML = `<div class="gen-wait">${lanternSVG("seq")}<p><b>${esc(label)}</b></p><p class="hint">Writing every part takes up to a minute or two. You can close this; it keeps going.</p></div>`;
+    S.sheetGuard = "wait";
+    b.innerHTML = `<div class="gen-wait" id="gWait">${lanternSVG("seq")}<p><b>${esc(label)}</b></p><p class="hint">Writing every part takes up to a minute or two. If you close this it keeps going, and the result waits for you under <b>New</b>.</p></div>`;
   });
-  try { GEN.card = await job(); GEN.busy = false; genKeep(); if (!$("sheet").hidden) genReview(); }
+  try {
+    GEN.card = await job(); GEN.busy = false; await genKeep(true);
+    if (!$("sheet").hidden && $("gWait")) genReview();
+    else if ($("sheet").hidden && $("chat").hidden) { toast(`${GEN.card.name || "Your bot"} is ready`); genReview(); }
+    else toast(`${GEN.card.name || "Your bot"} is ready. Find it under New → Unfinished.`);
+  }
   catch (e) {
     GEN.busy = false;
-    if ($("sheet").hidden) return;
+    if ($("sheet").hidden || !$("gWait")) { toast("The generator ran into a problem: " + e.message); return; }
     if (GEN.card) genReview(e.message); else { openGenerator(); $("gMsg").textContent = e.message; }
   }
 }
@@ -1544,12 +1556,15 @@ function genReview(err) {
       <button class="btn primary" id="gMake">✓ Looks good, create it</button>
       <button class="btn" id="gEdit">Create and open the editor</button>
       <button class="btn" id="gAgain">Start over</button>`;
-    const picked = new Set();
-    b.querySelectorAll("#gParts [data-p]").forEach(x => x.onclick = () => { const k = x.dataset.p; picked.has(k) ? picked.delete(k) : picked.add(k); x.classList.toggle("on", picked.has(k)); });
+    const picked = new Set((GEN.parts || []).filter(k => GEN_PARTS[K].some(p => p[0] === k)));
+    b.querySelectorAll("#gParts [data-p]").forEach(x => { x.classList.toggle("on", picked.has(x.dataset.p)); x.onclick = () => { const k = x.dataset.p; picked.has(k) ? picked.delete(k) : picked.add(k); x.classList.toggle("on", picked.has(k)); GEN.parts = [...picked]; genKeep(); }; });
+    $("gNote").value = GEN.note || "";
+    $("gNote").addEventListener("input", e => { GEN.note = e.target.value; genKeep(); });
     $("gRe").onclick = async () => {
       const note = $("gNote").value.trim();
       if (!picked.size && !note) { $("gMsg").textContent = "Pick the parts to rewrite, or describe what to change."; return; }
       const form = K === "world" ? "auto" : GEN.form;
+      GEN.note = ""; GEN.parts = [];
       await genRun(() => genRewrite(JSON.parse(JSON.stringify(c)), K, form, [...picked], note), "Rewriting " + (picked.size ? [...picked].map(k => GEN_PARTS[K].find(p => p[0] === k)[1].toLowerCase()).join(", ") : "what you asked for") + "…");
     };
     $("gMake").onclick = () => genFinish(false);
@@ -1575,7 +1590,7 @@ async function genFinish(edit) {
   await Promise.allSettled([K === "group" ? null : ensureVisual(w), ...made.map(m => ensureVisual(m))].filter(Boolean).map(p => within(p, 25000)));
   S.chars.unshift(...made); S.chars.unshift(w);
   await saveChars();
-  GEN.card = null; GEN.prompt = ""; dropDraft("gen");
+  GEN.card = null; GEN.prompt = ""; GEN.note = ""; GEN.parts = []; dropDraft("gen");
   closeSheet(); renderHome();
   if (edit) editChar(w, false); else openChat(w.id);
 }
@@ -2002,16 +2017,19 @@ function openSheet(title, build) {
 function closeSheet() { $("sheet").hidden = true; $("sheetBody").innerHTML = ""; S.sheetGuard = null; $("sheetConfirm")?.remove(); S.sheetAC?.abort(); S.sheetAC = null; }
 // what the user does to close (✕, back button, tapping outside): the bot creator and editor ask first
 function userClose() {
+  const body = $("sheetBody");
+  if (!S.sheetGuard && body.querySelector("#gPrompt,#gMake,#gWait,#cSave")) S.sheetGuard = body.querySelector("#cSave") ? "edit" : body.querySelector("#gWait") ? "wait" : "gen";
   if (!S.sheetGuard) { closeSheet(); return true; }
   if ($("sheetConfirm")) return false;
-  (S.sheetGuard === "gen" ? genKeep() : $("sheetBody").dispatchEvent(new Event("input")));
-  $("sheetBody").insertAdjacentHTML("beforebegin", `<div id="sheetConfirm" class="sheet-confirm" role="alertdialog" aria-label="Close?"><span>Close? What you wrote is saved as a draft. Pick it up any time from <b>New</b>.</span><div class="row"><button type="button" class="btn small primary" id="scKeep">Keep editing</button><button type="button" class="btn small" id="scClose">Close</button></div></div>`);
+  if (S.sheetGuard === "gen") genKeep(true); else if (S.sheetGuard === "edit") body.dispatchEvent(new Event("input"));
+  const msg = S.sheetGuard === "wait" ? "Close? The bot keeps being written, and the result waits for you under <b>New</b>." : "Close? What you wrote is saved as a draft. Pick it up any time from <b>New</b>.";
+  $("sheetBody").insertAdjacentHTML("beforebegin", `<div id="sheetConfirm" class="sheet-confirm" role="alertdialog" aria-label="Close?"><span>${msg}</span><div class="row"><button type="button" class="btn small primary" id="scKeep">Keep editing</button><button type="button" class="btn small" id="scClose">Close</button></div></div>`);
   $("scKeep").onclick = () => $("sheetConfirm").remove();
   $("scClose").onclick = () => closeSheet();
   return false;
 }
 $("sheetClose").onclick = userClose;
-$("sheet").addEventListener("click", e => { if (e.target.id === "sheet" && !S.sheetGuard && !$("sheetBody").querySelector("textarea")) closeSheet(); });
+$("sheet").addEventListener("click", e => { if (e.target.id === "sheet" && !S.sheetGuard && !$("sheetBody").querySelector("textarea,#gWait,#gMake")) closeSheet(); });
 function field(label, html, hint) { return `<div class="field"><label>${label}</label>${html}${hint ? `<div class="hint">${hint}</div>` : ""}</div>`; }
 function confirmBtn(btn, label, fn) {
   btn.addEventListener("click", () => {
