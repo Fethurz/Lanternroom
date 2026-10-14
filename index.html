@@ -853,7 +853,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.41 · Oct 14";
+const VERSION = "1.42 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2756,7 +2756,7 @@ function editPersona(p, isNew) {
     b.innerHTML = `
       ${field("Name", `<input id="peName" value="${esc(work.name)}" placeholder="Who you play">`)}
       ${field("Description", `<textarea id="peDesc" data-x="persona" style="min-height:140px" placeholder="Appearance, personality, background">${esc(work.description)}</textarea>`, "Characters see this, and it's used when illustrating scenes.")}
-      ${field("Your colour", `<div class="pe-cols" id="peCols">${PERSONA_COLS.map(c => `<button type="button" data-c="${c}" style="background:${c}" class="${(work.color || PERSONA_COLS[0]) === c ? "on" : ""}" aria-label="Colour ${c}"></button>`).join("")}<input type="color" id="peCol" value="${esc(work.color || PERSONA_COLS[0])}" aria-label="Any colour"></div>`, "How you show up in pictures, like the vore picture.")}
+      ${field("Your colour", `<div class="pe-cols" id="peCols">${PERSONA_COLS.map(c => `<button type="button" data-c="${c}" style="background:${c}" class="${(work.color || PERSONA_COLS[0]) === c ? "on" : ""}" aria-label="Colour ${c}"></button>`).join("")}<input type="color" id="peCol" value="${esc(work.color || PERSONA_COLS[0])}" aria-label="Any colour"></div>`, "How you show up in pictures the app draws for you.")}
       <button class="btn primary" id="peSave">${isNew ? "Create and use" : "Save"}</button>
       ${!isNew && S.personas.length > 1 ? '<button class="btn danger" id="peDel">Delete persona</button>' : ""}`;
     wireExpand(b, () => `Persona name: ${$("peName").value}`);
@@ -3988,7 +3988,9 @@ const VG_TYPE_FLUID = { oral: "acid", anal: "acid", tail: "acid", cock: "cum", u
 const VG_WHERE = { oral: "belly", anal: "belly", tail: "tail", cock: "balls", breast: "breast", unbirth: "womb" };
 const VG_PLACE = { belly: "stomach", tail: "tail", balls: "balls", breast: "breasts", womb: "womb" };
 const PREY_PALE = "#ece2d2";
-const vgOn = () => S.settings.voreGfx !== false;
+// VORE_PIC: the vore picture is still being designed (waiting on the base silhouettes); false hides the card, the side-panel section, the Settings switch and the prompt section
+const VORE_PIC = false;
+const vgOn = () => VORE_PIC && S.settings.voreGfx !== false;
 const personaColor = p => (p || persona()).color || "#6fc3d8";
 function vgSex(s) { s = String(s || "").toLowerCase(); return /futa|herm|intersex|dickgirl|both/.test(s) ? "futa" : /^f$|female|woman|girl|she\b|her\b|lady|vixen|doe|mare|queen|cow\b/.test(s) ? "female" : /^m$|male|man\b|boy|he\b|him\b|guy|stallion|buck|bull\b|king/.test(s) ? "male" : null; }
 function vgSize(s) { s = String(s || "").toLowerCase(); if (VG_SIZES[s]) return s; return /giga|mega|planet|colossal|kaiju|titan/.test(s) ? "macro" : /giant|massive|enormous|huge/.test(s) ? "huge" : /big|large|tall/.test(s) ? "large" : /little|short|small/.test(s) ? "small" : /mini|pocket|doll/.test(s) ? "tiny" : /speck|ant-?sized|microscop/.test(s) ? "micro" : null; }
@@ -4375,12 +4377,12 @@ function playSettings(panels) {
   f.innerHTML = `<h3>Screen effects</h3>
     <label class="check"><input type="checkbox" id="sFxW" ${st.fxWeather !== false ? "checked" : ""}> Weather and light from the scene (rain, snow, embers, fireflies, bubbles…)</label>
     <label class="check"><input type="checkbox" id="sFxS" ${st.fxScene !== false ? "checked" : ""}> Effects for what's happening (pulses and vignettes for sex, oral, kissing, vore…)</label>
-    <label class="check"><input type="checkbox" id="sVg" ${st.voreGfx !== false ? "checked" : ""}> Vore picture: a small card showing the pred, the prey, where they are and how far digestion has gone</label>
+    ${VORE_PIC ? `<label class="check"><input type="checkbox" id="sVg" ${st.voreGfx !== false ? "checked" : ""}> Vore picture: a small card showing the pred, the prey, where they are and how far digestion has gone</label>` : ""}
     <div class="field"><label>Strength</label><div class="tabs" id="sFxL">${[["off", "Off"], ["subtle", "Subtle"], ["full", "Full"]].map(([k, l]) => `<button type="button" class="tab ${(st.fxLevel || "full") === k ? "on" : ""}" data-l="${k}">${l}</button>`).join("")}</div></div>`;
   panels.look.insertBefore(f, panels.look.children[1] || null);
   f.querySelector("#sFxW").onchange = e => { st.fxWeather = e.target.checked; save(); };
   f.querySelector("#sFxS").onchange = e => { st.fxScene = e.target.checked; save(); };
-  f.querySelector("#sVg").onchange = e => { st.voreGfx = e.target.checked; save(); };
+  if (VORE_PIC) f.querySelector("#sVg").onchange = e => { st.voreGfx = e.target.checked; save(); };
   f.querySelectorAll("#sFxL [data-l]").forEach(b => b.onclick = () => { st.fxLevel = b.dataset.l; f.querySelectorAll("#sFxL .tab").forEach(x => x.classList.toggle("on", x === b)); save(); });
 }
 
