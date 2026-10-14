@@ -823,7 +823,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.39 · Oct 14";
+const VERSION = "1.40 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1982,6 +1982,7 @@ function renderMsgs(keepScroll) {
 }
 
 let pressT = null, pressXY = null, suppressClick = false;
+let BOOT_DONE; const BOOTED = new Promise(r => { BOOT_DONE = r; });
 function toast(t) { const el = document.createElement("div"); el.className = "toast"; el.textContent = t; document.body.appendChild(el); setTimeout(() => el.remove(), 1700); }
 async function copyText(t) {
   try { await navigator.clipboard.writeText(t); return true; } catch {}
@@ -3158,8 +3159,8 @@ function readPngCard(buf) {
   }
   return found.ccv3 || found.chara || null;
 }
-$("importCard").onchange = async e => {
-  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+$("importCard").onchange = async e => { const f = e.target.files[0]; e.target.value = ""; if (f) importCardFile(f); };
+async function importCardFile(f) {
   try {
     let card, pic = "";
     if (/png$/i.test(f.type) || /\.png$/i.test(f.name)) { card = readPngCard(await f.arrayBuffer()); pic = await shrinkImage(f); }
@@ -3174,8 +3175,25 @@ $("importCard").onchange = async e => {
     let lore = []; try { if (d.character_book) lore = parseLorebook(d.character_book).entries; } catch {}
     const c = { ...blankChar("character"), name: d.name || "Imported", description: desc, scenario: d.scenario || "", firstMessage: d.first_mes || "", altGreetings: (d.alternate_greetings || []).filter(g => typeof g === "string" && g.trim()), lore, customPortrait: pic };
     S.chars.unshift(c); await saveChars(); renderHome(); editChar(c, false);
-  } catch { $("tagline").textContent = "That file doesn't look like a character card (PNG or JSON)."; }
-};
+  } catch { $("tagline").textContent = "That file doesn't look like a character card (PNG or JSON)."; toast("That file isn't a character card"); }
+}
+// On a computer: files opened with Lanternroom (double-click, "Open with", dragged onto the window) — cards and sound packs
+async function openFiles(files) {
+  const packs = files.filter(f => /\.zip$/i.test(f.name) || /^audio\//.test(f.type) || AUDIO_EXT.test(f.name)), cards = files.filter(f => !packs.includes(f) && /\.(png|json)$/i.test(f.name));
+  if (packs.length) { toast("Adding sounds…"); const n = await importSounds(packs.map(f => ({ file: f, path: f.name })), t => setStatus(t)).catch(() => null); setStatus(""); toast("Sound pack added"); }
+  for (const f of cards) await importCardFile(f);
+}
+if ("launchQueue" in window) launchQueue.setConsumer(async p => { if (!p.files?.length) return; const files = []; for (const h of p.files) { try { files.push(await h.getFile()); } catch {} } await BOOTED; openFiles(files); });
+// files dropped on the home screen
+document.addEventListener("dragover", e => { if ($("home") && !$("home").hidden && e.dataTransfer?.types?.includes("Files") && !e.target.closest("#sheet")) e.preventDefault(); });
+document.addEventListener("drop", e => { if (!$("home") || $("home").hidden || e.target.closest("#sheet") || !e.dataTransfer?.files?.length) return; e.preventDefault(); openFiles([...e.dataTransfer.files]); });
+// keyboard on a computer: Esc steps back (sound panel, then a window, then out of the chat)
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape" || e.defaultPrevented) return;
+  if (!$("ambPop").hidden) { $("ambPop").hidden = true; return; }
+  if ($("sheet") && !$("sheet").hidden) { userClose(); return; }
+  if (!$("chat").hidden && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "")) leaveChat();
+});
 
 /* ---------- Memory sheet ---------- */
 $("btnMemory").onclick = () => openMemory();
@@ -3318,9 +3336,10 @@ function drawInstall() {
   const box = $("sInstall"); if (!box) return;
   if (isApp()) box.innerHTML = `<p class="note" style="margin:0">✓ Lanternroom is running as an installed app.</p>`;
   else if (INSTALL) {
-    box.innerHTML = `<button type="button" class="btn primary" id="sInstallGo">Install Lanternroom as an app</button><p class="hint" style="margin:0">Adds it to your home screen and app drawer. It opens full-screen, works offline and still updates itself.</p>`;
+    const pc = matchMedia("(pointer:fine)").matches;
+    box.innerHTML = `<button type="button" class="btn primary" id="sInstallGo">${pc ? "Install Lanternroom on this computer" : "Install Lanternroom as an app"}</button><p class="hint" style="margin:0">${pc ? "It becomes a program: its own window, a Start menu and taskbar icon, a desktop shortcut if you like. Works offline, updates itself, and character cards or sound packs can be opened straight into it." : "Adds it to your home screen and app drawer. It opens full-screen, works offline and still updates itself."}</p>`;
     $("sInstallGo").onclick = async () => { const p = INSTALL; INSTALL = null; p.prompt(); try { await p.userChoice; } catch {} drawInstall(); };
-  } else box.innerHTML = `<p class="note" style="margin:0">To install: in Chrome, open the ⋮ menu and choose <b>Add to Home screen</b> (or <b>Install app</b>). On a computer, use the install icon at the right of the address bar.</p>`;
+  } else box.innerHTML = matchMedia("(pointer:fine)").matches ? `<p class="note" style="margin:0">To install on this computer: open Lanternroom in <b>Chrome</b> or <b>Edge</b> and click the install icon at the right of the address bar (a little screen with an arrow). Or open the ⋮ / … menu → <b>Cast, save and share → Install page as app</b> (Chrome) or <b>Apps → Install this site as an app</b> (Edge).</p>` : `<p class="note" style="margin:0">To install: in Chrome, open the ⋮ menu and choose <b>Add to Home screen</b> (or <b>Install app</b>).</p>`;
 }
 
 /* ---------- Computer layout: bot rail (left) and scene panel (right) ---------- */
@@ -5634,6 +5653,11 @@ async function migrateChats() {
   if (!S.chars.length && !(await Store.get("seeded"))) { S.chars = [sampleChar()]; await Store.set("seeded", true); }
   await saveSettings(); await saveChars(); await savePersonas();
   renderHome();
+  BOOT_DONE();
+  { const q = new URLSearchParams(location.search).get("open"); if (q) { history.replaceState(null, "", location.pathname);
+      if (q === "new") setTimeout(() => $("btnNewChar")?.click(), 300);
+      else if (q === "last") { const id = Object.entries(S.recent || {}).sort((a, b) => b[1] - a[1]).map(x => x[0]).find(id => S.chars.some(c => c.id === id)); if (id) setTimeout(() => openProfile(id), 300); }
+      else if (q === "settings") setTimeout(() => $("btnSettings")?.click(), 300); } }
   if (Sync.on()) Sync.push().then(() => Sync.pull());
   setTimeout(() => { $("splash").classList.add("hide"); setTimeout(() => $("splash").remove(), 700); }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 1900);
 })();
