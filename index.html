@@ -537,7 +537,10 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .fx-vig.w-bubbles{background:linear-gradient(180deg,rgba(40,120,170,.18),rgba(10,40,80,.22));box-shadow:inset 0 0 120px rgba(0,30,60,.5)}
 .fx-vig.w-bubbles::before{opacity:1;background:repeating-linear-gradient(100deg,transparent 0 40px,rgba(170,220,255,.05) 40px 70px);animation:fxCaustic 9s linear infinite}
 .fx-vig.w-glints{background:linear-gradient(180deg,rgba(255,220,160,.08),transparent 50%)}
-.fx-vig.w-combat{box-shadow:inset 0 0 90px rgba(120,10,10,.35)}
+.fx-vig.w-combat{box-shadow:inset 0 0 90px rgba(0,0,0,.4)}
+.fx-vig.h-light{box-shadow:inset 0 0 70px rgba(150,10,10,.28)}
+.fx-vig.h-heavy{box-shadow:inset 0 0 130px rgba(160,0,0,.55);animation:fxHurt 1.1s ease-in-out infinite}
+@keyframes fxHurt{0%,100%{filter:none}15%{filter:brightness(1.35)}30%{filter:none}45%{filter:brightness(1.2)}}
 .fx-vig.flash::after{background:rgba(220,230,255,.55);animation:fxFlash 1.1s ease-out forwards}
 .fx-vig.hitflash::after{background:radial-gradient(circle,transparent 40%,rgba(200,20,20,.45));animation:fxFlash .6s ease-out forwards}
 /* what's happening */
@@ -811,7 +814,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.28 · Oct 13";
+const VERSION = "1.29 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1057,7 +1060,7 @@ function garbled(text, c) {
 }
 function parseTag(raw) {
   const m = raw.match(/\[\[([^\[\]]*)\]\]\s*$/);
-  if (!m || !/mood\s*:/i.test(m[1])) return { text: raw.split("[[")[0].trim(), mood: null, place: null, focus: null, amb: null, act: null, gauges: null, pace: null };
+  if (!m || !/mood\s*:/i.test(m[1])) return { text: raw.split("[[")[0].trim(), mood: null, place: null, focus: null, amb: null, act: null, gauges: null, pace: null, harm: null };
   const f = {};
   for (const part of m[1].split("|")) { const i = part.indexOf(":"); if (i > 0) f[part.slice(0, i).trim().toLowerCase()] = part.slice(i + 1).trim(); }
   const low = k => (f[k] || "").toLowerCase().replace(/[^a-z]/g, "");
@@ -1068,7 +1071,8 @@ function parseTag(raw) {
     amb: AMB_KEYS.includes(low("ambience")) ? low("ambience") : null,
     act: ACT_KEYS.includes(low("activity")) ? low("activity") : null,
     gauges: f.gauges || null,
-    pace: PACES.includes(low("pace")) ? low("pace") : null
+    pace: PACES.includes(low("pace")) ? low("pace") : null,
+    harm: ["light", "heavy"].includes(low("harm")) ? low("harm") : f.harm ? "none" : null
   };
 }
 
@@ -1130,6 +1134,23 @@ function parseLorebook(raw) {
   entries.sort((a, b) => a.order - b.order);
   return { name: (d && d.name) || "", entries };
 }
+// the sound-word style for every chat, and fresh examples for bodily sounds in vore scenes
+const OLD_SFX_LINE = "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].";
+const NEW_SFX_LINE = "Write every sound effect as a custom onomatopoeia in bold italics inside a color tag, like [color=green]***BwrrRRRglorp...***[/color].";
+const sfxRulesNow = r => String(r || "").replace(OLD_SFX_LINE, NEW_SFX_LINE);
+function onoPrompt(c, chat, upto) {
+  const recent = chat.messages.slice(Math.max(0, upto - 6), upto).filter(m => m.role !== "image").map(m => m.content || "").join("\n");
+  const tags = [...tagsOf(c), ...(c.kind === "group" ? members(c).flatMap(tagsOf) : [])].join(" ");
+  let out = `\n\n# Sound effects\nEvery sound effect is an onomatopoeia invented for that exact moment, written in bold italics (***like this***). Build it to sound like the real noise: stretch letters, mix lower and UPPER case to show it swelling and fading (capitals are louder), pile up consonants for wet, rumbling or gurgling textures, and break long sounds into parts with "..." between them. Never reuse an onomatopoeia within a chat and never fall back on plain words like "gurgle" or "burp". All bodily sounds (burps and belches, stomachs and balls gurgling, sloshing, churning) MUST get their own onomatopoeia.`;
+  const vore = /vore|pred|prey|belly|stomach|digest/i.test(tags) || VORE.swallow.test(recent) || VORE.stomach.test(recent) || ["vore", "struggle", "swallow"].includes(chat.messages[upto - 1]?.act);
+  if (vore) {
+    const types = ["belch", "longGurgle", "sloshy", "shortBelch", "lateGurgle", "burp"];
+    if (VORE.digest.test(recent) || VORE.dead.test(recent)) types.splice(2, 0, "brutal");
+    if (VORE.cockvore.test(recent) || VORE.balls.test(recent)) types.splice(1, 0, "ballGurgle");
+    out += `\nFresh examples to take after but NOT repeat (make new ones each time):\n` + ONO.examples(types, 6).join("\n");
+  }
+  return out;
+}
 function buildPrompt(c, chat, upto, cont) {
   const st = S.settings, u = uname(), p = persona();
   const rules = `Write actions in *asterisks* and speech in quotes. Never write ${u}'s words, thoughts or actions. Keep replies vivid and focused, usually 1-4 paragraphs. Stay consistent with everything established below. End each reply where the moment naturally ends: never close with a question, cliffhanger or prompt aimed at ${u} just to get a response (no "What do you do?", no lingering "…?"). Characters only ask ${u} things they would genuinely ask right then.`;
@@ -1154,13 +1175,14 @@ function buildPrompt(c, chat, upto, cont) {
   if (lore.length) sys += `\n\n# World notes\n` + lore.map(l => fill(l.text, c)).join("\n");
   if (c.instructions) sys += `\n\n# Special instructions for this story\n${fill(c.instructions, c)}`;
   if ((st.globalInstr || "").trim()) sys += `\n\n# The user's instructions for every chat (always follow)\n${fill(st.globalInstr, c)}`;
-  sys += `\n\n# Text colors\nThe app shows [color=NAME or #hex]text[/color] as colored text. Use it whenever instructions ask for colored text.` + (st.sfxColors ? `\n${st.sfxRules}` : "");
+  sys += `\n\n# Text colors\nThe app shows [color=NAME or #hex]text[/color] as colored text. Use it whenever instructions ask for colored text.` + (st.sfxColors ? `\n${sfxRulesNow(st.sfxRules)}` : "");
+  sys += onoPrompt(c, chat, upto);
   sys += gaugePrompt(c, chat);
   const gs = gaugesOf(c), gaugePart = gs.length ? ` | gauges: ${gs.map(g => g.name + "=number").join(", ")}` : "";
   const pacePart = pacerOn() ? " | pace: one of " + PACES.join("/") : "";
   if (pacePart) sys += `\n\n# Pace\nThe user follows an on-screen stroke pacer that your pace field controls. Set it from the scene's sexual intensity: stop when nothing sexual is happening or for a pause, slow for teasing and build-up, steady for ongoing sex, fast as things get intense, edge to make ${u} hold right at the brink (use it for denial and teasing near the peak), cum at the moment of climax. Build up naturally over several replies and use edge before cum when it fits.`;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")}${focusPart}${gaugePart}${pacePart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is swallow while someone is being swallowed or gulped down, struggle while living prey is squirming inside a stomach, vore while anyone is inside a stomach or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none.`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy${focusPart}${gaugePart}${pacePart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is swallow while someone is being swallowed or gulped down, struggle while living prey is squirming inside a stomach, vore while anyone is inside a stomach or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}).`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
   if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
@@ -1191,7 +1213,7 @@ function buildPrompt(c, chat, upto, cont) {
     out.unshift({ role: m.role, content, ...(m.turn ? { turn: m.turn } : {}) });
   }
   if (!out.length || out[0].role !== "user") out.unshift({ role: "user", content: "(The scene begins.)" });
-  const remind = st.sfxColors ? `\n\n[Reminder: write every sound effect in bold capitals inside a color tag, like [color=green]**BWOORP**[/color], following the color rules.]` : "";
+  const remind = st.sfxColors ? `\n\n[Reminder: write every sound effect as a fresh custom onomatopoeia in bold italics inside a color tag, like [color=green]***${ONO.make("shortBelch")}***[/color], following the color rules.]` : "";
   if (remind && !cont) { const last = out[out.length - 1]; if (last.role === "user" && typeof last.content === "string") last.content += remind; else if (last.role === "user" && Array.isArray(last.content)) last.content[0].text += remind; }
   for (const o of out) delete o.turn;
   if (cont) out.push({ role: "user", content: `[Continue the scene from where it left off, without waiting for ${u}. Write the next message as you think the story should go: advance the moment, have characters act or speak, but never write ${u}'s words or actions. Do not repeat earlier text.]` + remind });
@@ -2075,7 +2097,7 @@ async function generate(upto, existing, cont) {
       else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
-    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null };
+    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null };
     const gv = parseGauges(p.gauges, c); if (gv) { meta.gauges = { ...gaugeValues(c, chat), ...gv }; chat.gauges = { ...meta.gauges }; }
     if (p.pace) meta.pace = p.pace; else if (pacerOn()) meta.pace = null;
     const segs = c.kind === "group" ? splitSpeakers(p.text).filter(x => x.text.trim()) : [];
@@ -3531,9 +3553,12 @@ function updateFx(sc) {
   const act = on && S.settings.fxScene !== false && lvl !== "off" ? (sc?.act && sc.act !== "none" ? sc.act : null) : null;
   const vig = $("fxVig"); if (!vig) return;
   const vk = ["vore", "struggle", "swallow"].includes(act) ? voreKind() : null; FX.vk = vk;
-  vig.className = ["fx-vig", amb ? "w-" + amb : "", act ? "a-" + act : "", vk ? "vk-" + vk : "", "lv-" + lvl].filter(Boolean).join(" ");
+  const harm = on && lvl !== "off" && sc?.harm && sc.harm !== "none" ? sc.harm : null;
+  if (harm && harm !== FX.harm) { FX.nextFlash = 0; }
+  FX.harm = harm;
+  vig.className = ["fx-vig", amb ? "w-" + amb : "", act ? "a-" + act : "", vk ? "vk-" + vk : "", harm ? "h-" + harm : "", "lv-" + lvl].filter(Boolean).join(" ");
   if (amb !== FX.amb || act !== FX.act) { FX.parts = []; FX.amb = amb; FX.act = act; }
-  if ((amb || act) && lvl !== "still") { if (!FX.raf) FX.raf = requestAnimationFrame(fxFrame); }
+  if ((amb || act || harm) && lvl !== "still") { if (!FX.raf) FX.raf = requestAnimationFrame(fxFrame); }
   else { cancelAnimationFrame(FX.raf); FX.raf = 0; const cv = $("fxCanvas"); cv.getContext("2d").clearRect(0, 0, cv.width, cv.height); }
 }
 function fxFrame(t) {
@@ -3573,7 +3598,7 @@ function fxFrame(t) {
   // lightning, rumbles and shakes
   const vig = $("fxVig");
   if (FX.amb === "storm" && t > FX.nextFlash) { if (FX.nextFlash) { vig.classList.remove("flash"); void vig.offsetWidth; vig.classList.add("flash"); } FX.nextFlash = t + 5000 + R() * 9000; }
-  if (FX.amb === "combat" && t > FX.nextFlash) { if (FX.nextFlash) { vig.classList.remove("hitflash"); void vig.offsetWidth; vig.classList.add("hitflash"); } FX.nextFlash = t + 3500 + R() * 6000; }
+  if (FX.harm && t > FX.nextFlash) { vig.classList.remove("hitflash"); void vig.offsetWidth; vig.classList.add("hitflash"); FX.nextFlash = t + (FX.harm === "heavy" ? 2600 + R() * 2500 : 6000 + R() * 6000); }
   if (full && (FX.act === "vore" || FX.act === "struggle") && t > FX.nextShake) { if (FX.nextShake) shakeChat(FX.act === "struggle" ? 6 : 3); FX.nextShake = t + (FX.act === "struggle" ? 1800 + R() * 2500 : 5000 + R() * 7000); }
   FX.raf = requestAnimationFrame(fxFrame);
 }
@@ -3669,6 +3694,54 @@ function lanternSVG(cls = "") {
 })();
 
 /* ---------- Sound effects ---------- */
+// --- Onomatopoeia maker: fresh sound words in the owner's style (stretched letters, mixed case for swelling
+// and fading volume, dense consonant clusters, long sounds broken into parts with "...")
+const ONO = (() => {
+  let seed = 0;
+  const R = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  const pick = a => a[Math.floor(R() * a.length)];
+  const n = (a, b) => a + Math.floor(R() * (b - a + 1));
+  const rep = (ch, k) => ch.repeat(Math.max(1, k));
+  // a run that swells and fades: rrRRRRrr
+  const swell = (ch, len) => { const up = n(1, Math.max(1, len - 1)); let s = ""; for (let i = 0; i < len; i++) s += i >= len - up - n(0, 1) && i < len - n(0, 2) ? ch.toUpperCase() : ch.toLowerCase(); return s; };
+  const mixVowels = (set, len) => { let s = ""; for (let i = 0; i < len; i++) { const v = pick(set); s += R() < 0.45 ? v.toUpperCase() : v; } return s; };
+  const chunk = list => { const c = pick(list); return R() < 0.2 ? c.toUpperCase() : R() < 0.5 ? c[0].toUpperCase() + c.slice(1) : c; };
+  const GL = ["gl", "glb", "rgl", "glr", "grgl", "blr", "lbl", "glrt", "rglr", "grl", "bwrg", "glrg", "brgl", "gwl"];
+  const parts = {
+    belch() { return pick(["Hw", "Bw", "Br", "Bh", "Hu", "Gw", "Bu", "Hwr", "Bwu"]) + mixVowels(["o", "u", "a", "h"], n(2, 6)) + swell("r", n(3, 7)) + pick(["", "hl", "Rh", "gh", "rRh", "hL"]) + swell("r", n(2, 4)) + pick(["hhp", "p", "ph", "rp", "hp", "rhp"]) + pick(["..", "...", ""]); },
+    shortBelch() { return pick(["Bw", "Br", "Hw", "Gw", "Bu"]) + rep("r", n(1, 2)) + rep("R", n(2, 4)) + pick(["ph", "p", "rp", "hp"]); },
+    burp() { return pick(["Bru", "Bwo", "Hru", "Buo"]) + mixVowels(["u", "U", "o", "O", "h", "H"], n(4, 8)) + swell("r", n(3, 6)) + pick(["p", "rp", "hp"]) + pick(["...", "..", ""]); },
+    gurgle() { let s = pick(["bw", "Bl", "Gl", "Gw", "bl", "Gr", "Bw", "Hl"]); for (let i = 0, k = n(3, 5); i < k; i++) s += R() < 0.3 ? swell("r", n(3, 6)) : chunk(GL); return s + pick(["rg", "rr", "rRR", "g", "r", "lrrr"]); },
+    lateGurgle() { let s = pick(["Bwgl", "Gwl", "Blr", "Hgl"]) + pick(["rp", "rb", "rt"]); for (let i = 0, k = n(1, 3); i < k; i++) s += chunk(["Grgrl", "grgl", "Glrg", "blrg"]); return s + rep("n", n(3, 5)) + pick(["...", "..", "p"]); },
+    longGurgle() { const a = pick(["Bl", "Gl", "Bwl", "Gw"]) + swell("r", n(3, 6)) + chunk(["gl", "Gl", "bl"]) + mixVowels(["u", "o"], n(3, 6)) + pick(["rsh", "rbl", "rgl", "rsh"]); let b = pick(["bw", "gw", "Bl"]) + swell("r", n(2, 4)); for (let i = 0, k = n(2, 4); i < k; i++) b += chunk(["Glrt", "glrt", "glr", "grgl", "lrg"]); return a + "... " + b + swell("r", n(3, 5)) + "..."; },
+    sloshy() { let s = pick(["Shl", "Shlsh", "Sl", "Schl", "Shhl"]) + pick(["sh", "osh", "ush", ""]); for (let i = 0, k = n(2, 3); i < k; i++) s += chunk(["grg", "bwgr", "glr", "grl", "blrg"]); return s + pick(["lrnnp", "rnnp", "nnp", "lrnn", "rsh"]); },
+    brutal() { const g = () => pick(["Glu", "Gwo", "Blu", "Gru"]) + mixVowels(["u", "o", "U", "O"], n(2, 4)) + chunk(["rbl", "rgl", "rbl"]) + swell("r", n(2, 3)); return g() + pick(["sh", "rsh"]) + "... " + g().toLowerCase().replace(/^./, c => c) + pick(["RRCH", "rRCH", "RCH"]) + "... " + pick(["Cr", "Kr", "CR", "Krr"]) + rep("N", n(2, 4)) + "CH"; },
+    ballGurgle() { let s = pick(["Glor", "Shlor", "Blor", "Sql", "Glsh"]) + swell("r", n(2, 4)) + pick(["sh", "shl", "lsh"]); for (let i = 0, k = n(1, 2); i < k; i++) s += chunk(["glbl", "blorsh", "glrsh", "shlrg"]); return s + pick(["...", "..", ""]); },
+    churn() { return pick(["Grr", "Hrr", "Mrr", "Grro"]) + mixVowels(["o", "O", "u", "U"], n(3, 6)) + swell("r", n(3, 6)) + rep("n", n(2, 4)) + pick(["...", "..", "nk"]); }
+  };
+  const LABEL = { belch: "Belch", shortBelch: "Shorter belch", burp: "Burp", gurgle: "Digestion gurgle", lateGurgle: "Late-digestion gurgle", longGurgle: "Digestion gurgle", sloshy: "Sloshy late digestion gurgles", brutal: "Brutal digestion gurgles with a crunch", ballGurgle: "Full balls gurgling and sloshing", churn: "Stomach churning growl" };
+  return {
+    types: Object.keys(parts), LABEL,
+    make(type, s) { if (s != null) seed = s >>> 0; else if (!seed) seed = (Date.now() ^ (Math.random() * 1e9)) >>> 0; return (parts[type] || parts.gurgle)(); },
+    // a few fresh examples for the prompt
+    examples(types, k = 6) { const out = []; const list = [...types]; for (let i = 0; i < k; i++) { const t = list[i % list.length]; out.push(`${LABEL[t]}: ***${this.make(t)}***`); } return out; }
+  };
+})();
+
+// Sounds written in that style (HwOoUuRRRrRhlRrrrhhp, bwRRRRGlblrRRRglrglrrRRrg, CrNNNCH) don't match the word rules,
+// so they're read by their letters: dense gl/rg/bl clusters gurgle, a wide open sound ending in p/ph is a belch,
+// shl/sh is a slosh, cr+n+ch is a crunch, a low gr/hr growl ending in n is a churning stomach.
+function phonoCat(t) {
+  const p = t.toLowerCase().replace(/[^a-z]/g, ""); if (p.length < 3) return null;
+  const c = p.replace(/(.)\1+/g, "$1"), g = (c.match(/gl|lg|rg|gr|bl|lb/g) || []).length;
+  if (/^(c|k)r?n+c?h$|^(c|k)ru?n+c?h|^(c|k)rn/.test(c)) return "crack";
+  if (g >= 2) return "bubbles";
+  if (/^(sh|sch|sl)/.test(c) && /sh|sl/.test(c.slice(1))) return "liquid";
+  if (g <= 1 && /^(b|h|g|u|w)/.test(c) && /(r|h|l)h?p$|ph$/.test(c) && /r/.test(c)) return "gas";
+  if (/^(g|h|m)r[ou]/.test(c) && /n+k?$/.test(c)) return "bubbles";
+  if (g === 1 && /^(bl|gl|bw|gw|sq|sh)/.test(c) && /r/.test(c)) return "bubbles";
+  return null;
+}
 const SFX_RULES = [
   ["sex", /(^pla+p|^pa+p+$|^fa+p+$|^thru+st)/i],
   ["shit", /(^plo+r+p|^plu+r+p|^plo+m+p|^flo+m+p|^splu+d|splo+r+t?ch|^plu+r+t)/i],
@@ -3676,7 +3749,7 @@ const SFX_RULES = [
   ["fart", /(^f+a+r+t|^p+r+t|^p+r{2,}|^b+r+a+p|^b+r{2,}a+p|^p+b+t|pf+t|pf+f+t|^f+r+t|pb+t|thb+t|bra+p|pfr+t|^fr+p|^too+t|bla+r+t|^pff+)/i],
   ["gas", /(bu+r+p|bel+ch|^u+r+p|hu+r+k|bw[ao]+r+p|blu+r+p|^hic|^hu+r+p|^bu+r+r+p|^gu+r+p)/i],
   ["bubbles", /(gu+r+g+l|gl+r+k|gl+u+r+k|gr+gl|blo+r+p|glo+r+p|blu+b|bloo+p|gl+u+g|gl+o+r+b|grumbl|gl+o+r+k|blorb)/i],
-  ["crack", /(cra+ck|sna+p|cru+n+ch|kra+k|cri+ck|cru+nk|splint|kr+i+k)/i],
+  ["crack", /(^[ck]r+n+c?h|cra+ck|sna+p|cru+n+ch|kra+k|cri+ck|cru+nk|splint|kr+i+k)/i],
   ["boom", /(bo+o+m|ka-?boo+m|bla+m|^ba+n+g|bwoo+m|kra-?boo+m)/i],
   ["hit", /(thwa+ck|sma+ck|wha+m|^ba+m+|^po+w|thu+d|sla+m|wha+ck|bo+n+k|pu+nch|thwu+m+p|whu+m+p|ka-?pow|^oo+f|^wa+p)/i],
   ["slash", /(shi+n+g|sla+sh|swi+sh|shi+n+k|cla+ng|cla+sh|schwi+n+g|sli+ce|whi+sh|tsing|shk)/i],
@@ -3840,11 +3913,25 @@ function sfxCtx(i) {
     digested: VORE.swallow.test(all) && VORE.digest.test(all) && VORE.dead.test(all),
     cvDisposal: cv && (VORE.remains.test(cur) || VORE.digest.test(recent)),
     condom: VORE.condom.test(cur),
+    cumBelly: VORE.inflate.test(recent) && VORE.cumword.test(recent),
     gurgleCum: ballsNow || (VORE.inflate.test(recent) && VORE.cumword.test(recent)) || (cv && !(VORE.stomach.test(cur) && !ballsNow))
   };
 }
 function rgbOf(el) { const m = getComputedStyle(el).color.match(/[\d.]+/g); return m ? m.slice(0, 3).map(Number) : null; }
 const nearRGB = (c, t, d) => c && Math.abs(c[0] - t[0]) + Math.abs(c[1] - t[1]) + Math.abs(c[2] - t[2]) <= d;
+// which body part is written closest to a sound (same paragraph, a little before or after it)
+const BODY = [["balls", /\b(balls?|nuts|testicles?|scrotum|(ball)?sack|cock|shaft|dick|urethra|member)\b/gi], ["belly", /\b(stomach|belly|bellies|gut|guts|tummy|gullet|innards|insides|paunch|gut|middle|midsection)\b/gi], ["womb", /\b(womb|pussy|cunt|slit|vagina)\b/gi]];
+function nearBody(sp) {
+  const para = sp.closest("p, li, .msg"); if (!para) return null;
+  const full = para.textContent, t = sp.textContent, at = full.indexOf(t); if (at < 0) return null;
+  const before = full.slice(Math.max(0, at - 240), at), after = full.slice(at + t.length, at + t.length + 140);
+  let best = null, dist = 1e9;
+  for (const [k, re] of BODY) {
+    for (const m of before.matchAll(re)) { const d = before.length - m.index; if (d < dist) { dist = d; best = k; } }
+    const m2 = after.match(new RegExp(re.source, "i")); if (m2 && m2.index * 1.6 < dist) { dist = m2.index * 1.6; best = k; }
+  }
+  return best;
+}
 function sfxPick(sp, t) {
   if (isBreath(t)) return "breath";
   let cat = sfxCat(t);
@@ -3860,7 +3947,13 @@ function sfxPick(sp, t) {
   if (cat === "shit" && !ctx.scat && !ruleBrown) { const plain = sfxCat(t.replace(/^(plo|plu|flo|splu|splo)/i, "spla")); cat = plain === "shit" || plain === "wave" ? "liquid" : plain; } // a splat, not a plop
   if (cat === "shit") return ctx.digested ? "shitbones" : "shit";
   if (cat === "cum") return ctx.condom || ctx.cvDisposal ? "condom" : "cum";
-  if (gurgly && ctx.gurgleCum) return "cumbub";
+  // gurgles and sloshes: the body part the text names nearest to the sound decides (balls → cum sloshing, belly → stomach)
+  if (gurgly || cat === "liquid" || cat === "bubbles") {
+    const near = nearBody(sp);
+    if (near === "balls" && (gurgly || cat === "bubbles" || /sh/i.test(t))) return "cumbub";
+    if (near === "belly" || near === "womb") return ctx.cumBelly && gurgly ? "cumbub" : cat === "cumbub" && !(cream && VORE.cumword.test(msgText(S.chat?.messages?.[+sp.closest("[data-i]")?.dataset.i]))) ? "bubbles" : cat;
+    if (!near && gurgly && ctx.gurgleCum && cream) return "cumbub";
+  }
   return cat;
 }
 function r(a, b) { return a + Math.random() * (b - a); }
@@ -3880,14 +3973,25 @@ function isSfxText(t, bold) {
 }
 function sfxCat(t) {
   const w = t.replace(/[^\p{L}\s-]/gu, "").trim();
-  for (const [cat, re] of SFX_RULES) if (re.test(w)) return cat;
-  for (const part of w.split(/[\s-]+/)) for (const [cat, re] of SFX_RULES) if (re.test(part)) return cat;
+  for (const [cat, re] of SFX_RULES) if (cat !== "wave" && re.test(w)) return cat;
+  for (const part of w.split(/[\s-]+/)) for (const [cat, re] of SFX_RULES) if (cat !== "wave" && re.test(part)) return cat;
+  const ph = phonoCat(w); if (ph) return ph;
+  for (const [cat, re] of SFX_RULES) if (cat === "wave" && re.test(w)) return cat;
   return "wave";
 }
 function decorateSfx(root) {
   if (!document.getElementById("lrfxDefs")) document.body.insertAdjacentHTML("beforeend", `<svg id="lrfxDefs" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${FX_DEFS}</defs></svg>`);
   const mark = el => {
     const t = el.textContent.trim();
+    // a long sound in parts (GluuUurblrrsh... gwooOuurglRRCH... CrNNNCH): each part becomes its own tappable sound
+    const pieces = t.split(/(?<=\.{2,}|…)\s+/).filter(x => x.replace(/[^\p{L}]/gu, "").length >= 3);
+    if (pieces.length >= 2 && !el.classList.contains("sfx-part")) {
+      let inner = el; while (inner.children.length === 1 && inner.children[0].textContent.trim() === t) inner = inner.children[0];
+      inner.innerHTML = pieces.map(x => `<span class="cx sfx-part sfx-done">${esc(x)}</span>`).join(" ");
+      el.classList.add("sfx-group");
+      inner.querySelectorAll(".sfx-part").forEach(mark);
+      return;
+    }
     if (isBreath(t)) { const c = rgbOf(el); if (c && c[1] > c[0] + 30 && c[1] > c[2] + 30) el.style.color = "#f3f0f8"; }
     const cat = sfxPick(el, t);
     el.classList.add("sfx"); el.dataset.fx = cat;
@@ -3921,7 +4025,7 @@ function decorateSfx(root) {
 function looksLikeSound(t) {
   if (/[:?]$/.test(t) || !isSfxText(t, true)) return false;
   const words = t.split(/\s+/).filter(Boolean); if (words.length > 5) return false;
-  const known = words.some(w => { const l = w.replace(/[^\p{L}]/gu, ""); return l.length > 1 && (isBreath(l) || SFX_RULES.some(([c, re]) => c !== "wave" && re.test(l))); });
+  const known = words.some(w => { const l = w.replace(/[^\p{L}]/gu, ""); return l.length > 1 && (isBreath(l) || !!phonoCat(l) || SFX_RULES.some(([c, re]) => c !== "wave" && re.test(l))); });
   return known || /(\p{L})\1\1/iu.test(t.replace(/[^\p{L}]/gu, ""));
 }
 const AUTO_SFX_COLOR = { gas: "#6fdc6a", bubbles: "#6fdc6a", fart: "#a8875a", shit: "#c9a27e", shitbones: "#c9a27e", cum: "#f1ebda", cumbub: "#f1ebda", condom: "#f1ebda",
@@ -4429,7 +4533,11 @@ function sceneNow() {
   let amb = last?.amb, act = last?.act;
   if (!amb) { const t = `${S.chat?.place || ""}\n${msgText(last)}`; amb = (AMB_GUESS.find(([, re]) => re.test(t)) || ["none"])[0]; }
   if (!act) act = guessAct(msgs);
-  return { amb, act };
+  // red is only for the user's character getting hurt: the reply says so, or a health-type gauge runs low
+  let harm = last?.harm || "none";
+  const c = char(), hg = gaugesOf(c).find(g => /health|\bhp\b|hit ?points|vitality|\blife\b|blood/i.test(g.name));
+  if (hg && S.chat) { const v = gaugeValues(c, S.chat)[hg.name]; if (v <= 15) harm = "heavy"; else if (v <= 35 && harm === "none") harm = "light"; }
+  return { amb, act, harm };
 }
 const AMBS = { amb: null, act: null, bed: null, loop: null };
 // calls are queued so quick re-renders never start two soundscapes at once
@@ -4438,10 +4546,10 @@ function updateAmbience() { AMB_Q = AMB_Q.then(ambienceStep).catch(() => {}); re
 async function ambienceStep() {
   const st = S.settings, inChat = S.chat && !$("chat").hidden && !document.hidden;
   const btn = $("btnAmb"); if (btn) btn.classList.toggle("muted", !!st.ambMuted || (st.ambOn === false && st.actOn === false));
-  const { amb, act } = inChat ? sceneNow() : { amb: "none", act: "none" };
+  const scn = inChat ? sceneNow() : { amb: "none", act: "none", harm: "none" }, { amb, act } = scn;
   const wantAmb = inChat && st.ambOn !== false && !st.ambMuted && amb !== "none" ? amb : null;
   const wantAct = inChat && st.actOn !== false && !st.ambMuted && act !== "none" ? act : null;
-  try { updateFx(inChat ? { amb, act } : null); renderPacer(); } catch {}
+  try { updateFx(inChat ? scn : null); renderPacer(); } catch {}
   if (btn) btn.title = "Background: " + (AMB_LABEL[amb] || "none") + (act !== "none" ? ` · ${act}` : "") + (st.ambMuted ? " (muted)" : "");
   if (!inChat && (AMBS.amb || AMBS.act || LIVE.size)) {
     // left the chat or the app: everything stops at once, no fade
