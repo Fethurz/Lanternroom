@@ -66,7 +66,9 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
 .ph{display:grid;place-items:center;font:400 28px var(--f-display);color:var(--accent)}
 
 /* Chat */
-#chat{background:var(--bg)}
+#chat{background:var(--bg);overflow:hidden}
+#fxLayer{position:fixed;overflow:hidden;pointer-events:none;z-index:60}
+#fxLayer .fxp,#fxLayer .fxring{position:absolute}
 #scene{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s ease}
 #scene.on{opacity:.38}
 #chat::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 55%,transparent),color-mix(in srgb,var(--bg) 20%,transparent) 30%,color-mix(in srgb,var(--bg) 85%,transparent));pointer-events:none;z-index:0}
@@ -243,6 +245,23 @@ body{background:radial-gradient(120% 70% at 50% -10%,var(--glow) 0%,var(--bg) 55
 .chip .ti{margin-right:4px;display:inline-flex;vertical-align:-3px}
 .tsv{width:1.15em;height:1.15em;display:inline-block;overflow:visible;flex:none}
 #charList .char-card .ticons .tsv{width:13px;height:13px}
+/* v1.28: bot cards with name, stats, summary, tags and size */
+#charList{grid-template-columns:repeat(auto-fill,minmax(min(176px,calc(50% - 5px)),1fr));gap:10px}
+#charList .char-card{border-radius:14px;background:linear-gradient(180deg,color-mix(in srgb,var(--kc) 10%,var(--surface)) 0%,var(--surface) 30%,color-mix(in srgb,var(--bg) 60%,var(--surface)) 100%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--kc) 22%,transparent)}
+#charList .char-card > .name{font:400 14px/1.25 var(--f-display)!important;color:color-mix(in srgb,var(--kc) 70%,var(--fg));padding:7px 36px 6px 9px!important;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block!important}
+#charList .char-card img,#charList .char-card .ph{aspect-ratio:1/1}
+#charList .char-card .ph-wrap{margin:0 6px;border-radius:10px;overflow:hidden}
+#charList .bstats{position:absolute;top:6px;right:6px;display:flex;gap:4px}
+#charList .bstats span{display:inline-flex;align-items:center;gap:3px;padding:2px 6px 2px 4px;border-radius:7px;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(4px);color:var(--fg);font-size:11px;font-weight:700;border:1px solid color-mix(in srgb,var(--kc) 40%,transparent)}
+#charList .bstats svg{width:12px;height:12px;color:var(--kc)}
+#charList .char-card .cbody{display:flex;flex-direction:column;gap:7px;padding:8px 9px 0;flex:1}
+#charList .bsum{font-size:12.5px;line-height:1.38;color:color-mix(in srgb,var(--fg) 85%,var(--muted));display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+#charList .btags{display:flex;flex-wrap:wrap;gap:4px}
+#charList .btag{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;background:color-mix(in srgb,var(--kc) 8%,var(--surface-2));border:1px solid var(--line);color:var(--fg)}
+#charList .btag .ti{margin:0}#charList .btag .tsv{width:12px;height:12px}
+#charList .btag.more-t{color:var(--muted)}
+#charList .btok{margin-top:auto;padding:8px 0 7px;border-top:1px solid var(--line);text-align:center;font:11px ui-monospace,Menlo,monospace;color:var(--muted)}
+#charList .char-card .more{top:2px!important;right:2px!important;background:transparent}
 #ambPop{position:absolute;right:8px;top:66px;z-index:6;width:min(300px,calc(100% - 16px));background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px;box-shadow:0 14px 36px -12px rgba(0,0,0,.8);animation:fadeIn .15s ease}
 #ambPop .ap-row{display:flex;flex-direction:column;gap:4px}
 #ambPop .ap-top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:34px}
@@ -525,31 +544,31 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .fx-vig.a-sex::before{opacity:1;box-shadow:inset 0 0 110px rgba(255,80,160,.55);animation:fxPulse .62s ease-in-out infinite}
 .fx-vig.a-oral::before{opacity:1;box-shadow:inset 0 0 100px rgba(255,110,170,.42);animation:fxPulse 1.1s ease-in-out infinite}
 .fx-vig.a-kiss::before{opacity:1;box-shadow:inset 0 0 120px rgba(255,140,190,.35);animation:fxPulse 2.4s ease-in-out infinite}
-.fx-vig.a-vore::before{opacity:1;box-shadow:inset 0 0 130px rgba(140,20,30,.7);animation:fxThrob 2.6s ease-in-out infinite}
-.fx-vig.a-struggle::before{opacity:1;box-shadow:inset 0 0 120px rgba(170,25,35,.75);animation:fxThrob .9s ease-in-out infinite}
-.fx-vig.a-swallow::before{opacity:1;background:radial-gradient(ellipse at 50% 50%,transparent 35%,rgba(70,5,15,.85) 85%);animation:fxGulp 2.2s ease-in infinite}
+.fx-vig.a-vore,.fx-vig.a-struggle,.fx-vig.a-swallow{--vc:110,220,90}
+.fx-vig.vk-white{--vc:245,240,225}
+.fx-vig.a-vore::before{opacity:1;box-shadow:inset 0 0 120px rgba(var(--vc),.42),inset 0 0 40px rgba(var(--vc),.18)}
+.fx-vig.a-struggle::before{opacity:1;box-shadow:inset 0 0 120px rgba(var(--vc),.5),inset 0 0 44px rgba(var(--vc),.22)}
+.fx-vig.a-swallow::before{opacity:1;background:radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(var(--vc),.32) 100%);box-shadow:inset 0 0 90px rgba(var(--vc),.35)}
 .fx-vig.a-shit::before{opacity:1;box-shadow:inset 0 0 110px rgba(110,80,40,.45)}
 .fx-vig.climax::after{background:radial-gradient(circle,rgba(255,255,255,.65),rgba(255,120,190,.35) 50%,transparent 80%);animation:fxClimax 1.6s ease-out forwards}
 .fx-vig.lv-subtle{opacity:.55}
 .fx-vig.lv-off{display:none}
 .fx-vig.lv-still::before,.fx-vig.lv-still::after{animation:none!important}
 @keyframes fxPulse{0%,100%{opacity:.45}50%{opacity:1}}
-@keyframes fxThrob{0%,100%{opacity:.6;transform:scale(1)}40%{opacity:1;transform:scale(1.02)}}
-@keyframes fxGulp{0%{opacity:0;transform:scale(1.25)}60%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.95)}}
 @keyframes fxFlash{0%{opacity:0}8%{opacity:1}20%{opacity:.2}30%{opacity:.8}100%{opacity:0}}
 @keyframes fxClimax{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
 @keyframes fxCaustic{to{background-position:300px 0}}
 /* status gauges */
-#gauges{position:relative;z-index:3;display:flex;flex-wrap:wrap;gap:4px 12px;padding:6px 12px;background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#gauges{position:relative;z-index:3;overflow:hidden;display:flex;flex-wrap:wrap;gap:4px 12px;padding:6px 12px;background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .gauge{position:relative;flex:1 1 140px;min-width:0;display:flex;align-items:center;gap:6px;font-size:12px;transition:transform .3s}
 .gauge .gn{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42%}
 .gauge .gbar{flex:1;height:7px;border-radius:99px;background:color-mix(in srgb,var(--gc) 16%,var(--surface-2));overflow:hidden}
 .gauge .gbar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,color-mix(in srgb,var(--gc) 70%,#000),var(--gc));box-shadow:0 0 8px color-mix(in srgb,var(--gc) 60%,transparent);transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
 .gauge .gv{min-width:24px;text-align:right;font-variant-numeric:tabular-nums;color:var(--gc);font-weight:700}
 .gauge.bump{transform:scale(1.04)}
-.gdelta{position:absolute;right:0;top:-4px;font-size:11px;font-weight:700;animation:gUp 1.4s ease-out forwards;pointer-events:none}
+.gdelta{position:absolute;right:30px;top:-1px;font-size:11px;font-weight:700;animation:gUp 1.4s ease-out forwards;pointer-events:none}
 .gdelta.up{color:#8fe08a}.gdelta.down{color:#ff8a80}
-@keyframes gUp{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-14px)}}
+@keyframes gUp{0%{opacity:0;transform:translateY(5px)}20%{opacity:1}100%{opacity:0;transform:translateY(-5px)}}
 .gauge-row{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .gauge-sw{display:flex;flex-wrap:wrap;gap:6px}
 .gauge-sw .acc{width:30px;height:30px}
@@ -574,22 +593,51 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 @keyframes pcCue{0%{transform:scale(1.5);opacity:0}100%{transform:none;opacity:1}}
 @keyframes pcBurst{0%{opacity:1;transform:scale(.2)}100%{opacity:0;transform:scale(4)}}
 /* dice */
-.dline{margin-top:6px}
-.dchip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px 2px 3px;border-radius:999px;font-size:12px;font-weight:700;background:var(--surface-2);border:1px solid var(--line)}
-.dchip .die{width:24px;height:24px}
+.dline{margin-top:8px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.dchip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px 2px 3px;border-radius:999px;font-size:12px;font-weight:700;background:var(--surface-2);border:1px solid var(--line);color:var(--fg)}
+.dchip b{font-weight:400;color:var(--muted)}
+.dchip .die{width:26px;height:26px;flex:none}
 .dchip.d-criticalfail{color:#ff8a80;border-color:#ff8a80}
 .dchip.d-fail{color:#f2a08e}
 .dchip.d-partial{color:#f5d06b}
 .dchip.d-success{color:#8fe08a}
-.dchip.d-criticalsuccess{color:#7fe7ff;border-color:#7fe7ff;box-shadow:0 0 10px rgba(127,231,255,.35)}
+.dchip.d-criticalsuccess{color:#ffd76a;border-color:#ffd76a;box-shadow:0 0 10px rgba(255,215,106,.35)}
+.dvs{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.dres{font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent)}
+.dres.r-them{background:rgba(226,118,111,.16);color:#ff9a90}
+.dres.r-tie{background:var(--surface-2);color:var(--muted)}
+.tn-dot{margin-left:4px;font-size:10px;color:var(--accent);opacity:.8}
 #rollNow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:8px 12px 0;font-size:13px}
 #rollNow[hidden]{display:none}
 #rollNow .hint{flex:1;color:var(--muted)}
-.roll-fx{position:absolute;left:50%;top:45%;z-index:20;width:110px;height:110px;margin:-55px;pointer-events:none;animation:rollSpin .7s linear infinite;filter:drop-shadow(0 8px 24px rgba(0,0,0,.6))}
-.roll-fx .die{width:100%;height:100%}
-.roll-fx.done{animation:rollLand .65s cubic-bezier(.2,1.6,.4,1) forwards}
-@keyframes rollSpin{0%{transform:rotate(0) scale(.9)}50%{transform:rotate(180deg) scale(1.05)}100%{transform:rotate(360deg) scale(.9)}}
-@keyframes rollLand{0%{transform:scale(1.4)}40%{transform:scale(1)}85%{opacity:1}100%{opacity:0;transform:scale(1) translateY(-20px)}}
+#btnDice.spent{opacity:.4}
+.roll-stage{position:absolute;inset:0;z-index:25;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(4px) saturate(.7);-webkit-backdrop-filter:blur(4px) saturate(.7);opacity:0;transition:opacity .4s ease}
+.roll-stage.on{opacity:1}
+.roll-stage.off{opacity:0;transition:opacity .5s ease}
+.rs-dice{display:flex;gap:26px;align-items:flex-end;justify-content:center}
+.rs-slot{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:120px}
+.rs-die{width:116px;height:116px;filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));will-change:transform}
+.rs-die .die{width:100%;height:100%}
+.rs-slot:not(.landed):not(.rolling) .rs-die{opacity:0}
+.rs-who{font:400 15px var(--f-display);color:var(--muted)}
+.rs-out{font-weight:700;font-size:15px;min-height:20px;opacity:0;transform:translateY(4px);transition:all .3s}
+.rs-slot.landed .rs-out{opacity:1;transform:none}
+.rs-slot.landed .rs-die{animation:rsLand .5s ease-out}
+.o-criticalfail .rs-out{color:#ff8a80}.o-fail .rs-out{color:#f2a08e}.o-partial .rs-out{color:#f5d06b}.o-success .rs-out{color:#8fe08a}.o-criticalsuccess .rs-out{color:#ffd76a}
+.rs-slot.nat20 .rs-die{animation:rsCrit 1.4s ease-out;filter:drop-shadow(0 0 26px rgba(255,215,106,.95)) drop-shadow(0 10px 22px rgba(0,0,0,.5))}
+.rs-slot.nat20::after{content:"";position:absolute;width:220px;height:220px;margin-top:-50px;border-radius:50%;background:radial-gradient(circle,rgba(255,225,140,.55),transparent 65%);animation:rsGlow 1.6s ease-out forwards;pointer-events:none}
+.rs-slot{position:relative}
+.rs-slot.nat1 .rs-die{animation:rsFumble .9s ease-out;filter:drop-shadow(0 0 22px rgba(255,60,60,.8)) grayscale(.4) brightness(.8)}
+.rs-slot.nat1::after{content:"";position:absolute;inset:-30px;margin-top:-20px;background:radial-gradient(circle,rgba(200,20,20,.45),transparent 65%);animation:rsGlow 1.4s ease-out forwards;pointer-events:none}
+.rs-res{font:400 26px var(--f-display);opacity:0;transform:scale(.85);transition:all .35s cubic-bezier(.2,1.4,.4,1);color:var(--accent);text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.rs-res.show{opacity:1;transform:none}
+.rs-res.r-them{color:#ff9a90}.rs-res.r-tie{color:var(--fg)}
+.rs-res.crit{font-size:32px}
+@keyframes rsLand{0%{transform:scale(1.1,.9)}40%{transform:scale(.96,1.04)}100%{transform:none}}
+@keyframes rsCrit{0%{transform:scale(1)}25%{transform:scale(1.25) rotate(-6deg)}50%{transform:scale(1.15) rotate(4deg)}100%{transform:none}}
+@keyframes rsFumble{0%{transform:none}15%{transform:translateX(-8px) rotate(-8deg)}30%{transform:translateX(8px) rotate(6deg)}45%{transform:translateX(-5px)}60%{transform:translateY(6px) rotate(14deg)}100%{transform:translateY(4px) rotate(10deg)}}
+@keyframes rsGlow{0%{opacity:0;transform:scale(.4)}25%{opacity:1}100%{opacity:0;transform:scale(1.3)}}
+@media (max-width:420px){.rs-die{width:96px;height:96px}.rs-slot{min-width:100px}.rs-dice{gap:14px}}
 .badge.br{color:#c49bff}
 @media (prefers-reduced-motion: reduce){.fx-vig::before,.fx-vig::after,#pacer .pc-bead,#pacer .pc-track{animation:none!important}}
 </style>
@@ -738,9 +786,13 @@ const Store = {
     try { const v = localStorage.getItem("lr:" + k); return v ? JSON.parse(v) : undefined; } catch { return undefined; }
   },
   async set(k, v) {
+    const txt = JSON.stringify(v);
+    // saving the same thing again is not an edit: nothing is written or sent to other devices
+    if (typeof Sync !== "undefined" && Sync.synced(k)) { const cur = await this.get(k); if (cur !== undefined && JSON.stringify(cur) === txt) return false; }
     if (typeof Sync !== "undefined") Sync.mark(k);
-    if (this.db) return new Promise(res => { const tx = this.db.transaction("kv", "readwrite"); tx.objectStore("kv").put(JSON.parse(JSON.stringify(v)), k); tx.oncomplete = res; tx.onerror = res; });
-    try { localStorage.setItem("lr:" + k, JSON.stringify(v)); } catch {}
+    if (this.db) { await new Promise(res => { const tx = this.db.transaction("kv", "readwrite"); tx.objectStore("kv").put(JSON.parse(txt), k); tx.oncomplete = res; tx.onerror = res; }); return true; }
+    try { localStorage.setItem("lr:" + k, txt); } catch {}
+    return true;
   },
   async setRaw(k, v) { // stores Blobs as-is (IndexedDB only)
     if (typeof Sync !== "undefined") Sync.mark(k);
@@ -759,7 +811,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.27 · Oct 13";
+const VERSION = "1.28 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1110,7 +1162,7 @@ function buildPrompt(c, chat, upto, cont) {
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
   sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")}${focusPart}${gaugePart}${pacePart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is swallow while someone is being swallowed or gulped down, struggle while living prey is squirming inside a stomach, vore while anyone is inside a stomach or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
-  if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a d20 roll, the outcome of what ${u} tries follows the roll (1 critical fail, 2-6 fail, 7-11 partial, 12-19 success, 20 critical success), even if that means ${u} fails. The fate die decides how well the other characters' key actions go.`;
+  if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
   const blankStart = chat.messages[0]?.greeting && !chat.messages[0].content;
   if (blankStart) sys += `\n\nThere is no written opening: ${u}'s first message sets the scene. Take it exactly as ${u} wrote it and continue naturally from there.`;
@@ -1130,7 +1182,7 @@ function buildPrompt(c, chat, upto, cont) {
       content = (m.content ? m.content + "\n" : "") + `[${u} shared an image${m.caption ? ": " + m.caption : ""}]`;
     }
     if (m.role === "assistant" && m.turn && m.speaker) content = `**${m.speaker}:** ${content}`;
-    if (m.role === "user" && m.roll && diceOn()) content = (content || "") + rollNote(m, u);
+    if (m.role === "user" && m.roll && diceOn()) content = (content || "") + rollNote(m, u, c);
     if (m.role === "assistant" && m.mood && !(m.turn && hist[i + 1]?.turn === m.turn)) content += `\n[[mood: ${m.mood} | place: ${m.place || chat.place || "unknown"}${c.kind === "group" && m.focus ? ` | focus: ${m.focus}` : ""}${m.gauges && gs.length ? " | gauges: " + Object.entries(m.gauges).map(([k, v]) => k + "=" + v).join(", ") : ""}${m.pace && pacePart ? " | pace: " + m.pace : ""}]]`;
     if (budget - content.length < 0 && out.length >= 2) break;
     budget -= content.length;
@@ -1141,7 +1193,6 @@ function buildPrompt(c, chat, upto, cont) {
   if (!out.length || out[0].role !== "user") out.unshift({ role: "user", content: "(The scene begins.)" });
   const remind = st.sfxColors ? `\n\n[Reminder: write every sound effect in bold capitals inside a color tag, like [color=green]**BWOORP**[/color], following the color rules.]` : "";
   if (remind && !cont) { const last = out[out.length - 1]; if (last.role === "user" && typeof last.content === "string") last.content += remind; else if (last.role === "user" && Array.isArray(last.content)) last.content[0].text += remind; }
-  if (S.fate && diceOn()) { const fn = "\n\n" + fateNote(S.fate); const last = out[out.length - 1]; if (last.role === "user" && typeof last.content === "string") last.content += fn; else if (last.role === "user" && Array.isArray(last.content)) last.content[0].text += fn; else out.push({ role: "user", content: fn.trim() }); }
   for (const o of out) delete o.turn;
   if (cont) out.push({ role: "user", content: `[Continue the scene from where it left off, without waiting for ${u}. Write the next message as you think the story should go: advance the moment, have characters act or speak, but never write ${u}'s words or actions. Do not repeat earlier text.]` + remind });
   return [{ role: "system", content: sys }, ...out];
@@ -1189,8 +1240,8 @@ async function saveChat() {
   if (!S.charId || !S.chat) return;
   if (!S.chat.id) S.chat.id = uid();
   if (!S.chat.personaId) S.chat.personaId = S.personaId;
-  await within(Store.set("c2:" + S.chat.id, S.chat).catch(() => {}));
-  await within(touchIndex(S.charId, S.chat).catch(() => {}));
+  const changed = await within(Store.set("c2:" + S.chat.id, S.chat).catch(() => true));
+  if (changed !== false) await within(touchIndex(S.charId, S.chat).catch(() => {}));
   if (typeof renderPanes === "function") renderPanes();
 }
 async function saveSettings() { await Store.set("settings", S.settings); }
@@ -1348,15 +1399,18 @@ function renderHome() {
     const tg = tagsOf(c).filter(t => t !== "world" && t !== "group");
     const icons = [...new Map(tg.map(t => [tagIcon(t), t])).entries()].filter(([ic]) => ic).slice(0, 5);
     b.title = stripColor(sub).slice(0, 200);
-    b.innerHTML = `<div class="ph-wrap"><img alt="" loading="lazy"><span class="kind-pill">${kind === "world" ? "World" : kind === "group" ? `Group ${members(c).length}` : "Char"}</span></div><div class="cbody"><div class="name">${c.fav ? '<span class="fav-star">★</span>' : ""}${esc(c.name)}</div>${icons.length ? `<div class="ticons">${icons.map(([ic, t]) => `<span title="${esc(t)}">${ic}</span>`).join("")}</div>` : ""}<div class="snip" data-snip="${c.id}" hidden></div></div>`;
+    const summ = botSummary(c);
+    b.innerHTML = `<div class="name">${c.fav ? '<span class="fav-star">★</span>' : ""}${esc(c.name)}</div><div class="ph-wrap"><img alt="" loading="lazy"><span class="kind-pill">${kind === "world" ? "World" : kind === "group" ? `Group ${members(c).length}` : "Char"}</span><span class="bstats" data-stats="${c.id}" hidden></span></div><div class="cbody">${summ ? `<div class="bsum">${esc(summ)}</div>` : ""}${tg.length ? `<div class="btags">${tg.slice(0, 6).map(t => `<span class="btag">${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</span>`).join("")}${tg.length > 6 ? `<span class="btag more-t">+${tg.length - 6}</span>` : ""}</div>` : ""}<div class="btok">${fmtTok(cardTokens(c))} tokens</div></div>`;
     b.insertAdjacentHTML("beforeend", `<button type="button" class="more" aria-label="Options for ${esc(c.name)}"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>`);
     setImg(b.querySelector("img"), url, c);
     b.onclick = e => { if (e.target.closest(".more")) { cardMenu(c); return; } openProfile(c.id); };
     b.onkeydown = e => { if (e.key === "Enter") openProfile(c.id); };
     list.appendChild(b);
     getIndex(c.id).then(idx => {
-      const last = idx.sort((x, y) => y.updated - x.updated)[0];
-      if (last?.preview) { const el = list.querySelector(`[data-snip="${c.id}"]`); if (el) el.textContent = last.preview + (idx.length > 1 ? ` · ${idx.length} chats` : ""); }
+      const el = list.querySelector(`[data-stats="${c.id}"]`); if (!el) return;
+      const msgs = idx.reduce((a, e) => a + (+e.count || 0), 0);
+      el.hidden = false;
+      el.innerHTML = `<span title="${msgs} messages in all chats">${STAT_MSG}${fmtNum(msgs)}</span><span title="${idx.length} chats">${STAT_CHAT}${fmtNum(idx.length)}</span>`;
     });
   }
   $("tagline").textContent = hasKey() ? "Your characters, with memory that holds." : "Start by adding your API key in Settings.";
@@ -1389,6 +1443,16 @@ async function deleteBot(id) {
 const fmtWhen = ts => { const d = new Date(ts), now = new Date(); return d.toDateString() === now.toDateString() ? d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : d.toLocaleDateString([], { month: "short", day: "numeric" }); };
 // Tapping a bot opens its profile: summary, tags in words, who you play as, its chats,
 // and (for groups and worlds) the characters inside it, each of whom you can talk to alone.
+// rough size of what the bot sends the AI each turn (about 4 characters per token)
+function cardTokens(c) {
+  const parts = [c.description, c.appearance, c.scenario, c.firstMessage, c.instructions, ...(c.lore || []).filter(l => l.constant).map(l => l.text), ...(c.cast || []).map(x => x.name + " " + x.details)];
+  if (c.kind === "group") for (const m of members(c)) parts.push(m.description, m.appearance);
+  return Math.round(parts.filter(Boolean).join("\n").length / 4);
+}
+const fmtNum = n => n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace(/\.0$/, "") + "m" : n >= 1000 ? (n / 1000).toFixed(n >= 1e4 ? 0 : 1).replace(/\.0$/, "") + "k" : String(n);
+const fmtTok = n => fmtNum(n);
+const STAT_MSG = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5A1.5 1.5 0 0 1 3.5 2h9A1.5 1.5 0 0 1 14 3.5v6a1.5 1.5 0 0 1-1.5 1.5H7l-3 2.6V11h-.5A1.5 1.5 0 0 1 2 9.5z" fill="currentColor"/><path d="M5 5.5h6M5 8h4" stroke="var(--bg)" stroke-width="1.2" stroke-linecap="round"/></svg>`;
+const STAT_CHAT = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5h5.5L13 5v8.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1z" fill="currentColor"/><path d="M5.5 8h5M5.5 10.5h5M9.5 1.5V5H13" stroke="var(--bg)" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>`;
 const botSummary = c => { if (c.summary) return c.summary; const d = stripColor(fill(c.description || "", c)).replace(/[*_]/g, "").replace(/\s+/g, " ").trim(); return d.length > 300 ? d.slice(0, 300).replace(/\s\S*$/, "") + "…" : d; };
 async function spinOff(world, entry) {
   // a character from a world's listings, made into its own bot (once) so you can talk to them alone
@@ -1593,11 +1657,13 @@ function openSurprise() {
     const draw = () => {
       b.innerHTML = `<p class="note">Pick the tags you want and the generator invents everything else. You'll see the result before it's created.</p>
         ${field("Bot type", `<div class="tabs" id="srKind">${[["any", "Any"], ...Object.entries(KINDS).map(([k, v]) => [k, v.label])].map(([k, l]) => `<button type="button" class="tab ${SURPRISE.kind === k ? "on" : ""}" data-k="${k}">${l}</button>`).join("")}</div>`)}
-        ${groups.map(([g, list]) => `<div class="stack" style="gap:6px"><div class="lbl">${esc(g)}</div><div class="tabs">${list.map(t => `<button type="button" class="chip ${SURPRISE.tags.has(t) ? "on" : ""}" data-t="${esc(t)}">${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</button>`).join("")}</div></div>`).join("")}
+        ${groups.map(([g, list]) => `<div class="stack" style="gap:6px"><div class="lbl">${esc(g)}</div><div class="tabs">${list.map(t => `<button type="button" class="chip ${SURPRISE.tags.has(t) ? "on" : ""}" data-t="${esc(t)}">${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}${(S.settings.tagNotes || {})[t] ? '<span class="tn-dot" title="Has a note">✎</span>' : ""}</button>`).join("")}</div></div>`).join("")}
+        ${SURPRISE.tags.size ? `<div class="group" id="srNotes"><h3>Tag notes</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">What each tag means to you, so the bot comes out the way you picture it. Notes are remembered for next time.</p>${[...SURPRISE.tags].map(t => `<div class="field"><label>${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span> ` : ""}${esc(t)}</label><textarea data-note="${esc(t)}" rows="2" placeholder="e.g. what kind of ${esc(t)} you like, what to avoid…">${esc((S.settings.tagNotes || {})[t] || "")}</textarea></div>`).join("")}</div>` : ""}
         <div id="srMsg" class="hint"></div>
         <button type="button" class="btn primary" id="srGo">🎲 Surprise me${SURPRISE.tags.size ? ` with ${SURPRISE.tags.size} tag${SURPRISE.tags.size === 1 ? "" : "s"}` : ""}</button>`;
       b.querySelectorAll("#srKind [data-k]").forEach(x => x.onclick = () => { SURPRISE.kind = x.dataset.k; draw(); });
       b.querySelectorAll("[data-t]").forEach(x => x.onclick = () => { const t = x.dataset.t; SURPRISE.tags.has(t) ? SURPRISE.tags.delete(t) : SURPRISE.tags.add(t); const y = b.scrollTop; draw(); b.scrollTop = y; });
+      let noteT; b.querySelectorAll("[data-note]").forEach(ta => ta.addEventListener("input", () => { const notes = S.settings.tagNotes = { ...(S.settings.tagNotes || {}) }; const v = ta.value.trim(); if (v) notes[ta.dataset.note] = v; else delete notes[ta.dataset.note]; clearTimeout(noteT); noteT = setTimeout(saveSettings, 500); }));
       $("srGo").onclick = async () => {
         if (!SURPRISE.tags.size) { $("srMsg").textContent = "Pick at least one tag."; return; }
         if (!hasKey()) { $("srMsg").textContent = "Add your API key in Settings first."; return; }
@@ -1605,7 +1671,9 @@ function openSurprise() {
         const kind = SURPRISE.kind !== "any" ? SURPRISE.kind : tags.includes("harem") ? "group" : ["character", "character", "character", "world", "group"][Math.floor(Math.random() * 5)];
         const form = tags.includes("feral") ? "feral" : tags.includes("anthro") ? "anthro" : tags.includes("human") ? "human" : "auto";
         GEN.kind = kind; GEN.form = form; GEN.card = null;
-        GEN.prompt = `Surprise me: invent an original, creative ${KINDS[kind].label.toLowerCase()} that fits all of these tags: ${tags.join(", ")}. Choose everything else yourself and make it distinctive. Include these tags in the card's tags.`;
+        const notes = tags.filter(t => (S.settings.tagNotes || {})[t]).map(t => `- ${t}: ${S.settings.tagNotes[t]}`);
+        await saveSettings();
+        GEN.prompt = `Surprise me: invent an original, creative ${KINDS[kind].label.toLowerCase()} that fits all of these tags: ${tags.join(", ")}. Choose everything else yourself and make it distinctive. Include these tags in the card's tags.` + (notes.length ? `\n\nWhat these tags mean to me (follow these closely):\n${notes.join("\n")}` : "");
         await genRun(() => genCard(kind, kind === "world" ? "auto" : form, GEN.prompt), `Inventing a ${KINDS[kind].label.toLowerCase()}: ${tags.join(", ")}…`);
       };
     };
@@ -1722,7 +1790,7 @@ async function openChat(id, chatId) {
   $("chatName").textContent = c.name;
   S.seen = new Set(S.chat.messages.map(m => m.id));
   markRecent(id);
-  S.pendingRoll = null; drawPendingRoll(); syncPlay();
+  syncPlay();
   updateStage(); renderMsgs(); renderSpeakers(); setStatus(""); renderGauges(); renderPacer();
   const need = c.kind === "group" ? members(c) : [c];
   (async () => {
@@ -1818,8 +1886,7 @@ function renderMsgs(keepScroll) {
       const label = m.role === "user" ? uname() : c.kind === "world" ? `${c.name} · Narrator` : c.name;
       d.innerHTML = `<div class="who-l">${esc(label)}</div>` + (m.image ? `<img class="uimg" src="${esc(m.image)}" alt="Image you sent">` : "") + fmt(m.content);
     }
-    if (m.roll && m.role === "user") d.insertAdjacentHTML("beforeend", `<div class="dline">${diceChip(m.roll, "")}</div>`);
-    if (m.fate && m.role === "assistant" && diceOn() && !(m.turn && msgs[i + 1]?.turn === m.turn)) tail.insertAdjacentHTML("beforeend", `<div class="dline">${diceChip({ n: m.fate }, "Fate")}</div>`);
+    if (m.roll && m.role === "user") d.insertAdjacentHTML("beforeend", contestLine(m, c));
     if (S.seen && !S.seen.has(m.id)) { d.classList.add("enter"); S.seen.add(m.id); }
     if (m.role === "assistant" && i === lastAsst && m.turn) {
       const sw = document.createElement("div"); sw.className = "swipe";
@@ -1888,9 +1955,12 @@ $("msgs").addEventListener("click", async e => {
     // first tap asks, second tap deletes this message and every message after it
     if (S.confirmDel !== m.id) { S.confirmDel = m.id; renderMsgs(true); return; }
     S.confirmDel = null;
+    // deleting a rolled message doesn't buy a fresh roll: your roll comes back locked in (the other side rolls again after you send)
+    const rolled = S.chat.messages.slice(i).find(x => x.role === "user" && x.roll);
+    if (rolled && rollLimit()) { S.chat.pendingRoll = { n: rolled.roll.n }; S.chat.rollsUsed = rollLimit(); }
     S.chat.messages.splice(i);
     S.chat.summarizedUpTo = Math.min(S.chat.summarizedUpTo || 0, i);
-    S.openActs = null; await saveChat(); renderMsgs(true);
+    S.openActs = null; await saveChat(); renderMsgs(true); drawPendingRoll();
   }
   else if (act === "edit") editMessage(i);
   else if (act === "branch") branchFrom(i);
@@ -1938,12 +2008,22 @@ async function sendInner() {
   if (t || S.pendingImage) {
     const m = { id: uid(), role: "user", content: t };
     if (S.pendingImage) m.image = S.pendingImage;
-    if (diceOn()) { const pre = S.pendingRoll; m.roll = pre || { n: d20() }; S.pendingRoll = null; drawPendingRoll(); if (!pre) { setBusy(true); try { await rollAnim(m.roll.n); } finally { setBusy(false); } } }
-    S.chat.messages.push(m); $("input").value = ""; autoGrow(); clearAttach();
+    const pr = diceOn() && S.chat.pendingRoll;
+    if (pr) {
+      // you rolled: the other side rolls now, before the reply is written, and the contest is settled
+      const c = char(), foe = foeName(c), fate = d20(), res = contest(pr.n, fate);
+      Object.assign(m, { roll: { n: pr.n }, fate, foe, contest: res });
+      S.chat.pendingRoll = null; S.chat.rollsUsed = 0;
+      S.chat.messages.push(m); $("input").value = ""; autoGrow(); clearAttach(); drawPendingRoll();
+      await saveChat(); renderMsgs();
+      setBusy(true); S.rolling = true;
+      try { await rollScene([{ n: pr.n, who: uname(), known: true }, { n: fate, who: foe }], { text: res.win === "you" ? `${uname()} wins` : res.win === "them" ? `${foe} wins` : "Tie", cls: "r-" + res.win + (res.crit ? " crit" : "") }); }
+      finally { S.rolling = false; setBusy(false); }
+    } else { S.chat.messages.push(m); $("input").value = ""; autoGrow(); clearAttach(); }
   }
   else if (!S.chat.messages.length || S.chat.messages.at(-1).role === "assistant") return;
   S.openActs = null;
-  await saveChat(); renderMsgs();
+  await saveChat(); renderMsgs(); drawPendingRoll();
   await generate(S.chat.messages.length, null);
 }
 async function reroll(i) {
@@ -1958,7 +2038,6 @@ async function reroll(i) {
 async function generate(upto, existing, cont) {
   const c = char(), chat = S.chat;
   setBusy(true); setStatus("");
-  S.fate = diceOn() ? d20() : null; const fate = S.fate;
   let bubble;
   if (existing) bubble = $("msgs").querySelector(`[data-i="${upto}"]`);
   else { bubble = document.createElement("div"); bubble.className = "msg assistant typing"; bubble.dataset.i = upto; $("msgs").appendChild(bubble); }
@@ -1999,7 +2078,6 @@ async function generate(upto, existing, cont) {
     const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null };
     const gv = parseGauges(p.gauges, c); if (gv) { meta.gauges = { ...gaugeValues(c, chat), ...gv }; chat.gauges = { ...meta.gauges }; }
     if (p.pace) meta.pace = p.pace; else if (pacerOn()) meta.pace = null;
-    if (fate) meta.fate = fate; else meta.fate = null;
     const segs = c.kind === "group" ? splitSpeakers(p.text).filter(x => x.text.trim()) : [];
     const multi = segs.filter(x => x.who).length >= 2 || (segs.length >= 2 && segs.some(x => x.who));
     if (!multi && segs.length === 1 && segs[0].who) { meta.focus = memberByName(c, segs[0].who)?.name || segs[0].who; p.text = segs[0].text.trim(); } // one speaker: no label needed
@@ -2029,7 +2107,7 @@ async function generate(upto, existing, cont) {
   } catch (e) {
     if (!existing) bubble.remove(); else renderMsgs(true);
     setStatus(e.message, true);
-  } finally { S.fate = null; setBusy(false); }
+  } finally { setBusy(false); }
 }
 
 /* ---------- Images from the user ---------- */
@@ -2741,6 +2819,7 @@ function editChar(c, isNew, fromDraft) {
         <div class="row"><label class="btn" for="cPic">${work.customPortrait ? "Replace uploaded image" : "Upload my own image instead"}</label>${work.customPortrait ? '<button class="btn" type="button" id="cPicClear">Use generated pictures</button>' : ""}</div>
         <input type="file" id="cPic" accept="image/*" hidden>
       </div>`}
+      <div class="group"><h3>Dice</h3>${field("Rolls allowed per message", `<select id="cRollLim">${[[0, "Unlimited rerolls"], [1, "1 (no rerolls)"], [2, "2"], [3, "3"], [5, "5"]].map(([v, l]) => `<option value="${v}" ${(+work.rollLimit || 0) === v ? "selected" : ""}>${l}</option>`).join("")}</select>`, "How many times you can roll 🎲 before sending one message, so you can't keep rolling for the number you want. With a limit, a roll can't be thrown away either.")}</div>
       <div class="group"><h3>Status gauges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Bars at the top of the chat (fullness, arousal, health…) that the AI moves as the story goes.</p><div id="cGauges" class="stack"></div></div>
       <div id="cMsg" class="hint"></div>
       <button class="btn primary" id="cSave">${isNew ? "Create " + KINDS[K].label.toLowerCase() : "Save changes"}</button>
@@ -2757,6 +2836,7 @@ function editChar(c, isNew, fromDraft) {
       work.description = $("cDesc").value.trim(); work.scenario = $("cScen").value.trim();
       greets[gi] = $("cFirst").value; work.firstMessage = (greets[0] || "").trim(); work.altGreetings = greets.slice(1);
       work.startPlace = $("cPlace").value.trim();
+      if ($("cRollLim")) work.rollLimit = +$("cRollLim").value || 0;
       work.tags = parseTags($("cTags").value); work.instructions = $("cInstr").value.trim();
       if ($("cVis")) {
         const v = $("cVis").value.trim();
@@ -3119,7 +3199,7 @@ $("btnMore").onclick = () => openSheet("Options", b => {
   $("oEdit").onclick = () => editChar(char(), false);
   $("oMem").onclick = openMemory;
   $("oPer").onclick = () => openPersonas();
-  $("oDice").onclick = async () => { S.chat.dice = !diceOn(); if (!S.chat.dice) { S.pendingRoll = null; drawPendingRoll(); } await saveChat(); syncPlay(); renderMsgs(true); $("oDice").textContent = `🎲 Dice rolls: ${diceOn() ? "on" : "off"}`; toast(diceOn() ? "Dice on: your actions get a d20 roll" : "Dice off for this chat"); };
+  $("oDice").onclick = async () => { S.chat.dice = !diceOn(); await saveChat(); syncPlay(); renderMsgs(true); $("oDice").textContent = `🎲 Dice rolls: ${diceOn() ? "on" : "off"}`; toast(diceOn() ? "Dice on: your actions get a d20 roll" : "Dice off for this chat"); };
   $("oPacer").onclick = async () => { S.chat.pacer = !pacerOn(); await saveChat(); renderPacer(); $("oPacer").textContent = `〰 Stroke pacer: ${pacerOn() ? "on" : "off"}`; };
   confirmBtn($("oReset"), "Tap again to erase this chat", async () => { const keep = { id: S.chat.id, personaId: S.chat.personaId, created: S.chat.created }; S.chat = { ...newChat(char(), keep.personaId), ...keep }; await saveChat(); closeSheet(); S.seen = new Set(S.chat.messages.map(m => m.id)); updateStage(); renderMsgs(); });
 });
@@ -3138,7 +3218,7 @@ function editMessage(i) {
 
 $("btnChats").onclick = () => openChats(S.charId);
 $("btnBack").onclick = () => { if (S.busy) return; leaveChat(); };
-function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; S.pendingRoll = null; drawPendingRoll(); updateFx(null); renderPacer(); renderGauges(); renderHome(); };
+function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; drawPendingRoll(); updateFx(null); renderPacer(); renderGauges(); renderHome(); };
 
 /* ---------- Installed app: back button, offline, install ---------- */
 // The phone's back button (and the browser's) closes the open window first, then leaves the chat, and only exits from Home.
@@ -3243,29 +3323,137 @@ async function branchFrom(i) {
   await openChat(S.charId, ch.id);
 }
 
-// --- Dice: when on, every action you send gets a d20 roll; the other characters get a "fate" roll for their turn
-const DICE_OUT = [[1, 1, "Critical fail", "it goes badly, embarrassingly or dangerously wrong"], [2, 6, "Fail", "it doesn't work"], [7, 11, "Partial", "it half works, or works with a cost or complication"], [12, 19, "Success", "it works"], [20, 20, "Critical success", "it works spectacularly, better than hoped"]];
+// --- Dice: with dice on, you can roll a d20 before sending. A rolled message becomes a contest: the other side
+// rolls too (before the reply is written, so you see how it'll go) and the result decides who gets their way.
+const DICE_OUT = [[1, 1, "Critical fail", "it goes disastrously wrong"], [2, 6, "Fail", "it doesn't work"], [7, 11, "Partial", "it could go either way"], [12, 19, "Success", "it works"], [20, 20, "Critical success", "it works spectacularly"]];
 const diceOut = n => DICE_OUT.find(([a, b]) => n >= a && n <= b);
 const diceOn = () => !!(S.chat && (S.chat.dice ?? S.settings.diceDefault));
-const d20 = () => 1 + Math.floor((crypto.getRandomValues(new Uint32Array(1))[0] / 4294967296) * 20);
-const DIE_SVG = n => `<svg viewBox="0 0 40 40" class="die" aria-hidden="true"><path d="M20 2 37 11v18L20 38 3 29V11z" fill="var(--accent)"/><path d="M20 2 37 11 20 16 3 11zM20 16v22M3 11l17 5 17-5" fill="none" stroke="var(--accent-ink)" stroke-opacity=".35" stroke-width="1.2"/><text x="20" y="27" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent-ink)" font-family="var(--f-body)">${n}</text></svg>`;
-function diceChip(r, who) { const o = diceOut(r.n); return `<span class="dchip d-${o[2].toLowerCase().replace(/\s/g, "")}" title="${esc(o[3])}">${DIE_SVG(r.n)}<span>${who ? esc(who) + " " : ""}${r.n} · ${esc(o[2])}</span></span>`; }
-// a short tumbling-die moment in the middle of the chat
-function rollAnim(n) {
+const rand01 = () => crypto.getRandomValues(new Uint32Array(1))[0] / 4294967296;
+const d20 = () => 1 + Math.floor(rand01() * 20);
+const tierOf = n => n === 1 ? "cf" : n <= 6 ? "f" : n <= 11 ? "p" : n <= 19 ? "s" : "cs";
+// who wins a contest, following the owner's table
+function contest(u, t) {
+  const a = tierOf(u), b = tierOf(t), close = d => Math.min(0.97, 0.55 + 0.12 * d); // the bigger the gap, the surer the better roll wins
+  const res = (win, chance) => ({ win, crit: a === "cs" || a === "cf" || b === "cs" || b === "cf", chance: chance ?? null });
+  if (a === "cs" && b === "cs" || a === "cf" && b === "cf") return res("tie");
+  if (a === "cs" || b === "cf") return res("you");
+  if (b === "cs" || a === "cf") return res("them");
+  const rank = { f: 0, p: 1, s: 2 };
+  if (a === b && a !== "p") return res(u > t ? "you" : u < t ? "them" : "tie");          // fail v fail, success v success: higher wins
+  if (a === "p" && b === "p") { const pu = Math.max(0.1, Math.min(0.9, 0.5 + (u - t) * 0.1)); return res(rand01() < pu ? "you" : "them", pu); }
+  if (a !== "p" && b !== "p") return res(rank[a] > rank[b] ? "you" : "them");            // fail v success: success always wins
+  // partial against a fail or a success: the better tier almost always wins unless the numbers are close
+  const better = rank[a] > rank[b] ? "you" : "them", p = close(Math.abs(u - t));
+  return res(rand01() < p ? better : better === "you" ? "them" : "you", better === "you" ? p : 1 - p);
+}
+const foeName = c => c.kind === "world" ? "The world" : c.kind === "group" ? (S.nextSpeaker || c.name) : c.name;
+let DIE_N = 0;
+function DIE_SVG(n, cls = "die") {
+  const id = "dg" + (DIE_N++), T = [50, 25], L = [22, 69], R = [78, 69], V = [[50, 3], [91, 26], [91, 74], [50, 97], [9, 74], [9, 26]];
+  const face = (pts, op) => `<path d="M${pts.map(p => p.join(" ")).join("L")}Z" fill="#000" fill-opacity="${op}"/>`;
+  const big = n >= 10;
+  return `<svg viewBox="0 0 100 100" class="${cls}" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--accent-hi, var(--accent))"/><stop offset="1" stop-color="var(--accent-lo, var(--accent))"/></linearGradient></defs>
+    <path d="M50 3 91 26 91 74 50 97 9 74 9 26Z" fill="url(#${id})"/>
+    ${face([V[5], V[0], T], .02)}${face([V[0], V[1], T], .12)}${face([T, V[1], R], .2)}${face([V[1], V[2], R], .32)}${face([R, V[2], V[3]], .42)}${face([L, R, V[3]], .3)}${face([L, V[3], V[4]], .38)}${face([V[4], V[5], L], .22)}${face([V[5], T, L], .1)}
+    <path d="M${T}L${R}L${L}Z" fill="#fff" fill-opacity=".14"/>
+    <path d="M50 3 91 26 91 74 50 97 9 74 9 26Z M50 3 50 25 M91 26 50 25 M91 26 78 69 M91 74 78 69 M50 97 78 69 M50 97 22 69 M9 74 22 69 M9 26 22 69 M9 26 50 25 M50 25 78 69 22 69 50 25" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M50 3 91 26 91 74 50 97 9 74 9 26Z" fill="none" stroke="#000" stroke-opacity=".35" stroke-width="2" stroke-linejoin="round"/>
+    <text x="50" y="${big ? 59 : 60}" text-anchor="middle" font-size="${big ? 25 : 28}" font-family="'Young Serif', Georgia, serif" fill="var(--accent-ink, #1b1020)" stroke="#fff" stroke-opacity=".25" stroke-width=".8" paint-order="stroke" class="die-n">${n}</text></svg>`;
+}
+const outKey = n => diceOut(n)[2].toLowerCase().replace(/\s/g, "");
+function diceChip(n, who) { const o = diceOut(n); return `<span class="dchip d-${outKey(n)}" title="${esc(o[2])}">${DIE_SVG("")}<span>${who ? `<b>${esc(who)}</b> ` : ""}${n} · ${esc(o[2])}</span></span>`; }
+function contestLine(m, c) {
+  if (!m.roll) return "";
+  const foe = m.foe || foeName(c);
+  const res = m.contest ? (m.contest.win === "you" ? `${esc(uname())} wins` : m.contest.win === "them" ? `${esc(foe)} wins` : "Tie") : "";
+  return `<div class="dline">${diceChip(m.roll.n, "You")}${m.fate ? `<span class="dvs">vs</span>${diceChip(m.fate, foe)}` : ""}${res ? `<span class="dres r-${m.contest.win}">${res}</span>` : ""}</div>`;
+}
+// --- the roll on screen: the chat dims, the die tumbles in, lands, then floats away
+function diceSound(kind) {
+  if (S.settings.sfxSound === false) return;
+  const ac = acx(); if (!ac) return; const v = (S.settings.sfxVolume ?? 0.7) * 0.6, t0 = ac.currentTime;
+  const out = ac.createGain(); out.gain.value = v; out.connect(ac.destination);
+  const tone = (f, at, dur, type = "sine", g = 0.4, f2) => { const o = ac.createOscillator(), e = ac.createGain(); o.type = type; o.frequency.setValueAtTime(f, t0 + at); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t0 + at + dur); e.gain.setValueAtTime(0.0001, t0 + at); e.gain.exponentialRampToValueAtTime(g, t0 + at + 0.015); e.gain.exponentialRampToValueAtTime(0.0001, t0 + at + dur); o.connect(e).connect(out); o.start(t0 + at); o.stop(t0 + at + dur + 0.05); };
+  const click = (at, g = 0.5) => { const len = 0.03, b = ac.createBuffer(1, ac.sampleRate * len, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 4); const s = ac.createBufferSource(), f = ac.createBiquadFilter(), e = ac.createGain(); f.type = "bandpass"; f.frequency.value = 2400 + Math.random() * 1500; e.gain.value = g; s.buffer = b; s.connect(f).connect(e).connect(out); s.start(t0 + at); };
+  if (kind === "tumble") { for (let i = 0; i < 6; i++) click(i * 0.11 + Math.random() * 0.04, 0.25 + 0.1 * Math.random()); }
+  if (kind === "land") { click(0, 0.7); tone(140, 0, 0.12, "sine", 0.3); }
+  if (kind === "crit") { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * 0.07, 0.9, "triangle", 0.22)); tone(2093, 0.38, 1.2, "sine", 0.12); }
+  if (kind === "fumble") { tone(330, 0, 0.35, "sawtooth", 0.18, 250); tone(250, 0.32, 0.35, "sawtooth", 0.18, 190); tone(190, 0.64, 0.8, "sawtooth", 0.2, 70); tone(55, 0.64, 0.6, "sine", 0.5); }
+}
+function rollScene(dice, result) {
+  // dice: [{ n, who, known }] (known = already rolled, shown landed); result: optional banner { text, cls }
   return new Promise(res => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return res();
-    const el = document.createElement("div"); el.className = "roll-fx"; $("chat").appendChild(el);
-    let k = 0; const t = setInterval(() => { el.innerHTML = DIE_SVG(k++ < 9 ? d20() : n); if (k > 9) { clearInterval(t); el.classList.add("done"); try { navigator.vibrate?.([12, 40, 24]); } catch {} setTimeout(() => { el.remove(); res(); }, 650); } }, 70);
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const st = document.createElement("div"); st.className = "roll-stage"; $("chat").appendChild(st);
+    st.innerHTML = `<div class="rs-dice">${dice.map((d, i) => `<div class="rs-slot" data-i="${i}"><div class="rs-die">${DIE_SVG(d.known ? d.n : d20(), "die big")}</div><div class="rs-who">${esc(d.who)}</div><div class="rs-out"></div></div>`).join("")}</div><div class="rs-res"></div>`;
+    requestAnimationFrame(() => st.classList.add("on"));
+    let done = false; const finish = () => { if (done) return; done = true; st.querySelectorAll(".rs-die").forEach(d => d.animate([{ transform: "translateY(0) scale(1)", opacity: 1 }, { transform: "translateY(-46px) scale(.9)", opacity: 0 }], { duration: 480, easing: "ease-in", fill: "forwards" })); st.classList.add("off"); st.classList.remove("on"); setTimeout(() => { st.remove(); res(); }, 520); };
+    st.onclick = () => { st.classList.add("fast"); };
+    const land = (slot, d) => {
+      const die = slot.querySelector(".rs-die"); die.innerHTML = DIE_SVG(d.n, "die big"); slot.classList.add("landed", "o-" + outKey(d.n));
+      slot.querySelector(".rs-out").textContent = `${d.n} · ${diceOut(d.n)[2]}`;
+      if (d.n === 20 || d.n === 1) { slot.classList.add(d.n === 20 ? "nat20" : "nat1"); diceSound(d.n === 20 ? "crit" : "fumble"); try { navigator.vibrate?.(d.n === 20 ? [30, 40, 30, 40, 80] : [200]); } catch {} if (d.n === 1) shakeChat(8); }
+      else diceSound("land");
+    };
+    const slots = [...st.querySelectorAll(".rs-slot")];
+    let at = 250;
+    dice.forEach((d, i) => {
+      const slot = slots[i], die = slot.querySelector(".rs-die");
+      if (d.known) { slot.classList.add("landed", "o-" + outKey(d.n)); if (d.n === 20 || d.n === 1) slot.classList.add(d.n === 20 ? "nat20" : "nat1"); slot.querySelector(".rs-out").textContent = `${d.n} · ${diceOut(d.n)[2]}`; return; }
+      const dur = still ? 200 : 1250, from = i % 2 ? 1 : -1;
+      setTimeout(() => {
+        slot.classList.add("rolling");
+        if (!still) {
+          die.animate([
+            { transform: `translate(${from * 140}px, 120px) rotate(${from * -540}deg) scale(.5)`, opacity: 0 },
+            { transform: `translate(${from * 60}px, -40px) rotate(${from * -260}deg) scale(.95)`, opacity: 1, offset: .35 },
+            { transform: `translate(${from * 18}px, 6px) rotate(${from * -60}deg) scale(1.05,.95)`, offset: .7 },
+            { transform: `translate(0, -8px) rotate(${from * 8}deg) scale(1)`, offset: .86 },
+            { transform: "translate(0,0) rotate(0) scale(1)", opacity: 1 }
+          ], { duration: dur, easing: "cubic-bezier(.25,.8,.35,1)", fill: "both" });
+          diceSound("tumble");
+          let k = 0; const flick = () => { if (k++ > 11 || slot.classList.contains("landed")) return; die.innerHTML = DIE_SVG(d20(), "die big"); setTimeout(flick, 60 + k * 12); }; flick();
+        }
+        setTimeout(() => land(slot, d), dur);
+      }, at);
+      at += dur + 350;
+    });
+    if (result) setTimeout(() => { const r = st.querySelector(".rs-res"); r.textContent = result.text; r.className = "rs-res show " + (result.cls || ""); }, at);
+    setTimeout(finish, at + (result ? 1500 : 1000));
+    const speed = setInterval(() => { if (st.classList.contains("fast") && dice.every((_, i) => slots[i].classList.contains("landed"))) { clearInterval(speed); setTimeout(finish, 250); } if (done) clearInterval(speed); }, 100);
   });
 }
-async function preRoll() { if (!S.chat || S.busy) return; S.pendingRoll = { n: d20() }; await rollAnim(S.pendingRoll.n); drawPendingRoll(); }
-function drawPendingRoll() {
-  const box = $("rollNow"); if (!box) return;
-  box.hidden = !S.pendingRoll; if (S.pendingRoll) box.innerHTML = `${diceChip(S.pendingRoll, "You rolled")}<span class="hint">It goes with your next message.</span><button type="button" class="icon" id="rollX" aria-label="Discard this roll">✕</button>`;
-  if ($("rollX")) $("rollX").onclick = () => { S.pendingRoll = null; drawPendingRoll(); };
+const rollLimit = () => +(char()?.rollLimit || 0);
+const rollsLeft = () => { const lim = rollLimit(); return lim ? Math.max(0, lim - (S.chat?.rollsUsed || 0)) : Infinity; };
+async function preRoll() {
+  if (!S.chat || S.busy || S.rolling) return;
+  if (!rollsLeft()) { toast("No more rolls for this message. Send it with the roll you have."); return; }
+  S.rolling = true;
+  try {
+    const n = d20(); S.chat.rollsUsed = (S.chat.rollsUsed || 0) + 1; S.chat.pendingRoll = { n }; await saveChat();
+    await rollScene([{ n, who: uname() }]);
+  } finally { S.rolling = false; }
+  drawPendingRoll();
 }
-function rollNote(m, u) { const o = diceOut(m.roll.n); return `\n[Dice: ${u} rolled ${m.roll.n} on a d20 for what they just tried (${o[2].toLowerCase()}): ${o[3]}. Narrate the outcome of ${u}'s action to match this result.]`; }
-function fateNote(n) { const o = diceOut(n); return `[Fate die for the other characters' important actions this turn: ${n} on a d20 (${o[2].toLowerCase()}): ${o[3]}. Let it decide how well their key actions go.]`; }
+function drawPendingRoll() {
+  const box = $("rollNow"), btn = $("btnDice"); if (!box) return;
+  const pr = S.chat && diceOn() ? S.chat.pendingRoll : null, left = S.chat ? rollsLeft() : Infinity;
+  box.hidden = !pr;
+  if (btn) { btn.classList.toggle("spent", !!pr && !left); btn.title = pr ? (left === Infinity ? "Roll again" : left ? `Roll again (${left} left)` : "No rolls left for this message") : "Roll a d20 for your next action"; }
+  if (!pr) { box.innerHTML = ""; return; }
+  box.innerHTML = `${diceChip(pr.n, "You")}<span class="hint">${left === Infinity ? "Your next message is a contest roll." : left ? `Contest roll ready · ${left} reroll${left === 1 ? "" : "s"} left` : "Contest roll locked in"}</span>${rollLimit() ? "" : `<button type="button" class="icon" id="rollX" aria-label="Discard this roll">✕</button>`}`;
+  if ($("rollX")) $("rollX").onclick = async () => { S.chat.pendingRoll = null; await saveChat(); drawPendingRoll(); };
+}
+// the note the AI gets for a rolled message
+function rollNote(m, u, c) {
+  const o = diceOut(m.roll.n), foe = m.foe || foeName(c);
+  if (!m.fate || !m.contest) return `\n[Dice: ${u} rolled ${m.roll.n} on a d20 (${o[2].toLowerCase()}). Narrate the outcome of ${u}'s action to match.]`;
+  const f = diceOut(m.fate), w = m.contest.win;
+  const critTxt = n => n === 20 ? "a natural 20: a critical success, far better and more spectacular than a normal win" : n === 1 ? "a natural 1: a critical failure, a disastrous, humiliating or dangerous botch far worse than a normal loss" : "";
+  const crits = [m.roll.n, m.fate].some(n => n === 1 || n === 20) ? ` ${[m.roll.n === 1 || m.roll.n === 20 ? `${u} rolled ${critTxt(m.roll.n)}.` : "", m.fate === 1 || m.fate === 20 ? `${foe} rolled ${critTxt(m.fate)}.` : ""].filter(Boolean).join(" ")}` : "";
+  const outcome = w === "you" ? `${u} wins: what ${u} tries succeeds, overcoming any resistance from ${foe === "The world" ? "the world" : foe} or the situation.` : w === "them" ? `${foe === "The world" ? "The world" : foe} wins: what ${u} tries fails or is turned against them, and ${foe === "The world" ? "the situation" : foe} gets the upper hand.` : `Tie: neither side gets a clean win; it ends in a stalemate or a messy, mixed result.`;
+  return `\n[Contest roll (decided before this reply, follow it exactly): ${u} rolled ${m.roll.n} (${o[2].toLowerCase()}), ${foe} rolled ${m.fate} (${f[2].toLowerCase()}). ${outcome}${crits} Narrate the outcome to match, even if ${u} loses.]`;
+}
 
 // --- Status gauges: set up per bot; the AI updates them in the hidden line at the end of each reply
 const GAUGE_COLORS = ["#e8a95b", "#ff6fae", "#e2766f", "#6fdc6a", "#7fb2ff", "#c49bff", "#f1ebda", "#a8875a"];
@@ -3332,12 +3520,18 @@ function gaugeEditor(work) {
 const FX = { amb: null, act: null, raf: 0, parts: [], last: 0, nextFlash: 0, nextShake: 0, pace: null };
 const fxLevel = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "still" : (S.settings.fxLevel || "full");
 const WEATHER = { rain: "rain", storm: "storm", snow: "snow", campfire: "embers", fireplace: "embers", night: "fireflies", forest: "motes", nature: "motes", underwater: "bubbles", cave: "dust", dungeon: "dust", beach: "glints", river: "glints", combat: "combat" };
+// cock vore and unbirth glow creamy white; oral and anal vore glow stomach-acid green
+function voreKind() {
+  const recent = (S.chat?.messages || []).filter(m => m.role !== "image").slice(-6).map(m => m.content || "").join("\n");
+  return VORE.cockvore.test(recent) || VORE.unbirth.test(recent) ? "white" : "green";
+}
 function updateFx(sc) {
   const on = S.chat && !$("chat").hidden && !document.hidden, lvl = fxLevel();
   const amb = on && S.settings.fxWeather !== false && lvl !== "off" ? (WEATHER[sc?.amb] || null) : null;
   const act = on && S.settings.fxScene !== false && lvl !== "off" ? (sc?.act && sc.act !== "none" ? sc.act : null) : null;
   const vig = $("fxVig"); if (!vig) return;
-  vig.className = ["fx-vig", amb ? "w-" + amb : "", act ? "a-" + act : "", "lv-" + lvl].filter(Boolean).join(" ");
+  const vk = ["vore", "struggle", "swallow"].includes(act) ? voreKind() : null; FX.vk = vk;
+  vig.className = ["fx-vig", amb ? "w-" + amb : "", act ? "a-" + act : "", vk ? "vk-" + vk : "", "lv-" + lvl].filter(Boolean).join(" ");
   if (amb !== FX.amb || act !== FX.act) { FX.parts = []; FX.amb = amb; FX.act = act; }
   if ((amb || act) && lvl !== "still") { if (!FX.raf) FX.raf = requestAnimationFrame(fxFrame); }
   else { cancelAnimationFrame(FX.raf); FX.raf = 0; const cv = $("fxCanvas"); cv.getContext("2d").clearRect(0, 0, cv.width, cv.height); }
@@ -3352,13 +3546,13 @@ function fxFrame(t) {
   const full = fxLevel() === "full", R = Math.random, P = FX.parts;
   const want = { rain: full ? 140 : 70, storm: full ? 220 : 110, snow: full ? 90 : 45, embers: full ? 45 : 22, fireflies: full ? 22 : 12, motes: full ? 30 : 15, bubbles: full ? 30 : 15, dust: full ? 26 : 12, glints: full ? 18 : 9, combat: 0 }[FX.amb] || 0;
   const hearts = FX.act === "kiss" ? (full ? 10 : 5) : FX.act === "sex" && full ? 6 : 0;
-  const drips = (FX.act === "vore" || FX.act === "struggle" || FX.act === "swallow") && full ? 7 : 0;
+  const vbub = FX.act === "vore" || FX.act === "struggle" || FX.act === "swallow" ? (full ? (FX.act === "struggle" ? 34 : 26) : 12) : 0;
   const count = k => P.filter(p => p.k === k).length;
   const spawn = (k, n, mk) => { for (let i = count(k); i < n; i++) P.push({ k, ...mk(i < n * 0.6 && !FX.seeded) }); };
   const kind = FX.amb === "storm" ? "rain" : FX.amb;
   if (want) spawn(kind, want, any => ({ x: R() * w, y: any ? R() * h : kind === "embers" || kind === "bubbles" ? h + 10 : -10, s: R(), a: R() * 6.28 }));
   if (hearts) spawn("heart", hearts, any => ({ x: R() * w, y: any ? R() * h : h + 10, s: R(), a: R() * 6.28 }));
-  if (drips) spawn("drip", drips, any => ({ x: R() * w, y: -6, s: R(), a: 0, wait: R() * 300 }));
+  if (vbub) spawn("vbub", vbub, any => { const edge = R() < 0.5 ? R() * w * 0.22 : w - R() * w * 0.22; return { x: R() < 0.7 ? edge : R() * w, y: any ? R() * h : h + 8, s: R(), a: R() * 6.28 }; });
   FX.seeded = true;
   for (let i = P.length - 1; i >= 0; i--) {
     const p = P[i]; let dead = false;
@@ -3371,6 +3565,7 @@ function fxFrame(t) {
       case "bubbles": { p.a += 0.06 * dt; p.x += Math.sin(p.a) * 0.5 * dt; p.y -= (0.8 + p.s * 1.6) * dt; g.strokeStyle = `rgba(190,230,255,${0.35 + p.s * 0.3})`; g.lineWidth = 1.2; g.beginPath(); g.arc(p.x, p.y, 2 + p.s * 4, 0, 7); g.stroke(); dead = p.y < -10; break; }
       case "glints": { const gl = Math.max(0, Math.sin(t / 400 + p.s * 20)); g.fillStyle = `rgba(255,255,255,${gl * 0.5})`; g.beginPath(); g.arc(p.x, h * 0.55 + p.y * 0.45, 0.6 + gl * 1.6, 0, 7); g.fill(); break; }
       case "heart": { p.a += 0.04 * dt; p.x += Math.sin(p.a) * 0.6 * dt; p.y -= (0.6 + p.s * 0.8) * dt; const al = Math.min(1, p.y / h * 1.5) * 0.7, z = 5 + p.s * 6; g.fillStyle = `rgba(255,111,174,${al})`; g.beginPath(); g.moveTo(p.x, p.y + z * 0.35); g.bezierCurveTo(p.x - z, p.y - z * 0.4, p.x - z * 0.4, p.y - z, p.x, p.y - z * 0.35); g.bezierCurveTo(p.x + z * 0.4, p.y - z, p.x + z, p.y - z * 0.4, p.x, p.y + z * 0.35); g.fill(); dead = p.y < -12; break; }
+      case "vbub": { p.a += 0.05 * dt; p.x += Math.sin(p.a) * 0.35 * dt; p.y -= (0.35 + p.s * 0.75) * dt; const c = FX.vk === "white" ? "250,245,230" : "150,235,120", r0 = 1.5 + p.s * 4.5, al = 0.18 + p.s * 0.3; g.strokeStyle = `rgba(${c},${al + 0.15})`; g.fillStyle = `rgba(${c},${al * 0.35})`; g.lineWidth = 1.1; g.beginPath(); g.arc(p.x, p.y, r0, 0, 7); g.fill(); g.stroke(); g.fillStyle = `rgba(255,255,255,${al})`; g.beginPath(); g.arc(p.x - r0 * 0.35, p.y - r0 * 0.35, r0 * 0.25, 0, 7); g.fill(); dead = p.y < -10; break; }
       case "drip": { if (p.wait > 0) { p.wait -= dt; g.fillStyle = "rgba(190,70,80,.5)"; g.beginPath(); g.ellipse(p.x, 0, 3 + p.s * 2, 2 + (300 - p.wait) / 300 * 4, 0, 0, 7); g.fill(); break; } p.y += (2 + p.s * 3) * dt; g.fillStyle = "rgba(200,80,90,.55)"; g.beginPath(); g.ellipse(p.x, p.y, 2.2, 4, 0, 0, 7); g.fill(); dead = p.y > h + 10; break; }
     }
     if (dead) P.splice(i, 1);
@@ -3414,7 +3609,7 @@ function playSettings(panels) {
   const st = S.settings, save = () => { saveSettings(); if (S.chat) { renderGauges(); updateFx(sceneNow()); renderPacer(); } };
   const a = document.createElement("div"); a.className = "group"; a.id = "sPlay";
   a.innerHTML = `<h3>Play</h3>
-    <label class="check"><input type="checkbox" id="sDice" ${st.diceDefault ? "checked" : ""}> 🎲 Dice rolls on in new chats (each chat has its own switch under ⋯)</label>
+    <label class="check"><input type="checkbox" id="sDice" ${st.diceDefault ? "checked" : ""}> 🎲 Dice on in new chats: tap 🎲 before sending to make your action a contest roll (each chat has its own switch under ⋯)</label>
     <label class="check"><input type="checkbox" id="sGauges" ${st.gaugesOn !== false ? "checked" : ""}> Show status gauges (set them up per bot in its editor)</label>
     <label class="check"><input type="checkbox" id="sPacerBuzz" ${st.pacerBuzz !== false ? "checked" : ""}> Stroke pacer buzzes the phone with each stroke (switch the pacer on per chat under ⋯)</label>`;
   panels.chats.appendChild(a);
@@ -3433,7 +3628,7 @@ function playSettings(panels) {
 }
 
 // the 🎲 button shows only in chats with dice on
-function syncPlay() { const b = $("btnDice"); if (b) b.hidden = !diceOn(); }
+function syncPlay() { const b = $("btnDice"); if (b) b.hidden = !diceOn(); drawPendingRoll(); }
 $("btnDice").onclick = () => preRoll();
 $("btnDice").addEventListener("pointerdown", e => { if ($("composer").classList.contains("open")) e.preventDefault(); });
 document.querySelector("#pacer .pc-min").onclick = async () => { if (!S.chat) return; S.chat.pacer = false; await saveChat(); renderPacer(); toast("Pacer off. Switch it back on under ⋯"); };
@@ -3622,6 +3817,7 @@ const VORE = {
   swallow: /\b(swallow\w*|devour\w*|gulp\w* (him|her|them|it|down)|gobbl\w*|vor(e|ed|ing)|eaten (whole|alive)|ate (him|her|them) (whole|alive|up)|consum(ed|es|ing)|slid(es)? down (his|her|their|its|the) (throat|gullet)|into (his|her|their|its|the) (stomach|belly|gut|maw))\b/i,
   digest: /\b(digest\w*|dissolv\w*|melt\w* (down|away)|broken down|break(ing|s)? down|churn\w*|gurgled away|turned (in)?to (fat|mush|sludge|slurry|chyme|soup|padding|cum|cream)|reduced to|absorbed)\b/i,
   dead: /\b(dead|died|dies|death|lifeless|perish\w*|killed|went still|gone still|stopped (moving|struggling|squirming|kicking)|fell silent|no longer (moving|struggling|alive)|nothing (left|remain\w*)|remains|(only|just) bones)\b/i,
+  unbirth: /\b(unbirth\w*|womb|(in|into|inside|up) (his|her|their|its|the) (pussy|cunt|slit|sex|folds|vagina|birth canal))\b/i,
   cockvore: /\b(cock ?vore|urethra\w*|(in|into|inside|down) (his|her|their|its|the) (cock|shaft|dick|member|length|balls|testicles|sack|scrotum|nuts))\b/i,
   inflate: /\b(cum[- ]?inflat\w*|inflat\w*|bloat\w*|swell\w* with (cum|seed|spunk|jizz|cream)|(full|stuffed|packed|swollen) (of|with) (cum|seed|spunk|jizz|cream))\b/i,
   cumword: /\b(cum\w*|semen|seed|spunk|jizz|ejaculat\w*|orgasm\w*)\b/i,
@@ -3732,18 +3928,26 @@ const AUTO_SFX_COLOR = { gas: "#6fdc6a", bubbles: "#6fdc6a", fart: "#a8875a", sh
   sex: "#ff6fae", breath: "#f3f0f8", hit: "#ff5d52", crack: "#ff5d52", boom: "#ff5d52", slash: "#ff5d52", stomp: "#ff5d52", liquid: "#87cefa", kiss: "#ff69b4",
   fire: "#ffa94d", zap: "#ffd700", magic: "#ffd700", beat: "#ff7b8a", zzz: "#b8b2c4", wind: "#cfe8ff", wave: "#e8c47a" };
 const autoSfxColor = cat => AUTO_SFX_COLOR[cat] || "";
+function fxLayer(sp) {
+  let L = $("fxLayer"); if (!L) { L = document.createElement("div"); L.id = "fxLayer"; document.body.appendChild(L); }
+  const host = sp.closest("#chat") || sp.closest(".sheet") || document.body, r0 = host.getBoundingClientRect();
+  Object.assign(L.style, { left: r0.left / UIZ + "px", top: r0.top / UIZ + "px", width: r0.width / UIZ + "px", height: r0.height / UIZ + "px" });
+  return L;
+}
 function burst(sp) {
   const cat = sp.dataset.fx || "wave", M = FX_MOTION[cat] || FX_MOTION.wave;
   playSfx(cat, sp.textContent.trim());
   sp.animate([{ transform: "scale(1)" }, { transform: "scale(1.28) rotate(-3deg)" }, { transform: "scale(1)" }], { duration: 320, easing: "ease-out" });
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const rc = sp.getBoundingClientRect(), cx = (rc.left + rc.width / 2) / UIZ, cy = (rc.top + rc.height / 2) / UIZ, color = getComputedStyle(sp).color;
+  // bursts stay inside the chat window: they're drawn in a layer laid exactly over it
+  const L = fxLayer(sp), lr = L.getBoundingClientRect();
+  const rc = sp.getBoundingClientRect(), cx = (rc.left - lr.left + rc.width / 2) / UIZ, cy = (rc.top - lr.top + rc.height / 2) / UIZ, color = getComputedStyle(sp).color;
   if (M.shake) { const m = sp.closest(".msg"); m && m.animate([{ transform: "none" }, { transform: "translateX(-4px)" }, { transform: "translateX(4px)" }, { transform: "translateX(-2px)" }, { transform: "none" }], { duration: 300 }); }
   const rings = [M.ring, M.ring2, M.ring3].filter(Boolean).length;
   for (let k = 0; k < rings; k++) {
     const ring = document.createElement("div"); ring.className = "fxring"; ring.style.color = color;
     ring.style.left = cx - 10 + "px"; ring.style.top = cy - 10 + "px"; ring.style.width = ring.style.height = "20px";
-    document.body.appendChild(ring);
+    L.appendChild(ring);
     ring.animate([{ transform: "scale(.3)", opacity: .9 }, { transform: `scale(${cat === "boom" ? 6 : 4})`, opacity: 0 }], { duration: M.dur, delay: k * 140, easing: "ease-out", fill: "both" }).onfinish = () => ring.remove();
   }
   const icons = FX_ICON[cat] || FX_ICON.wave;
@@ -3752,7 +3956,7 @@ function burst(sp) {
     p.innerHTML = FX_PART[cat] && Math.random() < 0.6 ? FX_PART[cat] : icons[Math.floor(Math.random() * icons.length)];
     const size = ["gas", "fart", "stomp", "shit", "shitbones", "condom"].includes(cat) ? r(14, 22) : r(9, 16);
     p.style.width = p.style.height = size + "px";
-    document.body.appendChild(p);
+    L.appendChild(p);
     let x0 = 0, y0 = 0, x1, y1, mid = null;
     if (M.radial) { const a = Math.random() * Math.PI * 2, d = r(M.radial[0], M.radial[1]); x1 = Math.cos(a) * d; y1 = Math.sin(a) * d; }
     else if (M.splash) { const a = r(-Math.PI * 0.9, -Math.PI * 0.1), d = r(25, 55); mid = [Math.cos(a) * d, Math.sin(a) * d]; x1 = mid[0] * 1.5; y1 = r(25, 50); }
@@ -3769,7 +3973,7 @@ function burst(sp) {
     const anim = p.animate(frames, { duration: M.dur * r(0.8, 1.2), delay: (M.stagger || 0) * i + (M.flicker ? r(0, 120) : 0), easing: M.ease || "cubic-bezier(.2,.8,.3,1)", fill: "both" });
     if (M.flicker) p.animate([{ filter: "brightness(1)" }, { filter: "brightness(1.8)" }, { filter: "brightness(.8)" }], { duration: 120, iterations: Math.ceil(M.dur / 120) });
     anim.onfinish = () => {
-      if (M.pop) { const ring = document.createElement("div"); ring.className = "fxring"; ring.style.color = color; const box = p.getBoundingClientRect(); ring.style.left = box.left / UIZ + "px"; ring.style.top = box.top / UIZ + "px"; ring.style.width = ring.style.height = box.width / UIZ + "px"; document.body.appendChild(ring); ring.animate([{ transform: "scale(.6)", opacity: .8 }, { transform: "scale(1.6)", opacity: 0 }], { duration: 220 }).onfinish = () => ring.remove(); }
+      if (M.pop) { const ring = document.createElement("div"); ring.className = "fxring"; ring.style.color = color; const box = p.getBoundingClientRect(), lb = L.getBoundingClientRect(); ring.style.left = (box.left - lb.left) / UIZ + "px"; ring.style.top = (box.top - lb.top) / UIZ + "px"; ring.style.width = ring.style.height = box.width / UIZ + "px"; L.appendChild(ring); ring.animate([{ transform: "scale(.6)", opacity: .8 }, { transform: "scale(1.6)", opacity: 0 }], { duration: 220 }).onfinish = () => ring.remove(); }
       p.remove();
     };
   }
@@ -4440,8 +4644,9 @@ const Sync = {
   listKey: k => /^(chars|personas|books|sounds|chats:)/.test(k),
   mark(k) {
     if (this.applying || !this.on() || !this.synced(k)) return;
-    const d = new Set(this.st.dirty || []); d.add(k); this.st.dirty = [...d]; this.save();
-    clearTimeout(this.timer); this.timer = setTimeout(() => this.push(), 1500);
+    const d = new Set(this.st.dirty || []); d.add(k); this.st.dirty = [...d];
+    (this.st.edits = this.st.edits || {})[k] = Date.now(); this.save();
+    clearTimeout(this.timer); this.timer = setTimeout(() => this.push(), 1200);
   },
   async req(path, opt = {}, retry = true) {
     await this.fresh();
@@ -4493,6 +4698,7 @@ const Sync = {
       await this.put(k, merged);
     }
     for (const [k, v] of remote) if (!local.includes(k) && v !== undefined) await this.put(k, v);
+    this.st.ver = Object.fromEntries(remote.at || []);
     this.st.dirty = [...new Set([...(this.st.dirty || []), ...toPush])]; this.save();
     await this.reload();
     await this.push();
@@ -4504,13 +4710,30 @@ const Sync = {
     if (k === "settings") return { ...(mine || {}), ...(theirs || {}) };
     return theirs;
   },
+  // both this device and another changed the same thing: combine them, the newer edit winning where they clash
+  resolve(k, mine, theirs, theirAt) {
+    const newer = ((this.st.edits || {})[k] || 0) > theirAt;
+    if (theirs === undefined) return newer ? mine : undefined;
+    if (mine === undefined || mine === null) return theirs;
+    const [win, lose] = newer ? [mine, theirs] : [theirs, mine];
+    if (k.startsWith("c2:")) {
+      const out = [...(win.messages || [])], have = new Set(out.map(m => m.id)), src = lose.messages || [];
+      src.forEach((m, i) => { if (have.has(m.id)) return; const prev = i ? out.findIndex(x => x.id === src[i - 1].id) : -1; out.splice(prev + 1 || out.length, 0, m); have.add(m.id); });
+      return { ...lose, ...win, messages: out };
+    }
+    if (this.listKey(k)) { const m = new Map(); for (const x of [...(lose || []), ...(win || [])]) if (x && x.id) m.set(x.id, x); const order = [...(win || []).map(x => x.id)]; return [...m.values()].sort((a, b) => { const i = order.indexOf(a.id), j = order.indexOf(b.id); return (i < 0 ? 1e9 : i) - (j < 0 ? 1e9 : j); }); }
+    if (k === "recent") return this.merge(k, mine, theirs);
+    if (k === "sndgone") return { ...lose, ...win };
+    if (k === "settings" || k === "drafts") return { ...lose, ...win };
+    return win;
+  },
   async pullAll(all) {
-    const out = new Map(); let from = 0;
+    const out = new Map(); out.at = new Map(); let from = 0;
     for (;;) {
-      const r = await this.req(`/rest/v1/kv?select=key,value,deleted,updated_at&order=updated_at.asc` + (all ? "" : `&updated_at=gt.${encodeURIComponent(this.st.pulled || "1970-01-01T00:00:00Z")}`), { headers: { Range: `${from}-${from + 199}` } });
+      const r = await this.req(`/rest/v1/kv?select=key,value,deleted,updated_at,client_at&order=updated_at.asc` + (all ? "" : `&updated_at=gt.${encodeURIComponent(this.st.pulled || "1970-01-01T00:00:00Z")}`), { headers: { Range: `${from}-${from + 199}` } });
       if (!r.ok) throw new Error("Couldn't reach your account.");
       const rows = await r.json();
-      for (const row of rows) { out.set(row.key, row.deleted ? undefined : row.value); this.st.pulled = row.updated_at; }
+      for (const row of rows) { out.set(row.key, row.deleted ? undefined : row.value); out.at.set(row.key, +row.client_at || 0); this.st.pulled = row.updated_at; }
       if (rows.length < 200) break; from += 200;
     }
     this.save();
@@ -4521,14 +4744,29 @@ const Sync = {
     if (!this.on() || this.busy) return;
     this.busy = true; const started = Date.now();
     try {
-      const got = await this.pullAll(false), dirty = new Set(this.st.dirty || []), changed = [];
+      const got = await this.pullAll(false), changed = []; let merged = false;
+      this.st.ver = this.st.ver || {};
       for (const [k, v] of got) {
-        if (dirty.has(k) || (this.sent[k] || 0) > started) continue; // an unsent change here wins, and so does one sent while this pull ran
-        if (v === null || (this.listKey(k) && v !== undefined && !Array.isArray(v))) continue; // never take a broken or empty value
-        if (v !== undefined) { const cur = await Store.get(k); if (stableJSON(k === "settings" ? stripLocal(cur) : cur) === stableJSON(v)) continue; } // our own change coming back
+        const at = got.at?.get(k) || 0;
+        if (at && at <= (this.st.ver[k] || 0)) continue; // a copy we already have (often our own change coming back)
+        if (!at && (this.sent[k] || 0) > started) continue;
+        if (v === null || (this.listKey(k) && v !== undefined && !Array.isArray(v))) { this.st.ver[k] = at; continue; } // never take a broken or empty value
+        const open = S.chat && S.chat.id && k === "c2:" + S.chat.id;
+        if (open && S.busy) continue; // a reply is being written: take it after, by merging when this device saves
+        if (new Set(this.st.dirty || []).has(k)) {
+          // changed here and on another device since we last looked: keep both
+          const mix = this.resolve(k, await Store.get(k), v, at);
+          this.st.ver[k] = at; if (open && mix) S.chat = JSON.parse(JSON.stringify(mix));
+          await this.put(k, mix); changed.push(k); merged = true; continue;
+        }
+        this.st.ver[k] = at;
+        if (v !== undefined) { const cur = await Store.get(k); if (stableJSON(k === "settings" ? stripLocal(cur) : cur) === stableJSON(v)) continue; }
+        if (open && v) S.chat = JSON.parse(JSON.stringify(v)); // swap at once so nothing saves the old copy over it
         await this.put(k, v); changed.push(k);
       }
+      this.save();
       if (changed.length) await this.reload(changed);
+      if (merged) setTimeout(() => this.push(), 50);
       this.status = "Synced " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
     } catch (e) { this.status = e.message; }
     finally { this.busy = false; }
@@ -4578,23 +4816,29 @@ const Sync = {
     try {
       const keys = [...this.st.dirty], data = keys.filter(k => !k.startsWith("snd:")), blobs = keys.filter(k => k.startsWith("snd:"));
       // 1) bots, chats, settings and lists first, in batches of at most ~700 KB
-      let batch = [], size = 0;
+      let batch = [], size = 0; const rejected = [];
       const send = async () => {
         if (!batch.length) return;
-        const r = await this.req("/rest/v1/kv?on_conflict=user_id,key", { method: "POST", headers: { "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(batch) });
+        const r = await this.req("/rest/v1/kv?on_conflict=user_id,key&select=key,client_at", { method: "POST", headers: { "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=representation" }, body: JSON.stringify(batch) });
         if (!r.ok) throw new Error("Couldn't save to your account (" + r.status + ").");
-        for (const x of batch) { this.doneKey(x.key); this.sent[x.key] = Date.now(); }
-        batch = []; size = 0;
+        const ok = new Map(((await r.json().catch(() => null)) || []).map(x => [x.key, +x.client_at || 0]));
+        this.st.ver = this.st.ver || {};
+        for (const x of batch) {
+          if (ok.has(x.key)) { this.st.ver[x.key] = ok.get(x.key); if ((this.st.edits || {})[x.key] === x.client_at) this.doneKey(x.key); this.sent[x.key] = Date.now(); }
+          else rejected.push(x.key); // another device saved a newer copy first
+        }
+        this.save(); batch = []; size = 0;
       };
       for (const k of data) {
         let v = await Store.get(k);
         if (v === null || (this.listKey(k) && v !== undefined && !Array.isArray(v))) { this.doneKey(k); continue; } // nothing sane to send
         if (k === "settings" && v) v = stripLocal(v);
-        const row = { user_id: this.st.uid, key: k, value: v === undefined ? null : v, deleted: v === undefined }, n = JSON.stringify(row).length;
+        const row = { user_id: this.st.uid, key: k, value: v === undefined ? null : v, deleted: v === undefined, client_at: (this.st.edits = this.st.edits || {})[k] || (this.st.edits[k] = Date.now()), base_at: (this.st.ver || {})[k] || 0 }, n = JSON.stringify(row).length;
         if (batch.length && (size + n > 700000 || batch.length >= 20)) await send();
         batch.push(row); size += n;
       }
       await send();
+      if (rejected.length) await this.catchUp(rejected);
       // 2) then the user's own sound files, a few at a time; copies of built-in sounds are skipped
       if (blobs.length) {
         const built = new Set((await builtinSounds()).map(x => x.name.toLowerCase().replace(/[^a-z0-9]/g, "")));
@@ -4623,7 +4867,27 @@ const Sync = {
       if ((this.st.skipped || []).length) this.status += ` · ${this.st.skipped.length} sound${this.st.skipped.length === 1 ? "" : "s"} too big to sync (still on this device): ${this.st.skipped.slice(0, 3).join(", ")}${this.st.skipped.length > 3 ? "…" : ""}`;
       if ((this.st.dirty || []).length) this.timer = setTimeout(() => this.push(), 30000);
     } catch (e) { this.status = "Not synced yet: " + e.message; this.timer = setTimeout(() => this.push(), 30000); }
-    finally { this.pushing = false; const el = $("acStat"); if (el) el.textContent = this.status; if (this.again) this.push(); }
+    finally { this.pushing = false; const el = $("acStat"); if (el) el.textContent = this.status; if (this.again) this.push(); else this.rounds = 0; }
+  },
+  // our copy was older than the account's: fetch theirs, combine, and send the result again
+  async catchUp(keys) {
+    const list = keys.map(k => '"' + k.replace(/"/g, '\\"') + '"').join(",");
+    const r = await this.req(`/rest/v1/kv?select=key,value,deleted,client_at&key=in.(${encodeURIComponent(list)})`);
+    if (!r.ok) return;
+    const rows = await r.json(), changed = [];
+    for (const row of rows) {
+      const k = row.key, theirs = row.deleted ? undefined : row.value, at = +row.client_at || 0;
+      if (theirs === null || (this.listKey(k) && theirs !== undefined && !Array.isArray(theirs))) { this.st.ver[k] = at; continue; }
+      const open = S.chat && S.chat.id && k === "c2:" + S.chat.id;
+      const mix = this.resolve(k, await Store.get(k), theirs, at);
+      this.st.ver[k] = at; (this.st.edits = this.st.edits || {})[k] = Date.now();
+      if (open && mix && !S.busy) S.chat = JSON.parse(JSON.stringify(mix));
+      await this.put(k, mix); changed.push(k);
+    }
+    this.save();
+    this.rounds = (this.rounds || 0) + 1;
+    if (this.rounds < 4) this.again = true;
+    if (changed.length) await this.reload(changed);
   },
   async fetchSound(id) {
     try {
@@ -4652,13 +4916,15 @@ const Sync = {
     }
     if (any(/^sndfix$/)) SNDFIX = null;
     if (any(/^drafts$/)) DRAFTS = (await Store.get("drafts")) || {};
-    if (!$("chat").hidden && S.chat && S.chat.id && !S.busy && any(new RegExp("^c2:" + S.chat.id + "$"))) { const c = await Store.get("c2:" + S.chat.id); if (c) { S.chat = c; renderMsgs(true); updateStage(); } }
+    if (!$("chat").hidden && S.chat && S.chat.id && !S.busy && any(new RegExp("^c2:" + S.chat.id + "$"))) { const c = await Store.get("c2:" + S.chat.id); if (c) { S.chat = c; renderMsgs(true); updateStage(); renderGauges(); renderPacer(); } }
     if (!$("home").hidden && $("sheet").hidden) renderHome();
     renderPanes();
   }
 };
 document.addEventListener("visibilitychange", () => { if (!Sync.on()) return; if (document.hidden) Sync.push(); else Sync.pull(); });
-setInterval(() => { if (Sync.on() && !document.hidden) Sync.pull(); }, 60000);
+// other devices' changes arrive on their own: every 10 s while the app is on screen, and at once when it comes back
+setInterval(() => { if (Sync.on() && !document.hidden) Sync.pull(); }, 10000);
+for (const ev of ["focus", "online", "pageshow"]) addEventListener(ev, () => { if (Sync.on() && !document.hidden) { Sync.push(); Sync.pull(); } });
 function drawAccount(box) {
   if (!box) return;
   if (Sync.on()) {
