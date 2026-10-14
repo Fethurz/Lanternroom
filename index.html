@@ -563,6 +563,13 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 @keyframes fxClimax{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
 @keyframes fxCaustic{to{background-position:300px 0}}
 /* status gauges */
+#rpgbar{position:relative;z-index:3;display:flex;gap:6px;padding:5px 12px;background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#rpgbar button{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:600 13px var(--f-body,inherit)}
+#rpgbar svg,.rpg-gold svg{width:18px;height:18px;flex:none}#rpgbar i{font-style:normal;font-size:11px;min-width:18px;padding:0 5px;border-radius:9px;background:color-mix(in srgb,var(--accent) 25%,transparent);text-align:center}
+#rpgbar button.bump{animation:rpgBump .6s ease}@keyframes rpgBump{40%{transform:scale(1.12)}}
+.rpg-gold{display:flex;align-items:center;justify-content:center;gap:10px;font:400 34px var(--f-display,serif);margin:6px 0 12px}.rpg-gold svg{width:34px;height:34px}
+.sd-rpg{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.sd-rpg button{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:600 13px inherit;cursor:pointer}.sd-rpg svg{width:18px;height:18px}
+.rpg-list{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:6px}.rpg-list li{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}.rpg-list li.done label{text-decoration:line-through;opacity:.7}.rpg-list .q{min-width:22px;text-align:center}.rpg-n{flex:1;min-width:0}.rpg-ctl{display:flex;align-items:center;gap:2px;flex:none}
 #gauges{position:relative;z-index:3;overflow:hidden;display:flex;flex-wrap:wrap;gap:4px 12px;padding:6px 12px;background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .gauge{position:relative;flex:1 1 140px;min-width:0;display:flex;align-items:center;gap:6px;font-size:12px;transition:transform .3s}
 .gauge .gn{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:42%}
@@ -697,6 +704,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
       <button class="icon" id="btnMore" aria-label="More"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
     </header>
     <div id="gauges" hidden aria-label="Status"></div>
+    <div id="rpgbar" hidden aria-label="Gold, inventory and quests"></div>
     <div id="ambPop" hidden role="dialog" aria-label="Sounds in this chat"></div>
     <div id="pacer" hidden aria-label="Stroke pacer"><div class="pc-track"><div class="pc-bead"></div></div><div class="pc-cue"></div><div class="pc-burst"></div><button type="button" class="pc-min" aria-label="Hide the pacer for this chat">✕</button></div>
     <div id="msgs" aria-live="polite"></div>
@@ -815,7 +823,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.37 · Oct 14";
+const VERSION = "1.38 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -834,7 +842,7 @@ const DEFAULTS = {
   imgStyle: "detailed anime illustration, painterly, soft cinematic lighting",
   imgUrl: "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true&model=flux&enhance=false",
   portraits: true, backgrounds: true,
-  globalInstr: "", sfxColors: true, sfxSound: true, sfxVolume: 0.7, builtinPack: true, ambOn: true, ambVol: 0.35, actOn: true, actVol: 0.5, ambMuted: false,
+  globalInstr: "", sfxColors: true, sfxSound: true, sfxVolume: 0.7, builtinPack: true, ambOn: true, ambVol: 0.35, actOn: true, actVol: 0.5, ambMuted: false, musicOn: true, musicVol: 0.2, autoSfx: true, rpgOn: true,
   sfxRules: "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, stomach gurgles and growls (never breathing)\n- white: breathing, panting, sighs, huffs, gasps and exhales\n- #a8875a (brown): farts\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses\n- #f1ebda (cream): cum, ejaculation and semen sounds, and the sloshing or gurgling of full balls or cum-filled bellies\n- #ff6fae (pink): sex sounds, like hips slapping and thrusting"
 };
 const S = { recent: {}, settings: { ...DEFAULTS }, chars: [], personas: [], books: [], personaId: null, charId: null, chat: null, busy: false, openActs: null, nextSpeaker: "" };
@@ -1074,7 +1082,9 @@ function parseTag(raw) {
     gauges: f.gauges || null,
     pace: PACES.includes(low("pace")) ? low("pace") : null,
     harm: ["light", "heavy"].includes(low("harm")) ? low("harm") : f.harm ? "none" : null,
-    hear: ["inside", "outside"].includes(low("hearing")) ? low("hearing") : null
+    hear: ["inside", "outside"].includes(low("hearing")) ? low("hearing") : null,
+    music: MUS_KEYS.includes(low("music")) ? low("music") : null, event: EVT_KEYS.includes(low("event")) ? low("event") : null,
+    gold: f.gold || null, items: f.items || null, quests: f.quests || null
   };
 }
 
@@ -1163,6 +1173,8 @@ function onoPrompt(c, chat, upto) {
     [act === "kiss" || /\b(kiss|smooch|lips|tongue|lick)\w*/i.test(last), ["smooch", "wetKiss", "lick"]],
     [act === "shit" || VORE.scat.test(last) || /\bfart/i.test(last), ["dryFart", "wetFart", "plop", "push", "flush"]],
     [act === "chew" || /\b(chew|chomp|bite|bit into|teeth|gnaw|munch|tear(s|ing)? (into|off|apart)|dismember|gore|blood)\w*/i.test(last), ["chomp", "tear", "crunch", "goreSplat"]],
+    [/\b(sword|blade|shield|parr|clash|armou?r|steel)\w*/i.test(last), ["clang"]],
+    [/\b(gun|pistol|rifle|revolver|shotgun|bullet|trigger)\w*/i.test(last), ["gunshot"]],
     [/\b(acid|sizzl|burn|hiss)\w*/i.test(last), ["sizzle"]],
     [/\b(punch|strike|struck|hit|sword|blade|claw|slash|stab|fight|attack|explo|blast)\w*/i.test(last), ["impact", "slash", "boom"]],
     [/\b(water|river|lake|splash|swim|pool|bath|wade)\w*/i.test(last), ["splash"]],
@@ -1203,11 +1215,15 @@ function buildPrompt(c, chat, upto, cont) {
   sys += `\n\n# Text colors\nThe app shows [color=NAME or #hex]text[/color] as colored text. Use it whenever instructions ask for colored text.` + (st.sfxColors ? `\n${sfxRulesNow(st.sfxRules)}` : "");
   sys += onoPrompt(c, chat, upto);
   sys += gaugePrompt(c, chat);
+  sys += rpgPrompt(c, chat);
   const gs = gaugesOf(c), gaugePart = gs.length ? ` | gauges: ${gs.map(g => g.name + "=number").join(", ")}` : "";
   const pacePart = pacerOn() ? " | pace: one of " + PACES.join("/") : "";
   if (pacePart) sys += `\n\n# Pace\nThe user follows an on-screen stroke pacer that your pace field controls. Set it from the scene's sexual intensity: stop when nothing sexual is happening or for a pause, slow for teasing and build-up, steady for ongoing sex, fast as things get intense, edge to make ${u} hold right at the brink (use it for denial and teasing near the peak), cum at the moment of climax. Build up naturally over several replies and use edge before cum when it fits.`;
+  const musicPart = musicOn() ? ` | music: one of ${MUS_KEYS.join("/")} | event: one of ${EVT_KEYS.join("/")}` : "";
+  const rpgPart = rpgOn(c) ? " | gold: +n/-n | items: +Name/-Name | quests: +Name/done Name" : "";
+  if (musicPart) sys += `\n\n# Music and events\nmusic is the background music that fits the scene right now. Use none for ordinary moments; only pick music for scenes that call for it: a tavern or inn, a village, a city, a forest, a cave, a dungeon or temple, somewhere magical, a calm or tender moment, romance, sleep, danger or a creeping threat, a fight, an epic moment, space, vore, sex. event is something that happened in this reply: danger when a fight or real threat begins, victory when ${u}'s side wins a fight, defeat when ${u}'s side loses one, quest when a quest or goal is completed, item when ${u} finds or receives something notable, coins when ${u} gains money; otherwise none.`;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${focusPart}${gaugePart}${pacePart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
   if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
@@ -2122,7 +2138,8 @@ async function generate(upto, existing, cont) {
       else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
-    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null, hear: p.hear || null };
+    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null, hear: p.hear || null, music: p.music || null, event: p.event || null, rpg: rpgOn(c) ? parseRpgDelta(p) : null };
+    const rpgBefore = rpgOn(c) ? rpgState(c, chat) : null;
     const gv = parseGauges(p.gauges, c); if (gv) { meta.gauges = { ...gaugeValues(c, chat), ...gv }; chat.gauges = { ...meta.gauges }; }
     if (p.pace) meta.pace = p.pace; else if (pacerOn()) meta.pace = null;
     const segs = c.kind === "group" ? splitSpeakers(p.text).filter(x => x.text.trim()) : [];
@@ -2149,6 +2166,7 @@ async function generate(upto, existing, cont) {
     await saveChat();
     renderMsgs(true); updateStage(); renderGauges(); renderPacer();
     showMsgTop(existing ? upto : multi ? upto : chat.messages.length - 1);
+    { const fresh = multi ? chat.messages.filter(x => x.turn === chat.messages[upto]?.turn).at(-1) : existing || chat.messages.at(-1); onReply(fresh, rpgBefore).catch(() => {}); if (rpgBefore) $("rpgbar")?.querySelectorAll("button").forEach(b => { b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump"); }); }
     if (!existing) maintainMemory(c, chat).catch(e => setStatus("Memory update skipped: " + e.message, true));
     captionImages(chat).catch(() => {});
   } catch (e) {
@@ -2575,6 +2593,10 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       ${rangeRow("sAmbVol", "Background volume", "Loudness of the scene's background sounds.", 0, 1, 0.05, st.ambVol ?? 0.35, v => Math.round(v * 100) + "%")}
       <label class="check"><input type="checkbox" id="sAct" ${st.actOn !== false ? "checked" : ""}> Scene sounds for what's happening (sex, oral, kissing, vore, shitting…)</label>
       ${rangeRow("sActVol", "Scene sound volume", "Loudness of the sounds of what's happening.", 0, 1, 0.05, st.actVol ?? 0.5, v => Math.round(v * 100) + "%")}
+      <label class="check"><input type="checkbox" id="sMus" ${st.musicOn !== false ? "checked" : ""}> Music in fitting scenes (taverns, dungeons, fights, magic, romance…) and short stings for events</label>
+      ${rangeRow("sMusVol", "Music volume", "Music sits under the other sounds.", 0, 1, 0.05, st.musicVol ?? 0.2, v => Math.round(v * 100) + "%")}
+      <label class="check"><input type="checkbox" id="sAuto" ${st.autoSfx !== false ? "checked" : ""}> Play key moments by themselves (spells, coins, potions, items, climax, gape farts)</label>
+      <label class="check"><input type="checkbox" id="sRpg" ${st.rpgOn !== false ? "checked" : ""}> Gold, inventory and quests in bots that use them</label>
       <p class="note" style="margin:0">The 🔊 button at the top of a chat mutes and unmutes these.</p>
       <button class="btn small" type="button" id="sPack">Sound pack · add your own audio files</button>
     </div>
@@ -2642,7 +2664,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       portraits: $("sPort").checked, backgrounds: $("sBg").checked,
       imgStyle: $("sStyle").value.trim() || DEFAULTS.imgStyle, imgUrl: $("sImg").value.trim() || DEFAULTS.imgUrl,
       keepRecent: n("sKeep", 16), factsEvery: n("sFacts", 4), summarizeAt: n("sSum", 12000),
-      globalInstr: $("sGlobal").value.trim(), sfxColors: $("sSfx").checked, sfxSound: $("sSound").checked, sfxVolume: n("sVol", 0.7), ambOn: $("sAmb").checked, ambVol: n("sAmbVol", 0.35), actOn: $("sAct").checked, actVol: n("sActVol", 0.5), sfxRules: $("sSfxRules").value.trim() || DEFAULTS.sfxRules
+      globalInstr: $("sGlobal").value.trim(), sfxColors: $("sSfx").checked, sfxSound: $("sSound").checked, sfxVolume: n("sVol", 0.7), ambOn: $("sAmb").checked, ambVol: n("sAmbVol", 0.35), actOn: $("sAct").checked, actVol: n("sActVol", 0.5), musicOn: $("sMus").checked, musicVol: n("sMusVol", 0.2), autoSfx: $("sAuto").checked, rpgOn: $("sRpg").checked, sfxRules: $("sSfxRules").value.trim() || DEFAULTS.sfxRules
     });
     await saveSettings(); closeSheet(); updateAmbience();
     if (!$("chat").hidden) updateStage(); else renderHome();
@@ -2868,12 +2890,13 @@ function editChar(c, isNew, fromDraft) {
       </div>`}
       <div class="group"><h3>Dice</h3>${field("Rolls allowed per message", `<select id="cRollLim">${[[0, "Unlimited rerolls"], [1, "1 (no rerolls)"], [2, "2"], [3, "3"], [5, "5"]].map(([v, l]) => `<option value="${v}" ${(+work.rollLimit || 0) === v ? "selected" : ""}>${l}</option>`).join("")}</select>`, "How many times you can roll 🎲 before sending one message, so you can't keep rolling for the number you want. With a limit, a roll can't be thrown away either.")}</div>
       <div class="group"><h3>Status gauges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Bars at the top of the chat (fullness, arousal, health…) that the AI moves as the story goes.</p><div id="cGauges" class="stack"></div></div>
+      <div class="group"><h3>Gold, inventory and quests</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">For adventures: a gold counter, a bag and a quest log under the chat header. The AI keeps them up to date and you can edit them.</p><div id="cRpg" class="stack"></div></div>
       <div id="cMsg" class="hint"></div>
       <button class="btn primary" id="cSave">${isNew ? "Create " + KINDS[K].label.toLowerCase() : "Save changes"}</button>
       ${isNew ? "" : `<button class="btn danger" id="cDel">Delete ${KINDS[K].label.toLowerCase()}</button>`}`;
 
     ruleTabs($("cInstr"));
-    gaugeEditor(work);
+    gaugeEditor(work); rpgEditor(work);
     const greets = [work.firstMessage || "", ...(work.altGreetings || [])];
     let gi = 0;
     const grab = () => {
@@ -3329,6 +3352,7 @@ function renderSide() {
     box.innerHTML = `<div class="sd-port" id="sdPort" style="--ring:${MOOD_COLOR[ch.mood] || "var(--accent)"}" role="button" tabindex="0" aria-label="Show portrait"><img alt=""><div class="sd-name">${esc(focus ? focus.name : c.name)}</div></div>
       <div class="sd-meta"><span class="mood-chip">${esc(mood)}</span>${ch.place ? `<span>📍 ${esc(ch.place)}</span>` : ""}</div>
       ${c.kind === "group" ? `<div><span class="lbl">Who replies next</span><div class="sd-mem" style="margin-top:6px">${["", ...members(c).map(m => m.name)].map(n => `<button type="button" data-n="${esc(n)}" class="${S.nextSpeaker === n ? "on" : ""}">${n ? `<img alt="">` : ""}${n ? esc(n) : "Anyone"}</button>`).join("")}</div></div>` : ""}
+      ${rpgOn(c) ? (() => { const rs = rpgState(c, ch); return `<div class="sd-card"><span class="lbl">Gold, bag and quests</span><div class="sd-rpg"><button type="button" data-rpg="gold">${RPG_ICON.gold} ${rs.gold}</button><button type="button" data-rpg="bag">${RPG_ICON.bag} ${[...rs.items.values()].reduce((a, q) => a + q, 0)}</button><button type="button" data-rpg="quests">${RPG_ICON.quest} ${rs.quests.filter(q => !q.done).length}</button></div></div>`; })() : ""}
       ${sound ? `<div class="sd-card"><span class="lbl">Scene sounds</span><div>${esc(sound)}${S.settings.ambMuted ? " (muted)" : ""}</div></div>` : ""}
       ${ch.summary ? `<div class="sd-card"><span class="lbl">Story so far</span><div class="sd-sum">${esc(ch.summary)}</div></div>` : ""}
       ${facts.length ? `<div class="sd-card"><span class="lbl">Facts</span><ul class="sd-facts">${facts.map(f => `<li class="${f.pin ? "pin" : ""}">${esc(f.t)}</li>`).join("")}</ul></div>` : ""}
@@ -3336,6 +3360,7 @@ function renderSide() {
       <div class="sd-btns"><button type="button" class="rbtn" id="sdMem">Memory</button><button type="button" class="rbtn" id="sdChats">Chats</button><button type="button" class="rbtn" id="sdEdit">Edit bot</button><button type="button" class="rbtn" id="sdMore">Options</button></div>`;
     setImg(box.querySelector("#sdPort img"), focus ? portraitURL(focus) : c.kind === "world" ? coverURL(c) : portraitURL(c), focus || c);
     $("sdPort").onclick = () => openPortrait(char());
+    box.querySelectorAll(".sd-rpg button").forEach(b => b.onclick = () => openRpg(b.dataset.rpg));
     box.querySelectorAll(".sd-mem button").forEach(b => { const m = b.dataset.n && memberByName(c, b.dataset.n); if (m) setImg(b.querySelector("img"), portraitURL(m), m); b.onclick = () => { S.nextSpeaker = b.dataset.n; renderSpeakers(); renderSide(); }; });
     $("sdMem").onclick = () => openMemory(); $("sdChats").onclick = () => openChats(S.charId); $("sdEdit").onclick = () => editChar(char(), false); $("sdMore").onclick = () => $("btnMore").click();
     return;
@@ -3527,6 +3552,7 @@ function parseGauges(str, c) {
 }
 let GAUGE_PREV = {};
 function renderGauges() {
+  renderRpg();
   const box = $("gauges"); if (!box) return;
   const c = char(), gs = S.chat && !$("chat").hidden ? gaugesOf(c) : [];
   if (!gs.length) { box.hidden = true; box.innerHTML = ""; GAUGE_PREV = {}; return; }
@@ -3563,10 +3589,229 @@ function gaugeEditor(work) {
   draw();
 }
 
+// --- Music: its own layer, under the sounds. Only fitting scenes get music; the hidden tag names the scene (music: …)
+// and one-off events (event: …) play short stings: a danger cue that flows into fight music, then a win or loss sting.
+const MUS_KEYS = ["none", "tavern", "village", "city", "forest", "cave", "dungeon", "magic", "calm", "romance", "sleep", "danger", "fight", "epic", "space", "vore", "sex"];
+const EVT_KEYS = ["none", "danger", "victory", "defeat", "quest", "item", "coins"];
+const MUS_LABEL = { tavern: "Tavern", village: "Village", city: "City", forest: "Forest", cave: "Cave", dungeon: "Dungeon / temple", magic: "Magical", calm: "Calm", romance: "Romance", sleep: "Sleep", danger: "Danger", fight: "Fight", epic: "Epic", space: "Space", vore: "Vore", sex: "Sex" };
+const EVT_LABEL = { danger: "Fight or danger begins", victory: "Fight won", defeat: "Fight lost", quest: "Quest done", item: "Item found", coins: "Coins gained" };
+const musicOn = () => S.settings.musicOn !== false && !S.settings.ambMuted;
+const musicVol = () => S.settings.musicVol ?? 0.2;
+// when a reply has no music field (older replies), guess from the scene
+function musicGuess(sc) {
+  if (["vore", "struggle", "swallow", "chew"].includes(sc.act)) return "vore";
+  if (["sex", "oral"].includes(sc.act)) return "sex";
+  if (sc.act === "kiss") return "romance";
+  return { combat: "fight", gunfight: "fight", tavern: "tavern", village: "village", city: "city", market: "city", forest: "forest", nature: "forest", light_rain: "calm", cave: "cave", dungeon: "dungeon", spaceship: "space", panic: "danger" }[sc.amb] || "none";
+}
+function musicScene() {
+  const msgs = (S.chat?.messages || []).filter(m => m.role === "assistant"), last = msgs.at(-1);
+  if (!last) return "none";
+  if (last.music) return last.music;
+  return musicGuess(sceneNow());
+}
+const MUS = { key: null, loop: null, hold: 0, sting: null };
+async function musicStep(inChat) {
+  const want = inChat && musicOn() && Date.now() >= MUS.hold ? musicScene() : "none";
+  const key = want === "none" ? null : want;
+  if (key === MUS.key && MUS.loop) { MUS.loop.setVol(musicVol()); return; }
+  if (key === MUS.key && !key) return;
+  const old = MUS.loop; MUS.loop = null; MUS.key = key; old?.stop(2.5); // crossfade: the old track fades out as the new one fades in
+  if (!key) return;
+  const files = await poolFor(["mus_" + key, ...(key === "epic" ? ["mus_fight"] : key === "danger" ? ["mus_fight"] : [])]);
+  if (!files.length || MUS.key !== key) return;
+  const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id);
+  if (!url || MUS.key !== key) return;
+  const lp = await startLoop(url, musicVol(), false, 2.5).catch(() => null);
+  if (MUS.key !== key) { lp?.stop(); return; }
+  MUS.loop = lp;
+}
+function musicStop() { MUS.loop?.stop(0.4); MUS.loop = null; MUS.key = null; MUS.sting?.pause(); MUS.sting = null; MUS.hold = 0; }
+// a sting plays once; danger, victory and defeat hold the music for their length (danger then flows into fight music)
+async function playSting(evt) {
+  if (!musicOn() || !evt || evt === "none") return;
+  const files = await poolFor(["sting_" + evt]); if (!files.length) return;
+  const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id); if (!url) return;
+  const big = ["danger", "victory", "defeat"].includes(evt);
+  if (big) { MUS.loop?.stop(1.2); MUS.loop = null; MUS.key = null; }
+  else MUS.loop?.setVol(musicVol() * 0.35); // duck the music under a small sting
+  const a = trackAudio(new Audio(url)); a.volume = Math.min(1, musicVol() * (big ? 1.8 : 2.2)); MUS.sting = a;
+  const len = (f.len || 4) * 1000;
+  if (big) MUS.hold = Date.now() + Math.max(1500, len - 1200);
+  a.onended = () => { if (MUS.sting === a) MUS.sting = null; if (!big) MUS.loop?.setVol(musicVol()); };
+  await a.play().catch(() => {});
+  if (big) setTimeout(() => updateAmbience(), Math.max(1500, len - 1200) + 50);
+  else setTimeout(() => { if (MUS.sting !== a) MUS.loop?.setVol(musicVol()); }, len + 200);
+}
+
+// --- Key moments: when a reply arrives, a few things play by themselves (spells, coins, potions, items, climax, gape farts)
+const SPELL_WORDS = /\b(spell\w*|cast(s|ing)?|incant\w*|conjur\w*|summon\w*|rune\w*|mana|arcane|magic\w*|sorcer\w*|enchant\w*)\b/i;
+function spellType(t) {
+  if (/\b(heal\w*|holy|divine|restor\w*|mend\w*|cleans\w*|blessing)\b/i.test(t)) return "heal";
+  if (/\b(portal|rift|warp\w*|teleport\w*|blink\w*)\b/i.test(t)) return "portal";
+  if (/\b(lightning|thunderbolt|electric\w*|shock\w*|spark\w*|static)\b/i.test(t)) return "spell_lightning";
+  if (/\b(fire\w*|flame\w*|inferno|blaze|burn\w*|ember\w*|pyro\w*|scorch\w*)\b/i.test(t)) return "spell_fire";
+  if (/\b(ice|icy|frost\w*|freez\w*|frozen|glacial|blizzard|cryo\w*)\b/i.test(t)) return "spell_ice";
+  if (/\b(earth\w*|stone|rock\w*|boulder\w*|quake|terra\w*|ground (splits|cracks|erupts))\b/i.test(t)) return "spell_earth";
+  if (/\b(wind\w*|gust\w*|gale|tornado|cyclone|air blade|aero\w*)\b/i.test(t)) return "spell_wind";
+  if (/\b(beam|laser|ray|energy (blast|bolt|beam))\b/i.test(t)) return "beam";
+  return "spell";
+}
+const CLIMAX = /\b(cum(s|ming)?|came (hard|inside|deep|all over)|ejaculat\w*|orgasm\w*|climax\w*|shoots? (his|her|their|a|thick) (load|cum|seed)|spurt\w*|pump\w* (his|her) (load|seed|cum)|creampie\w*|blows? (his|a) load|unload\w* (inside|into|in))\b/i;
+const GAPE = /\b(pull\w*|slid\w*|slip\w*|draw\w*|pop\w*|withdraw\w*|yank\w*)\b[^.!?\n]{0,40}\bout\b[^.!?\n]{0,60}\b(ass|asshole|anus|rear|backside|rump|hole|butt)\b|\b(ass|asshole|anus|hole)\b[^.!?\n]{0,60}\b(gap\w*|gaping|left open|queef\w*)\b/i;
+async function playOne(types, vol, delay = 0) {
+  const files = await poolFor(types); if (!files.length) return 0;
+  const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id); if (!url) return 0;
+  setTimeout(() => { const a = trackAudio(new Audio(url)); a.volume = Math.max(0, Math.min(1, vol)); a.play().catch(() => {}); if (!/climax|loop|sting/.test(f.type)) capAudio(a, a.volume); }, delay);
+  return (f.len || 1) * 1000;
+}
+async function onReply(m, rpgBefore) {
+  if (!m || !S.chat) return;
+  const st = S.settings, c = char(), t = msgText(m), sc = sceneNow();
+  // music events
+  if (m.event && m.event !== "none") playSting(m.event);
+  if (st.sfxSound === false || st.autoSfx === false || st.ambMuted) return;
+  const vol = st.sfxVolume ?? 0.7, queue = [];
+  // climax: one burst of spurts when the reply describes cumming during sex or oral
+  if ((["sex", "oral"].includes(sc.act) || m.pace === "cum") && CLIMAX.test(t)) queue.push(["climax", ["climax", "cum"]]);
+  // a gape fart right after an anal pull-out
+  if (GAPE.test(t)) queue.push(["gape", ["gape"]]);
+  // RPG: gold, items and quests that changed in this reply
+  if (rpgBefore && rpgOn(c)) {
+    const after = rpgState(c, S.chat);
+    if (after.gold > rpgBefore.gold) queue.push(["coins", ["coins"]]);
+    if ([...after.items.entries()].some(([k, q]) => q > (rpgBefore.items.get(k) || 0))) queue.push(["item", ["item"]]);
+    if (after.quests.some(q => q.done && !rpgBefore.quests.find(x => x.name === q.name && x.done)) && m.event !== "quest") playSting("quest");
+  }
+  // spells, potions, coins and items described in the text
+  if (SPELL_WORDS.test(t) && /\b(cast\w*|hurl\w*|unleash\w*|fire[sd]? (a|off)|launch\w*|conjur\w*|summon\w*|channel\w*|erupt\w*|blast\w*|sends? a|calls? down)\b/i.test(t)) queue.push(["spell", [spellType(t), "spell", "magic"]]);
+  if (/\b(drink\w*|drank|quaff\w*|gulp\w*|down\w*|swig\w*|uncork\w*)\b[^.!?\n]{0,40}\b(potion|elixir|tonic|draught|vial|phial)\b/i.test(t)) queue.push(["potion", ["potion"]]);
+  if (!queue.some(q => q[0] === "coins") && /\b(coins?|gold pieces|purse of gold|pouch of (gold|coins)|silver pieces)\b/i.test(t) && /\b(hand\w*|toss\w*|drop\w*|count\w*|jingl\w*|pay\w*|paid|clink\w*|pocket\w*|receiv\w*|reward\w*|loot\w*)\b/i.test(t)) queue.push(["coins", ["coins"]]);
+  if (!queue.some(q => q[0] === "item") && /\b(pick\w* up|pocket\w*|stow\w*|loot\w*|(add|put)\w* (it |them )?(to|in|into) (your|my|the|his|her) (bag|pack|satchel|inventory))\b/i.test(t)) queue.push(["item", ["item"]]);
+  let at = 600; // start after the reply has landed, one after another
+  for (const [, types] of queue.slice(0, 3)) { const len = await playOne(types, vol, at); if (len) at += Math.min(2500, len * 0.6) + 250; }
+}
+
+// --- RPG: gold, inventory and quests. Turned on per bot (editor), the AI changes them in the hidden tag, you can edit them too.
+const rpgOn = c => S.settings.rpgOn !== false && !!c?.rpg?.on;
+const itemKey = n => String(n || "").trim().toLowerCase();
+function parseItemList(s) { // "2 Health potion" / "Health potion x2" / "Torch"
+  const out = []; for (const line of String(s || "").split(/[\n,;]/)) { let t = line.trim(); if (!t) continue; let q = 1, m;
+    if ((m = t.match(/^(\d+)\s*x?\s+(.+)$/i))) { q = +m[1]; t = m[2]; } else if ((m = t.match(/^(.+?)\s*[x×]\s*(\d+)$/i))) { q = +m[2]; t = m[1]; }
+    out.push({ name: t.trim(), qty: q }); }
+  return out;
+}
+function parseRpgDelta(p) {
+  if (!p) return null; const d = {};
+  if (p.gold != null && /-?\+?\d/.test(p.gold)) { const m = String(p.gold).match(/([+-=])?\s*(\d+)/); if (m) { if (m[1] === "=") d.goldSet = +m[2]; else d.gold = (m[1] === "-" ? -1 : 1) * +m[2]; } }
+  if (p.items && !/^none$/i.test(p.items.trim())) { d.items = []; for (const part of p.items.split(/[,;]/)) { const m = part.trim().match(/^([+-])\s*(.+)$/); if (!m) continue; const it = parseItemList(m[2])[0]; if (it) d.items.push({ name: it.name, d: (m[1] === "-" ? -1 : 1) * it.qty }); } if (!d.items.length) delete d.items; }
+  if (p.quests && !/^none$/i.test(p.quests.trim())) { d.quests = []; for (const part of p.quests.split(/[,;]/)) { const t = part.trim(); let m;
+    if ((m = t.match(/^\+\s*(.+)$/))) d.quests.push({ name: m[1].trim(), status: "open" });
+    else if ((m = t.match(/^(done|completed?|finished|✓)\s*:?\s*(.+)$/i))) d.quests.push({ name: m[2].trim(), status: "done" });
+    else if ((m = t.match(/^(-|failed|dropped|removed?)\s*:?\s*(.+)$/i))) d.quests.push({ name: m[2].trim(), status: "removed" }); }
+    if (!d.quests.length) delete d.quests; }
+  return Object.keys(d).length ? d : null;
+}
+function rpgState(c, chat) {
+  const base = c?.rpg || {}, items = new Map(), names = new Map(), quests = [];
+  let gold = Math.max(0, +base.gold || 0);
+  const addItem = (name, d) => { const k = itemKey(name); if (!k) return; if (!names.has(k)) names.set(k, name.trim()); items.set(k, Math.max(0, (items.get(k) || 0) + d)); };
+  const setQuest = (name, status) => { const n = String(name || "").trim(); if (!n) return; const q = quests.find(x => x.name.toLowerCase() === n.toLowerCase()); if (status === "removed") { if (q) quests.splice(quests.indexOf(q), 1); return; } if (q) q.done = status === "done"; else quests.push({ name: n, done: status === "done" }); };
+  for (const it of parseItemList(base.items)) addItem(it.name, it.qty);
+  for (const q of String(base.quests || "").split("\n")) setQuest(q, "open");
+  const apply = d => { if (!d) return; if (d.goldSet != null) gold = d.goldSet; if (d.gold) gold = Math.max(0, gold + d.gold); for (const it of d.items || []) addItem(it.name, it.d); for (const q of d.quests || []) setQuest(q.name, q.status); };
+  for (const m of chat?.messages || []) if (m.role === "assistant") apply(m.rpg);
+  for (const e of chat?.rpgEdits || []) apply(e);
+  for (const [k, q] of [...items]) if (q <= 0) items.delete(k);
+  return { gold, items, names, quests };
+}
+function rpgPrompt(c, chat) {
+  if (!rpgOn(c)) return "";
+  const s = rpgState(c, chat), u = uname();
+  const bag = [...s.items].map(([k, q]) => (q > 1 ? q + " " : "") + s.names.get(k)).join(", ") || "nothing";
+  const qs = s.quests.filter(q => !q.done).map(q => q.name).join("; ") || "none";
+  return `\n\n# ${u}'s gold, inventory and quests\nGold: ${s.gold}. Bag: ${bag}. Open quests: ${qs}.\nKeep these consistent with the story: ${u} can only use, give or sell what is in the bag, and can only pay with gold they have. When the story changes them, say so in the hidden line (gold: +n or -n; items: +Name or -Name, with a count like +2 Arrows; quests: +New quest or done Quest name). Leave those fields out when nothing changed.`;
+}
+// the slim bar under the chat header
+const RPG_ICON = {
+  gold: `<svg viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="10" cy="13" rx="6.5" ry="3" fill="#b8862f"/><ellipse cx="10" cy="11" rx="6.5" ry="3" fill="#e8b54a"/><ellipse cx="10" cy="8" rx="6.5" ry="3" fill="#f5cf6a"/><ellipse cx="10" cy="8" rx="3.6" ry="1.4" fill="#e0a83a"/></svg>`,
+  bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5c0-1.6 1.3-2.5 3-2.5s3 .9 3 2.5" fill="none" stroke="#c99a62" stroke-width="1.6"/><path d="M4 7h12l-1 10H5z" fill="#a8744a"/><path d="M4 7h12v2H4z" fill="#c4915c"/><rect x="8.6" y="9.5" width="2.8" height="2.4" rx=".6" fill="#f0c674"/></svg>`,
+  quest: `<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="3" width="11" height="14" rx="1.5" fill="#efe1c0"/><path d="M7 7h6M7 10h6M7 13h4" stroke="#8a6a3e" stroke-width="1.4"/><circle cx="15" cy="15" r="3" fill="#e2766f"/></svg>`
+};
+function renderRpg() {
+  const bar = $("rpgbar"); if (!bar) return;
+  const c = char(); if (!S.chat || $("chat").hidden || !rpgOn(c)) { bar.hidden = true; bar.innerHTML = ""; return; }
+  const s = rpgState(c, S.chat), nItems = [...s.items.values()].reduce((a, q) => a + q, 0), open = s.quests.filter(q => !q.done).length;
+  bar.hidden = false;
+  bar.innerHTML = `<button type="button" data-rpg="gold" aria-label="Gold: ${s.gold}">${RPG_ICON.gold}<b>${s.gold}</b></button><button type="button" data-rpg="bag" aria-label="Inventory">${RPG_ICON.bag}<span>Bag</span><i>${nItems}</i></button><button type="button" data-rpg="quests" aria-label="Quests">${RPG_ICON.quest}<span>Quests</span><i>${open}</i></button>`;
+  bar.querySelectorAll("button").forEach(b => b.onclick = () => openRpg(b.dataset.rpg));
+}
+async function rpgEdit(op) { S.chat.rpgEdits = [...(S.chat.rpgEdits || []), op]; await saveChat(); renderRpg(); renderPanes(); }
+function openRpg(which) {
+  const c = char(), vol = S.settings.sfxVolume ?? 0.7;
+  if (which === "bag") playOne(["bag"], vol * 0.8);
+  openSheet(which === "gold" ? "Gold" : which === "bag" ? "Inventory" : "Quests", b => {
+    const draw = () => {
+      const s = rpgState(c, S.chat);
+      if (which === "gold") {
+        b.innerHTML = `<div class="rpg-gold">${RPG_ICON.gold}<b>${s.gold}</b></div>
+          <div class="row" style="gap:6px;justify-content:center">${[-10, -1, 1, 10].map(d => `<button type="button" class="btn small" data-d="${d}">${d > 0 ? "+" : ""}${d}</button>`).join("")}</div>
+          ${field("Set exactly", `<div class="row" style="gap:6px"><input type="number" id="rgSet" min="0" value="${s.gold}" style="flex:1"><button type="button" class="btn small" id="rgOk">Set</button></div>`, "The AI also changes your gold as the story goes.")}`;
+        const change = async d => { if (!d) return; await rpgEdit({ gold: d }); if (d > 0) playOne(["coins"], vol); draw(); };
+        b.querySelectorAll("[data-d]").forEach(x => x.onclick = () => change(+x.dataset.d));
+        $("rgOk").onclick = () => change(Math.max(0, +$("rgSet").value || 0) - s.gold);
+      } else if (which === "bag") {
+        const list = [...s.items];
+        b.innerHTML = `${list.length ? `<ul class="rpg-list">${list.map(([k, q]) => `<li><span class="rpg-n">${esc(s.names.get(k))}</span><span class="rpg-ctl"><button type="button" class="icon" data-k="${esc(k)}" data-d="-1" aria-label="One fewer">−</button><b class="q">${q}</b><button type="button" class="icon" data-k="${esc(k)}" data-d="1" aria-label="One more">+</button><button type="button" class="icon" data-k="${esc(k)}" data-d="${-q}" aria-label="Remove">✕</button></span></li>`).join("")}</ul>` : `<p class="hint">The bag is empty.</p>`}
+          ${field("Add an item", `<div class="row" style="gap:6px"><input id="riName" placeholder="e.g. Health potion" style="flex:1"><input id="riQty" type="number" min="1" value="1" style="flex:0 0 64px;min-width:64px" aria-label="How many"><button type="button" class="btn small" id="riAdd">Add</button></div>`, "The AI adds and removes items as the story goes too.")}`;
+        b.querySelectorAll("[data-k]").forEach(x => x.onclick = async () => { await rpgEdit({ items: [{ name: s.names.get(x.dataset.k), d: +x.dataset.d }] }); draw(); });
+        $("riAdd").onclick = async () => { const n = $("riName").value.trim(); if (!n) return; await rpgEdit({ items: [{ name: n, d: Math.max(1, +$("riQty").value || 1) }] }); playOne(["item"], vol); draw(); };
+      } else {
+        b.innerHTML = `${s.quests.length ? `<ul class="rpg-list">${s.quests.map((q, i) => `<li class="${q.done ? "done" : ""}"><label class="check" style="flex:1"><input type="checkbox" data-i="${i}" ${q.done ? "checked" : ""}> ${esc(q.name)}</label><button type="button" class="icon" data-rm="${i}" aria-label="Remove quest">✕</button></li>`).join("")}</ul>` : `<p class="hint">No quests yet.</p>`}
+          ${field("Add a quest", `<div class="row" style="gap:6px"><input id="rqName" placeholder="e.g. Find the lost amulet" style="flex:1"><button type="button" class="btn small" id="rqAdd">Add</button></div>`, "The AI adds quests and marks them done as the story goes.")}`;
+        b.querySelectorAll("input[data-i]").forEach(x => x.onchange = async () => { const q = s.quests[+x.dataset.i]; await rpgEdit({ quests: [{ name: q.name, status: x.checked ? "done" : "open" }] }); if (x.checked) playSting("quest"); draw(); });
+        b.querySelectorAll("[data-rm]").forEach(x => x.onclick = async () => { await rpgEdit({ quests: [{ name: s.quests[+x.dataset.rm].name, status: "removed" }] }); draw(); });
+        $("rqAdd").onclick = async () => { const n = $("rqName").value.trim(); if (!n) return; await rpgEdit({ quests: [{ name: n, status: "open" }] }); draw(); };
+      }
+    };
+    draw();
+  });
+}
+function rpgEditor(work) {
+  const box = $("cRpg"); if (!box) return;
+  work.rpg = work.rpg || { on: false, gold: 0, items: "", quests: "" };
+  const r = work.rpg;
+  box.innerHTML = `<label class="check"><input type="checkbox" id="cRpgOn" ${r.on ? "checked" : ""}> Gold, inventory and quests in this bot's chats</label>
+    ${field("Starting gold", `<input type="number" id="cRpgGold" min="0" value="${esc(r.gold || 0)}">`)}
+    ${field("Starting items", `<textarea id="cRpgItems" style="min-height:70px" placeholder="One per line, e.g.\n2 Health potion\nRusty sword">${esc(r.items || "")}</textarea>`)}
+    ${field("Starting quests", `<textarea id="cRpgQuests" style="min-height:60px" placeholder="One per line">${esc(r.quests || "")}</textarea>`)}`;
+  $("cRpgOn").onchange = e => { r.on = e.target.checked; };
+  $("cRpgGold").oninput = e => { r.gold = Math.max(0, +e.target.value || 0); };
+  $("cRpgItems").oninput = e => { r.items = e.target.value; };
+  $("cRpgQuests").oninput = e => { r.quests = e.target.value; };
+}
+// tap words in fights and spellcasting: the sentence around a sound decides which weapon or spell it is
+function combatSub(sp, t, cat) {
+  const para = (sp.closest("p") || sp.closest(".msg") || sp.parentElement)?.textContent || "";
+  if (/^(ba+ng|bla+m+|ra+t+a+t|pe+w|bla+t+|bu+d+a+|kra+ck)/i.test(t) && /\b(gun|pistol|rifle|revolver|shotgun|firearm|trigger|bullet|shot)\w*\b/i.test(para)) return "gun";
+  if (["magic", "zap"].includes(cat) || ((cat === "fire" || cat === "wind" || cat === "boom" || cat === "wave") && SPELL_WORDS.test(para))) return spellType(para);
+  if (/\b(coins?|gold pieces|purse)\b/i.test(para) && /^(cli+n+k|ji+n+g|chi+n+k|ti+n+k)/i.test(t)) return "coins";
+  if (/\b(potion|elixir|vial|flask)\b/i.test(para) && /^(gl|gu|sh?lu)/i.test(t)) return "potion";
+  if (cat === "slash" || cat === "hit" || cat === "wind" || cat === "wave") {
+    if (/\b(sheath\w*|unsheath\w*|draws? (his|her|their|a|the) (sword|blade|katana))\b/i.test(para) && /^(shi+n+g|schwi+n+g|shhi+n+g|ssh)/i.test(t)) return "sheath";
+    if (/\b(arrow|bow|bolt|quiver)\w*\b/i.test(para) && !/\blightning\b/i.test(para)) return "arrow";
+    if (/\b(spear|lance|pike|halberd|trident)\w*\b/i.test(para)) return "stab";
+    if (/\b(shield|parr\w*|block\w*|armou?r|clash\w*|steel meets steel|blades? (meet|lock))\b/i.test(para) || /^(cla+n+g|kla+n+g|cla+n+k|ti+n+g|kli+n+g)/i.test(t)) return "clash";
+    if (/\b(crate|barrel|plank|door|table|chair)s?\b/i.test(para) && /\b(smash\w*|splinter\w*|shatter\w*|break\w*|broke)\b/i.test(para)) return "smash";
+    if (cat === "wind" && /\b(sword|blade|axe|club|swing\w*|swung)\b/i.test(para)) return "swing";
+  }
+  return null;
+}
+
 // --- Screen effects: weather and light from where the scene is, plus effects for what's happening
 const FX = { amb: null, act: null, raf: 0, parts: [], last: 0, nextFlash: 0, nextShake: 0, pace: null };
 const fxLevel = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "still" : (S.settings.fxLevel || "full");
-const WEATHER = { rain: "rain", light_rain: "rain", rain_shelter: "rain", storm: "storm", wind: "dust", snow: "snow", campfire: "embers", fireplace: "embers", night: "fireflies", forest: "motes", nature: "motes", underwater: "bubbles", cave: "dust", dungeon: "dust", beach: "glints", river: "glints", combat: "combat" };
+const WEATHER = { desert: "dust", panic: "combat", gunfight: "combat", rain: "rain", light_rain: "rain", rain_shelter: "rain", storm: "storm", wind: "dust", snow: "snow", campfire: "embers", fireplace: "embers", night: "fireflies", forest: "motes", nature: "motes", underwater: "bubbles", cave: "dust", dungeon: "dust", beach: "glints", river: "glints", combat: "combat" };
 // cock vore and unbirth glow creamy white; oral and anal vore glow stomach-acid green
 function voreKind() {
   const recent = (S.chat?.messages || []).filter(m => m.role !== "image").slice(-6).map(m => m.content || "").join("\n");
@@ -3783,13 +4028,15 @@ const ONO = (() => {
     fire: () => R() < 0.5 ? run(n(2, 3), () => pick(["Krkl", "Ktt", "Krrkl", "Pkt"])) : "Fw" + swell("o", n(2, 4)) + "mph",
     thunder: () => "Kr" + swell("r", n(2, 4)) + "AKK... " + pick(["rrmmbl", "rrmblmbl", "rrrmmmbl"]) + "...",
     rip: () => pick([() => pick(["rrrrip", "rRrRip", "rRrrip", "rrRRip", "RrrRip"]), () => "SHR" + rep("R", n(1, 2)) + "K", () => "Zzzzip"])(),
+    clang: () => pick(["KLANG", "Klaaang", "CLANG", "Klnng", "KLANK"]) + (R() < 0.4 ? "... " + pick(["ting", "shhng", "tnng"]) : ""),
+    gunshot: () => run(n(1, 3), () => pick(["BLAM", "BANG", "Bang", "BLAMM", "Pkew"])),
     chomp: () => run(n(1, 3), () => pick(["Chmp", "CHMP", "Chomp", "Krmp", "Chmmp", "CHOMP"])) + (R() < 0.5 ? " " + pick(["Shlrrch", "shlrch", "Sqlrch"]) + "..." : ""),
     tear: () => pick(["Rrrtch", "Shrrrlk", "RRRtch", "Hrrrk-tch", "Skrrrtch", "rRRRtch"]) + (R() < 0.4 ? "... " + pick(["Shlrp", "Splk", "Plrch"]) : ""),
     goreSplat: () => pick(["SPLRTCH", "Splrrch", "Shplrt", "SPLTCH", "Splrrtch"]) + (R() < 0.4 ? "... " + pick(["plk", "plp", "tik"]) + "..." : ""),
     door: () => "Kr" + rep("r", n(0, 2)) + mixVowels(["e"], n(3, 5)) + "k" + (R() < 0.6 ? "... " + pick(["THUD", "Klak", "Thmp", "KLAK"]) : "")
   };
   Object.assign(parts, more);
-  const LABEL = { plap: "Hips slapping", squelch: "Wet thrusts", spurt: "Cum spurting", pour: "Cum pouring and dripping", slurp: "Slurping", suck: "Sucking", gluck: "Gagging", drinkGulp: "Gulping it down", smooch: "Kiss", wetKiss: "Wet kissing", lick: "Lick", preyGulp: "Swallowing prey", gullet: "Throat squeezing prey down", muffled: "Muffled struggling inside", crunch: "Bones crunching", sizzle: "Acid sizzling", dryFart: "Dry fart", wetFart: "Wet fart", plop: "Plop", push: "Long push and plop", flush: "Flush", heart: "Heartbeat", breath: "Breathing", sniff: "Sniffing", drool: "Drool dripping", stomp: "Big footsteps", impact: "Punch or hit", slash: "Blade or claw", boom: "Explosion", splash: "Splash", fire: "Fire", thunder: "Thunder", rip: "Cloth ripping or zipper", door: "Door", chomp: "Crushing bite", tear: "Flesh tearing", goreSplat: "Blood and gore splattering",
+  const LABEL = { plap: "Hips slapping", squelch: "Wet thrusts", spurt: "Cum spurting", pour: "Cum pouring and dripping", slurp: "Slurping", suck: "Sucking", gluck: "Gagging", drinkGulp: "Gulping it down", smooch: "Kiss", wetKiss: "Wet kissing", lick: "Lick", preyGulp: "Swallowing prey", gullet: "Throat squeezing prey down", muffled: "Muffled struggling inside", crunch: "Bones crunching", sizzle: "Acid sizzling", dryFart: "Dry fart", wetFart: "Wet fart", plop: "Plop", push: "Long push and plop", flush: "Flush", heart: "Heartbeat", breath: "Breathing", sniff: "Sniffing", drool: "Drool dripping", stomp: "Big footsteps", impact: "Punch or hit", slash: "Blade or claw", boom: "Explosion", splash: "Splash", fire: "Fire", thunder: "Thunder", rip: "Cloth ripping or zipper", door: "Door", chomp: "Crushing bite", clang: "Blades or armour clashing", gunshot: "Gunshot", tear: "Flesh tearing", goreSplat: "Blood and gore splattering",
     belch: "Belch", shortBelch: "Shorter belch", burp: "Burp", gurgle: "Digestion gurgle", lateGurgle: "Late-digestion gurgle", longGurgle: "Digestion gurgle", sloshy: "Sloshy late digestion gurgles", brutal: "Brutal digestion gurgles with a crunch", ballGurgle: "Full balls gurgling and sloshing", churn: "Stomach churning growl" };
   return {
     types: Object.keys(parts).filter(k => !(k in more)), all: Object.keys(parts), LABEL,
@@ -3834,6 +4081,8 @@ const SHAPES = [
   [/^r{3,}ip$|^shr+k$|^z{3,}ip$/, "slash", "rip"],
   [/^kr+e{2,}k$/, "wave", "door"],
   [/^(thud|klak)$/, "hit", "door"],
+  [/^(ba+n+g+|bla+m+|pke+w)$/, "boom", ""],
+  [/^(cl|kl)a*n+[gk]+$/, "hit", "clash"],
   [/^(chm+p|krmp|cho+mp|cha+mp|mu+nch)+$/, "crack", "chew"],
   [/^(r{3,}tch|shr{2,}lk|hr+ktch|skr+tch)$/, "slash", "chew"],
   [/^(spl|shpl)r*t?ch$|^shplrt$|^splr+tch$/, "liquid", "gore"]
@@ -4057,6 +4306,7 @@ function sfxPick(sp, t) {
   if (ruleBrown) cat = "shit";
   else if (cat !== "kiss" && nearRGB(c, [255, 111, 174], 50)) cat = "sex";
   else if (cream && (gurgly || ["liquid", "wave", "hit", "stomp", "cum"].includes(cat))) cat = gurgly ? "cumbub" : "cum";
+  if (["magic", "zap", "fire", "wind", "boom", "wave", "hit", "slash"].includes(cat)) { const sub = combatSub(sp, t, cat); if (sub) { sp.dataset.sub = sub; return cat; } }
   if (!["shit", "cum", "cumbub", "bubbles", "liquid", "crack", "wind", "fire"].includes(cat)) return cat;
   const holder = sp.closest("[data-i]"), ctx = sfxCtx(holder ? +holder.dataset.i : 1e9);
   // on the toilet a crackly KRRNNCHL is a push and a FWOOSH is the flush
@@ -4212,20 +4462,29 @@ const SND_TYPES = {
   gag: "Gagging", plap: "Plapping & slaps", flush: "Toilet flush", loop_kiss: "Loop · kissing", loop_shit: "Loop · shitting",
   loop_vore: "Loop · gurgling", loop_swallow: "Loop · swallowing", loop_sex: "Loop · sex", loop_oral: "Loop · oral", cum: "Cum", condom: "Condom squelch", shit: "Plops", shitbones: "Bone plops", sex: "Wet sex sounds", kiss: "Kisses",
   beat: "Heartbeats", struggle: "Muffled struggling", crack: "Cracks & crunches", hit: "Hits", stomp: "Stomps & thuds", boom: "Booms",
-  slash: "Slashes", fire: "Fire", wet: "Subtle wet noises", loop_vore_bones: "Loop · brutal digestion (bones)", loop_vore_m: "Loop · gurgling (muffled)", loop_vore_bones_m: "Loop · brutal digestion (muffled)", sizzle: "Acid & sizzling", crack_m: "Cracks & crunches (muffled)", lick: "Licks", rip: "Rips & zippers", door: "Doors", thunder: "Thunder", loop_digest: "Loop · active digestion (layer)", loop_digest_m: "Loop · active digestion (muffled layer)", chew: "Chewing & biting", gore: "Gore", loop_chew: "Loop · chewing (hard vore)", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
+  slash: "Slashes", fire: "Fire", wet: "Subtle wet noises", loop_vore_bones: "Loop · brutal digestion (bones)", loop_vore_m: "Loop · gurgling (muffled)", loop_vore_bones_m: "Loop · brutal digestion (muffled)", sizzle: "Acid & sizzling", crack_m: "Cracks & crunches (muffled)", lick: "Licks", rip: "Rips & zippers", door: "Doors", thunder: "Thunder", climax: "Climax bursts", gape: "Gape farts", loop_cum: "Loop · messy cum", swing: "Swings (whoosh)", clash: "Clangs & blocks", stab: "Stabs & thrusts", arrow: "Arrows", metal: "Metal falling/breaking", sheath: "Drawing & sheathing", smash: "Wood smashing", gun: "Gunshots",
+  spell: "Spells (any)", spell_fire: "Fire spells", spell_ice: "Ice spells", spell_earth: "Earth spells", spell_wind: "Wind spells", spell_lightning: "Lightning spells", heal: "Healing", beam: "Energy beams", portal: "Portals",
+  coins: "Coins", item: "Items", bag: "Inventory bag", potion: "Potions", loop_digest: "Loop · active digestion (layer)", loop_digest_m: "Loop · active digestion (muffled layer)", chew: "Chewing & biting", gore: "Gore", loop_chew: "Loop · chewing (hard vore)", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
   amb_campfire: "Bg · Campfire", amb_fireplace: "Bg · Fireplace", amb_tavern: "Bg · Tavern", amb_market: "Bg · Crowd & market", amb_city: "Bg · City",
   amb_village: "Bg · Village", amb_office: "Bg · Office", amb_combat: "Bg · Combat", amb_forest: "Bg · Forest", amb_nature: "Bg · Nature",
-  amb_night: "Bg · Night", amb_rain: "Bg · Rain", amb_light_rain: "Bg · Light rain (birds)", amb_rain_shelter: "Bg · Rain on a tent/umbrella", amb_rain_vehicle: "Bg · Rain on a car/hut roof", amb_rain_indoors: "Bg · Rain outside (indoors)", amb_storm: "Bg · Storm", amb_storm_indoors: "Bg · Storm outside (indoors)", amb_wind: "Bg · Wind", amb_wind_indoors: "Bg · Wind outside (indoors)", amb_shower: "Bg · Shower", amb_shower_nearby: "Bg · Shower in the next room", amb_beach: "Bg · Beach & ocean", amb_river: "Bg · River & water",
+  amb_night: "Bg · Night", amb_rain: "Bg · Rain", amb_light_rain: "Bg · Light rain (birds)", amb_rain_shelter: "Bg · Rain on a tent/umbrella", amb_rain_vehicle: "Bg · Rain on a car/hut roof", amb_rain_indoors: "Bg · Rain outside (indoors)", amb_storm: "Bg · Storm", amb_storm_indoors: "Bg · Storm outside (indoors)", amb_wind: "Bg · Wind", amb_wind_indoors: "Bg · Wind outside (indoors)", amb_desert: "Bg · Desert", amb_arena: "Bg · Arena crowd", amb_panic: "Bg · Panicked crowd", amb_flying: "Bg · Flying (wings)", amb_gunfight: "Bg · Gunfight", amb_shower: "Bg · Shower", amb_shower_nearby: "Bg · Shower in the next room", amb_beach: "Bg · Beach & ocean", amb_river: "Bg · River & water",
   amb_cave: "Bg · Cave", amb_dungeon: "Bg · Dungeon", amb_snow: "Bg · Snow & wind", amb_underwater: "Bg · Underwater", amb_spaceship: "Bg · Spaceship",
   amb_indoors: "Bg · Quiet room", wave: "Other"
 };
+for (const k of MUS_KEYS) if (k !== "none") SND_TYPES["mus_" + k] = "Music · " + MUS_LABEL[k];
+for (const k of EVT_KEYS) if (k !== "none") SND_TYPES["sting_" + k] = "Sting · " + EVT_LABEL[k];
 // words that pick a finer audio type than their icon category
 // what each sound type is for, grouped the way the Sound pack screen shows them
 const SND_GROUPS = [
   ["Tap sounds · vore & body", ["bubbles", "churn", "swallow", "chew", "gas", "fart", "struggle", "squelch", "cumbub", "liquid", "beat"]],
-  ["Tap sounds · adult", ["plap", "sex", "wet", "oral", "gag", "lick", "cum", "condom", "shit", "shitbones", "flush", "kiss"]],
+  ["Tap sounds · adult", ["plap", "sex", "wet", "oral", "gag", "lick", "cum", "climax", "gape", "condom", "shit", "shitbones", "flush", "kiss"]],
   ["Tap sounds · other", ["breath", "thunder", "crack", "crack_m", "gore", "hit", "stomp", "boom", "slash", "sizzle", "rip", "door", "fire", "zap", "magic", "zzz", "wind", "wave"]],
-  ["Scene loops", ["loop_vore", "loop_vore_m", "loop_vore_bones", "loop_vore_bones_m", "loop_digest", "loop_digest_m", "loop_chew", "loop_swallow", "loop_sex", "loop_oral", "loop_kiss", "loop_shit", "vorebed"]],
+  ["Tap sounds · combat", ["swing", "clash", "stab", "arrow", "metal", "sheath", "smash", "gun"]],
+  ["Tap sounds · magic", ["spell", "spell_fire", "spell_ice", "spell_earth", "spell_wind", "spell_lightning", "heal", "beam", "portal"]],
+  ["RPG", ["coins", "item", "bag", "potion"]],
+  ["Music by scene", MUS_KEYS.filter(k => k !== "none").map(k => "mus_" + k)],
+  ["Stings by event", EVT_KEYS.filter(k => k !== "none").map(k => "sting_" + k)],
+  ["Scene loops", ["loop_vore", "loop_vore_m", "loop_vore_bones", "loop_vore_bones_m", "loop_digest", "loop_digest_m", "loop_chew", "loop_cum", "loop_swallow", "loop_sex", "loop_oral", "loop_kiss", "loop_shit", "vorebed"]],
   ["Backgrounds", Object.keys(SND_TYPES).filter(k => k.startsWith("amb_"))]
 ];
 const SND_HELP = {
@@ -4247,13 +4506,16 @@ const SND_HELP = {
   rip: "Cloth tearing and zippers. Plays for RRRRIP, SHRRK and ZZZZIP.", door: "Doors creaking, slamming and latching. Plays for KRREEEK, KLAK and THUD at doors.",
   chew: "Crushing bites, flesh tearing and wet squelches. Plays for CHOMP and tearing sounds, and while prey is being chewed.", gore: "Blood splatters and sprays, giblets, limbs torn or chopped. Plays for SPLRTCH sounds and wet hits in fights or hard vore.",
   loop_digest: "Soft acid bubbling laid on top of the stomach loop while prey is actually being digested (never in safe or gentle vore).", loop_digest_m: "The digestion layer as heard from outside the belly.",
+  climax: "A burst of several spurts that plays by itself when a reply describes cumming.", gape: "Farts after a cock pulls out of an ass; plays by itself right after an anal pull-out.", loop_cum: "Slow dripping and oozing for messy, cum-soaked scenes.",
+  coins: "Plays when your gold goes up and for coin sounds.", item: "Plays when an item lands in your bag.", bag: "Plays when you open the inventory.", potion: "Plays when someone drinks a potion.",
+  spell: "Any spell being cast; the element words around it pick fire, ice, earth, wind, lightning, healing, beams or portals.", gun: "Gunshots for BANG and BLAM in gunfights.",
   thunder: "Thunder claps and rolls. Plays for KRAKOOM and thunder sounds, and rumbles during storms. Thunder plays out in full.",
   loop_chew: "A seamless loop that plays while prey is being chewed or torn apart (hard vore).",
   wave: "Sounds the app couldn't place. Move them with the dropdown."
 };
-const SND_CHAIN_EXTRA = { gag: ["oral"], plap: ["sex"], sex: ["plap"], lick: ["oral", "liquid"], sizzle: ["fire"], rip: ["slash"], door: ["hit", "stomp"], oral: ["liquid"], thunder: ["boom"], chew: ["crack", "squelch"], gore: ["squelch", "liquid"] };
+const SND_CHAIN_EXTRA = { gag: ["oral"], plap: ["sex"], sex: ["plap"], lick: ["oral", "liquid"], sizzle: ["fire"], rip: ["slash"], door: ["hit", "stomp"], oral: ["liquid"], thunder: ["boom"], spell_fire: ["spell", "fire", "magic"], spell_ice: ["spell", "magic"], spell_earth: ["spell", "magic"], spell_wind: ["spell", "wind", "magic"], spell_lightning: ["spell", "zap", "magic"], heal: ["spell", "magic"], beam: ["zap", "spell", "magic"], portal: ["spell", "magic"], spell: ["magic"], gun: ["boom", "hit"], clash: ["hit"], swing: ["slash", "wind"], stab: ["slash", "hit"], arrow: ["hit"], metal: ["clash", "hit"], sheath: ["slash"], smash: ["crack", "hit"], climax: ["cum"], gape: ["fart"], chew: ["crack", "squelch"], gore: ["squelch", "liquid"] };
 const SND_CHAIN = { cumbub: ["liquid"], condom: ["squelch", "cum"], shit: ["squelch"], shitbones: ["shit", "squelch", "crack"], churn: ["bubbles"], bubbles: ["churn"], liquid: ["cumbub", "squelch"], fart: ["gas"], cum: ["liquid"], struggle: ["squelch"] };
-const SND_SUB = [["thunder", /(^kr+a+k+(a?-?boo+m)?|^ka-?boo+m|thunder|^kr+a+-?ka+-?boo)/i], ["flush", /^(ker-?)?flu+sh/i], ["chew", /^(cho+m+p|cha+m+p|chm+p|mu+n+ch|chew|gna+sh|gna+w)/i], ["gag", /(^ga+g|^gla+[ck]|^glu+ck|^gwa+[ck]|^hu?r+k|^ghk|^hl+k|cho+k|^gck|^gu+[ck]k)/i], ["plap", /(^pla+p|^pa+p+$|^cla+p|^sma+ck|^thwa+p|^sla+p)/i],
+const SND_SUB = [["clash", /^(cla+n+[gk]+|kla+n+[gk]+|ka+-?ti+n+g+)$/i], ["arrow", /^(thwi+p+|fwi+p+|twa+n+g+)$/i], ["thunder", /(^kr+a+k+(a?-?boo+m)?|^ka-?boo+m|thunder|^kr+a+-?ka+-?boo)/i], ["flush", /^(ker-?)?flu+sh/i], ["chew", /^(cho+m+p|cha+m+p|chm+p|mu+n+ch|chew|gna+sh|gna+w)/i], ["gag", /(^ga+g|^gla+[ck]|^glu+ck|^gwa+[ck]|^hu?r+k|^ghk|^hl+k|cho+k|^gck|^gu+[ck]k)/i], ["plap", /(^pla+p|^pa+p+$|^cla+p|^sma+ck|^thwa+p|^sla+p)/i],
   ["squelch", /(sque+l+ch|squi+sh|squo+r?ch|squi+ck|shlo+r?ck|splo+r?ch|squee+z|squi+r?k)/i], ["cumbub", /(slo+sh|swa+sh|slo+r+sh|slu+sh)/i], ["struggle", /(thra+sh|wri+th|squi+r+m|ki+ck|mmph|mmf+|mrph|thu+m+p+.*thu+m+p)/i], ["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ]; // swallow and churn words above are listed after the new ones
 // file names → sound type, for adding a whole pack at once
 const AMB_NAMES = [["amb_shower", /shower/i], ["amb_wind", /\bwind|gust|gale|blizz/i], ["amb_campfire", /campfire|bonfire|camp.?fire|ember|torch/i], ["amb_fireplace", /fireplace|hearth|crkl/i], ["amb_storm", /thunder|storm|\bthun/i], ["amb_rain", /\brain/i],
@@ -4404,7 +4666,7 @@ async function playSfx(cat, text, hint) {
   // wet splats and squelches are flesh and blood while prey is being chewed or during a fight
   const scAct = AMBS.act || sceneNow().act, scAmb = AMBS.amb || sceneNow().amb;
   // booms and rumbles are thunder while it storms (a stomach's rumble stays a rumble during vore)
-  if (/storm|rain/.test(scAmb || "") && (sub === "boom" || cat === "boom" || ((sub === "churn" || sub === "stomp") && !["vore", "struggle", "swallow"].includes(scAct)))) sub = "thunder";
+  if (/storm|rain/.test(scAmb || "") && (sub === "boom" || (cat === "boom" && !sub) || ((sub === "churn" || sub === "stomp") && !["vore", "struggle", "swallow"].includes(scAct)))) sub = "thunder";
   if ((sub === "squelch" || /^spla+t|^splu+r?ch|^gu+sh/i.test(text || "")) && (scAct === "chew" || (AMBS.amb || sceneNow().amb) === "combat")) sub = scAct === "chew" ? "chew" : "gore";
   const chain = t => [...(SND_CHAIN[t] || []), ...(SND_CHAIN_EXTRA[t] || [])];
   const order = [...new Set([sub, ...chain(sub), cat, ...chain(cat)].filter(Boolean))];
@@ -4651,9 +4913,9 @@ function openSoundPack() {
 
 /* ---------- Ambience: background soundscape + activity loops ---------- */
 // The model labels each reply with [[... | ambience: x | activity: y]]; older replies fall back to keyword guesses.
-const AMB_KEYS = ["campfire", "fireplace", "tavern", "market", "city", "village", "office", "combat", "forest", "nature", "night", "rain", "light_rain", "rain_shelter", "rain_vehicle", "rain_indoors", "storm", "storm_indoors", "wind", "wind_indoors", "shower", "shower_nearby", "beach", "river", "cave", "dungeon", "snow", "underwater", "spaceship", "indoors", "none"];
+const AMB_KEYS = ["campfire", "fireplace", "tavern", "market", "city", "village", "office", "combat", "forest", "nature", "night", "rain", "light_rain", "rain_shelter", "rain_vehicle", "rain_indoors", "storm", "storm_indoors", "wind", "wind_indoors", "shower", "shower_nearby", "desert", "arena", "panic", "flying", "gunfight", "beach", "river", "cave", "dungeon", "snow", "underwater", "spaceship", "indoors", "none"];
 const ACT_KEYS = ["none", "swallow", "chew", "vore", "struggle", "sex", "oral", "kiss", "shit"];
-const AMB_LABEL = { campfire: "Campfire", fireplace: "Fireplace", tavern: "Tavern", market: "Crowd", city: "City", village: "Village", office: "Office", combat: "Combat", forest: "Forest", nature: "Nature", night: "Night", rain: "Rain", storm: "Storm", light_rain: "Light rain", rain_shelter: "Rain overhead", rain_vehicle: "Rain on the roof", rain_indoors: "Rain outside", storm_indoors: "Storm outside", wind: "Wind", wind_indoors: "Wind outside", shower: "Shower", shower_nearby: "Shower nearby", beach: "Beach", river: "River", cave: "Cave", dungeon: "Dungeon", snow: "Snow & wind", underwater: "Underwater", spaceship: "Spaceship", indoors: "Quiet room" };
+const AMB_LABEL = { campfire: "Campfire", fireplace: "Fireplace", tavern: "Tavern", market: "Crowd", city: "City", village: "Village", office: "Office", combat: "Combat", forest: "Forest", nature: "Nature", night: "Night", rain: "Rain", storm: "Storm", light_rain: "Light rain", rain_shelter: "Rain overhead", rain_vehicle: "Rain on the roof", rain_indoors: "Rain outside", storm_indoors: "Storm outside", wind: "Wind", wind_indoors: "Wind outside", shower: "Shower", shower_nearby: "Shower nearby", desert: "Desert", arena: "Arena crowd", panic: "Panic", flying: "Flying", gunfight: "Gunfight", beach: "Beach", river: "River", cave: "Cave", dungeon: "Dungeon", snow: "Snow & wind", underwater: "Underwater", spaceship: "Spaceship", indoors: "Quiet room" };
 // weather heard from where the characters are (checked before the plain place guesses)
 function weatherGuess(t) {
   const shower = /\bshower(s|ing)?\b/i, wet = /\b(rain\w*|drizzl\w*|downpour|storm\w*|thunder\w*)\b/i;
@@ -4669,7 +4931,8 @@ function weatherGuess(t) {
   if (/\b(wind(y|swept)?|gust\w*|gale|howling wind)\b/i.test(t)) return /\b(window|indoors|inside|house|room|cabin)\b/i.test(t) ? "wind_indoors" : "wind";
   return null;
 }
-const AMB_GUESS = [["combat", /\b(battle|combat|fight(ing)?|swords? clash|ambush|gunfire|skirmish|duel)\b/i], ["campfire", /campfire|bonfire|\bcamp\b/i], ["fireplace", /fireplace|hearth/i],
+const AMB_GUESS = [["gunfight", /\b(gunfire|shootout|gunfight|bullets (fly|whiz|rip)|open(s|ed)? fire)\b/i], ["arena", /\b(arena|colosseum|stadium|fighting pit|tournament grounds)\b/i], ["panic", /\b(panic\w*|screaming crowd|stampede|people (flee|run screaming)|evacuat\w*)\b/i],
+  ["flying", /\b(soar\w*|in flight|mid-?air|flying|takes? (off|flight)|wings? (beat|beats|pump|flap)\w*)\b/i], ["desert", /\b(desert|dunes?|sand sea|wasteland)\b/i], ["combat", /\b(battle|combat|fight(ing)?|swords? clash|ambush|gunfire|skirmish|duel)\b/i], ["campfire", /campfire|bonfire|\bcamp\b/i], ["fireplace", /fireplace|hearth/i],
   ["tavern", /tavern|\binn\b|\bpub\b|\bbar\b|saloon/i], ["office", /office|cubicle|workplace/i], ["spaceship", /spaceship|starship|space station|cockpit/i], ["underwater", /underwater|beneath the waves/i],
   ["dungeon", /dungeon|crypt|catacomb|prison cell/i], ["cave", /\bcave|cavern|\bmine\b|tunnel/i], ["market", /market|bazaar|festival|crowd/i], ["city", /\bcity|street|downtown|alley|traffic/i],
   ["village", /village|hamlet|\bfarm/i], ["beach", /beach|shore|ocean|\bsea\b|coast|harbou?r|\bdock/i], ["river", /river|stream|creek|waterfall|\blake/i], ["forest", /forest|\bwoods|jungle|grove/i],
@@ -4716,7 +4979,7 @@ async function ambienceStep() {
   if (btn) btn.title = "Background: " + (AMB_LABEL[amb] || "none") + (act !== "none" ? ` · ${act}` : "") + (st.ambMuted ? " (muted)" : "");
   if (!inChat && (AMBS.amb || AMBS.act || LIVE.size)) {
     // left the chat or the app: everything stops at once, no fade
-    AMBS.bed?.stop(); AMBS.loop?.stop(); AMBS.bed = AMBS.loop = null; AMBS.amb = AMBS.act = null; hushAll(); return;
+    AMBS.bed?.stop(); AMBS.loop?.stop(); AMBS.bed = AMBS.loop = null; AMBS.amb = AMBS.act = null; musicStop(); hushAll(); return;
   }
   if (wantAmb !== AMBS.amb) { AMBS.bed?.stop(); AMBS.amb = wantAmb; AMBS.bed = wantAmb ? await startBed(wantAmb) : null; }
   else AMBS.bed?.setVol(st.ambVol ?? 0.35);
@@ -4724,6 +4987,7 @@ async function ambienceStep() {
   const wantDig = ["vore", "struggle"].includes(wantAct) && digestScene(), wantInt = ["oral", "sex"].includes(wantAct) ? sceneIntensity() : null;
   if (wantAct !== AMBS.act || wantMuf !== AMBS.muf || wantBrutal !== AMBS.brutal || wantDig !== AMBS.dig || wantInt !== AMBS.int) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.muf = wantMuf; AMBS.brutal = wantBrutal; AMBS.dig = wantDig; AMBS.int = wantInt; AMBS.loop = wantAct ? startActivity(wantAct, wantMuf, wantBrutal, { digest: wantDig, intensity: wantInt }) : null; }
   else AMBS.loop?.setVol?.(st.actVol ?? 0.5);
+  await musicStep(inChat).catch(() => {});
   renderPanes();
 }
 // 🔊 opens a small panel: background and scene sounds switch on and off separately, each with its own volume
@@ -4734,12 +4998,15 @@ function drawAmbPop() {
     <div class="ap-row"><div class="ap-top"><b>Background<small>${esc(bgName)}</small></b><label class="switch"><input type="checkbox" id="apAmb" aria-label="Background sounds" ${st.ambOn !== false && !st.ambMuted ? "checked" : ""}><span></span></label></div>
       <input type="range" id="apAmbVol" min="0" max="1" step="0.05" value="${st.ambVol ?? 0.35}" aria-label="Background volume"></div>
     <div class="ap-row"><div class="ap-top"><b>Scene sounds<small>${esc(actName)}</small></b><label class="switch"><input type="checkbox" id="apAct" aria-label="Scene sounds" ${st.actOn !== false && !st.ambMuted ? "checked" : ""}><span></span></label></div>
-      <input type="range" id="apActVol" min="0" max="1" step="0.05" value="${st.actVol ?? 0.5}" aria-label="Scene sound volume"></div>`;
+      <input type="range" id="apActVol" min="0" max="1" step="0.05" value="${st.actVol ?? 0.5}" aria-label="Scene sound volume"></div>
+    <div class="ap-row"><div class="ap-top"><b>Music<small>${esc(MUS.key ? MUS_LABEL[MUS.key] || MUS.key : "nothing right now")}</small></b><label class="switch"><input type="checkbox" id="apMus" aria-label="Music" ${st.musicOn !== false && !st.ambMuted ? "checked" : ""}><span></span></label></div>
+      <input type="range" id="apMusVol" min="0" max="1" step="0.05" value="${st.musicVol ?? 0.2}" aria-label="Music volume"></div>`;
   const save = async () => { await saveSettings(); acx(); updateAmbience(); };
   $("apAmb").onchange = e => { st.ambOn = e.target.checked; if (e.target.checked) { if (st.ambMuted) st.actOn = false; st.ambMuted = false; } save(); drawAmbPop(); };
   $("apAct").onchange = e => { st.actOn = e.target.checked; if (e.target.checked) { if (st.ambMuted) st.ambOn = false; st.ambMuted = false; } save(); drawAmbPop(); };
-  for (const [id, key] of [["apAmbVol", "ambVol"], ["apActVol", "actVol"]]) {
-    $(id).oninput = e => { st[key] = +e.target.value; if (key === "ambVol") AMBS.bed?.setVol(st[key]); else AMBS.loop?.setVol?.(st[key]); };
+  $("apMus").onchange = e => { st.musicOn = e.target.checked; if (e.target.checked && st.ambMuted) { st.ambMuted = false; st.ambOn = false; st.actOn = false; } save(); drawAmbPop(); };
+  for (const [id, key] of [["apAmbVol", "ambVol"], ["apActVol", "actVol"], ["apMusVol", "musicVol"]]) {
+    $(id).oninput = e => { st[key] = +e.target.value; if (key === "ambVol") AMBS.bed?.setVol(st[key]); else if (key === "musicVol") MUS.loop?.setVol(st[key]); else AMBS.loop?.setVol?.(st[key]); };
     $(id).onchange = () => saveSettings();
   }
 }
@@ -4750,7 +5017,7 @@ document.addEventListener("visibilitychange", () => updateAmbience());
 document.addEventListener("pointerdown", () => { if (AC?.state === "suspended") AC.resume(); }, { passive: true });
 
 // user files for a sound type (with sensible stand-ins)
-const AMB_FALLBACK = { light_rain: ["rain"], rain_shelter: ["rain"], rain_vehicle: ["rain_shelter", "rain"], rain_indoors: ["rain"], storm_indoors: ["rain_indoors", "storm"], wind_indoors: ["wind"], wind: ["snow"], shower_nearby: ["shower"], nature: ["forest"], forest: ["nature"], night: ["forest", "nature"], storm: ["rain"], rain: ["storm"], fireplace: ["campfire"], campfire: ["fireplace"], market: ["tavern", "city"], tavern: ["market"], village: ["nature", "city"], dungeon: ["cave"], cave: ["dungeon"], snow: ["nature"], river: ["beach"], beach: ["river"] };
+const AMB_FALLBACK = { gunfight: ["combat"], arena: ["market"], panic: ["market", "city"], flying: ["wind"], desert: ["wind"], light_rain: ["rain"], rain_shelter: ["rain"], rain_vehicle: ["rain_shelter", "rain"], rain_indoors: ["rain"], storm_indoors: ["rain_indoors", "storm"], wind_indoors: ["wind"], wind: ["snow"], shower_nearby: ["shower"], nature: ["forest"], forest: ["nature"], night: ["forest", "nature"], storm: ["rain"], rain: ["storm"], fireplace: ["campfire"], campfire: ["fireplace"], market: ["tavern", "city"], tavern: ["market"], village: ["nature", "city"], dungeon: ["cave"], cave: ["dungeon"], snow: ["nature"], river: ["beach"], beach: ["river"] };
 const packFiles = poolFor;
 async function startBed(key) {
   const vol = () => S.settings.ambVol ?? 0.35;
@@ -4898,7 +5165,7 @@ function muffleChain(ac, kind) {
   return { input: nodes[0], output: nodes[nodes.length - 1] };
 }
 function muffleEl(a, kind) { const ac = acx(); if (!ac) return a; try { const ch = muffleChain(ac, kind); ac.createMediaElementSource(a).connect(ch.input); ch.output.connect(ac.destination); } catch {} return a; }
-async function startLoop(url, vol, muffle) {
+async function startLoop(url, vol, muffle, fade = 1.2) {
   const ac = acx(); if (!ac) return null;
   let buf = LOOP_BUF.get(url);
   if (!buf) { buf = await ac.decodeAudioData(await (await fetch(url)).arrayBuffer()); LOOP_BUF.set(url, buf); }
@@ -4907,8 +5174,8 @@ async function startLoop(url, vol, muffle) {
   src.buffer = buf; src.loop = true; g.gain.value = 0.0001;
   if (muffle) { const ch = muffleChain(ac); src.connect(g).connect(ch.input); ch.output.connect(ac.destination); } else src.connect(g).connect(ac.destination);
   src.start();
-  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), ac.currentTime + 1.2);
-  return { stop() { try { g.gain.setTargetAtTime(0.0001, ac.currentTime, 0.15); setTimeout(() => { try { src.stop(); } catch {} }, 600); } catch {} }, setVol(v) { g.gain.setTargetAtTime(Math.max(0.0002, v), ac.currentTime, 0.2); } };
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), ac.currentTime + fade);
+  return { stop(sec = 0.6) { try { g.gain.cancelScheduledValues(ac.currentTime); g.gain.setTargetAtTime(0.0001, ac.currentTime, sec / 4); setTimeout(() => { try { src.stop(); } catch {} }, sec * 1000 + 100); } catch {} }, setVol(v) { g.gain.setTargetAtTime(Math.max(0.0002, v), ac.currentTime, 0.2); } };
 }
 SYNTH.plap = (ac, o) => { sNoise(ac, o, { dur: 0.07, g: 0.45, type: "lowpass", f0: 1500, f1: 500 }); sTone(ac, o, { f0: 170, f1: 90, dur: 0.08, g: 0.3 }); sNoise(ac, o, { t: 0.02, dur: 0.06, g: 0.12, f0: 900, q: 3 }); };
 SYNTH.oral = (ac, o) => {
