@@ -12,3 +12,4 @@ Each sound keeps the license its creator chose on freesound.org.
 Bone cracks (crack/, and their muffled versions in crack_m/): "Bones cracking" by Joseph Sardin, BigSoundBank.com (#0596, CC0), cut into single cracks; the muffled set is filtered to match the owner's reference.
 Wet plaps (plap/plap-wet-mb*) and the mb-mnc sex/oral loops (loop_sex/, loop_oral/): MonsterBox Entertainment's free Lewd SFX pack (https://monsterboxgames.itch.io/royalty-free-hentai-sfx-pack), free to use with credit to MonsterBox Entertainment, cut into seamless loops / normalised.
 Stomach loops (loop_vore/gurgle-*, loop_vore_bones/, and the muffled _m versions): mixed for Lanternroom from Jeschke's Vore Sound Pack 2024 (CC BY) and the BigSoundBank bone cracks.
+Combat, bone, chewing and gore tap sounds (files named gore-*) and the hard vore loops (loop_chew/): cut, trimmed and levelled from the "Gore SFX" pack the owner supplied (96 kHz set); chew-and-gulp also uses Jeschke gulps (CC BY).

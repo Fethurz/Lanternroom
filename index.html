@@ -552,6 +552,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .fx-vig.a-vore::before{opacity:1;box-shadow:inset 0 0 120px rgba(var(--vc),.42),inset 0 0 40px rgba(var(--vc),.18)}
 .fx-vig.a-struggle::before{opacity:1;box-shadow:inset 0 0 120px rgba(var(--vc),.5),inset 0 0 44px rgba(var(--vc),.22)}
 .fx-vig.a-swallow::before{opacity:1;background:radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(var(--vc),.32) 100%);box-shadow:inset 0 0 90px rgba(var(--vc),.35)}
+.fx-vig.a-chew::before{opacity:1;box-shadow:inset 0 0 130px rgba(20,8,14,.7),inset 0 0 50px rgba(60,20,30,.35)}
 .fx-vig.a-shit::before{opacity:1;box-shadow:inset 0 0 110px rgba(110,80,40,.45)}
 .fx-vig.climax::after{background:radial-gradient(circle,rgba(255,255,255,.65),rgba(255,120,190,.35) 50%,transparent 80%);animation:fxClimax 1.6s ease-out forwards}
 .fx-vig.lv-subtle{opacity:.55}
@@ -814,7 +815,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.33 · Oct 14";
+const VERSION = "1.34 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1161,6 +1162,7 @@ function onoPrompt(c, chat, upto) {
     [act === "oral" || /\b(suck|blowjob|deepthroat|throat|mouth around|licks? (his|her) (cock|shaft))\w*/i.test(last), ["slurp", "suck", "gluck", "drinkGulp"]],
     [act === "kiss" || /\b(kiss|smooch|lips|tongue|lick)\w*/i.test(last), ["smooch", "wetKiss", "lick"]],
     [act === "shit" || VORE.scat.test(last) || /\bfart/i.test(last), ["dryFart", "wetFart", "plop", "push", "flush"]],
+    [act === "chew" || /\b(chew|chomp|bite|bit into|teeth|gnaw|munch|tear(s|ing)? (into|off|apart)|dismember|gore|blood)\w*/i.test(last), ["chomp", "tear", "crunch", "goreSplat"]],
     [/\b(acid|sizzl|burn|hiss)\w*/i.test(last), ["sizzle"]],
     [/\b(punch|strike|struck|hit|sword|blade|claw|slash|stab|fight|attack|explo|blast)\w*/i.test(last), ["impact", "slash", "boom"]],
     [/\b(water|river|lake|splash|swim|pool|bath|wade)\w*/i.test(last), ["splash"]],
@@ -1205,7 +1207,7 @@ function buildPrompt(c, chat, upto, cont) {
   const pacePart = pacerOn() ? " | pace: one of " + PACES.join("/") : "";
   if (pacePart) sys += `\n\n# Pace\nThe user follows an on-screen stroke pacer that your pace field controls. Set it from the scene's sexual intensity: stop when nothing sexual is happening or for a pause, slow for teasing and build-up, steady for ongoing sex, fast as things get intense, edge to make ${u} hold right at the brink (use it for denial and teasing near the peak), cum at the moment of climax. Build up naturally over several replies and use edge before cum when it fits.`;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${focusPart}${gaugePart}${pacePart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is swallow while someone is being swallowed or gulped down, struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${focusPart}${gaugePart}${pacePart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
   if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
@@ -3300,7 +3302,7 @@ function drawInstall() {
 
 /* ---------- Computer layout: bot rail (left) and scene panel (right) ---------- */
 var RAIL = { q: "" };
-const ACT_LABEL = { swallow: "Swallowing", vore: "In a stomach", struggle: "Struggling inside", sex: "Sex", oral: "Oral", kiss: "Kissing", shit: "Shitting" };
+const ACT_LABEL = { swallow: "Swallowing", chew: "Chewing (hard vore)", vore: "In a stomach", struggle: "Struggling inside", sex: "Sex", oral: "Oral", kiss: "Kissing", shit: "Shitting" };
 var PANES_T = 0;
 function renderPanes() { cancelAnimationFrame(PANES_T); PANES_T = requestAnimationFrame(() => { try { renderRail(); renderSide(); } catch (e) { console.warn(e); } }); }
 function renderRail() {
@@ -3622,6 +3624,7 @@ function fxFrame(t) {
   const vig = $("fxVig");
   if (FX.amb === "storm" && t > FX.nextFlash) { if (FX.nextFlash) { vig.classList.remove("flash"); void vig.offsetWidth; vig.classList.add("flash"); } FX.nextFlash = t + 5000 + R() * 9000; }
   if (FX.harm && t > FX.nextFlash) { vig.classList.remove("hitflash"); void vig.offsetWidth; vig.classList.add("hitflash"); FX.nextFlash = t + (FX.harm === "heavy" ? 2600 + R() * 2500 : 6000 + R() * 6000); }
+  if (full && FX.act === "chew" && t > FX.nextShake) { if (FX.nextShake) shakeChat(3); FX.nextShake = t + 2200 + R() * 2600; }
   if (full && (FX.act === "vore" || FX.act === "struggle") && t > FX.nextShake) { if (FX.nextShake) shakeChat(FX.act === "struggle" ? 6 : 3); FX.nextShake = t + (FX.act === "struggle" ? 1800 + R() * 2500 : 5000 + R() * 7000); }
   FX.raf = requestAnimationFrame(fxFrame);
 }
@@ -3780,10 +3783,13 @@ const ONO = (() => {
     fire: () => R() < 0.5 ? run(n(2, 3), () => pick(["Krkl", "Ktt", "Krrkl", "Pkt"])) : "Fw" + swell("o", n(2, 4)) + "mph",
     thunder: () => "Kr" + swell("r", n(2, 4)) + "AKK... " + pick(["rrmmbl", "rrmblmbl", "rrrmmmbl"]) + "...",
     rip: () => pick([() => pick(["rrrrip", "rRrRip", "rRrrip", "rrRRip", "RrrRip"]), () => "SHR" + rep("R", n(1, 2)) + "K", () => "Zzzzip"])(),
+    chomp: () => run(n(1, 3), () => pick(["Chmp", "CHMP", "Chomp", "Krmp", "Chmmp", "CHOMP"])) + (R() < 0.5 ? " " + pick(["Shlrrch", "shlrch", "Sqlrch"]) + "..." : ""),
+    tear: () => pick(["Rrrtch", "Shrrrlk", "RRRtch", "Hrrrk-tch", "Skrrrtch", "rRRRtch"]) + (R() < 0.4 ? "... " + pick(["Shlrp", "Splk", "Plrch"]) : ""),
+    goreSplat: () => pick(["SPLRTCH", "Splrrch", "Shplrt", "SPLTCH", "Splrrtch"]) + (R() < 0.4 ? "... " + pick(["plk", "plp", "tik"]) + "..." : ""),
     door: () => "Kr" + rep("r", n(0, 2)) + mixVowels(["e"], n(3, 5)) + "k" + (R() < 0.6 ? "... " + pick(["THUD", "Klak", "Thmp", "KLAK"]) : "")
   };
   Object.assign(parts, more);
-  const LABEL = { plap: "Hips slapping", squelch: "Wet thrusts", spurt: "Cum spurting", pour: "Cum pouring and dripping", slurp: "Slurping", suck: "Sucking", gluck: "Gagging", drinkGulp: "Gulping it down", smooch: "Kiss", wetKiss: "Wet kissing", lick: "Lick", preyGulp: "Swallowing prey", gullet: "Throat squeezing prey down", muffled: "Muffled struggling inside", crunch: "Bones crunching", sizzle: "Acid sizzling", dryFart: "Dry fart", wetFart: "Wet fart", plop: "Plop", push: "Long push and plop", flush: "Flush", heart: "Heartbeat", breath: "Breathing", sniff: "Sniffing", drool: "Drool dripping", stomp: "Big footsteps", impact: "Punch or hit", slash: "Blade or claw", boom: "Explosion", splash: "Splash", fire: "Fire", thunder: "Thunder", rip: "Cloth ripping or zipper", door: "Door",
+  const LABEL = { plap: "Hips slapping", squelch: "Wet thrusts", spurt: "Cum spurting", pour: "Cum pouring and dripping", slurp: "Slurping", suck: "Sucking", gluck: "Gagging", drinkGulp: "Gulping it down", smooch: "Kiss", wetKiss: "Wet kissing", lick: "Lick", preyGulp: "Swallowing prey", gullet: "Throat squeezing prey down", muffled: "Muffled struggling inside", crunch: "Bones crunching", sizzle: "Acid sizzling", dryFart: "Dry fart", wetFart: "Wet fart", plop: "Plop", push: "Long push and plop", flush: "Flush", heart: "Heartbeat", breath: "Breathing", sniff: "Sniffing", drool: "Drool dripping", stomp: "Big footsteps", impact: "Punch or hit", slash: "Blade or claw", boom: "Explosion", splash: "Splash", fire: "Fire", thunder: "Thunder", rip: "Cloth ripping or zipper", door: "Door", chomp: "Crushing bite", tear: "Flesh tearing", goreSplat: "Blood and gore splattering",
     belch: "Belch", shortBelch: "Shorter belch", burp: "Burp", gurgle: "Digestion gurgle", lateGurgle: "Late-digestion gurgle", longGurgle: "Digestion gurgle", sloshy: "Sloshy late digestion gurgles", brutal: "Brutal digestion gurgles with a crunch", ballGurgle: "Full balls gurgling and sloshing", churn: "Stomach churning growl" };
   return {
     types: Object.keys(parts).filter(k => !(k in more)), all: Object.keys(parts), LABEL,
@@ -3827,7 +3833,10 @@ const SHAPES = [
   [/^r+m+b?l(mbl)?$/, "stomp", "stomp"],
   [/^r{3,}ip$|^shr+k$|^z{3,}ip$/, "slash", "rip"],
   [/^kr+e{2,}k$/, "wave", "door"],
-  [/^(thud|klak)$/, "hit", "door"]
+  [/^(thud|klak)$/, "hit", "door"],
+  [/^(chm+p|krmp|cho+mp|cha+mp|mu+nch)+$/, "crack", "chew"],
+  [/^(r{3,}tch|shr{2,}lk|hr+ktch|skr+tch)$/, "slash", "chew"],
+  [/^(spl|shpl)r*t?ch$|^shplrt$|^splr+tch$/, "liquid", "gore"]
 ];
 function shapeOf(t) {
   const l = String(t || "").toLowerCase().replace(/[^a-z]/g, ""); if (l.length < 2) return null;
@@ -4203,7 +4212,7 @@ const SND_TYPES = {
   gag: "Gagging", plap: "Plapping & slaps", flush: "Toilet flush", loop_kiss: "Loop · kissing", loop_shit: "Loop · shitting",
   loop_vore: "Loop · gurgling", loop_swallow: "Loop · swallowing", loop_sex: "Loop · sex", loop_oral: "Loop · oral", cum: "Cum", condom: "Condom squelch", shit: "Plops", shitbones: "Bone plops", sex: "Wet sex sounds", kiss: "Kisses",
   beat: "Heartbeats", struggle: "Muffled struggling", crack: "Cracks & crunches", hit: "Hits", stomp: "Stomps & thuds", boom: "Booms",
-  slash: "Slashes", fire: "Fire", wet: "Subtle wet noises", loop_vore_bones: "Loop · brutal digestion (bones)", loop_vore_m: "Loop · gurgling (muffled)", loop_vore_bones_m: "Loop · brutal digestion (muffled)", sizzle: "Acid & sizzling", crack_m: "Cracks & crunches (muffled)", lick: "Licks", rip: "Rips & zippers", door: "Doors", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
+  slash: "Slashes", fire: "Fire", wet: "Subtle wet noises", loop_vore_bones: "Loop · brutal digestion (bones)", loop_vore_m: "Loop · gurgling (muffled)", loop_vore_bones_m: "Loop · brutal digestion (muffled)", sizzle: "Acid & sizzling", crack_m: "Cracks & crunches (muffled)", lick: "Licks", rip: "Rips & zippers", door: "Doors", chew: "Chewing & biting", gore: "Gore", loop_chew: "Loop · chewing (hard vore)", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
   amb_campfire: "Bg · Campfire", amb_fireplace: "Bg · Fireplace", amb_tavern: "Bg · Tavern", amb_market: "Bg · Crowd & market", amb_city: "Bg · City",
   amb_village: "Bg · Village", amb_office: "Bg · Office", amb_combat: "Bg · Combat", amb_forest: "Bg · Forest", amb_nature: "Bg · Nature",
   amb_night: "Bg · Night", amb_rain: "Bg · Rain", amb_storm: "Bg · Storm", amb_beach: "Bg · Beach & ocean", amb_river: "Bg · River & water",
@@ -4213,10 +4222,10 @@ const SND_TYPES = {
 // words that pick a finer audio type than their icon category
 // what each sound type is for, grouped the way the Sound pack screen shows them
 const SND_GROUPS = [
-  ["Tap sounds · vore & body", ["bubbles", "churn", "swallow", "gas", "fart", "struggle", "squelch", "cumbub", "liquid", "beat"]],
+  ["Tap sounds · vore & body", ["bubbles", "churn", "swallow", "chew", "gas", "fart", "struggle", "squelch", "cumbub", "liquid", "beat"]],
   ["Tap sounds · adult", ["plap", "sex", "wet", "oral", "gag", "lick", "cum", "condom", "shit", "shitbones", "flush", "kiss"]],
-  ["Tap sounds · other", ["breath", "crack", "crack_m", "hit", "stomp", "boom", "slash", "sizzle", "rip", "door", "fire", "zap", "magic", "zzz", "wind", "wave"]],
-  ["Scene loops", ["loop_vore", "loop_vore_m", "loop_vore_bones", "loop_vore_bones_m", "loop_swallow", "loop_sex", "loop_oral", "loop_kiss", "loop_shit", "vorebed"]],
+  ["Tap sounds · other", ["breath", "crack", "crack_m", "gore", "hit", "stomp", "boom", "slash", "sizzle", "rip", "door", "fire", "zap", "magic", "zzz", "wind", "wave"]],
+  ["Scene loops", ["loop_vore", "loop_vore_m", "loop_vore_bones", "loop_vore_bones_m", "loop_chew", "loop_swallow", "loop_sex", "loop_oral", "loop_kiss", "loop_shit", "vorebed"]],
   ["Backgrounds", Object.keys(SND_TYPES).filter(k => k.startsWith("amb_"))]
 ];
 const SND_HELP = {
@@ -4236,11 +4245,13 @@ const SND_HELP = {
   crack_m: "The same cracks muffled, as if inside a stomach. Play instead of normal cracks when you hear a predator's gut from outside.",
   sizzle: "Acid hissing and sizzling (stomach acid, burning). Plays for SSSZZHH sounds.", lick: "Tongue licks. Plays for SHHLICK and lick sounds.",
   rip: "Cloth tearing and zippers. Plays for RRRRIP, SHRRK and ZZZZIP.", door: "Doors creaking, slamming and latching. Plays for KRREEEK, KLAK and THUD at doors.",
+  chew: "Crushing bites, flesh tearing and wet squelches. Plays for CHOMP and tearing sounds, and while prey is being chewed.", gore: "Blood splatters and sprays, giblets, limbs torn or chopped. Plays for SPLRTCH sounds and wet hits in fights or hard vore.",
+  loop_chew: "A seamless loop that plays while prey is being chewed or torn apart (hard vore).",
   wave: "Sounds the app couldn't place. Move them with the dropdown."
 };
-const SND_CHAIN_EXTRA = { gag: ["oral"], plap: ["sex"], sex: ["plap"], lick: ["oral", "liquid"], sizzle: ["fire"], rip: ["slash"], door: ["hit", "stomp"], oral: ["liquid"] };
+const SND_CHAIN_EXTRA = { gag: ["oral"], plap: ["sex"], sex: ["plap"], lick: ["oral", "liquid"], sizzle: ["fire"], rip: ["slash"], door: ["hit", "stomp"], oral: ["liquid"], chew: ["crack", "squelch"], gore: ["squelch", "liquid"] };
 const SND_CHAIN = { cumbub: ["liquid"], condom: ["squelch", "cum"], shit: ["squelch"], shitbones: ["shit", "squelch", "crack"], churn: ["bubbles"], bubbles: ["churn"], liquid: ["cumbub", "squelch"], fart: ["gas"], cum: ["liquid"], struggle: ["squelch"] };
-const SND_SUB = [["flush", /^(ker-?)?flu+sh/i], ["gag", /(^ga+g|^gla+[ck]|^glu+ck|^gwa+[ck]|^hu?r+k|^ghk|^hl+k|cho+k|^gck|^gu+[ck]k)/i], ["plap", /(^pla+p|^pa+p+$|^cla+p|^sma+ck|^thwa+p|^sla+p)/i],
+const SND_SUB = [["flush", /^(ker-?)?flu+sh/i], ["chew", /^(cho+m+p|cha+m+p|chm+p|mu+n+ch|chew|gna+sh|gna+w)/i], ["gag", /(^ga+g|^gla+[ck]|^glu+ck|^gwa+[ck]|^hu?r+k|^ghk|^hl+k|cho+k|^gck|^gu+[ck]k)/i], ["plap", /(^pla+p|^pa+p+$|^cla+p|^sma+ck|^thwa+p|^sla+p)/i],
   ["squelch", /(sque+l+ch|squi+sh|squo+r?ch|squi+ck|shlo+r?ck|splo+r?ch|squee+z|squi+r?k)/i], ["cumbub", /(slo+sh|swa+sh|slo+r+sh|slu+sh)/i], ["struggle", /(thra+sh|wri+th|squi+r+m|ki+ck|mmph|mmf+|mrph|thu+m+p+.*thu+m+p)/i], ["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ]; // swallow and churn words above are listed after the new ones
 // file names → sound type, for adding a whole pack at once
 const AMB_NAMES = [["amb_campfire", /campfire|bonfire|camp.?fire|ember|torch/i], ["amb_fireplace", /fireplace|hearth|crkl/i], ["amb_storm", /thunder|storm|\bthun/i], ["amb_rain", /\brain/i],
@@ -4249,7 +4260,7 @@ const AMB_NAMES = [["amb_campfire", /campfire|bonfire|camp.?fire|ember|torch/i],
   ["amb_beach", /beach|ocean|\bsea\b|\bwaves?\b|shore|coast|\bgull/i], ["amb_river", /river|stream|creek|waterfall|brook|\blake/i], ["amb_underwater", /underwater|undwtr/i], ["amb_cave", /\bcave|cavern|\bmines?\b|underground/i],
   ["amb_dungeon", /dungeon|crypt|catacomb|prison|horror|hell/i], ["amb_spaceship", /spaceship|space.?ship|starship|sci.?fi|engine.?room|turbine|astral/i], ["amb_snow", /snow|blizzard|winter|arctic|tundra|howl/i],
   ["amb_night", /night|cricket|\bowl|evening/i], ["amb_forest", /forest|woods|jungle|\bforst|tropical|swamp|\bpine/i], ["amb_nature", /nature|meadow|field|park|garden|bird|\bwind|mountain|desert|mist|fog|clearing/i]];
-const SND_NAMES = [["sizzle", /sizzl|acid|fizz|\bhiss|sear\b|burn/i], ["lick", /\blick|tongue/i], ["rip", /(^|[^a-z])rip([^a-z]|$)|ripping|(^|[^a-z])tear|zipper|(^|[^a-z])zip([^a-z]|$)|velcro|fabric/i], ["door", /door|creak|latch|hinge|\bgate/i], ["boom", /thunder/i], ["slash", /sword|blade|claw|stab/i], ["hit", /punch/i], ["stomp", /footstep/i], ["gag", /\bgag|gluck/i], ["plap", /\bslap|smack|plap|bed.?pound/i], ["breath", /\bpant/i], ["oral", /\bsuck|blow.?job|\bbj\b|deep.?throat|\bgag|fellat|throat.?fuck/i], ["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i],
+const SND_NAMES = [["gore", /\bgore|blood|giblet|disembow|splatter|\bguts\b|decapit|dismember|\blimb/i], ["chew", /chew|chomp|munch|\bbite|crush|rip.?flesh/i], ["sizzle", /sizzl|acid|fizz|\bhiss|sear\b|burn/i], ["lick", /\blick|tongue/i], ["rip", /(^|[^a-z])rip([^a-z]|$)|ripping|(^|[^a-z])tear|zipper|(^|[^a-z])zip([^a-z]|$)|velcro|fabric/i], ["door", /door|creak|latch|hinge|\bgate/i], ["boom", /thunder/i], ["slash", /sword|blade|claw|stab/i], ["hit", /punch/i], ["stomp", /footstep/i], ["gag", /\bgag|gluck/i], ["plap", /\bslap|smack|plap|bed.?pound/i], ["breath", /\bpant/i], ["oral", /\bsuck|blow.?job|\bbj\b|deep.?throat|\bgag|fellat|throat.?fuck/i], ["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i],
   ["fart", /fart|flatul|toot/i], ["gas", /burp|belch|bel[ck]h?/i], ["struggle", /between.?cheeks|lmovement|thrash|\bkick|squirm|struggl|trapped|thump/i],
   ["churn", /churn|growl|groan|grooo|rumbl|grumbl|whin|hunger|hungry|clench|strain|digest.*(long|ambien)|ambien/i], ["bubbles", /blorp|blurb|glorp|blrp|blrt|blrg|burbl|brbl|gurgl|squirt|stomach|belly|digest|tummy|bubbl|innard|\bgut/i],
   ["cumbub", /slosh|shaking|\bballs?\b|testic|scrot|\bnuts?\b/i], ["squelch", /squeez|squelch|squish|pumpkin|pull.?apart/i], ["cum", /\bcum|ejacul|spurt|jizz|semen/i], ["condom", /condom|rubber/i],
@@ -4388,6 +4399,9 @@ async function playSfx(cat, text, hint) {
   if (sub === "struggle" && shape && !["vore", "struggle", "swallow"].includes(AMBS.act || sceneNow().act)) sub = "stomp";
   // GLUK / GLK / GULK: a gag during oral scenes, a gulp otherwise
   if (sub === "swallow" && /^g+u?l+u?c?k+/i.test(text || "") && (AMBS.act === "oral" || sceneNow().act === "oral")) sub = "gag";
+  // wet splats and squelches are flesh and blood while prey is being chewed or during a fight
+  const scAct = AMBS.act || sceneNow().act;
+  if ((sub === "squelch" || /^spla+t|^splu+r?ch|^gu+sh/i.test(text || "")) && (scAct === "chew" || (AMBS.amb || sceneNow().amb) === "combat")) sub = scAct === "chew" ? "chew" : "gore";
   const chain = t => [...(SND_CHAIN[t] || []), ...(SND_CHAIN_EXTRA[t] || [])];
   const order = [...new Set([sub, ...chain(sub), cat, ...chain(cat)].filter(Boolean))];
   try {
@@ -4634,7 +4648,7 @@ function openSoundPack() {
 /* ---------- Ambience: background soundscape + activity loops ---------- */
 // The model labels each reply with [[... | ambience: x | activity: y]]; older replies fall back to keyword guesses.
 const AMB_KEYS = ["campfire", "fireplace", "tavern", "market", "city", "village", "office", "combat", "forest", "nature", "night", "rain", "storm", "beach", "river", "cave", "dungeon", "snow", "underwater", "spaceship", "indoors", "none"];
-const ACT_KEYS = ["none", "swallow", "vore", "struggle", "sex", "oral", "kiss", "shit"];
+const ACT_KEYS = ["none", "swallow", "chew", "vore", "struggle", "sex", "oral", "kiss", "shit"];
 const AMB_LABEL = { campfire: "Campfire", fireplace: "Fireplace", tavern: "Tavern", market: "Crowd", city: "City", village: "Village", office: "Office", combat: "Combat", forest: "Forest", nature: "Nature", night: "Night", rain: "Rain", storm: "Storm", beach: "Beach", river: "River", cave: "Cave", dungeon: "Dungeon", snow: "Snow & wind", underwater: "Underwater", spaceship: "Spaceship", indoors: "Quiet room" };
 const AMB_GUESS = [["combat", /\b(battle|combat|fight(ing)?|swords? clash|ambush|gunfire|skirmish|duel)\b/i], ["campfire", /campfire|bonfire|\bcamp\b/i], ["fireplace", /fireplace|hearth/i],
   ["tavern", /tavern|\binn\b|\bpub\b|\bbar\b|saloon/i], ["office", /office|cubicle|workplace/i], ["spaceship", /spaceship|starship|space station|cockpit/i], ["underwater", /underwater|beneath the waves/i],
@@ -4648,6 +4662,7 @@ function guessAct(msgs) {
   if (/\b(swallow(s|ing)?|gulp(s|ing)?|slid(es|ing)? down (her|his|their|its|the) (throat|gullet))\b/i.test(msgText(msgs.at(-1))) && !/\b(stomach|belly)\b/i.test(msgText(msgs.at(-1)))) return "swallow";
   if (/\b(thrust(s|ing)?|fuck(s|ing|ed)?|pound(s|ing)?|rid(es|ing) (him|her|them)|penetrat\w*|hips slap\w*|bounc(es|ing) on)\b/i.test(t2)) return "sex";
   if (VORE.scat.test(msgText(msgs.at(-1)))) return "shit";
+  if (/\b(chew(s|ing|ed)?|chomp\w*|gnaw\w*|munch\w*|crunch(es|ing)? (down )?on|bit(es|ing)? (down on|into|off)|tear(s|ing)? (into|off|apart)|tore (into|off|apart)|rip(s|ping)? (off|apart|into))\b/i.test(msgText(msgs.at(-1))) && /\b(teeth|jaws?|fangs?|mouth|maw|bite|bites|chew\w*|chomp\w*|gnaw\w*|munch\w*)\b/i.test(msgText(msgs.at(-1)))) return "chew";
   if (VORE.swallow.test(t6) && /\b(stomach|belly|gut|inside)\b/i.test(t6) && !/\b(spat|spits? (him|her|them) out|escap\w*|freed|regurgitat\w*|came out|pushed out)\b/i.test(t2)) return /\b(squirm\w*|struggl\w*|thrash\w*|kick(s|ing)?|wriggl\w*|writh\w*|pound(s|ing)? (on|against))\b/i.test(t2) ? "struggle" : "vore";
   if (/\b(kiss(es|ing|ed)?|making out|make out|smooch\w*|lips (lock|press|meet|crash)\w*|tongues? (dance|tangle|swirl)\w*)\b/i.test(msgText(msgs.at(-1)))) return "kiss";
   return "none";
@@ -4787,6 +4802,7 @@ const ACT_PLAN = {
   // mix: one-shots on top (sparser when a loop is playing)
   vore: { loop: ["loop_vore"], loopBrutal: ["loop_vore_bones"], bed: ["vorebed"], mix: [[["churn"], 0.45], [["bubbles"], 0.45], [["cumbub", "liquid"], 0.1]], gap: [0.8, 4], gapLoop: [5, 12] },
   struggle: { loop: ["loop_vore"], loopBrutal: ["loop_vore_bones"], bed: ["vorebed"], mix: [[["struggle"], 0.6], [["churn"], 0.2], [["bubbles"], 0.2]], gap: [0.3, 1.8], gapLoop: [0.8, 3] },
+  chew: { loop: ["loop_chew"], mix: [[["chew"], 0.6], [["crack"], 0.25], [["gore"], 0.15]], gap: [0.5, 1.3], gapLoop: [6, 12], loopMix: [[["crack"], 0.5], [["gore"], 0.5]] },
   swallow: { loop: ["loop_swallow"], mix: [[["swallow"], 0.8], [["bubbles"], 0.2]], gap: [1.2, 2.6], gapLoop: [8, 16] },
   sex: { loop: ["loop_sex"], under: ["wet"], mix: [[["plap"], 0.8], [["sex"], 0.2]], gap: [0.03, 0.18], gapLoop: [3, 8], loopMix: [[["plap"], 0.5], [["sex"], 0.5]] },
   oral: { loop: ["loop_oral"], under: ["wet"], mix: [[["oral"], 0.8], [["gag"], 0.2]], gap: [0.15, 0.9], gapLoop: [3, 9], loopMix: [[["gag"], 0.7], [["oral"], 0.3]] },
