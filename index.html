@@ -1221,9 +1221,9 @@ function buildPrompt(c, chat, upto, cont) {
   if (pacePart) sys += `\n\n# Pace\nThe user follows an on-screen stroke pacer that your pace field controls. Set it from the scene's sexual intensity: stop when nothing sexual is happening or for a pause, slow for teasing and build-up, steady for ongoing sex, fast as things get intense, edge to make ${u} hold right at the brink (use it for denial and teasing near the peak), cum at the moment of climax. Build up naturally over several replies and use edge before cum when it fits.`;
   const musicPart = musicOn() ? ` | music: one of ${MUS_KEYS.join("/")} | event: one of ${EVT_KEYS.join("/")}` : "";
   const rpgPart = rpgOn(c) ? " | gold: +n/-n | items: +Name/-Name | quests: +Name/done Name" : "";
-  if (musicPart) sys += `\n\n# Music and events\nmusic is the background music that fits the scene right now. Use none for ordinary moments; only pick music for scenes that call for it: a tavern or inn, a village, a city, a forest, a cave, a dungeon or temple, somewhere magical, a calm or tender moment, romance, sleep, danger or a creeping threat, a fight, an epic moment, space, vore, sex. event is something that happened in this reply: danger when a fight or real threat begins, victory when ${u}'s side wins a fight, defeat when ${u}'s side loses one, quest when a quest or goal is completed, item when ${u} finds or receives something notable, coins when ${u} gains money; otherwise none.`;
+  if (musicPart) sys += `\n\n# Music and events\nmusic is the background music that fits the scene right now. Use none for ordinary moments; only pick music for scenes that call for it: a tavern or inn, a village, a city, a club, party or rave, a forest, a cave, deep water, a dungeon, crypt, temple or other evil place, somewhere magical, a calm or idle moment, romance, sleep or a quiet night, danger or a creeping threat, horror, somewhere eerie, mysterious or unnerving, a fight, an epic or grand moment, space or sci-fi, vore, sex. event is something that happened in this reply: attack when a blow, shot or spell is coming at someone and the reply ends before it is known whether it lands; danger when a fight or real threat begins; victory when ${u}'s side wins a fight; defeat when ${u}'s side loses one; sad for a very sad, tragic or dramatic moment (a death, a farewell); quest when a quest or goal is completed; item when ${u} finds or receives something valuable, magical or rare; coins when ${u} gains money; otherwise none.`;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, mess while someone is dripping with, covered in or filled with cum (messy aftermath, cum inflation) or during excessive nonstop cumming, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
   if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
@@ -3325,7 +3325,7 @@ function drawInstall() {
 
 /* ---------- Computer layout: bot rail (left) and scene panel (right) ---------- */
 var RAIL = { q: "" };
-const ACT_LABEL = { swallow: "Swallowing", chew: "Chewing (hard vore)", vore: "In a stomach", struggle: "Struggling inside", sex: "Sex", oral: "Oral", kiss: "Kissing", shit: "Shitting" };
+const ACT_LABEL = { mess: "Messy cum", swallow: "Swallowing", chew: "Chewing (hard vore)", vore: "In a stomach", struggle: "Struggling inside", sex: "Sex", oral: "Oral", kiss: "Kissing", shit: "Shitting" };
 var PANES_T = 0;
 function renderPanes() { cancelAnimationFrame(PANES_T); PANES_T = requestAnimationFrame(() => { try { renderRail(); renderSide(); } catch (e) { console.warn(e); } }); }
 function renderRail() {
@@ -3591,18 +3591,18 @@ function gaugeEditor(work) {
 
 // --- Music: its own layer, under the sounds. Only fitting scenes get music; the hidden tag names the scene (music: …)
 // and one-off events (event: …) play short stings: a danger cue that flows into fight music, then a win or loss sting.
-const MUS_KEYS = ["none", "tavern", "village", "city", "forest", "cave", "dungeon", "magic", "calm", "romance", "sleep", "danger", "fight", "epic", "space", "vore", "sex"];
-const EVT_KEYS = ["none", "danger", "victory", "defeat", "quest", "item", "coins"];
-const MUS_LABEL = { tavern: "Tavern", village: "Village", city: "City", forest: "Forest", cave: "Cave", dungeon: "Dungeon / temple", magic: "Magical", calm: "Calm", romance: "Romance", sleep: "Sleep", danger: "Danger", fight: "Fight", epic: "Epic", space: "Space", vore: "Vore", sex: "Sex" };
-const EVT_LABEL = { danger: "Fight or danger begins", victory: "Fight won", defeat: "Fight lost", quest: "Quest done", item: "Item found", coins: "Coins gained" };
+const MUS_KEYS = ["none", "tavern", "village", "city", "club", "forest", "cave", "underwater", "dungeon", "magic", "calm", "romance", "sleep", "danger", "horror", "eerie", "fight", "epic", "space", "vore", "sex"];
+const EVT_KEYS = ["none", "attack", "danger", "victory", "defeat", "sad", "quest", "item", "coins"];
+const MUS_LABEL = { tavern: "Tavern", village: "Village", city: "City", club: "Club / party", underwater: "Deep water", horror: "Horror", eerie: "Eerie", forest: "Forest", cave: "Cave", dungeon: "Dungeon / temple", magic: "Magical", calm: "Calm", romance: "Romance", sleep: "Sleep", danger: "Danger", fight: "Fight", epic: "Epic", space: "Space", vore: "Vore", sex: "Sex" };
+const EVT_LABEL = { attack: "An attack is coming (result not known yet)", sad: "Sad or dramatic moment", danger: "Fight or danger begins", victory: "Fight won", defeat: "Fight lost", quest: "Quest done", item: "Valuable, magical or rare item found", coins: "Coins gained" };
 const musicOn = () => S.settings.musicOn !== false && !S.settings.ambMuted;
 const musicVol = () => S.settings.musicVol ?? 0.2;
 // when a reply has no music field (older replies), guess from the scene
 function musicGuess(sc) {
   if (["vore", "struggle", "swallow", "chew"].includes(sc.act)) return "vore";
-  if (["sex", "oral"].includes(sc.act)) return "sex";
+  if (["sex", "oral", "mess"].includes(sc.act)) return "sex";
   if (sc.act === "kiss") return "romance";
-  return { combat: "fight", gunfight: "fight", tavern: "tavern", village: "village", city: "city", market: "city", forest: "forest", nature: "forest", light_rain: "calm", cave: "cave", dungeon: "dungeon", spaceship: "space", panic: "danger" }[sc.amb] || "none";
+  return { arena: "fight", underwater: "underwater", combat: "fight", gunfight: "fight", tavern: "tavern", village: "village", city: "city", market: "city", forest: "forest", nature: "forest", light_rain: "calm", cave: "cave", dungeon: "dungeon", spaceship: "space", panic: "danger" }[sc.amb] || "none";
 }
 function musicScene() {
   const msgs = (S.chat?.messages || []).filter(m => m.role === "assistant"), last = msgs.at(-1);
@@ -3648,13 +3648,12 @@ async function playSting(evt) {
 const SPELL_WORDS = /\b(spell\w*|cast(s|ing)?|incant\w*|conjur\w*|summon\w*|rune\w*|mana|arcane|magic\w*|sorcer\w*|enchant\w*)\b/i;
 function spellType(t) {
   if (/\b(heal\w*|holy|divine|restor\w*|mend\w*|cleans\w*|blessing)\b/i.test(t)) return "heal";
-  if (/\b(portal|rift|warp\w*|teleport\w*|blink\w*)\b/i.test(t)) return "portal";
+  if (/\b(dark|void|shadow\w*|corrupt\w*|unstable|eldritch|necro\w*|evil|unholy|abyss\w*|demonic|cursed|portal|rift|warp\w*|teleport\w*)\b/i.test(t)) return "darkmagic";
   if (/\b(lightning|thunderbolt|electric\w*|shock\w*|spark\w*|static)\b/i.test(t)) return "spell_lightning";
   if (/\b(fire\w*|flame\w*|inferno|blaze|burn\w*|ember\w*|pyro\w*|scorch\w*)\b/i.test(t)) return "spell_fire";
   if (/\b(ice|icy|frost\w*|freez\w*|frozen|glacial|blizzard|cryo\w*)\b/i.test(t)) return "spell_ice";
   if (/\b(earth\w*|stone|rock\w*|boulder\w*|quake|terra\w*|ground (splits|cracks|erupts))\b/i.test(t)) return "spell_earth";
   if (/\b(wind\w*|gust\w*|gale|tornado|cyclone|air blade|aero\w*)\b/i.test(t)) return "spell_wind";
-  if (/\b(beam|laser|ray|energy (blast|bolt|beam))\b/i.test(t)) return "beam";
   return "spell";
 }
 const CLIMAX = /\b(cum(s|ming)?|came (hard|inside|deep|all over)|ejaculat\w*|orgasm\w*|climax\w*|shoots? (his|her|their|a|thick) (load|cum|seed)|spurt\w*|pump\w* (his|her) (load|seed|cum)|creampie\w*|blows? (his|a) load|unload\w* (inside|into|in))\b/i;
@@ -3669,7 +3668,8 @@ async function onReply(m, rpgBefore) {
   if (!m || !S.chat) return;
   const st = S.settings, c = char(), t = msgText(m), sc = sceneNow();
   // music events
-  if (m.event && m.event !== "none") playSting(m.event);
+  if (m.event === "attack") { if (S.settings.sfxSound !== false && S.settings.autoSfx !== false) playOne(["windup", "swing", "slash"], (S.settings.sfxVolume ?? 0.7) * 0.9, 400); }
+  else if (m.event && m.event !== "none") playSting(m.event);
   if (st.sfxSound === false || st.autoSfx === false || st.ambMuted) return;
   const vol = st.sfxVolume ?? 0.7, queue = [];
   // climax: one burst of spurts when the reply describes cumming during sex or oral
@@ -3687,6 +3687,7 @@ async function onReply(m, rpgBefore) {
   if (SPELL_WORDS.test(t) && /\b(cast\w*|hurl\w*|unleash\w*|fire[sd]? (a|off)|launch\w*|conjur\w*|summon\w*|channel\w*|erupt\w*|blast\w*|sends? a|calls? down)\b/i.test(t)) queue.push(["spell", [spellType(t), "spell", "magic"]]);
   if (/\b(drink\w*|drank|quaff\w*|gulp\w*|down\w*|swig\w*|uncork\w*)\b[^.!?\n]{0,40}\b(potion|elixir|tonic|draught|vial|phial)\b/i.test(t)) queue.push(["potion", ["potion"]]);
   if (!queue.some(q => q[0] === "coins") && /\b(coins?|gold pieces|purse of gold|pouch of (gold|coins)|silver pieces)\b/i.test(t) && /\b(hand\w*|toss\w*|drop\w*|count\w*|jingl\w*|pay\w*|paid|clink\w*|pocket\w*|receiv\w*|reward\w*|loot\w*)\b/i.test(t)) queue.push(["coins", ["coins"]]);
+  if (/\b(gem|gems|gemstone\w*|jewel\w*|crystal\w*|diamond\w*|ruby|rubies|emerald\w*|sapphire\w*|amethyst\w*)\b/i.test(t) && /\b(find\w*|found|pick\w*|pocket\w*|pry\w*|take\w*|took|grab\w*|obtain\w*|receiv\w*|reward\w*|loot\w*|glint\w*)\b/i.test(t)) queue.push(["gem", ["gem", "item"]]);
   if (!queue.some(q => q[0] === "item") && /\b(pick\w* up|pocket\w*|stow\w*|loot\w*|(add|put)\w* (it |them )?(to|in|into) (your|my|the|his|her) (bag|pack|satchel|inventory))\b/i.test(t)) queue.push(["item", ["item"]]);
   let at = 600; // start after the reply has landed, one after another
   for (const [, types] of queue.slice(0, 3)) { const len = await playOne(types, vol, at); if (len) at += Math.min(2500, len * 0.6) + 250; }
@@ -3793,17 +3794,21 @@ function rpgEditor(work) {
 // tap words in fights and spellcasting: the sentence around a sound decides which weapon or spell it is
 function combatSub(sp, t, cat) {
   const para = (sp.closest("p") || sp.closest(".msg") || sp.parentElement)?.textContent || "";
+  if (/\b(blaster|laser|plasma|phaser|ray ?gun|energy (weapon|rifle|pistol|cannon)|pulse rifle|railgun|ion cannon)\w*\b/i.test(para) && ["boom", "zap", "hit", "wave", "magic", "fire"].includes(cat)) return "beam";
   if (/^(ba+ng|bla+m+|ra+t+a+t|pe+w|bla+t+|bu+d+a+|kra+ck)/i.test(t) && /\b(gun|pistol|rifle|revolver|shotgun|firearm|trigger|bullet|shot)\w*\b/i.test(para)) return "gun";
+  if (/\b(pickaxe|pick-axe|mining|mines?|chisel\w*|quarr\w*|ore vein|ore)\b/i.test(para) && ["hit", "crack", "wave", "stomp"].includes(cat)) return "mine";
   if (["magic", "zap"].includes(cat) || ((cat === "fire" || cat === "wind" || cat === "boom" || cat === "wave") && SPELL_WORDS.test(para))) return spellType(para);
   if (/\b(coins?|gold pieces|purse)\b/i.test(para) && /^(cli+n+k|ji+n+g|chi+n+k|ti+n+k)/i.test(t)) return "coins";
   if (/\b(potion|elixir|vial|flask)\b/i.test(para) && /^(gl|gu|sh?lu)/i.test(t)) return "potion";
-  if (cat === "slash" || cat === "hit" || cat === "wind" || cat === "wave") {
+  if (cat === "slash" || cat === "hit" || cat === "wind" || cat === "wave" || cat === "crack") {
+    if (/\b(sever\w*|decapitat\w*|behead\w*|lops? off|lopped off|(cuts?|cleaves?|hacks?|slices?) (off|clean through|through (his|her|its|their) (neck|arm|leg))|dismember\w*|head (rolls|flies|falls)|(arm|leg|limb|head) (flies|falls|drops) (away|off|free))\b/i.test(para)) return "sever";
+    if (/\b(critical\w*|crushing blow|bone-?crushing|warhammer|hammer|mace|maul|cudgel|club|bludgeon\w*|morning star|flail)\b/i.test(para) && cat !== "slash") return "heavyhit";
     if (/\b(sheath\w*|unsheath\w*|draws? (his|her|their|a|the) (sword|blade|katana))\b/i.test(para) && /^(shi+n+g|schwi+n+g|shhi+n+g|ssh)/i.test(t)) return "sheath";
     if (/\b(arrow|bow|bolt|quiver)\w*\b/i.test(para) && !/\blightning\b/i.test(para)) return "arrow";
     if (/\b(spear|lance|pike|halberd|trident)\w*\b/i.test(para)) return "stab";
-    if (/\b(shield|parr\w*|block\w*|armou?r|clash\w*|steel meets steel|blades? (meet|lock))\b/i.test(para) || /^(cla+n+g|kla+n+g|cla+n+k|ti+n+g|kli+n+g)/i.test(t)) return "clash";
+    if (/\b(shield|parr\w*|block\w*|armou?r\w*|plate|chainmail|mail|helm\w*|gauntlet\w*|metal|steel|iron|knight|golem|robot|mech|clash\w*|blades? (meet|lock))\b/i.test(para) || /^(cla+n+g|kla+n+g|cla+n+k|ti+n+g|kli+n+g)/i.test(t)) return "clash";
     if (/\b(crate|barrel|plank|door|table|chair)s?\b/i.test(para) && /\b(smash\w*|splinter\w*|shatter\w*|break\w*|broke)\b/i.test(para)) return "smash";
-    if (cat === "wind" && /\b(sword|blade|axe|club|swing\w*|swung)\b/i.test(para)) return "swing";
+    if (cat === "wind" && /\b(sword|blade|axe|club|spear|swing\w*|swung|lunge\w*|thrust\w*)\b/i.test(para)) return "windup";
   }
   return null;
 }
@@ -4464,10 +4469,10 @@ const SND_TYPES = {
   beat: "Heartbeats", struggle: "Muffled struggling", crack: "Cracks & crunches", hit: "Hits", stomp: "Stomps & thuds", boom: "Booms",
   slash: "Slashes", fire: "Fire", wet: "Subtle wet noises", loop_vore_bones: "Loop · brutal digestion (bones)", loop_vore_m: "Loop · gurgling (muffled)", loop_vore_bones_m: "Loop · brutal digestion (muffled)", sizzle: "Acid & sizzling", crack_m: "Cracks & crunches (muffled)", lick: "Licks", rip: "Rips & zippers", door: "Doors", thunder: "Thunder", climax: "Climax bursts", gape: "Gape farts", loop_cum: "Loop · messy cum", swing: "Swings (whoosh)", clash: "Clangs & blocks", stab: "Stabs & thrusts", arrow: "Arrows", metal: "Metal falling/breaking", sheath: "Drawing & sheathing", smash: "Wood smashing", gun: "Gunshots",
   spell: "Spells (any)", spell_fire: "Fire spells", spell_ice: "Ice spells", spell_earth: "Earth spells", spell_wind: "Wind spells", spell_lightning: "Lightning spells", heal: "Healing", beam: "Energy beams", portal: "Portals",
-  coins: "Coins", item: "Items", bag: "Inventory bag", potion: "Potions", loop_digest: "Loop · active digestion (layer)", loop_digest_m: "Loop · active digestion (muffled layer)", chew: "Chewing & biting", gore: "Gore", loop_chew: "Loop · chewing (hard vore)", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
+  coins: "Coins", item: "Items", bag: "Inventory bag", potion: "Potions", gem: "Gems & valuables", windup: "Wind-ups (an attack on its way)", sever: "Severing & beheading", heavyhit: "Crushing blunt hits", mine: "Pickaxe on stone", darkmagic: "Dark / unstable magic", loop_digest: "Loop · active digestion (layer)", loop_digest_m: "Loop · active digestion (muffled layer)", chew: "Chewing & biting", gore: "Gore", loop_chew: "Loop · chewing (hard vore)", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
   amb_campfire: "Bg · Campfire", amb_fireplace: "Bg · Fireplace", amb_tavern: "Bg · Tavern", amb_market: "Bg · Crowd & market", amb_city: "Bg · City",
   amb_village: "Bg · Village", amb_office: "Bg · Office", amb_combat: "Bg · Combat", amb_forest: "Bg · Forest", amb_nature: "Bg · Nature",
-  amb_night: "Bg · Night", amb_rain: "Bg · Rain", amb_light_rain: "Bg · Light rain (birds)", amb_rain_shelter: "Bg · Rain on a tent/umbrella", amb_rain_vehicle: "Bg · Rain on a car/hut roof", amb_rain_indoors: "Bg · Rain outside (indoors)", amb_storm: "Bg · Storm", amb_storm_indoors: "Bg · Storm outside (indoors)", amb_wind: "Bg · Wind", amb_wind_indoors: "Bg · Wind outside (indoors)", amb_desert: "Bg · Desert", amb_arena: "Bg · Arena crowd", amb_panic: "Bg · Panicked crowd", amb_flying: "Bg · Flying (wings)", amb_gunfight: "Bg · Gunfight", amb_shower: "Bg · Shower", amb_shower_nearby: "Bg · Shower in the next room", amb_beach: "Bg · Beach & ocean", amb_river: "Bg · River & water",
+  amb_night: "Bg · Night", amb_rain: "Bg · Rain", amb_light_rain: "Bg · Light rain (birds)", amb_rain_shelter: "Bg · Rain on a tent/umbrella", amb_rain_vehicle: "Bg · Rain on a car/hut roof", amb_rain_indoors: "Bg · Rain outside (indoors)", amb_storm: "Bg · Storm", amb_storm_indoors: "Bg · Storm outside (indoors)", amb_wind: "Bg · Wind", amb_wind_indoors: "Bg · Wind outside (indoors)", amb_desert: "Bg · Desert", amb_road: "Bg · Road & traffic", amb_underwater_inside: "Bg · Underwater, enclosed", amb_arena: "Bg · Arena crowd", amb_panic: "Bg · Panicked crowd", amb_flying: "Bg · Flying (wings)", amb_gunfight: "Bg · Gunfight", amb_shower: "Bg · Shower", amb_shower_nearby: "Bg · Shower in the next room", amb_beach: "Bg · Beach & ocean", amb_river: "Bg · River & water",
   amb_cave: "Bg · Cave", amb_dungeon: "Bg · Dungeon", amb_snow: "Bg · Snow & wind", amb_underwater: "Bg · Underwater", amb_spaceship: "Bg · Spaceship",
   amb_indoors: "Bg · Quiet room", wave: "Other"
 };
@@ -4479,9 +4484,9 @@ const SND_GROUPS = [
   ["Tap sounds · vore & body", ["bubbles", "churn", "swallow", "chew", "gas", "fart", "struggle", "squelch", "cumbub", "liquid", "beat"]],
   ["Tap sounds · adult", ["plap", "sex", "wet", "oral", "gag", "lick", "cum", "climax", "gape", "condom", "shit", "shitbones", "flush", "kiss"]],
   ["Tap sounds · other", ["breath", "thunder", "crack", "crack_m", "gore", "hit", "stomp", "boom", "slash", "sizzle", "rip", "door", "fire", "zap", "magic", "zzz", "wind", "wave"]],
-  ["Tap sounds · combat", ["swing", "clash", "stab", "arrow", "metal", "sheath", "smash", "gun"]],
-  ["Tap sounds · magic", ["spell", "spell_fire", "spell_ice", "spell_earth", "spell_wind", "spell_lightning", "heal", "beam", "portal"]],
-  ["RPG", ["coins", "item", "bag", "potion"]],
+  ["Tap sounds · combat", ["windup", "clash", "heavyhit", "sever", "arrow", "metal", "sheath", "smash", "mine", "gun", "beam", "swing", "stab"]],
+  ["Tap sounds · magic", ["spell", "spell_fire", "spell_ice", "spell_earth", "spell_wind", "spell_lightning", "heal", "darkmagic", "portal"]],
+  ["RPG", ["coins", "gem", "item", "bag", "potion"]],
   ["Music by scene", MUS_KEYS.filter(k => k !== "none").map(k => "mus_" + k)],
   ["Stings by event", EVT_KEYS.filter(k => k !== "none").map(k => "sting_" + k)],
   ["Scene loops", ["loop_vore", "loop_vore_m", "loop_vore_bones", "loop_vore_bones_m", "loop_digest", "loop_digest_m", "loop_chew", "loop_cum", "loop_swallow", "loop_sex", "loop_oral", "loop_kiss", "loop_shit", "vorebed"]],
@@ -4507,13 +4512,14 @@ const SND_HELP = {
   chew: "Crushing bites, flesh tearing and wet squelches. Plays for CHOMP and tearing sounds, and while prey is being chewed.", gore: "Blood splatters and sprays, giblets, limbs torn or chopped. Plays for SPLRTCH sounds and wet hits in fights or hard vore.",
   loop_digest: "Soft acid bubbling laid on top of the stomach loop while prey is actually being digested (never in safe or gentle vore).", loop_digest_m: "The digestion layer as heard from outside the belly.",
   climax: "A burst of several spurts that plays by itself when a reply describes cumming.", gape: "Farts after a cock pulls out of an ass; plays by itself right after an anal pull-out.", loop_cum: "Slow dripping and oozing for messy, cum-soaked scenes.",
-  coins: "Plays when your gold goes up and for coin sounds.", item: "Plays when an item lands in your bag.", bag: "Plays when you open the inventory.", potion: "Plays when someone drinks a potion.",
+  coins: "Plays when your gold goes up and for coin sounds.", gem: "Finding a gem, crystal or other valuable.", windup: "A swing or thrust on its way: plays when a reply ends with an attack whose result isn't known yet.",
+  sever: "Limbs or heads cut off.", heavyhit: "Critical, crushing hits with blunt weapons.", mine: "A pickaxe biting into stone.", darkmagic: "Unstable, evil energy: dark spells, void, corruption, portals.", beam: "Sci-fi energy weapons: blasters, lasers, plasma.", item: "Plays when an item lands in your bag.", bag: "Plays when you open the inventory.", potion: "Plays when someone drinks a potion.",
   spell: "Any spell being cast; the element words around it pick fire, ice, earth, wind, lightning, healing, beams or portals.", gun: "Gunshots for BANG and BLAM in gunfights.",
   thunder: "Thunder claps and rolls. Plays for KRAKOOM and thunder sounds, and rumbles during storms. Thunder plays out in full.",
   loop_chew: "A seamless loop that plays while prey is being chewed or torn apart (hard vore).",
   wave: "Sounds the app couldn't place. Move them with the dropdown."
 };
-const SND_CHAIN_EXTRA = { gag: ["oral"], plap: ["sex"], sex: ["plap"], lick: ["oral", "liquid"], sizzle: ["fire"], rip: ["slash"], door: ["hit", "stomp"], oral: ["liquid"], thunder: ["boom"], spell_fire: ["spell", "fire", "magic"], spell_ice: ["spell", "magic"], spell_earth: ["spell", "magic"], spell_wind: ["spell", "wind", "magic"], spell_lightning: ["spell", "zap", "magic"], heal: ["spell", "magic"], beam: ["zap", "spell", "magic"], portal: ["spell", "magic"], spell: ["magic"], gun: ["boom", "hit"], clash: ["hit"], swing: ["slash", "wind"], stab: ["slash", "hit"], arrow: ["hit"], metal: ["clash", "hit"], sheath: ["slash"], smash: ["crack", "hit"], climax: ["cum"], gape: ["fart"], chew: ["crack", "squelch"], gore: ["squelch", "liquid"] };
+const SND_CHAIN_EXTRA = { gag: ["oral"], plap: ["sex"], sex: ["plap"], lick: ["oral", "liquid"], sizzle: ["fire"], rip: ["slash"], door: ["hit", "stomp"], oral: ["liquid"], thunder: ["boom"], windup: ["swing", "slash"], sever: ["gore", "slash"], heavyhit: ["hit", "clash"], mine: ["hit", "crack"], gem: ["item", "coins"], darkmagic: ["portal", "spell", "magic"], spell_fire: ["spell", "fire", "magic"], spell_ice: ["spell", "magic"], spell_earth: ["spell", "magic"], spell_wind: ["spell", "wind", "magic"], spell_lightning: ["spell", "zap", "magic"], heal: ["spell", "magic"], beam: ["zap", "spell", "magic"], portal: ["darkmagic", "spell", "magic"], spell: ["magic"], gun: ["boom", "hit"], clash: ["hit"], swing: ["windup", "slash", "wind"], stab: ["slash", "hit"], arrow: ["hit"], metal: ["clash", "hit"], sheath: ["slash"], smash: ["crack", "hit"], climax: ["cum"], gape: ["fart"], chew: ["crack", "squelch"], gore: ["squelch", "liquid"] };
 const SND_CHAIN = { cumbub: ["liquid"], condom: ["squelch", "cum"], shit: ["squelch"], shitbones: ["shit", "squelch", "crack"], churn: ["bubbles"], bubbles: ["churn"], liquid: ["cumbub", "squelch"], fart: ["gas"], cum: ["liquid"], struggle: ["squelch"] };
 const SND_SUB = [["clash", /^(cla+n+[gk]+|kla+n+[gk]+|ka+-?ti+n+g+)$/i], ["arrow", /^(thwi+p+|fwi+p+|twa+n+g+)$/i], ["thunder", /(^kr+a+k+(a?-?boo+m)?|^ka-?boo+m|thunder|^kr+a+-?ka+-?boo)/i], ["flush", /^(ker-?)?flu+sh/i], ["chew", /^(cho+m+p|cha+m+p|chm+p|mu+n+ch|chew|gna+sh|gna+w)/i], ["gag", /(^ga+g|^gla+[ck]|^glu+ck|^gwa+[ck]|^hu?r+k|^ghk|^hl+k|cho+k|^gck|^gu+[ck]k)/i], ["plap", /(^pla+p|^pa+p+$|^cla+p|^sma+ck|^thwa+p|^sla+p)/i],
   ["squelch", /(sque+l+ch|squi+sh|squo+r?ch|squi+ck|shlo+r?ck|splo+r?ch|squee+z|squi+r?k)/i], ["cumbub", /(slo+sh|swa+sh|slo+r+sh|slu+sh)/i], ["struggle", /(thra+sh|wri+th|squi+r+m|ki+ck|mmph|mmf+|mrph|thu+m+p+.*thu+m+p)/i], ["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ]; // swallow and churn words above are listed after the new ones
@@ -4913,9 +4919,9 @@ function openSoundPack() {
 
 /* ---------- Ambience: background soundscape + activity loops ---------- */
 // The model labels each reply with [[... | ambience: x | activity: y]]; older replies fall back to keyword guesses.
-const AMB_KEYS = ["campfire", "fireplace", "tavern", "market", "city", "village", "office", "combat", "forest", "nature", "night", "rain", "light_rain", "rain_shelter", "rain_vehicle", "rain_indoors", "storm", "storm_indoors", "wind", "wind_indoors", "shower", "shower_nearby", "desert", "arena", "panic", "flying", "gunfight", "beach", "river", "cave", "dungeon", "snow", "underwater", "spaceship", "indoors", "none"];
-const ACT_KEYS = ["none", "swallow", "chew", "vore", "struggle", "sex", "oral", "kiss", "shit"];
-const AMB_LABEL = { campfire: "Campfire", fireplace: "Fireplace", tavern: "Tavern", market: "Crowd", city: "City", village: "Village", office: "Office", combat: "Combat", forest: "Forest", nature: "Nature", night: "Night", rain: "Rain", storm: "Storm", light_rain: "Light rain", rain_shelter: "Rain overhead", rain_vehicle: "Rain on the roof", rain_indoors: "Rain outside", storm_indoors: "Storm outside", wind: "Wind", wind_indoors: "Wind outside", shower: "Shower", shower_nearby: "Shower nearby", desert: "Desert", arena: "Arena crowd", panic: "Panic", flying: "Flying", gunfight: "Gunfight", beach: "Beach", river: "River", cave: "Cave", dungeon: "Dungeon", snow: "Snow & wind", underwater: "Underwater", spaceship: "Spaceship", indoors: "Quiet room" };
+const AMB_KEYS = ["campfire", "fireplace", "tavern", "market", "city", "village", "office", "combat", "forest", "nature", "night", "rain", "light_rain", "rain_shelter", "rain_vehicle", "rain_indoors", "storm", "storm_indoors", "wind", "wind_indoors", "shower", "shower_nearby", "desert", "arena", "panic", "flying", "gunfight", "road", "underwater_inside", "beach", "river", "cave", "dungeon", "snow", "underwater", "spaceship", "indoors", "none"];
+const ACT_KEYS = ["none", "swallow", "chew", "vore", "struggle", "sex", "oral", "mess", "kiss", "shit"];
+const AMB_LABEL = { campfire: "Campfire", fireplace: "Fireplace", tavern: "Tavern", market: "Crowd", city: "City", village: "Village", office: "Office", combat: "Combat", forest: "Forest", nature: "Nature", night: "Night", rain: "Rain", storm: "Storm", light_rain: "Light rain", rain_shelter: "Rain overhead", rain_vehicle: "Rain on the roof", rain_indoors: "Rain outside", storm_indoors: "Storm outside", wind: "Wind", wind_indoors: "Wind outside", shower: "Shower", shower_nearby: "Shower nearby", desert: "Desert", road: "Road & traffic", underwater_inside: "Underwater, enclosed", arena: "Arena crowd", panic: "Panic", flying: "Flying", gunfight: "Gunfight", beach: "Beach", river: "River", cave: "Cave", dungeon: "Dungeon", snow: "Snow & wind", underwater: "Underwater", spaceship: "Spaceship", indoors: "Quiet room" };
 // weather heard from where the characters are (checked before the plain place guesses)
 function weatherGuess(t) {
   const shower = /\bshower(s|ing)?\b/i, wet = /\b(rain\w*|drizzl\w*|downpour|storm\w*|thunder\w*)\b/i;
@@ -4931,7 +4937,7 @@ function weatherGuess(t) {
   if (/\b(wind(y|swept)?|gust\w*|gale|howling wind)\b/i.test(t)) return /\b(window|indoors|inside|house|room|cabin)\b/i.test(t) ? "wind_indoors" : "wind";
   return null;
 }
-const AMB_GUESS = [["gunfight", /\b(gunfire|shootout|gunfight|bullets (fly|whiz|rip)|open(s|ed)? fire)\b/i], ["arena", /\b(arena|colosseum|stadium|fighting pit|tournament grounds)\b/i], ["panic", /\b(panic\w*|screaming crowd|stampede|people (flee|run screaming)|evacuat\w*)\b/i],
+const AMB_GUESS = [["underwater_inside", /\b(submarine|diving bell|underwater (base|station|dome|habitat)|bathysphere)\b/i], ["road", /\b(highway|freeway|motorway|road ?trip|driv(es|ing) (down|along|through)|roadside|side of the road|traffic)\b/i], ["gunfight", /\b(gunfire|shootout|gunfight|bullets (fly|whiz|rip)|open(s|ed)? fire)\b/i], ["arena", /\b(arena|colosseum|stadium|fighting pit|tournament grounds)\b/i], ["panic", /\b(panic\w*|screaming crowd|stampede|people (flee|run screaming)|evacuat\w*)\b/i],
   ["flying", /\b(soar\w*|in flight|mid-?air|flying|takes? (off|flight)|wings? (beat|beats|pump|flap)\w*)\b/i], ["desert", /\b(desert|dunes?|sand sea|wasteland)\b/i], ["combat", /\b(battle|combat|fight(ing)?|swords? clash|ambush|gunfire|skirmish|duel)\b/i], ["campfire", /campfire|bonfire|\bcamp\b/i], ["fireplace", /fireplace|hearth/i],
   ["tavern", /tavern|\binn\b|\bpub\b|\bbar\b|saloon/i], ["office", /office|cubicle|workplace/i], ["spaceship", /spaceship|starship|space station|cockpit/i], ["underwater", /underwater|beneath the waves/i],
   ["dungeon", /dungeon|crypt|catacomb|prison cell/i], ["cave", /\bcave|cavern|\bmine\b|tunnel/i], ["market", /market|bazaar|festival|crowd/i], ["city", /\bcity|street|downtown|alley|traffic/i],
@@ -4944,6 +4950,7 @@ function guessAct(msgs) {
   if (/\b(swallow(s|ing)?|gulp(s|ing)?|slid(es|ing)? down (her|his|their|its|the) (throat|gullet))\b/i.test(msgText(msgs.at(-1))) && !/\b(stomach|belly)\b/i.test(msgText(msgs.at(-1)))) return "swallow";
   if (/\b(thrust(s|ing)?|fuck(s|ing|ed)?|pound(s|ing)?|rid(es|ing) (him|her|them)|penetrat\w*|hips slap\w*|bounc(es|ing) on)\b/i.test(t2)) return "sex";
   if (VORE.scat.test(msgText(msgs.at(-1)))) return "shit";
+  if (/\b(dripping (with|in) cum|covered in cum|cum-?(soaked|covered|drenched|filled|inflated|stuffed)|leaking cum|cum (leaks|drips|oozes|pours|gushes|floods)|(gallons|torrents?|flood) of cum)\b/i.test(msgText(msgs.at(-1)))) return "mess";
   if (/\b(chew(s|ing|ed)?|chomp\w*|gnaw\w*|munch\w*|crunch(es|ing)? (down )?on|bit(es|ing)? (down on|into|off)|tear(s|ing)? (into|off|apart)|tore (into|off|apart)|rip(s|ping)? (off|apart|into))\b/i.test(msgText(msgs.at(-1))) && /\b(teeth|jaws?|fangs?|mouth|maw|bite|bites|chew\w*|chomp\w*|gnaw\w*|munch\w*)\b/i.test(msgText(msgs.at(-1)))) return "chew";
   if (VORE.swallow.test(t6) && /\b(stomach|belly|gut|inside)\b/i.test(t6) && !/\b(spat|spits? (him|her|them) out|escap\w*|freed|regurgitat\w*|came out|pushed out)\b/i.test(t2)) return /\b(squirm\w*|struggl\w*|thrash\w*|kick(s|ing)?|wriggl\w*|writh\w*|pound(s|ing)? (on|against))\b/i.test(t2) ? "struggle" : "vore";
   if (/\b(kiss(es|ing|ed)?|making out|make out|smooch\w*|lips (lock|press|meet|crash)\w*|tongues? (dance|tangle|swirl)\w*)\b/i.test(msgText(msgs.at(-1)))) return "kiss";
@@ -4984,7 +4991,7 @@ async function ambienceStep() {
   if (wantAmb !== AMBS.amb) { AMBS.bed?.stop(); AMBS.amb = wantAmb; AMBS.bed = wantAmb ? await startBed(wantAmb) : null; }
   else AMBS.bed?.setVol(st.ambVol ?? 0.35);
   const wantMuf = !!wantAct && scn.hear !== "inside", wantBrutal = !!wantAct && brutalScene();
-  const wantDig = ["vore", "struggle"].includes(wantAct) && digestScene(), wantInt = ["oral", "sex"].includes(wantAct) ? sceneIntensity() : null;
+  const wantDig = ["vore", "struggle"].includes(wantAct) && digestScene(), wantInt = ["oral", "sex"].includes(wantAct) ? sceneIntensity() : wantAct === "mess" && /\b(hyper|excessive|gallons|torrent\w*|flood\w*|nonstop|non-stop|endless\w*|gush\w*|geyser\w*|won'?t stop cumming)\b/i.test((S.chat?.messages || []).slice(-2).map(msgText).join("\n")) ? "hyper" : null;
   if (wantAct !== AMBS.act || wantMuf !== AMBS.muf || wantBrutal !== AMBS.brutal || wantDig !== AMBS.dig || wantInt !== AMBS.int) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.muf = wantMuf; AMBS.brutal = wantBrutal; AMBS.dig = wantDig; AMBS.int = wantInt; AMBS.loop = wantAct ? startActivity(wantAct, wantMuf, wantBrutal, { digest: wantDig, intensity: wantInt }) : null; }
   else AMBS.loop?.setVol?.(st.actVol ?? 0.5);
   await musicStep(inChat).catch(() => {});
@@ -5017,7 +5024,7 @@ document.addEventListener("visibilitychange", () => updateAmbience());
 document.addEventListener("pointerdown", () => { if (AC?.state === "suspended") AC.resume(); }, { passive: true });
 
 // user files for a sound type (with sensible stand-ins)
-const AMB_FALLBACK = { gunfight: ["combat"], arena: ["market"], panic: ["market", "city"], flying: ["wind"], desert: ["wind"], light_rain: ["rain"], rain_shelter: ["rain"], rain_vehicle: ["rain_shelter", "rain"], rain_indoors: ["rain"], storm_indoors: ["rain_indoors", "storm"], wind_indoors: ["wind"], wind: ["snow"], shower_nearby: ["shower"], nature: ["forest"], forest: ["nature"], night: ["forest", "nature"], storm: ["rain"], rain: ["storm"], fireplace: ["campfire"], campfire: ["fireplace"], market: ["tavern", "city"], tavern: ["market"], village: ["nature", "city"], dungeon: ["cave"], cave: ["dungeon"], snow: ["nature"], river: ["beach"], beach: ["river"] };
+const AMB_FALLBACK = { road: ["city"], underwater_inside: ["underwater"], gunfight: ["combat"], arena: ["market"], panic: ["market", "city"], flying: ["wind"], desert: ["wind"], light_rain: ["rain"], rain_shelter: ["rain"], rain_vehicle: ["rain_shelter", "rain"], rain_indoors: ["rain"], storm_indoors: ["rain_indoors", "storm"], wind_indoors: ["wind"], wind: ["snow"], shower_nearby: ["shower"], nature: ["forest"], forest: ["nature"], night: ["forest", "nature"], storm: ["rain"], rain: ["storm"], fireplace: ["campfire"], campfire: ["fireplace"], market: ["tavern", "city"], tavern: ["market"], village: ["nature", "city"], dungeon: ["cave"], cave: ["dungeon"], snow: ["nature"], river: ["beach"], beach: ["river"] };
 const packFiles = poolFor;
 async function startBed(key) {
   const vol = () => S.settings.ambVol ?? 0.35;
@@ -5097,6 +5104,7 @@ const ACT_PLAN = {
   vore: { loop: ["loop_vore"], loopBrutal: ["loop_vore_bones"], bed: ["vorebed"], mix: [[["churn"], 0.45], [["bubbles"], 0.45], [["cumbub", "liquid"], 0.1]], gap: [0.8, 4], gapLoop: [5, 12] },
   struggle: { loop: ["loop_vore"], loopBrutal: ["loop_vore_bones"], bed: ["vorebed"], mix: [[["struggle"], 0.6], [["churn"], 0.2], [["bubbles"], 0.2]], gap: [0.3, 1.8], gapLoop: [0.8, 3] },
   chew: { loop: ["loop_chew"], mix: [[["chew"], 0.6], [["crack"], 0.25], [["gore"], 0.15]], gap: [0.5, 1.3], gapLoop: [6, 12], loopMix: [[["crack"], 0.5], [["gore"], 0.5]] },
+  mess: { loop: ["loop_cum"], mix: [[["cum"], 1]], gap: [1.5, 4], gapLoop: [7, 15], loopMix: [[["cum"], 1]] },
   swallow: { loop: ["loop_swallow"], mix: [[["swallow"], 0.8], [["bubbles"], 0.2]], gap: [1.2, 2.6], gapLoop: [8, 16] },
   sex: { loop: ["loop_sex"], under: ["wet"], mix: [[["plap"], 0.8], [["sex"], 0.2]], gap: [0.03, 0.18], gapLoop: [3, 8], loopMix: [[["plap"], 0.5], [["sex"], 0.5]] },
   oral: { loop: ["loop_oral"], under: ["wet"], mix: [[["oral"], 0.8], [["gag"], 0.2]], gap: [0.15, 0.9], gapLoop: [3, 9], loopMix: [[["gag"], 0.7], [["oral"], 0.3]] },
@@ -5198,6 +5206,7 @@ function startActivity(kind, muffled, brutal, opt = {}) {
     if (lf.length && muffled && mf(lf[0].type)) { const m = await poolFor([lf[0].type + "_m"]); if (m.length) { lf = m; pre = true; } }
     // rough or slow versions when the scene says so (files named …rough… / …slow…)
     if (opt.intensity && lf.length) { const k = lf.filter(f => new RegExp(opt.intensity, "i").test(f.id)); if (k.length) lf = k; }
+    else if (lf.length) { const k = lf.filter(f => !/hyper/i.test(f.id)); if (k.length) lf = k; } // nonstop-cum loops only when the scene is excessive
     // active digestion: a soft bubbling layer on top of the stomach loop (muffled from outside)
     if (opt.digest) (async () => { const d = await poolFor([muffled ? "loop_digest_m" : "loop_digest"]); if (stopped || !d.length) return; const u = await sndURL(d[Math.floor(Math.random() * d.length)].id); if (!u || stopped) return; digLoop = await startLoop(u, vol()).catch(() => null); if (stopped) digLoop?.stop(); })();
     if (lf.length) {
