@@ -10,5 +10,5 @@ From freesound.org:
 - Farts: peridactyloptrix ("farts loud and flabby x7", #202528), aetherzip ("fart short", #691977), bassimat ("fart 005", #840755)
 Each sound keeps the license its creator chose on freesound.org.
 Bone cracks (crack/, and their muffled versions in crack_m/): "Bones cracking" by Joseph Sardin, BigSoundBank.com (#0596, CC0), cut into single cracks; the muffled set is filtered to match the owner's reference.
-Wet plaps (plap/plap-wet-mb*) and subtle wet noises (wet/): MonsterBox Entertainment's free Lewd SFX pack (https://monsterboxgames.itch.io/royalty-free-hentai-sfx-pack), free to use with credit to MonsterBox Entertainment; hiss reduced and normalised.
+Wet plaps (plap/plap-wet-mb*) and the mb-mnc sex/oral loops (loop_sex/, loop_oral/): MonsterBox Entertainment's free Lewd SFX pack (https://monsterboxgames.itch.io/royalty-free-hentai-sfx-pack), free to use with credit to MonsterBox Entertainment, cut into seamless loops / normalised.
 Stomach loops (loop_vore/gurgle-*, loop_vore_bones/, and the muffled _m versions): mixed for Lanternroom from Jeschke's Vore Sound Pack 2024 (CC BY) and the BigSoundBank bone cracks.
