@@ -553,6 +553,8 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .fx-vig.a-struggle::before{opacity:1;box-shadow:inset 0 0 120px rgba(var(--vc),.5),inset 0 0 44px rgba(var(--vc),.22)}
 .fx-vig.a-swallow::before{opacity:1;background:radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(var(--vc),.32) 100%);box-shadow:inset 0 0 90px rgba(var(--vc),.35)}
 .fx-vig.a-chew::before{opacity:1;box-shadow:inset 0 0 130px rgba(20,8,14,.7),inset 0 0 50px rgba(60,20,30,.35)}
+.fx-vig.a-mess::before,.fx-vig.c-cum::before{opacity:1;box-shadow:inset 0 0 120px rgba(250,246,232,.42),inset 0 0 36px rgba(255,255,255,.2);animation:fxPulse .9s ease-in-out infinite}
+.fx-vig.a-drip::before,.fx-vig.a-inflate::before{opacity:1;box-shadow:inset 0 0 110px rgba(245,240,225,.3)}
 .fx-vig.a-shit::before{opacity:1;box-shadow:inset 0 0 110px rgba(110,80,40,.45)}
 .fx-vig.climax::after{background:radial-gradient(circle,rgba(255,255,255,.65),rgba(255,120,190,.35) 50%,transparent 80%);animation:fxClimax 1.6s ease-out forwards}
 .fx-vig.lv-subtle{opacity:.55}
@@ -563,6 +565,33 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 @keyframes fxClimax{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
 @keyframes fxCaustic{to{background-position:300px 0}}
 /* status gauges */
+/* vore picture: corner card (tap to shrink to an icon); in the scene panel on wide screens */
+#voreCard{position:absolute;left:8px;top:64px;z-index:4;max-width:min(220px,58vw)}
+#voreCard button{display:block;padding:0;border:1px solid var(--line);background:color-mix(in srgb,var(--bg) 74%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--text);cursor:pointer;font:inherit;text-align:left}
+#voreCard .vg-body{width:min(200px,56vw);border-radius:14px;padding:6px 6px 5px}
+#voreCard .vg-icon{width:46px;height:46px;border-radius:50%;display:grid;place-items:center}
+#voreCard .vg-icon svg{width:36px;height:36px}
+.vg-svg{display:block;width:100%;height:auto;overflow:visible}
+.vg-cap{font-size:11.5px;line-height:1.3;color:var(--muted);padding:3px 2px 0}
+.sd-vore .vg-cap{font-size:13px}
+.vg-pred{animation:vgBreathe 4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes vgBreathe{50%{transform:scaleY(1.012)}}
+.vg-bulge{transform-box:fill-box;transform-origin:center}
+.vg-bulge.wob{animation:vgWob 1.1s ease-in-out infinite}
+@keyframes vgWob{0%,100%{transform:none}20%{transform:scale(1.07,.94) translate(1px,-1px)}45%{transform:scale(.95,1.06) translate(-1px,0)}70%{transform:scale(1.04,.97) translate(0,1px)}}
+.vg-svg.burp .vg-bulge{animation:vgBurp .9s ease-out}
+@keyframes vgBurp{25%{transform:scale(.9,1.08)}60%{transform:scale(1.03,.98)}}
+.vg-fluid path{transform-box:fill-box;animation:vgWave 2.6s linear infinite}
+@keyframes vgWave{to{transform:translateX(25%)}}
+.vg-slide.r{animation:vgSlideR 2.6s ease-in-out infinite}.vg-slide.l{animation:vgSlideL 2.6s ease-in-out infinite}
+@keyframes vgSlideR{50%{transform:translateX(-3px)}}@keyframes vgSlideL{50%{transform:translateX(3px)}}
+.vg-pin{animation:vgPin 1.6s ease-in-out infinite}@keyframes vgPin{50%{opacity:.3}}
+.vg-puff circle{fill:color-mix(in srgb,var(--text) 60%,transparent);transform-box:fill-box;transform-origin:center;animation:vgPuff 1.2s ease-out forwards;opacity:0}
+@keyframes vgPuff{0%{opacity:.85;transform:scale(.3)}100%{opacity:0;transform:translate(6px,-8px) scale(1.8)}}
+@media (prefers-reduced-motion: reduce){.vg-pred,.vg-bulge.wob,.vg-fluid path,.vg-slide,.vg-pin{animation:none}}
+.pe-cols{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.pe-cols button{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);cursor:pointer}.pe-cols button.on{border-color:var(--text);box-shadow:0 0 0 2px var(--bg) inset}
+.pe-cols input[type=color]{width:42px;height:34px;padding:0;border:1px solid var(--line);border-radius:10px;background:none}
+.p-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:baseline}
 #rpgbar{position:relative;z-index:3;display:flex;gap:6px;padding:5px 12px;background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 #rpgbar button{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:600 13px var(--f-body,inherit)}
 #rpgbar svg,.rpg-gold svg{width:18px;height:18px;flex:none}#rpgbar i{font-style:normal;font-size:11px;min-width:18px;padding:0 5px;border-radius:9px;background:color-mix(in srgb,var(--accent) 25%,transparent);text-align:center}
@@ -707,6 +736,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
     <div id="rpgbar" hidden aria-label="Gold, inventory and quests"></div>
     <div id="ambPop" hidden role="dialog" aria-label="Sounds in this chat"></div>
     <div id="pacer" hidden aria-label="Stroke pacer"><div class="pc-track"><div class="pc-bead"></div></div><div class="pc-cue"></div><div class="pc-burst"></div><button type="button" class="pc-min" aria-label="Hide the pacer for this chat">✕</button></div>
+    <div id="voreCard" hidden></div>
     <div id="msgs" aria-live="polite"></div>
     <div id="status"></div>
     <div id="speakers" hidden></div>
@@ -1084,7 +1114,8 @@ function parseTag(raw) {
     harm: ["light", "heavy"].includes(low("harm")) ? low("harm") : f.harm ? "none" : null,
     hear: ["inside", "outside"].includes(low("hearing")) ? low("hearing") : null,
     music: MUS_KEYS.includes(low("music")) ? low("music") : null, event: EVT_KEYS.includes(low("event")) ? low("event") : null,
-    gold: f.gold || null, items: f.items || null, quests: f.quests || null
+    gold: f.gold || null, items: f.items || null, quests: f.quests || null,
+    vore: parseVore(f.vore, f)
   };
 }
 
@@ -1218,12 +1249,15 @@ function buildPrompt(c, chat, upto, cont) {
   sys += rpgPrompt(c, chat);
   const gs = gaugesOf(c), gaugePart = gs.length ? ` | gauges: ${gs.map(g => g.name + "=number").join(", ")}` : "";
   const pacePart = pacerOn() ? " | pace: one of " + PACES.join("/") : "";
+  const voreTalk = vgOn() && (tagsOf(c).some(t => /vore|pred|prey/.test(t)) || VORE.swallow.test(`${c.description || ""}\n${c.scenario || ""}`) || VORE.swallow.test(chat.messages.slice(Math.max(0, upto - 10), upto).map(msgText).join("\n")));
+  const vorePart = voreTalk ? " | vore: type=…; stage=…; digest=…; pred=…; prey=…; gain=…" : "";
+  if (voreTalk) sys += `\n\n# Vore picture\nThe app draws the vore in a small picture. Whenever someone is about to be eaten, is being eaten, is inside someone, or was just digested, fill the vore field: type is oral, anal, cock, breast, unbirth or tail (how the prey went in); stage is before (about to be eaten), swallowing (going in), inside (held, not being digested), digesting, or after (fully digested); digest is 0-100, how far the prey is digested; pred and prey are species, sex, size: for animals say anthro or feral (anthro wolf, feral dragon, naga, slime, centaur, plant…), sex is male, female or futa, size is micro, tiny, small, medium, large, huge or macro so the picture shows the size difference; write you first for ${u} (prey=you, human, male, small, or pred=you, … when ${u} is the predator); join several prey with + (prey=you, human, female, small + feral rabbit, female, tiny); gain is how much weight the pred has put on from digested prey so far, 0-100, and where it went (belly, hips, chest or all), carried over between replies. Example: vore: type=oral; stage=digesting; digest=40; pred=feral dragon, female, huge; prey=you, human, male, small; gain=10, belly. Write vore: none when nobody is being eaten.`;
   if (pacePart) sys += `\n\n# Pace\nThe user follows an on-screen stroke pacer that your pace field controls. Set it from the scene's sexual intensity: stop when nothing sexual is happening or for a pause, slow for teasing and build-up, steady for ongoing sex, fast as things get intense, edge to make ${u} hold right at the brink (use it for denial and teasing near the peak), cum at the moment of climax. Build up naturally over several replies and use edge before cum when it fits.`;
   const musicPart = musicOn() ? ` | music: one of ${MUS_KEYS.join("/")} | event: one of ${EVT_KEYS.join("/")}` : "";
   const rpgPart = rpgOn(c) ? " | gold: +n/-n | items: +Name/-Name | quests: +Name/done Name" : "";
   if (musicPart) sys += `\n\n# Music and events\nmusic is the background music that fits the scene right now. Use none for ordinary moments; only pick music for scenes that call for it: a tavern or inn, a village, a city, a club, party or rave, a forest, a cave, deep water, a dungeon, crypt, temple or other evil place, somewhere magical, a calm or idle moment, romance, sleep or a quiet night, danger or a creeping threat, horror, somewhere eerie, mysterious or unnerving, a fight, an epic or grand moment, space or sci-fi. Music follows the setting and mood, never the action: vore or sex in a club still gets club music, in a tavern tavern music, and none when the setting has no music. event is something that happened in this reply: attack when a blow, shot or spell is coming at someone and the reply ends before it is known whether it lands; danger when a fight or real threat begins; victory when ${u}'s side wins a fight; defeat when ${u}'s side loses one; sad for a very sad, tragic or dramatic moment (a death, a farewell); quest when a quest or goal is completed; item when ${u} finds or receives something valuable, magical or rare; coins when ${u} gains money; otherwise none.`;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, mess while someone is dripping with, covered in or filled with cum (messy aftermath, cum inflation) or during excessive nonstop cumming, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}${vorePart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; savanna for grasslands, plains and prairies; jungle for jungles and rainforests; party for a lively party or club full of people talking; castle for castle halls, keeps, fortresses and throne rooms; lava near volcanoes, lava fields or molten hellscapes; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, mess only while someone is cumming right now (spurting, pumping a load, excessive nonstop cumming) or while cum is still described dripping, leaking or pouring; once the climax is over and nothing is flowing, it is no longer mess, inflate while someone's belly (or balls, womb) is being filled up or swollen with cum (cum inflation), kiss while characters are kissing or making out, lick while someone is licking or slowly tasting someone's body (not oral sex), shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
   if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
@@ -2139,7 +2173,7 @@ async function generate(upto, existing, cont) {
       else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
-    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null, hear: p.hear || null, music: p.music || null, event: p.event || null, rpg: rpgOn(c) ? parseRpgDelta(p) : null };
+    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null, hear: p.hear || null, music: p.music || null, event: p.event || null, vore: p.vore || null, rpg: rpgOn(c) ? parseRpgDelta(p) : null };
     const rpgBefore = rpgOn(c) ? rpgState(c, chat) : null;
     const gv = parseGauges(p.gauges, c); if (gv) { meta.gauges = { ...gaugeValues(c, chat), ...gv }; chat.gauges = { ...meta.gauges }; }
     if (p.pace) meta.pace = p.pace; else if (pacerOn()) meta.pace = null;
@@ -2697,12 +2731,13 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
 });
 
 /* ---------- Personas ---------- */
+const PERSONA_COLS = ["#6fc3d8", "#8fe08a", "#c7a6ff", "#ff8fb8", "#ffd36b", "#ff9f6b", "#f2f2f2", "#7d9cff"];
 function openPersonas() {
   openSheet("Personas", b => {
     b.innerHTML = `<p class="note">A persona is who you play. Every character, world and group keeps a separate chat for each persona.</p><div class="stack" id="pList"></div><button class="btn primary" id="pNew">New persona</button>`;
     for (const p of S.personas) {
       const row = document.createElement("div"); row.className = "listrow" + (p.id === S.personaId ? " on" : "");
-      row.innerHTML = `<div class="grow"><div><b>${esc(p.name || "Unnamed")}</b>${p.id === S.personaId ? '<span class="badge">Active</span>' : ""}</div><div class="sub">${esc((p.description || "No description").slice(0, 90))}</div></div>${p.id === S.personaId ? "" : '<button class="btn small" data-use>Use</button>'}<button class="btn small" data-edit>Edit</button>`;
+      row.innerHTML = `<div class="grow"><div><span class="p-dot" style="background:${esc(personaColor(p))}"></span><b>${esc(p.name || "Unnamed")}</b>${p.id === S.personaId ? '<span class="badge">Active</span>' : ""}</div><div class="sub">${esc((p.description || "No description").slice(0, 90))}</div></div>${p.id === S.personaId ? "" : '<button class="btn small" data-use>Use</button>'}<button class="btn small" data-edit>Edit</button>`;
       row.querySelector("[data-use]")?.addEventListener("click", () => usePersona(p.id));
       row.querySelector("[data-edit]").onclick = () => editPersona(p, false);
       $("pList").appendChild(row);
@@ -2721,9 +2756,12 @@ function editPersona(p, isNew) {
     b.innerHTML = `
       ${field("Name", `<input id="peName" value="${esc(work.name)}" placeholder="Who you play">`)}
       ${field("Description", `<textarea id="peDesc" data-x="persona" style="min-height:140px" placeholder="Appearance, personality, background">${esc(work.description)}</textarea>`, "Characters see this, and it's used when illustrating scenes.")}
+      ${field("Your colour", `<div class="pe-cols" id="peCols">${PERSONA_COLS.map(c => `<button type="button" data-c="${c}" style="background:${c}" class="${(work.color || PERSONA_COLS[0]) === c ? "on" : ""}" aria-label="Colour ${c}"></button>`).join("")}<input type="color" id="peCol" value="${esc(work.color || PERSONA_COLS[0])}" aria-label="Any colour"></div>`, "How you show up in pictures, like the vore picture.")}
       <button class="btn primary" id="peSave">${isNew ? "Create and use" : "Save"}</button>
       ${!isNew && S.personas.length > 1 ? '<button class="btn danger" id="peDel">Delete persona</button>' : ""}`;
     wireExpand(b, () => `Persona name: ${$("peName").value}`);
+    const pick = c => { work.color = c; $("peCol").value = c; b.querySelectorAll("#peCols button").forEach(x => x.classList.toggle("on", x.dataset.c === c)); };
+    b.querySelectorAll("#peCols button").forEach(x => x.onclick = () => pick(x.dataset.c)); $("peCol").oninput = e => pick(e.target.value);
     $("peSave").onclick = async () => {
       work.name = $("peName").value.trim(); work.description = $("peDesc").value.trim();
       if (!work.name) { $("peName").focus(); $("peName").placeholder = "A name is required"; return; }
@@ -3346,7 +3384,7 @@ function drawInstall() {
 
 /* ---------- Computer layout: bot rail (left) and scene panel (right) ---------- */
 var RAIL = { q: "" };
-const ACT_LABEL = { mess: "Messy cum", swallow: "Swallowing", chew: "Chewing (hard vore)", vore: "In a stomach", struggle: "Struggling inside", sex: "Sex", oral: "Oral", kiss: "Kissing", shit: "Shitting" };
+const ACT_LABEL = { lick: "Licking", mess: "Messy cum", drip: "Cum dripping", inflate: "Cum inflation", swallow: "Swallowing", chew: "Chewing (hard vore)", vore: "In a stomach", struggle: "Struggling inside", sex: "Sex", oral: "Oral", kiss: "Kissing", shit: "Shitting" };
 var PANES_T = 0;
 function renderPanes() { cancelAnimationFrame(PANES_T); PANES_T = requestAnimationFrame(() => { try { renderRail(); renderSide(); } catch (e) { console.warn(e); } }); }
 function renderRail() {
@@ -3374,6 +3412,7 @@ function renderSide() {
       <div class="sd-meta"><span class="mood-chip">${esc(mood)}</span>${ch.place ? `<span>📍 ${esc(ch.place)}</span>` : ""}</div>
       ${c.kind === "group" ? `<div><span class="lbl">Who replies next</span><div class="sd-mem" style="margin-top:6px">${["", ...members(c).map(m => m.name)].map(n => `<button type="button" data-n="${esc(n)}" class="${S.nextSpeaker === n ? "on" : ""}">${n ? `<img alt="">` : ""}${n ? esc(n) : "Anyone"}</button>`).join("")}</div></div>` : ""}
       ${rpgOn(c) ? (() => { const rs = rpgState(c, ch); return `<div class="sd-card"><span class="lbl">Gold, bag and quests</span><div class="sd-rpg"><button type="button" data-rpg="gold">${RPG_ICON.gold} ${rs.gold}</button><button type="button" data-rpg="bag">${RPG_ICON.bag} ${[...rs.items.values()].reduce((a, q) => a + q, 0)}</button><button type="button" data-rpg="quests">${RPG_ICON.quest} ${rs.quests.filter(q => !q.done).length}</button></div></div>`; })() : ""}
+      ${(() => { const vs = voreState(); return vs ? `<div class="sd-card sd-vore"><span class="lbl">Vore</span>${voreSVG(vs, { id: "s" })}<div class="vg-cap">${esc(voreCaption(vs))}</div></div>` : ""; })()}
       ${sound ? `<div class="sd-card"><span class="lbl">Scene sounds</span><div>${esc(sound)}${S.settings.ambMuted ? " (muted)" : ""}</div></div>` : ""}
       ${ch.summary ? `<div class="sd-card"><span class="lbl">Story so far</span><div class="sd-sum">${esc(ch.summary)}</div></div>` : ""}
       ${facts.length ? `<div class="sd-card"><span class="lbl">Facts</span><ul class="sd-facts">${facts.map(f => `<li class="${f.pin ? "pin" : ""}">${esc(f.t)}</li>`).join("")}</ul></div>` : ""}
@@ -3686,6 +3725,8 @@ async function playOne(types, vol, delay = 0) {
 async function onReply(m, rpgBefore) {
   if (!m || !S.chat) return;
   const st = S.settings, c = char(), t = msgText(m), sc = sceneNow();
+  // the vore picture belches when the reply describes a burp
+  if (/\b(burp|belch|urp)\w*/i.test(t) && document.querySelector(".vg-svg")) setTimeout(voreBurp, 700);
   // music events
   if (m.event === "attack") { if (S.settings.sfxSound !== false && S.settings.autoSfx !== false) playOne(["windup", "swing", "slash"], (S.settings.sfxVolume ?? 0.7) * 0.9, 400); }
   else if (m.event && m.event !== "none") playSting(m.event);
@@ -3835,7 +3876,7 @@ function combatSub(sp, t, cat) {
 // --- Screen effects: weather and light from where the scene is, plus effects for what's happening
 const FX = { amb: null, act: null, raf: 0, parts: [], last: 0, nextFlash: 0, nextShake: 0, pace: null };
 const fxLevel = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "still" : (S.settings.fxLevel || "full");
-const WEATHER = { desert: "dust", panic: "combat", gunfight: "combat", rain: "rain", light_rain: "rain", rain_shelter: "rain", storm: "storm", wind: "dust", snow: "snow", campfire: "embers", fireplace: "embers", night: "fireflies", forest: "motes", nature: "motes", underwater: "bubbles", cave: "dust", dungeon: "dust", beach: "glints", river: "glints", combat: "combat" };
+const WEATHER = { lava: "embers", jungle: "motes", savanna: "motes", castle: "dust", desert: "dust", panic: "combat", gunfight: "combat", rain: "rain", light_rain: "rain", rain_shelter: "rain", storm: "storm", wind: "dust", snow: "snow", campfire: "embers", fireplace: "embers", night: "fireflies", forest: "motes", nature: "motes", underwater: "bubbles", cave: "dust", dungeon: "dust", beach: "glints", river: "glints", combat: "combat" };
 // cock vore and unbirth glow creamy white; oral and anal vore glow stomach-acid green
 function voreKind() {
   const recent = (S.chat?.messages || []).filter(m => m.role !== "image").slice(-6).map(m => m.content || "").join("\n");
@@ -3847,12 +3888,15 @@ function updateFx(sc) {
   const act = on && S.settings.fxScene !== false && lvl !== "off" ? (sc?.act && sc.act !== "none" ? sc.act : null) : null;
   const vig = $("fxVig"); if (!vig) return;
   const vk = ["vore", "struggle", "swallow"].includes(act) ? voreKind() : null; FX.vk = vk;
+  // a climax splashes thick white blobs across the screen; afterwards only drips run while the story still says cum is dripping
+  const cum = act ? (act === "mess" || climaxNow() ? "cum" : act === "drip" ? "drip" : null) : null;
+  if (cum === "cum" && FX.cum !== "cum") FX.splash = 3; FX.cum = cum;
   const harm = on && lvl !== "off" && sc?.harm && sc.harm !== "none" ? sc.harm : null;
   if (harm && harm !== FX.harm) { FX.nextFlash = 0; }
   FX.harm = harm;
-  vig.className = ["fx-vig", amb ? "w-" + amb : "", act ? "a-" + act : "", vk ? "vk-" + vk : "", harm ? "h-" + harm : "", "lv-" + lvl].filter(Boolean).join(" ");
-  if (amb !== FX.amb || act !== FX.act) { FX.parts = []; FX.amb = amb; FX.act = act; }
-  if ((amb || act || harm) && lvl !== "still") { if (!FX.raf) FX.raf = requestAnimationFrame(fxFrame); }
+  vig.className = ["fx-vig", amb ? "w-" + amb : "", act ? "a-" + act : "", cum === "cum" ? "c-cum" : "", vk ? "vk-" + vk : "", harm ? "h-" + harm : "", "lv-" + lvl].filter(Boolean).join(" ");
+  if (amb !== FX.amb || act !== FX.act) { FX.parts = FX.parts.filter(p => p.k === "splat" || p.k === "wdrip"); FX.amb = amb; FX.act = act; } // splats stay and fade on their own
+  if ((amb || act || harm || FX.parts.length) && lvl !== "still") { if (!FX.raf) FX.raf = requestAnimationFrame(fxFrame); }
   else { cancelAnimationFrame(FX.raf); FX.raf = 0; const cv = $("fxCanvas"); cv.getContext("2d").clearRect(0, 0, cv.width, cv.height); }
 }
 function fxFrame(t) {
@@ -3873,6 +3917,8 @@ function fxFrame(t) {
   if (hearts) spawn("heart", hearts, any => ({ x: R() * w, y: any ? R() * h : h + 10, s: R(), a: R() * 6.28 }));
   if (vbub) spawn("vbub", vbub, any => { const edge = R() < 0.5 ? R() * w * 0.22 : w - R() * w * 0.22; return { x: R() < 0.7 ? edge : R() * w, y: any ? R() * h : h + 8, s: R(), a: R() * 6.28 }; });
   FX.seeded = true;
+  if (FX.cum === "cum" && (FX.splash > 0 || t > (FX.nextSplat || 0))) { const n = FX.splash || 1; FX.splash = 0; for (let i = 0; i < n; i++) P.push(newSplat(w, h)); FX.nextSplat = t + (full ? 600 + R() * 1500 : 1400 + R() * 2400); }
+  if (FX.cum === "drip" && t > (FX.nextSplat || 0)) { P.push({ k: "wdrip", x: R() * w, y: 0, s: R(), wait: 40 + R() * 80 }); FX.nextSplat = t + 1800 + R() * 3500; }
   for (let i = P.length - 1; i >= 0; i--) {
     const p = P[i]; let dead = false;
     switch (p.k) {
@@ -3885,6 +3931,8 @@ function fxFrame(t) {
       case "glints": { const gl = Math.max(0, Math.sin(t / 400 + p.s * 20)); g.fillStyle = `rgba(255,255,255,${gl * 0.5})`; g.beginPath(); g.arc(p.x, h * 0.55 + p.y * 0.45, 0.6 + gl * 1.6, 0, 7); g.fill(); break; }
       case "heart": { p.a += 0.04 * dt; p.x += Math.sin(p.a) * 0.6 * dt; p.y -= (0.6 + p.s * 0.8) * dt; const al = Math.min(1, p.y / h * 1.5) * 0.7, z = 5 + p.s * 6; g.fillStyle = `rgba(255,111,174,${al})`; g.beginPath(); g.moveTo(p.x, p.y + z * 0.35); g.bezierCurveTo(p.x - z, p.y - z * 0.4, p.x - z * 0.4, p.y - z, p.x, p.y - z * 0.35); g.bezierCurveTo(p.x + z * 0.4, p.y - z, p.x + z, p.y - z * 0.4, p.x, p.y + z * 0.35); g.fill(); dead = p.y < -12; break; }
       case "vbub": { p.a += 0.05 * dt; p.x += Math.sin(p.a) * 0.35 * dt; p.y -= (0.35 + p.s * 0.75) * dt; const c = FX.vk === "white" ? "250,245,230" : "150,235,120", r0 = 1.5 + p.s * 4.5, al = 0.18 + p.s * 0.3; g.strokeStyle = `rgba(${c},${al + 0.15})`; g.fillStyle = `rgba(${c},${al * 0.35})`; g.lineWidth = 1.1; g.beginPath(); g.arc(p.x, p.y, r0, 0, 7); g.fill(); g.stroke(); g.fillStyle = `rgba(255,255,255,${al})`; g.beginPath(); g.arc(p.x - r0 * 0.35, p.y - r0 * 0.35, r0 * 0.25, 0, 7); g.fill(); dead = p.y < -10; break; }
+      case "splat": dead = drawSplat(g, p, dt); break;
+      case "wdrip": { if (p.wait > 0) { p.wait -= dt; g.fillStyle = "rgba(250,246,232,.55)"; g.beginPath(); g.ellipse(p.x, 0, 3 + p.s * 2.5, 2 + (120 - p.wait) / 120 * 5, 0, 0, 7); g.fill(); break; } p.y += (1.2 + p.s * 2) * dt; g.fillStyle = "rgba(252,249,238,.7)"; g.beginPath(); g.ellipse(p.x, p.y, 2.6, 4.6, 0, 0, 7); g.fill(); g.fillStyle = "rgba(255,255,255,.8)"; g.beginPath(); g.arc(p.x - 0.8, p.y - 1.4, 0.9, 0, 7); g.fill(); dead = p.y > h + 10; break; }
       case "drip": { if (p.wait > 0) { p.wait -= dt; g.fillStyle = "rgba(190,70,80,.5)"; g.beginPath(); g.ellipse(p.x, 0, 3 + p.s * 2, 2 + (300 - p.wait) / 300 * 4, 0, 0, 7); g.fill(); break; } p.y += (2 + p.s * 3) * dt; g.fillStyle = "rgba(200,80,90,.55)"; g.beginPath(); g.ellipse(p.x, p.y, 2.2, 4, 0, 0, 7); g.fill(); dead = p.y > h + 10; break; }
     }
     if (dead) P.splice(i, 1);
@@ -3897,8 +3945,395 @@ function fxFrame(t) {
   if (full && (FX.act === "vore" || FX.act === "struggle") && t > FX.nextShake) { if (FX.nextShake) shakeChat(FX.act === "struggle" ? 6 : 3); FX.nextShake = t + (FX.act === "struggle" ? 1800 + R() * 2500 : 5000 + R() * 7000); }
   FX.raf = requestAnimationFrame(fxFrame);
 }
+// is a climax happening in the latest reply? (pace "cum", or cumming words during sex, oral or a mess scene)
+function climaxNow() {
+  const last = (S.chat?.messages || []).filter(m => m.role === "assistant").at(-1); if (!last) return false;
+  if (last.pace === "cum") return true;
+  return ["sex", "oral", "mess"].includes(last.act || sceneNow().act) && CUMMING_NOW.test(msgText(last));
+}
+// a thick white blob: pops in, glistens, slowly runs down in a drip, then fades
+function newSplat(w, h) {
+  const R = Math.random, r = 12 + R() * 26, drops = [];
+  for (let i = 0, n = 3 + (R() * 5 | 0); i < n; i++) { const a = R() * 6.28, d = r * (1.15 + R() * 0.9); drops.push({ x: Math.cos(a) * d, y: Math.sin(a) * d, r: 1.5 + R() * r * 0.22 }); }
+  return { k: "splat", x: w * (0.08 + R() * 0.84), y: h * (0.06 + R() * 0.8), r, drops, life: 0, max: 260 + R() * 220, drip: 0, dripMax: r * (1.5 + R() * 3), dx: (R() - 0.5) * r * 0.6, s1: R() * 6, s2: R() * 6 };
+}
+function drawSplat(g, p, dt) {
+  p.life += dt; const k = p.life;
+  const al = Math.min(1, k / 5) * (k > p.max - 70 ? Math.max(0, (p.max - k) / 70) : 1) * 0.82;
+  const sc = k < 9 ? 0.4 + 0.75 * Math.sin(Math.min(1, k / 9) * Math.PI / 2) * (k < 9 ? 1.08 : 1) : 1;
+  if (k > 14 && p.drip < p.dripMax) p.drip += (0.12 + p.r * 0.006) * dt;
+  g.save(); g.translate(p.x, p.y); g.scale(sc, sc);
+  const body = `rgba(246,242,228,${al})`, edge = `rgba(225,218,198,${al * 0.9})`;
+  // the drip running down from the blob
+  if (p.drip > 1) { const wd = p.r * 0.32; g.fillStyle = body; g.beginPath(); g.moveTo(p.dx - wd, p.r * 0.4); g.quadraticCurveTo(p.dx - wd * 0.45, p.r * 0.6 + p.drip * 0.6, p.dx - wd * 0.42, p.r * 0.5 + p.drip); g.arc(p.dx, p.r * 0.5 + p.drip, wd * 0.6, Math.PI, 0, true); g.quadraticCurveTo(p.dx + wd * 0.45, p.r * 0.6 + p.drip * 0.6, p.dx + wd, p.r * 0.4); g.fill(); }
+  const grad = g.createRadialGradient(-p.r * 0.3, -p.r * 0.35, p.r * 0.1, 0, 0, p.r * 1.15); grad.addColorStop(0, `rgba(255,255,252,${al})`); grad.addColorStop(0.7, body); grad.addColorStop(1, edge);
+  g.fillStyle = grad; g.beginPath();
+  for (let i = 0; i <= 28; i++) { const a = i / 28 * 6.2832, rr = p.r * (1 + 0.16 * Math.sin(3 * a + p.s1) + 0.09 * Math.sin(5 * a + p.s2)); i ? g.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : g.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); }
+  g.closePath(); g.fill();
+  g.fillStyle = body; for (const d of p.drops) { g.beginPath(); g.arc(d.x, d.y, d.r, 0, 7); g.fill(); }
+  // wet shine
+  g.fillStyle = `rgba(255,255,255,${al * 0.95})`; g.beginPath(); g.ellipse(-p.r * 0.35, -p.r * 0.4, p.r * 0.28, p.r * 0.14, -0.6, 0, 7); g.fill();
+  g.beginPath(); g.arc(p.r * 0.25, -p.r * 0.1, p.r * 0.07, 0, 7); g.fill();
+  g.restore();
+  return k >= p.max;
+}
 function shakeChat(px) { const m = $("msgs"); if (!m || matchMedia("(prefers-reduced-motion: reduce)").matches) return; m.animate([{ transform: "none" }, { transform: `translate(${-px}px,${px / 2}px)` }, { transform: `translate(${px}px,${-px / 2}px)` }, { transform: `translate(${-px / 2}px,0)` }, { transform: "none" }], { duration: 420, easing: "ease-out" }); }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && S.chat) updateFx(sceneNow()); });
+
+// --- Vore picture: flat silhouettes of the pred and prey showing where the prey is and how far digestion has gone.
+// The story's hidden tag reports it (| vore: type=…; stage=…; digest=…; pred=…; prey=…; gain=…); without one it's guessed from the scene.
+const VG_SIZES = { micro: 0.1, tiny: 0.25, small: 0.6, medium: 1, large: 1.45, huge: 2.2, macro: 5 };
+const VG_FLUID = { acid: "#8fdc6a", cum: "#f6f3ea", juices: "#ff9cc6", milk: "#f3e4bd" };
+const VG_TYPE_FLUID = { oral: "acid", anal: "acid", tail: "acid", cock: "cum", unbirth: "juices", breast: "milk" };
+const VG_WHERE = { oral: "belly", anal: "belly", tail: "tail", cock: "balls", breast: "breast", unbirth: "womb" };
+const VG_PLACE = { belly: "stomach", tail: "tail", balls: "balls", breast: "breasts", womb: "womb" };
+const PREY_PALE = "#ece2d2";
+const vgOn = () => S.settings.voreGfx !== false;
+const personaColor = p => (p || persona()).color || "#6fc3d8";
+function vgSex(s) { s = String(s || "").toLowerCase(); return /futa|herm|intersex|dickgirl|both/.test(s) ? "futa" : /^f$|female|woman|girl|she\b|her\b|lady|vixen|doe|mare|queen|cow\b/.test(s) ? "female" : /^m$|male|man\b|boy|he\b|him\b|guy|stallion|buck|bull\b|king/.test(s) ? "male" : null; }
+function vgSize(s) { s = String(s || "").toLowerCase(); if (VG_SIZES[s]) return s; return /giga|mega|planet|colossal|kaiju|titan/.test(s) ? "macro" : /giant|massive|enormous|huge/.test(s) ? "huge" : /big|large|tall/.test(s) ? "large" : /little|short|small/.test(s) ? "small" : /mini|pocket|doll/.test(s) ? "tiny" : /speck|ant-?sized|microscop/.test(s) ? "micro" : null; }
+// one figure: "you, human, male, small" / "anthro wolf, female, huge"
+function vgWho(s) {
+  const bits = String(s || "").split(/[,/]/).map(x => x.trim()).filter(Boolean);
+  const you = !!bits.length && /^(you|user|me|\{\{user\}\})$/i.test(bits[0]); if (you) bits.shift();
+  let sex = null, size = null; const rest = [];
+  for (const b of bits) { const sx = !sex && vgSex(b), sz = !size && vgSize(b); if (sx && b.split(" ").length === 1) sex = sx; else if (sz && b.split(" ").length <= 2) size = sz; else rest.push(b); }
+  return { you, sex, size, species: rest.join(" ").toLowerCase() };
+}
+function parseVore(v, f = {}) {
+  if (!v && !f.pred) return null;
+  const t = String(v || "").trim(); if (/^(none|no|n\/a|-)\b/i.test(t)) return { none: true };
+  const o = {};
+  for (const part of t.split(";")) { const m = part.match(/^\s*([a-z]+)\s*[=:]\s*(.*)$/i); if (m) o[m[1].toLowerCase()] = m[2].trim(); }
+  for (const k of ["type", "stage", "digest", "pred", "prey", "gain"]) if (!o[k] && f[k]) o[k] = f[k];
+  const type = (String(o.type || t).toLowerCase().match(/oral|anal|cock|breast|unbirth|tail/) || ["oral"])[0];
+  const stage = (String(o.stage || "").toLowerCase().match(/before|swallow|inside|digest|after/) || [null])[0];
+  const st = stage === "swallow" ? "swallowing" : stage === "digest" ? "digesting" : stage || "inside";
+  const digest = Math.max(0, Math.min(100, parseInt(o.digest, 10) || 0));
+  const prey = String(o.prey || "you").split(/\s*\+\s*/).filter(Boolean).slice(0, 6).map(vgWho);
+  const g = String(o.gain || "").toLowerCase(), gn = Math.max(0, Math.min(100, parseInt(g, 10) || 0));
+  const gw = (g.match(/belly|hips|butt|ass|thighs|chest|breasts?|boobs|tits|all|everywhere/) || ["belly"])[0];
+  return { type, stage: st, digest, pred: vgWho(o.pred || ""), prey, gain: o.gain != null ? gn : null, gainWhere: /hips|butt|ass|thighs/.test(gw) ? "hips" : /chest|breast|boob|tit/.test(gw) ? "chest" : /all|everywhere/.test(gw) ? "all" : "belly" };
+}
+// what kind of body: the drawing plan and head
+function vgPlan(species, art) {
+  const t = " " + String(species || "").toLowerCase() + " ";
+  const has = re => re.test(t);
+  const head = has(/dragon|drake|wyvern|wyrm|hydra/) ? "dragon" : has(/snake|serpent|python|anaconda|viper|cobra|naga|lamia|boa\b/) ? "snake" : has(/lizard|kobold|croc|gator|alligator|dino|raptor|\brex\b|gecko|iguana|reptil|argonian|shark|orca|whale|dolphin|fish|eel/) ? "reptile"
+    : has(/wolf|dog|fox|coyote|jackal|hyena|canine|husky|vulpine|lupine|dingo|kitsune|werewolf/) ? "canine" : has(/\bcat\b|lion|tiger|leopard|panther|lynx|cheetah|jaguar|feline|cougar|puma|kitty|catgirl|neko/) ? "feline"
+    : has(/horse|pony|zebra|unicorn|donkey|equine|mare\b|stallion|centaur/) ? "equine" : has(/\bcow\b|bull|\box\b|minotaur|bovine|goat|sheep|ram\b|deer|stag|moose|elk/) ? "bovine" : has(/bear|panda|ursine/) ? "ursine"
+    : has(/rabbit|bunny|hare|lagomorph/) ? "rabbit" : has(/mouse|\brat\b|rodent|squirrel|hamster|otter|weasel|ferret|raccoon|skunk|possum|opossum/) ? "mouse" : has(/bird|eagle|hawk|owl|raven|crow|avian|harpy|gryphon|griffin|parrot|phoenix|chicken|duck|goose/) ? "avian"
+    : has(/robot|android|mech\b|machine|cyborg|synth\b|protogen/) ? "robot" : null;
+  const anthro = has(/anthro|furry|kemono|were|humanoid|-?morph\b|biped|harpy|minotaur|kobold|argonian|catgirl|neko|kitsune|protogen/), feral = has(/feral|wild|beast|monster\b/);
+  let body;
+  if (has(/drider|arachne/)) body = "drider"; else if (has(/\w*taur\b|centaur/)) body = "taur"; else if (has(/naga|lamia/)) body = "naga"; else if (has(/mermaid|merman|merfolk|siren\b/)) body = "mer";
+  else if (has(/slime|\bgoo\b|ooze|jelly|blob/)) body = "slime"; else if (has(/mimic/)) body = "mimic"; else if (has(/plant|flytrap|pitcher|vine|flower|alraune|dryad/) && !anthro) body = "plant";
+  else if (has(/spider|arachn|tarantula/)) body = "spider"; else if (has(/insect|\bbug\b|mantis|\bant\b|\bbee\b|wasp|beetle|centipede|moth/)) body = "insect"; else if (has(/octopus|kraken|squid|cephalopod|tentacle/)) body = "octo";
+  else if (head === "robot") body = "biped";
+  else if (!head) body = has(/human|elf|orc|goblin|demon|angel|vampire|giant|dwarf|woman|\bman\b|girl|boy|person|succubus|incubus|ogre|troll|witch/) || !String(species || "").trim() ? (art === "feral" && !String(species || "").trim() ? "quad" : "biped") : art === "feral" ? "quad" : "biped";
+  else if (anthro) body = "biped";
+  else if (head === "snake") body = "serpent"; else if (has(/shark|orca|whale|dolphin|fish|\beel\b/)) body = "fish"; else if (head === "avian" && !has(/gryphon|griffin/)) body = feral || art !== "anthro" ? "bird" : "biped";
+  else if (head === "dragon") body = feral || art !== "anthro" ? (has(/hydra/) ? "hydra" : "dragon") : "biped";
+  else body = feral ? "quad" : art === "anthro" ? "biped" : art === "human" && !feral ? (has(/\b(cat|dog|wolf|fox|horse|bear)\b/) ? "quad" : "biped") : "quad";
+  return { body, head: head === "snake" && body === "biped" ? "reptile" : head || "human", wings: has(/wing|angel|harpy|gryphon|griffin|succubus|demon|phoenix/) || body === "dragon" || body === "hydra", horns: has(/demon|horn|succubus|incubus|minotaur|goat|ram\b|devil|oni/), robot: head === "robot" };
+}
+// --- drawing primitives (pred/prey colour comes from the group's fill and stroke)
+const vE = (x, y, rx, ry, r = 0) => `<ellipse cx="${x}" cy="${y}" rx="${Math.max(0.3, rx)}" ry="${Math.max(0.3, ry)}"${r ? ` transform="rotate(${r} ${x} ${y})"` : ""}/>`;
+const vL = (pts, w) => `<polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const vP = pts => `<polygon points="${pts.map(p => p.join(",")).join(" ")}"/>`;
+const vD = (d, extra = "") => `<path d="${d}"${extra}/>`;
+// heads drawn around (40,15), facing right; returns svg and mouth point
+function vgHead(h, o) {
+  const fem = o.sex !== "male";
+  switch (h) {
+    case "canine": return { s: vE(40, 15, 7, 6.5) + vP([[44, 11.5], [55.5, 15.5], [55, 18.5], [44, 20.5]]) + vP([[34.5, 12], [35.5, 1.5], [41, 9.5]]) + vP([[39.5, 10], [44, 1], [45.5, 10.5]]), m: [55.5, 17.5] };
+    case "feline": return { s: vE(40, 15, 7, 6.8) + vP([[45, 12.5], [51.5, 15.5], [51, 18], [45, 19.5]]) + vP([[34, 11.5], [35, 3], [40.5, 8.5]]) + vP([[40, 9], [44.5, 3], [46.5, 10.5]]), m: [51.5, 17] };
+    case "equine": return { s: vP([[35.5, 10], [44, 7.5], [57.5, 17], [56.5, 22.5], [48, 23], [37, 20]]) + vP([[37.5, 10], [39, 1.5], [42.5, 9]]) + vL([[36, 9], [33.5, 25]], 4.5), m: [57, 20.5] };
+    case "bovine": return { s: vE(40, 15, 7.5, 7) + vE(48, 18, 5, 4) + vD("M35 10 Q28 5 30 -1 Q33 6 38 8Z") + vD("M43 9 Q49 4 48 -2 Q52 6 45 11Z") + vE(33, 13, 3.2, 1.6, -20), m: [52.5, 19] };
+    case "ursine": return { s: vE(40, 15, 8, 7.5) + vE(48.5, 17, 5, 3.6) + vE(34.5, 8, 3, 3) + vE(44, 7.5, 3, 3), m: [53, 18] };
+    case "rabbit": return { s: vE(40, 15, 6.5, 6.5) + vE(46, 16.5, 3.8, 3.2) + vE(36.5, 2.5, 2.4, 9, -14) + vE(41.5, 1.5, 2.4, 9, 10), m: [49.5, 17.5] };
+    case "mouse": return { s: vE(40, 15, 6.5, 6) + vP([[44, 12.5], [52.5, 16.5], [44, 19.5]]) + vE(35, 8, 4, 4) + vE(43.5, 7.5, 4, 4), m: [52.5, 16.5] };
+    case "dragon": return { s: vE(40, 15, 7, 6) + vP([[44, 11.5], [58, 15], [57.5, 18.5], [44, 20.5]]) + vP([[35.5, 11], [29, 1.5], [39, 8.5]]) + vP([[40, 9.5], [37, -0.5], [43.5, 8.5]]), m: [57.5, 17] };
+    case "reptile": return { s: vE(40, 15, 7, 6) + vP([[44, 11.5], [57, 15], [56.5, 18.5], [44, 20.5]]), m: [57, 17] };
+    case "avian": return { s: vE(40, 15, 7, 7) + vP([[46, 12.5], [55.5, 16.5], [46, 19]]) + vP([[36, 9], [31, 4], [38, 8]]), m: [55, 16.5] };
+    case "robot": return { s: vD("M33.5 7.5h14v14h-14z") + vL([[40.5, 7.5], [40.5, 2.5]], 1.4) + vE(40.5, 2.2, 1.6, 1.6), m: [47.5, 17.5] };
+    default: return { s: vE(41, 15, 6.5, 7.5) + (fem ? vD("M34 9 Q36 4 42 6 Q34 9 35 24 Q31 18 34 9Z") : "") + (o.horns ? vP([[37, 9], [33, 2], [39.5, 8]]) + vP([[42, 8.5], [43, 1], [45, 9]]) : ""), m: [47, 18.5] };
+  }
+}
+// tails, attached at the rump (x,y) going left
+function vgTail(h, x, y, k = 1) {
+  const T = `translate(${x} ${y}) scale(${k})`;
+  const s = h === "canine" ? vD("M0 0 Q-16 -2 -20 12 Q-12 6 1 5Z") : h === "feline" || h === "mouse" ? vL([[0, 0], [-12, 5], [-16, 18], [-12, 26]], 3.4)
+    : h === "rabbit" ? vE(-1, 1, 4.5, 4.5) : h === "equine" ? vD("M0 -2 Q-12 4 -9 26 Q-5 12 2 4Z") : h === "avian" ? vP([[0, 0], [-15, 10], [-11, 13], [1, 5]])
+    : h === "dragon" || h === "reptile" || h === "snake" ? vD("M1 -4 Q-18 10 -30 38 L-23 38 Q-12 16 2 6Z") : h === "ursine" ? vE(-1, 0, 3.5, 3) : h === "bovine" ? vL([[0, 0], [-6, 10], [-7, 22]], 2.5) + vE(-7, 23, 2.2, 3.5) : "";
+  return s ? `<g transform="${T}">${s}</g>` : "";
+}
+const vgWings = (x, y, k = 1) => `<g transform="translate(${x} ${y}) scale(${k})">${vD("M0 0 Q-14 -24 -32 -22 Q-22 -16 -26 -8 Q-16 -10 -18 0 Q-10 -2 -2 10Z", ' opacity=".85"')}</g>`;
+// gain spread: how much each area grows (0..1)
+function vgGain(o) { const g = Math.min(1, (o.gain || 0) / 100), w = o.gainWhere || "belly"; return { b: w === "belly" ? g : w === "all" ? g * 0.6 : 0, h: w === "hips" ? g : w === "all" ? g * 0.6 : 0, c: w === "chest" ? g : w === "all" ? g * 0.6 : 0, a: w === "all" ? g : 0 }; }
+// upper body (torso, chest, arms, head, wings) of a biped; dx/dy shift it (taurs, nagas, slimes)
+function vgUpper(o, dx = 0, dy = 0) {
+  const fem = o.sex !== "male", male = o.sex !== "female", G = vgGain(o);
+  const sh = (fem && !male ? 10.5 : 12.5) + G.a * 3, waist = (fem && !male ? 7.5 : 9.5) + G.b * 3 + G.a * 3, x = 40;
+  const hd = vgHead(o.head, o), bs = (1 + G.c * 1.1 + (o.full?.breast || 0)) * (male && !fem ? 0 : 1);
+  let s = "";
+  if (o.wings) s += vgWings(x - 6, 32);
+  s += vL([[x - sh + 2, 31], [x - sh - 3, 45], [x - sh - 1.5, 57]], 5.5 + G.a * 2);   // back arm
+  s += vP([[x - sh, 27.5], [x + sh, 27.5], [x + waist + 1, 47], [x + waist + 2, 57], [x - waist - 1, 57], [x - waist, 47]]);
+  s += vL([[x, 21], [x + 1, 29]], 6.5) + hd.s;
+  if (G.b) s += vE(x + 5, 49, 6 + G.b * 7, 6 + G.b * 6);                              // soft belly from gained weight
+  if (male && !fem) s += vE(x + 5, 35.5, 7 + G.c * 3.5, 4.8 + G.c * 2.5);            // pecs
+  if (bs) s += vE(x + 7 + bs * 1.6, 39.5, 5.2 * bs, 4.8 * bs);                        // breasts
+  s += vL([[x + sh - 3, 31], [x + sh + 4, 43], [x + sh + 9, 51.5]], 5.5 + G.a * 2);   // front arm
+  const T = (p) => [p[0] + dx, p[1] + dy];
+  return { s: dx || dy ? `<g transform="translate(${dx} ${dy})">${s}</g>` : s, mouth: T(hd.m), headC: T([x, 15]), throat: [T([x + 1, 22]), T([x + 3, 34])], breast: { x: x + 9 + dx + bs * 1.4, y: 40 + dy, rx: 5.5, ry: 5, entry: T([x + 9 + bs * 6.5, 40.5]) }, chest: T([x + 6, 50]) };
+}
+// all body plans: drawn facing right, feet on y=100; return svg + anchors
+function vgBody(o) {
+  const fem = o.sex !== "male", male = o.sex !== "female", G = vgGain(o), F = o.full || {}, erect = o.erect;
+  const bb = 1 + (F.balls || 0), animal = !["human", "robot"].includes(o.head);
+  let s = "", a = {};
+  const genitals = (x, y, quad) => {
+    if (!male) return "";
+    const sheath = animal && o.head !== "reptile" && o.head !== "dragon";
+    const cock = erect ? vL(quad ? [[x, y], [x + 13, y + 4]] : [[x, y], [x + 11, y - 6]], 3.6) : quad ? (sheath ? vE(x + 2, y + 1, 4, 2.3) : vL([[x, y], [x + 3, y + 4]], 3)) : vL([[x, y], [x + 2.5, y + 6]], 3.1);
+    return vE(x - (quad ? 18 : 1), y + (quad ? -2 : 4), 3.6 * bb, 3.2 * bb) + cock;
+  };
+  switch (o.body) {
+    case "quad": case "dragon": case "hydra": case "taur": case "drider": {
+      if (o.body === "drider") { // spider lower body + upper
+        s += vE(22, 70, 18 + G.b * 5, 14 + G.b * 4) + vE(48, 72, 11, 9);
+        for (const [k, i] of [[1, 0], [1, 1], [-1, 0], [-1, 1]]) s += vL([[48, 72], [48 + k * 10 + i * 4, 52 + i * 4], [48 + k * 18 + i * 8, 98]], 2.6);
+        const up = vgUpper(o, 12, 12); s += up.s;
+        a = { mouth: up.mouth, headC: up.headC, throat: up.throat, belly: { x: 22, y: 70, rx: 10, ry: 8 }, womb: { x: 26, y: 74, rx: 7, ry: 6 }, balls: { x: 40, y: 80, rx: 4, ry: 3.5 }, breast: up.breast, vent: [5, 70], tail: { x: 10, y: 72, rx: 6, ry: 5 }, tailTip: [5, 70], cockTip: [52, 84], nipple: up.breast.entry, crotch: [44, 80], w: [0, 70] };
+        if (male) s += vE(40, 80, 3.6 * bb, 3.2 * bb) + (erect ? vL([[44, 80], [56, 84]], 3.4) : "");
+        break;
+      }
+      const taur = o.body === "taur", dragon = o.body === "dragon" || o.body === "hydra";
+      const hoof = ["equine", "bovine"].includes(o.head);
+      const bodyL = 30 + G.a * 4, bodyH = 13.5 + G.a * 3;
+      if (dragon && o.wings !== false) s += `<g transform="translate(50 50)">${vD("M0 0 Q-6 -30 -22 -44 Q2 -36 18 -40 Q12 -28 26 -24 Q14 -14 14 2Z", ' opacity=".85"')}</g>`;
+      s += vgTail(o.head, 19, 56, dragon ? 1.25 : 1.1);
+      // legs: rear two, front two
+      const rl = hoof ? [[[28, 66], [27, 82], [27, 98]], [[34, 68], [35, 83], [34, 98]]] : [[[27, 66], [32, 80], [24, 90], [26, 98]], [[34, 68], [38, 81], [31, 91], [33, 98]]];
+      const fl = [[[72, 70], [73, 86], [72, 98]], [[79, 70], [81, 86], [80, 98]]];
+      for (const p of [...rl, ...fl]) s += vL(p, 7.5 + G.a * 2);
+      if (!hoof) for (const x of [27, 34, 73, 81]) s += vE(x + 1.5, 98.5, 4.5, 2);
+      s += vE(51, 63, bodyL, bodyH) + vE(74, 60, 12, 13.5) + vE(30, 61, 13 + G.h * 6, 13.5 + G.h * 4);
+      if (G.b) s += vE(52, 70, 18 + G.b * 8, 6 + G.b * 8);
+      if (fem && !taur) s += vE(40, 75.5, 4 * (1 + (F.breast || 0) * 2.2 + G.c), 2.4 * (1 + (F.breast || 0) * 2.2 + G.c));  // teats / udder
+      s += genitals(42, 74, true);
+      if (taur) {
+        const up = vgUpper(o, 36, -2); s += up.s;
+        a = { mouth: up.mouth, headC: up.headC, throat: up.throat, breast: up.breast, nipple: up.breast.entry };
+      } else {
+        const necks = o.body === "hydra" ? [[[76, 55], [88, 32]], [[74, 54], [80, 20]], [[78, 57], [98, 42]]] : [[[76, 55], dragon ? [90, 32] : [87, 40]]];
+        let mouth;
+        for (const [i, n] of necks.entries()) {
+          s += vL(n, dragon ? 10 : 12);
+          const hd = vgHead(dragon ? "dragon" : o.head === "human" ? "canine" : o.head, o), k = 1.25, [hx, hy] = n[1];
+          s += `<g transform="translate(${hx} ${hy - 3}) scale(${k}) translate(-40 -15)">${hd.s}</g>`;
+          if (i === 0) mouth = [hx + (hd.m[0] - 40) * k, hy - 3 + (hd.m[1] - 15) * k];
+        }
+        a = { mouth, headC: [necks[0][1][0], necks[0][1][1] - 3], throat: [necks[0][1], necks[0][0]], breast: { x: 40, y: 77, rx: 5, ry: 3.5 }, nipple: [44, 78] };
+      }
+      Object.assign(a, { belly: { x: 53, y: 70, rx: 11, ry: 7, down: true }, womb: { x: 32, y: 68, rx: 9, ry: 7, down: true }, balls: { x: 24, y: 72, rx: 4.5, ry: 4.2 }, vent: [16, 58], tail: { x: 4, y: 76, rx: 4, ry: 3.5 }, tailTip: [-10, 96], cockTip: [56, 79], crotch: [24, 70], w: [-12, 110] });
+      break;
+    }
+    case "serpent": case "naga": case "mer": {
+      const naga = o.body !== "serpent", mer = o.body === "mer";
+      const w = 13 + G.a * 4 + G.b * 4;
+      if (mer) s += vD("M76 56 Q78 84 48 92 Q30 96 22 92", ` fill="none" stroke-width="${w}" stroke-linecap="round"`) + vP([[24, 92], [6, 80], [12, 92], [6, 104]]);
+      else s += vD(naga ? "M76 56 Q80 88 52 95 Q30 100 10 94 Q2 92 -4 96" : "M-4 97 Q20 90 46 96 Q70 102 78 84 Q84 66 80 52", ` fill="none" stroke-width="${w}" stroke-linecap="round"`) + vP(naga ? [[-2, 90], [-14, 99], [-2, 101]] : [[-2, 91], [-16, 98], [-2, 103]]);
+      if (naga) { const up = vgUpper(o, 36, 0); s += up.s; a = { mouth: up.mouth, headC: up.headC, throat: [...up.throat, [77, 70], [66, 92]], breast: up.breast, nipple: up.breast.entry, chest: up.chest }; }
+      else { s += vE(87, 48, 9, 6.5, -12) + vP([[90, 44], [101, 47], [100, 51], [90, 53]]) + `<polyline points="101,49 106,49 108,47 M106,49 108,51" fill="none" stroke="#ff8fa0" stroke-width="1"/>`; a = { mouth: [101, 49], headC: [87, 48], throat: [[82, 56], [80, 76], [66, 98]], breast: { x: 46, y: 95, rx: 5, ry: 4 }, nipple: [50, 95] }; }
+      Object.assign(a, { belly: { x: naga ? 40 : 46, y: naga ? 95 : 95, rx: 9, ry: 6.5 }, womb: naga ? { x: 70, y: 70, rx: 6, ry: 6 } : { x: 30, y: 94, rx: 7, ry: 5 }, balls: { x: 70, y: 70, rx: 4, ry: 3.5 }, vent: [0, 96], tail: { x: 8, y: 95, rx: 6, ry: 4.5 }, tailTip: [-14, 99], cockTip: [80, 64], crotch: [74, 68], w: [-16, 110] });
+      if (naga && male) s += vE(73, 66, 3.4 * bb, 3 * bb) + (erect ? vL([[76, 66], [86, 61]], 3.4) : "");
+      break;
+    }
+    case "bird": {
+      s += vP([[30, 58], [6, 50], [8, 62], [30, 67]]) + vE(48, 63, 22 + G.a * 4, 15 + G.b * 4) + vL([[64, 55], [73, 40]], 9) + vE(76, 36, 7.5, 7) + vP([[82, 33], [94, 38], [82, 40.5]]);
+      s += vD("M34 55 Q52 46 66 56 Q54 66 34 66Z", ' opacity=".8"') + vL([[44, 76], [45, 89], [42, 98]], 2.6) + vL([[52, 76], [54, 89], [52, 98]], 2.6);
+      a = { mouth: [94, 38], headC: [76, 36], throat: [[74, 40], [65, 55]], belly: { x: 57, y: 72, rx: 9, ry: 7, down: true }, womb: { x: 34, y: 68, rx: 7, ry: 6 }, balls: { x: 32, y: 70, rx: 3.5, ry: 3 }, breast: { x: 62, y: 66, rx: 6, ry: 5 }, nipple: [68, 66], vent: [28, 64], tail: { x: 14, y: 58, rx: 5, ry: 4 }, tailTip: [6, 54], cockTip: [36, 74], crotch: [32, 70], w: [4, 96] };
+      break;
+    }
+    case "fish": {
+      s += vE(54, 66, 40 + G.a * 4, 14 + G.b * 5) + vP([[16, 66], [1, 47], [7, 66], [1, 85]]) + vP([[48, 53], [60, 37], [66, 54]]) + vP([[62, 74], [55, 87], [71, 76]]);
+      a = { mouth: [94, 68], headC: [84, 64], belly: { x: 58, y: 74, rx: 11, ry: 7, down: true }, womb: { x: 32, y: 70, rx: 7, ry: 6 }, balls: { x: 30, y: 72, rx: 3.5, ry: 3 }, breast: { x: 66, y: 74, rx: 5, ry: 4 }, nipple: [70, 76], vent: [20, 66], tail: { x: 12, y: 66, rx: 4, ry: 4 }, tailTip: [2, 66], cockTip: [34, 78], crotch: [30, 72], w: [0, 96] };
+      break;
+    }
+    case "octo": {
+      for (const [i, x] of [34, 42, 50, 58, 66].entries()) s += vL([[x, 55], [x - 8 + (i % 2) * 14, 72], [x - 2, 86], [x - 9 + (i % 2) * 16, 98]], 5);
+      s += vE(50, 38, 18 + G.a * 4, 22 + G.b * 4) + vE(50, 54, 15, 6);
+      a = { mouth: [50, 60], headC: [50, 38], belly: { x: 50, y: 36, rx: 11, ry: 12 }, womb: { x: 50, y: 44, rx: 7, ry: 7 }, balls: { x: 50, y: 58, rx: 4, ry: 3 }, breast: { x: 58, y: 46, rx: 5, ry: 5 }, nipple: [64, 46], vent: [36, 58], tail: { x: 30, y: 90, rx: 4, ry: 4 }, tailTip: [24, 98], cockTip: [60, 62], crotch: [52, 60], w: [24, 76] };
+      break;
+    }
+    case "slime": {
+      s += `<g opacity=".88">${vD(`M6 99 Q8 ${74 - G.b * 6} 32 70 Q50 66 68 70 Q92 ${74 - G.b * 6} 94 99Z`)}`;
+      const up = vgUpper(o, 12, 8); s += up.s + vE(34, 99, 4, 3) + vE(70, 99, 5, 3) + "</g>";
+      a = { mouth: up.mouth, headC: up.headC, throat: up.throat, belly: { x: 50, y: 85, rx: 14, ry: 9 }, womb: { x: 52, y: 70, rx: 8, ry: 6 }, balls: { x: 58, y: 72, rx: 4, ry: 3.5 }, breast: up.breast, nipple: up.breast.entry, vent: [10, 92], tail: { x: 14, y: 94, rx: 5, ry: 4 }, tailTip: [6, 98], cockTip: [70, 66], crotch: [58, 68], w: [4, 96] };
+      if (male) s += vE(57, 71, 3.4 * bb, 3 * bb) + (erect ? vL([[60, 70], [71, 64]], 3.4) : "");
+      break;
+    }
+    case "spider": case "insect": {
+      const sp = o.body === "spider";
+      if (sp) { s += vE(28, 62, 20 + G.b * 6, 16 + G.b * 5) + vE(56, 68, 13, 10); for (const [k, i] of [[1, 0], [1, 1], [1, 2], [1, 3]]) { s += vL([[56, 66], [60 + i * 6, 44 + i * 3], [66 + i * 9, 98]], 2.4) + vL([[54, 66], [44 - i * 6, 44 + i * 3], [34 - i * 8, 98]], 2.4); } s += vP([[66, 70], [72, 76], [67, 76]]); a = { mouth: [70, 72], headC: [58, 66] }; }
+      else { s += vE(26, 66, 20 + G.b * 6, 11 + G.b * 5) + vE(50, 64, 10, 8) + vE(66, 56, 7, 7) + vL([[68, 50], [74, 38]], 1.2) + vL([[66, 50], [66, 37]], 1.2); for (const x of [44, 50, 56]) s += vL([[x, 68], [x - 6, 82], [x - 2, 98]], 2.4); a = { mouth: [73, 58], headC: [66, 56] }; }
+      Object.assign(a, { belly: sp ? { x: 28, y: 62, rx: 12, ry: 10 } : { x: 26, y: 66, rx: 12, ry: 7 }, womb: { x: 18, y: 66, rx: 7, ry: 6 }, balls: { x: 12, y: 70, rx: 4, ry: 3 }, breast: { x: 50, y: 70, rx: 5, ry: 4 }, nipple: [54, 72], vent: [8, 64], tail: { x: 10, y: 64, rx: 5, ry: 4 }, tailTip: [6, 64], cockTip: [12, 78], crotch: [12, 72], w: [2, 104] });
+      break;
+    }
+    case "plant": {
+      s += vL([[50, 98], [50, 72]], 5) + vD("M50 86 Q34 78 22 88 Q36 92 50 90Z") + vD("M50 80 Q66 70 80 80 Q66 86 50 84Z") + vD(`M32 26 Q${28 - G.b * 4} 70 50 74 Q${72 + G.b * 4} 70 68 26 Q59 33 50 31 Q41 33 32 26Z`) + vP([[66, 26], [80, 10], [84, 18], [70, 30]]);
+      a = { mouth: [50, 30], headC: [50, 30], belly: { x: 50, y: 54, rx: 12, ry: 13 }, womb: { x: 50, y: 60, rx: 8, ry: 7 }, balls: { x: 50, y: 70, rx: 4, ry: 3 }, breast: { x: 50, y: 50, rx: 8, ry: 8 }, nipple: [50, 31], vent: [50, 31], tail: { x: 50, y: 54, rx: 12, ry: 13 }, tailTip: [50, 31], cockTip: [50, 31], crotch: [50, 31], w: [20, 86] };
+      break;
+    }
+    case "mimic": {
+      s += vD("M18 62h64v37h-64z") + vP([[18, 62], [82, 62], [88, 42], [24, 34]]) + `<g fill="#f2ead8">${[26, 36, 46, 56, 66, 76].map(x => vP([[x, 62], [x + 3, 56], [x + 6, 62]])).join("")}</g>` + `<path d="M74 60 Q92 52 98 66" fill="none" stroke="#d9607a" stroke-width="4" stroke-linecap="round"/>`;
+      a = { mouth: [84, 58], headC: [70, 50], belly: { x: 50, y: 81, rx: 16, ry: 10 }, womb: { x: 50, y: 81, rx: 12, ry: 8 }, balls: { x: 50, y: 92, rx: 5, ry: 3 }, breast: { x: 50, y: 81, rx: 12, ry: 8 }, nipple: [84, 58], vent: [84, 58], tail: { x: 50, y: 81, rx: 12, ry: 8 }, tailTip: [84, 58], cockTip: [84, 58], crotch: [84, 58], w: [16, 100] };
+      break;
+    }
+    default: { // biped (human, anthro, robot)
+      const digi = animal && o.head !== "robot", hip = (fem && !male ? 13 : 10.5) + G.h * 6 + G.a * 3, lw = 8.5 + G.a * 3 + G.h * 2;
+      if (o.head !== "human" && o.head !== "robot") s += vgTail(o.head, 30, 58);
+      s += digi ? vL([[34, 60], [30, 76], [36, 89], [33, 97]], lw) + vL([[46, 60], [45, 76], [51, 89], [49, 97]], lw) : vL([[34, 60], [33, 80], [32, 97]], lw) + vL([[46, 60], [48, 80], [49, 97]], lw);
+      s += vE(digi ? 35 : 34, 98.5, 6, 2.5) + vE(digi ? 52 : 52, 98.5, 6, 2.5);
+      s += vE(40, 59.5, hip, 9 + G.h * 2) + (G.h ? vE(40 - hip * 0.55, 60, 6 + G.h * 6, 8 + G.h * 3) : "");
+      if (o.head === "robot") s += vD("M28 27h25v31h-25z");
+      const up = vgUpper(o); s += up.s + genitals(47.5, 62, false);
+      a = { mouth: up.mouth, headC: up.headC, throat: up.throat, belly: { x: 47, y: 50, rx: 7.5, ry: 7.5 }, womb: { x: 46, y: 56.5, rx: 6.5, ry: 5.5 }, balls: { x: 46.5, y: 66, rx: 3.8, ry: 3.4 }, breast: up.breast, nipple: up.breast.entry, vent: [28, 62], tail: { x: 18, y: 66, rx: 4, ry: 3.5 }, tailTip: [12, 72], cockTip: [58.5, 56], crotch: [48, 63], w: [10, 66] };
+    }
+  }
+  return { s, a };
+}
+// prey curled up inside: a body, a head and tucked knees (a coil for snakes)
+function vgCurled(x, y, r, plan) {
+  if (plan.body === "serpent" || plan.body === "naga") return `<circle cx="${x}" cy="${y}" r="${r * 0.8}" fill="none" stroke-width="${r * 0.42}"/>`;
+  if (plan.body === "fish") return vE(x, y, r, r * 0.45, -20) + vP([[x - r, y], [x - r * 1.5, y - r * 0.5], [x - r * 1.5, y + r * 0.5]]);
+  const ears = ["canine", "feline", "rabbit", "mouse", "dragon"].includes(plan.head) ? vP([[x + r * 0.35, y - r * 0.75], [x + r * 0.45, y - r * 1.15], [x + r * 0.7, y - r * 0.8]]) : "";
+  return vE(x, y + r * 0.12, r * 0.78, r * 0.62, -15) + vE(x + r * 0.58, y - r * 0.45, r * 0.38, r * 0.38) + vE(x - r * 0.15, y - r * 0.2, r * 0.38, r * 0.3) + ears;
+}
+// the bot's own body when the story doesn't say: art type, pronouns, tags
+function vgCharWho(c) {
+  const t = `${c?.name || ""} ${(c?.tags || []).join(" ")} ${c?.appearance || ""} ${(c?.description || "").slice(0, 1200)}`;
+  const m = (t.match(/\b(dragon|drake|wyvern|hydra|naga|lamia|snake|serpent|wolf|fox|dog|cat|lion|tiger|horse|centaur|\w+taur|bear|rabbit|bunny|shark|orca|bird|harpy|gryphon|slime|spider|drider|mimic|plant|octopus|kraken|robot|lizard|kobold|cow|minotaur|mouse|rat|otter|deer|goat|hyena|human)\b/i) || [""])[0];
+  const art = artOf(c || {}), sex = /\b(futa|herm|dickgirl)\b/i.test(t) ? "futa" : (t.match(/\b(she|her)\b/gi) || []).length > (t.match(/\b(he|him|his)\b/gi) || []).length ? "female" : /\b(he|him|his)\b/i.test(t) ? "male" : "female";
+  const size = vgSize((t.match(/\b(macro|giant|giantess|huge|massive|enormous|tiny|micro)\b/i) || [""])[0]) || "large";
+  return { you: false, sex, size, species: (art === "anthro" && m ? "anthro " : art === "feral" && m ? "feral " : "") + m.toLowerCase(), art };
+}
+function vgYouWho() { const p = persona(), w = vgCharWho({ name: p.name, description: p.description || "", tags: [] }); return { you: true, sex: w.sex, size: vgSize((p.description || "").match(/\b(macro|giant|giantess|huge|massive|tiny|micro|small|short)\b/i)?.[0]) || "medium", species: w.species, art: "anthro" }; }
+// what to draw right now (null = nothing)
+function voreState() {
+  if (!S.chat || !vgOn()) return null;
+  const as = (S.chat.messages || []).filter(m => m.role === "assistant"), last = as.at(-1); if (!last) return null;
+  const sc = sceneNow(), voreAct = ["vore", "struggle", "swallow", "chew"].includes(sc.act);
+  let v = last.vore;
+  if (v?.none || (!v && !voreAct)) return null;
+  const c = char(), recent = (S.chat.messages || []).slice(-6).map(msgText).join("\n");
+  if (!v) { const type = VORE.cockvore.test(recent) ? "cock" : VORE.unbirth.test(recent) ? "unbirth" : /\b(breast|boob|tit|nipple)s? ?vore|into (his|her|their) (breast|boob|tit|nipple)s?\b/i.test(recent) ? "breast" : /\b(anal ?vore|up (his|her|their|its) (ass|rear|tail ?hole)|into (his|her|their|its) (ass|rear))\b/i.test(recent) ? "anal" : /\btail ?vore\b/i.test(recent) ? "tail" : "oral"; v = { type, stage: sc.act === "swallow" || sc.act === "chew" ? "swallowing" : digestScene() ? "digesting" : "inside", digest: digestScene() ? 35 : 0, pred: {}, prey: [] }; }
+  const lastG = [...as].reverse().find(m => m.vore && m.vore.gain != null)?.vore;
+  const youPred = !!v.pred?.you;
+  const base = youPred ? vgYouWho() : vgCharWho(c);
+  const pred = { ...base, ...Object.fromEntries(Object.entries(v.pred || {}).filter(([, x]) => x)), you: youPred };
+  const given = (v.prey || []).filter(p => p.you || p.species || p.sex || p.size);
+  const prey = (given.length ? given : [{ you: !youPred }]).map(p => { const isYou = !!p.you; const b = isYou ? vgYouWho() : { sex: "female", size: "small", species: "" }; return { ...b, ...Object.fromEntries(Object.entries(p).filter(([, x]) => x)), you: isYou }; });
+  return { ...v, pred, prey, gain: v.gain ?? lastG?.gain ?? 0, gainWhere: v.gainWhere || lastG?.gainWhere || "belly", struggle: sc.act === "struggle" };
+}
+// the picture as svg (viewBox 0 0 220 130)
+function voreSVG(st, opt = {}) {
+  const pc = st.pred.you ? personaColor() : "var(--accent)", per = personaColor();
+  const plan = vgPlan(st.pred.species, st.pred.art || artOf(char() || {}));
+  const where = VG_WHERE[st.type] || "belly", fluid = VG_FLUID[VG_TYPE_FLUID[st.type] || "acid"];
+  const sex = st.type === "cock" && st.pred.sex === "female" ? "futa" : (st.type === "unbirth" || st.type === "breast") && st.pred.sex === "male" && plan.body !== "quad" ? (st.type === "unbirth" ? "futa" : "male") : st.pred.sex || "female";
+  const stage = st.stage, d = stage === "after" ? 100 : st.digest || 0, inside = ["inside", "digesting"].includes(stage);
+  const sp = VG_SIZES[st.pred.size] || 1, ratios = st.prey.map(p => Math.max(0.02, (VG_SIZES[p.size] || 0.6) / sp));
+  const fullness = inside ? Math.min(2.6, ratios.reduce((s, r) => s + Math.pow(Math.min(r, 3), 0.8), 0)) * (1 - 0.55 * d / 100) : stage === "swallowing" ? Math.min(1.4, ratios[0] * 0.5) : stage === "after" ? 0.22 : 0;
+  const full = { [where]: fullness };
+  const o = { ...plan, sex, gain: st.gain, gainWhere: st.gainWhere, erect: st.type === "cock" && stage !== "after", full };
+  const body = vgBody(o), A = body.a;
+  const anch = A[where] || A.belly, grow = 1 + 1.05 * fullness;
+  const brx = anch.rx * grow, bry = anch.ry * grow, bcx = anch.x + (anch.down ? 0 : brx * 0.32), bcy = anch.y + (anch.down ? bry * 0.42 : 0);
+  // layout: pred on the left, prey (before/swallowing) to the right
+  const [x0, x1] = A.w || [0, 100], W = x1 - x0, entry = where === "balls" ? A.cockTip : where === "breast" ? A.nipple : where === "womb" ? A.crotch : where === "tail" ? A.tailTip : st.type === "anal" ? A.vent : A.mouth;
+  const leftEntry = entry && entry[0] < (x0 + x1) / 2 - 10;
+  const preyLen = stage === "swallowing" ? 88 * ratios[0] : stage === "before" ? ratios.reduce((s, r) => s + 60 * r + 6, 0) : 0;
+  let U = Math.min(1.18, 116 / 100, 212 / (W + preyLen + 8)); if (stage === "before") U = Math.min(U, 116 / (100 * Math.max(1, ...ratios)));
+  const px = 4 - x0 * U + (leftEntry && stage === "swallowing" ? preyLen * U : 0), py = 124 - 100 * U;
+  const G = (x, y) => [px + x * U, py + y * U];
+  const preyPlan = st.prey.map(p => vgPlan(p.species, p.you ? "human" : "human"));
+  const preyCol = p => p.you ? per : PREY_PALE;
+  const preyBody = (i, s) => { const p = st.prey[i], pl = preyPlan[i]; return vgBody({ ...pl, sex: p.sex || "female", gain: 0, full: {} }); };
+  let out = "";
+  // prey outside: standing (before) or going in head first (swallowing)
+  if (stage === "before") {
+    let x = G(x1, 0)[0] + 8;
+    st.prey.forEach((p, i) => { const k = Math.max(0.08, U * ratios[i]), b = preyBody(i), [bx0, bx1] = b.a.w || [0, 100];
+      out += `<g transform="translate(${x - bx0 * k} ${124 - 100 * k}) scale(${k})" fill="${preyCol(p)}" stroke="${preyCol(p)}" class="vg-prey">${b.s}</g>`;
+      if (k < 0.2) out += `<circle cx="${x + 3}" cy="${118 - 100 * k}" r="5" fill="none" stroke="${preyCol(p)}" stroke-width="1" class="vg-pin"/>`;
+      x += (bx1 - bx0) * k + 6; });
+  }
+  let lump = "";
+  if (stage === "swallowing" && entry) {
+    const p = st.prey[0], b = preyBody(0), k = Math.max(0.07, U * ratios[0]), [ex, ey] = G(...entry), hc = b.a.headC || [40, 15];
+    const rot = leftEntry ? 90 : -90, ins = (leftEntry ? 1 : -1) * (6 * k + 2.5 * U);
+    out += `<g class="vg-slide ${leftEntry ? "l" : "r"}"><g transform="translate(${ex + ins} ${ey}) rotate(${rot}) scale(${k}) translate(${-hc[0]} ${-hc[1]})" fill="${preyCol(p)}" stroke="${preyCol(p)}">${b.s}</g></g>`;
+    // a lump travels from the way in to where the prey ends up
+    const [tx, ty] = G(bcx, bcy), lr = Math.max(2.5, Math.min(bry * U * 0.6, 14 * k + 3));
+    const via = (entry === A.mouth && A.throat ? A.throat : []).map(q => G(...q)).map(q => ` L${q[0].toFixed(1)},${q[1].toFixed(1)}`).join("");
+    lump = `<ellipse rx="${lr * 1.1}" ry="${lr}" fill="${pc}" class="vg-lump"><animateMotion dur="2.6s" repeatCount="indefinite" path="M${ex},${ey}${via} L${tx},${ty}" keyPoints="0;1;1" keyTimes="0;0.8;1" calcMode="linear"/></ellipse>`;
+  }
+  // the pred, the swelling and what's inside it
+  const clipId = "vgc" + (opt.id || "") + Math.random().toString(36).slice(2, 7);
+  const bul = fullness > 0.05 ? `<g class="vg-bulge${st.struggle && inside ? " wob" : ""}">${vE(bcx, bcy, brx, bry)}</g>` : "";
+  let inner = "";
+  if (inside || stage === "after") {
+    const lvl = stage === "after" ? 0.55 : 0.18 + 0.62 * d / 100, top = bcy + bry - 2 * bry * lvl;
+    inner += `<clipPath id="${clipId}">${vE(bcx, bcy, brx * 0.9, bry * 0.88)}</clipPath><g clip-path="url(#${clipId})">`;
+    inner += `<rect x="${bcx - brx}" y="${bcy - bry}" width="${brx * 2}" height="${bry * 2}" fill="#000" opacity=".22" stroke="none"/>`;
+    if (inside) {
+      const n = st.prey.length, op = Math.max(0.12, 0.85 * (1 - d / 100));
+      st.prey.forEach((p, i) => { const ang = n > 1 ? i / n * 6.283 : 0, rr = n > 1 ? Math.min(brx, bry) * 0.42 : 0, cx = bcx + Math.cos(ang) * rr, cy = bcy + Math.sin(ang) * rr * 0.8, r = Math.min(brx, bry) * (n > 1 ? 0.48 : 0.72) * (1 - d / 280) * Math.min(1, 0.55 + ratios[i] * 0.6);
+        inner += `<g fill="${preyCol(p)}" stroke="${preyCol(p)}" opacity="${op.toFixed(2)}" class="vg-in">${vgCurled(cx, cy, r, preyPlan[i])}</g>`; });
+    }
+    inner += `<g class="vg-fluid" style="--lvl:${top}px"><path d="M${bcx - brx * 2} ${top} q${brx * 0.25} -2.2 ${brx * 0.5} 0 t${brx * 0.5} 0 t${brx * 0.5} 0 t${brx * 0.5} 0 t${brx * 0.5} 0 t${brx * 0.5} 0 t${brx * 0.5} 0 t${brx * 0.5} 0 V${bcy + bry + 4} H${bcx - brx * 2}Z" fill="${fluid}" opacity=".72" stroke="none"/></g>`;
+    inner += `${vE(bcx - brx * 0.35, bcy - bry * 0.45, brx * 0.22, bry * 0.12, -25).replace("<ellipse", '<ellipse fill="#fff" opacity=".25" stroke="none"')}</g>`;
+  }
+  const mouth = A.mouth ? G(...A.mouth) : [0, 0];
+  out += `<g transform="translate(${px} ${py}) scale(${U})" fill="${pc}" stroke="${pc}" class="vg-pred">${body.s}${bul}${inner}</g>${lump}`;
+  return `<svg class="vg-svg" viewBox="0 0 220 130" data-mouth="${mouth.map(v => v.toFixed(1)).join(",")}" role="img" aria-label="${esc(voreCaption(st))}"><line x1="0" y1="124.5" x2="220" y2="124.5" stroke="var(--line)" stroke-width="1"/>${out}</svg>`;
+}
+function voreCaption(st) {
+  const place = VG_PLACE[VG_WHERE[st.type] || "belly"], who = st.prey.some(p => p.you) ? "You" : st.pred.you ? (st.prey.length > 1 ? "Your prey" : "Your prey") : st.prey.length > 1 ? `${st.prey.length} prey` : "Prey";
+  if (st.stage === "before") return `${who} · about to be eaten`;
+  if (st.stage === "swallowing") return `${who} · going ${st.type === "cock" ? "down the shaft" : st.type === "unbirth" ? "into the womb" : st.type === "breast" ? "into a breast" : st.type === "tail" ? "into the tail" : st.type === "anal" ? "in from behind" : "down the throat"}`;
+  if (st.stage === "after") return `Digested${st.gain ? ` · +${st.gain}% ${st.gainWhere === "all" ? "everywhere" : st.gainWhere}` : ""}`;
+  return `${who} · in the ${place}${st.digest ? ` · ${st.digest}% digested` : ""}${st.struggle ? " · struggling" : ""}`;
+}
+// the card in the chat's corner (tap: shrink to an icon and back); on wide computer screens it lives in the scene panel instead
+let VG_KEY = "";
+function renderVore() {
+  const card = $("voreCard"); if (!card) return;
+  const st = !$("chat").hidden ? voreState() : null, wide = document.documentElement.classList.contains("wider");
+  if (!st || wide) { card.hidden = true; VG_KEY = ""; return; }
+  const key = JSON.stringify(st) + personaColor() + (S.settings.voreMin ? 1 : 0);
+  card.hidden = false; card.classList.toggle("min", !!S.settings.voreMin);
+  try { card.style.top = ($("msgs").offsetTop + 8) + "px"; } catch {}
+  if (key === VG_KEY) return; VG_KEY = key;
+  const pct = st.stage === "after" ? 100 : st.digest || 0;
+  card.innerHTML = S.settings.voreMin
+    ? `<button type="button" class="vg-icon" aria-label="Show the vore picture"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--line)" stroke-width="3"/><circle cx="18" cy="18" r="15" fill="none" stroke="${VG_FLUID[VG_TYPE_FLUID[st.type] || "acid"]}" stroke-width="3" stroke-dasharray="${(pct / 100 * 94.2).toFixed(1)} 94.2" transform="rotate(-90 18 18)"/><ellipse cx="18" cy="19" rx="8" ry="7" fill="var(--accent)"/><circle cx="20" cy="19" r="3" fill="${st.prey.some(p => p.you) ? personaColor() : PREY_PALE}"/></svg></button>`
+    : `<button type="button" class="vg-body" aria-label="Shrink the vore picture">${voreSVG(st, { id: "c" })}<div class="vg-cap">${esc(voreCaption(st))}</div></button>`;
+  card.querySelector("button").onclick = async () => { S.settings.voreMin = !S.settings.voreMin; await saveSettings(); renderVore(); };
+}
+// the pred belches: a puff from the mouth and the belly squeezes
+function voreBurp() {
+  for (const svg of document.querySelectorAll(".vg-svg")) {
+    const [x, y] = (svg.dataset.mouth || "0,0").split(",").map(Number); if (!x && !y) continue;
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g"); g.setAttribute("class", "vg-puff");
+    g.innerHTML = [0, 1, 2].map(i => `<circle cx="${x + 4 + i * 5}" cy="${y - 2 - i * 3}" r="${3 + i * 1.5}" style="animation-delay:${i * 90}ms"/>`).join("");
+    svg.appendChild(g); setTimeout(() => g.remove(), 1500);
+    svg.classList.remove("burp"); void svg.getBoundingClientRect(); svg.classList.add("burp"); setTimeout(() => svg.classList.remove("burp"), 950);
+  }
+}
 
 // --- Stroke pacer: an abstract rhythm guide the story sets the pace for
 const PACES = ["stop", "slow", "steady", "fast", "edge", "cum"];
@@ -3940,10 +4375,12 @@ function playSettings(panels) {
   f.innerHTML = `<h3>Screen effects</h3>
     <label class="check"><input type="checkbox" id="sFxW" ${st.fxWeather !== false ? "checked" : ""}> Weather and light from the scene (rain, snow, embers, fireflies, bubbles…)</label>
     <label class="check"><input type="checkbox" id="sFxS" ${st.fxScene !== false ? "checked" : ""}> Effects for what's happening (pulses and vignettes for sex, oral, kissing, vore…)</label>
+    <label class="check"><input type="checkbox" id="sVg" ${st.voreGfx !== false ? "checked" : ""}> Vore picture: a small card showing the pred, the prey, where they are and how far digestion has gone</label>
     <div class="field"><label>Strength</label><div class="tabs" id="sFxL">${[["off", "Off"], ["subtle", "Subtle"], ["full", "Full"]].map(([k, l]) => `<button type="button" class="tab ${(st.fxLevel || "full") === k ? "on" : ""}" data-l="${k}">${l}</button>`).join("")}</div></div>`;
   panels.look.insertBefore(f, panels.look.children[1] || null);
   f.querySelector("#sFxW").onchange = e => { st.fxWeather = e.target.checked; save(); };
   f.querySelector("#sFxS").onchange = e => { st.fxScene = e.target.checked; save(); };
+  f.querySelector("#sVg").onchange = e => { st.voreGfx = e.target.checked; save(); };
   f.querySelectorAll("#sFxL [data-l]").forEach(b => b.onclick = () => { st.fxLevel = b.dataset.l; f.querySelectorAll("#sFxL .tab").forEach(x => x.classList.toggle("on", x === b)); save(); });
 }
 
@@ -4483,7 +4920,7 @@ function burst(sp) {
 const SND_TYPES = {
   bubbles: "Gurgles", churn: "Stomach churns", swallow: "Swallows & gulps", gas: "Burps", fart: "Farts", liquid: "Splashes & wet",
   cumbub: "Sloshing", squelch: "Squelches & squishes", vorebed: "Inside a stomach (bed)",
-  gag: "Gagging", plap: "Plapping & slaps", flush: "Toilet flush", loop_kiss: "Loop · kissing", loop_shit: "Loop · shitting",
+  gag: "Gagging", plap: "Plapping & slaps", flush: "Toilet flush", loop_lick: "Loop · Licking", loop_kiss: "Loop · kissing", loop_shit: "Loop · shitting",
   loop_vore: "Loop · gurgling", loop_swallow: "Loop · swallowing", loop_sex: "Loop · sex", loop_oral: "Loop · oral", cum: "Cum", condom: "Condom squelch", shit: "Plops", shitbones: "Bone plops", sex: "Wet sex sounds", kiss: "Kisses",
   beat: "Heartbeats", struggle: "Muffled struggling", crack: "Cracks & crunches", hit: "Hits", stomp: "Stomps & thuds", boom: "Booms",
   slash: "Slashes", fire: "Fire", wet: "Subtle wet noises", loop_vore_bones: "Loop · brutal digestion (bones)", loop_vore_m: "Loop · gurgling (muffled)", loop_vore_bones_m: "Loop · brutal digestion (muffled)", sizzle: "Acid & sizzling", crack_m: "Cracks & crunches (muffled)", lick: "Licks", rip: "Rips & zippers", door: "Doors", thunder: "Thunder", climax: "Climax bursts", gape: "Gape farts", loop_cum: "Loop · messy cum", swing: "Swings (whoosh)", clash: "Clangs & blocks", stab: "Stabs & thrusts", arrow: "Arrows", metal: "Metal falling/breaking", sheath: "Drawing & sheathing", smash: "Wood smashing", gun: "Gunshots",
@@ -4491,7 +4928,7 @@ const SND_TYPES = {
   coins: "Coins", item: "Items", bag: "Inventory bag", potion: "Potions", gem: "Gems & valuables", windup: "Wind-ups (an attack on its way)", sever: "Severing & beheading", heavyhit: "Crushing blunt hits", mine: "Pickaxe on stone", darkmagic: "Dark / unstable magic", loop_digest: "Loop · active digestion (layer)", loop_digest_m: "Loop · active digestion (muffled layer)", chew: "Chewing & biting", gore: "Gore", loop_chew: "Loop · chewing (hard vore)", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
   amb_campfire: "Bg · Campfire", amb_fireplace: "Bg · Fireplace", amb_tavern: "Bg · Tavern", amb_market: "Bg · Crowd & market", amb_city: "Bg · City",
   amb_village: "Bg · Village", amb_office: "Bg · Office", amb_combat: "Bg · Combat", amb_forest: "Bg · Forest", amb_nature: "Bg · Nature",
-  amb_night: "Bg · Night", amb_rain: "Bg · Rain", amb_light_rain: "Bg · Light rain (birds)", amb_rain_shelter: "Bg · Rain on a tent/umbrella", amb_rain_vehicle: "Bg · Rain on a car/hut roof", amb_rain_indoors: "Bg · Rain outside (indoors)", amb_storm: "Bg · Storm", amb_storm_indoors: "Bg · Storm outside (indoors)", amb_wind: "Bg · Wind", amb_wind_indoors: "Bg · Wind outside (indoors)", amb_desert: "Bg · Desert", amb_road: "Bg · Road & traffic", amb_underwater_inside: "Bg · Underwater, enclosed", amb_arena: "Bg · Arena crowd", amb_panic: "Bg · Panicked crowd", amb_flying: "Bg · Flying (wings)", amb_gunfight: "Bg · Gunfight", amb_shower: "Bg · Shower", amb_shower_nearby: "Bg · Shower in the next room", amb_beach: "Bg · Beach & ocean", amb_river: "Bg · River & water",
+  amb_night: "Bg · Night", amb_rain: "Bg · Rain", amb_light_rain: "Bg · Light rain (birds)", amb_rain_shelter: "Bg · Rain on a tent/umbrella", amb_rain_vehicle: "Bg · Rain on a car/hut roof", amb_rain_indoors: "Bg · Rain outside (indoors)", amb_storm: "Bg · Storm", amb_storm_indoors: "Bg · Storm outside (indoors)", amb_wind: "Bg · Wind", amb_wind_indoors: "Bg · Wind outside (indoors)", amb_desert: "Bg · Desert", amb_jungle: "Bg · Jungle", amb_savanna: "Bg · Savanna", amb_party: "Bg · Party", amb_castle: "Bg · Castle", amb_lava: "Bg · Lava", amb_road: "Bg · Road & traffic", amb_underwater_inside: "Bg · Underwater, enclosed", amb_arena: "Bg · Arena crowd", amb_panic: "Bg · Panicked crowd", amb_flying: "Bg · Flying (wings)", amb_gunfight: "Bg · Gunfight", amb_shower: "Bg · Shower", amb_shower_nearby: "Bg · Shower in the next room", amb_beach: "Bg · Beach & ocean", amb_river: "Bg · River & water",
   amb_cave: "Bg · Cave", amb_dungeon: "Bg · Dungeon", amb_snow: "Bg · Snow & wind", amb_underwater: "Bg · Underwater", amb_spaceship: "Bg · Spaceship",
   amb_indoors: "Bg · Quiet room", wave: "Other"
 };
@@ -4508,7 +4945,7 @@ const SND_GROUPS = [
   ["RPG", ["coins", "gem", "item", "bag", "potion"]],
   ["Music by scene", MUS_KEYS.filter(k => k !== "none").map(k => "mus_" + k)],
   ["Stings by event", EVT_KEYS.filter(k => k !== "none").map(k => "sting_" + k)],
-  ["Scene loops", ["loop_vore", "loop_vore_m", "loop_vore_bones", "loop_vore_bones_m", "loop_digest", "loop_digest_m", "loop_chew", "loop_cum", "loop_swallow", "loop_sex", "loop_oral", "loop_kiss", "loop_shit", "vorebed"]],
+  ["Scene loops", ["loop_vore", "loop_vore_m", "loop_vore_bones", "loop_vore_bones_m", "loop_digest", "loop_digest_m", "loop_chew", "loop_cum", "loop_swallow", "loop_sex", "loop_oral", "loop_kiss", "loop_lick", "loop_shit", "vorebed"]],
   ["Backgrounds", Object.keys(SND_TYPES).filter(k => k.startsWith("amb_"))]
 ];
 const SND_HELP = {
@@ -4520,7 +4957,7 @@ const SND_HELP = {
   breath: "Breaths, pants and exhales (the only voice sounds the app keeps).",
   loop_vore: "A seamless loop that plays continuously while someone is in a stomach.", loop_swallow: "A seamless loop that plays while someone is being swallowed.",
   loop_sex: "A seamless loop that plays continuously during sex.", loop_oral: "A seamless loop that plays continuously during oral.",
-  loop_kiss: "A seamless loop that plays while characters are kissing.", loop_shit: "A seamless loop that plays while someone is shitting.",
+  loop_lick: "A seamless loop that plays while someone is licking.", loop_kiss: "A seamless loop that plays while characters are kissing.", loop_shit: "A seamless loop that plays while someone is shitting.",
   flush: "A toilet flush. Plays for FLUSH sounds.", kiss: "Kisses and smooches. Plays for MWAH, SMOOCH and kiss sounds, and during kissing scenes.",
   shit: "Plops and splashes into water. Plays for PLOP and pooping sounds, and during shitting scenes.", fart: "Farts. Plays for fart sounds, and now and then during shitting scenes.",
   wet: "Quiet wet sounds (churning, fingering) played softly under sex and oral scenes.", loop_vore_bones: "Stomach loop with bones cracking. Only plays when the story makes clear the digestion is brutal (crushing, killing).",
@@ -4539,6 +4976,8 @@ const SND_HELP = {
   wave: "Sounds the app couldn't place. Move them with the dropdown."
 };
 const SND_CHAIN_EXTRA = { gag: ["oral"], plap: ["sex"], sex: ["plap"], lick: ["oral", "liquid"], sizzle: ["fire"], rip: ["slash"], door: ["hit", "stomp"], oral: ["liquid"], thunder: ["boom"], windup: ["swing", "slash"], sever: ["gore", "slash"], heavyhit: ["hit", "clash"], mine: ["hit", "crack"], gem: ["item", "coins"], darkmagic: ["portal", "spell", "magic"], spell_fire: ["spell", "fire", "magic"], spell_ice: ["spell", "magic"], spell_earth: ["spell", "magic"], spell_wind: ["spell", "wind", "magic"], spell_lightning: ["spell", "zap", "magic"], heal: ["spell", "magic"], beam: ["zap", "spell", "magic"], portal: ["darkmagic", "spell", "magic"], spell: ["magic"], gun: ["boom", "hit"], clash: ["hit"], swing: ["windup", "slash", "wind"], stab: ["slash", "hit"], arrow: ["hit"], metal: ["clash", "hit"], sheath: ["slash"], smash: ["crack", "hit"], climax: ["cum"], gape: ["fart"], chew: ["crack", "squelch"], gore: ["squelch", "liquid"] };
+// categories that never had recordings of their own borrow the nearest real ones (no made-up sounds any more)
+for (const [k, v] of Object.entries({ fire: ["spell_fire"], zap: ["spell_lightning", "beam"], magic: ["heal", "spell_wind", "spell_ice"], wind: ["spell_wind", "windup", "breath"], zzz: ["breath"] })) SND_CHAIN_EXTRA[k] = [...new Set([...(SND_CHAIN_EXTRA[k] || []), ...v])];
 const SND_CHAIN = { cumbub: ["liquid"], condom: ["squelch", "cum"], shit: ["squelch"], shitbones: ["shit", "squelch", "crack"], churn: ["bubbles"], bubbles: ["churn"], liquid: ["cumbub", "squelch"], fart: ["gas"], cum: ["liquid"], struggle: ["squelch"] };
 const SND_SUB = [["clash", /^(cla+n+[gk]+|kla+n+[gk]+|ka+-?ti+n+g+)$/i], ["arrow", /^(thwi+p+|fwi+p+|twa+n+g+)$/i], ["thunder", /(^kr+a+k+(a?-?boo+m)?|^ka-?boo+m|thunder|^kr+a+-?ka+-?boo)/i], ["flush", /^(ker-?)?flu+sh/i], ["chew", /^(cho+m+p|cha+m+p|chm+p|mu+n+ch|chew|gna+sh|gna+w)/i], ["gag", /(^ga+g|^gla+[ck]|^glu+ck|^gwa+[ck]|^hu?r+k|^ghk|^hl+k|cho+k|^gck|^gu+[ck]k)/i], ["plap", /(^pla+p|^pa+p+$|^cla+p|^sma+ck|^thwa+p|^sla+p)/i],
   ["squelch", /(sque+l+ch|squi+sh|squo+r?ch|squi+ck|shlo+r?ck|splo+r?ch|squee+z|squi+r?k)/i], ["cumbub", /(slo+sh|swa+sh|slo+r+sh|slu+sh)/i], ["struggle", /(thra+sh|wri+th|squi+r+m|ki+ck|mmph|mmf+|mrph|thu+m+p+.*thu+m+p)/i], ["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ]; // swallow and churn words above are listed after the new ones
@@ -4627,7 +5066,7 @@ async function sndQuality(blob, type) {
 let BUILTIN = null;
 async function builtinSounds() {
   if (BUILTIN) return BUILTIN;
-  const pack = async (dir, pre) => { try { const m = await (await fetch(`sounds/${dir}/manifest.json`)).json(); return m.files.map(f => ({ id: pre + f.p, type: f.t, name: f.n, len: f.d, builtin: true })); } catch { return []; } };
+  const pack = async (dir, pre) => { try { const m = await (await fetch(`sounds/${dir}/manifest.json`)).json(); return m.files.map(f => ({ id: pre + f.p, type: f.t, name: f.n, len: f.d, builtin: true, ...(f.b ? { belch: f.b } : {}) })); } catch { return []; } };
   // Jeschke's vore pack (ids b:) and the Lanternroom extras cut from the owner's packs (ids x:): kisses, plops, farts, flush, loops
   BUILTIN = [...await pack("jeschke", "b:"), ...await pack("extra", "x:")];
   return BUILTIN;
@@ -4702,13 +5141,18 @@ async function playSfx(cat, text, hint) {
       const muf = muffleFor(pick.type) || (pick.type === "thunder" && /indoors|vehicle/.test(scAmb || "") ? "medium" : false); // thunder through walls
       if (muf) { const pre = await poolFor([pick.type + "_m"]); if (pre.length) pick = pre[Math.floor(Math.random() * pre.length)]; } // ready-muffled versions (bone cracks)
       const url = await sndURL(pick.id);
-      if (url) { const a = trackAudio(new Audio(url)); if (muf && !pick.type.endsWith("_m")) muffleEl(a, muf); a.volume = vol; await a.play(); if (pick.type !== "thunder") capAudio(a, vol); return; }
+      if (url) { const a = trackAudio(new Audio(url)); if (muf && !pick.type.endsWith("_m")) muffleEl(a, muf); a.volume = vol; await a.play(); if (pick.type === "gas" || pick.type === "gas_m") voreBurp(); if (pick.type !== "thunder") capAudio(a, vol); return; }
     }
   } catch {}
-  synthSfx(sub && SYNTH[sub] ? sub : cat, vol);
+  // only real recordings play; the one made-up sound left is the heartbeat thump
+  if (sub === "heart" || cat === "beat" || sub === "beat") synthSfx("beat", vol);
 }
 // --- tiny synthesiser (Web Audio). Each sound is a few envelopes on tones and filtered noise.
-function acx() { if (!AC) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); } if (AC.state === "suspended") AC.resume(); return AC; }
+function acx() {
+  if (!AC || AC.state === "closed") { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C();
+    // the system can pause the sound engine (another window, a headset change); wake it again while the app is on screen
+    const ac = AC; ac.addEventListener("statechange", () => { if (ac === AC && ac.state !== "running" && ac.state !== "closed" && !away()) setTimeout(() => { if (ac === AC && ac.state !== "running" && ac.state !== "closed") ac.resume().catch(() => {}); }, 250); }); }
+  if (AC.state !== "running") AC.resume().catch(() => {}); return AC; }
 function sTone(ac, out, { type = "sine", f0, f1 = f0, t = 0, dur, g = 0.5, vib = 0, vibF = 8 }) {
   const o = ac.createOscillator(), e = ac.createGain(), at = ac.currentTime + t;
   o.type = type; o.frequency.setValueAtTime(f0, at); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), at + dur);
@@ -4725,44 +5169,14 @@ function sNoise(ac, out, { t = 0, dur, g = 0.4, type = "bandpass", f0 = 800, f1 
   n.connect(f).connect(e).connect(out); n.start(at, Math.random()); n.stop(at + dur + 0.02);
 }
 const rr = (a, b) => a + Math.random() * (b - a);
-const gurgle = (ac, o, n, low) => { let t = 0; for (let i = 0; i < n; i++) { const d = rr(0.05, 0.14), f = rr(low ? 90 : 160, low ? 260 : 520); sTone(ac, o, { f0: f, f1: f * rr(1.4, 2.4), t, dur: d, g: 0.35 }); sNoise(ac, o, { t, dur: d, g: 0.12, f0: f * 2, q: 6 }); t += d * rr(0.5, 1.1); } };
+// the heartbeat is the one sound still made on the device (everything else plays real recordings)
 const SYNTH = {
-  bubbles: (ac, o) => gurgle(ac, o, 9, true),
-  cumbub: (ac, o) => { gurgle(ac, o, 7, false); sNoise(ac, o, { dur: 0.5, g: 0.15, type: "lowpass", f0: 900, f1: 300 }); },
-  churn: (ac, o) => { sTone(ac, o, { type: "sawtooth", f0: 60, f1: 45, dur: 1.1, g: 0.18, vib: 12, vibF: 5 }); sNoise(ac, o, { dur: 1.1, g: 0.2, type: "lowpass", f0: 300, f1: 140, q: 3 }); gurgle(ac, o, 4, true); },
-  swallow: (ac, o) => { sTone(ac, o, { f0: 420, f1: 120, dur: 0.22, g: 0.5 }); sNoise(ac, o, { t: 0.02, dur: 0.18, g: 0.25, f0: 700, f1: 200, q: 4 }); sTone(ac, o, { f0: 90, f1: 60, t: 0.18, dur: 0.25, g: 0.5 }); },
-  gas: (ac, o) => { sTone(ac, o, { type: "sawtooth", f0: rr(85, 110), f1: 65, dur: 0.55, g: 0.35, vib: 18, vibF: 22 }); sNoise(ac, o, { dur: 0.5, g: 0.15, type: "lowpass", f0: 500, f1: 250 }); },
-  fart: (ac, o) => { sTone(ac, o, { type: "sawtooth", f0: rr(70, 95), f1: 50, dur: 0.6, g: 0.35, vib: 25, vibF: 30 }); sNoise(ac, o, { dur: 0.6, g: 0.25, type: "lowpass", f0: 350, f1: 150 }); },
-  liquid: (ac, o) => { for (let i = 0; i < 3; i++) sTone(ac, o, { f0: rr(300, 500), f1: rr(900, 1400), t: i * 0.09, dur: 0.07, g: 0.35 }); sNoise(ac, o, { dur: 0.25, g: 0.12, f0: 1200, f1: 500, q: 2 }); },
-  cum: (ac, o) => { sNoise(ac, o, { dur: 0.22, g: 0.35, type: "lowpass", f0: 1600, f1: 400 }); sTone(ac, o, { f0: 260, f1: 700, t: 0.04, dur: 0.1, g: 0.25 }); sNoise(ac, o, { t: 0.25, dur: 0.18, g: 0.25, type: "lowpass", f0: 1200, f1: 300 }); },
-  condom: (ac, o) => { sNoise(ac, o, { dur: 0.45, g: 0.35, f0: 300, f1: 900, q: 5 }); sTone(ac, o, { f0: 140, f1: 90, dur: 0.4, g: 0.3, vib: 20, vibF: 12 }); },
-  shit: (ac, o) => { sTone(ac, o, { f0: 220, f1: 55, dur: 0.18, g: 0.6 }); sNoise(ac, o, { t: 0.04, dur: 0.25, g: 0.18, type: "lowpass", f0: 900, f1: 200 }); },
-  shitbones: (ac, o) => { SYNTH.shit(ac, o); for (let i = 0; i < 3; i++) sNoise(ac, o, { t: 0.08 + i * 0.05, dur: 0.03, g: 0.25, type: "highpass", f0: 2500 }); },
-  sex: (ac, o) => { for (let i = 0; i < 2; i++) { sNoise(ac, o, { t: i * 0.22, dur: 0.08, g: 0.45, type: "lowpass", f0: 1400, f1: 500 }); sTone(ac, o, { f0: 160, f1: 90, t: i * 0.22, dur: 0.08, g: 0.3 }); } },
-  kiss: (ac, o) => { sTone(ac, o, { f0: 700, f1: 1500, dur: 0.07, g: 0.3 }); sNoise(ac, o, { t: 0.05, dur: 0.04, g: 0.3, type: "highpass", f0: 2000 }); },
   beat: (ac, o) => { sTone(ac, o, { f0: 70, f1: 45, dur: 0.14, g: 0.8 }); sTone(ac, o, { f0: 65, f1: 42, t: 0.22, dur: 0.16, g: 0.65 }); },
-  struggle: (ac, o) => { for (let i = 0; i < 3; i++) { sTone(ac, o, { f0: rr(70, 100), f1: 45, t: i * rr(0.12, 0.2), dur: 0.12, g: 0.5 }); sNoise(ac, o, { t: i * 0.15, dur: 0.1, g: 0.15, type: "lowpass", f0: 400 }); } },
-  crack: (ac, o) => { for (let i = 0; i < 4; i++) sNoise(ac, o, { t: i * rr(0.02, 0.05), dur: 0.035, g: 0.45, type: "highpass", f0: rr(1500, 3500) }); },
-  hit: (ac, o) => { sNoise(ac, o, { dur: 0.12, g: 0.5, type: "lowpass", f0: 2500, f1: 400 }); sTone(ac, o, { f0: 140, f1: 55, dur: 0.15, g: 0.6 }); },
-  stomp: (ac, o) => { sTone(ac, o, { f0: 90, f1: 35, dur: 0.3, g: 0.8 }); sNoise(ac, o, { dur: 0.25, g: 0.25, type: "lowpass", f0: 600, f1: 120 }); },
-  boom: (ac, o) => { sTone(ac, o, { f0: 80, f1: 28, dur: 1.0, g: 0.8 }); sNoise(ac, o, { dur: 1.2, g: 0.5, type: "lowpass", f0: 1800, f1: 80 }); },
-  slash: (ac, o) => sNoise(ac, o, { dur: 0.25, g: 0.4, type: "highpass", f0: 1200, f1: 6000 }),
-  fire: (ac, o) => { sNoise(ac, o, { dur: 0.7, g: 0.25, f0: 500, f1: 1600, q: 0.7 }); for (let i = 0; i < 6; i++) sNoise(ac, o, { t: rr(0, 0.6), dur: 0.02, g: 0.3, type: "highpass", f0: 3000 }); },
-  zap: (ac, o) => sTone(ac, o, { type: "square", f0: 1100, f1: 160, dur: 0.25, g: 0.18, vib: 200, vibF: 60 }),
-  magic: (ac, o) => [880, 1175, 1480, 1760].forEach((f, i) => sTone(ac, o, { f0: f, t: i * 0.06, dur: 0.35, g: 0.18 })),
-  zzz: (ac, o) => sTone(ac, o, { f0: 180, f1: 150, dur: 0.8, g: 0.15, vib: 4, vibF: 3 }),
-  wind: (ac, o) => sNoise(ac, o, { dur: 0.9, g: 0.3, f0: 400, f1: 900, q: 1.5 }),
-  breath: (ac, o) => sNoise(ac, o, { dur: 0.7, g: 0.22, f0: 900, f1: 500, q: 0.8 }),
-  sizzle: (ac, o) => { sNoise(ac, o, { dur: 1.2, g: 0.28, type: "highpass", f0: 5000, f1: 3500, q: 0.7 }); for (let i = 0; i < 6; i++) sNoise(ac, o, { t: Math.random() * 1.0, dur: 0.05, g: 0.25, f0: 6000, q: 3 }); },
-  lick: (ac, o) => { sNoise(ac, o, { dur: 0.35, g: 0.35, f0: 1800, f1: 900, q: 2 }); sTone(ac, o, { f0: 900, f1: 500, dur: 0.12, t: 0.22, g: 0.12 }); },
-  rip: (ac, o) => { for (let i = 0; i < 14; i++) sNoise(ac, o, { t: i * 0.035, dur: 0.04, g: 0.3, f0: 1500 + i * 120, q: 1.5 }); },
-  door: (ac, o) => { sTone(ac, o, { type: "sawtooth", f0: 220, f1: 330, dur: 0.6, g: 0.06, vib: 30, vibF: 18 }); sTone(ac, o, { f0: 90, f1: 50, t: 0.62, dur: 0.25, g: 0.6 }); },
-  wave: (ac, o) => sTone(ac, o, { f0: 400, f1: 700, dur: 0.12, g: 0.25 })
 };
 function synthSfx(cat, vol) {
   const ac = acx(); if (!ac) return;
   const out = ac.createGain(); out.gain.value = vol; out.connect(ac.destination);
-  (SYNTH[cat] || SYNTH[FX_CSS[cat]] || SYNTH.wave)(ac, out);
+  (SYNTH[cat] || SYNTH.beat)(ac, out);
 }
 // audio files picked one by one, as a whole folder, or dropped onto the screen; zips are unpacked; anything else is ignored
 async function importSounds(items, say) {
@@ -4938,9 +5352,9 @@ function openSoundPack() {
 
 /* ---------- Ambience: background soundscape + activity loops ---------- */
 // The model labels each reply with [[... | ambience: x | activity: y]]; older replies fall back to keyword guesses.
-const AMB_KEYS = ["campfire", "fireplace", "tavern", "market", "city", "village", "office", "combat", "forest", "nature", "night", "rain", "light_rain", "rain_shelter", "rain_vehicle", "rain_indoors", "storm", "storm_indoors", "wind", "wind_indoors", "shower", "shower_nearby", "desert", "arena", "panic", "flying", "gunfight", "road", "underwater_inside", "beach", "river", "cave", "dungeon", "snow", "underwater", "spaceship", "indoors", "none"];
-const ACT_KEYS = ["none", "swallow", "chew", "vore", "struggle", "sex", "oral", "mess", "kiss", "shit"];
-const AMB_LABEL = { campfire: "Campfire", fireplace: "Fireplace", tavern: "Tavern", market: "Crowd", city: "City", village: "Village", office: "Office", combat: "Combat", forest: "Forest", nature: "Nature", night: "Night", rain: "Rain", storm: "Storm", light_rain: "Light rain", rain_shelter: "Rain overhead", rain_vehicle: "Rain on the roof", rain_indoors: "Rain outside", storm_indoors: "Storm outside", wind: "Wind", wind_indoors: "Wind outside", shower: "Shower", shower_nearby: "Shower nearby", desert: "Desert", road: "Road & traffic", underwater_inside: "Underwater, enclosed", arena: "Arena crowd", panic: "Panic", flying: "Flying", gunfight: "Gunfight", beach: "Beach", river: "River", cave: "Cave", dungeon: "Dungeon", snow: "Snow & wind", underwater: "Underwater", spaceship: "Spaceship", indoors: "Quiet room" };
+const AMB_KEYS = ["campfire", "fireplace", "tavern", "market", "city", "village", "office", "combat", "forest", "jungle", "savanna", "nature", "night", "party", "castle", "lava", "rain", "light_rain", "rain_shelter", "rain_vehicle", "rain_indoors", "storm", "storm_indoors", "wind", "wind_indoors", "shower", "shower_nearby", "desert", "arena", "panic", "flying", "gunfight", "road", "underwater_inside", "beach", "river", "cave", "dungeon", "snow", "underwater", "spaceship", "indoors", "none"];
+const ACT_KEYS = ["none", "swallow", "chew", "vore", "struggle", "sex", "oral", "mess", "inflate", "kiss", "lick", "shit"];
+const AMB_LABEL = { jungle: "Jungle", savanna: "Savanna", party: "Party", castle: "Castle", lava: "Lava", campfire: "Campfire", fireplace: "Fireplace", tavern: "Tavern", market: "Crowd", city: "City", village: "Village", office: "Office", combat: "Combat", forest: "Forest", nature: "Nature", night: "Night", rain: "Rain", storm: "Storm", light_rain: "Light rain", rain_shelter: "Rain overhead", rain_vehicle: "Rain on the roof", rain_indoors: "Rain outside", storm_indoors: "Storm outside", wind: "Wind", wind_indoors: "Wind outside", shower: "Shower", shower_nearby: "Shower nearby", desert: "Desert", road: "Road & traffic", underwater_inside: "Underwater, enclosed", arena: "Arena crowd", panic: "Panic", flying: "Flying", gunfight: "Gunfight", beach: "Beach", river: "River", cave: "Cave", dungeon: "Dungeon", snow: "Snow & wind", underwater: "Underwater", spaceship: "Spaceship", indoors: "Quiet room" };
 // weather heard from where the characters are (checked before the plain place guesses)
 function weatherGuess(t) {
   const shower = /\bshower(s|ing)?\b/i, wet = /\b(rain\w*|drizzl\w*|downpour|storm\w*|thunder\w*)\b/i;
@@ -4957,7 +5371,7 @@ function weatherGuess(t) {
   return null;
 }
 const AMB_GUESS = [["underwater_inside", /\b(submarine|diving bell|underwater (base|station|dome|habitat)|bathysphere)\b/i], ["road", /\b(highway|freeway|motorway|road ?trip|driv(es|ing) (down|along|through)|roadside|side of the road|traffic)\b/i], ["gunfight", /\b(gunfire|shootout|gunfight|bullets (fly|whiz|rip)|open(s|ed)? fire)\b/i], ["arena", /\b(arena|colosseum|stadium|fighting pit|tournament grounds)\b/i], ["panic", /\b(panic\w*|screaming crowd|stampede|people (flee|run screaming)|evacuat\w*)\b/i],
-  ["flying", /\b(soar\w*|in flight|mid-?air|flying|takes? (off|flight)|wings? (beat|beats|pump|flap)\w*)\b/i], ["desert", /\b(desert|dunes?|sand sea|wasteland)\b/i], ["combat", /\b(battle|combat|fight(ing)?|swords? clash|ambush|gunfire|skirmish|duel)\b/i], ["campfire", /campfire|bonfire|\bcamp\b/i], ["fireplace", /fireplace|hearth/i],
+  ["flying", /\b(soar\w*|in flight|mid-?air|flying|takes? (off|flight)|wings? (beat|beats|pump|flap)\w*)\b/i], ["desert", /\b(desert|dunes?|sand sea|wasteland)\b/i], ["combat", /\b(battle|combat|fight(ing)?|swords? clash|ambush|gunfire|skirmish|duel)\b/i], ["lava", /\blava|volcan\w*|magma|molten|hellscape|inferno/i], ["castle", /castle|\bkeep\b|throne ?room|fortress|citadel/i], ["party", /\bparty\b|\brave\b|nightclub|\bclub\b/i], ["jungle", /jungle|rain ?forest/i], ["savanna", /savann?ah?|grassland|\bplains\b|prairie|steppe/i], ["campfire", /campfire|bonfire|\bcamp\b/i], ["fireplace", /fireplace|hearth/i],
   ["tavern", /tavern|\binn\b|\bpub\b|\bbar\b|saloon/i], ["office", /office|cubicle|workplace/i], ["spaceship", /spaceship|starship|space station|cockpit/i], ["underwater", /underwater|beneath the waves/i],
   ["dungeon", /dungeon|crypt|catacomb|prison cell/i], ["cave", /\bcave|cavern|\bmine\b|tunnel/i], ["market", /market|bazaar|festival|crowd/i], ["city", /\bcity|street|downtown|alley|traffic/i],
   ["village", /village|hamlet|\bfarm/i], ["beach", /beach|shore|ocean|\bsea\b|coast|harbou?r|\bdock/i], ["river", /river|stream|creek|waterfall|\blake/i], ["forest", /forest|\bwoods|jungle|grove/i],
@@ -4969,12 +5383,18 @@ function guessAct(msgs) {
   if (/\b(swallow(s|ing)?|gulp(s|ing)?|slid(es|ing)? down (her|his|their|its|the) (throat|gullet))\b/i.test(msgText(msgs.at(-1))) && !/\b(stomach|belly)\b/i.test(msgText(msgs.at(-1)))) return "swallow";
   if (/\b(thrust(s|ing)?|fuck(s|ing|ed)?|pound(s|ing)?|rid(es|ing) (him|her|them)|penetrat\w*|hips slap\w*|bounc(es|ing) on)\b/i.test(t2)) return "sex";
   if (VORE.scat.test(msgText(msgs.at(-1)))) return "shit";
+  if (VORE.inflate.test(msgText(msgs.at(-1))) && VORE.cumword.test(msgText(msgs.at(-1)))) return "inflate";
   if (/\b(dripping (with|in) cum|covered in cum|cum-?(soaked|covered|drenched|filled|inflated|stuffed)|leaking cum|cum (leaks|drips|oozes|pours|gushes|floods)|(gallons|torrents?|flood) of cum)\b/i.test(msgText(msgs.at(-1)))) return "mess";
   if (/\b(chew(s|ing|ed)?|chomp\w*|gnaw\w*|munch\w*|crunch(es|ing)? (down )?on|bit(es|ing)? (down on|into|off)|tear(s|ing)? (into|off|apart)|tore (into|off|apart)|rip(s|ping)? (off|apart|into))\b/i.test(msgText(msgs.at(-1))) && /\b(teeth|jaws?|fangs?|mouth|maw|bite|bites|chew\w*|chomp\w*|gnaw\w*|munch\w*)\b/i.test(msgText(msgs.at(-1)))) return "chew";
   if (VORE.swallow.test(t6) && /\b(stomach|belly|gut|inside)\b/i.test(t6) && !/\b(spat|spits? (him|her|them) out|escap\w*|freed|regurgitat\w*|came out|pushed out)\b/i.test(t2)) return /\b(squirm\w*|struggl\w*|thrash\w*|kick(s|ing)?|wriggl\w*|writh\w*|pound(s|ing)? (on|against))\b/i.test(t2) ? "struggle" : "vore";
+  if (/\b(lick(s|ing|ed)?|lap(s|ping|ped)? (at|up|along)|tongue (drags?|slides?|runs?|trails?|laps?|swirls?) (up|over|along|across|against))\b/i.test(msgText(msgs.at(-1))) && !/\b(pussy|clit|cock|dick|shaft|cunt|ass ?hole)\b/i.test(msgText(msgs.at(-1)))) return "lick";
   if (/\b(kiss(es|ing|ed)?|making out|make out|smooch\w*|lips (lock|press|meet|crash)\w*|tongues? (dance|tangle|swirl)\w*)\b/i.test(msgText(msgs.at(-1)))) return "kiss";
   return "none";
 }
+// is someone cumming right now (mess), is cum only dripping (drip), or is it over (none)?
+const CUMMING_NOW = /\b(cum(s|ming)\b(?! (back|over|here|in|along|with me|on in))|ejaculat(es|ing)|orgasm(s|ing)\b|climax(es|ing)\b|spurt(s|ing)?\b|shoot(s|ing) (his|her|their|its|a|thick|hot) (load|cum|seed|rope)|pump(s|ing) (his|her|their|its|load|cum|seed)|unload(s|ing)|blow(s|ing) (his|her|their|a) load|gush(es|ing)|geyser\w*|erupt(s|ing)|flood(s|ing) (her|him|them|you|your|my|the))/i;
+const CUM_DRIP = /\b(drip(s|ping)?|leak(s|ing)?|ooz(es|ing)|trickl(es|ing)|dribbl(es|ing)|seep(s|ing)|pour(s|ing)|runs? down|running down|spill(s|ing))\b/i;
+const messNow = t => CUMMING_NOW.test(t) ? "mess" : CUM_DRIP.test(t) && /\b(cum|seed|spunk|jizz|load|cream)\b/i.test(t) ? "drip" : "none";
 const YOU_INSIDE = /\b(you|your)\b[^.!?\n]{0,80}\b(inside|into|in)\b[^.!?\n]{0,30}\b(stomach|belly|gut|womb|balls|gullet|throat)|\b(stomach|belly|gut|womb)( walls?)? (squeez|press|clench|churn|knead)\w* (around|against|in on) you\b|\baround you\b[^.!?\n]{0,40}\b(acid|gurgl|churn|flesh)/i;
 function sceneNow() {
   const msgs = (S.chat?.messages || []).filter(m => m.role !== "image" && m.content);
@@ -4982,6 +5402,7 @@ function sceneNow() {
   let amb = last?.amb, act = last?.act;
   if (!amb) { const t = `${S.chat?.place || ""}\n${msgText(last)}`; amb = (!/\b(battle|combat|fight(ing)?|ambush|skirmish|duel)\b/i.test(t) && weatherGuess(t)) || (AMB_GUESS.find(([, re]) => re.test(t)) || ["none"])[0]; }
   if (!act) act = guessAct(msgs);
+  if (act === "mess") act = messNow(msgText(last)); // cumming sounds end with the climax
   // red is only for the user's character getting hurt: the reply says so, or a health-type gauge runs low
   let harm = last?.harm || "none";
   const c = char(), hg = gaugesOf(c).find(g => /health|\bhp\b|hit ?points|vitality|\blife\b|blood/i.test(g.name));
@@ -4995,13 +5416,15 @@ const AMBS = { amb: null, act: null, bed: null, loop: null };
 // calls are queued so quick re-renders never start two soundscapes at once
 let AMB_Q = Promise.resolve();
 function updateAmbience() { AMB_Q = AMB_Q.then(ambienceStep).catch(() => {}); return AMB_Q; }
+// "away" = the app really isn't on screen. Windows can wrongly report a focused window as hidden (covered-window detection), so a focused window always counts as here.
+const away = () => document.hidden && !document.hasFocus();
 async function ambienceStep() {
-  const st = S.settings, inChat = S.chat && !$("chat").hidden && !document.hidden;
+  const st = S.settings, inChat = S.chat && !$("chat").hidden && !away();
   const btn = $("btnAmb"); if (btn) btn.classList.toggle("muted", !!st.ambMuted || (st.ambOn === false && st.actOn === false));
   const scn = inChat ? sceneNow() : { amb: "none", act: "none", harm: "none" }, { amb, act } = scn;
   const wantAmb = inChat && st.ambOn !== false && !st.ambMuted && amb !== "none" ? amb : null;
   const wantAct = inChat && st.actOn !== false && !st.ambMuted && act !== "none" ? act : null;
-  try { updateFx(inChat ? scn : null); renderPacer(); } catch {}
+  try { updateFx(inChat ? scn : null); renderPacer(); renderVore(); } catch {}
   if (btn) btn.title = "Background: " + (AMB_LABEL[amb] || "none") + (act !== "none" ? ` · ${act}` : "") + (st.ambMuted ? " (muted)" : "");
   if (!inChat && (AMBS.amb || AMBS.act || LIVE.size)) {
     // left the chat or the app: everything stops at once, no fade
@@ -5042,10 +5465,14 @@ $("btnAmb").onclick = e => { e.stopPropagation(); const pop = $("ambPop"); if (p
 document.addEventListener("click", e => { const pop = $("ambPop"); if (!pop.hidden && !e.target.closest("#ambPop,#btnAmb")) pop.hidden = true; });
 document.addEventListener("visibilitychange", () => updateAmbience());
 // first tap anywhere unlocks audio on phones
-document.addEventListener("pointerdown", () => { if (AC?.state === "suspended") AC.resume(); }, { passive: true });
+document.addEventListener("pointerdown", () => { if (AC && AC.state !== "running" && AC.state !== "closed") AC.resume().catch(() => {}); }, { passive: true });
+// coming back to the window (PC program, alt-tab, a covered window) wakes the sound engine and restarts the scene sounds
+function wakeAudio() { if (away()) return; if (AC && AC.state !== "running" && AC.state !== "closed") AC.resume().catch(() => {}); if (S.chat && !$("chat").hidden) updateAmbience(); }
+for (const ev of ["focus", "pageshow"]) addEventListener(ev, wakeAudio);
+setInterval(() => { if (document.hasFocus() && AC && AC.state === "suspended" && S.chat) AC.resume().catch(() => {}); }, 3000);
 
 // user files for a sound type (with sensible stand-ins)
-const AMB_FALLBACK = { road: ["city"], underwater_inside: ["underwater"], gunfight: ["combat"], arena: ["market"], panic: ["market", "city"], flying: ["wind"], desert: ["wind"], light_rain: ["rain"], rain_shelter: ["rain"], rain_vehicle: ["rain_shelter", "rain"], rain_indoors: ["rain"], storm_indoors: ["rain_indoors", "storm"], wind_indoors: ["wind"], wind: ["snow"], shower_nearby: ["shower"], nature: ["forest"], forest: ["nature"], night: ["forest", "nature"], storm: ["rain"], rain: ["storm"], fireplace: ["campfire"], campfire: ["fireplace"], market: ["tavern", "city"], tavern: ["market"], village: ["nature", "city"], dungeon: ["cave"], cave: ["dungeon"], snow: ["nature"], river: ["beach"], beach: ["river"] };
+const AMB_FALLBACK = { road: ["city"], underwater_inside: ["underwater"], gunfight: ["combat"], arena: ["market"], panic: ["market", "city"], flying: ["wind"], desert: ["wind"], light_rain: ["rain"], rain_shelter: ["rain"], rain_vehicle: ["rain_shelter", "rain"], rain_indoors: ["rain"], storm_indoors: ["rain_indoors", "storm"], wind_indoors: ["wind"], wind: ["snow"], shower_nearby: ["shower"], nature: ["forest", "savanna"], forest: ["nature", "jungle"], jungle: ["forest"], savanna: ["nature"], party: ["tavern", "market"], castle: ["dungeon"], night: ["forest", "nature"], storm: ["rain"], rain: ["storm"], fireplace: ["campfire"], campfire: ["fireplace"], market: ["tavern", "city"], tavern: ["market"], village: ["nature", "city"], dungeon: ["cave"], cave: ["dungeon"], snow: ["nature"], river: ["beach"], beach: ["river"] };
 const packFiles = poolFor;
 async function startBed(key, muffle) {
   const vol = () => S.settings.ambVol ?? 0.35;
@@ -5066,59 +5493,9 @@ async function startBed(key, muffle) {
     next();
     return { stop() { stopped = true; loopObj?.stop(); const el = a; if (el) ramp(el, 0, 1200, () => el.pause()); }, setVol(v) { loopObj?.setVol(v); if (a && !stopped) a.volume = v; } };
   }
-  return synthBed(key, vol(), muffle);
+  return null; // no recording for this place: silence rather than a made-up hum
 }
 function noiseBuf(ac) { if (!NOISE) { NOISE = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate); const d = NOISE.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; } return NOISE; }
-function synthBed(key, vol, muffle) {
-  const ac = acx(); if (!ac) return null;
-  const out = ac.createGain(); out.gain.value = 0.0001;
-  if (muffle) { const ch = muffleChain(ac); out.connect(ch.input); ch.output.connect(ac.destination); } else out.connect(ac.destination);
-  out.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), ac.currentTime + 2);
-  const nodes = [], timers = [];
-  const bed = (type, f, q, g, lfoRate = 0, lfoDepth = 0) => {
-    const n = ac.createBufferSource(), fl = ac.createBiquadFilter(), gn = ac.createGain();
-    n.buffer = noiseBuf(ac); n.loop = true; fl.type = type; fl.frequency.value = f; fl.Q.value = q; gn.gain.value = g;
-    n.connect(fl).connect(gn).connect(out); n.start(0, Math.random() * 2); nodes.push(n);
-    if (lfoRate) { const l = ac.createOscillator(), lg = ac.createGain(); l.frequency.value = lfoRate; lg.gain.value = lfoDepth; l.connect(lg).connect(gn.gain); l.start(); nodes.push(l); }
-  };
-  const hum = (f, g) => { const o = ac.createOscillator(), gn = ac.createGain(); o.frequency.value = f; gn.gain.value = g; o.connect(gn).connect(out); o.start(); nodes.push(o); };
-  const every = (a, b, fn) => { const tick = () => { try { fn(); } catch {} timers.push(setTimeout(tick, rr(a, b) * 1000)); }; timers.push(setTimeout(tick, rr(a, b) * 1000)); };
-  const bird = () => { const n = 2 + Math.floor(Math.random() * 4), f = rr(2400, 4600); for (let i = 0; i < n; i++) sTone(ac, out, { f0: f * rr(0.9, 1.1), f1: f * rr(0.7, 1.4), t: i * rr(0.08, 0.16), dur: rr(0.05, 0.1), g: 0.07 }); };
-  const crowd = g => [330, 520, 760, 1050].forEach(f => bed("bandpass", f, 3, g, rr(0.6, 2.2), g * 0.8));
-  const crackle = (a, b) => every(a, b, () => sNoise(ac, out, { dur: rr(0.008, 0.035), g: rr(0.08, 0.4), type: "highpass", f0: rr(1500, 4500) }));
-  const R = {
-    campfire: () => { bed("lowpass", 450, 0.7, 0.3, 0.3, 0.12); crackle(0.03, 0.3); every(1.5, 5, () => sTone(ac, out, { f0: 320, f1: 80, dur: 0.05, g: 0.25 })); },
-    fireplace: () => { bed("lowpass", 380, 0.7, 0.22, 0.25, 0.08); crackle(0.06, 0.45); },
-    rain: () => { bed("highpass", 1400, 0.5, 0.32, 0.2, 0.05); bed("lowpass", 320, 0.7, 0.14); every(0.03, 0.15, () => sNoise(ac, out, { dur: 0.01, g: rr(0.02, 0.08), type: "highpass", f0: rr(3000, 6000) })); },
-    storm: () => { R.rain(); bed("bandpass", 600, 0.8, 0.12, 0.08, 0.1); every(9, 22, () => { sNoise(ac, out, { dur: rr(2.5, 4), g: 0.55, type: "lowpass", f0: 900, f1: 60 }); sTone(ac, out, { f0: 60, f1: 30, dur: 2.5, g: 0.35 }); }); },
-    forest: () => { bed("bandpass", 520, 0.6, 0.1, 0.07, 0.07); every(1.2, 4.5, bird); every(6, 14, bird); },
-    nature: () => { bed("bandpass", 700, 0.5, 0.12, 0.05, 0.09); every(3, 8, bird); every(12, 30, () => sTone(ac, out, { type: "sawtooth", f0: 230, f1: 210, dur: 1.2, g: 0.012, vib: 12, vibF: 30 })); },
-    night: () => { bed("bandpass", 450, 0.6, 0.06, 0.05, 0.04); every(0.4, 1.1, () => { for (let i = 0; i < 3; i++) sTone(ac, out, { f0: 4400, t: i * 0.055, dur: 0.03, g: 0.035 }); }); every(10, 25, () => { sTone(ac, out, { f0: 410, f1: 380, dur: 0.35, g: 0.06 }); sTone(ac, out, { f0: 400, f1: 370, t: 0.5, dur: 0.5, g: 0.05 }); }); },
-    beach: () => { bed("lowpass", 700, 0.5, 0.25, 0.09, 0.22); bed("highpass", 2500, 0.4, 0.05, 0.09, 0.04); every(7, 16, () => sTone(ac, out, { f0: 1900, f1: 1200, dur: 0.35, g: 0.04, vib: 60, vibF: 9 })); },
-    river: () => { bed("bandpass", 1500, 0.6, 0.25, 0.5, 0.05); bed("lowpass", 420, 0.5, 0.12); every(0.2, 0.9, () => sTone(ac, out, { f0: rr(500, 900), f1: rr(1200, 2000), dur: 0.04, g: 0.03 })); },
-    cave: () => { hum(55, 0.04); bed("lowpass", 200, 0.7, 0.08); every(1.2, 4, () => { const f = rr(900, 1500); sTone(ac, out, { f0: f, f1: f * 1.6, dur: 0.05, g: 0.2 }); sTone(ac, out, { f0: f, f1: f * 1.6, t: 0.28, dur: 0.05, g: 0.06 }); }); },
-    dungeon: () => { R.cave(); every(5, 14, () => { for (let i = 0; i < 4; i++) sNoise(ac, out, { t: i * rr(0.05, 0.12), dur: 0.08, g: 0.12, f0: rr(2500, 3800), q: 15 }); }); },
-    tavern: () => { crowd(0.05); bed("lowpass", 300, 0.5, 0.05); every(0.8, 3.5, () => { const f = rr(2000, 3300); sTone(ac, out, { f0: f, dur: 0.3, g: 0.04 }); sTone(ac, out, { f0: f * 2.7, dur: 0.15, g: 0.015 }); }); },
-    market: () => { crowd(0.08); every(2, 6, bird); },
-    city: () => { bed("lowpass", 260, 0.6, 0.3, 0.05, 0.08); every(2.5, 8, () => sNoise(ac, out, { dur: rr(2, 3.5), g: 0.18, f0: 300, f1: 900, q: 1.2 })); every(15, 40, () => { sTone(ac, out, { type: "square", f0: 420, dur: 0.25, g: 0.025 }); sTone(ac, out, { type: "square", f0: 525, dur: 0.25, g: 0.02 }); }); },
-    village: () => { bed("bandpass", 600, 0.5, 0.07, 0.05, 0.05); every(3, 9, bird); every(10, 25, () => { for (let i = 0; i < 4; i++) sTone(ac, out, { f0: 320, f1: 150, t: i * 0.26, dur: 0.04, g: 0.08 }); }); every(4, 10, () => sNoise(ac, out, { dur: rr(0.6, 1.4), g: 0.04, f0: rr(400, 900), q: 3 })); },
-    office: () => { bed("lowpass", 260, 0.6, 0.07); hum(120, 0.008); every(2, 7, () => { const n = 4 + Math.floor(Math.random() * 10); let t = 0; for (let i = 0; i < n; i++) { sNoise(ac, out, { t, dur: 0.015, g: 0.07, type: "highpass", f0: rr(2500, 4000) }); t += rr(0.07, 0.16); } }); },
-    combat: () => { bed("lowpass", 220, 0.6, 0.16, 0.2, 0.06); every(0.3, 1.3, () => { sNoise(ac, out, { dur: 0.3, g: 0.22, f0: rr(2500, 4200), q: 18 }); sTone(ac, out, { f0: 130, f1: 50, dur: 0.12, g: 0.22 }); }); every(2, 6, () => sNoise(ac, out, { dur: rr(0.4, 0.8), g: 0.08, f0: rr(500, 900), f1: rr(300, 600), q: 2 })); },
-    snow: () => { bed("bandpass", 700, 0.8, 0.22, 0.1, 0.15); bed("bandpass", 1400, 1.2, 0.08, 0.13, 0.06); },
-    underwater: () => { bed("lowpass", 240, 0.7, 0.28, 0.1, 0.06); every(0.5, 2, () => sTone(ac, out, { f0: rr(250, 400), f1: rr(700, 1100), dur: 0.06, g: 0.1 })); },
-    spaceship: () => { hum(60, 0.05); hum(90, 0.025); bed("lowpass", 320, 0.6, 0.06); every(6, 15, () => { sTone(ac, out, { type: "square", f0: 1200, dur: 0.08, g: 0.02 }); sTone(ac, out, { type: "square", f0: 1500, t: 0.12, dur: 0.08, g: 0.02 }); }); },
-    indoors: () => bed("lowpass", 300, 0.5, 0.035),
-    light_rain: () => { bed("highpass", 1800, 0.5, 0.14, 0.15, 0.03); every(1.5, 5, bird); }, rain_shelter: () => R.rain(), rain_vehicle: () => { bed("lowpass", 900, 0.6, 0.3, 0.2, 0.06); bed("lowpass", 250, 0.7, 0.12); },
-    rain_indoors: () => bed("lowpass", 600, 0.6, 0.2, 0.15, 0.05), storm_indoors: () => { bed("lowpass", 500, 0.6, 0.2, 0.12, 0.05); every(10, 24, () => sTone(ac, out, { f0: 55, f1: 30, dur: 2.5, g: 0.3 })); },
-    wind: () => { bed("bandpass", 500, 0.7, 0.3, 0.09, 0.22); bed("bandpass", 1300, 1.5, 0.1, 0.13, 0.08); }, wind_indoors: () => { bed("bandpass", 420, 2, 0.12, 0.1, 0.1); bed("bandpass", 900, 6, 0.05, 0.07, 0.05); },
-    shower: () => { bed("highpass", 900, 0.5, 0.35, 0.3, 0.04); bed("lowpass", 400, 0.7, 0.1); }, shower_nearby: () => bed("lowpass", 700, 0.6, 0.2, 0.3, 0.03)
-  };
-  (R[key] || (() => {}))();
-  return {
-    setVol(v) { out.gain.setTargetAtTime(Math.max(0.0002, v), ac.currentTime, 0.2); },
-    stop() { timers.forEach(clearTimeout); timers.length = 0; out.gain.setTargetAtTime(0.0001, ac.currentTime, 0.4); setTimeout(() => { nodes.forEach(n => { try { n.stop(); } catch {} }); out.disconnect(); }, 2000); }
-  };
-}
 // Activity: repeated one-shots (the user's files if any, else synthesised) at a rhythm that fits
 const ACT_PLAN = {
   // loop: a seamless file played continuously (Web Audio, no gap); bed: long recordings used when there's no loop;
@@ -5126,10 +5503,13 @@ const ACT_PLAN = {
   vore: { loop: ["loop_vore"], loopBrutal: ["loop_vore_bones"], bed: ["vorebed"], mix: [[["churn"], 0.45], [["bubbles"], 0.45], [["cumbub", "liquid"], 0.1]], gap: [0.8, 4], gapLoop: [5, 12] },
   struggle: { loop: ["loop_vore"], loopBrutal: ["loop_vore_bones"], bed: ["vorebed"], mix: [[["struggle"], 0.6], [["churn"], 0.2], [["bubbles"], 0.2]], gap: [0.3, 1.8], gapLoop: [0.8, 3] },
   chew: { loop: ["loop_chew"], mix: [[["chew"], 0.6], [["crack"], 0.25], [["gore"], 0.15]], gap: [0.5, 1.3], gapLoop: [6, 12], loopMix: [[["crack"], 0.5], [["gore"], 0.5]] },
+  inflate: { loop: ["loop_vore"], bed: ["vorebed"], mix: [[["cumbub"], 0.6], [["bubbles"], 0.25], [["liquid"], 0.15]], gap: [0.8, 3], gapLoop: [3, 8], loopMix: [[["cumbub"], 0.75], [["liquid"], 0.25]] },
+  drip: { mix: [[["cum"], 0.7], [["liquid"], 0.3]], gap: [2.5, 6], gapLoop: [2.5, 6] },
   mess: { loop: ["loop_cum"], mix: [[["cum"], 1]], gap: [1.5, 4], gapLoop: [7, 15], loopMix: [[["cum"], 1]] },
   swallow: { loop: ["loop_swallow"], mix: [[["swallow"], 0.8], [["bubbles"], 0.2]], gap: [1.2, 2.6], gapLoop: [8, 16] },
   sex: { loop: ["loop_sex"], under: ["wet"], mix: [[["plap"], 0.8], [["sex"], 0.2]], gap: [0.03, 0.18], gapLoop: [3, 8], loopMix: [[["plap"], 0.5], [["sex"], 0.5]] },
   oral: { loop: ["loop_oral"], under: ["wet"], mix: [[["oral"], 0.8], [["gag"], 0.2]], gap: [0.15, 0.9], gapLoop: [3, 9], loopMix: [[["gag"], 0.7], [["oral"], 0.3]] },
+  lick: { loop: ["loop_lick"], mix: [[["lick"], 0.7], [["kiss"], 0.3]], gap: [0.8, 2.2], gapLoop: [8, 16], loopMix: [[["lick"], 1]] },
   kiss: { loop: ["loop_kiss"], mix: [[["kiss"], 1]], gap: [0.8, 2.2], gapLoop: [7, 15], loopMix: [[["kiss"], 1]] },
   shit: { loop: ["loop_shit"], mix: [[["shit"], 0.75], [["fart"], 0.25]], gap: [1, 3.2], gapLoop: [9, 18], loopMix: [[["fart"], 1]] }
 };
@@ -5168,7 +5548,7 @@ function brutalScene() {
 const MUFFLE_INSIDE = new Set(["gas"]); // burps come from outside the stomach, so from inside they're muffled
 // heard from inside: the body around you stays clear, so do game sounds (coins, items, stings); everything else comes through the walls
 const INSIDE_CLEAR = new Set([...MUFFLE_BODY, "squelch", "sizzle", "crack", "crack_m", "liquid", "swallow", "cum", "cumbub", "climax", "loop_cum", "loop_digest", "loop_vore_bones", "loop_swallow", "breath", "beat", "chew", "gore", "coins", "gem", "item", "bag", "potion", "wave"]);
-const VORE_ACTS = ["vore", "struggle", "swallow", "chew", "mess"];
+const VORE_ACTS = ["vore", "struggle", "swallow", "chew", "mess", "inflate", "drip"];
 const isInside = () => !!S.chat && sceneNow().hear === "inside";
 function muffleFor(type) {
   if (!S.chat || !type) return false;
@@ -5209,19 +5589,14 @@ async function startLoop(url, vol, muffle, fade = 1.2) {
   if (muffle) { const ch = muffleChain(ac); src.connect(g).connect(ch.input); ch.output.connect(ac.destination); } else src.connect(g).connect(ac.destination);
   src.start();
   g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), ac.currentTime + fade);
-  return { stop(sec = 0.6) { try { g.gain.cancelScheduledValues(ac.currentTime); g.gain.setTargetAtTime(0.0001, ac.currentTime, sec / 4); setTimeout(() => { try { src.stop(); } catch {} }, sec * 1000 + 100); } catch {} }, setVol(v) { g.gain.setTargetAtTime(Math.max(0.0002, v), ac.currentTime, 0.2); } };
+  return { t0: ac.currentTime, dur: buf.duration, ac, stop(sec = 0.6) { try { g.gain.cancelScheduledValues(ac.currentTime); g.gain.setTargetAtTime(0.0001, ac.currentTime, sec / 4); setTimeout(() => { try { src.stop(); } catch {} }, sec * 1000 + 100); } catch {} }, setVol(v) { g.gain.setTargetAtTime(Math.max(0.0002, v), ac.currentTime, 0.2); } };
 }
-SYNTH.plap = (ac, o) => { sNoise(ac, o, { dur: 0.07, g: 0.45, type: "lowpass", f0: 1500, f1: 500 }); sTone(ac, o, { f0: 170, f1: 90, dur: 0.08, g: 0.3 }); sNoise(ac, o, { t: 0.02, dur: 0.06, g: 0.12, f0: 900, q: 3 }); };
-SYNTH.oral = (ac, o) => {
-  sNoise(ac, o, { dur: rr(0.22, 0.35), g: 0.3, f0: rr(250, 400), f1: rr(900, 1400), q: 4 }); sTone(ac, o, { f0: rr(120, 160), f1: 90, dur: 0.25, g: 0.12, vib: 15, vibF: 18 });
-  if (Math.random() < 0.18) { sTone(ac, o, { type: "sawtooth", t: 0.3, f0: rr(130, 160), f1: 85, dur: 0.3, g: 0.12, vib: 25, vibF: 24 }); sNoise(ac, o, { t: 0.3, dur: 0.25, g: 0.15, type: "lowpass", f0: 700, f1: 250 }); }
-};
 function startActivity(kind, muffled, brutal, opt = {}) {
   const plan = ACT_PLAN[kind]; if (!plan) return null;
   const mf = t => opt.allMuf || (muffled && (MUFFLE_BODY.has(t) || MUFFLE_VORE.has(t) || t.startsWith("loop_vore")));
   let under = null; // a quiet bed of wet noises under sex and oral
   if (plan.under) (async () => { const files = await poolFor(plan.under); const next = async () => { if (stopped || !files.length) return; const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id); if (!url || stopped) return; under = trackAudio(new Audio(url)); under.volume = (S.settings.actVol ?? 0.5) * 0.28; under.onended = next; under.play().catch(() => {}); }; next(); })();
-  let stopped = false, timer = null, cur = null, bed = null, loop = null, looping = false, digLoop = null;
+  let stopped = false, timer = null, cur = null, bed = null, loop = null, looping = false, digLoop = null, belchT = null;
   const vol = () => S.settings.actVol ?? 0.5;
   // 1) a seamless loop if one exists for this activity; 2) otherwise long recordings played back to back
   (async () => {
@@ -5238,6 +5613,8 @@ function startActivity(kind, muffled, brutal, opt = {}) {
     if (lf.length) {
       const f = lf[Math.floor(Math.random() * lf.length)], url = await sndURL(f.id);
       if (url && !stopped) { loop = await startLoop(url, vol(), !pre && mf(f.type)).catch(() => null); looping = !!loop; if (stopped && loop) loop.stop(); }
+      // the vore picture belches along with the belches baked into the loop
+      if (loop && f.belch?.length) { let prev = 0; belchT = setInterval(() => { if (stopped || loop.ac.state === "closed") return clearInterval(belchT); const ph = (loop.ac.currentTime - loop.t0) % loop.dur; for (const b of f.belch) if (prev <= ph ? prev < b && b <= ph : b > prev || b <= ph) voreBurp(); prev = ph; }, 150); }
       if (looping) return;
     }
     const files = plan.bed ? await poolFor(plan.bed) : [];
@@ -5260,21 +5637,12 @@ function startActivity(kind, muffled, brutal, opt = {}) {
     if (files.length) {
       const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id);
       if (url && !stopped) { cur = trackAudio(new Audio(url)); if (mf(f.type)) muffleEl(cur); cur.volume = vol() * (looping ? 0.8 : 1); await cur.play().catch(() => {}); capAudio(cur, cur.volume); wait += Math.min(4, isFinite(cur.duration) ? cur.duration : 1); }
-    } else if (!looping) {
-      const ac = acx(); if (ac) { const out = ac.createGain(); out.gain.value = vol(); out.connect(ac.destination);
-        if (kind === "vore") { (Math.random() < 0.3 ? SYNTH.churn : SYNTH.bubbles)(ac, out); wait += 1; }
-        else if (kind === "struggle") { (Math.random() < 0.5 ? SYNTH.struggle : SYNTH.bubbles)(ac, out); wait += 0.4; }
-        else if (kind === "swallow") { SYNTH.swallow(ac, out); wait += 0.6; }
-        else if (kind === "sex") { SYNTH.plap(ac, out); wait = rr(0.38, 0.62); }
-        else if (kind === "kiss") { SYNTH.kiss(ac, out); wait += 0.3; }
-        else if (kind === "shit") { (Math.random() < 0.25 ? SYNTH.fart : SYNTH.shit)(ac, out); wait += 0.5; }
-        else { SYNTH.oral(ac, out); wait += 0.35; } }
-    }
+    } // no recordings: stay quiet (no made-up sounds)
     if (!stopped) timer = setTimeout(step, wait * 1000);
   };
   setTimeout(step, 1200); // let the loop start first
   return {
-    stop() { stopped = true; clearTimeout(timer); if (cur) cur.pause(); if (under) under.pause(); if (loop) loop.stop(); digLoop?.stop(); if (bed) { const b = bed; let v = b.volume; const t = setInterval(() => { v -= 0.03; if (v <= 0.01) { b.pause(); clearInterval(t); } else b.volume = v; }, 60); } },
+    stop() { stopped = true; clearTimeout(timer); clearInterval(belchT); if (cur) cur.pause(); if (under) under.pause(); if (loop) loop.stop(); digLoop?.stop(); if (bed) { const b = bed; let v = b.volume; const t = setInterval(() => { v -= 0.03; if (v <= 0.01) { b.pause(); clearInterval(t); } else b.volume = v; }, 60); } },
     setVol(v) { if (loop) loop.setVol(v); digLoop?.setVol(v); }
   };
 }
