@@ -815,7 +815,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.34 · Oct 14";
+const VERSION = "1.35 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -4411,7 +4411,7 @@ async function playSfx(cat, text, hint) {
       const muf = muffleFor(pick.type);
       if (muf) { const pre = await poolFor([pick.type + "_m"]); if (pre.length) pick = pre[Math.floor(Math.random() * pre.length)]; } // ready-muffled versions (bone cracks)
       const url = await sndURL(pick.id);
-      if (url) { const a = trackAudio(new Audio(url)); if (muf && !pick.type.endsWith("_m")) muffleEl(a); a.volume = vol; await a.play(); capAudio(a, vol); return; }
+      if (url) { const a = trackAudio(new Audio(url)); if (muf && !pick.type.endsWith("_m")) muffleEl(a, muf); a.volume = vol; await a.play(); capAudio(a, vol); return; }
     }
   } catch {}
   synthSfx(sub && SYNTH[sub] ? sub : cat, vol);
@@ -4828,11 +4828,20 @@ const MUFFLE_INSIDE = new Set(["gas"]); // burps come from outside the stomach, 
 function muffleFor(type) {
   if (!S.chat || !type) return false;
   const sc = sceneNow();
-  if (sc.hear === "inside") return MUFFLE_INSIDE.has(type) && ["vore", "struggle", "swallow"].includes(sc.act);
+  if (sc.hear === "inside") return MUFFLE_INSIDE.has(type) && ["vore", "struggle", "swallow"].includes(sc.act) ? "medium" : false; // dulled, not walled off (owner's pick)
   if (MUFFLE_BODY.has(type)) return true;
   return MUFFLE_VORE.has(type) && (["vore", "struggle", "swallow"].includes(sc.act) || VORE.digest.test(msgText(S.chat.messages.filter(m => m.role === "assistant").at(-1))));
 }
-function muffleChain(ac) {
+function muffleChain(ac, kind) {
+  if (kind === "medium") { // a belch heard from inside the stomach: 4th-order low-pass at 1.5 kHz and a -7 dB shelf above 700 Hz
+    const ns = [];
+    for (const q of [0.5412, 1.3066]) { const n = ac.createBiquadFilter(); n.type = "lowpass"; n.frequency.value = 1500; n.Q.value = q; ns.push(n); }
+    const sh = ac.createBiquadFilter(); sh.type = "highshelf"; sh.frequency.value = 700; sh.gain.value = -7; ns.push(sh);
+    const mk = ac.createGain(); mk.gain.value = 1.5; ns.push(mk);
+    const lm = ac.createDynamicsCompressor(); lm.threshold.value = -6; lm.ratio.value = 12; lm.attack.value = 0.003; lm.release.value = 0.15; ns.push(lm);
+    for (let i = 0; i < ns.length - 1; i++) ns[i].connect(ns[i + 1]);
+    return { input: ns[0], output: ns[ns.length - 1] };
+  }
   const first = ac.createIIRFilter ? (() => { const K = Math.tan(Math.PI * 180 / ac.sampleRate), b0 = K / (1 + K); return ac.createIIRFilter([b0, b0], [1, (K - 1) / (K + 1)]); })() : Object.assign(ac.createBiquadFilter(), { type: "lowpass" });
   const nodes = [first];
   const bq = (type, f, Q, gain) => { const n = ac.createBiquadFilter(); n.type = type; n.frequency.value = f; if (Q != null) n.Q.value = Q; if (gain != null) n.gain.value = gain; nodes.push(n); };
@@ -4844,7 +4853,7 @@ function muffleChain(ac) {
   for (let i = 0; i < nodes.length - 1; i++) nodes[i].connect(nodes[i + 1]);
   return { input: nodes[0], output: nodes[nodes.length - 1] };
 }
-function muffleEl(a) { const ac = acx(); if (!ac) return a; try { const ch = muffleChain(ac); ac.createMediaElementSource(a).connect(ch.input); ch.output.connect(ac.destination); } catch {} return a; }
+function muffleEl(a, kind) { const ac = acx(); if (!ac) return a; try { const ch = muffleChain(ac, kind); ac.createMediaElementSource(a).connect(ch.input); ch.output.connect(ac.destination); } catch {} return a; }
 async function startLoop(url, vol, muffle) {
   const ac = acx(); if (!ac) return null;
   let buf = LOOP_BUF.get(url);
