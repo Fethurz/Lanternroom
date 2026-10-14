@@ -815,7 +815,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.36 · Oct 14";
+const VERSION = "1.37 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -4212,7 +4212,7 @@ const SND_TYPES = {
   gag: "Gagging", plap: "Plapping & slaps", flush: "Toilet flush", loop_kiss: "Loop · kissing", loop_shit: "Loop · shitting",
   loop_vore: "Loop · gurgling", loop_swallow: "Loop · swallowing", loop_sex: "Loop · sex", loop_oral: "Loop · oral", cum: "Cum", condom: "Condom squelch", shit: "Plops", shitbones: "Bone plops", sex: "Wet sex sounds", kiss: "Kisses",
   beat: "Heartbeats", struggle: "Muffled struggling", crack: "Cracks & crunches", hit: "Hits", stomp: "Stomps & thuds", boom: "Booms",
-  slash: "Slashes", fire: "Fire", wet: "Subtle wet noises", loop_vore_bones: "Loop · brutal digestion (bones)", loop_vore_m: "Loop · gurgling (muffled)", loop_vore_bones_m: "Loop · brutal digestion (muffled)", sizzle: "Acid & sizzling", crack_m: "Cracks & crunches (muffled)", lick: "Licks", rip: "Rips & zippers", door: "Doors", thunder: "Thunder", chew: "Chewing & biting", gore: "Gore", loop_chew: "Loop · chewing (hard vore)", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
+  slash: "Slashes", fire: "Fire", wet: "Subtle wet noises", loop_vore_bones: "Loop · brutal digestion (bones)", loop_vore_m: "Loop · gurgling (muffled)", loop_vore_bones_m: "Loop · brutal digestion (muffled)", sizzle: "Acid & sizzling", crack_m: "Cracks & crunches (muffled)", lick: "Licks", rip: "Rips & zippers", door: "Doors", thunder: "Thunder", loop_digest: "Loop · active digestion (layer)", loop_digest_m: "Loop · active digestion (muffled layer)", chew: "Chewing & biting", gore: "Gore", loop_chew: "Loop · chewing (hard vore)", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
   amb_campfire: "Bg · Campfire", amb_fireplace: "Bg · Fireplace", amb_tavern: "Bg · Tavern", amb_market: "Bg · Crowd & market", amb_city: "Bg · City",
   amb_village: "Bg · Village", amb_office: "Bg · Office", amb_combat: "Bg · Combat", amb_forest: "Bg · Forest", amb_nature: "Bg · Nature",
   amb_night: "Bg · Night", amb_rain: "Bg · Rain", amb_light_rain: "Bg · Light rain (birds)", amb_rain_shelter: "Bg · Rain on a tent/umbrella", amb_rain_vehicle: "Bg · Rain on a car/hut roof", amb_rain_indoors: "Bg · Rain outside (indoors)", amb_storm: "Bg · Storm", amb_storm_indoors: "Bg · Storm outside (indoors)", amb_wind: "Bg · Wind", amb_wind_indoors: "Bg · Wind outside (indoors)", amb_shower: "Bg · Shower", amb_shower_nearby: "Bg · Shower in the next room", amb_beach: "Bg · Beach & ocean", amb_river: "Bg · River & water",
@@ -4225,7 +4225,7 @@ const SND_GROUPS = [
   ["Tap sounds · vore & body", ["bubbles", "churn", "swallow", "chew", "gas", "fart", "struggle", "squelch", "cumbub", "liquid", "beat"]],
   ["Tap sounds · adult", ["plap", "sex", "wet", "oral", "gag", "lick", "cum", "condom", "shit", "shitbones", "flush", "kiss"]],
   ["Tap sounds · other", ["breath", "thunder", "crack", "crack_m", "gore", "hit", "stomp", "boom", "slash", "sizzle", "rip", "door", "fire", "zap", "magic", "zzz", "wind", "wave"]],
-  ["Scene loops", ["loop_vore", "loop_vore_m", "loop_vore_bones", "loop_vore_bones_m", "loop_chew", "loop_swallow", "loop_sex", "loop_oral", "loop_kiss", "loop_shit", "vorebed"]],
+  ["Scene loops", ["loop_vore", "loop_vore_m", "loop_vore_bones", "loop_vore_bones_m", "loop_digest", "loop_digest_m", "loop_chew", "loop_swallow", "loop_sex", "loop_oral", "loop_kiss", "loop_shit", "vorebed"]],
   ["Backgrounds", Object.keys(SND_TYPES).filter(k => k.startsWith("amb_"))]
 ];
 const SND_HELP = {
@@ -4246,6 +4246,7 @@ const SND_HELP = {
   sizzle: "Acid hissing and sizzling (stomach acid, burning). Plays for SSSZZHH sounds.", lick: "Tongue licks. Plays for SHHLICK and lick sounds.",
   rip: "Cloth tearing and zippers. Plays for RRRRIP, SHRRK and ZZZZIP.", door: "Doors creaking, slamming and latching. Plays for KRREEEK, KLAK and THUD at doors.",
   chew: "Crushing bites, flesh tearing and wet squelches. Plays for CHOMP and tearing sounds, and while prey is being chewed.", gore: "Blood splatters and sprays, giblets, limbs torn or chopped. Plays for SPLRTCH sounds and wet hits in fights or hard vore.",
+  loop_digest: "Soft acid bubbling laid on top of the stomach loop while prey is actually being digested (never in safe or gentle vore).", loop_digest_m: "The digestion layer as heard from outside the belly.",
   thunder: "Thunder claps and rolls. Plays for KRAKOOM and thunder sounds, and rumbles during storms. Thunder plays out in full.",
   loop_chew: "A seamless loop that plays while prey is being chewed or torn apart (hard vore).",
   wave: "Sounds the app couldn't place. Move them with the dropdown."
@@ -4720,7 +4721,8 @@ async function ambienceStep() {
   if (wantAmb !== AMBS.amb) { AMBS.bed?.stop(); AMBS.amb = wantAmb; AMBS.bed = wantAmb ? await startBed(wantAmb) : null; }
   else AMBS.bed?.setVol(st.ambVol ?? 0.35);
   const wantMuf = !!wantAct && scn.hear !== "inside", wantBrutal = !!wantAct && brutalScene();
-  if (wantAct !== AMBS.act || wantMuf !== AMBS.muf || wantBrutal !== AMBS.brutal) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.muf = wantMuf; AMBS.brutal = wantBrutal; AMBS.loop = wantAct ? startActivity(wantAct, wantMuf, wantBrutal) : null; }
+  const wantDig = ["vore", "struggle"].includes(wantAct) && digestScene(), wantInt = ["oral", "sex"].includes(wantAct) ? sceneIntensity() : null;
+  if (wantAct !== AMBS.act || wantMuf !== AMBS.muf || wantBrutal !== AMBS.brutal || wantDig !== AMBS.dig || wantInt !== AMBS.int) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.muf = wantMuf; AMBS.brutal = wantBrutal; AMBS.dig = wantDig; AMBS.int = wantInt; AMBS.loop = wantAct ? startActivity(wantAct, wantMuf, wantBrutal, { digest: wantDig, intensity: wantInt }) : null; }
   else AMBS.loop?.setVol?.(st.actVol ?? 0.5);
   renderPanes();
 }
@@ -4845,6 +4847,23 @@ const MUFFLE_VORE = new Set(["crack", "sizzle", "squelch"]);                    
 const BRUTAL = /\b(crush\w*|crunch\w*|bones? (break|breaks|broke|broken|snap\w*|crack\w*|splinter\w*|grind\w*)|snap\w* (bones?|ribs?|spine)|(break|breaking|broke) (his|her|their|its) (bones|ribs|body)|kill\w*|lethal|fatal|to death|dissolv\w*|melt\w* (away|down)|turned (in)?to (mush|sludge|slurry|soup)|digest\w* (alive|completely|to nothing))\b/i;
 const GENTLE = /\b(safe|gentle|gently|soft vore|unharmed|harmless|endo\w*|non-?fatal|won'?t (hurt|digest)|(not|never|isn'?t|won'?t) (be )?digest\w*|cozy|cosy|comfy)\b/i;
 const brutalText = t => BRUTAL.test(t) && !GENTLE.test(t);
+// active digestion: the last few messages say prey is being digested and the latest reply doesn't make it gentle
+function digestScene() {
+  const msgs = (S.chat?.messages || []).filter(m => m.role !== "image"), lastA = msgText(msgs.filter(m => m.role === "assistant").at(-1));
+  return VORE.digest.test(msgs.slice(-3).map(msgText).join("\n")) && !GENTLE.test(lastA);
+}
+// how hard a scene is going: "rough" (fast, hard, throat-fucking) or "slow" (slow, gentle, deep, teasing), else null
+function sceneIntensity() {
+  const last = S.chat?.messages?.filter(m => m.role === "assistant").at(-1); if (!last) return null;
+  if (["fast", "edge", "cum"].includes(last.pace)) return "rough"; if (["slow", "stop"].includes(last.pace)) return "slow";
+  for (const m of S.chat.messages.slice(-2).reverse()) { const r = intensityOf(msgText(m)); if (r) return r; } // the latest message decides first
+  return null;
+}
+function intensityOf(t) {
+  if (/\b(rough\w*|hard(er)?|fast(er)?|brutal\w*|pound\w*|ramm\w*|face-?fuck\w*|throat-?fuck\w*|savage\w*|relentless\w*|frantic\w*)\b/i.test(t)) return "rough";
+  if (/\b(slow\w*|gentl\w*|lazy|lazily|languid\w*|tease\w*|teasing|savou?r\w*|unhurried|deliberate\w*)\b/i.test(t)) return "slow";
+  return null;
+}
 function brutalScene() {
   const msgs = (S.chat?.messages || []).filter(m => m.role !== "image"), lastA = msgText(msgs.filter(m => m.role === "assistant").at(-1));
   return BRUTAL.test(msgs.slice(-3).map(msgText).join("\n")) && !GENTLE.test(lastA); // the latest reply can make it gentle again
@@ -4896,12 +4915,12 @@ SYNTH.oral = (ac, o) => {
   sNoise(ac, o, { dur: rr(0.22, 0.35), g: 0.3, f0: rr(250, 400), f1: rr(900, 1400), q: 4 }); sTone(ac, o, { f0: rr(120, 160), f1: 90, dur: 0.25, g: 0.12, vib: 15, vibF: 18 });
   if (Math.random() < 0.18) { sTone(ac, o, { type: "sawtooth", t: 0.3, f0: rr(130, 160), f1: 85, dur: 0.3, g: 0.12, vib: 25, vibF: 24 }); sNoise(ac, o, { t: 0.3, dur: 0.25, g: 0.15, type: "lowpass", f0: 700, f1: 250 }); }
 };
-function startActivity(kind, muffled, brutal) {
+function startActivity(kind, muffled, brutal, opt = {}) {
   const plan = ACT_PLAN[kind]; if (!plan) return null;
   const mf = t => muffled && (MUFFLE_BODY.has(t) || MUFFLE_VORE.has(t) || t.startsWith("loop_vore"));
   let under = null; // a quiet bed of wet noises under sex and oral
   if (plan.under) (async () => { const files = await poolFor(plan.under); const next = async () => { if (stopped || !files.length) return; const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id); if (!url || stopped) return; under = trackAudio(new Audio(url)); under.volume = (S.settings.actVol ?? 0.5) * 0.28; under.onended = next; under.play().catch(() => {}); }; next(); })();
-  let stopped = false, timer = null, cur = null, bed = null, loop = null, looping = false;
+  let stopped = false, timer = null, cur = null, bed = null, loop = null, looping = false, digLoop = null;
   const vol = () => S.settings.actVol ?? 0.5;
   // 1) a seamless loop if one exists for this activity; 2) otherwise long recordings played back to back
   (async () => {
@@ -4910,6 +4929,10 @@ function startActivity(kind, muffled, brutal) {
     if (stopped) return;
     let pre = false; // ready-muffled versions of the loops when heard from outside
     if (lf.length && muffled && mf(lf[0].type)) { const m = await poolFor([lf[0].type + "_m"]); if (m.length) { lf = m; pre = true; } }
+    // rough or slow versions when the scene says so (files named …rough… / …slow…)
+    if (opt.intensity && lf.length) { const k = lf.filter(f => new RegExp(opt.intensity, "i").test(f.id)); if (k.length) lf = k; }
+    // active digestion: a soft bubbling layer on top of the stomach loop (muffled from outside)
+    if (opt.digest) (async () => { const d = await poolFor([muffled ? "loop_digest_m" : "loop_digest"]); if (stopped || !d.length) return; const u = await sndURL(d[Math.floor(Math.random() * d.length)].id); if (!u || stopped) return; digLoop = await startLoop(u, vol()).catch(() => null); if (stopped) digLoop?.stop(); })();
     if (lf.length) {
       const f = lf[Math.floor(Math.random() * lf.length)], url = await sndURL(f.id);
       if (url && !stopped) { loop = await startLoop(url, vol(), !pre && mf(f.type)).catch(() => null); looping = !!loop; if (stopped && loop) loop.stop(); }
@@ -4949,8 +4972,8 @@ function startActivity(kind, muffled, brutal) {
   };
   setTimeout(step, 1200); // let the loop start first
   return {
-    stop() { stopped = true; clearTimeout(timer); if (cur) cur.pause(); if (under) under.pause(); if (loop) loop.stop(); if (bed) { const b = bed; let v = b.volume; const t = setInterval(() => { v -= 0.03; if (v <= 0.01) { b.pause(); clearInterval(t); } else b.volume = v; }, 60); } },
-    setVol(v) { if (loop) loop.setVol(v); }
+    stop() { stopped = true; clearTimeout(timer); if (cur) cur.pause(); if (under) under.pause(); if (loop) loop.stop(); digLoop?.stop(); if (bed) { const b = bed; let v = b.volume; const t = setInterval(() => { v -= 0.03; if (v <= 0.01) { b.pause(); clearInterval(t); } else b.volume = v; }, 60); } },
+    setVol(v) { if (loop) loop.setVol(v); digLoop?.setVol(v); }
   };
 }
 
