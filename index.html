@@ -823,7 +823,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.38 · Oct 14";
+const VERSION = "1.39 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1221,7 +1221,7 @@ function buildPrompt(c, chat, upto, cont) {
   if (pacePart) sys += `\n\n# Pace\nThe user follows an on-screen stroke pacer that your pace field controls. Set it from the scene's sexual intensity: stop when nothing sexual is happening or for a pause, slow for teasing and build-up, steady for ongoing sex, fast as things get intense, edge to make ${u} hold right at the brink (use it for denial and teasing near the peak), cum at the moment of climax. Build up naturally over several replies and use edge before cum when it fits.`;
   const musicPart = musicOn() ? ` | music: one of ${MUS_KEYS.join("/")} | event: one of ${EVT_KEYS.join("/")}` : "";
   const rpgPart = rpgOn(c) ? " | gold: +n/-n | items: +Name/-Name | quests: +Name/done Name" : "";
-  if (musicPart) sys += `\n\n# Music and events\nmusic is the background music that fits the scene right now. Use none for ordinary moments; only pick music for scenes that call for it: a tavern or inn, a village, a city, a club, party or rave, a forest, a cave, deep water, a dungeon, crypt, temple or other evil place, somewhere magical, a calm or idle moment, romance, sleep or a quiet night, danger or a creeping threat, horror, somewhere eerie, mysterious or unnerving, a fight, an epic or grand moment, space or sci-fi, vore, sex. event is something that happened in this reply: attack when a blow, shot or spell is coming at someone and the reply ends before it is known whether it lands; danger when a fight or real threat begins; victory when ${u}'s side wins a fight; defeat when ${u}'s side loses one; sad for a very sad, tragic or dramatic moment (a death, a farewell); quest when a quest or goal is completed; item when ${u} finds or receives something valuable, magical or rare; coins when ${u} gains money; otherwise none.`;
+  if (musicPart) sys += `\n\n# Music and events\nmusic is the background music that fits the scene right now. Use none for ordinary moments; only pick music for scenes that call for it: a tavern or inn, a village, a city, a club, party or rave, a forest, a cave, deep water, a dungeon, crypt, temple or other evil place, somewhere magical, a calm or idle moment, romance, sleep or a quiet night, danger or a creeping threat, horror, somewhere eerie, mysterious or unnerving, a fight, an epic or grand moment, space or sci-fi. Music follows the setting and mood, never the action: vore or sex in a club still gets club music, in a tavern tavern music, and none when the setting has no music. event is something that happened in this reply: attack when a blow, shot or spell is coming at someone and the reply ends before it is known whether it lands; danger when a fight or real threat begins; victory when ${u}'s side wins a fight; defeat when ${u}'s side loses one; sad for a very sad, tragic or dramatic moment (a death, a farewell); quest when a quest or goal is completed; item when ${u} finds or receives something valuable, magical or rare; coins when ${u} gains money; otherwise none.`;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
   sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, mess while someone is dripping with, covered in or filled with cum (messy aftermath, cum inflation) or during excessive nonstop cumming, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
@@ -3591,7 +3591,7 @@ function gaugeEditor(work) {
 
 // --- Music: its own layer, under the sounds. Only fitting scenes get music; the hidden tag names the scene (music: …)
 // and one-off events (event: …) play short stings: a danger cue that flows into fight music, then a win or loss sting.
-const MUS_KEYS = ["none", "tavern", "village", "city", "club", "forest", "cave", "underwater", "dungeon", "magic", "calm", "romance", "sleep", "danger", "horror", "eerie", "fight", "epic", "space", "vore", "sex"];
+const MUS_KEYS = ["none", "tavern", "village", "city", "club", "forest", "cave", "underwater", "dungeon", "magic", "calm", "romance", "sleep", "danger", "horror", "eerie", "fight", "epic", "space"];
 const EVT_KEYS = ["none", "attack", "danger", "victory", "defeat", "sad", "quest", "item", "coins"];
 const MUS_LABEL = { tavern: "Tavern", village: "Village", city: "City", club: "Club / party", underwater: "Deep water", horror: "Horror", eerie: "Eerie", forest: "Forest", cave: "Cave", dungeon: "Dungeon / temple", magic: "Magical", calm: "Calm", romance: "Romance", sleep: "Sleep", danger: "Danger", fight: "Fight", epic: "Epic", space: "Space", vore: "Vore", sex: "Sex" };
 const EVT_LABEL = { attack: "An attack is coming (result not known yet)", sad: "Sad or dramatic moment", danger: "Fight or danger begins", victory: "Fight won", defeat: "Fight lost", quest: "Quest done", item: "Valuable, magical or rare item found", coins: "Coins gained" };
@@ -3599,9 +3599,6 @@ const musicOn = () => S.settings.musicOn !== false && !S.settings.ambMuted;
 const musicVol = () => S.settings.musicVol ?? 0.2;
 // when a reply has no music field (older replies), guess from the scene
 function musicGuess(sc) {
-  if (["vore", "struggle", "swallow", "chew"].includes(sc.act)) return "vore";
-  if (["sex", "oral", "mess"].includes(sc.act)) return "sex";
-  if (sc.act === "kiss") return "romance";
   return { arena: "fight", underwater: "underwater", combat: "fight", gunfight: "fight", tavern: "tavern", village: "village", city: "city", market: "city", forest: "forest", nature: "forest", light_rain: "calm", cave: "cave", dungeon: "dungeon", spaceship: "space", panic: "danger" }[sc.amb] || "none";
 }
 function musicScene() {
@@ -3610,19 +3607,20 @@ function musicScene() {
   if (last.music) return last.music;
   return musicGuess(sceneNow());
 }
-const MUS = { key: null, loop: null, hold: 0, sting: null };
+const MUS = { key: null, loop: null, hold: 0, sting: null, muf: false };
+const DIEGETIC = new Set(["tavern", "club"]); // music that is actually playing in the place
 async function musicStep(inChat) {
   const want = inChat && musicOn() && Date.now() >= MUS.hold ? musicScene() : "none";
-  const key = want === "none" ? null : want;
-  if (key === MUS.key && MUS.loop) { MUS.loop.setVol(musicVol()); return; }
+  const key = want === "none" ? null : want, muf = !!key && DIEGETIC.has(key) && isInside();
+  if (key === MUS.key && muf === MUS.muf && MUS.loop) { MUS.loop.setVol(musicVol()); return; }
   if (key === MUS.key && !key) return;
-  const old = MUS.loop; MUS.loop = null; MUS.key = key; old?.stop(2.5); // crossfade: the old track fades out as the new one fades in
+  const old = MUS.loop; MUS.loop = null; MUS.key = key; MUS.muf = muf; old?.stop(2.5); // crossfade: the old track fades out as the new one fades in
   if (!key) return;
   const files = await poolFor(["mus_" + key, ...(key === "epic" ? ["mus_fight"] : key === "danger" ? ["mus_fight"] : [])]);
   if (!files.length || MUS.key !== key) return;
   const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id);
   if (!url || MUS.key !== key) return;
-  const lp = await startLoop(url, musicVol(), false, 2.5).catch(() => null);
+  const lp = await startLoop(url, musicVol(), muf, 2.5).catch(() => null);
   if (MUS.key !== key) { lp?.stop(); return; }
   MUS.loop = lp;
 }
@@ -4988,11 +4986,13 @@ async function ambienceStep() {
     // left the chat or the app: everything stops at once, no fade
     AMBS.bed?.stop(); AMBS.loop?.stop(); AMBS.bed = AMBS.loop = null; AMBS.amb = AMBS.act = null; musicStop(); hushAll(); return;
   }
-  if (wantAmb !== AMBS.amb) { AMBS.bed?.stop(); AMBS.amb = wantAmb; AMBS.bed = wantAmb ? await startBed(wantAmb) : null; }
+  const bedMuf = !!wantAmb && scn.hear === "inside";
+  if (wantAmb !== AMBS.amb || bedMuf !== AMBS.bedMuf) { AMBS.bed?.stop(); AMBS.amb = wantAmb; AMBS.bedMuf = bedMuf; AMBS.bed = wantAmb ? await startBed(wantAmb, bedMuf) : null; }
   else AMBS.bed?.setVol(st.ambVol ?? 0.35);
   const wantMuf = !!wantAct && scn.hear !== "inside", wantBrutal = !!wantAct && brutalScene();
   const wantDig = ["vore", "struggle"].includes(wantAct) && digestScene(), wantInt = ["oral", "sex"].includes(wantAct) ? sceneIntensity() : wantAct === "mess" && /\b(hyper|excessive|gallons|torrent\w*|flood\w*|nonstop|non-stop|endless\w*|gush\w*|geyser\w*|won'?t stop cumming)\b/i.test((S.chat?.messages || []).slice(-2).map(msgText).join("\n")) ? "hyper" : null;
-  if (wantAct !== AMBS.act || wantMuf !== AMBS.muf || wantBrutal !== AMBS.brutal || wantDig !== AMBS.dig || wantInt !== AMBS.int) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.muf = wantMuf; AMBS.brutal = wantBrutal; AMBS.dig = wantDig; AMBS.int = wantInt; AMBS.loop = wantAct ? startActivity(wantAct, wantMuf, wantBrutal, { digest: wantDig, intensity: wantInt }) : null; }
+  const wantAll = !!wantAct && scn.hear === "inside" && !VORE_ACTS.includes(wantAct);
+  if (wantAct !== AMBS.act || wantMuf !== AMBS.muf || wantBrutal !== AMBS.brutal || wantDig !== AMBS.dig || wantInt !== AMBS.int || wantAll !== AMBS.all) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.muf = wantMuf; AMBS.brutal = wantBrutal; AMBS.dig = wantDig; AMBS.int = wantInt; AMBS.all = wantAll; AMBS.loop = wantAct ? startActivity(wantAct, wantMuf, wantBrutal, { digest: wantDig, intensity: wantInt, allMuf: wantAll }) : null; }
   else AMBS.loop?.setVol?.(st.actVol ?? 0.5);
   await musicStep(inChat).catch(() => {});
   renderPanes();
@@ -5026,7 +5026,7 @@ document.addEventListener("pointerdown", () => { if (AC?.state === "suspended") 
 // user files for a sound type (with sensible stand-ins)
 const AMB_FALLBACK = { road: ["city"], underwater_inside: ["underwater"], gunfight: ["combat"], arena: ["market"], panic: ["market", "city"], flying: ["wind"], desert: ["wind"], light_rain: ["rain"], rain_shelter: ["rain"], rain_vehicle: ["rain_shelter", "rain"], rain_indoors: ["rain"], storm_indoors: ["rain_indoors", "storm"], wind_indoors: ["wind"], wind: ["snow"], shower_nearby: ["shower"], nature: ["forest"], forest: ["nature"], night: ["forest", "nature"], storm: ["rain"], rain: ["storm"], fireplace: ["campfire"], campfire: ["fireplace"], market: ["tavern", "city"], tavern: ["market"], village: ["nature", "city"], dungeon: ["cave"], cave: ["dungeon"], snow: ["nature"], river: ["beach"], beach: ["river"] };
 const packFiles = poolFor;
-async function startBed(key) {
+async function startBed(key, muffle) {
   const vol = () => S.settings.ambVol ?? 0.35;
   const files = await packFiles(["amb_" + key, ...(AMB_FALLBACK[key] || []).map(k => "amb_" + k)]);
   if (files.length) {
@@ -5037,20 +5037,21 @@ async function startBed(key) {
       if (stopped) return;
       const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id); if (!url || stopped) return;
       if (String(f.id).startsWith("x:")) { // the built-in backgrounds are seamless loops: play them gaplessly
-        const lp = await startLoop(url, vol()).catch(() => null); if (lp) { if (stopped) lp.stop(); else loopObj = lp; return; }
+        const lp = await startLoop(url, vol(), muffle).catch(() => null); if (lp) { if (stopped) lp.stop(); else loopObj = lp; return; }
       }
-      a = trackAudio(new Audio(url)); a.volume = 0; a.loop = files.length === 1;
+      a = trackAudio(new Audio(url)); if (muffle) muffleEl(a); a.volume = 0; a.loop = files.length === 1;
       a.onended = next; a.play().then(() => ramp(a, vol(), 1500)).catch(() => {});
     };
     next();
     return { stop() { stopped = true; loopObj?.stop(); const el = a; if (el) ramp(el, 0, 1200, () => el.pause()); }, setVol(v) { loopObj?.setVol(v); if (a && !stopped) a.volume = v; } };
   }
-  return synthBed(key, vol());
+  return synthBed(key, vol(), muffle);
 }
 function noiseBuf(ac) { if (!NOISE) { NOISE = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate); const d = NOISE.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; } return NOISE; }
-function synthBed(key, vol) {
+function synthBed(key, vol, muffle) {
   const ac = acx(); if (!ac) return null;
-  const out = ac.createGain(); out.gain.value = 0.0001; out.connect(ac.destination);
+  const out = ac.createGain(); out.gain.value = 0.0001;
+  if (muffle) { const ch = muffleChain(ac); out.connect(ch.input); ch.output.connect(ac.destination); } else out.connect(ac.destination);
   out.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), ac.currentTime + 2);
   const nodes = [], timers = [];
   const bed = (type, f, q, g, lfoRate = 0, lfoDepth = 0) => {
@@ -5144,10 +5145,14 @@ function brutalScene() {
   return BRUTAL.test(msgs.slice(-3).map(msgText).join("\n")) && !GENTLE.test(lastA); // the latest reply can make it gentle again
 }
 const MUFFLE_INSIDE = new Set(["gas"]); // burps come from outside the stomach, so from inside they're muffled
+// heard from inside: the body around you stays clear, so do game sounds (coins, items, stings); everything else comes through the walls
+const INSIDE_CLEAR = new Set([...MUFFLE_BODY, "squelch", "sizzle", "crack", "crack_m", "liquid", "swallow", "cum", "cumbub", "climax", "loop_cum", "loop_digest", "loop_vore_bones", "loop_swallow", "breath", "beat", "chew", "gore", "coins", "gem", "item", "bag", "potion", "wave"]);
+const VORE_ACTS = ["vore", "struggle", "swallow", "chew", "mess"];
+const isInside = () => !!S.chat && sceneNow().hear === "inside";
 function muffleFor(type) {
   if (!S.chat || !type) return false;
   const sc = sceneNow();
-  if (sc.hear === "inside") return MUFFLE_INSIDE.has(type) && ["vore", "struggle", "swallow"].includes(sc.act) ? "medium" : false; // dulled, not walled off (owner's pick)
+  if (sc.hear === "inside") { if (MUFFLE_INSIDE.has(type)) return "medium"; /* dulled, not walled off (owner's pick) */ return INSIDE_CLEAR.has(type) || type.startsWith("sting_") ? false : true; }
   if (MUFFLE_BODY.has(type)) return true;
   return MUFFLE_VORE.has(type) && (["vore", "struggle", "swallow"].includes(sc.act) || VORE.digest.test(msgText(S.chat.messages.filter(m => m.role === "assistant").at(-1))));
 }
@@ -5192,7 +5197,7 @@ SYNTH.oral = (ac, o) => {
 };
 function startActivity(kind, muffled, brutal, opt = {}) {
   const plan = ACT_PLAN[kind]; if (!plan) return null;
-  const mf = t => muffled && (MUFFLE_BODY.has(t) || MUFFLE_VORE.has(t) || t.startsWith("loop_vore"));
+  const mf = t => opt.allMuf || (muffled && (MUFFLE_BODY.has(t) || MUFFLE_VORE.has(t) || t.startsWith("loop_vore")));
   let under = null; // a quiet bed of wet noises under sex and oral
   if (plan.under) (async () => { const files = await poolFor(plan.under); const next = async () => { if (stopped || !files.length) return; const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id); if (!url || stopped) return; under = trackAudio(new Audio(url)); under.volume = (S.settings.actVol ?? 0.5) * 0.28; under.onended = next; under.play().catch(() => {}); }; next(); })();
   let stopped = false, timer = null, cur = null, bed = null, loop = null, looping = false, digLoop = null;
