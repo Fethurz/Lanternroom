@@ -814,7 +814,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.29 · Oct 13";
+const VERSION = "1.30 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1143,12 +1143,34 @@ function onoPrompt(c, chat, upto) {
   const tags = [...tagsOf(c), ...(c.kind === "group" ? members(c).flatMap(tagsOf) : [])].join(" ");
   let out = `\n\n# Sound effects\nEvery sound effect is an onomatopoeia invented for that exact moment, written in bold italics (***like this***). Build it to sound like the real noise: stretch letters, mix lower and UPPER case to show it swelling and fading (capitals are louder), pile up consonants for wet, rumbling or gurgling textures, and break long sounds into parts with "..." between them. Never reuse an onomatopoeia within a chat and never fall back on plain words like "gurgle" or "burp". All bodily sounds (burps and belches, stomachs and balls gurgling, sloshing, churning) MUST get their own onomatopoeia.`;
   const vore = /vore|pred|prey|belly|stomach|digest/i.test(tags) || VORE.swallow.test(recent) || VORE.stomach.test(recent) || ["vore", "struggle", "swallow"].includes(chat.messages[upto - 1]?.act);
+  // examples for whatever is going on: vore body sounds, plus sex, oral, kissing, toilet, fights, weather and so on
+  const act = chat.messages[upto - 1]?.act || "", last = chat.messages.slice(Math.max(0, upto - 2), upto).map(m => m.content || "").join("\n");
+  const picks = [];
+  const add = (list, k) => { const l = [...list].sort(() => Math.random() - 0.5); for (const t of l.slice(0, k)) if (!picks.includes(t)) picks.push(t); };
   if (vore) {
     const types = ["belch", "longGurgle", "sloshy", "shortBelch", "lateGurgle", "burp"];
-    if (VORE.digest.test(recent) || VORE.dead.test(recent)) types.splice(2, 0, "brutal");
+    if (VORE.digest.test(recent) || VORE.dead.test(recent)) types.splice(2, 0, "brutal", "crunch", "sizzle");
     if (VORE.cockvore.test(recent) || VORE.balls.test(recent)) types.splice(1, 0, "ballGurgle");
-    out += `\nFresh examples to take after but NOT repeat (make new ones each time):\n` + ONO.examples(types, 6).join("\n");
+    if (act === "swallow" || /\b(swallow|gulp|gullet|throat)/i.test(last)) types.unshift("preyGulp", "gullet");
+    if (act === "struggle" || /\b(struggl|squirm|kick|thrash|pound)/i.test(last)) types.unshift("muffled");
+    add(types.slice(0, 4), 4); add(types.slice(4), 2);
   }
+  const ctxs = [
+    [act === "sex" || /\b(thrust|fuck|pound|hips|cock|pussy|ride|riding)\w*/i.test(last), ["plap", "squelch", "spurt", "pour"]],
+    [act === "oral" || /\b(suck|blowjob|deepthroat|throat|mouth around|licks? (his|her) (cock|shaft))\w*/i.test(last), ["slurp", "suck", "gluck", "drinkGulp"]],
+    [act === "kiss" || /\b(kiss|smooch|lips|tongue|lick)\w*/i.test(last), ["smooch", "wetKiss", "lick"]],
+    [act === "shit" || VORE.scat.test(last) || /\bfart/i.test(last), ["dryFart", "wetFart", "plop", "push", "flush"]],
+    [/\b(acid|sizzl|burn|hiss)\w*/i.test(last), ["sizzle"]],
+    [/\b(punch|strike|struck|hit|sword|blade|claw|slash|stab|fight|attack|explo|blast)\w*/i.test(last), ["impact", "slash", "boom"]],
+    [/\b(water|river|lake|splash|swim|pool|bath|wade)\w*/i.test(last), ["splash"]],
+    [/\b(fire|flame|torch|campfire|hearth|burning)\w*/i.test(last), ["fire"]],
+    [/\b(storm|thunder|lightning)\w*/i.test(last), ["thunder"]],
+    [/\b(rip|tear|tore|torn|zip|unzip|cloth|dress|shirt|pants)\w*/i.test(last), ["rip"]],
+    [/\b(door|gate|hatch)\w*/i.test(last), ["door"]],
+    [/\b(sniff|smell|scent|breath|pant|huff|exhal|drool|slobber|stomp|footstep|steps?|walk|heart)\w*/i.test(last), ["breath", "sniff", "drool", "stomp", "heart"]]
+  ];
+  for (const [on, list] of ctxs) if (on) add(list, list.length > 3 ? 2 : list.length);
+  if (picks.length) out += `\nFresh examples to take after but NOT repeat (make new ones each time):\n` + picks.slice(0, 9).map(t => `${ONO.LABEL[t]}: ***${ONO.make(t)}***`).join("\n");
   return out;
 }
 function buildPrompt(c, chat, upto, cont) {
@@ -3719,15 +3741,98 @@ const ONO = (() => {
     ballGurgle() { let s = pick(["Glor", "Shlor", "Blor", "Sql", "Glsh"]) + swell("r", n(2, 4)) + pick(["sh", "shl", "lsh"]); for (let i = 0, k = n(1, 2); i < k; i++) s += chunk(["glbl", "blorsh", "glrsh", "shlrg"]); return s + pick(["...", "..", ""]); },
     churn() { return pick(["Grr", "Hrr", "Mrr", "Grro"]) + mixVowels(["o", "O", "u", "U"], n(3, 6)) + swell("r", n(3, 6)) + rep("n", n(2, 4)) + pick(["...", "..", "nk"]); }
   };
-  const LABEL = { belch: "Belch", shortBelch: "Shorter belch", burp: "Burp", gurgle: "Digestion gurgle", lateGurgle: "Late-digestion gurgle", longGurgle: "Digestion gurgle", sloshy: "Sloshy late digestion gurgles", brutal: "Brutal digestion gurgles with a crunch", ballGurgle: "Full balls gurgling and sloshing", churn: "Stomach churning growl" };
+  // everything else, approved by the owner on the Sound Words Bench (their liked words shaped these)
+  const cap = s => R() < 0.3 ? s.toUpperCase() : s;
+  const run = (k, f) => Array.from({ length: k }, (_, i) => f(i)).join("... ") + (R() < 0.5 ? "..." : "");
+  const one = set => { const v = pick(set); return R() < 0.4 ? v.toUpperCase() : v; };
+  const more = {
+    plap: () => run(n(1, 3), () => pick(["Pl", "PL", "Thw", "Pw", "Fw", "Pl"]) + mixVowels(["a"], n(1, 3)) + rep("p", n(1, 2))),
+    squelch: () => pick(["Schl", "Shl", "Squl", "Shlk", "Spl"]) + mixVowels(["o", "u", "e"], n(1, 3)) + (R() < 0.5 ? swell("r", n(1, 3)) : "") + pick(["k", "rk", "lk", "rch", "ck", "rp"]),
+    spurt: () => run(n(1, 3), () => pick(["Spl", "Spr", "Shpl", "Splll"]) + mixVowels(["u", "o"], n(1, 3)) + swell("r", n(1, 4)) + pick(["t", "rt", "tch", "T"])),
+    pour: () => pick(["Drrl", "Glrr", "Shlrr", "Drl"]) + mixVowels(["o", "u"], n(1, 3)) + pick(["p", "rp", "sh"]) + "... " + pick(["plip", "plp", "drip", "plk"]) + (R() < 0.6 ? "... " + pick(["plip", "plp", "tik"]) : ""),
+    slurp: () => pick(["Shl", "Sl", "Schl", "Shhl"]) + mixVowels(["u"], n(1, 3)) + swell("r", n(2, 5)) + pick(["p", "rp", "lp", "k"]),
+    suck: () => run(n(1, 2), () => pick(["Schl", "Sch", "Tsch", "Shl"]) + mixVowels(["u"], n(1, 3)) + pick(["k", "ck", "lk"])).replace(/\.\.\.$/, "") + (R() < 0.5 ? "... " + pick(["POP", "Pwop", "Plop", "Mpah"]) : ""),
+    gluck: () => run(n(2, 3), () => cap(pick(["Gl", "Gh", "Hgl", "Gwl", "Gll"]) + mixVowels(["u", "o", "a"], n(1, 2)) + pick(["ck", "k", "rk", "kk"]))),
+    drinkGulp: () => run(n(1, 3), () => pick(["Gl", "Gul", "Gll", "Glk"]) + mixVowels(["u"], n(1, 2)) + pick(["p", "mp", "rk", "lp"])),
+    smooch: () => pick(["Mw", "Mmw", "Chu", "Sm", "Mwu"]) + mixVowels(["a", "u", "o"], n(1, 3)) + pick(["h", "ch", "", "hh"]),
+    wetKiss: () => run(n(1, 3), () => pick(["Mmlch", "Shm", "Mwlch", "Mmhl", "Shlp"]) + mixVowels(["e", "a", "u"], n(0, 2)) + pick(["ch", "k", "p", ""])),
+    lick: () => pick(["Shhl", "Shl", "Shhl"]) + (R() < 0.5 ? one(["i", "e"]) : one(["i"]) + one(["e"]).toLowerCase()) + (R() < 0.3 ? "e" : "") + pick(["ck", "rp", "p", "k", "erp"]),
+    preyGulp: () => (R() < 0.5 ? pick(["Hrrk-", "Ghk-", "Hlk-"]) : "") + "GL" + swell("u", n(3, 6)) + pick(["RK", "rRK", "LP", "rLP", "MP"]),
+    gullet: () => run(n(2, 3), () => pick(["Hrrg", "Glrk", "Hhgk", "Shlrk", "Mrrgl"]) + mixVowels(["h", "u"], n(0, 2))),
+    muffled: () => run(n(2, 3), () => pick(["Thmp", "thMMP", "Bmpf", "Thwmp", "mmPH", "Fwmp"])),
+    crunch: () => pick(["Cr", "Kr", "CR", "Krr"]) + rep("N", n(2, 4)) + "CH" + (R() < 0.4 ? "... " + pick(["KrK", "Snkt", "SNAP", "KrrK"]) : ""),
+    sizzle: () => "S" + rep("s", n(2, 4)) + swell("s", n(2, 3)) + "Z" + rep("z", n(1, 3)) + "hh" + pick(["...", "", "h..."]),
+    dryFart: () => pick(["Pb", "Pf", "Fr", "Pbb", "Ppf"]) + swell("r", n(2, 6)) + pick(["t", "pt", "PHT", "T"]),
+    wetFart: () => pick(["Pl", "Shp", "Fl", "Splb", "Pbl"]) + swell("r", n(2, 5)) + pick(["bt", "tch", "BT", "pt", "rtch"]),
+    plop: () => run(n(1, 2), () => pick(["Pl", "PL", "Pll"]) + mixVowels(["o", "u"], n(1, 2)) + pick(["p", "rp", "mp"])),
+    push: () => pick(["Krr", "Crr", "Shrr", "Krrr"]) + rep("n", n(2, 5)) + pick(["ch", "kl", "chl", "chl"]) + "... " + pick(["Plrrt", "SPLRT", "Plorp", "Plrrt"]),
+    flush: () => "FW" + swell("o", n(3, 6)) + "SH" + rep("H", n(1, 3)) + "... " + pick(["glglgl", "glrrgl", "gllll"]) + "...",
+    heart: () => run(n(2, 3), () => pick(["Ba-dum", "BA-DUM", "ba-DUM", "Thmp-thmp", "Bmp-BMP"])),
+    breath: () => run(n(1, 3), () => pick(["Hhh", "Hh", "Ff", "Fff"]) + mixVowels(["a", "u"], n(1, 3)) + pick(["h", "hh", "ff", ""])),
+    sniff: () => run(n(1, 2), () => pick(["Sn", "SN", "Snn"]) + mixVowels(["i"], n(1, 2)) + "ff"),
+    drool: () => pick(["Shlrr", "Drrl", "Slrr"]) + "... " + pick(["plip", "plp", "tik"]) + "... " + pick(["plip", "plk", "tp"]),
+    stomp: () => run(n(2, 3), () => cap(pick(["Thoom", "Thmp", "Krumph", "Thoomp", "Bwoom", "Thmp"]))),
+    impact: () => pick(["THW", "Thw", "Kr", "WH", "Wh"]) + mixVowels(["a", "u"], n(1, 2)) + pick(["K", "CK", "MP", "mp"]),
+    slash: () => pick(["Shnk", "SHHW", "Sshl", "Shk", "Shwi"]) + pick(["", "ing", "ck", "NK"]),
+    boom: () => pick(["KRA-", "Ka-", "", "KRR-"]) + pick(["BOOOM", "BOOOOM", "Booom", "BWOOOM", "Boooom"]) + (R() < 0.5 ? "..." : ""),
+    splash: () => pick([() => pick(["SPL", "SHPL"]) + rep(pick(["A", "O", "U"]), n(1, 3)) + "SH", () => pick(["Spl", "Pl", "Shpl"]) + rep(pick(["a", "o", "u"]), n(1, 3)) + "sh"])(),
+    fire: () => R() < 0.5 ? run(n(2, 3), () => pick(["Krkl", "Ktt", "Krrkl", "Pkt"])) : "Fw" + swell("o", n(2, 4)) + "mph",
+    thunder: () => "Kr" + swell("r", n(2, 4)) + "AKK... " + pick(["rrmmbl", "rrmblmbl", "rrrmmmbl"]) + "...",
+    rip: () => pick([() => pick(["rrrrip", "rRrRip", "rRrrip", "rrRRip", "RrrRip"]), () => "SHR" + rep("R", n(1, 2)) + "K", () => "Zzzzip"])(),
+    door: () => "Kr" + rep("r", n(0, 2)) + mixVowels(["e"], n(3, 5)) + "k" + (R() < 0.6 ? "... " + pick(["THUD", "Klak", "Thmp", "KLAK"]) : "")
+  };
+  Object.assign(parts, more);
+  const LABEL = { plap: "Hips slapping", squelch: "Wet thrusts", spurt: "Cum spurting", pour: "Cum pouring and dripping", slurp: "Slurping", suck: "Sucking", gluck: "Gagging", drinkGulp: "Gulping it down", smooch: "Kiss", wetKiss: "Wet kissing", lick: "Lick", preyGulp: "Swallowing prey", gullet: "Throat squeezing prey down", muffled: "Muffled struggling inside", crunch: "Bones crunching", sizzle: "Acid sizzling", dryFart: "Dry fart", wetFart: "Wet fart", plop: "Plop", push: "Long push and plop", flush: "Flush", heart: "Heartbeat", breath: "Breathing", sniff: "Sniffing", drool: "Drool dripping", stomp: "Big footsteps", impact: "Punch or hit", slash: "Blade or claw", boom: "Explosion", splash: "Splash", fire: "Fire", thunder: "Thunder", rip: "Cloth ripping or zipper", door: "Door",
+    belch: "Belch", shortBelch: "Shorter belch", burp: "Burp", gurgle: "Digestion gurgle", lateGurgle: "Late-digestion gurgle", longGurgle: "Digestion gurgle", sloshy: "Sloshy late digestion gurgles", brutal: "Brutal digestion gurgles with a crunch", ballGurgle: "Full balls gurgling and sloshing", churn: "Stomach churning growl" };
   return {
-    types: Object.keys(parts), LABEL,
+    types: Object.keys(parts).filter(k => !(k in more)), all: Object.keys(parts), LABEL,
     make(type, s) { if (s != null) seed = s >>> 0; else if (!seed) seed = (Date.now() ^ (Math.random() * 1e9)) >>> 0; return (parts[type] || parts.gurgle)(); },
     // a few fresh examples for the prompt
     examples(types, k = 6) { const out = []; const list = [...types]; for (let i = 0; i < k; i++) { const t = list[i % list.length]; out.push(`${LABEL[t]}: ***${this.make(t)}***`); } return out; }
   };
 })();
 
+// The approved sound-word shapes (Sound Words Bench), read from the letters alone: [icon category, sound type]
+const SHAPES = [
+  [/^(p|th|f)w?l?a+p+$/, "sex", "plap"],
+  [/^(hrrk|ghk|hlk)?gl+u{2,}r*(rk|lp|mp)$/, "liquid", "swallow"],
+  [/^(s|sch|sh|shh)l+u+r+(p|lp|k)$/, "liquid", "oral"],
+  [/^(t?sch|shl)u+(l?k|ck)$|^(pop|pwop|mpah)$/, "liquid", "oral"],
+  [/^sh+l+[ie]+(ck|rp|p|k|erp|e?rp)$/, "liquid", "lick"],
+  [/^(sch|sh|sq|squ|sp)l+k?[oue]+r*(k|lk|rch|ck|rp)$/, "liquid", "squelch"],
+  [/^(spl|spr|shpl)l*[uo]+r+(t|tch)$/, "cum", "cum"],
+  [/^(drr?l|glrr|shlrr|slrr)[ou]*(p|rp|sh)?$/, "liquid", ""],
+  [/^(pl[ik]?p|plk|tik|tp|drip)$/, "liquid", ""],
+  [/^(gl|gul|gll|glk)u+(l?p|mp)$|^gulu+rk$/, "liquid", "swallow"],
+  [/^(gl|gh|hgl|gwl|gll)[uoa]+(c?k+|rk)$/, "liquid", "gag"],
+  [/^(hrrg|glrk|hhgk|shlrk|mrrgl)[hu]*$/, "liquid", "swallow"],
+  [/^(mw|mmw|chu|sm|mwu)[auo]*(h|ch|hh)?$/, "kiss", "kiss"],
+  [/^(mmlch|shm|mwlch|mmhl|shlp)[eau]*(ch|k|p)?$/, "kiss", "kiss"],
+  [/^(thm+p|bmpf|thwmp|m+ph|fwmp)$/, "stomp", "struggle"],
+  [/^s{2,}z*h*$|^s+z{2,}h*$/, "fire", "sizzle"],
+  [/^s?plr+t$/, "shit", "shit"],
+  [/^(krr?k|snkt|snap)$/, "crack", "crack"],
+  [/^(pb|pf|fr|pbb|ppf|pl|shp|fl|splb|pbl)b*r+(t|pt|pht|bt|tch|rtch)$/, "fart", "fart"],
+  [/^pl+[ou]+(p|rp|mp)$/, "shit", "shit"],
+  [/^(kr|cr|shr)r*n+(ch|kl|chl)$/, "crack", "crack"],
+  [/^fwo{2,}sh+$/, "wind", ""],
+  [/^(thmp|bmp)(thmp|bmp)$|^ba?dum$/, "beat", "beat"],
+  [/^(thoom|krumph|thoomp|bwoom)$/, "stomp", "stomp"],
+  [/^(thw|wh|kr)[au]+(k|ck|mp)$/, "hit", "hit"],
+  [/^(shnk|shhw|sshl|shk|shwi)(ing|ck|nk)?$/, "slash", "slash"],
+  [/^(spl|shpl|pl)[aou]+sh$/, "liquid", ""],
+  [/^(krr?kl|ktt|pkt)$/, "fire", "fire"],
+  [/^kr+a+k+$/, "boom", "boom"],
+  [/^r+m+b?l(mbl)?$/, "stomp", "stomp"],
+  [/^r{3,}ip$|^shr+k$|^z{3,}ip$/, "slash", "rip"],
+  [/^kr+e{2,}k$/, "wave", "door"],
+  [/^(thud|klak)$/, "hit", "door"]
+];
+function shapeOf(t) {
+  const l = String(t || "").toLowerCase().replace(/[^a-z]/g, ""); if (l.length < 2) return null;
+  for (const [re, cat, sub] of SHAPES) if (re.test(l)) return { cat, sub };
+  return null;
+}
 // Sounds written in that style (HwOoUuRRRrRhlRrrrhhp, bwRRRRGlblrRRRglrglrrRRrg, CrNNNCH) don't match the word rules,
 // so they're read by their letters: dense gl/rg/bl clusters gurgle, a wide open sound ending in p/ph is a belch,
 // shl/sh is a slosh, cr+n+ch is a crunch, a low gr/hr growl ending in n is a churning stomach.
@@ -3942,8 +4047,11 @@ function sfxPick(sp, t) {
   if (ruleBrown) cat = "shit";
   else if (cat !== "kiss" && nearRGB(c, [255, 111, 174], 50)) cat = "sex";
   else if (cream && (gurgly || ["liquid", "wave", "hit", "stomp", "cum"].includes(cat))) cat = gurgly ? "cumbub" : "cum";
-  if (!["shit", "cum", "cumbub", "bubbles", "liquid"].includes(cat)) return cat;
+  if (!["shit", "cum", "cumbub", "bubbles", "liquid", "crack", "wind", "fire"].includes(cat)) return cat;
   const holder = sp.closest("[data-i]"), ctx = sfxCtx(holder ? +holder.dataset.i : 1e9);
+  // on the toilet a crackly KRRNNCHL is a push and a FWOOSH is the flush
+  if (cat === "crack") return ctx.scat && /^[kcs]h?r+n/i.test(t.replace(/[^\p{L}]/gu, "")) ? "shit" : cat;
+  if (cat === "wind" || cat === "fire") { if (ctx.scat && /^fwo+sh/i.test(t)) { sp.dataset.sub = "flush"; return "liquid"; } return cat; }
   if (cat === "shit" && !ctx.scat && !ruleBrown) { const plain = sfxCat(t.replace(/^(plo|plu|flo|splu|splo)/i, "spla")); cat = plain === "shit" || plain === "wave" ? "liquid" : plain; } // a splat, not a plop
   if (cat === "shit") return ctx.digested ? "shitbones" : "shit";
   if (cat === "cum") return ctx.condom || ctx.cvDisposal ? "condom" : "cum";
@@ -3958,7 +4066,7 @@ function sfxPick(sp, t) {
 }
 function r(a, b) { return a + Math.random() * (b - a); }
 // breathing sounds: always shown soft white, never green
-const BREATH = /^(h+a+h+$|h+a+$|ha{2,}h*|hu+f+|hf+|pa+n+t|phe+w|ph+ew|si+gh|fwu+h|fu+h+$|ffu+h|hu+h+$|h{3,}|whe+w|exha+l|inha+l|sni+f+|hhf+|gaa*sp)/i;
+const BREATH = /^(f{2,}[au]+h*f*$|h{2,}[au]+h*$|s+n+i+f+$|h+a+h+$|h+a+$|ha{2,}h*|hu+f+|hf+|pa+n+t|phe+w|ph+ew|si+gh|fwu+h|fu+h+$|ffu+h|hu+h+$|h{3,}|whe+w|exha+l|inha+l|sni+f+|hhf+|gaa*sp)/i;
 const isBreath = t => BREATH.test(t.replace(/[^\p{L}\s]/gu, "").trim().split(/\s+/)[0] || "");
 function isSfxText(t, bold) {
   const letters = t.replace(/[^\p{L}]/gu, "");
@@ -3973,6 +4081,7 @@ function isSfxText(t, bold) {
 }
 function sfxCat(t) {
   const w = t.replace(/[^\p{L}\s-]/gu, "").trim();
+  const sh = shapeOf(w); if (sh) return sh.cat;
   for (const [cat, re] of SFX_RULES) if (cat !== "wave" && re.test(w)) return cat;
   for (const part of w.split(/[\s-]+/)) for (const [cat, re] of SFX_RULES) if (cat !== "wave" && re.test(part)) return cat;
   const ph = phonoCat(w); if (ph) return ph;
@@ -4025,7 +4134,7 @@ function decorateSfx(root) {
 function looksLikeSound(t) {
   if (/[:?]$/.test(t) || !isSfxText(t, true)) return false;
   const words = t.split(/\s+/).filter(Boolean); if (words.length > 5) return false;
-  const known = words.some(w => { const l = w.replace(/[^\p{L}]/gu, ""); return l.length > 1 && (isBreath(l) || !!phonoCat(l) || SFX_RULES.some(([c, re]) => c !== "wave" && re.test(l))); });
+  const known = words.some(w => { const l = w.replace(/[^\p{L}]/gu, ""); return l.length > 1 && (isBreath(l) || !!shapeOf(l) || !!phonoCat(l) || SFX_RULES.some(([c, re]) => c !== "wave" && re.test(l))); });
   return known || /(\p{L})\1\1/iu.test(t.replace(/[^\p{L}]/gu, ""));
 }
 const AUTO_SFX_COLOR = { gas: "#6fdc6a", bubbles: "#6fdc6a", fart: "#a8875a", shit: "#c9a27e", shitbones: "#c9a27e", cum: "#f1ebda", cumbub: "#f1ebda", condom: "#f1ebda",
@@ -4040,7 +4149,7 @@ function fxLayer(sp) {
 }
 function burst(sp) {
   const cat = sp.dataset.fx || "wave", M = FX_MOTION[cat] || FX_MOTION.wave;
-  playSfx(cat, sp.textContent.trim());
+  playSfx(cat, sp.textContent.trim(), sp.dataset.sub);
   sp.animate([{ transform: "scale(1)" }, { transform: "scale(1.28) rotate(-3deg)" }, { transform: "scale(1)" }], { duration: 320, easing: "ease-out" });
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   // bursts stay inside the chat window: they're drawn in a layer laid exactly over it
@@ -4093,7 +4202,7 @@ const SND_TYPES = {
   gag: "Gagging", plap: "Plapping & slaps", flush: "Toilet flush", loop_kiss: "Loop · kissing", loop_shit: "Loop · shitting",
   loop_vore: "Loop · gurgling", loop_swallow: "Loop · swallowing", loop_sex: "Loop · sex", loop_oral: "Loop · oral", cum: "Cum", condom: "Condom squelch", shit: "Plops", shitbones: "Bone plops", sex: "Wet sex sounds", kiss: "Kisses",
   beat: "Heartbeats", struggle: "Muffled struggling", crack: "Cracks & crunches", hit: "Hits", stomp: "Stomps & thuds", boom: "Booms",
-  slash: "Slashes", fire: "Fire", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
+  slash: "Slashes", fire: "Fire", sizzle: "Acid & sizzling", lick: "Licks", rip: "Rips & zippers", door: "Doors", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
   amb_campfire: "Bg · Campfire", amb_fireplace: "Bg · Fireplace", amb_tavern: "Bg · Tavern", amb_market: "Bg · Crowd & market", amb_city: "Bg · City",
   amb_village: "Bg · Village", amb_office: "Bg · Office", amb_combat: "Bg · Combat", amb_forest: "Bg · Forest", amb_nature: "Bg · Nature",
   amb_night: "Bg · Night", amb_rain: "Bg · Rain", amb_storm: "Bg · Storm", amb_beach: "Bg · Beach & ocean", amb_river: "Bg · River & water",
@@ -4104,8 +4213,8 @@ const SND_TYPES = {
 // what each sound type is for, grouped the way the Sound pack screen shows them
 const SND_GROUPS = [
   ["Tap sounds · vore & body", ["bubbles", "churn", "swallow", "gas", "fart", "struggle", "squelch", "cumbub", "liquid", "beat"]],
-  ["Tap sounds · adult", ["plap", "sex", "oral", "gag", "cum", "condom", "shit", "shitbones", "flush", "kiss"]],
-  ["Tap sounds · other", ["breath", "crack", "hit", "stomp", "boom", "slash", "fire", "zap", "magic", "zzz", "wind", "wave"]],
+  ["Tap sounds · adult", ["plap", "sex", "oral", "gag", "lick", "cum", "condom", "shit", "shitbones", "flush", "kiss"]],
+  ["Tap sounds · other", ["breath", "crack", "hit", "stomp", "boom", "slash", "sizzle", "rip", "door", "fire", "zap", "magic", "zzz", "wind", "wave"]],
   ["Scene loops", ["loop_vore", "loop_swallow", "loop_sex", "loop_oral", "loop_kiss", "loop_shit", "vorebed"]],
   ["Backgrounds", Object.keys(SND_TYPES).filter(k => k.startsWith("amb_"))]
 ];
@@ -4121,9 +4230,11 @@ const SND_HELP = {
   loop_kiss: "A seamless loop that plays while characters are kissing.", loop_shit: "A seamless loop that plays while someone is shitting.",
   flush: "A toilet flush. Plays for FLUSH sounds.", kiss: "Kisses and smooches. Plays for MWAH, SMOOCH and kiss sounds, and during kissing scenes.",
   shit: "Plops and splashes into water. Plays for PLOP and pooping sounds, and during shitting scenes.", fart: "Farts. Plays for fart sounds, and now and then during shitting scenes.",
+  sizzle: "Acid hissing and sizzling (stomach acid, burning). Plays for SSSZZHH sounds.", lick: "Tongue licks. Plays for SHHLICK and lick sounds.",
+  rip: "Cloth tearing and zippers. Plays for RRRRIP, SHRRK and ZZZZIP.", door: "Doors creaking, slamming and latching. Plays for KRREEEK, KLAK and THUD at doors.",
   wave: "Sounds the app couldn't place. Move them with the dropdown."
 };
-const SND_CHAIN_EXTRA = { gag: ["oral"], plap: ["sex"], sex: ["plap"] };
+const SND_CHAIN_EXTRA = { gag: ["oral"], plap: ["sex"], sex: ["plap"], lick: ["oral", "liquid"], sizzle: ["fire"], rip: ["slash"], door: ["hit", "stomp"], oral: ["liquid"] };
 const SND_CHAIN = { cumbub: ["liquid"], condom: ["squelch", "cum"], shit: ["squelch"], shitbones: ["shit", "squelch", "crack"], churn: ["bubbles"], bubbles: ["churn"], liquid: ["cumbub", "squelch"], fart: ["gas"], cum: ["liquid"], struggle: ["squelch"] };
 const SND_SUB = [["flush", /^(ker-?)?flu+sh/i], ["gag", /(^ga+g|^gla+[ck]|^glu+ck|^gwa+[ck]|^hu?r+k|^ghk|^hl+k|cho+k|^gck|^gu+[ck]k)/i], ["plap", /(^pla+p|^pa+p+$|^cla+p|^sma+ck|^thwa+p|^sla+p)/i],
   ["squelch", /(sque+l+ch|squi+sh|squo+r?ch|squi+ck|shlo+r?ck|splo+r?ch|squee+z|squi+r?k)/i], ["cumbub", /(slo+sh|swa+sh|slo+r+sh|slu+sh)/i], ["struggle", /(thra+sh|wri+th|squi+r+m|ki+ck|mmph|mmf+|mrph|thu+m+p+.*thu+m+p)/i], ["swallow", /(gu+l+p|glu+g|^gl+k$|swallo|glu+k|^gu+k$)/i], ["churn", /(chu+r+n|gro+a+n|grumbl|ru+m+bl|blu+r+b|gro+o+r)/i], ]; // swallow and churn words above are listed after the new ones
@@ -4134,12 +4245,12 @@ const AMB_NAMES = [["amb_campfire", /campfire|bonfire|camp.?fire|ember|torch/i],
   ["amb_beach", /beach|ocean|\bsea\b|\bwaves?\b|shore|coast|\bgull/i], ["amb_river", /river|stream|creek|waterfall|brook|\blake/i], ["amb_underwater", /underwater|undwtr/i], ["amb_cave", /\bcave|cavern|\bmines?\b|underground/i],
   ["amb_dungeon", /dungeon|crypt|catacomb|prison|horror|hell/i], ["amb_spaceship", /spaceship|space.?ship|starship|sci.?fi|engine.?room|turbine|astral/i], ["amb_snow", /snow|blizzard|winter|arctic|tundra|howl/i],
   ["amb_night", /night|cricket|\bowl|evening/i], ["amb_forest", /forest|woods|jungle|\bforst|tropical|swamp|\bpine/i], ["amb_nature", /nature|meadow|field|park|garden|bird|\bwind|mountain|desert|mist|fog|clearing/i]];
-const SND_NAMES = [["gag", /\bgag|gluck/i], ["plap", /\bslap|smack|plap|bed.?pound/i], ["breath", /\bpant/i], ["oral", /\bsuck|blow.?job|\bbj\b|deep.?throat|\bgag|fellat|throat.?fuck/i], ["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i],
+const SND_NAMES = [["sizzle", /sizzl|acid|fizz|\bhiss|sear\b|burn/i], ["lick", /\blick|tongue/i], ["rip", /(^|[^a-z])rip([^a-z]|$)|ripping|(^|[^a-z])tear|zipper|(^|[^a-z])zip([^a-z]|$)|velcro|fabric/i], ["door", /door|creak|latch|hinge|\bgate/i], ["boom", /thunder/i], ["slash", /sword|blade|claw|stab/i], ["hit", /punch/i], ["stomp", /footstep/i], ["gag", /\bgag|gluck/i], ["plap", /\bslap|smack|plap|bed.?pound/i], ["breath", /\bpant/i], ["oral", /\bsuck|blow.?job|\bbj\b|deep.?throat|\bgag|fellat|throat.?fuck/i], ["swallow", /swallow|gulp|gullet|throat|esoph|down.?the/i],
   ["fart", /fart|flatul|toot/i], ["gas", /burp|belch|bel[ck]h?/i], ["struggle", /between.?cheeks|lmovement|thrash|\bkick|squirm|struggl|trapped|thump/i],
   ["churn", /churn|growl|groan|grooo|rumbl|grumbl|whin|hunger|hungry|clench|strain|digest.*(long|ambien)|ambien/i], ["bubbles", /blorp|blurb|glorp|blrp|blrt|blrg|burbl|brbl|gurgl|squirt|stomach|belly|digest|tummy|bubbl|innard|\bgut/i],
   ["cumbub", /slosh|shaking|\bballs?\b|testic|scrot|\bnuts?\b/i], ["squelch", /squeez|squelch|squish|pumpkin|pull.?apart/i], ["cum", /\bcum|ejacul|spurt|jizz|semen/i], ["condom", /condom|rubber/i],
   ["shit", /plop|poop|scat|shit|toilet|defecat|turd/i], ["crack", /crunch|bone|crack|snap|break/i], ["liquid", /splash|\bwet|slime|slurp|\blick|drip|saliva|drool|\bgoo|liquid|acid|water|tub\b|landing|movement/i],
-  ["beat", /heart|beat|pulse/i], ["sex", /\bsex|plap|thrust|slap/i], ["kiss", /kiss|smooch|mwah/i], ["hit", /\bhits?\b|punch|smack|impact/i], ["stomp", /stomp|thud|step|foot/i], ["boom", /boom|explo/i], ["breath", /breath|pant|sigh|exhal|inhal/i]];
+  ["beat", /heart|beat|pulse/i], ["sex", /\bsex|plap|thrust|slap/i], ["kiss", /kiss|smooch|mwah/i], ["hit", /\bhits?\b|punch|smack|impact/i], ["stomp", /stomp|thud|step|foot/i], ["boom", /boom|explo/i], ["breath", /breath|pant|sigh|exhal|inhal|sniff/i]];
 // long recordings, or names that say "ambience", are matched as background first; short ones as tap sounds first
 const sndTypeForFile = (name, long) => {
   const near = name.split("/").slice(-2).join("/"); // the file and its own folder, not the zip it came in
@@ -4264,10 +4375,13 @@ async function unzipAudio(blob, prefix, onFile, depth = 0) {
     await onFile(prefix + name, new Blob([data], { type: AUDIO_MIME[ext.toLowerCase()] || "audio/*" }));
   }
 }
-async function playSfx(cat, text) {
+async function playSfx(cat, text, hint) {
   const st = S.settings; if (st.sfxSound === false) return;
   const vol = Math.max(0, Math.min(1, st.sfxVolume ?? 0.7)); if (!vol) return;
-  let sub = (SND_SUB.find(([, re]) => re.test(text || "")) || [])[0];
+  const shape = shapeOf(text);
+  let sub = hint || (cat !== "condom" && cat !== "shitbones" ? shape?.sub : "") || (SND_SUB.find(([, re]) => re.test(text || "")) || [])[0];
+  // muffled thumps are prey kicking only in a vore scene; otherwise they're footsteps or knocks
+  if (sub === "struggle" && shape && !["vore", "struggle", "swallow"].includes(AMBS.act || sceneNow().act)) sub = "stomp";
   // GLUK / GLK / GULK: a gag during oral scenes, a gulp otherwise
   if (sub === "swallow" && /^g+u?l+u?c?k+/i.test(text || "") && (AMBS.act === "oral" || sceneNow().act === "oral")) sub = "gag";
   const chain = t => [...(SND_CHAIN[t] || []), ...(SND_CHAIN_EXTRA[t] || [])];
@@ -4327,6 +4441,10 @@ const SYNTH = {
   zzz: (ac, o) => sTone(ac, o, { f0: 180, f1: 150, dur: 0.8, g: 0.15, vib: 4, vibF: 3 }),
   wind: (ac, o) => sNoise(ac, o, { dur: 0.9, g: 0.3, f0: 400, f1: 900, q: 1.5 }),
   breath: (ac, o) => sNoise(ac, o, { dur: 0.7, g: 0.22, f0: 900, f1: 500, q: 0.8 }),
+  sizzle: (ac, o) => { sNoise(ac, o, { dur: 1.2, g: 0.28, type: "highpass", f0: 5000, f1: 3500, q: 0.7 }); for (let i = 0; i < 6; i++) sNoise(ac, o, { t: Math.random() * 1.0, dur: 0.05, g: 0.25, f0: 6000, q: 3 }); },
+  lick: (ac, o) => { sNoise(ac, o, { dur: 0.35, g: 0.35, f0: 1800, f1: 900, q: 2 }); sTone(ac, o, { f0: 900, f1: 500, dur: 0.12, t: 0.22, g: 0.12 }); },
+  rip: (ac, o) => { for (let i = 0; i < 14; i++) sNoise(ac, o, { t: i * 0.035, dur: 0.04, g: 0.3, f0: 1500 + i * 120, q: 1.5 }); },
+  door: (ac, o) => { sTone(ac, o, { type: "sawtooth", f0: 220, f1: 330, dur: 0.6, g: 0.06, vib: 30, vibF: 18 }); sTone(ac, o, { f0: 90, f1: 50, t: 0.62, dur: 0.25, g: 0.6 }); },
   wave: (ac, o) => sTone(ac, o, { f0: 400, f1: 700, dur: 0.12, g: 0.25 })
 };
 function synthSfx(cat, vol) {
