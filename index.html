@@ -823,7 +823,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.40 · Oct 14";
+const VERSION = "1.41 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -3334,7 +3334,9 @@ addEventListener("beforeinstallprompt", e => { e.preventDefault(); INSTALL = e; 
 addEventListener("appinstalled", () => { INSTALL = null; drawInstall(); });
 function drawInstall() {
   const box = $("sInstall"); if (!box) return;
-  if (isApp()) box.innerHTML = `<p class="note" style="margin:0">✓ Lanternroom is running as an installed app.</p>`;
+  if (/Electron\//.test(navigator.userAgent)) box.innerHTML = `<p class="note" style="margin:0">✓ Lanternroom is running as the Windows program. F11 = full screen, Ctrl + / Ctrl − = size, Ctrl R = reload.</p>`;
+  else if (isApp()) box.innerHTML = `<p class="note" style="margin:0">✓ Lanternroom is running as an installed app.</p>`;
+  else if (/\bOPR\//.test(navigator.userAgent) && matchMedia("(pointer:fine)").matches) box.innerHTML = `<p class="note" style="margin:0">Opera and Opera GX can't install web apps. Use the Lanternroom Windows program instead (ask Claude for the download), or install once from Microsoft Edge.</p>`;
   else if (INSTALL) {
     const pc = matchMedia("(pointer:fine)").matches;
     box.innerHTML = `<button type="button" class="btn primary" id="sInstallGo">${pc ? "Install Lanternroom on this computer" : "Install Lanternroom as an app"}</button><p class="hint" style="margin:0">${pc ? "It becomes a program: its own window, a Start menu and taskbar icon, a desktop shortcut if you like. Works offline, updates itself, and character cards or sound packs can be opened straight into it." : "Adds it to your home screen and app drawer. It opens full-screen, works offline and still updates itself."}</p>`;
