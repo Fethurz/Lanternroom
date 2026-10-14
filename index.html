@@ -814,7 +814,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.30 · Oct 13";
+const VERSION = "1.31 · Oct 13";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1060,7 +1060,7 @@ function garbled(text, c) {
 }
 function parseTag(raw) {
   const m = raw.match(/\[\[([^\[\]]*)\]\]\s*$/);
-  if (!m || !/mood\s*:/i.test(m[1])) return { text: raw.split("[[")[0].trim(), mood: null, place: null, focus: null, amb: null, act: null, gauges: null, pace: null, harm: null };
+  if (!m || !/mood\s*:/i.test(m[1])) return { text: raw.split("[[")[0].trim(), mood: null, place: null, focus: null, amb: null, act: null, gauges: null, pace: null, harm: null, hear: null };
   const f = {};
   for (const part of m[1].split("|")) { const i = part.indexOf(":"); if (i > 0) f[part.slice(0, i).trim().toLowerCase()] = part.slice(i + 1).trim(); }
   const low = k => (f[k] || "").toLowerCase().replace(/[^a-z]/g, "");
@@ -1072,7 +1072,8 @@ function parseTag(raw) {
     act: ACT_KEYS.includes(low("activity")) ? low("activity") : null,
     gauges: f.gauges || null,
     pace: PACES.includes(low("pace")) ? low("pace") : null,
-    harm: ["light", "heavy"].includes(low("harm")) ? low("harm") : f.harm ? "none" : null
+    harm: ["light", "heavy"].includes(low("harm")) ? low("harm") : f.harm ? "none" : null,
+    hear: ["inside", "outside"].includes(low("hearing")) ? low("hearing") : null
   };
 }
 
@@ -1204,7 +1205,7 @@ function buildPrompt(c, chat, upto, cont) {
   const pacePart = pacerOn() ? " | pace: one of " + PACES.join("/") : "";
   if (pacePart) sys += `\n\n# Pace\nThe user follows an on-screen stroke pacer that your pace field controls. Set it from the scene's sexual intensity: stop when nothing sexual is happening or for a pause, slow for teasing and build-up, steady for ongoing sex, fast as things get intense, edge to make ${u} hold right at the brink (use it for denial and teasing near the peak), cum at the moment of climax. Build up naturally over several replies and use edge before cum when it fits.`;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy${focusPart}${gaugePart}${pacePart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is swallow while someone is being swallowed or gulped down, struggle while living prey is squirming inside a stomach, vore while anyone is inside a stomach or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}).`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${focusPart}${gaugePart}${pacePart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). activity is swallow while someone is being swallowed or gulped down, struggle while living prey is squirming inside a stomach, vore while anyone is inside a stomach or being digested and not struggling, sex during penetrative sex, oral during oral sex, kiss while characters are kissing or making out, shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
   if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
@@ -2119,7 +2120,7 @@ async function generate(upto, existing, cont) {
       else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
-    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null };
+    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null, hear: p.hear || null };
     const gv = parseGauges(p.gauges, c); if (gv) { meta.gauges = { ...gaugeValues(c, chat), ...gv }; chat.gauges = { ...meta.gauges }; }
     if (p.pace) meta.pace = p.pace; else if (pacerOn()) meta.pace = null;
     const segs = c.kind === "group" ? splitSpeakers(p.text).filter(x => x.text.trim()) : [];
@@ -4202,7 +4203,7 @@ const SND_TYPES = {
   gag: "Gagging", plap: "Plapping & slaps", flush: "Toilet flush", loop_kiss: "Loop · kissing", loop_shit: "Loop · shitting",
   loop_vore: "Loop · gurgling", loop_swallow: "Loop · swallowing", loop_sex: "Loop · sex", loop_oral: "Loop · oral", cum: "Cum", condom: "Condom squelch", shit: "Plops", shitbones: "Bone plops", sex: "Wet sex sounds", kiss: "Kisses",
   beat: "Heartbeats", struggle: "Muffled struggling", crack: "Cracks & crunches", hit: "Hits", stomp: "Stomps & thuds", boom: "Booms",
-  slash: "Slashes", fire: "Fire", sizzle: "Acid & sizzling", lick: "Licks", rip: "Rips & zippers", door: "Doors", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
+  slash: "Slashes", fire: "Fire", sizzle: "Acid & sizzling", crack_m: "Cracks & crunches (muffled)", lick: "Licks", rip: "Rips & zippers", door: "Doors", zap: "Zaps", magic: "Magic", zzz: "Sleep", wind: "Wind", breath: "Breaths", oral: "Oral (sucking & gagging)",
   amb_campfire: "Bg · Campfire", amb_fireplace: "Bg · Fireplace", amb_tavern: "Bg · Tavern", amb_market: "Bg · Crowd & market", amb_city: "Bg · City",
   amb_village: "Bg · Village", amb_office: "Bg · Office", amb_combat: "Bg · Combat", amb_forest: "Bg · Forest", amb_nature: "Bg · Nature",
   amb_night: "Bg · Night", amb_rain: "Bg · Rain", amb_storm: "Bg · Storm", amb_beach: "Bg · Beach & ocean", amb_river: "Bg · River & water",
@@ -4214,7 +4215,7 @@ const SND_TYPES = {
 const SND_GROUPS = [
   ["Tap sounds · vore & body", ["bubbles", "churn", "swallow", "gas", "fart", "struggle", "squelch", "cumbub", "liquid", "beat"]],
   ["Tap sounds · adult", ["plap", "sex", "oral", "gag", "lick", "cum", "condom", "shit", "shitbones", "flush", "kiss"]],
-  ["Tap sounds · other", ["breath", "crack", "hit", "stomp", "boom", "slash", "sizzle", "rip", "door", "fire", "zap", "magic", "zzz", "wind", "wave"]],
+  ["Tap sounds · other", ["breath", "crack", "crack_m", "hit", "stomp", "boom", "slash", "sizzle", "rip", "door", "fire", "zap", "magic", "zzz", "wind", "wave"]],
   ["Scene loops", ["loop_vore", "loop_swallow", "loop_sex", "loop_oral", "loop_kiss", "loop_shit", "vorebed"]],
   ["Backgrounds", Object.keys(SND_TYPES).filter(k => k.startsWith("amb_"))]
 ];
@@ -4230,6 +4231,7 @@ const SND_HELP = {
   loop_kiss: "A seamless loop that plays while characters are kissing.", loop_shit: "A seamless loop that plays while someone is shitting.",
   flush: "A toilet flush. Plays for FLUSH sounds.", kiss: "Kisses and smooches. Plays for MWAH, SMOOCH and kiss sounds, and during kissing scenes.",
   shit: "Plops and splashes into water. Plays for PLOP and pooping sounds, and during shitting scenes.", fart: "Farts. Plays for fart sounds, and now and then during shitting scenes.",
+  crack_m: "The same cracks muffled, as if inside a stomach. Play instead of normal cracks when you hear a predator's gut from outside.",
   sizzle: "Acid hissing and sizzling (stomach acid, burning). Plays for SSSZZHH sounds.", lick: "Tongue licks. Plays for SHHLICK and lick sounds.",
   rip: "Cloth tearing and zippers. Plays for RRRRIP, SHRRK and ZZZZIP.", door: "Doors creaking, slamming and latching. Plays for KRREEEK, KLAK and THUD at doors.",
   wave: "Sounds the app couldn't place. Move them with the dropdown."
@@ -4389,8 +4391,11 @@ async function playSfx(cat, text, hint) {
   try {
     const pool = await poolFor(order);
     if (pool.length) {
-      const pick = pool[Math.floor(Math.random() * pool.length)], url = await sndURL(pick.id);
-      if (url) { const a = trackAudio(new Audio(url)); a.volume = vol; await a.play(); capAudio(a, vol); return; }
+      let pick = pool[Math.floor(Math.random() * pool.length)];
+      const muf = muffleFor(pick.type);
+      if (muf) { const pre = await poolFor([pick.type + "_m"]); if (pre.length) pick = pre[Math.floor(Math.random() * pre.length)]; } // ready-muffled versions (bone cracks)
+      const url = await sndURL(pick.id);
+      if (url) { const a = trackAudio(new Audio(url)); if (muf && !pick.type.endsWith("_m")) muffleEl(a); a.volume = vol; await a.play(); capAudio(a, vol); return; }
     }
   } catch {}
   synthSfx(sub && SYNTH[sub] ? sub : cat, vol);
@@ -4645,6 +4650,7 @@ function guessAct(msgs) {
   if (/\b(kiss(es|ing|ed)?|making out|make out|smooch\w*|lips (lock|press|meet|crash)\w*|tongues? (dance|tangle|swirl)\w*)\b/i.test(msgText(msgs.at(-1)))) return "kiss";
   return "none";
 }
+const YOU_INSIDE = /\b(you|your)\b[^.!?\n]{0,80}\b(inside|into|in)\b[^.!?\n]{0,30}\b(stomach|belly|gut|womb|balls|gullet|throat)|\b(stomach|belly|gut|womb)( walls?)? (squeez|press|clench|churn|knead)\w* (around|against|in on) you\b|\baround you\b[^.!?\n]{0,40}\b(acid|gurgl|churn|flesh)/i;
 function sceneNow() {
   const msgs = (S.chat?.messages || []).filter(m => m.role !== "image" && m.content);
   const last = [...msgs].reverse().find(m => m.role === "assistant");
@@ -4655,7 +4661,10 @@ function sceneNow() {
   let harm = last?.harm || "none";
   const c = char(), hg = gaugesOf(c).find(g => /health|\bhp\b|hit ?points|vitality|\blife\b|blood/i.test(g.name));
   if (hg && S.chat) { const v = gaugeValues(c, S.chat)[hg.name]; if (v <= 15) harm = "heavy"; else if (v <= 35 && harm === "none") harm = "light"; }
-  return { amb, act, harm };
+  // where the user hears body sounds from: inside a body (as prey) or outside (belly rubs, a predator's gut)
+  let hear = last?.hear;
+  if (!hear) { const t = msgs.slice(-2).map(msgText).join("\n"); hear = YOU_INSIDE.test(t) ? "inside" : "outside"; }
+  return { amb, act, harm, hear };
 }
 const AMBS = { amb: null, act: null, bed: null, loop: null };
 // calls are queued so quick re-renders never start two soundscapes at once
@@ -4675,7 +4684,8 @@ async function ambienceStep() {
   }
   if (wantAmb !== AMBS.amb) { AMBS.bed?.stop(); AMBS.amb = wantAmb; AMBS.bed = wantAmb ? await startBed(wantAmb) : null; }
   else AMBS.bed?.setVol(st.ambVol ?? 0.35);
-  if (wantAct !== AMBS.act) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.loop = wantAct ? startActivity(wantAct) : null; }
+  const wantMuf = !!wantAct && scn.hear !== "inside";
+  if (wantAct !== AMBS.act || wantMuf !== AMBS.muf) { AMBS.loop?.stop(); AMBS.act = wantAct; AMBS.muf = wantMuf; AMBS.loop = wantAct ? startActivity(wantAct, wantMuf) : null; }
   else AMBS.loop?.setVol?.(st.actVol ?? 0.5);
   renderPanes();
 }
@@ -4783,13 +4793,39 @@ const ACT_PLAN = {
 };
 const LOOP_BUF = new Map();
 // seamless loop through Web Audio (an <audio loop> leaves a small gap on phones)
-async function startLoop(url, vol) {
+// --- Muffle: body sounds heard from outside a body (belly rubs, a predator's gut, prey's bones breaking inside)
+// play through the owner's reference muffle (gentle roll-off from ~180 Hz, a wall at ~800 Hz, slight low boost).
+// Heard from inside (you're the prey) they play as recorded.
+const MUFFLE_BODY = new Set(["bubbles", "churn", "cumbub", "struggle", "vorebed", "loop_vore"]);   // always muffled from outside
+const MUFFLE_VORE = new Set(["crack", "sizzle", "squelch"]);                           // muffled from outside during vore
+function muffleFor(type) {
+  if (!S.chat || !type) return false;
+  const sc = sceneNow(); if (sc.hear === "inside") return false;
+  if (MUFFLE_BODY.has(type)) return true;
+  return MUFFLE_VORE.has(type) && (["vore", "struggle", "swallow"].includes(sc.act) || VORE.digest.test(msgText(S.chat.messages.filter(m => m.role === "assistant").at(-1))));
+}
+function muffleChain(ac) {
+  const first = ac.createIIRFilter ? (() => { const K = Math.tan(Math.PI * 180 / ac.sampleRate), b0 = K / (1 + K); return ac.createIIRFilter([b0, b0], [1, (K - 1) / (K + 1)]); })() : Object.assign(ac.createBiquadFilter(), { type: "lowpass" });
+  const nodes = [first];
+  const bq = (type, f, Q, gain) => { const n = ac.createBiquadFilter(); n.type = type; n.frequency.value = f; if (Q != null) n.Q.value = Q; if (gain != null) n.gain.value = gain; nodes.push(n); };
+  for (const q of [0.5098, 0.6013, 0.9000, 2.5629]) bq("lowpass", 800, q);   // 8th-order wall at 800 Hz
+  for (const q of [0.5412, 1.3066]) bq("lowpass", 1200, q);                  // and 4th-order at 1.2 kHz
+  bq("highpass", 30, 0.707); bq("lowshelf", 120, null, 4);
+  const make = ac.createGain(); make.gain.value = 2.2; nodes.push(make);    // the filter takes a lot away; bring the level back up
+  const lim = ac.createDynamicsCompressor(); lim.threshold.value = -6; lim.ratio.value = 12; lim.attack.value = 0.003; lim.release.value = 0.15; nodes.push(lim);
+  for (let i = 0; i < nodes.length - 1; i++) nodes[i].connect(nodes[i + 1]);
+  return { input: nodes[0], output: nodes[nodes.length - 1] };
+}
+function muffleEl(a) { const ac = acx(); if (!ac) return a; try { const ch = muffleChain(ac); ac.createMediaElementSource(a).connect(ch.input); ch.output.connect(ac.destination); } catch {} return a; }
+async function startLoop(url, vol, muffle) {
   const ac = acx(); if (!ac) return null;
   let buf = LOOP_BUF.get(url);
   if (!buf) { buf = await ac.decodeAudioData(await (await fetch(url)).arrayBuffer()); LOOP_BUF.set(url, buf); }
   if (AC !== ac) return null; // the sound was cut while loading
   const src = ac.createBufferSource(), g = ac.createGain();
-  src.buffer = buf; src.loop = true; g.gain.value = 0.0001; src.connect(g).connect(ac.destination); src.start();
+  src.buffer = buf; src.loop = true; g.gain.value = 0.0001;
+  if (muffle) { const ch = muffleChain(ac); src.connect(g).connect(ch.input); ch.output.connect(ac.destination); } else src.connect(g).connect(ac.destination);
+  src.start();
   g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), ac.currentTime + 1.2);
   return { stop() { try { g.gain.setTargetAtTime(0.0001, ac.currentTime, 0.15); setTimeout(() => { try { src.stop(); } catch {} }, 600); } catch {} }, setVol(v) { g.gain.setTargetAtTime(Math.max(0.0002, v), ac.currentTime, 0.2); } };
 }
@@ -4798,8 +4834,9 @@ SYNTH.oral = (ac, o) => {
   sNoise(ac, o, { dur: rr(0.22, 0.35), g: 0.3, f0: rr(250, 400), f1: rr(900, 1400), q: 4 }); sTone(ac, o, { f0: rr(120, 160), f1: 90, dur: 0.25, g: 0.12, vib: 15, vibF: 18 });
   if (Math.random() < 0.18) { sTone(ac, o, { type: "sawtooth", t: 0.3, f0: rr(130, 160), f1: 85, dur: 0.3, g: 0.12, vib: 25, vibF: 24 }); sNoise(ac, o, { t: 0.3, dur: 0.25, g: 0.15, type: "lowpass", f0: 700, f1: 250 }); }
 };
-function startActivity(kind) {
+function startActivity(kind, muffled) {
   const plan = ACT_PLAN[kind]; if (!plan) return null;
+  const mf = t => muffled && (MUFFLE_BODY.has(t) || MUFFLE_VORE.has(t));
   let stopped = false, timer = null, cur = null, bed = null, loop = null, looping = false;
   const vol = () => S.settings.actVol ?? 0.5;
   // 1) a seamless loop if one exists for this activity; 2) otherwise long recordings played back to back
@@ -4808,7 +4845,7 @@ function startActivity(kind) {
     if (stopped) return;
     if (lf.length) {
       const f = lf[Math.floor(Math.random() * lf.length)], url = await sndURL(f.id);
-      if (url && !stopped) { loop = await startLoop(url, vol()).catch(() => null); looping = !!loop; if (stopped && loop) loop.stop(); }
+      if (url && !stopped) { loop = await startLoop(url, vol(), mf(f.type)).catch(() => null); looping = !!loop; if (stopped && loop) loop.stop(); }
       if (looping) return;
     }
     const files = plan.bed ? await poolFor(plan.bed) : [];
@@ -4816,7 +4853,7 @@ function startActivity(kind) {
     const playBed = async () => {
       if (stopped) return;
       const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id); if (!url || stopped) return;
-      bed = trackAudio(new Audio(url)); bed.volume = 0; bed.onended = playBed;
+      bed = trackAudio(new Audio(url)); if (mf(f.type)) muffleEl(bed); bed.volume = 0; bed.onended = playBed;
       await bed.play().catch(() => {});
       const target = vol() * 0.55; let v = 0; const t = setInterval(() => { v = Math.min(target, v + target / 20); if (bed) bed.volume = v; if (v >= target) clearInterval(t); }, 75);
     };
@@ -4830,7 +4867,7 @@ function startActivity(kind) {
     let wait = rr(...(looping ? plan.gapLoop : plan.gap));
     if (files.length) {
       const f = files[Math.floor(Math.random() * files.length)], url = await sndURL(f.id);
-      if (url && !stopped) { cur = trackAudio(new Audio(url)); cur.volume = vol() * (looping ? 0.8 : 1); await cur.play().catch(() => {}); capAudio(cur, cur.volume); wait += Math.min(4, isFinite(cur.duration) ? cur.duration : 1); }
+      if (url && !stopped) { cur = trackAudio(new Audio(url)); if (mf(f.type)) muffleEl(cur); cur.volume = vol() * (looping ? 0.8 : 1); await cur.play().catch(() => {}); capAudio(cur, cur.volume); wait += Math.min(4, isFinite(cur.duration) ? cur.duration : 1); }
     } else if (!looping) {
       const ac = acx(); if (ac) { const out = ac.createGain(); out.gain.value = vol(); out.connect(ac.destination);
         if (kind === "vore") { (Math.random() < 0.3 ? SYNTH.churn : SYNTH.bubbles)(ac, out); wait += 1; }

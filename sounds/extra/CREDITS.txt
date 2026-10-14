@@ -9,3 +9,4 @@ From freesound.org:
 - Flush: jpbillingsleyjr ("flushed it", #553460)
 - Farts: peridactyloptrix ("farts loud and flabby x7", #202528), aetherzip ("fart short", #691977), bassimat ("fart 005", #840755)
 Each sound keeps the license its creator chose on freesound.org.
+Bone cracks (crack/, and their muffled versions in crack_m/): "Bones cracking" by Joseph Sardin, BigSoundBank.com (#0596, CC0), cut into single cracks; the muffled set is filtered to match the owner's reference.
