@@ -872,7 +872,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.45 · Oct 14";
+const VERSION = "1.46 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1056,11 +1056,17 @@ async function ds(messages, o = {}) {
   if (o.json) body.response_format = { type: "json_object" };
   const url = deep ? "https://api.deepseek.com/chat/completions" : st.customUrl.replace(/\/+$/, "") + "/chat/completions";
   let r;
-  try {
-    r = await fetch(url, { method: "POST", signal: o.signal, headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key }, body: JSON.stringify(body) });
-  } catch (e) {
-    if (e.name === "AbortError") throw e;
-    throw new Error(`Couldn't reach ${deep ? "DeepSeek" : "the API"}. Check your internet connection and try again.`);
+  // an overloaded or briefly failing service gets two more tries (after 3 and 8 seconds) before the error shows
+  for (let tryN = 0; ; tryN++) {
+    try {
+      r = await fetch(url, { method: "POST", signal: o.signal, headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key }, body: JSON.stringify(body) });
+    } catch (e) {
+      if (e.name === "AbortError") throw e;
+      throw new Error(`Couldn't reach ${deep ? "DeepSeek" : "the API"}. Check your internet connection and try again.`);
+    }
+    if (![429, 500, 502, 503, 504].includes(r.status) || tryN >= 2) break;
+    o.onRetry?.(tryN + 1);
+    await new Promise((res, rej) => { const t = setTimeout(res, tryN ? 8000 : 3000); o.signal?.addEventListener("abort", () => { clearTimeout(t); rej(new DOMException("Aborted", "AbortError")); }, { once: true }); });
   }
   if (!r.ok) {
     let msg = ""; try { msg = (await r.json()).error?.message || ""; } catch {}
@@ -2190,6 +2196,7 @@ async function generate(upto, existing, cont) {
         temperature: attempt ? Math.min(S.settings.temperature, 0.7) : undefined,
         signal: gac.signal,
         onThinking: () => kick(),
+        onRetry: n => { kick(); const t = bubble.querySelector(".typing-l > span"); if (t) t.textContent = `DeepSeek is busy, trying again (${n} of 2)…`; },
         onDelta: full => {
           kick(); latest = full;
           if (!revealP) {
@@ -3662,113 +3669,259 @@ function rubSound(part, scn, n) {
   if (n > 3 && Math.random() < 0.13) return "burp"; // enough rubbing works a burp loose
   return pick(["gurgle", "gurgle", "growl", "slosh"]);
 }
-// The rub pad (v1.45): each part is a soft body. Its skin is a ring of points on springs; the hand drags the skin
-// it touches in the direction it moves, the whole mass sways after the hand and jiggles back, and balls and breasts
-// swing on their own and bump into each other. Drawn on a canvas in the pred's amber, lit from the top left.
-function rubBody(part, R) {
-  const N = 30, blobs = [];
-  const blob = (x, y, rx, ry, hang) => blobs.push({ x0: x, y0: y, x, y, vx: 0, vy: 0, rx, ry, hang, d: Array.from({ length: N }, () => ({ x: 0, y: 0, vx: 0, vy: 0 })) });
-  if (part === "belly") blob(0, R * 0.08, R * 0.62, R * 0.56, 0.35);
-  else if (part === "balls") { blob(-R * 0.29, R * 0.2, R * 0.34, R * 0.36, 1); blob(R * 0.29, R * 0.24, R * 0.33, R * 0.35, 1); }
-  else { blob(-R * 0.33, R * 0.1, R * 0.36, R * 0.34, 0.8); blob(R * 0.33, R * 0.1, R * 0.36, R * 0.34, 0.8); }
-  const pt = (b, i) => { const a = i / N * Math.PI * 2, sag = b.hang * 0.12 * Math.max(0, Math.sin(a)); return [b.x + Math.cos(a) * b.rx + b.d[i].x, b.y + Math.sin(a) * b.ry * (1 + sag) + b.d[i].y]; };
-  return {
-    blobs,
-    // the hand at (hx, hy) moving by (mx, my) this frame, pressing when down
-    step(dt, hx, hy, mx, my, down) {
-      const k = Math.min(2, dt * 60);
-      for (const b of blobs) {
-        // the whole mass: pulled home by a spring, nudged by the hand, swinging more when it hangs
-        if (down && Math.hypot(hx - b.x, hy - b.y) < Math.max(b.rx, b.ry) * 1.15) { b.vx += mx * 0.09 * (0.6 + b.hang); b.vy += my * 0.07 * (0.6 + b.hang); }
-        const sp = 0.045 - b.hang * 0.018;
-        b.vx += (b.x0 - b.x) * sp * k; b.vy += (b.y0 - b.y) * sp * k;
-        b.vx *= Math.pow(0.9, k); b.vy *= Math.pow(0.9, k);
-        b.x += b.vx * k; b.y += b.vy * k;
-        // the skin: points near the hand are dragged along and pressed in, then spring back and settle smoothly
-        for (let i = 0; i < N; i++) {
-          const p = b.d[i], [px, py] = pt(b, i), dist = Math.hypot(px - hx, py - hy), reach = Math.max(b.rx, b.ry) * 0.75;
-          if (down && dist < reach) {
-            const f = (1 - dist / reach) ** 2, a = i / N * Math.PI * 2, nx = Math.cos(a), ny = Math.sin(a);
-            p.vx += (mx * 0.35 - nx * 0.9) * f; p.vy += (my * 0.35 - ny * 0.9) * f;
-          }
-          const L = b.d[(i + N - 1) % N], Rr = b.d[(i + 1) % N];
-          p.vx += (-p.x * 0.12 + (L.x + Rr.x - 2 * p.x) * 0.18) * k; p.vy += (-p.y * 0.12 + (L.y + Rr.y - 2 * p.y) * 0.18) * k;
-          p.vx *= Math.pow(0.82, k); p.vy *= Math.pow(0.82, k);
-        }
-        for (const p of b.d) { p.x += p.vx * k; p.y += p.vy * k; const m = Math.hypot(p.x, p.y), cap = Math.min(b.rx, b.ry) * 0.35; if (m > cap) { p.x *= cap / m; p.y *= cap / m; } }
-      }
-      // two balls or two breasts never pass through each other
-      if (blobs.length === 2) {
-        const [a, c] = blobs, dx = c.x - a.x, dy = c.y - a.y, dd = Math.hypot(dx, dy) || 1, min = (a.rx + c.rx) * 0.78;
-        if (dd < min) { const push = (min - dd) / 2, ux = dx / dd, uy = dy / dd; a.x -= ux * push; a.y -= uy * push; c.x += ux * push; c.y += uy * push; a.vx -= ux * push * 0.3; c.vx += ux * push * 0.3; }
-      }
-    },
-    // a poke from inside (struggling prey) or a gurgle ripple
-    poke(strength) {
-      const b = blobs[Math.floor(Math.random() * blobs.length)], i0 = Math.floor(Math.random() * N);
-      for (let j = -3; j <= 3; j++) { const p = b.d[(i0 + j + N) % N], a = (i0 + j) / N * Math.PI * 2, f = strength * (1 - Math.abs(j) / 4); p.vx += Math.cos(a) * f; p.vy += Math.sin(a) * f; }
-    },
-    draw(ctx, R) {
-      const css = getComputedStyle(document.documentElement), acc = css.getPropertyValue("--accent").trim() || "#e8a95b";
-      if (part === "balls") { // the base of the shaft above the sack
-        ctx.fillStyle = shade(acc, -0.18); ctx.beginPath(); ctx.roundRect(-R * 0.17, -R * 0.62, R * 0.34, R * 0.6, R * 0.15); ctx.fill();
-      }
-      if (part === "breasts") { ctx.fillStyle = shade(acc, -0.42); ctx.globalAlpha = 0.55; ctx.beginPath(); ctx.roundRect(-R * 0.82, -R * 0.42, R * 1.64, R * 0.5, R * 0.25); ctx.fill(); ctx.globalAlpha = 1; }
-      if (part === "belly") { ctx.fillStyle = shade(acc, -0.42); ctx.globalAlpha = 0.55; ctx.beginPath(); ctx.ellipse(0, -R * 0.08, R * 0.5, R * 0.72, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
-      const path = b => { const ps = Array.from({ length: N }, (_, i) => pt(b, i)); ctx.beginPath(); for (let i = 0; i < N; i++) { const [x0, y0] = ps[i], [x1, y1] = ps[(i + 1) % N]; if (!i) ctx.moveTo((x0 + x1) / 2, (y0 + y1) / 2); else ctx.quadraticCurveTo(x0, y0, (x0 + x1) / 2, (y0 + y1) / 2); } const [x0, y0] = ps[0], [x1, y1] = ps[1]; ctx.quadraticCurveTo(x0, y0, (x0 + x1) / 2, (y0 + y1) / 2); ctx.closePath(); };
-      // back blob first so the nearer one overlaps it
-      const order = [...blobs].sort((a, b) => a.y - b.y);
-      for (const b of order) {
-        const g = ctx.createRadialGradient(b.x - b.rx * 0.35, b.y - b.ry * 0.45, b.rx * 0.1, b.x, b.y, Math.max(b.rx, b.ry) * 1.15);
-        g.addColorStop(0, shade(acc, 0.35)); g.addColorStop(0.55, acc); g.addColorStop(1, shade(acc, -0.38));
-        path(b); ctx.fillStyle = g; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = shade(acc, -0.5); ctx.stroke();
-        // a soft shine that slides with the skin
-        const sh = b.d[Math.round(N * 0.62)];
-        ctx.fillStyle = "rgba(255,255,255,.28)"; ctx.beginPath(); ctx.ellipse(b.x - b.rx * 0.32 + sh.x * 0.6, b.y - b.ry * 0.42 + sh.y * 0.6, b.rx * 0.24, b.ry * 0.13, -0.5, 0, Math.PI * 2); ctx.fill();
-        if (part === "breasts") { const q = b.d[Math.round(N * 0.25)]; ctx.fillStyle = shade(acc, -0.3); ctx.beginPath(); ctx.arc(b.x + q.x * 0.8 + (b.x < 0 ? -b.rx * 0.08 : b.rx * 0.08), b.y + b.ry * 0.35 + q.y * 0.8, b.rx * 0.11, 0, Math.PI * 2); ctx.fill(); }
-      }
-      if (part === "balls") { const [a, c] = blobs; ctx.strokeStyle = shade(acc, -0.45); ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo((a.x + c.x) / 2, Math.min(a.y, c.y) - a.ry * 0.5); ctx.quadraticCurveTo((a.x + c.x) / 2 + (c.vx + a.vx) * 2, (a.y + c.y) / 2, (a.x + c.x) / 2, Math.max(a.y, c.y) + a.ry * 0.7); ctx.stroke(); }
-      if (part === "belly") { const b = blobs[0], q = b.d[Math.round(N * 0.25)]; ctx.fillStyle = shade(acc, -0.5); ctx.beginPath(); ctx.ellipse(b.x + q.x * 0.7, b.y + b.ry * 0.12 + q.y * 0.7, R * 0.025, R * 0.045, 0, 0, Math.PI * 2); ctx.fill(); }
-    }
-  };
+// The rub pad (v1.46): each part is a soft body anchored in the middle of the pad, sized by how full the pred is.
+// Skin is a ring of points on springs (the hand drags and presses it), the mass barely leaves its anchor, balls hang
+// from one point with a seam that keeps the two together and swing when rubbed hard, breasts droop and squash
+// against each other instead of overlapping, and the cock can be stroked and smacked around. Built per pred:
+// broader and squarer for males, softer curves and wider hips for females, a side view with no navel for ferals.
+function predLook() {
+  const c = char(); if (!c) return { sex: "n", feral: false };
+  const who = (c.kind === "group" && S.chat?.focus && memberByName(c, S.chat.focus)) || c;
+  const t = [who.appearance, who.visual, who.description].join(" ");
+  const f = (t.match(/\b(she|her|hers|herself|woman|girl|female|lady|vixen|doe|mare|queen|mother|wife)\b/gi) || []).length;
+  const m = (t.match(/\b(he|him|his|himself|man|guy|male|boy|stallion|king|father|husband)\b/gi) || []).length;
+  return { sex: f > m * 1.2 ? "f" : m > f * 1.2 ? "m" : "n", feral: artOf(who) === "feral" };
 }
-// a colour made lighter (+) or darker (-)
 function shade(hex, f) {
   const m = String(hex).replace("#", ""); const n = parseInt(m.length === 3 ? m.replace(/./g, c => c + c) : m.slice(0, 6), 16);
   const ch = [n >> 16 & 255, n >> 8 & 255, n & 255].map(v => Math.round(f >= 0 ? v + (255 - v) * f : v * (1 + f)));
   return `rgb(${ch.join(",")})`;
+}
+// a smooth closed (or open) curve through points
+function smoothPath(ctx, ps, closed = true) {
+  const n = ps.length, P = i => ps[closed ? (i + n) % n : Math.max(0, Math.min(n - 1, i))];
+  ctx.moveTo(ps[0][0], ps[0][1]);
+  for (let i = 0; i < (closed ? n : n - 1); i++) {
+    const p0 = P(i - 1), p1 = P(i), p2 = P(i + 1), p3 = P(i + 2);
+    ctx.bezierCurveTo(p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6, p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6, p2[0], p2[1]);
+  }
+  if (closed) ctx.closePath();
+}
+function rubBody(part, R, look) {
+  const N = 32, fem = look.sex === "f", male = look.sex === "m", side = part === "belly" && look.feral, equine = look.feral && S.settings.feralCock !== "human";
+  const W = (m, f) => (male ? m : fem ? f : (m + f) / 2) * R; // a measurement for this body shape
+  const ev = { smack: false, clap: false, stroke: 0 };
+  // ---- a soft blob: anchor, a little give, skin points; shape(a) is its resting outline, mob(a) how loose the skin is there
+  const blob = (cx, cy, rx, ry, o = {}) => ({ cx, cy, rx, ry, ox: 0, oy: 0, vx: 0, vy: 0, sag: 0, k: o.k || 0.16, max: o.max || R * 0.04, droop: o.droop || 0, flatTop: o.flatTop || 0, narrowTop: o.narrowTop || 0, mob: o.mob || (() => 1), d: Array.from({ length: N }, () => ({ x: 0, y: 0, vx: 0, vy: 0 })) });
+  const rest = (b, i) => {
+    const a = i / N * Math.PI * 2, s = Math.sin(a), c = Math.cos(a);
+    let x = c * b.rx, y = s * b.ry * (1 + b.sag);
+    if (s > 0) { y += b.ry * b.droop * s ** 1.6; x *= 1 + b.droop * 0.25 * s; } // fuller and lower at the bottom
+    else { y *= 1 - b.flatTop * -s; x *= 1 - b.narrowTop * (-s) ** 1.2; }        // flatter and narrower where it's attached on top
+    return [x, y];
+  };
+  const pt = (b, i) => { const [x, y] = rest(b, i), m = b.mob(i / N * Math.PI * 2); return [b.cx + b.ox + x + b.d[i].x * m, b.cy + b.oy + y + b.d[i].y * m]; };
+  const stepBlob = (b, k, hx, hy, mx, my, push = 1) => {
+    const near = Math.hypot(hx - b.cx - b.ox, hy - b.cy - b.oy) < Math.max(b.rx, b.ry) * 1.1;
+    if (near) { b.vx += mx * 0.05 * push; b.vy += my * 0.05 * push; }
+    b.vx += -b.ox * b.k * k; b.vy += -b.oy * b.k * k; b.vx *= Math.pow(0.8, k); b.vy *= Math.pow(0.8, k);
+    b.ox += b.vx * k; b.oy += b.vy * k;
+    const m = Math.hypot(b.ox, b.oy); if (m > b.max) { b.ox *= b.max / m; b.oy *= b.max / m; b.vx *= 0.5; b.vy *= 0.5; } // stays attached
+    for (let i = 0; i < N; i++) {
+      const p = b.d[i], [px, py] = pt(b, i), dist = Math.hypot(px - hx, py - hy), reach = Math.max(b.rx, b.ry) * 0.7;
+      if (dist < reach) { const f = (1 - dist / reach) ** 2, a = i / N * Math.PI * 2; p.vx += (mx * 0.3 - Math.cos(a) * 0.8) * f; p.vy += (my * 0.3 - Math.sin(a) * 0.8) * f; }
+      const L = b.d[(i + N - 1) % N], Rr = b.d[(i + 1) % N];
+      p.vx += (-p.x * 0.13 + (L.x + Rr.x - 2 * p.x) * 0.2) * k; p.vy += (-p.y * 0.13 + (L.y + Rr.y - 2 * p.y) * 0.2) * k;
+      p.vx *= Math.pow(0.8, k); p.vy *= Math.pow(0.8, k);
+    }
+    for (const p of b.d) { p.x += p.vx * k; p.y += p.vy * k; const m2 = Math.hypot(p.x, p.y), cap = Math.min(b.rx, b.ry) * 0.3; if (m2 > cap) { p.x *= cap / m2; p.y *= cap / m2; } }
+  };
+  const blobPath = (ctx, b) => { ctx.beginPath(); smoothPath(ctx, Array.from({ length: N }, (_, i) => pt(b, i))); };
+  const skin = (acc, b) => { const g = ctxRef.createRadialGradient(b.cx + b.ox - b.rx * 0.35, b.cy + b.oy - b.ry * 0.45, b.rx * 0.1, b.cx + b.ox, b.cy + b.oy, Math.max(b.rx, b.ry) * 1.2); g.addColorStop(0, shade(acc, 0.35)); g.addColorStop(0.55, acc); g.addColorStop(1, shade(acc, -0.4)); return g; };
+  const shine = (ctx, b, f = 1) => { const q = b.d[Math.round(N * 0.62)]; ctx.fillStyle = "rgba(255,255,255,.26)"; ctx.beginPath(); ctx.ellipse(b.cx + b.ox - b.rx * 0.32 + q.x * 0.5, b.cy + b.oy - b.ry * 0.4 + q.y * 0.5, b.rx * 0.24 * f, b.ry * 0.12 * f, -0.5, 0, Math.PI * 2); ctx.fill(); };
+  let ctxRef = null;
+
+  // ---- the parts
+  const blobs = [];
+  let swing = 0, swingV = 0, seam = 0, seamV = 0, energy = 0, cock = null, contact = 0, lastClap = 0;
+  if (part === "belly") {
+    if (side) blobs.push(blob(0, 0.05 * R, 0.72 * R, 0.5 * R, { flatTop: 0.45, droop: 0.18, max: R * 0.035, mob: a => 0.25 + 0.75 * Math.max(0, Math.sin(a)) }));
+    else blobs.push(blob(0, 0.08 * R, W(0.6, 0.6), 0.56 * R, { droop: 0.1, flatTop: 0.1, max: R * 0.035, mob: a => 0.55 + 0.45 * Math.max(0, Math.sin(a)) }));
+  } else if (part === "balls") {
+    // two lobes hang from one point under the shaft; the sack swings around that point
+    blobs.push(blob(-0.24 * R, 0.45 * R, 0.29 * R, 0.29 * R, { droop: 0.05, flatTop: 0.06, k: 0.12, max: R * 0.05 }), blob(0.24 * R, 0.48 * R, 0.285 * R, 0.285 * R, { droop: 0.05, flatTop: 0.06, k: 0.12, max: R * 0.05 }));
+    cock = { phi: 0, w: 0, len: (equine ? 0.76 : 0.66) * R, squash: 0, slide: 0 };
+  } else {
+    const ro = W(0.32, 0.37), ry = W(0.27, 0.35);
+    for (const sgn of [-1, 1]) blobs.push(blob(sgn * W(0.37, 0.34), W(0.06, 0.02), ro, ry, { droop: W(0.14, 0.4) / R, flatTop: 0.12, narrowTop: W(0.1, 0.3) / R, k: 0.13, max: R * 0.045, mob: a => 0.3 + 0.7 * Math.max(0, Math.sin(a)) }));
+  }
+  const PIV = [0, 0.1 * R]; // where the sack hangs from
+  const rot = ([x, y]) => { const c = Math.cos(swing), s = Math.sin(swing), dx = x - PIV[0], dy = y - PIV[1]; return [PIV[0] + dx * c - dy * s, PIV[1] + dx * s + dy * c]; };
+  const unrot = (x, y) => { const c = Math.cos(-swing), s = Math.sin(-swing), dx = x - PIV[0], dy = y - PIV[1]; return [PIV[0] + dx * c - dy * s, PIV[1] + dx * s + dy * c]; };
+  const cockBase = [0, 0.02 * R];
+  const cockPts = () => { // base, bend control and tip of the shaft (it points up, leaning with phi)
+    const L = cock.len * (1 + cock.squash), a = cock.phi, ca = a * 0.55;
+    return [cockBase, [cockBase[0] + Math.sin(ca) * L * 0.5, cockBase[1] - Math.cos(ca) * L * 0.5], [cockBase[0] + Math.sin(a) * L, cockBase[1] - Math.cos(a) * L]];
+  };
+
+  return {
+    ev,
+    // for tests: how far each part is off its anchor, the seam gap, breasts overlapping, the swing
+    _state() {
+      const st = { offs: blobs.map(b => Math.hypot(b.ox, b.oy)), swing };
+      if (part === "balls") st.gap = ((blobs[1].cx + blobs[1].ox) - (blobs[0].cx + blobs[0].ox)) / (blobs[1].cx - blobs[0].cx);
+      if (part === "breasts") { const xs = b => Array.from({ length: N }, (_, i) => pt(b, i)[0]); st.overlap = Math.max(0, Math.max(...xs(blobs[0])) - Math.min(...xs(blobs[1]))); }
+      return st;
+    },
+    step(dt, hx, hy, mx, my) {
+      const k = Math.min(2, dt * 60), sp = Math.hypot(mx, my);
+      ev.smack = false; ev.clap = false;
+      if (part === "balls") {
+        // the cock: stroked along its length it bobs and slides, swiped hard across it swings and slaps back
+        const [b0, b1, b2] = cockPts(), segD = (px, py, [ax, ay], [bx, by]) => { const vx = bx - ax, vy = by - ay, t = Math.max(0, Math.min(1, ((px - ax) * vx + (py - ay) * vy) / (vx * vx + vy * vy))); return Math.hypot(px - ax - vx * t, py - ay - vy * t); };
+        const onCock = Math.min(segD(hx, hy, b0, b1), segD(hx, hy, b1, b2)) < 0.14 * R;
+        if (onCock && sp > 0.5) {
+          const ax = Math.sin(cock.phi), ay = -Math.cos(cock.phi), along = mx * ax + my * ay, across = mx * ay * -1 + my * ax;
+          cock.w += -across * 0.0045 * k; cock.slide += along * 0.004; ev.stroke += Math.abs(along);
+          cock.squash += -along * 0.0016;
+          if (Math.abs(across) > 9) { cock.w += Math.sign(-across) * 0.06; ev.smack = true; }
+        }
+        cock.w += -cock.phi * 0.07 * k; cock.w *= Math.pow(0.9, k); cock.phi = Math.max(-0.95, Math.min(0.95, cock.phi + cock.w * k));
+        cock.squash *= Math.pow(0.85, k); cock.squash = Math.max(-0.08, Math.min(0.08, cock.squash)); cock.slide *= Math.pow(0.93, k); cock.slide = Math.max(-0.12, Math.min(0.12, cock.slide));
+        // the sack: hard rubbing swings it from where it hangs; the swing and the rubbing let it sag a little lower
+        const [lhx, lhy] = unrot(hx, hy), inSack = !onCock && lhy > 0.05 * R && Math.abs(lhx) < 0.55 * R && lhy < 0.85 * R;
+        if (inSack && sp > 6) swingV += mx * 0.0016 * k;
+        swingV += -swing * 0.05 * k; swingV *= Math.pow(0.93, k); swing = Math.max(-0.4, Math.min(0.4, swing + swingV * k));
+        energy += ((inSack ? Math.min(1, sp / 14) : 0) + Math.abs(swing) * 2 - energy) * 0.05 * k;
+        for (const b of blobs) { b.sag += (0.02 + energy * 0.1 - b.sag) * 0.08 * k; stepBlob(b, k, lhx, lhy, inSack ? mx : 0, inSack ? my : 0, 1.2); }
+        // the seam holds the two together: they can wobble apart a little, never separate
+        const [L, Rb] = blobs, gap = (Rb.cx + Rb.ox) - (L.cx + L.ox), restGap = Rb.cx - L.cx;
+        if (gap > restGap * 1.04) { const e = (gap - restGap * 1.04) / 2; L.ox += e; Rb.ox -= e; L.vx *= 0.6; Rb.vx *= 0.6; }
+        if (gap < restGap * 0.93) { const e = (restGap * 0.93 - gap) / 2; L.ox -= e; Rb.ox += e; }
+        if (inSack && Math.abs(lhx - seam) < 0.09 * R) seamV += mx * 0.012;
+        seamV += -seam * 0.12 * k; seamV *= Math.pow(0.82, k); seam = Math.max(-0.035 * R, Math.min(0.035 * R, seam + seamV * k));
+        return;
+      }
+      for (const b of blobs) stepBlob(b, k, hx, hy, mx, my, part === "breasts" ? 1.3 : 0.8);
+      if (part === "breasts") { // they press into each other at the middle, never through
+        const [L, Rb] = blobs; let squash = 0;
+        for (const [b, s] of [[L, 1], [Rb, -1]]) for (let i = 0; i < N; i++) {
+          const [px] = pt(b, i), over = s > 0 ? px - (-0.004 * R) : (0.004 * R) - px;
+          if (over > 0) { const m = b.mob(i / N * Math.PI * 2) || 1; b.d[i].x -= s * over / m; b.d[i].vx *= 0.4; squash += over; }
+        }
+        const rel = Math.abs(L.vx - Rb.vx) + Math.abs(L.vy - Rb.vy), now = performance.now();
+        if (squash > R * 0.05 && rel > 1.6 && now - lastClap > 450) { ev.clap = true; lastClap = now; }
+        contact = squash;
+      }
+    },
+    poke(strength) {
+      const b = blobs[Math.floor(Math.random() * blobs.length)], i0 = Math.floor(N * (0.1 + Math.random() * 0.8));
+      for (let j = -3; j <= 3; j++) { const p = b.d[(i0 + j + N) % N], a = (i0 + j) / N * Math.PI * 2, f = strength * (1 - Math.abs(j) / 4); p.vx += Math.cos(a) * f; p.vy += Math.sin(a) * f; }
+    },
+    draw(ctx) {
+      ctxRef = ctx;
+      const acc = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#e8a95b", line = shade(acc, -0.55);
+      if (part === "balls") {
+        // the shaft: an outline, then the skin, a vein, the slid skin ring and the head
+        const [b0, b1, b2] = cockPts(), wd = (equine ? 0.21 : 0.19) * R;
+        ctx.lineCap = "round"; ctx.lineJoin = "round";
+        const stroke = (w, col) => { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(b0[0], b0[1] + 0.06 * R); ctx.quadraticCurveTo(b1[0], b1[1], b2[0], b2[1]); ctx.stroke(); };
+        stroke(wd + 3, line);
+        const g = ctx.createLinearGradient(b0[0] - wd, 0, b0[0] + wd, 0); g.addColorStop(0, shade(acc, -0.25)); g.addColorStop(0.4, shade(acc, 0.18)); g.addColorStop(1, shade(acc, -0.32)); stroke(wd, g);
+        ctx.strokeStyle = shade(acc, -0.28); ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(b0[0] + wd * 0.18, b0[1]); ctx.quadraticCurveTo(b1[0] + wd * 0.25, b1[1], b2[0] + wd * 0.12, b2[1] + 0.12 * R); ctx.stroke(); // vein
+        const t = 0.62 + cock.slide, rx = (1 - t) * (1 - t) * b0[0] + 2 * (1 - t) * t * b1[0] + t * t * b2[0], ry = (1 - t) * (1 - t) * b0[1] + 2 * (1 - t) * t * b1[1] + t * t * b2[1];
+        ctx.strokeStyle = shade(acc, -0.3); ctx.lineWidth = 1.4; ctx.beginPath(); ctx.ellipse(rx, ry, wd * 0.52, wd * 0.16, cock.phi, 0, Math.PI); ctx.stroke(); // skin ring
+        const ang = Math.atan2(b2[1] - b1[1], b2[0] - b1[0]) + Math.PI / 2, head = shade(acc, -0.05);
+        if (equine) { // a horse's: the raised ring halfway up, then a wide, flat, flared head
+          const tm = 0.45, mx2 = (1 - tm) * (1 - tm) * b0[0] + 2 * (1 - tm) * tm * b1[0] + tm * tm * b2[0], my2 = (1 - tm) * (1 - tm) * b0[1] + 2 * (1 - tm) * tm * b1[1] + tm * tm * b2[1];
+          ctx.strokeStyle = shade(acc, 0.12); ctx.lineWidth = 3.2; ctx.beginPath(); ctx.ellipse(mx2, my2, wd * 0.56, wd * 0.18, cock.phi * 0.55, 0, Math.PI); ctx.stroke();
+          ctx.save(); ctx.translate(b2[0], b2[1]); ctx.rotate(ang);
+          ctx.fillStyle = head; ctx.strokeStyle = line; ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(-wd * 0.5, 0.05 * R); ctx.quadraticCurveTo(-wd * 0.62, -0.02 * R, -wd * 1.02, -0.07 * R); ctx.quadraticCurveTo(-wd * 1.12, -0.17 * R, -wd * 0.72, -0.2 * R); ctx.quadraticCurveTo(0, -0.24 * R, wd * 0.72, -0.2 * R); ctx.quadraticCurveTo(wd * 1.12, -0.17 * R, wd * 1.02, -0.07 * R); ctx.quadraticCurveTo(wd * 0.62, -0.02 * R, wd * 0.5, 0.05 * R); ctx.closePath(); ctx.fill(); ctx.stroke();
+          ctx.strokeStyle = shade(acc, -0.3); ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(-wd * 0.95, -0.08 * R); ctx.quadraticCurveTo(0, -0.03 * R, wd * 0.95, -0.08 * R); ctx.stroke(); // the flare's rim
+          ctx.fillStyle = shade(acc, -0.5); ctx.beginPath(); ctx.ellipse(0, -0.19 * R, 0.03 * R, 0.016 * R, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = "rgba(0,0,0,.14)"; for (const [x, y, r] of [[-0.3, -0.14, 0.03], [0.28, -0.11, 0.026], [0.08, -0.17, 0.02]]) { ctx.beginPath(); ctx.arc(wd * x * 2, y * R, r * R, 0, Math.PI * 2); ctx.fill(); } // mottling
+          ctx.restore();
+        } else {
+        ctx.save(); ctx.translate(b2[0], b2[1]); ctx.rotate(ang);
+        ctx.fillStyle = head; ctx.strokeStyle = line; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(-wd * 0.62, 0.02 * R); ctx.quadraticCurveTo(-wd * 0.7, -0.16 * R, 0, -0.2 * R); ctx.quadraticCurveTo(wd * 0.7, -0.16 * R, wd * 0.62, 0.02 * R); ctx.quadraticCurveTo(0, 0.07 * R, -wd * 0.62, 0.02 * R); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = shade(acc, -0.45); ctx.beginPath(); ctx.moveTo(0, -0.2 * R); ctx.lineTo(0, -0.15 * R); ctx.stroke(); // slit
+        ctx.fillStyle = "rgba(255,255,255,.25)"; ctx.beginPath(); ctx.ellipse(-wd * 0.22, -0.11 * R, wd * 0.16, 0.035 * R, -0.4, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+        }
+        // the sack: neck from the hanging point plus both lobes, outlined as one shape, the seam down the middle
+        ctx.save(); ctx.translate(PIV[0], PIV[1]); ctx.rotate(swing); ctx.translate(-PIV[0], -PIV[1]);
+        const [L, Rb] = blobs, neck = () => { ctx.beginPath(); smoothPath(ctx, [[-0.12 * R, PIV[1] - 0.03 * R], [0, PIV[1] - 0.07 * R], [0.12 * R, PIV[1] - 0.03 * R], [Rb.cx + Rb.ox + 0.06 * R, Rb.cy + Rb.oy - 0.14 * R], [0, 0.4 * R], [L.cx + L.ox - 0.06 * R, L.cy + L.oy - 0.14 * R]]); };
+        ctx.lineWidth = 3; ctx.strokeStyle = line;
+        for (const f of [neck, () => blobPath(ctx, L), () => blobPath(ctx, Rb)]) { f(); ctx.stroke(); }
+        const sg = ctx.createRadialGradient(-0.12 * R, 0.25 * R, 0.05 * R, 0, 0.45 * R, 0.62 * R); sg.addColorStop(0, shade(acc, 0.3)); sg.addColorStop(0.55, acc); sg.addColorStop(1, shade(acc, -0.42));
+        ctx.fillStyle = sg; for (const f of [neck, () => blobPath(ctx, L), () => blobPath(ctx, Rb)]) { f(); ctx.fill(); }
+        const sx = (L.ox + Rb.ox) / 2 + seam;
+        ctx.strokeStyle = shade(acc, -0.38); ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(0, PIV[1] + 0.02 * R); ctx.quadraticCurveTo(sx * 1.3, 0.42 * R, sx, Math.max(L.cy + L.oy, Rb.cy + Rb.oy) + L.ry * (1 + L.sag) * 0.95); ctx.stroke();
+        shine(ctx, L, 0.8); shine(ctx, Rb, 0.8);
+        ctx.restore();
+        return;
+      }
+      for (const b of [...blobs].sort((a, c) => a.cy - c.cy)) { blobPath(ctx, b); ctx.fillStyle = skin(acc, b); ctx.fill(); ctx.lineWidth = 1.6; ctx.strokeStyle = line; ctx.stroke(); shine(ctx, b); }
+      if (part === "breasts") for (const [b, s] of [[blobs[0], -1], [blobs[1], 1]]) { // nipples sit low and point a little outward
+        const i = Math.round(N * (0.25 + s * 0.045)), [px, py] = pt(b, i), cx = b.cx + b.ox, cy = b.cy + b.oy, nx = px + (cx - px) * 0.2, ny = py + (cy - py) * 0.2;
+        ctx.fillStyle = shade(acc, -0.22); ctx.beginPath(); ctx.ellipse(nx, ny, 0.07 * R, 0.06 * R, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = shade(acc, -0.38); ctx.beginPath(); ctx.arc(nx, ny + 0.005 * R, 0.028 * R, 0, Math.PI * 2); ctx.fill();
+      }
+      if (part === "belly" && !side) { // the navel rides the skin
+        const b = blobs[0], q = b.d[Math.round(N * 0.25)];
+        ctx.fillStyle = shade(acc, -0.55); ctx.beginPath(); ctx.ellipse(b.cx + b.ox + q.x * 0.6, b.cy + b.oy + b.ry * 0.14 + q.y * 0.6, 0.024 * R, 0.045 * R, 0, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+  };
+}
+// How full the pred's belly, balls or breasts are right now, 0 (barely) to 1 (huge): a fullness-type gauge if the bot
+// has one, else the latest words about that part (huge / full / slight), more for several prey, less as it shrinks.
+const RUB_WORDS = { belly: /\b(belly|bellies|stomach|gut|tummy|middle|midsection|womb|paunch)\b/i, balls: /\b(balls|ballsack|sack|nuts|testicles?|scrotum|orbs)\b/i, breasts: /\b(breasts?|boobs?|tits?|bust|chest|udders?)\b/i };
+const FULL_HUGE = /\b(huge|massive|enormous|gigantic|immense|colossal|tremendous|bursting|drum-?tight|taut|stretched (tight|thin|to (the |its |their )?limit\w*)|grotesque\w*|obscene\w*|gravid|hyper|beachball|watermelons?|tremendously)\b/i;
+const FULL_BIG = /\b(swollen|swell\w*|round(ed)?|bulg\w*|stuffed|heavy|packed|distended|big|large|full|bloat\w*|slosh\w*|fat|plump|engorged|ballooning|ballooned|bloat)\b/i;
+const FULL_SMALL = /\b(slight(ly)?|small|little|faint|modest|softening|shrink\w*|smaller|deflat\w*|empty|emptied|flat(ter|tened)?|barely|mostly digested|nearly gone|almost gone)\b/i;
+function rubFullness(part) {
+  const c = char(), chat = S.chat; if (!c || !chat) return 0.55;
+  const g = gaugesOf(c).find(x => (part === "balls" ? /ball|cum|seed|load/i : part === "breasts" ? /breast|boob|milk/i : /full|stomach|belly|capacity|stuff|womb/i).test(x.name));
+  if (g) { const v = gaugeValues(c, chat)[g.name]; if (Number.isFinite(v)) return Math.max(0, Math.min(1, v / 100)); }
+  const msgs = (chat.messages || []).filter(m => m.role !== "image" && m.content).slice(-4).reverse().map(msgText);
+  for (const t of msgs) {
+    const sents = t.split(/(?<=[.!?])\s+|\n+/).filter(x => RUB_WORDS[part].test(x)).reverse(); // the last thing said about this part counts
+    for (const x of sents) {
+      let f = FULL_HUGE.test(x) ? 0.92 : FULL_SMALL.test(x) ? 0.3 : FULL_BIG.test(x) ? 0.66 : null;
+      if (f == null) continue;
+      if (/\b(both|two|three|four|several|many|all of them|the whole (group|party|crew|squad))\b/i.test(t)) f = Math.min(1, f + 0.12);
+      return f;
+    }
+  }
+  return 0.55;
 }
 function rubStart(e) {
   const b = $("btnRub"); if (!RUB.part || RUB.on) return;
   e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch {}
   acx(); // wake the sound engine on the touch itself
   const scn = sceneNow(), part = RUB.part, t0 = performance.now(), still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let lastX = e.clientX, lastY = e.clientY, travel = 0, since = 0, strokes = 0, lastPlay = 0, open = false, raf = 0, mx = 0, my = 0, nextPoke = 0;
-  const SIZE = 220, R = SIZE / 2, body = rubBody(part, R * 0.95);
-  let hx = 0, hy = 0; // the hand inside the pad, in pad units from its centre
-  RUB.on = true;
+  let lastX = e.clientX, lastY = e.clientY, travel = 0, since = 0, strokes = 0, lastPlay = 0, lastSmack = 0, open = false, raf = 0, mx = 0, my = 0, nextPoke = 0;
+  const SIZE = Math.min(260, Math.round(innerWidth / UIZ - 24)), R = SIZE / 2, full = rubFullness(part), body = rubBody(part, R * 0.8 * (0.62 + 0.5 * full), predLook()); // a fuller pred, a bigger part
+  let hx = 0, hy = 0; // the hand inside the pad, from its centre
+  RUB.on = true; RUB.body = body;
   const openPad = () => {
     open = true;
     const r = b.getBoundingClientRect(), pad = document.createElement("div"); pad.id = "rubPad";
     const dpr = Math.min(3, devicePixelRatio || 1) * UIZ;
     pad.innerHTML = `<canvas width="${SIZE * dpr}" height="${SIZE * dpr}" aria-hidden="true"></canvas><span class="rub-lbl">Swirl to rub the ${RUB_NAME[part]}</span>`;
     const cx = (r.left + r.width / 2) / UIZ, top = r.top / UIZ - SIZE - 12;
-    Object.assign(pad.style, { left: Math.max(8, Math.min(innerWidth / UIZ - SIZE - 8, cx - R)) + "px", top: Math.max(8, top) + "px" });
+    Object.assign(pad.style, { width: SIZE + "px", height: SIZE + "px", left: Math.max(8, Math.min(innerWidth / UIZ - SIZE - 8, cx - R)) + "px", top: Math.max(8, top) + "px" });
     document.body.appendChild(pad); RUB.pad = pad;
-    const cv = pad.querySelector("canvas"), ctx = cv.getContext("2d");
+    const cv = pad.querySelector("canvas"), ctx = cv.getContext("2d"); cv.style.width = cv.style.height = SIZE + "px";
     let last = performance.now();
     const frame = now => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
       if (!still) {
         if (scn.act === "struggle" && now > nextPoke) { body.poke(2.2 + Math.random() * 2); nextPoke = now + 500 + Math.random() * 1400; } // the prey kicks back
-        body.step(dt, hx, hy, mx, my, true);
+        body.step(dt, hx, hy, mx, my);
+        if (body.ev.smack && now - lastSmack > 280) { lastSmack = now; playKey("plap"); try { navigator.vibrate?.(20); } catch {} }
+        if (body.ev.clap) playKey("squish");
       }
-      mx *= 0.5; my *= 0.5;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, SIZE, SIZE); ctx.translate(R, R);
-      ctx.translate(0, -R * 0.06); body.draw(ctx, R * 0.95); ctx.translate(0, R * 0.06);
-      // the hand: a warm glow where it touches
-      const g = ctx.createRadialGradient(hx, hy, 0, hx, hy, 22); g.addColorStop(0, "rgba(255,240,220,.55)"); g.addColorStop(1, "rgba(255,240,220,0)");
+      mx *= 0.4; my *= 0.4;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, SIZE, SIZE);
+      ctx.save(); ctx.beginPath(); ctx.roundRect(0, 0, SIZE, SIZE, 26); ctx.clip(); ctx.translate(R, R);
+      body.draw(ctx);
+      const g = ctx.createRadialGradient(hx, hy, 0, hx, hy, 22); g.addColorStop(0, "rgba(255,240,220,.5)"); g.addColorStop(1, "rgba(255,240,220,0)");
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(hx, hy, 22, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
       raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);
@@ -3776,11 +3929,11 @@ function rubStart(e) {
   const move = ev => {
     const dx = (ev.clientX - lastX) / UIZ, dy = (ev.clientY - lastY) / UIZ, d = Math.hypot(dx, dy); lastX = ev.clientX; lastY = ev.clientY;
     travel += d; since += d; mx += dx; my += dy;
-    // the hand moves over the part the way the finger moves on the button, kept inside the pad
-    hx += dx * 1.1; hy += dy * 1.1; const m = Math.hypot(hx, hy), lim = R * 0.72; if (m > lim) { hx *= lim / m; hy *= lim / m; }
+    // the hand moves over the body the way the finger moves on the button, kept inside the pad
+    hx += dx * 1.15; hy += dy * 1.15; const m = Math.hypot(hx, hy), lim = R * 0.85; if (m > lim) { hx *= lim / m; hy *= lim / m; }
     if (!open && (travel > 10 || performance.now() - t0 > 220)) openPad();
     const now = performance.now();
-    if (since > 110 && now - lastPlay > 380) { since = 0; lastPlay = now; strokes++; if (!still) body.poke(1.2); playKey(rubSound(part, scn, strokes)); try { navigator.vibrate?.(12); } catch {} }
+    if (since > 110 && now - lastPlay > 380) { since = 0; lastPlay = now; strokes++; if (!still) body.poke(1.1); playKey(rubSound(part, scn, strokes)); try { navigator.vibrate?.(12); } catch {} }
   };
   const hold = setTimeout(() => { if (!open && RUB.on) openPad(); }, 220);
   const end = async () => {
@@ -4607,12 +4760,16 @@ function playSettings(panels) {
   f.innerHTML = `<h3>Screen effects</h3>
     <label class="check"><input type="checkbox" id="sFxW" ${st.fxWeather !== false ? "checked" : ""}> Weather and light from the scene (rain, snow, embers, fireflies, bubbles…)</label>
     <label class="check"><input type="checkbox" id="sFxS" ${st.fxScene !== false ? "checked" : ""}> Effects for what's happening (pulses and vignettes for sex, oral, kissing, vore…)</label>
+    <label class="check"><input type="checkbox" id="sRub" ${st.rubOn !== false ? "checked" : ""}> Belly rub button in vore scenes (hold and swirl to rub a full belly, balls or breasts)</label>
+    <div class="field"><label>Cocks on feral preds in the rub pad</label><div class="tabs" id="sFeralCock">${[["equine", "Horse-like"], ["human", "Human-like"]].map(([k, l]) => `<button type="button" class="tab ${(st.feralCock || "equine") === k ? "on" : ""}" data-c="${k}">${l}</button>`).join("")}</div></div>
     ${VORE_PIC ? `<label class="check"><input type="checkbox" id="sVg" ${st.voreGfx !== false ? "checked" : ""}> Vore picture: a small card showing the pred, the prey, where they are and how far digestion has gone</label>` : ""}
     <div class="field"><label>Strength</label><div class="tabs" id="sFxL">${[["off", "Off"], ["subtle", "Subtle"], ["full", "Full"]].map(([k, l]) => `<button type="button" class="tab ${(st.fxLevel || "full") === k ? "on" : ""}" data-l="${k}">${l}</button>`).join("")}</div></div>`;
   panels.look.insertBefore(f, panels.look.children[1] || null);
   f.querySelector("#sFxW").onchange = e => { st.fxWeather = e.target.checked; save(); };
   f.querySelector("#sFxS").onchange = e => { st.fxScene = e.target.checked; save(); };
   if (VORE_PIC) f.querySelector("#sVg").onchange = e => { st.voreGfx = e.target.checked; save(); };
+  f.querySelector("#sRub").onchange = e => { st.rubOn = e.target.checked; save(); };
+  f.querySelectorAll("#sFeralCock [data-c]").forEach(b => b.onclick = () => { st.feralCock = b.dataset.c; f.querySelectorAll("#sFeralCock .tab").forEach(x => x.classList.toggle("on", x === b)); save(); });
   f.querySelectorAll("#sFxL [data-l]").forEach(b => b.onclick = () => { st.fxLevel = b.dataset.l; f.querySelectorAll("#sFxL .tab").forEach(x => x.classList.toggle("on", x === b)); save(); });
 }
 
