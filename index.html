@@ -854,7 +854,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.42 · Oct 14";
+const VERSION = "1.43 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -4568,7 +4568,7 @@ const SFX_LIST = [
   { k: "lick", g: "oral", l: "a tongue licking", play: ["loop_lick"], slice: true, fx: "liquid", gen: ["lick"] },
   { k: "kiss", g: "kiss", l: "a kiss or wet kissing", play: ["kiss"], fx: "kiss", gen: ["smooch", "wetKiss"] },
   { k: "spurt", g: "cum", l: "cum spurting, an orgasm", play: ["cum", "climax"], fx: "cum", gen: ["spurt"] },
-  { k: "cumslosh", g: "cum", l: "full balls, or a cum-filled belly or womb, sloshing and gurgling", play: ["cumbub"], fx: "cumbub", gen: ["ballGurgle"] },
+  { k: "cumslosh", g: "cum", l: "full balls, a cum-filled belly or womb, or an overfilled condom, sloshing and gurgling", play: ["cumbub"], fx: "cumbub", gen: ["ballGurgle"] },
   { k: "drip", g: "cum", l: "cum or thick fluid dripping, oozing or pouring", play: ["loop_cum"], slice: true, fx: "liquid", gen: ["pour"] },
   { k: "fart", g: "fart", l: "a fart", play: ["fart"], fx: "fart", gen: ["dryFart", "wetFart"] },
   { k: "gape", g: "fart", l: "air farting out of a gaping hole after a pull-out", play: ["gape", "fart"], fx: "fart", gen: ["wetFart"] },
@@ -4578,7 +4578,7 @@ const SFX_LIST = [
   { k: "drink", g: "water", l: "gulping a drink down", play: ["swallow"], name: /gulp/i, fx: "liquid", gen: ["drinkGulp"] },
   { k: "breath", g: "body", l: "a heavy breath, sigh or exhale", play: ["breath"], fx: "breath", gen: ["breath"] },
   { k: "heartbeat", g: "body", c: "#ff7b8a", l: "a heartbeat", play: [], synth: "beat", fx: "beat", gen: ["heart"] },
-  { k: "punch", g: "fight", l: "a punch, kick or hit landing", play: ["hit"], fx: "hit", gen: ["impact"] },
+  { k: "punch", g: "fight", l: "a punch, kick or hit landing, or a blunt weapon (club, hammer, mace) striking", play: ["hit"], fx: "hit", gen: ["impact"] },
   { k: "slash", g: "fight", l: "a blade, claw or stab cutting", play: ["slash"], fx: "slash", gen: ["slash"] },
   { k: "chop", g: "fight", l: "a limb or head being chopped off", play: ["sever", "slash"], fx: "slash", gen: ["chop"] },
   { k: "thud", g: "fight", l: "a body falling, a heavy thud or stomp", play: ["stomp"], fx: "stomp", gen: ["stomp"] },
