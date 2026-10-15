@@ -650,6 +650,22 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .tn-dot{margin-left:4px;font-size:10px;color:var(--accent);opacity:.8}
 #rollNow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:8px 12px 0;font-size:13px}
 #rollNow[hidden]{display:none}
+#rubNow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:8px 12px 0;font-size:13px}
+#rubNow[hidden]{display:none}
+#rubNow .hint{flex:1;color:var(--muted)}
+#rubNow .rub-tell{font:inherit;font-size:12.5px;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:999px;padding:5px 11px;min-height:30px;cursor:pointer}
+#rubNow .rub-tell.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+#rubNow svg,#btnRub svg{width:20px;height:20px;flex:none}
+#btnRub{touch-action:none;color:var(--accent)}
+#btnRub .rub-more{position:absolute;right:2px;bottom:2px;width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
+#btnRub{position:relative}
+#rubPad{position:fixed;z-index:60;width:180px;height:180px;border-radius:50%;pointer-events:none;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 26%,transparent),color-mix(in srgb,var(--accent) 8%,transparent) 62%,transparent 72%);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 35%,transparent) inset;color:var(--accent);transition:opacity .15s}
+#rubPad svg{width:96px;height:96px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.45))}
+#rubPad .rub-lbl{position:absolute;bottom:14px;font-size:12px;color:var(--fg);opacity:.8}
+.rub-line{margin-top:6px;font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.rub-line svg{width:15px;height:15px;color:var(--accent)}
 #rollNow .hint{flex:1;color:var(--muted)}
 #btnDice.spent{opacity:.4}
 .roll-stage{position:absolute;inset:0;z-index:25;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(4px) saturate(.7);-webkit-backdrop-filter:blur(4px) saturate(.7);opacity:0;transition:opacity .4s ease}
@@ -743,12 +759,14 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
     <div id="speakers" hidden></div>
     <div id="attach" hidden><img id="attachImg" alt="Image to send"><span class="hint" style="flex:1;color:var(--muted);font-size:13px">Image attached. Add a message or just send.</span><button type="button" class="icon" id="attachX" aria-label="Remove image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div id="rollNow" hidden></div>
+    <div id="rubNow" hidden></div>
     <form id="composer" autocomplete="off">
       <button type="button" class="icon" id="btnAttach" aria-label="Send an image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.5l-8.3 8.3a5 5 0 0 1-7.1-7.1l8.6-8.6a3.3 3.3 0 0 1 4.7 4.7L10.3 18.4a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/></svg></button>
       <input type="file" id="imgCam" accept="image/*" capture="environment" hidden>
       <input type="file" id="imgPick" accept="image/*" hidden>
       <button type="button" class="icon" id="btnIllustrate" aria-label="Illustrate this moment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></button>
       <button type="button" class="icon" id="btnDice" hidden aria-label="Roll a d20 for your next action" title="Roll the die"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 2.5l8.5 4.9v9.2L12 21.5l-8.5-4.9V7.4z"/><path d="M3.5 7.4L12 10l8.5-2.6M12 10v11.5"/><path d="M12 2.5L7.5 9M12 2.5L16.5 9"/></svg></button>
+      <button type="button" class="icon" id="btnRub" hidden aria-label="Rub (hold and swirl)" title="Hold and swirl to rub"></button>
       <textarea id="input" rows="1" placeholder="Write your reply…"></textarea>
       <button type="button" class="icon" id="btnMin" aria-label="Minimize the message box" title="Minimize"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
       <button type="button" class="icon" id="btnCont" aria-label="Continue without replying" title="Continue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6l6 6-6 6M12 6l6 6-6 6"/></svg></button>
@@ -854,7 +872,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.43 · Oct 14";
+const VERSION = "1.44 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1287,6 +1305,7 @@ function buildPrompt(c, chat, upto, cont) {
     }
     if (m.role === "assistant" && m.turn && m.speaker) content = `**${m.speaker}:** ${content}`;
     if (m.role === "user" && m.roll && diceOn()) content = (content || "") + rollNote(m, u, c);
+    if (m.role === "user" && m.rub) content = (content || "") + rubNote(m, u);
     if (m.role === "assistant" && m.mood && !(m.turn && hist[i + 1]?.turn === m.turn)) content += `\n[[mood: ${m.mood} | place: ${m.place || chat.place || "unknown"}${c.kind === "group" && m.focus ? ` | focus: ${m.focus}` : ""}${m.gauges && gs.length ? " | gauges: " + Object.entries(m.gauges).map(([k, v]) => k + "=" + v).join(", ") : ""}${m.pace && pacePart ? " | pace: " + m.pace : ""}]]`;
     if (budget - content.length < 0 && out.length >= 2) break;
     budget -= content.length;
@@ -1991,6 +2010,7 @@ function renderMsgs(keepScroll) {
       d.innerHTML = `<div class="who-l">${esc(label)}</div>` + (m.image ? `<img class="uimg" src="${esc(m.image)}" alt="Image you sent">` : "") + fmt(m.content);
     }
     if (m.roll && m.role === "user") d.insertAdjacentHTML("beforeend", contestLine(m, c));
+    if (m.rub && m.role === "user") d.insertAdjacentHTML("beforeend", rubLine(m));
     if (S.seen && !S.seen.has(m.id)) { d.classList.add("enter"); S.seen.add(m.id); }
     if (m.role === "assistant" && i === lastAsst && m.turn) {
       const sw = document.createElement("div"); sw.className = "swipe";
@@ -2113,6 +2133,7 @@ async function sendInner() {
   if (t || S.pendingImage) {
     const m = { id: uid(), role: "user", content: t };
     if (S.pendingImage) m.image = S.pendingImage;
+    const rb = S.chat.pendingRub; if (rb) { if (rb.tell) m.rub = { part: rb.part, amt: rb.amt }; S.chat.pendingRub = null; drawRubChip(); } // a rub goes with this message only if the owner said so
     const pr = diceOn() && S.chat.pendingRoll;
     if (pr) {
       // you rolled: the other side rolls now, before the reply is written, and the contest is settled
@@ -3351,7 +3372,7 @@ function editMessage(i) {
 
 $("btnChats").onclick = () => openChats(S.charId);
 $("btnBack").onclick = () => { if (S.busy) return; leaveChat(); };
-function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; drawPendingRoll(); updateFx(null); renderPacer(); renderGauges(); renderHome(); };
+function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; drawPendingRoll(); drawRub(null); updateFx(null); renderPacer(); renderGauges(); renderHome(); };
 
 /* ---------- Installed app: back button, offline, install ---------- */
 // The phone's back button (and the browser's) closes the open window first, then leaves the chat, and only exits from Home.
@@ -3583,6 +3604,111 @@ function drawPendingRoll() {
   box.innerHTML = `${diceChip(pr.n, "You")}<span class="hint">${left === Infinity ? "Your next message is a contest roll." : left ? `Contest roll ready · ${left} reroll${left === 1 ? "" : "s"} left` : "Contest roll locked in"}</span>${rollLimit() ? "" : `<button type="button" class="icon" id="rollX" aria-label="Discard this roll">✕</button>`}`;
   if ($("rollX")) $("rollX").onclick = async () => { S.chat.pendingRoll = null; await saveChat(); drawPendingRoll(); };
 }
+/* ---------- Belly rubs (v1.44): hold the button and swirl to rub a full belly, balls or breasts ---------- */
+// Rubbing plays the body's sounds (heard from outside, so muffled like any belly rub) and wobbles the pad.
+// The story only hears about it if the owner taps "Tell the story" on the chip before sending.
+const RUB_ICON = {
+  belly: '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M7.2 1.5c-.5 1.6-.3 3 .3 4.1C4.3 6.8 2.4 9.4 2.4 12.4c0 3.6 3 6.1 7.6 6.1s7.6-2.5 7.6-6.1c0-3.4-2.6-6.2-6.4-6.9.7-1.1.9-2.5.5-4H7.2z"/><circle cx="10" cy="12.6" r=".95" fill="#16131d" opacity=".55"/></svg>',
+  balls: '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2.2c-.9 0-1.6.9-1.6 2.2v3.1C5 7.7 2.5 10.4 2.5 13.4c0 2.8 2.1 4.6 4.6 4.6 1.2 0 2.2-.4 2.9-1.1.7.7 1.7 1.1 2.9 1.1 2.5 0 4.6-1.8 4.6-4.6 0-3-2.5-5.7-5.9-5.9V4.4c0-1.3-.7-2.2-1.6-2.2z"/><path d="M10 9.5v6.8" stroke="#16131d" stroke-width="1" opacity=".5"/></svg>',
+  breasts: '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M1.8 6.5c1.2 1.4 2.2 2 3.6 2.2C3 9.5 1.6 11.3 1.6 13.4c0 2.5 2 4.3 4.6 4.3 1.6 0 3-.8 3.8-2 .8 1.2 2.2 2 3.8 2 2.6 0 4.6-1.8 4.6-4.3 0-2.1-1.4-3.9-3.8-4.7 1.4-.2 2.4-.8 3.6-2.2l-.8-.7c-1.6 1.6-3.4 2-6 2s-4.4-.4-6-2z"/><circle cx="6.2" cy="13.8" r=".9" fill="#16131d" opacity=".5"/><circle cx="13.8" cy="13.8" r=".9" fill="#16131d" opacity=".5"/></svg>',
+  hand: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10.5V4.8a1.2 1.2 0 0 1 2.4 0V9M8.4 8.6V3.6a1.2 1.2 0 0 1 2.4 0V9M10.8 8.8V4.4a1.2 1.2 0 0 1 2.4 0V10M13.2 9.6V7a1.2 1.2 0 0 1 2.4 0v4.6c0 3.4-2.4 6-5.6 6-2.6 0-4-1.4-5.2-3.4L3 11.4a1.2 1.2 0 0 1 2-1.3L6 11.6"/></svg>'
+};
+const RUB_NAME = { belly: "belly", balls: "balls", breasts: "breasts" };
+const BREASTVORE = /\b(breast ?vore|nipple ?vore|(in|into|inside|down|through) (his|her|their|its|the|a) (breasts?|boobs?|tits?|nipples?|bust)|(breasts?|boobs?|tits?|bust) (swell|bulg|wobbl|slosh|stretch|fill|gurgl)\w*)\b/i;
+const FULL_PART = /\b(full|swollen|stuffed|bulging|bloated|round(ed)?|distended|heavy|packed|sloshing|gurgling|taut|stretched)\b[^.!?\n]{0,40}\b(belly|stomach|gut|tummy|balls|sack|nuts|breasts?|boobs?|tits?)\b|\b(belly|stomach|gut|tummy|balls|sack|breasts?|boobs?|tits?)\b[^.!?\n]{0,30}\b(bulg\w*|swell\w*|slosh\w*|gurgl\w*|wobbl\w*|distend\w*)/i;
+// which full parts there are to rub right now: [] outside a vore/inflation scene, or when you're the one inside
+function rubParts(scn) {
+  if (!S.chat || !scn || scn.hear === "inside" || S.settings.rubOn === false) return [];
+  const msgs = (S.chat.messages || []).filter(m => m.role !== "image" && m.content), recent = msgs.slice(-6).map(msgText).join("\n"), last = msgs.slice(-2).map(msgText).join("\n");
+  const scene = ["vore", "struggle", "swallow", "inflate"].includes(scn.act) || FULL_PART.test(last);
+  if (!scene) return [];
+  // what the latest messages describe comes first; parts from a little earlier in the scene follow
+  const found = t => [VORE.cockvore.test(t) || (/\b(balls|ballsack|sack|nuts|testicles?|scrotum)\b/i.test(t) && FULL_PART.test(t)) ? "balls" : "",
+    BREASTVORE.test(t) ? "breasts" : "", VORE.stomach.test(t) || VORE.unbirth.test(t) || (scn.act === "inflate" && t === last) ? "belly" : ""].filter(Boolean);
+  const out = [...new Set([...found(last), ...found(recent)])];
+  return out.length ? out : ["belly"];
+}
+const RUB = { parts: [], part: null, pad: null, on: false };
+function drawRub(scn) {
+  const b = $("btnRub"); if (!b) return;
+  const parts = S.chat ? rubParts(scn) : [];
+  if (parts.join() !== RUB.parts.join()) RUB.part = parts[0] || null; // a new scene starts on what it's about
+  RUB.parts = parts; if (!parts.includes(RUB.part)) RUB.part = parts[0] || null;
+  b.hidden = !parts.length;
+  if (parts.length) { b.innerHTML = RUB_ICON[RUB.part] + (parts.length > 1 ? '<span class="rub-more"></span>' : ""); b.setAttribute("aria-label", `Rub the ${RUB_NAME[RUB.part]} (hold and swirl${parts.length > 1 ? "; tap to switch" : ""})`); }
+  drawRubChip();
+}
+function drawRubChip() {
+  const box = $("rubNow"); if (!box) return;
+  const r = S.chat?.pendingRub; box.hidden = !r;
+  if (!r) { box.innerHTML = ""; return; }
+  box.innerHTML = `${RUB_ICON.hand}<span class="hint">You rubbed the ${RUB_NAME[r.part]}${r.amt > 2 ? " for a while" : ""}.</span><button type="button" class="rub-tell ${r.tell ? "on" : ""}" id="rubTell" aria-pressed="${!!r.tell}">${r.tell ? "Story will know" : "Tell the story"}</button><button type="button" class="icon" id="rubX" aria-label="Forget the rub">✕</button>`;
+  $("rubTell").onclick = async () => { r.tell = !r.tell; await saveChat(); drawRubChip(); };
+  $("rubX").onclick = async () => { S.chat.pendingRub = null; await saveChat(); drawRubChip(); };
+}
+// one stroke's sound: what that part of a full body sounds like under a hand
+function rubSound(part, scn, n) {
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  if (scn.act === "struggle" && Math.random() < 0.18) return "struggle"; // the prey squirms at the touch
+  if (part === "balls") return pick(["cumslosh", "cumslosh", "cumslosh", "gurgle"]);
+  if (part === "breasts") return pick(["slosh", "slosh", "gurgle"]);
+  if (scn.act === "inflate") return pick(["cumslosh", "cumslosh", "gurgle", "slosh"]);
+  if (n > 3 && Math.random() < 0.13) return "burp"; // enough rubbing works a burp loose
+  return pick(["gurgle", "gurgle", "growl", "slosh"]);
+}
+function rubStart(e) {
+  const b = $("btnRub"); if (!RUB.part || RUB.on) return;
+  e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch {}
+  acx(); // wake the sound engine on the touch itself
+  const scn = sceneNow(), part = RUB.part, t0 = performance.now();
+  let lastX = e.clientX, lastY = e.clientY, travel = 0, since = 0, strokes = 0, lastPlay = 0, wob = 0, open = false, raf = 0, vx = 0, vy = 0;
+  RUB.on = true;
+  const openPad = () => {
+    open = true;
+    const r = b.getBoundingClientRect(), pad = document.createElement("div"); pad.id = "rubPad";
+    pad.innerHTML = RUB_ICON[part] + `<span class="rub-lbl">Swirl to rub the ${RUB_NAME[part]}</span>`;
+    const cx = (r.left + r.width / 2) / UIZ, top = r.top / UIZ - 190;
+    Object.assign(pad.style, { left: Math.max(8, Math.min(innerWidth / UIZ - 188, cx - 90)) + "px", top: Math.max(8, top) + "px" });
+    document.body.appendChild(pad); RUB.pad = pad;
+    const icon = pad.querySelector("svg"), still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const tick = () => { // the belly squishes along with the hand and jiggles back
+      wob *= 0.9; vx *= 0.85; vy *= 0.85;
+      if (!still) icon.style.transform = `translate(${vx * 0.6}px, ${vy * 0.6}px) scale(${1 + wob * 0.06 + Math.abs(vx) * 0.004}, ${1 + wob * 0.05 - Math.abs(vx) * 0.003}) rotate(${vx * 0.5}deg)`;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+  };
+  const move = ev => {
+    const dx = ev.clientX - lastX, dy = ev.clientY - lastY, d = Math.hypot(dx, dy); lastX = ev.clientX; lastY = ev.clientY;
+    travel += d; since += d; vx = Math.max(-14, Math.min(14, vx + dx * 0.5)); vy = Math.max(-14, Math.min(14, vy + dy * 0.5));
+    if (!open && (travel > 10 || performance.now() - t0 > 220)) openPad();
+    const now = performance.now();
+    if (since > 110 && now - lastPlay > 380) { since = 0; lastPlay = now; strokes++; wob = 1; playKey(rubSound(part, scn, strokes)); try { navigator.vibrate?.(12); } catch {} }
+  };
+  const hold = setTimeout(() => { if (!open && RUB.on) openPad(); }, 220);
+  const end = async () => {
+    clearTimeout(hold); b.removeEventListener("pointermove", move); b.removeEventListener("pointerup", end); b.removeEventListener("pointercancel", end);
+    cancelAnimationFrame(raf); RUB.pad?.remove(); RUB.pad = null; RUB.on = false;
+    const quick = performance.now() - t0 < 220 && travel < 10;
+    if (quick) { // a tap: switch between belly, balls and breasts, or explain how to rub
+      if (RUB.parts.length > 1) { RUB.part = RUB.parts[(RUB.parts.indexOf(RUB.part) + 1) % RUB.parts.length]; drawRub(sceneNow()); toast(`Rubbing the ${RUB_NAME[RUB.part]}`); }
+      else toast("Hold and swirl to rub");
+      return;
+    }
+    if (!strokes) return;
+    const prev = S.chat.pendingRub, amt = (prev && prev.part === part ? prev.amt : 0) + strokes;
+    S.chat.pendingRub = { part, amt, tell: prev?.part === part ? !!prev.tell : false };
+    await saveChat(); drawRubChip();
+  };
+  b.addEventListener("pointermove", move); b.addEventListener("pointerup", end); b.addEventListener("pointercancel", end);
+}
+// the note the AI gets when the owner chose to tell the story about a rub
+function rubNote(m, u) {
+  const how = m.rub.amt > 8 ? "eagerly and for a good while" : m.rub.amt > 3 ? "slowly for a little while" : "briefly";
+  return `\n[${u} rubbed the full ${RUB_NAME[m.rub.part] || "belly"} ${how} before this message, and it gurgled and sloshed under ${u}'s hands. Let the scene react to it.]`;
+}
+const rubLine = m => m.rub ? `<div class="rub-line">${RUB_ICON.hand}Rubbed the ${esc(RUB_NAME[m.rub.part] || "belly")}</div>` : "";
+
 // the note the AI gets for a rolled message
 function rollNote(m, u, c) {
   const o = diceOut(m.roll.n), foe = m.foe || foeName(c);
@@ -4396,6 +4522,8 @@ function playSettings(panels) {
 // the 🎲 button shows only in chats with dice on
 function syncPlay() { const b = $("btnDice"); if (b) b.hidden = !diceOn(); drawPendingRoll(); }
 $("btnDice").onclick = () => preRoll();
+$("btnRub").addEventListener("pointerdown", rubStart);
+$("btnRub").addEventListener("contextmenu", e => e.preventDefault());
 $("btnDice").addEventListener("pointerdown", e => { if ($("composer").classList.contains("open")) e.preventDefault(); });
 document.querySelector("#pacer .pc-min").onclick = async () => { if (!S.chat) return; S.chat.pacer = false; await saveChat(); renderPacer(); toast("Pacer off. Switch it back on under ⋯"); };
 document.querySelector("#pacer .pc-bead").addEventListener("animationiteration", pacerBuzz);
@@ -5575,7 +5703,7 @@ async function ambienceStep() {
   const scn = inChat ? sceneNow() : { amb: "none", act: "none", harm: "none" }, { amb, act } = scn;
   const wantAmb = inChat && st.ambOn !== false && !st.ambMuted && amb !== "none" ? amb : null;
   const wantAct = inChat && st.actOn !== false && !st.ambMuted && act !== "none" ? act : null;
-  try { updateFx(inChat ? scn : null); renderPacer(); renderVore(); } catch {}
+  try { updateFx(inChat ? scn : null); renderPacer(); renderVore(); drawRub(inChat ? scn : null); } catch {}
   if (btn) btn.title = "Background: " + (AMB_LABEL[amb] || "none") + (act !== "none" ? ` · ${act}` : "") + (st.ambMuted ? " (muted)" : "");
   if (!inChat && (AMBS.amb || AMBS.act || LIVE.size)) {
     // left the chat or the app: everything stops at once, no fade
