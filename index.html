@@ -659,10 +659,10 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 #btnRub{touch-action:none;color:var(--accent)}
 #btnRub .rub-more{position:absolute;right:2px;bottom:2px;width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
 #btnRub{position:relative}
-#rubPad{position:fixed;z-index:60;width:180px;height:180px;border-radius:50%;pointer-events:none;display:grid;place-items:center;
-  background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 26%,transparent),color-mix(in srgb,var(--accent) 8%,transparent) 62%,transparent 72%);
-  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 35%,transparent) inset;color:var(--accent);transition:opacity .15s}
-#rubPad svg{width:96px;height:96px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.45))}
+#rubPad{position:fixed;z-index:60;width:220px;height:220px;border-radius:28px;pointer-events:none;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--accent) 16%,var(--surface-2)),var(--surface) 75%);border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));
+  box-shadow:0 14px 40px rgba(0,0,0,.55);color:var(--accent);transition:opacity .15s}
+#rubPad canvas{width:220px;height:220px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
 #rubPad .rub-lbl{position:absolute;bottom:14px;font-size:12px;color:var(--fg);opacity:.8}
 .rub-line{margin-top:6px;font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
 .rub-line svg{width:15px;height:15px;color:var(--accent)}
@@ -872,7 +872,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.44 · Oct 14";
+const VERSION = "1.45 · Oct 14";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1892,6 +1892,7 @@ async function genFinish(edit) {
 
 /* ---------- Chat ---------- */
 async function openChat(id, chatId) {
+  S.genAC?.abort(); // a reply still coming in the old chat stops
   S.charId = id; S.nextSpeaker = ""; S.chat = null; clearAttach();
   const c = char();
   let chat = chatId ? await Store.get("c2:" + chatId) : null;
@@ -2175,6 +2176,9 @@ async function generate(upto, existing, cont) {
   // follow the new reply down only until its first line reaches the top, so it can be read from the start
   let follow = true; const stopFollow = () => { follow = false; };
   box.addEventListener("touchstart", stopFollow, { once: true, passive: true }); box.addEventListener("wheel", stopFollow, { once: true, passive: true });
+  // Back (or leaving the chat) stops a reply that's still coming; one that sends nothing for 2 minutes gives up
+  const gac = new AbortController(); S.genAC = gac; let stall = 0;
+  const kick = () => { clearTimeout(stall); stall = setTimeout(() => { gac.stalled = true; gac.abort(); }, 120000); }; kick();
   try {
     let p;
     const pause = matchMedia("(prefers-reduced-motion: reduce)").matches ? 150 : 800;
@@ -2184,9 +2188,10 @@ async function generate(upto, existing, cont) {
       const raw = await ds(buildPrompt(c, chat, upto, cont), {
         thinking: S.settings.thinking,
         temperature: attempt ? Math.min(S.settings.temperature, 0.7) : undefined,
-        onThinking: () => {},
+        signal: gac.signal,
+        onThinking: () => kick(),
         onDelta: full => {
-          latest = full;
+          kick(); latest = full;
           if (!revealP) {
             const l = bubble.querySelector(".lantern");
             if (l) { l.classList.remove("seq"); l.classList.add("lit"); const t = bubble.querySelector(".typing-l > span"); if (t) t.textContent = `${who} is writing…`; }
@@ -2233,9 +2238,10 @@ async function generate(upto, existing, cont) {
     if (!existing) maintainMemory(c, chat).catch(e => setStatus("Memory update skipped: " + e.message, true));
     captionImages(chat).catch(() => {});
   } catch (e) {
+    if (S.chat !== chat) return; // the chat was left while the reply was coming
     if (!existing) bubble.remove(); else renderMsgs(true);
-    setStatus(e.message, true);
-  } finally { setBusy(false); }
+    setStatus(gac.stalled ? "The reply took too long and was stopped. Tap ↻ to try again." : gac.signal.aborted ? "Reply stopped." : e.message, true);
+  } finally { clearTimeout(stall); if (S.genAC === gac) S.genAC = null; setBusy(false); }
 }
 
 /* ---------- Images from the user ---------- */
@@ -3371,7 +3377,7 @@ function editMessage(i) {
 }
 
 $("btnChats").onclick = () => openChats(S.charId);
-$("btnBack").onclick = () => { if (S.busy) return; leaveChat(); };
+$("btnBack").onclick = () => { if (S.busy && !S.genAC) return; S.genAC?.abort(); leaveChat(); };
 function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; drawPendingRoll(); drawRub(null); updateFx(null); renderPacer(); renderGauges(); renderHome(); };
 
 /* ---------- Installed app: back button, offline, install ---------- */
@@ -3387,7 +3393,7 @@ addEventListener("popstate", () => {
   if (POP_IGNORE) { POP_IGNORE--; if (WANT_GUARD) { WANT_GUARD = false; syncNav(); } return; }
   if (!$("ambPop").hidden) $("ambPop").hidden = true;
   else if (!$("sheet").hidden) userClose();
-  else if (!$("chat").hidden && !S.busy) leaveChat();
+  else if (!$("chat").hidden && (!S.busy || S.genAC)) { S.genAC?.abort(); leaveChat(); }
   syncNav();
 });
 new MutationObserver(() => queueMicrotask(syncNav)).observe($("sheet"), { attributes: true, attributeFilter: ["hidden"] });
@@ -3462,7 +3468,7 @@ function renderSide() {
     getIndex(c.id).then(idx => { const last = idx.sort((x, y) => y.updated - x.updated)[0]; const el = b.querySelector("small"); if (el && last?.preview) el.textContent = `${fmtWhen(S.recent[c.id])} · ${last.preview}`; });
   });
 }
-$("railHome").onclick = () => { if (S.busy) return; closeSheet(); if (!$("chat").hidden) $("btnBack").click(); };
+$("railHome").onclick = () => { if (S.busy && !S.genAC) return; closeSheet(); if (!$("chat").hidden) $("btnBack").click(); };
 $("railNew").onclick = () => $("btnNewChar").click();
 $("railBooks").onclick = () => $("btnBooks").click();
 $("railSet").onclick = () => $("btnSettings").click();
@@ -3656,34 +3662,125 @@ function rubSound(part, scn, n) {
   if (n > 3 && Math.random() < 0.13) return "burp"; // enough rubbing works a burp loose
   return pick(["gurgle", "gurgle", "growl", "slosh"]);
 }
+// The rub pad (v1.45): each part is a soft body. Its skin is a ring of points on springs; the hand drags the skin
+// it touches in the direction it moves, the whole mass sways after the hand and jiggles back, and balls and breasts
+// swing on their own and bump into each other. Drawn on a canvas in the pred's amber, lit from the top left.
+function rubBody(part, R) {
+  const N = 30, blobs = [];
+  const blob = (x, y, rx, ry, hang) => blobs.push({ x0: x, y0: y, x, y, vx: 0, vy: 0, rx, ry, hang, d: Array.from({ length: N }, () => ({ x: 0, y: 0, vx: 0, vy: 0 })) });
+  if (part === "belly") blob(0, R * 0.08, R * 0.62, R * 0.56, 0.35);
+  else if (part === "balls") { blob(-R * 0.29, R * 0.2, R * 0.34, R * 0.36, 1); blob(R * 0.29, R * 0.24, R * 0.33, R * 0.35, 1); }
+  else { blob(-R * 0.33, R * 0.1, R * 0.36, R * 0.34, 0.8); blob(R * 0.33, R * 0.1, R * 0.36, R * 0.34, 0.8); }
+  const pt = (b, i) => { const a = i / N * Math.PI * 2, sag = b.hang * 0.12 * Math.max(0, Math.sin(a)); return [b.x + Math.cos(a) * b.rx + b.d[i].x, b.y + Math.sin(a) * b.ry * (1 + sag) + b.d[i].y]; };
+  return {
+    blobs,
+    // the hand at (hx, hy) moving by (mx, my) this frame, pressing when down
+    step(dt, hx, hy, mx, my, down) {
+      const k = Math.min(2, dt * 60);
+      for (const b of blobs) {
+        // the whole mass: pulled home by a spring, nudged by the hand, swinging more when it hangs
+        if (down && Math.hypot(hx - b.x, hy - b.y) < Math.max(b.rx, b.ry) * 1.15) { b.vx += mx * 0.09 * (0.6 + b.hang); b.vy += my * 0.07 * (0.6 + b.hang); }
+        const sp = 0.045 - b.hang * 0.018;
+        b.vx += (b.x0 - b.x) * sp * k; b.vy += (b.y0 - b.y) * sp * k;
+        b.vx *= Math.pow(0.9, k); b.vy *= Math.pow(0.9, k);
+        b.x += b.vx * k; b.y += b.vy * k;
+        // the skin: points near the hand are dragged along and pressed in, then spring back and settle smoothly
+        for (let i = 0; i < N; i++) {
+          const p = b.d[i], [px, py] = pt(b, i), dist = Math.hypot(px - hx, py - hy), reach = Math.max(b.rx, b.ry) * 0.75;
+          if (down && dist < reach) {
+            const f = (1 - dist / reach) ** 2, a = i / N * Math.PI * 2, nx = Math.cos(a), ny = Math.sin(a);
+            p.vx += (mx * 0.35 - nx * 0.9) * f; p.vy += (my * 0.35 - ny * 0.9) * f;
+          }
+          const L = b.d[(i + N - 1) % N], Rr = b.d[(i + 1) % N];
+          p.vx += (-p.x * 0.12 + (L.x + Rr.x - 2 * p.x) * 0.18) * k; p.vy += (-p.y * 0.12 + (L.y + Rr.y - 2 * p.y) * 0.18) * k;
+          p.vx *= Math.pow(0.82, k); p.vy *= Math.pow(0.82, k);
+        }
+        for (const p of b.d) { p.x += p.vx * k; p.y += p.vy * k; const m = Math.hypot(p.x, p.y), cap = Math.min(b.rx, b.ry) * 0.35; if (m > cap) { p.x *= cap / m; p.y *= cap / m; } }
+      }
+      // two balls or two breasts never pass through each other
+      if (blobs.length === 2) {
+        const [a, c] = blobs, dx = c.x - a.x, dy = c.y - a.y, dd = Math.hypot(dx, dy) || 1, min = (a.rx + c.rx) * 0.78;
+        if (dd < min) { const push = (min - dd) / 2, ux = dx / dd, uy = dy / dd; a.x -= ux * push; a.y -= uy * push; c.x += ux * push; c.y += uy * push; a.vx -= ux * push * 0.3; c.vx += ux * push * 0.3; }
+      }
+    },
+    // a poke from inside (struggling prey) or a gurgle ripple
+    poke(strength) {
+      const b = blobs[Math.floor(Math.random() * blobs.length)], i0 = Math.floor(Math.random() * N);
+      for (let j = -3; j <= 3; j++) { const p = b.d[(i0 + j + N) % N], a = (i0 + j) / N * Math.PI * 2, f = strength * (1 - Math.abs(j) / 4); p.vx += Math.cos(a) * f; p.vy += Math.sin(a) * f; }
+    },
+    draw(ctx, R) {
+      const css = getComputedStyle(document.documentElement), acc = css.getPropertyValue("--accent").trim() || "#e8a95b";
+      if (part === "balls") { // the base of the shaft above the sack
+        ctx.fillStyle = shade(acc, -0.18); ctx.beginPath(); ctx.roundRect(-R * 0.17, -R * 0.62, R * 0.34, R * 0.6, R * 0.15); ctx.fill();
+      }
+      if (part === "breasts") { ctx.fillStyle = shade(acc, -0.42); ctx.globalAlpha = 0.55; ctx.beginPath(); ctx.roundRect(-R * 0.82, -R * 0.42, R * 1.64, R * 0.5, R * 0.25); ctx.fill(); ctx.globalAlpha = 1; }
+      if (part === "belly") { ctx.fillStyle = shade(acc, -0.42); ctx.globalAlpha = 0.55; ctx.beginPath(); ctx.ellipse(0, -R * 0.08, R * 0.5, R * 0.72, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
+      const path = b => { const ps = Array.from({ length: N }, (_, i) => pt(b, i)); ctx.beginPath(); for (let i = 0; i < N; i++) { const [x0, y0] = ps[i], [x1, y1] = ps[(i + 1) % N]; if (!i) ctx.moveTo((x0 + x1) / 2, (y0 + y1) / 2); else ctx.quadraticCurveTo(x0, y0, (x0 + x1) / 2, (y0 + y1) / 2); } const [x0, y0] = ps[0], [x1, y1] = ps[1]; ctx.quadraticCurveTo(x0, y0, (x0 + x1) / 2, (y0 + y1) / 2); ctx.closePath(); };
+      // back blob first so the nearer one overlaps it
+      const order = [...blobs].sort((a, b) => a.y - b.y);
+      for (const b of order) {
+        const g = ctx.createRadialGradient(b.x - b.rx * 0.35, b.y - b.ry * 0.45, b.rx * 0.1, b.x, b.y, Math.max(b.rx, b.ry) * 1.15);
+        g.addColorStop(0, shade(acc, 0.35)); g.addColorStop(0.55, acc); g.addColorStop(1, shade(acc, -0.38));
+        path(b); ctx.fillStyle = g; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = shade(acc, -0.5); ctx.stroke();
+        // a soft shine that slides with the skin
+        const sh = b.d[Math.round(N * 0.62)];
+        ctx.fillStyle = "rgba(255,255,255,.28)"; ctx.beginPath(); ctx.ellipse(b.x - b.rx * 0.32 + sh.x * 0.6, b.y - b.ry * 0.42 + sh.y * 0.6, b.rx * 0.24, b.ry * 0.13, -0.5, 0, Math.PI * 2); ctx.fill();
+        if (part === "breasts") { const q = b.d[Math.round(N * 0.25)]; ctx.fillStyle = shade(acc, -0.3); ctx.beginPath(); ctx.arc(b.x + q.x * 0.8 + (b.x < 0 ? -b.rx * 0.08 : b.rx * 0.08), b.y + b.ry * 0.35 + q.y * 0.8, b.rx * 0.11, 0, Math.PI * 2); ctx.fill(); }
+      }
+      if (part === "balls") { const [a, c] = blobs; ctx.strokeStyle = shade(acc, -0.45); ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo((a.x + c.x) / 2, Math.min(a.y, c.y) - a.ry * 0.5); ctx.quadraticCurveTo((a.x + c.x) / 2 + (c.vx + a.vx) * 2, (a.y + c.y) / 2, (a.x + c.x) / 2, Math.max(a.y, c.y) + a.ry * 0.7); ctx.stroke(); }
+      if (part === "belly") { const b = blobs[0], q = b.d[Math.round(N * 0.25)]; ctx.fillStyle = shade(acc, -0.5); ctx.beginPath(); ctx.ellipse(b.x + q.x * 0.7, b.y + b.ry * 0.12 + q.y * 0.7, R * 0.025, R * 0.045, 0, 0, Math.PI * 2); ctx.fill(); }
+    }
+  };
+}
+// a colour made lighter (+) or darker (-)
+function shade(hex, f) {
+  const m = String(hex).replace("#", ""); const n = parseInt(m.length === 3 ? m.replace(/./g, c => c + c) : m.slice(0, 6), 16);
+  const ch = [n >> 16 & 255, n >> 8 & 255, n & 255].map(v => Math.round(f >= 0 ? v + (255 - v) * f : v * (1 + f)));
+  return `rgb(${ch.join(",")})`;
+}
 function rubStart(e) {
   const b = $("btnRub"); if (!RUB.part || RUB.on) return;
   e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch {}
   acx(); // wake the sound engine on the touch itself
-  const scn = sceneNow(), part = RUB.part, t0 = performance.now();
-  let lastX = e.clientX, lastY = e.clientY, travel = 0, since = 0, strokes = 0, lastPlay = 0, wob = 0, open = false, raf = 0, vx = 0, vy = 0;
+  const scn = sceneNow(), part = RUB.part, t0 = performance.now(), still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let lastX = e.clientX, lastY = e.clientY, travel = 0, since = 0, strokes = 0, lastPlay = 0, open = false, raf = 0, mx = 0, my = 0, nextPoke = 0;
+  const SIZE = 220, R = SIZE / 2, body = rubBody(part, R * 0.95);
+  let hx = 0, hy = 0; // the hand inside the pad, in pad units from its centre
   RUB.on = true;
   const openPad = () => {
     open = true;
     const r = b.getBoundingClientRect(), pad = document.createElement("div"); pad.id = "rubPad";
-    pad.innerHTML = RUB_ICON[part] + `<span class="rub-lbl">Swirl to rub the ${RUB_NAME[part]}</span>`;
-    const cx = (r.left + r.width / 2) / UIZ, top = r.top / UIZ - 190;
-    Object.assign(pad.style, { left: Math.max(8, Math.min(innerWidth / UIZ - 188, cx - 90)) + "px", top: Math.max(8, top) + "px" });
+    const dpr = Math.min(3, devicePixelRatio || 1) * UIZ;
+    pad.innerHTML = `<canvas width="${SIZE * dpr}" height="${SIZE * dpr}" aria-hidden="true"></canvas><span class="rub-lbl">Swirl to rub the ${RUB_NAME[part]}</span>`;
+    const cx = (r.left + r.width / 2) / UIZ, top = r.top / UIZ - SIZE - 12;
+    Object.assign(pad.style, { left: Math.max(8, Math.min(innerWidth / UIZ - SIZE - 8, cx - R)) + "px", top: Math.max(8, top) + "px" });
     document.body.appendChild(pad); RUB.pad = pad;
-    const icon = pad.querySelector("svg"), still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const tick = () => { // the belly squishes along with the hand and jiggles back
-      wob *= 0.9; vx *= 0.85; vy *= 0.85;
-      if (!still) icon.style.transform = `translate(${vx * 0.6}px, ${vy * 0.6}px) scale(${1 + wob * 0.06 + Math.abs(vx) * 0.004}, ${1 + wob * 0.05 - Math.abs(vx) * 0.003}) rotate(${vx * 0.5}deg)`;
-      raf = requestAnimationFrame(tick);
+    const cv = pad.querySelector("canvas"), ctx = cv.getContext("2d");
+    let last = performance.now();
+    const frame = now => {
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (!still) {
+        if (scn.act === "struggle" && now > nextPoke) { body.poke(2.2 + Math.random() * 2); nextPoke = now + 500 + Math.random() * 1400; } // the prey kicks back
+        body.step(dt, hx, hy, mx, my, true);
+      }
+      mx *= 0.5; my *= 0.5;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, SIZE, SIZE); ctx.translate(R, R);
+      ctx.translate(0, -R * 0.06); body.draw(ctx, R * 0.95); ctx.translate(0, R * 0.06);
+      // the hand: a warm glow where it touches
+      const g = ctx.createRadialGradient(hx, hy, 0, hx, hy, 22); g.addColorStop(0, "rgba(255,240,220,.55)"); g.addColorStop(1, "rgba(255,240,220,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(hx, hy, 22, 0, Math.PI * 2); ctx.fill();
+      raf = requestAnimationFrame(frame);
     };
-    raf = requestAnimationFrame(tick);
+    raf = requestAnimationFrame(frame);
   };
   const move = ev => {
-    const dx = ev.clientX - lastX, dy = ev.clientY - lastY, d = Math.hypot(dx, dy); lastX = ev.clientX; lastY = ev.clientY;
-    travel += d; since += d; vx = Math.max(-14, Math.min(14, vx + dx * 0.5)); vy = Math.max(-14, Math.min(14, vy + dy * 0.5));
+    const dx = (ev.clientX - lastX) / UIZ, dy = (ev.clientY - lastY) / UIZ, d = Math.hypot(dx, dy); lastX = ev.clientX; lastY = ev.clientY;
+    travel += d; since += d; mx += dx; my += dy;
+    // the hand moves over the part the way the finger moves on the button, kept inside the pad
+    hx += dx * 1.1; hy += dy * 1.1; const m = Math.hypot(hx, hy), lim = R * 0.72; if (m > lim) { hx *= lim / m; hy *= lim / m; }
     if (!open && (travel > 10 || performance.now() - t0 > 220)) openPad();
     const now = performance.now();
-    if (since > 110 && now - lastPlay > 380) { since = 0; lastPlay = now; strokes++; wob = 1; playKey(rubSound(part, scn, strokes)); try { navigator.vibrate?.(12); } catch {} }
+    if (since > 110 && now - lastPlay > 380) { since = 0; lastPlay = now; strokes++; if (!still) body.poke(1.2); playKey(rubSound(part, scn, strokes)); try { navigator.vibrate?.(12); } catch {} }
   };
   const hold = setTimeout(() => { if (!open && RUB.on) openPad(); }, 220);
   const end = async () => {
@@ -3695,7 +3792,7 @@ function rubStart(e) {
       else toast("Hold and swirl to rub");
       return;
     }
-    if (!strokes) return;
+    if (!strokes || !S.chat) return;
     const prev = S.chat.pendingRub, amt = (prev && prev.part === part ? prev.amt : 0) + strokes;
     S.chat.pendingRub = { part, amt, tell: prev?.part === part ? !!prev.tell : false };
     await saveChat(); drawRubChip();
@@ -5266,6 +5363,7 @@ const freeAudio = a => { try { a.removeAttribute("src"); a.load(); } catch {} };
 const trackAudio = a => { LIVE.add(a); a.addEventListener("ended", () => { LIVE.delete(a); if (!a.loop) freeAudio(a); }); a.addEventListener("pause", () => LIVE.delete(a)); return a; };
 function hushAll() {
   for (const a of [...LIVE]) { try { a.pause(); a.src = ""; } catch {} } LIVE.clear();
+  for (const h of [...SFX_LIVE]) h.stop(); SFX_LIVE.clear();
   if (AC && AC.state === "running") { const old = AC; AC = null; NOISE = null; old.close().catch(() => {}); }
 }
 // The list of the owner's sounds. It is never replaced by "nothing": a missing or broken copy leaves the list as it was.
@@ -5393,7 +5491,7 @@ async function playSfx(cat, text, hint) {
       const muf = muffleFor(pick.type) || (pick.type === "thunder" && /indoors|vehicle/.test(scAmb || "") ? "medium" : false); // thunder through walls
       if (muf) { const pre = await poolFor([pick.type + "_m"]); if (pre.length) pick = pre[Math.floor(Math.random() * pre.length)]; } // ready-muffled versions (bone cracks)
       const url = await sndURL(pick.id);
-      if (url) { const a = trackAudio(new Audio(url)); if (muf && !pick.type.endsWith("_m")) muffleEl(a, muf); a.volume = vol; await a.play(); if (pick.type === "gas" || pick.type === "gas_m") voreBurp(); if (pick.type !== "thunder") capAudio(a, vol); return; }
+      if (url) { await playBuf(url, { vol, muf: muf && !pick.type.endsWith("_m") ? muf : false, cap: pick.type === "thunder" ? 0 : 4 }); if (pick.type === "gas" || pick.type === "gas_m") voreBurp(); return; }
     }
   } catch {}
   // only real recordings play; the one made-up sound left is the heartbeat thump
@@ -5412,18 +5510,11 @@ async function playKey(k) {
     const muf = pick.type.endsWith("_m") ? false : muffleFor(pick.type) || (pick.type === "thunder" && /indoors|vehicle/.test(scAmb || "") ? "medium" : false);
     if (muf) { const pre = await poolFor([pick.type + "_m"]); if (pre.length) pick = pre[Math.floor(Math.random() * pre.length)]; } // ready-muffled versions (bone cracks)
     const url = await sndURL(pick.id); if (!url) return;
-    // a slice is a few seconds from somewhere inside a loop (a media fragment says where), faded in and out
+    // a slice is a few seconds from somewhere inside a loop, faded in and out
     const len = pick.len || 0, at = x.slice && len > 4 ? Math.random() * (len - 3.5) : 0;
-    const a = trackAudio(new Audio(at ? `${url}#t=${at.toFixed(2)}` : url)); if (muf && !pick.type.endsWith("_m")) muffleEl(a, muf);
-    if (x.slice) {
-      a.volume = 0; await a.play();
-      let v = 0; const up = setInterval(() => { v = Math.min(vol, v + vol / 6); a.volume = v; if (v >= vol) clearInterval(up); }, 40);
-      setTimeout(() => { clearInterval(up); let w = a.volume; const t = setInterval(() => { w -= vol / 10; if (w <= 0.02) { a.pause(); clearInterval(t); freeAudio(a); } else a.volume = w; }, 60); }, 2200);
-      return;
-    }
-    a.volume = vol; await a.play();
+    const mf = muf && !pick.type.endsWith("_m") ? muf : false;
+    await playBuf(url, x.slice ? { vol, muf: mf, at, len: 2.8, fadeIn: 0.25 } : { vol, muf: mf, cap: pick.type === "thunder" ? 0 : 4 });
     if (pick.type === "gas" || pick.type === "gas_m") voreBurp();
-    if (pick.type !== "thunder") capAudio(a, vol);
   } catch {}
 }
 // --- tiny synthesiser (Web Audio). Each sound is a few envelopes on tones and filtered noise.
@@ -5857,7 +5948,44 @@ function muffleChain(ac, kind) {
   for (let i = 0; i < nodes.length - 1; i++) nodes[i].connect(nodes[i + 1]);
   return { input: nodes[0], output: nodes[nodes.length - 1] };
 }
-function muffleEl(a, kind) { const ac = acx(); if (!ac) return a; try { const ch = muffleChain(ac, kind); ac.createMediaElementSource(a).connect(ch.input); ch.output.connect(ac.destination); } catch {} return a; }
+// One muffle chain per kind, shared by every sound (v1.45). Building a fresh chain for each sound and never taking it
+// down piled up hundreds of filters during fast rubbing until the phone's sound engine choked and the app crawled.
+const MUF_BUS = new WeakMap();
+function mufBus(ac, kind) {
+  let m = MUF_BUS.get(ac); if (!m) MUF_BUS.set(ac, m = {});
+  const k = kind === "medium" ? "medium" : "full";
+  if (!m[k]) { const ch = muffleChain(ac, kind === "medium" ? "medium" : undefined); ch.output.connect(ac.destination); m[k] = ch.input; }
+  return m[k];
+}
+function muffleEl(a, kind) {
+  const ac = acx(); if (!ac) return a;
+  try { const s = ac.createMediaElementSource(a); s.connect(mufBus(ac, kind)); const off = () => { try { s.disconnect(); } catch {} }; a.addEventListener("ended", off, { once: true }); a.addEventListener("emptied", off, { once: true }); } catch {}
+  return a;
+}
+// Tap sounds play from decoded buffers (kept for the last 80 files), at most 6 at once (the oldest gives way),
+// so fast tapping or rubbing never runs the phone out of media players.
+const SFX_BUF = new Map(), SFX_LIVE = new Set();
+function sfxBuffer(ac, url) {
+  let p = SFX_BUF.get(url);
+  if (!p) { p = fetch(url).then(r => r.arrayBuffer()).then(b => ac.decodeAudioData(b)); SFX_BUF.set(url, p); p.catch(() => SFX_BUF.delete(url)); if (SFX_BUF.size > 80) SFX_BUF.delete(SFX_BUF.keys().next().value); }
+  else { SFX_BUF.delete(url); SFX_BUF.set(url, p); } // recently used stays
+  return p;
+}
+async function playBuf(url, { vol, muf, at = 0, len = 0, fadeIn = 0, cap = 4 }) {
+  const ac = acx(); if (!ac) return null;
+  const buf = await sfxBuffer(ac, url); if (AC !== ac) return null; // the sound was cut while loading
+  while (SFX_LIVE.size >= 6) { const old = SFX_LIVE.values().next().value; SFX_LIVE.delete(old); old.stop(); }
+  const src = ac.createBufferSource(), g = ac.createGain(); src.buffer = buf;
+  src.connect(g).connect(muf ? mufBus(ac, muf) : ac.destination);
+  at = Math.max(0, Math.min(at, Math.max(0, buf.duration - 0.2)));
+  const rest = buf.duration - at, dur = len ? Math.min(len, rest) : cap && rest > cap + 0.6 ? cap + 0.5 : rest, t = ac.currentTime;
+  g.gain.setValueAtTime(fadeIn ? 0.0001 : vol, t); if (fadeIn) g.gain.linearRampToValueAtTime(vol, t + fadeIn);
+  if (dur < rest - 0.05) { const fo = Math.min(0.6, dur / 3); g.gain.setValueAtTime(vol, t + dur - fo); g.gain.linearRampToValueAtTime(0.0001, t + dur); } // cut short: fade, never click
+  src.start(t, at, dur);
+  const h = { stop() { try { g.gain.cancelScheduledValues(ac.currentTime); g.gain.setTargetAtTime(0.0001, ac.currentTime, 0.03); src.stop(ac.currentTime + 0.15); } catch {} } };
+  SFX_LIVE.add(h); src.onended = () => { SFX_LIVE.delete(h); try { g.disconnect(); src.disconnect(); } catch {} };
+  return h;
+}
 async function startLoop(url, vol, muffle, fade = 1.2) {
   const ac = acx(); if (!ac) return null;
   let buf = LOOP_BUF.get(url);
