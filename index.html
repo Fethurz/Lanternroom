@@ -384,6 +384,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 #btnCont{color:var(--accent)}
 .chip{transition:background-color .2s,color .2s,transform .12s}
 .cx{font-weight:700}
+.sfx-cols .lbl{margin:8px 0 4px;font-size:.8rem;opacity:.75}.sfx-row{display:flex;flex-wrap:wrap;gap:6px 12px}.sfx-row label{display:flex;align-items:center;gap:5px;font-size:.85rem;min-height:34px}.sfx-row input[type=color]{width:30px;height:30px;padding:0;border:0;background:none;border-radius:6px}
 #msgs .msg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--surface-2);border:1px solid var(--line);color:var(--fg);padding:8px 16px;border-radius:999px;font-size:14px;z-index:20;animation:toast 1.6s ease forwards;pointer-events:none}
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
@@ -894,7 +895,7 @@ const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&l
 const fill = (s, c) => String(s || "").replace(/\{\{char\}\}/gi, c?.name || "").replace(/\{\{user\}\}/gi, uname());
 const within = (p, ms = 1500) => Promise.race([p, new Promise(r => setTimeout(r, ms))]);
 
-const stripColor = s => String(s || "").replace(/\[\/?colou?r[^\]]*\]/gi, "");
+const stripColor = s => String(s || "").replace(/\[\/?(colou?r|sfx)[^\]]*\]/gi, "");
 const okColor = c => /^#[0-9a-f]{3,8}$/i.test(c) || /^[a-z]{3,24}$/i.test(c);
 // brighter versions of basic color names so they read well on the dark background
 const NAMED = { green: "#6fdc6a", darkgreen: "#4fbf5a", red: "#ff5d52", darkred: "#e0483f", blue: "#6fa8ff", darkblue: "#5b8cf0", navy: "#6f8cff", purple: "#c49bff", brown: "#b5895c", black: "#a9a3b3", maroon: "#e0605a", olive: "#b8c25a", teal: "#4fd1c5", gray: "#b8b2c4", grey: "#b8b2c4" };
@@ -903,6 +904,11 @@ function fmt(text) {
   let h = String(text).replace(/[&<>]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" }[c]));
   h = h.replace(/\[colou?r=["']?([#\w]{1,24})["']?\]([\s\S]*?)\[\/colou?r\]/gi, (m, col, inner) => okColor(col) ? `<span class=cx style=color:${colorOf(col)}>${inner}</span>` : inner)
        .replace(/\[colou?r=[^\]]*\]$|\[\/?colou?r[^\]]*\]/gi, "");
+  // labelled sounds from the sound list: [sfx=belch]***BwoOORp***[/sfx] (the stars are optional); unknown keys are read by their letters.
+  // Attributes use single quotes or none: double-quoted text is turned into speech spans just below
+  h = h.replace(/\[sfx=["']?([\w-]{1,24})["']?\]\s*\**([^\[\]*\n]+?)\**\s*\[\/sfx\]/gi, (m, k, inner) => { const x = SFX_BY[k.toLowerCase()];
+    return x ? `<span class='cx sfx-k' data-k=${x.k}${S.settings.sfxColors === false ? "" : ` style=color:${sfxColor(x)}`}><strong><em>${inner.trim()}</em></strong></span>` : `<strong><em>${inner.trim()}</em></strong>`; })
+       .replace(/\[sfx=[^\]]*\]\s*\**([^\[*]*)\**$/i, "<strong><em>$1</em></strong>").replace(/\[\/?sfx[^\]]*\]/gi, "");
   h = h.replace(/("[^"\n]+"|“[^”\n]+”)/g, "<span class=q>$1</span>")
        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
        .replace(/\*([^*\n]+)\*/g, "<em class=act>$1</em>")
@@ -1184,7 +1190,7 @@ const sfxRulesNow = r => String(r || "").replace(OLD_SFX_LINE, NEW_SFX_LINE);
 function onoPrompt(c, chat, upto) {
   const recent = chat.messages.slice(Math.max(0, upto - 6), upto).filter(m => m.role !== "image").map(m => m.content || "").join("\n");
   const tags = [...tagsOf(c), ...(c.kind === "group" ? members(c).flatMap(tagsOf) : [])].join(" ");
-  let out = `\n\n# Sound effects\nEvery sound effect is an onomatopoeia invented for that exact moment, written in bold italics (***like this***). Build it to sound like the real noise: stretch letters, mix lower and UPPER case to show it swelling and fading (capitals are louder), pile up consonants for wet, rumbling or gurgling textures, and break long sounds into parts with "..." between them. Never reuse an onomatopoeia within a chat and never fall back on plain words like "gurgle" or "burp". All bodily sounds (burps and belches, stomachs and balls gurgling, sloshing, churning) MUST get their own onomatopoeia.`;
+  let out = `\n\n# Sound effects\nWrite every sound effect as an onomatopoeia invented for that exact moment, wrapped in a sound tag that names what is making the noise: [sfx=KEY]***Onomatopoeia***[/sfx], for example [sfx=belch]***${ONO.make("belch")}***[/sfx]. KEY must be one of the keys listed below; the app colors the word and plays a real recording of that sound, so pick the key that matches what is actually happening (a stomach gurgle is gurgle, full balls sloshing is cumslosh, a punch is punch). Build the word itself to sound like the real noise: stretch letters, mix lower and UPPER case to show it swelling and fading (capitals are louder), pile up consonants for wet, rumbling or gurgling textures, and break long sounds into parts with "..." between them. Never reuse an onomatopoeia within a chat and never fall back on plain words like "gurgle" or "burp". All bodily sounds on the list (burps and belches, stomachs and balls gurgling, sloshing, churning) MUST get their own tagged onomatopoeia. ONLY the sounds on this list exist: anything else (voices, moans, growls, roars, purrs, doors, cloth, footsteps, snoring, sniffing) is described in plain words, with no onomatopoeia and no sound tag. Never write a sound effect in a [color] tag.\nThe sounds:\n${sfxListPrompt()}`;
   const vore = /vore|pred|prey|belly|stomach|digest/i.test(tags) || VORE.swallow.test(recent) || VORE.stomach.test(recent) || ["vore", "struggle", "swallow"].includes(chat.messages[upto - 1]?.act);
   // examples for whatever is going on: vore body sounds, plus sex, oral, kissing, toilet, fights, weather and so on
   const act = chat.messages[upto - 1]?.act || "", last = chat.messages.slice(Math.max(0, upto - 2), upto).map(m => m.content || "").join("\n");
@@ -1216,7 +1222,8 @@ function onoPrompt(c, chat, upto) {
     [/\b(sniff|smell|scent|breath|pant|huff|exhal|drool|slobber|stomp|footstep|steps?|walk|heart)\w*/i.test(last), ["breath", "sniff", "drool", "stomp", "heart"]]
   ];
   for (const [on, list] of ctxs) if (on) add(list, list.length > 3 ? 2 : list.length);
-  if (picks.length) out += `\nFresh examples to take after but NOT repeat (make new ones each time):\n` + picks.slice(0, 9).map(t => `${ONO.LABEL[t]}: ***${ONO.make(t)}***`).join("\n");
+  const lines = picks.map(t => { const x = sfxAvail().find(x => x.gen.includes(t)); return x && `[sfx=${x.k}]***${ONO.make(t)}***[/sfx]`; }).filter(Boolean);
+  if (lines.length) out += `\nMore fresh examples for this scene, to take after but NOT repeat (make new ones each time):\n` + lines.slice(0, 9).join("\n");
   return out;
 }
 function buildPrompt(c, chat, upto, cont) {
@@ -1243,7 +1250,7 @@ function buildPrompt(c, chat, upto, cont) {
   if (lore.length) sys += `\n\n# World notes\n` + lore.map(l => fill(l.text, c)).join("\n");
   if (c.instructions) sys += `\n\n# Special instructions for this story\n${fill(c.instructions, c)}`;
   if ((st.globalInstr || "").trim()) sys += `\n\n# The user's instructions for every chat (always follow)\n${fill(st.globalInstr, c)}`;
-  sys += `\n\n# Text colors\nThe app shows [color=NAME or #hex]text[/color] as colored text. Use it whenever instructions ask for colored text.` + (st.sfxColors ? `\n${sfxRulesNow(st.sfxRules)}` : "");
+  sys += `\n\n# Text colors\nThe app shows [color=NAME or #hex]text[/color] as colored text. Use it whenever instructions ask for colored text.` + "";
   sys += onoPrompt(c, chat, upto);
   sys += gaugePrompt(c, chat);
   sys += rpgPrompt(c, chat);
@@ -1288,7 +1295,7 @@ function buildPrompt(c, chat, upto, cont) {
     out.unshift({ role: m.role, content, ...(m.turn ? { turn: m.turn } : {}) });
   }
   if (!out.length || out[0].role !== "user") out.unshift({ role: "user", content: "(The scene begins.)" });
-  const remind = st.sfxColors ? `\n\n[Reminder: write every sound effect as a fresh custom onomatopoeia in bold italics inside a color tag, like [color=green]***${ONO.make("shortBelch")}***[/color], following the color rules.]` : "";
+  const remind = `\n\n[Reminder: write every sound effect as a fresh onomatopoeia in a sound tag with a key from the sound list, like [sfx=burp]***${ONO.make("shortBelch")}***[/sfx]; sounds not on the list are described in plain words.]`;
   if (remind && !cont) { const last = out[out.length - 1]; if (last.role === "user" && typeof last.content === "string") last.content += remind; else if (last.role === "user" && Array.isArray(last.content)) last.content[0].text += remind; }
   for (const o of out) delete o.turn;
   if (cont) out.push({ role: "user", content: `[Continue the scene from where it left off, without waiting for ${u}. Write the next message as you think the story should go: advance the moment, have characters act or speak, but never write ${u}'s words or actions. Do not repeat earlier text.]` + remind });
@@ -2620,7 +2627,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
     <div class="group"><h3>All chats</h3>
       ${field("Rules for every chat", `<textarea id="sGlobal" style="min-height:100px" placeholder="e.g. Write in third person. Keep replies under 4 paragraphs. Describe smells and sounds.">${esc(st.globalInstr || "")}</textarea>`, "Applied to every character, world and group. Colored text works with [color=red]text[/color].")}
       <label class="check"><input type="checkbox" id="sSfx" ${st.sfxColors ? "checked" : ""}> Colored sound effects</label>
-      ${field("Sound effect colors", `<textarea id="sSfxRules" style="min-height:120px">${esc(st.sfxRules || "")}</textarea>`, "Edit freely. Any color name or #hex code works.")}
+      ${field("Sound effect colors", `<div id="sSfxRules" class="sfx-cols">${Object.entries(SFX_GROUPS).map(([g, [gl]]) => `<div class="lbl">${esc(gl)}</div><div class="sfx-row">${SFX_LIST.filter(x => x.g === g).map(x => `<label title="${esc(x.l)}"><input type="color" data-k="${x.k}" value="${sfxColor(x)}"> ${x.k}</label>`).join("")}</div>`).join("")}</div>`, "Every sound the chats can write, with its colour. Tap a colour to change it.")}
       <button class="btn small" type="button" id="sSfxReset">Restore default colors</button>
       <label class="check"><input type="checkbox" id="sSound" ${st.sfxSound !== false ? "checked" : ""}> Play a sound when I tap a sound effect</label>
       ${rangeRow("sVol", "Sound volume", "How loud tapped sound effects play.", 0, 1, 0.05, st.sfxVolume ?? 0.7, v => Math.round(v * 100) + "%")}
@@ -2682,7 +2689,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   $("sAccentPick").onchange = () => saveSettings();
   settingsTabs(b);
   $("sPack").onclick = async () => { await $("sSave").onclick(); openSoundPack(); }; // keep any settings changes first
-  $("sSfxReset").onclick = () => { $("sSfxRules").value = DEFAULTS.sfxRules; };
+  $("sSfxReset").onclick = () => { for (const i of $("sSfxRules").querySelectorAll("input[data-k]")) { const x = SFX_BY[i.dataset.k]; i.value = x.c || SFX_GROUPS[x.g][1]; } };
   $("sReset").onclick = () => {
     const d = DEFAULTS, map = { sTemp: d.temperature, sMax: d.maxTokens, sCtx: d.contextTokens, sTopK: d.topK, sTopP: d.topP, sRep: d.repPenalty, sFreq: d.freqPenalty };
     for (const [id, v] of Object.entries(map)) { $(id).value = v; $(id + "V").textContent = fmts[id](v); }
@@ -2699,7 +2706,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       portraits: $("sPort").checked, backgrounds: $("sBg").checked,
       imgStyle: $("sStyle").value.trim() || DEFAULTS.imgStyle, imgUrl: $("sImg").value.trim() || DEFAULTS.imgUrl,
       keepRecent: n("sKeep", 16), factsEvery: n("sFacts", 4), summarizeAt: n("sSum", 12000),
-      globalInstr: $("sGlobal").value.trim(), sfxColors: $("sSfx").checked, sfxSound: $("sSound").checked, sfxVolume: n("sVol", 0.7), ambOn: $("sAmb").checked, ambVol: n("sAmbVol", 0.35), actOn: $("sAct").checked, actVol: n("sActVol", 0.5), musicOn: $("sMus").checked, musicVol: n("sMusVol", 0.2), autoSfx: $("sAuto").checked, rpgOn: $("sRpg").checked, sfxRules: $("sSfxRules").value.trim() || DEFAULTS.sfxRules
+      globalInstr: $("sGlobal").value.trim(), sfxColors: $("sSfx").checked, sfxSound: $("sSound").checked, sfxVolume: n("sVol", 0.7), ambOn: $("sAmb").checked, ambVol: n("sAmbVol", 0.35), actOn: $("sAct").checked, actVol: n("sActVol", 0.5), musicOn: $("sMus").checked, musicVol: n("sMusVol", 0.2), autoSfx: $("sAuto").checked, rpgOn: $("sRpg").checked, sfxCols: Object.fromEntries([...$("sSfxRules").querySelectorAll("input[data-k]")].filter(i => i.value.toLowerCase() !== (SFX_BY[i.dataset.k].c || SFX_GROUPS[SFX_BY[i.dataset.k].g][1]).toLowerCase()).map(i => [i.dataset.k, i.value]))
     });
     await saveSettings(); closeSheet(); updateAmbience();
     if (!$("chat").hidden) updateStage(); else renderHome();
@@ -4496,10 +4503,30 @@ const ONO = (() => {
     chomp: () => run(n(1, 3), () => pick(["Chmp", "CHMP", "Chomp", "Krmp", "Chmmp", "CHOMP"])) + (R() < 0.5 ? " " + pick(["Shlrrch", "shlrch", "Sqlrch"]) + "..." : ""),
     tear: () => pick(["Rrrtch", "Shrrrlk", "RRRtch", "Hrrrk-tch", "Skrrrtch", "rRRRtch"]) + (R() < 0.4 ? "... " + pick(["Shlrp", "Splk", "Plrch"]) : ""),
     goreSplat: () => pick(["SPLRTCH", "Splrrch", "Shplrt", "SPLTCH", "Splrrtch"]) + (R() < 0.4 ? "... " + pick(["plk", "plp", "tik"]) + "..." : ""),
-    door: () => "Kr" + rep("r", n(0, 2)) + mixVowels(["e"], n(3, 5)) + "k" + (R() < 0.6 ? "... " + pick(["THUD", "Klak", "Thmp", "KLAK"]) : "")
+    door: () => "Kr" + rep("r", n(0, 2)) + mixVowels(["e"], n(3, 5)) + "k" + (R() < 0.6 ? "... " + pick(["THUD", "Klak", "Thmp", "KLAK"]) : ""),
+    // v1.43: words for the sounds that had recordings but no words yet (Sound List Bench)
+    acid: () => pick(["Fss", "Tss", "Hss", "Pss"]) + swell("s", n(2, 4)) + pick(["hh", "h", ""]) + "... " + pick(["blrp", "plblb", "blbl", "bblp", "plp-blp"]) + pick(["...", ""]),
+    whoosh: () => pick(["Fw", "Wh", "Shw", "FW"]) + swell("o", n(2, 5)) + pick(["sh", "SH", "ssh", "shh"]),
+    arrow: () => pick(["Thwip", "Fwip", "THWIP", "Tsshwip", "Fwiiip"]) + (R() < 0.5 ? "... " + pick(["THUNK", "Thnk", "Tchk"]) : ""),
+    sheath: () => pick(["Shh", "Sch", "Shhh", "SH", "Schl"]) + rep(pick(["i", "I"]), n(2, 5)) + pick(["ng", "NG", "nng"]),
+    chop: () => pick(["THWACK", "Shhnk", "SHLUNK", "Thwnk", "Chnk"]) + (R() < 0.5 ? "... " + pick(["plk", "thmp", "plp"]) : ""),
+    smash: () => pick(["KRSSH", "Krrsssh", "Krsshkl", "KRAKKL", "Crrsshh"]) + (R() < 0.6 ? "... " + pick(["tk-tk", "klk", "tktktk"]) : ""),
+    metal: () => run(n(1, 3), () => cap(pick(["Klnk", "Klank", "Tnnk", "Klrrnk", "Tnk"]))),
+    mine: () => run(n(1, 3), () => cap(pick(["Tchnk", "Kchnk", "Tnnk", "Chnk", "Tsching"]))),
+    fireSpell: () => pick(["Fw", "FW", "Fwh"]) + swell("o", n(2, 5)) + pick(["mph", "MPH", "mf", "sh"]),
+    iceSpell: () => pick(["Krssh", "Tsshk", "Kshhhk", "Krrshh", "Tssshhk"]) + (R() < 0.6 ? "... " + pick(["tnk", "tink", "krk", "tnk-tnk"]) : ""),
+    earthSpell: () => "Grr" + swell("r", n(2, 4)) + pick(["mbl", "mmbl", "umbl"]) + "... " + pick(["KRAK", "KRRAK", "Krrak", "KRSH"]),
+    windSpell: () => pick(["Fwh", "Whh", "Fwhh", "Hwh"]) + swell("o", n(3, 6)) + pick(["sh", "shh", "SH"]) + pick(["...", ""]),
+    lightning: () => pick(["Bzzrt", "KZZAK", "Kzzt", "BZZZT", "Krzzak", "Bzzzrk"]) + (R() < 0.4 ? "... " + pick(["krk", "tzzt", "zzt"]) : ""),
+    heal: () => pick(["Shw", "Shhw", "Hmmw", "Tw"]) + rep(pick(["i", "I"]), n(3, 5)) + pick(["ng", "nnn", "ng..."]),
+    darkMagic: () => "Vw" + swell("o", n(3, 5)) + pick(["mmm", "MMM", "mmmrr"]) + pick(["...", "... hrrmmm...", "..."]),
+    beam: () => run(n(1, 3), () => cap(pick(["Pew", "Pyew", "Bzwww", "Vzzt", "Pchew"]))),
+    coins: () => run(n(2, 3), () => cap(pick(["Clink", "Klink", "Tink", "Chnk", "Tnk"]))),
+    potion: () => (R() < 0.5 ? pick(["Pmp", "Pok", "Pop"]) + "... " : "") + run(n(2, 3), () => pick(["Glk", "Gulk", "Glg", "Glk"]))
   };
   Object.assign(parts, more);
   const LABEL = { plap: "Hips slapping", squelch: "Wet thrusts", spurt: "Cum spurting", pour: "Cum pouring and dripping", slurp: "Slurping", suck: "Sucking", gluck: "Gagging", drinkGulp: "Gulping it down", smooch: "Kiss", wetKiss: "Wet kissing", lick: "Lick", preyGulp: "Swallowing prey", gullet: "Throat squeezing prey down", muffled: "Muffled struggling inside", crunch: "Bones crunching", sizzle: "Acid sizzling", dryFart: "Dry fart", wetFart: "Wet fart", plop: "Plop", push: "Long push and plop", flush: "Flush", heart: "Heartbeat", breath: "Breathing", sniff: "Sniffing", drool: "Drool dripping", stomp: "Big footsteps", impact: "Punch or hit", slash: "Blade or claw", boom: "Explosion", splash: "Splash", fire: "Fire", thunder: "Thunder", rip: "Cloth ripping or zipper", door: "Door", chomp: "Crushing bite", clang: "Blades or armour clashing", gunshot: "Gunshot", tear: "Flesh tearing", goreSplat: "Blood and gore splattering",
+    acid: "Acid fizzing", whoosh: "Swing whooshing", arrow: "Arrow", sheath: "Blade drawn", chop: "Chop", smash: "Wood smashing", metal: "Metal clattering", mine: "Pickaxe on stone", fireSpell: "Fire whooshing", iceSpell: "Ice cracking", earthSpell: "Earth rumbling", windSpell: "Gust of wind", lightning: "Lightning zap", heal: "Healing shimmer", darkMagic: "Dark magic", beam: "Energy beam", coins: "Coins", potion: "Drinking a potion",
     belch: "Belch", shortBelch: "Shorter belch", burp: "Burp", gurgle: "Digestion gurgle", lateGurgle: "Late-digestion gurgle", longGurgle: "Digestion gurgle", sloshy: "Sloshy late digestion gurgles", brutal: "Brutal digestion gurgles with a crunch", ballGurgle: "Full balls gurgling and sloshing", churn: "Stomach churning growl" };
   return {
     types: Object.keys(parts).filter(k => !(k in more)), all: Object.keys(parts), LABEL,
@@ -4508,6 +4535,95 @@ const ONO = (() => {
     examples(types, k = 6) { const out = []; const list = [...types]; for (let i = 0; i < k; i++) { const t = list[i % list.length]; out.push(`${LABEL[t]}: ***${this.make(t)}***`); } return out; }
   };
 })();
+
+// --- The sound list (v1.43): every sound a chat may write. The model labels each one with its key,
+// [sfx=belch]***BwoOORrrph...***[/sfx], so the app knows exactly which recordings to play, which icon to show and
+// which colour to use, with no guessing from the letters. Only sounds that have recordings are offered to the model.
+// k key · l what it is (told to the model) · g colour group · play sound types tried in order · fx icon · gen ONO recipes
+// name: only recordings whose name matches · slice: a few seconds cut from a loop · out: the type to use when heard from outside a body
+const SFX_GROUPS = {
+  gut: ["Burps, gurgles & stomach", "#6fdc6a"], gore: ["Bones, chewing & gore", "#ff5d52"], sex: ["Sex", "#ff6fae"], oral: ["Oral & licking", "#ff8fc8"],
+  kiss: ["Kisses", "#ff69b4"], cum: ["Cum & full balls", "#f1ebda"], fart: ["Farts", "#a8875a"], poop: ["Pooping", "#c9a27e"], water: ["Water & drinking", "#87cefa"],
+  body: ["Breathing & heartbeat", "#f3f0f8"], fight: ["Fighting", "#ff5d52"], metal: ["Metal & objects", "#c0c7d1"], magic: ["Magic", "#ffd700"], world: ["Weather", "#cfd8ff"], loot: ["Coins & potions", "#ffcf4d"]
+};
+const SFX_LIST = [
+  { k: "belch", g: "gut", l: "a big, long belch", play: ["gas"], fx: "gas", gen: ["belch"] },
+  { k: "burp", g: "gut", l: "a short burp", play: ["gas"], fx: "gas", gen: ["shortBelch", "burp"] },
+  { k: "gurgle", g: "gut", l: "a stomach gurgling (digesting, full, hungry)", play: ["bubbles", "churn"], fx: "bubbles", gen: ["gurgle", "longGurgle", "lateGurgle"] },
+  { k: "growl", g: "gut", l: "a stomach growling, churning or groaning", play: ["churn", "bubbles"], fx: "bubbles", gen: ["churn"] },
+  { k: "slosh", g: "gut", l: "a full belly sloshing", play: ["cumbub", "liquid"], fx: "liquid", gen: ["sloshy"] },
+  { k: "gulp", g: "gut", l: "swallowing something big or someone (prey going down the throat)", play: ["swallow"], fx: "liquid", gen: ["preyGulp", "gullet"] },
+  { k: "squish", g: "gut", l: "stomach or flesh walls squeezing and squelching", play: ["squelch"], fx: "liquid", gen: ["squelch"] },
+  { k: "struggle", g: "gut", l: "prey kicking and squirming inside a belly (muffled thumps)", play: ["struggle"], fx: "stomp", gen: ["muffled"] },
+  { k: "acid", g: "gut", l: "stomach acid fizzing and bubbling", play: ["loop_digest"], out: "loop_digest_m", slice: true, fx: "bubbles", gen: ["acid"] },
+  { k: "crunch", g: "gore", l: "bones cracking, snapping or crunching", play: ["crack"], fx: "crack", gen: ["crunch"] },
+  { k: "chomp", g: "gore", l: "a crushing bite, chewing", play: ["chew"], fx: "crack", gen: ["chomp"] },
+  { k: "tear", g: "gore", l: "flesh tearing", play: ["chew"], name: /rip|tear|guts|blood/i, fx: "slash", gen: ["tear"] },
+  { k: "splatter", g: "gore", l: "blood and gore splattering", play: ["gore"], fx: "liquid", gen: ["goreSplat"] },
+  { k: "plap", g: "sex", l: "hips or skin slapping together during sex", play: ["plap"], fx: "sex", gen: ["plap"] },
+  { k: "squelch", g: "sex", l: "wet squelching thrusts during sex", play: ["sex", "squelch"], fx: "sex", gen: ["squelch"] },
+  { k: "slurp", g: "oral", l: "slurping (oral sex, eating out, messy tongues)", play: ["oral"], fx: "liquid", gen: ["slurp"] },
+  { k: "suck", g: "oral", l: "sucking, a mouth popping off", play: ["oral"], fx: "liquid", gen: ["suck"] },
+  { k: "gag", g: "oral", l: "gagging or choking on something", play: ["gag"], fx: "liquid", gen: ["gluck"] },
+  { k: "lick", g: "oral", l: "a tongue licking", play: ["loop_lick"], slice: true, fx: "liquid", gen: ["lick"] },
+  { k: "kiss", g: "kiss", l: "a kiss or wet kissing", play: ["kiss"], fx: "kiss", gen: ["smooch", "wetKiss"] },
+  { k: "spurt", g: "cum", l: "cum spurting, an orgasm", play: ["cum", "climax"], fx: "cum", gen: ["spurt"] },
+  { k: "cumslosh", g: "cum", l: "full balls, or a cum-filled belly or womb, sloshing and gurgling", play: ["cumbub"], fx: "cumbub", gen: ["ballGurgle"] },
+  { k: "drip", g: "cum", l: "cum or thick fluid dripping, oozing or pouring", play: ["loop_cum"], slice: true, fx: "liquid", gen: ["pour"] },
+  { k: "fart", g: "fart", l: "a fart", play: ["fart"], fx: "fart", gen: ["dryFart", "wetFart"] },
+  { k: "gape", g: "fart", l: "air farting out of a gaping hole after a pull-out", play: ["gape", "fart"], fx: "fart", gen: ["wetFart"] },
+  { k: "plop", g: "poop", l: "poop dropping or pushing out", play: ["shit"], fx: "shit", gen: ["plop", "push"] },
+  { k: "flush", g: "water", l: "a toilet flushing", play: ["flush"], fx: "liquid", gen: ["flush"] },
+  { k: "splash", g: "water", l: "a splash of water or liquid", play: ["liquid"], name: /splash|landing/i, fx: "liquid", gen: ["splash"] },
+  { k: "drink", g: "water", l: "gulping a drink down", play: ["swallow"], name: /gulp/i, fx: "liquid", gen: ["drinkGulp"] },
+  { k: "breath", g: "body", l: "a heavy breath, sigh or exhale", play: ["breath"], fx: "breath", gen: ["breath"] },
+  { k: "heartbeat", g: "body", c: "#ff7b8a", l: "a heartbeat", play: [], synth: "beat", fx: "beat", gen: ["heart"] },
+  { k: "punch", g: "fight", l: "a punch, kick or hit landing", play: ["hit"], fx: "hit", gen: ["impact"] },
+  { k: "slash", g: "fight", l: "a blade, claw or stab cutting", play: ["slash"], fx: "slash", gen: ["slash"] },
+  { k: "chop", g: "fight", l: "a limb or head being chopped off", play: ["sever", "slash"], fx: "slash", gen: ["chop"] },
+  { k: "thud", g: "fight", l: "a body falling, a heavy thud or stomp", play: ["stomp"], fx: "stomp", gen: ["stomp"] },
+  { k: "whoosh", g: "fight", c: "#cfe8ff", l: "a weapon swinging or thrusting through the air", play: ["windup"], fx: "wind", gen: ["whoosh"] },
+  { k: "arrow", g: "fight", l: "an arrow or bolt flying", play: ["arrow"], fx: "slash", gen: ["arrow"] },
+  { k: "gunshot", g: "fight", l: "a gunshot", play: ["gun"], fx: "boom", gen: ["gunshot"] },
+  { k: "boom", g: "fight", c: "#ff8a3d", l: "an explosion", play: ["boom"], fx: "boom", gen: ["boom"] },
+  { k: "clang", g: "metal", l: "metal clashing, blades or armour, a block", play: ["clash"], fx: "hit", gen: ["clang"] },
+  { k: "sheath", g: "metal", l: "a blade being drawn or sheathed", play: ["sheath"], fx: "slash", gen: ["sheath"] },
+  { k: "metal", g: "metal", l: "metal clattering or breaking", play: ["metal"], fx: "hit", gen: ["metal"] },
+  { k: "smash", g: "metal", c: "#d9a86c", l: "wood smashing, a crate or door breaking", play: ["smash"], fx: "crack", gen: ["smash"] },
+  { k: "mine", g: "metal", l: "a pickaxe striking stone", play: ["mine"], fx: "hit", gen: ["mine"] },
+  { k: "fire", g: "magic", c: "#ffa94d", l: "flames whooshing up, a fireball", play: ["spell_fire"], fx: "fire", gen: ["fireSpell"] },
+  { k: "ice", g: "magic", c: "#bfe8ff", l: "ice forming or cracking, a frost spell", play: ["spell_ice"], fx: "magic", gen: ["iceSpell"] },
+  { k: "earth", g: "magic", c: "#c8a165", l: "earth rumbling and rock bursting up", play: ["spell_earth"], fx: "stomp", gen: ["earthSpell"] },
+  { k: "gust", g: "magic", c: "#cfe8ff", l: "a gust of wind, a wind spell", play: ["spell_wind"], fx: "wind", gen: ["windSpell"] },
+  { k: "zap", g: "magic", c: "#ffe14d", l: "electricity or a lightning bolt", play: ["spell_lightning"], fx: "zap", gen: ["lightning"] },
+  { k: "heal", g: "magic", c: "#8ef0c0", l: "healing or holy magic", play: ["heal"], fx: "magic", gen: ["heal"] },
+  { k: "darkmagic", g: "magic", c: "#c49bff", l: "dark, unstable magic, a portal opening", play: ["darkmagic", "portal"], fx: "magic", gen: ["darkMagic"] },
+  { k: "beam", g: "magic", c: "#6ff0ff", l: "a sci-fi energy weapon firing (laser, blaster)", play: ["beam"], fx: "zap", gen: ["beam"] },
+  { k: "thunder", g: "world", l: "thunder", play: ["thunder"], fx: "boom", gen: ["thunder"] },
+  { k: "coins", g: "loot", l: "coins clinking", play: ["coins"], fx: "magic", gen: ["coins"] },
+  { k: "potion", g: "loot", l: "uncorking and drinking a potion", play: ["potion"], fx: "liquid", gen: ["potion"] }
+];
+const SFX_BY = Object.fromEntries(SFX_LIST.map(x => [x.k, x]));
+const sfxColor = x => (S.settings.sfxCols || {})[x.k] || x.c || SFX_GROUPS[x.g][1];
+// which sounds have recordings right now (built-ins plus the owner's own files); refreshed at start and after sound changes
+let SFX_AVAIL = null;
+async function sfxEntryPool(x, outside) {
+  const types = outside && x.out ? [x.out, ...x.play] : x.play;
+  for (const t of types) { let f = await soundsOf(t); if (x.name) f = f.filter(s => x.name.test(s.name || s.id)); if (f.length) return f; }
+  return [];
+}
+async function refreshSfxAvail() {
+  const ok = new Set();
+  for (const x of SFX_LIST) if (x.synth || (await sfxEntryPool(x)).length) ok.add(x.k);
+  return (SFX_AVAIL = ok);
+}
+const sfxAvail = () => SFX_LIST.filter(x => !SFX_AVAIL || SFX_AVAIL.has(x.k));
+// the prompt's list: one line per sound, with a fresh example for each
+function sfxListPrompt() {
+  const by = {};
+  for (const x of sfxAvail()) (by[x.g] ||= []).push(x);
+  return Object.entries(by).map(([g, xs]) => `${SFX_GROUPS[g][0]}:\n` + xs.map(x => `- ${x.k}: ${x.l} (e.g. ${ONO.make(x.gen[Math.floor(Math.random() * x.gen.length)])})`).join("\n")).join("\n");
+}
 
 // The approved sound-word shapes (Sound Words Bench), read from the letters alone: [icon category, sound type]
 const SHAPES = [
@@ -4824,9 +4940,11 @@ function decorateSfx(root) {
       inner.querySelectorAll(".sfx-part").forEach(mark);
       return;
     }
-    if (isBreath(t)) { const c = rgbOf(el); if (c && c[1] > c[0] + 30 && c[1] > c[2] + 30) el.style.color = "#f3f0f8"; }
-    const cat = sfxPick(el, t);
-    el.classList.add("sfx"); el.dataset.fx = cat;
+    // a sound labelled from the sound list: its icon and recordings are known, nothing to guess
+    const kx = SFX_BY[(el.closest("[data-k]") || el.querySelector("[data-k]"))?.dataset.k];
+    if (!kx && isBreath(t)) { const c = rgbOf(el); if (c && c[1] > c[0] + 30 && c[1] > c[2] + 30) el.style.color = "#f3f0f8"; }
+    const cat = kx ? kx.fx : sfxPick(el, t);
+    el.classList.add("sfx"); el.dataset.fx = cat; if (kx) el.dataset.k = kx.k;
     el.setAttribute("role", "button"); el.setAttribute("aria-label", t + " (sound effect)");
     const set = FX_ICON[cat] || FX_ICON.wave;
     el.insertAdjacentHTML("beforeend", `<span class="fxi fx-${FX_CSS[cat] || cat}" aria-hidden="true">${set[hash(t) % set.length]}</span>`);
@@ -4836,7 +4954,7 @@ function decorateSfx(root) {
     if (sp.closest(".sfx")) return;
     const t = sp.textContent.trim(), strongs = [...sp.querySelectorAll("strong")];
     const allBold = !!sp.closest("strong") || (strongs.length === 1 && strongs[0].textContent.trim() === t);
-    if (isSfxText(t, allBold)) return mark(sp);
+    if (sp.dataset.k || isSfxText(t, allBold)) return mark(sp);
     // a colored phrase with a bold sound inside it: decorate just the sound
     for (const st of strongs) { const s2 = st.textContent.trim(); if (s2.split(/\s+/).length <= 4 && isSfxText(s2, true)) mark(st); }
   });
@@ -4871,8 +4989,8 @@ function fxLayer(sp) {
   return L;
 }
 function burst(sp) {
-  const cat = sp.dataset.fx || "wave", M = FX_MOTION[cat] || FX_MOTION.wave;
-  playSfx(cat, sp.textContent.trim(), sp.dataset.sub);
+  const cat = sp.dataset.fx || "wave", M = FX_MOTION[cat] || FX_MOTION.wave, key = sp.closest("[data-k]")?.dataset.k;
+  if (SFX_BY[key]) playKey(key); else playSfx(cat, sp.textContent.trim(), sp.dataset.sub);
   sp.animate([{ transform: "scale(1)" }, { transform: "scale(1.28) rotate(-3deg)" }, { transform: "scale(1)" }], { duration: 320, easing: "ease-out" });
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   // bursts stay inside the chat window: they're drawn in a layer laid exactly over it
@@ -5024,7 +5142,7 @@ function hushAll() {
 }
 // The list of the owner's sounds. It is never replaced by "nothing": a missing or broken copy leaves the list as it was.
 async function sndIndex() { if (!Array.isArray(SND)) { const v = await Store.get("sounds"); SND = Array.isArray(v) ? v : []; } return SND; }
-async function sndSave() { if (Array.isArray(SND)) await Store.set("sounds", SND); }
+async function sndSave() { if (Array.isArray(SND)) await Store.set("sounds", SND); refreshSfxAvail(); }
 // Sounds the owner removed, by path → id (synced as "sndgone"). Only these files are ever deleted from other devices,
 // and importing the same pack again skips them.
 const sndTail = p => String(p || "").toLowerCase().split("/").slice(-2).join("/");
@@ -5077,7 +5195,7 @@ const builtinOn = () => S.settings.builtinPack !== false;
 // the owner's changes to built-in sounds: removed ones and ones moved to another type (synced as "sndfix")
 let SNDFIX = null;
 async function sndFix() { if (!SNDFIX) { const f = (await Store.get("sndfix")) || {}; SNDFIX = { hidden: f.hidden || {}, moved: f.moved || {} }; } return SNDFIX; }
-async function saveFix() { await Store.set("sndfix", SNDFIX); }
+async function saveFix() { await Store.set("sndfix", SNDFIX); refreshSfxAvail(); }
 async function builtinView() { const f = await sndFix(); return (await builtinSounds()).filter(x => !f.hidden[x.id]).map(x => f.moved[x.id] ? { ...x, type: f.moved[x.id] } : x); }
 // every sound of a type: the user's own plus the built-in ones
 async function soundsOf(type) { return [...(await sndIndex()).filter(x => x.type === type), ...(builtinOn() ? (await builtinView()).filter(x => x.type === type) : [])]; }
@@ -5134,6 +5252,10 @@ async function playSfx(cat, text, hint) {
   // booms and rumbles are thunder while it storms (a stomach's rumble stays a rumble during vore)
   if (/storm|rain/.test(scAmb || "") && (sub === "boom" || (cat === "boom" && !sub) || ((sub === "churn" || sub === "stomp") && !["vore", "struggle", "swallow"].includes(scAct)))) sub = "thunder";
   if ((sub === "squelch" || /^spla+t|^splu+r?ch|^gu+sh/i.test(text || "")) && (scAct === "chew" || (AMBS.amb || sceneNow().amb) === "combat")) sub = scAct === "chew" ? "chew" : "gore";
+  // sounds guessed from older replies: acid and licks use the sound list's real recordings; rips and doors have none,
+  // and the old stand-ins (a sword for cloth, a punch for a door) sounded wrong, so they stay silent
+  const keyFor = { sizzle: "acid", lick: "lick" }[sub || cat]; if (keyFor) return playKey(keyFor);
+  if (["rip", "door"].includes(sub) || (!sub && cat === "wave")) return;
   const chain = t => [...(SND_CHAIN[t] || []), ...(SND_CHAIN_EXTRA[t] || [])];
   const order = [...new Set([sub, ...chain(sub), cat, ...chain(cat)].filter(Boolean))];
   try {
@@ -5148,6 +5270,33 @@ async function playSfx(cat, text, hint) {
   } catch {}
   // only real recordings play; the one made-up sound left is the heartbeat thump
   if (sub === "heart" || cat === "beat" || sub === "beat") synthSfx("beat", vol);
+}
+// a sound from the sound list: its own recordings, muffled by where you hear it from
+async function playKey(k) {
+  const st = S.settings, x = SFX_BY[k]; if (!x || st.sfxSound === false) return;
+  const vol = Math.max(0, Math.min(1, st.sfxVolume ?? 0.7)); if (!vol) return;
+  if (x.synth) return synthSfx(x.synth, vol);
+  try {
+    const outside = !!S.chat && !isInside(), pool = await sfxEntryPool(x, outside);
+    if (!pool.length) return;
+    let pick = pool[Math.floor(Math.random() * pool.length)];
+    const scAmb = AMBS.amb || sceneNow().amb;
+    const muf = pick.type.endsWith("_m") ? false : muffleFor(pick.type) || (pick.type === "thunder" && /indoors|vehicle/.test(scAmb || "") ? "medium" : false);
+    if (muf) { const pre = await poolFor([pick.type + "_m"]); if (pre.length) pick = pre[Math.floor(Math.random() * pre.length)]; } // ready-muffled versions (bone cracks)
+    const url = await sndURL(pick.id); if (!url) return;
+    // a slice is a few seconds from somewhere inside a loop (a media fragment says where), faded in and out
+    const len = pick.len || 0, at = x.slice && len > 4 ? Math.random() * (len - 3.5) : 0;
+    const a = trackAudio(new Audio(at ? `${url}#t=${at.toFixed(2)}` : url)); if (muf && !pick.type.endsWith("_m")) muffleEl(a, muf);
+    if (x.slice) {
+      a.volume = 0; await a.play();
+      let v = 0; const up = setInterval(() => { v = Math.min(vol, v + vol / 6); a.volume = v; if (v >= vol) clearInterval(up); }, 40);
+      setTimeout(() => { clearInterval(up); let w = a.volume; const t = setInterval(() => { w -= vol / 10; if (w <= 0.02) { a.pause(); clearInterval(t); freeAudio(a); } else a.volume = w; }, 60); }, 2200);
+      return;
+    }
+    a.volume = vol; await a.play();
+    if (pick.type === "gas" || pick.type === "gas_m") voreBurp();
+    if (pick.type !== "thunder") capAudio(a, vol);
+  } catch {}
 }
 // --- tiny synthesiser (Web Audio). Each sound is a few envelopes on tones and filtered noise.
 function acx() {
@@ -6025,7 +6174,7 @@ async function migrateChats() {
   if (!S.chars.length && !(await Store.get("seeded"))) { S.chars = [sampleChar()]; await Store.set("seeded", true); }
   await saveSettings(); await saveChars(); await savePersonas();
   renderHome();
-  BOOT_DONE();
+  BOOT_DONE(); refreshSfxAvail().catch(() => {}); // which sounds the chats may write
   { const q = new URLSearchParams(location.search).get("open"); if (q) { history.replaceState(null, "", location.pathname);
       if (q === "new") setTimeout(() => $("btnNewChar")?.click(), 300);
       else if (q === "last") { const id = Object.entries(S.recent || {}).sort((a, b) => b[1] - a[1]).map(x => x[0]).find(id => S.chars.some(c => c.id === id)); if (id) setTimeout(() => openProfile(id), 300); }
