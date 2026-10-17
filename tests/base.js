@@ -1,9 +1,10 @@
 // shared harness: serves the repo at http://local/lr/, mocks DeepSeek
 const { chromium } = require("playwright");
 const fs = require("fs"), path = require("path");
-const ROOT = "/home/claude/lanternroom";
+// the repo folder (cloud workspace by default; LR_ROOT on the owner's PC) and an installed browser to use (LR_CHANNEL=msedge on the PC)
+const ROOT = process.env.LR_ROOT || "/home/claude/lanternroom";
 module.exports = async function open({ width = 390, json, stream } = {}) {
-  const b = await chromium.launch({ args: ["--autoplay-policy=no-user-gesture-required"] });
+  const b = await chromium.launch({ args: ["--autoplay-policy=no-user-gesture-required"], ...(process.env.LR_CHANNEL ? { channel: process.env.LR_CHANNEL } : {}) });
   const pg = await b.newPage({ viewport: { width, height: 900 } });
   const errs = []; const calls = [];
   pg.on("pageerror", e => errs.push("pageerror: " + e.message));
