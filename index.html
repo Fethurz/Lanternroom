@@ -733,17 +733,42 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .qz-row:first-child{border-top:0}.qz-rq{font-size:12px;color:var(--muted)}.qz-ra{font-weight:700}
 #daily:empty{display:none}
 .daily{position:relative;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:16px;padding:12px 14px;margin:0 0 12px;background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--accent) 16%,var(--surface)),var(--surface));display:flex;flex-direction:column;gap:6px}
-.daily.k-world{border-color:color-mix(in srgb,var(--k-world,#4fd1c5) 50%,var(--line))}.daily.k-group{border-color:color-mix(in srgb,var(--k-group,#b28dff) 50%,var(--line))}
+.daily{--kc:var(--k-character)}.daily.k-world{--kc:var(--k-world)}.daily.k-group{--kc:var(--k-group)}
+.daily:not(.dl-wait){border-color:color-mix(in srgb,var(--kc) 60%,var(--line));background:radial-gradient(130% 150% at 0% 0%,color-mix(in srgb,var(--kc) 22%,var(--surface)),var(--surface) 70%);box-shadow:0 0 0 1px color-mix(in srgb,var(--kc) 18%,transparent),0 10px 30px -14px color-mix(in srgb,var(--kc) 55%,transparent)}
+.daily .dl-lbl{color:var(--kc)}
+.dl-head{display:flex;align-items:center;gap:12px}.dl-ttl{min-width:0}
+.dl-hero{position:relative;flex:none;width:60px;height:60px;border-radius:18px;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--kc) 30%,var(--surface-2)),var(--surface-2));border:1px solid color-mix(in srgb,var(--kc) 55%,var(--line));box-shadow:0 0 18px -4px color-mix(in srgb,var(--kc) 70%,transparent);animation:dlGlow 3.2s ease-in-out infinite}
+.dl-hero .tsv{width:34px;height:34px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+.dl-hero-t{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;max-width:76px;overflow:hidden;text-overflow:ellipsis;padding:1px 6px;border-radius:6px;background:var(--kc);color:var(--bg)}
+@keyframes dlGlow{50%{box-shadow:0 0 26px -2px color-mix(in srgb,var(--kc) 85%,transparent);transform:translateY(-1px)}}
+@media (prefers-reduced-motion:reduce){.dl-hero{animation:none}}
 .dl-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
 .dl-name{font-family:"Young Serif",serif;font-weight:400;font-size:21px;margin:0}
 .dl-sum{margin:0;font-size:14px;color:var(--muted);line-height:1.4}
 .daily .btags,.dl-card .btags{display:flex;flex-wrap:wrap;gap:4px}
 .daily .btag{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;background:var(--surface-2);border:1px solid var(--line);color:var(--fg)}.daily .btag .tsv{width:12px;height:12px}
 .dl-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px}
+.dl-head+.dl-sum{margin-top:6px}
 .dl-row{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}.dl-lan svg{width:30px;height:38px}
 .dl-past{background:none;border:0;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;padding:6px 4px;margin-left:auto;min-height:34px}
 .dl-mini{display:flex;justify-content:flex-end;margin:-6px 0 6px}
 .dl-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--surface);display:flex;flex-direction:column;gap:4px;flex:none}
+.ach-toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:300;display:flex;align-items:center;gap:10px;padding:10px 16px 10px 10px;border-radius:16px;background:var(--surface-2);border:1px solid color-mix(in srgb,var(--accent) 50%,var(--line));box-shadow:0 14px 34px -12px rgba(0,0,0,.7),0 0 24px -8px color-mix(in srgb,var(--accent) 60%,transparent);max-width:calc(100vw - 32px);cursor:pointer;animation:achIn .45s cubic-bezier(.2,1.4,.4,1)}
+.ach-toast.out{animation:achOut .45s ease-in forwards}
+.ach-toast .ach-medal{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:18px;color:#3a2408;background:radial-gradient(circle at 35% 30%,#ffe7b8,var(--accent) 55%,#8a5a20);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 70%,transparent)}
+.ach-toast .ach-tx{min-width:0}.ach-toast b{display:block;font-family:"Young Serif",serif;font-weight:400;font-size:17px}.ach-toast small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@keyframes achIn{from{transform:translate(-50%,-120%);opacity:0}}@keyframes achOut{to{transform:translate(-50%,-120%);opacity:0}}
+@media (prefers-reduced-motion:reduce){.ach-toast,.ach-toast.out{animation:none}}
+.ach-sum{display:flex;align-items:center;gap:14px;flex:none}.ach-sum .grow{flex:1;min-width:0}.ach-big{font-family:"Young Serif",serif;font-size:34px;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1}.ach-big span{font-size:16px;color:var(--muted);margin-left:4px}
+.ach-bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-bottom:4px}.ach-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent-lo,var(--accent)),var(--accent));border-radius:99px}
+.ach-tabs{flex:none;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.ach-tabs .tab{flex:none}
+.ach-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;flex:none}
+.ach-row{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border-top:1px solid var(--line);background:var(--surface)}.ach-row:first-child{border-top:0}
+.ach-row .grow{flex:1;min-width:0}.ach-row .sub{display:block;font-size:13px;color:var(--muted)}.ach-row:not(.on) b{color:var(--muted)}
+.ach-md{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:15px;border:1px dashed var(--line);color:var(--muted)}
+.ach-md.on{border:0;color:#3a2408;background:radial-gradient(circle at 35% 30%,#ffe7b8,var(--accent) 55%,#8a5a20)}
+.ach-shelf{display:flex;flex-wrap:wrap;gap:6px}.ach-chip{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,var(--surface-2));border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));color:var(--fg)}
+.bdg-row{display:grid;gap:6px;padding:10px;border:1px solid var(--line);border-radius:12px}.bdg-row input,.bdg-row textarea{width:100%;padding:8px 10px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}.bdg-row [data-rm]{justify-self:start}
 </style>
 </head>
 <body>
@@ -755,6 +780,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
       <label class="rbtn" for="importCard">Import card</label>
       <button type="button" class="rbtn" id="railBooks">Lorebooks</button>
       <button type="button" class="rbtn" id="railTags">Tags</button>
+      <button type="button" class="rbtn" id="railTrophy">🏆 Trophies</button>
       <button type="button" class="rbtn" id="railSet">⚙ Settings</button>
     </div>
     <input id="railQ" type="search" placeholder="Find a bot" autocomplete="off" aria-label="Find a bot">
@@ -764,6 +790,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
   <section id="home" class="screen">
     <header class="topbar">
       <button class="logo" id="logoBtn" aria-label="Lanternroom: tap to put out or light the lantern"><span id="logoLantern"></span><h1>Lantern<span>room</span></h1></button>
+      <button class="icon" id="btnTrophy" aria-label="Trophies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1.5A3.5 3.5 0 0 0 7.5 11M17 6h3v1.5a3.5 3.5 0 0 1-3.5 3.5M12 14v3M8.5 20h7M9.5 17h5v3h-5z"/></svg></button>
       <button class="icon" id="btnSettings" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </header>
     <div class="home-scroll">
@@ -922,7 +949,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.49 · Oct 17";
+const VERSION = "1.50 · Oct 17";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1050,10 +1077,10 @@ async function ensureVisual(c, force) {
     sys = `You turn a character card into a visual description for an image generator.
 First decide the character's form: "human", "anthro" (an anthropomorphic animal person: furry, scalie, etc.), or "feral" (an animal or creature with natural, non-humanoid anatomy).${want ? ` The user says the form is "${want}".` : ""}
 Then write 25-50 words of comma-separated visual details for that form:
-- human: apparent age (always an adult), gender presentation, skin tone, hair, eyes, face, build, clothing, accessories.
-- anthro: species, fur/scale/feather colors and markings, eyes, muzzle or beak, ears, tail, build, clothing, accessories. Always an adult.
+- human: apparent age (fully grown and mature), gender presentation, skin tone, hair, eyes, face, build, clothing, accessories.
+- anthro: species, fur/scale/feather colors and markings, eyes, muzzle or beak, ears, tail, build, clothing, accessories. Fully grown and mature.
 - feral: species or creature type, size, coat/scale/feather colors and markings, eyes, distinctive features such as horns, wings or tail.
-End with the overall color palette. Only physical appearance, no personality or story. Characters are always adults. If the card is vague, invent a coherent, appealing design that fits.
+End with the overall color palette. Only physical appearance, no personality or story. Every character is treated as a fully grown, mature being. If the card is vague, invent a coherent, appealing design that fits.
 Respond as JSON: {"form": "human|anthro|feral", "description": "..."}`;
   }
   const raw = await ds([
@@ -1179,7 +1206,7 @@ function garbled(text, c) {
 }
 function parseTag(raw) {
   const m = raw.match(/\[\[([^\[\]]*)\]\]\s*$/);
-  if (!m || !/mood\s*:/i.test(m[1])) return { text: raw.split("[[")[0].trim(), mood: null, place: null, focus: null, amb: null, act: null, gauges: null, pace: null, harm: null, hear: null };
+  if (!m || !/mood\s*:/i.test(m[1])) return { text: raw.split("[[")[0].trim(), badges: null, award: null, mood: null, place: null, focus: null, amb: null, act: null, gauges: null, pace: null, harm: null, hear: null };
   const f = {};
   for (const part of m[1].split("|")) { const i = part.indexOf(":"); if (i > 0) f[part.slice(0, i).trim().toLowerCase()] = part.slice(i + 1).trim(); }
   const low = k => (f[k] || "").toLowerCase().replace(/[^a-z]/g, "");
@@ -1195,7 +1222,8 @@ function parseTag(raw) {
     hear: ["inside", "outside"].includes(low("hearing")) ? low("hearing") : null,
     music: MUS_KEYS.includes(low("music")) ? low("music") : null, event: EVT_KEYS.includes(low("event")) ? low("event") : null,
     gold: f.gold || null, items: f.items || null, quests: f.quests || null,
-    vore: parseVore(f.vore, f)
+    vore: parseVore(f.vore, f),
+    badges: f.badges || f.badge || null, award: f.award || null
   };
 }
 
@@ -1337,8 +1365,9 @@ function buildPrompt(c, chat, upto, cont) {
   const musicPart = musicOn() ? ` | music: one of ${MUS_KEYS.join("/")} | event: one of ${EVT_KEYS.join("/")}` : "";
   const rpgPart = rpgOn(c) ? " | gold: +n/-n | items: +Name/-Name | quests: +Name/done Name" : "";
   if (musicPart) sys += `\n\n# Music and events\nmusic is the background music that fits the scene right now. Use none for ordinary moments; only pick music for scenes that call for it: a tavern or inn, a village, a city, a club, party or rave, a forest, a cave, deep water, a dungeon, crypt, temple or other evil place, somewhere magical, a calm or idle moment, romance, sleep or a quiet night, danger or a creeping threat, horror, somewhere eerie, mysterious or unnerving, a fight, an epic or grand moment, space or sci-fi. Music follows the setting and mood, never the action: vore or sex in a club still gets club music, in a tavern tavern music, and none when the setting has no music. event is something that happened in this reply: attack when a blow, shot or spell is coming at someone and the reply ends before it is known whether it lands; danger when a fight or real threat begins; victory when ${u}'s side wins a fight; defeat when ${u}'s side loses one; sad for a very sad, tragic or dramatic moment (a death, a farewell); quest when a quest or goal is completed; item when ${u} finds or receives something valuable, magical or rare; coins when ${u} gains money; otherwise none.`;
+  const achP = achPrompt(c, chat); sys += achP.sys;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}${vorePart}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; savanna for grasslands, plains and prairies; jungle for jungles and rainforests; party for a lively party or club full of people talking; castle for castle halls, keeps, fortresses and throne rooms; lava near volcanoes, lava fields or molten hellscapes; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, mess only while someone is cumming right now (spurting, pumping a load, excessive nonstop cumming) or while cum is still described dripping, leaking or pouring; once the climax is over and nothing is flowing, it is no longer mess, inflate while someone's belly (or balls, womb) is being filled up or swollen with cum (cum inflation), kiss while characters are kissing or making out, lick while someone is licking or slowly tasting someone's body (not oral sex), shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}${vorePart}${achP.part}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; savanna for grasslands, plains and prairies; jungle for jungles and rainforests; party for a lively party or club full of people talking; castle for castle halls, keeps, fortresses and throne rooms; lava near volcanoes, lava fields or molten hellscapes; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, mess only while someone is cumming right now (spurting, pumping a load, excessive nonstop cumming) or while cum is still described dripping, leaking or pouring; once the climax is over and nothing is flowing, it is no longer mess, inflate while someone's belly (or balls, womb) is being filled up or swollen with cum (cum inflation), kiss while characters are kissing or making out, lick while someone is licking or slowly tasting someone's body (not oral sex), shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
   if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
@@ -1544,6 +1573,7 @@ function tagIconAuto(t) { const s = String(t || "").toLowerCase(); for (const [r
 // the owner can pick an icon (or none) and a colour per tag in the tag manager
 function tagIcon(t) { const k = String(t || "").toLowerCase(), m = (S.settings && S.settings.tagMeta || {})[k] || {}; const svg = m.icon === "none" ? "" : m.icon && TAG_SVG[m.icon] ? TAG_SVG[m.icon] : tagIconAuto(k); return svg && m.color ? svg.replace(/style="color:[^"]*"/, `style="color:${m.color}"`) : svg; }
 function renderHome() {
+  achLoad().then(achHome).catch(() => {});
   dailyLoad().then(drawDaily).catch(() => {});
   updateAmbience();
   $("personaBar").innerHTML = `Playing as <b>${esc(uname())}</b><span class="chg">Change</span>`;
@@ -1661,6 +1691,7 @@ async function openProfile(id) {
       ${field("Play as", `<select id="pfP">${S.personas.map(p => `<option value="${p.id}" ${p.id === S.personaId ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>`)}
       <div class="row"><button type="button" class="btn primary" id="pfGo"></button><button type="button" class="btn" id="pfNew">New chat</button></div>
       ${people.length ? `<div class="stack"><div class="lbl">${kind === "group" ? "Talk to one of them alone" : "Characters in this world"}</div>${people.map((x, i) => `<button type="button" class="listrow pf-person" data-i="${i}"><img alt=""><span class="grow"><b>${esc(x.name)}</b><span class="sub">${esc(x.sub || "")}</span></span><span class="pf-go">Talk ›</span></button>`).join("")}</div>` : ""}
+      ${achShelf(c)}
       <div class="stack"><div class="lbl">Chats · ${idx.length}</div><div class="stack" id="pfChats"></div></div>
       <div class="row"><button type="button" class="btn small" id="pfEdit">Edit</button><button type="button" class="btn small" id="pfManage">Manage chats</button><button type="button" class="btn small" id="pfMore">More…</button></div>`;
     setImg(b.querySelector(".pf-img"), thumbURL(c), c);
@@ -1679,6 +1710,7 @@ async function openProfile(id) {
     }
     b.querySelectorAll(".pf-person").forEach(el => { const x = people[+el.dataset.i]; setImg(el.querySelector("img"), x.img || (x.who ? thumbURL(x.who) : ""), x.who || { name: x.name }); el.onclick = () => x.go(); });
     $("pfEdit").onclick = () => editChar(c, false);
+    if ($("pfBadges")) $("pfBadges").onclick = () => openTrophies(c.id);
     $("pfManage").onclick = () => openChats(id);
     $("pfMore").onclick = () => cardMenu(c);
   });
@@ -1758,7 +1790,8 @@ function genSpec(kind, form) {
 - "firstMessages": an array of 2 different openings, 120-250 words each, in the story's voice with *actions* in asterisks and dialogue in quotes, ending where the moment naturally pauses, never with a question or prompt aimed at {{user}} just to get a reply; never speak or act for {{user}}${kind === "group" ? "; start each character's part with **Name:**" : ""}
 - "startPlace": the starting location in 2-6 words
 - "instructions": special rules the AI follows in every reply for this bot, as 2-8 lines each starting with "- " (how to portray it, recurring mechanics, trackers or stats, colored text for thoughts, pacing)
-- "lore": 3-8 entries {"keys": "comma, separated, keywords", "text": "40-120 words"} for facts that only matter when they come up (people, places, items, abilities, mechanics)`;
+- "lore": 3-8 entries {"keys": "comma, separated, keywords", "text": "40-120 words"} for facts that only matter when they come up (people, places, items, abilities, mechanics)
+- "badges": 2-4 achievements special to this bot {"name": a short catchy title, "how": what {{user}} must do or go through in the story to earn it}`;
   if (kind === "world") return common + `
 - "description": the world itself, 250-450 words: geography, history, cultures, power, daily life, tone
 - "cast": 5-10 listings {"name", "type": one of "character" | "group" | "species" | "location" | "concept", "details": 60-150 words}, covering the key characters, factions, species, places and setting rules`;
@@ -1770,7 +1803,7 @@ function genSpec(kind, form) {
 - "appearance": 60-120 words: build, face, coloring, hair or fur, clothing, distinctive features
 - "description": personality and background, 200-350 words: temperament, history, desires, quirks, speech style and how they treat {{user}}`;
 }
-const GEN_SYS = kind => `You design bots for Lanternroom, an interactive roleplay chat app. Build a complete, ready-to-play ${KINDS[kind].label.toLowerCase()} from the user's request. Follow the request closely and include every theme, kink, tone and detail they ask for. Fill everything they left unsaid with specific, vivid, consistent choices. Characters are adults; this needs no mention anywhere in the card.`;
+const GEN_SYS = kind => `You design bots for Lanternroom, an interactive roleplay chat app. Build a complete, ready-to-play ${KINDS[kind].label.toLowerCase()} from the user's request. Follow the request closely and include every theme, kink, tone and detail they ask for. Fill everything they left unsaid with specific, vivid, consistent choices. Every character is treated as a fully grown, mature being; this needs no mention anywhere in the card.`;
 function genNormalize(j, kind, form) {
   const str = v => typeof v === "string" ? v.trim() : Array.isArray(v) ? v.join("\n").trim() : v == null ? "" : String(v).trim();
   const art = a => ["human", "anthro", "feral"].includes(String(a || "").toLowerCase()) ? String(a).toLowerCase() : (form !== "auto" ? form : "auto");
@@ -1782,6 +1815,7 @@ function genNormalize(j, kind, form) {
   if ("cast" in j) out.cast = (Array.isArray(j.cast) ? j.cast : []).map(x => ({ name: str(x.name), type: WORLD_TYPES[x.type] ? x.type : "character", details: str(x.details) })).filter(x => x.name);
   if ("members" in j) out.members = (Array.isArray(j.members) ? j.members : []).map(m => ({ name: str(m.name), artType: art(m.artType), appearance: str(m.appearance), description: str(m.description) })).filter(m => m.name);
   if ("artType" in j || kind === "character") out.artType = art(j.artType);
+  if ("badges" in j) out.badges = (Array.isArray(j.badges) ? j.badges : []).map(x => ({ name: str(x.name).slice(0, 60), how: str(x.how).slice(0, 200) })).filter(x => x.name).slice(0, 6);
   for (const k of ["name", "summary", "appearance", "description", "scenario", "startPlace"]) if (k in j) out[k] = str(j[k]);
   return out;
 }
@@ -1984,6 +2018,8 @@ function editTag(t) {
 const recolor = (svg, col) => svg && col ? svg.replace(/style="color:[^"]*"/, `style="color:${col}"`) : svg || "";
 const tagStyle = t => { const c = tagMeta(t).color; return c ? ` style="--tc:${esc(c)}"` : ""; };
 $("btnTags").onclick = () => openTags();
+$("btnTrophy").onclick = () => openTrophies();
+$("railTrophy").onclick = () => openTrophies();
 $("railTags").onclick = () => openTags();
 function openSurprise() {
   const groups = surpriseGroups();
@@ -2269,13 +2305,14 @@ function genReview(err) {
   });
 }
 async function genFinish(edit) {
-  const c = GEN.card, K = c._kind || GEN.kind;
+  const c = GEN.card, K = c._kind || GEN.kind, madeFrom = /^The user filled in a character quiz/.test(GEN.prompt) ? "quiz" : /^Surprise me:/.test(GEN.prompt) ? "surprise" : "";
   const btn = $(edit ? "gEdit" : "gMake"); btn.disabled = true; btn.textContent = K === "world" ? "Picturing the world…" : "Designing the look…";
   const w = blankChar(K);
   Object.assign(w, { name: c.name, summary: c.summary || "", tags: c.tags || [], description: c.description || "", scenario: c.scenario || "", startPlace: c.startPlace || "", instructions: c.instructions || "", lore: c.lore || [] });
   const greets = c.firstMessages || []; w.firstMessage = greets[0] || ""; w.altGreetings = greets.slice(1);
   if (K === "character") { w.appearance = c.appearance || ""; w.artType = c.artType || "auto"; }
   if (K === "world") w.cast = c.cast || [];
+  w.badges = (c.badges || []).map(x => ({ id: uid(), name: x.name, how: x.how }));
   const made = [];
   if (K === "group") {
     for (const m of c.members || []) {
@@ -2287,6 +2324,7 @@ async function genFinish(edit) {
   S.chars.unshift(...made); S.chars.unshift(w);
   await saveChars();
   GEN.card = null; GEN.prompt = ""; GEN.note = ""; GEN.parts = []; dropDraft("gen");
+  try { if (madeFrom) achEvent("made", { from: madeFrom, id: w.id }); } catch {}
   closeSheet(); renderHome();
   if (edit) editChar(w, false); else openChat(w.id);
 }
@@ -2346,6 +2384,7 @@ async function cardToBot(c, K) {
   const greets = c.firstMessages || []; w.firstMessage = greets[0] || ""; w.altGreetings = greets.slice(1);
   if (K === "character") { w.appearance = c.appearance || ""; w.artType = c.artType || "auto"; }
   if (K === "world") w.cast = c.cast || [];
+  w.badges = (c.badges || []).map(x => ({ id: uid(), name: x.name, how: x.how }));
   const made = [];
   if (K === "group") for (const m of c.members || []) { const mc = Object.assign(blankChar("character"), { name: m.name, appearance: m.appearance, description: m.description, artType: m.artType || "auto" }); made.push(mc); w.members.push(mc.id); }
   await Promise.allSettled([K === "group" ? null : ensureVisual(w), ...made.map(m => ensureVisual(m))].filter(Boolean).map(p => within(p, 25000)));
@@ -2356,7 +2395,7 @@ async function dailyKeep(chat, past) {
   const d = past || DAILY.cur; if (!d || !d.card) return;
   toast(d.kind === "world" ? "Picturing the world…" : "Designing the look…");
   const w = await cardToBot(d.card, d.card._kind || d.kind);
-  w.daily = d.day; await saveChars();
+  w.daily = d.day; await saveChars(); try { achEvent("daily", { id: w.id }); } catch {}
   if (past) { DAILY.past = DAILY.past.filter(p => p.id !== past.id); await Store.set("dailyPast", DAILY.past); }
   else { DAILY.cur = { ...DAILY.cur, status: "kept", charId: w.id }; await Store.set("daily", DAILY.cur); }
   renderHome(); if (chat) { closeSheet(); openChat(w.id); } else toast(`${w.name} is on your shelf`);
@@ -2366,6 +2405,12 @@ async function dailySkip() {
   if (d.card && !DAILY.past.some(p => p.day === d.day)) { DAILY.past = [{ id: uid(), day: d.day, kind: d.kind, form: d.form, tags: d.tags, card: d.card, at: d.at || Date.now() }, ...DAILY.past]; await Store.set("dailyPast", DAILY.past); }
   DAILY.cur = { ...d, status: "skipped" }; await Store.set("daily", DAILY.cur); drawDaily(); toast("Moved to Past dailies");
 }
+// the bot's main draw: the most-weighted daily tag that the card kept and that has an icon, else any card tag with an icon
+function dailyHighlight(d) {
+  const card = (d.card?.tags || []).map(t => String(t).toLowerCase());
+  const order = [...(d.tags || []).filter(t => card.includes(t)), ...card, ...(d.tags || [])];
+  return order.find(t => t && tagIcon(t)) || "";
+}
 function drawDaily() {
   const el = $("daily"); if (!el) return;
   const d = DAILY.cur, today = dayKey(), n = DAILY.past.length;
@@ -2374,9 +2419,9 @@ function drawDaily() {
   else if (d.status === "making") el.innerHTML = `<div class="daily dl-wait"><div class="dl-lbl">Today's bot</div><div class="dl-row"><span class="dl-lan">${lanternSVG("seq")}</span><span>Dreaming up today's ${esc(KINDS[d.kind]?.label.toLowerCase() || "bot")} from ${esc((d.tags || []).join(", "))}…</span></div></div>`;
   else if (d.status === "error") el.innerHTML = `<div class="daily"><div class="dl-lbl">Today's bot</div><p class="dl-sum">Couldn't make today's bot: ${esc(d.err || "unknown problem")}</p><div class="dl-acts"><button type="button" class="btn small primary" id="dlRetry">Try again</button>${pastLink}</div></div>`;
   else {
-    const c = d.card, tg = (c.tags || d.tags || []).slice(0, 6);
-    el.innerHTML = `<div class="daily k-${esc(d.kind)}"><div class="dl-lbl">Today's bot · ${esc(KINDS[d.kind]?.label || "Bot")}</div>
-      <h3 class="dl-name">${esc(c.name || "Unnamed")}</h3><p class="dl-sum">${esc(c.summary || "")}</p>
+    const c = d.card, tg = (c.tags || d.tags || []).slice(0, 6), hi = dailyHighlight(d);
+    el.innerHTML = `<div class="daily k-${esc(d.kind)}"><div class="dl-head">${hi ? `<span class="dl-hero" title="${esc(hi)}">${tagIcon(hi)}<span class="dl-hero-t">${esc(hi)}</span></span>` : ""}<div class="dl-ttl"><div class="dl-lbl">Today's bot · ${esc(KINDS[d.kind]?.label || "Bot")}</div>
+      <h3 class="dl-name">${esc(c.name || "Unnamed")}</h3></div></div><p class="dl-sum">${esc(c.summary || "")}</p>
       ${tg.length ? `<div class="btags">${tg.map(t => `<span class="btag"${tagStyle(t)}>${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</span>`).join("")}</div>` : ""}
       <div class="dl-acts"><button type="button" class="btn small primary" id="dlChat">Start chat</button><button type="button" class="btn small" id="dlKeep">Keep</button><button type="button" class="btn small" id="dlSkip">Skip</button>${pastLink}</div></div>`;
     $("dlChat").onclick = e => { e.target.disabled = true; dailyKeep(true); };
@@ -2406,6 +2451,408 @@ let DAILY_CHECK = 0;
 function dailyTick() { if (Date.now() - DAILY_CHECK < 60000 && DAILY.cur?.day === dayKey()) return; DAILY_CHECK = Date.now(); dailyLoad().then(() => { drawDaily(); if (!document.hidden && dailyOn()) dailyMake(); }).catch(() => {}); }
 document.addEventListener("visibilitychange", () => { if (!document.hidden) setTimeout(dailyTick, 1500); });
 setInterval(() => { if (!document.hidden && !$("home").hidden) dailyTick(); }, 600000);
+
+/* ---------- Achievements (v1.50) ---------- */
+// src "app": the app counts it; "story": the reply's hidden badges field reports it (the app also spots some itself).
+// s: secret until earned (shows only the tiny hint h); soon: needs a minigame that isn't built yet.
+const ACH_GROUPS = ["Vore", "Fetish", "RPG & combat", "Lewd & silly", "Chatting", "Play"];
+const ACH = [
+  // Vore (owner-approved round 1)
+  { k: "first_swallow", g: "Vore", n: "Down the Hatch", how: "Get swallowed.", src: "story" },
+  { k: "first_pred", g: "Vore", n: "Big Appetite", how: "Swallow someone yourself (you as the pred).", src: "story" },
+  { k: "escaped", g: "Vore", n: "Spat Out", how: "Make it back out of someone alive.", src: "story" },
+  { k: "digested", g: "Vore", n: "Fully Absorbed", how: "Get completely digested.", src: "story" },
+  { k: "safe_vore", g: "Vore", n: "Safe and Snug", how: "Spend a safe/endo vore scene inside someone.", src: "story" },
+  { k: "cock_vore", g: "Vore", n: "Ball Bound", how: "End up in someone's balls.", src: "story" },
+  { k: "unbirth", g: "Vore", n: "Back to the Womb", how: "Get unbirthed.", src: "story" },
+  { k: "anal_vore", g: "Vore", n: "Wrong Way Down", how: "Go in through the back door (anal vore).", src: "story" },
+  { k: "breast_vore", g: "Vore", n: "Milked In", how: "Get swallowed by a breast.", src: "story" },
+  { k: "tail_vore", g: "Vore", n: "Tail End", how: "Get swallowed by a tail.", src: "story", s: 1, h: "Not the mouth. Further back." },
+  { k: "full_house", g: "Vore", n: "Full House", how: "Share a stomach with other prey.", src: "story" },
+  { k: "macro_snack", g: "Vore", n: "Bite-Sized", how: "Get swallowed by a macro pred.", src: "story" },
+  { k: "same_size", g: "Vore", n: "Tight Fit", how: "Same-size vore.", src: "story" },
+  { k: "wiggle", g: "Vore", n: "Wiggle Room", how: "Struggle inside for 5 replies in a row.", src: "app" },
+  { k: "heard_burp", g: "Vore", n: "Excuse Me", how: "Hear your pred belch while you're inside.", src: "story", s: 1, h: "Rude, from the inside." },
+  { k: "chewed", g: "Vore", n: "Chewed Up", how: "Get chewed in a hard vore scene.", src: "story", s: 1, h: "Teeth were involved." },
+  { k: "remains", g: "Vore", n: "Nothing Left", how: "Reach the very end of digestion (disposal).", src: "story", s: 1, h: "What goes in…" },
+  { k: "repeat_meal", g: "Vore", n: "Regular Meal", how: "Get eaten by the same bot 5 times.", src: "app" },
+  { k: "many_preds", g: "Vore", n: "Passed Around", how: "Get eaten by 10 different bots.", src: "app" },
+  { k: "first_rub", g: "Vore", n: "Tummy Rubs", how: "Rub a full belly for the first time.", src: "app" },
+  { k: "rubs_500", g: "Vore", n: "Professional Rubber", how: "500 rub strokes in total.", src: "app" },
+  // Vore (new)
+  { k: "willing", g: "Vore", n: "Willing Meal", how: "Ask to be eaten and get your wish.", src: "story" , nw: 1, h: "Ask nicely." },
+  { k: "taste_test", g: "Vore", n: "Taste Test", how: "Get licked and tasted by a pred before being swallowed.", src: "story" , nw: 1, h: "A little taste first." },
+  { k: "throat_bulge", g: "Vore", n: "Going Down", how: "Make a visible bulge sliding down someone's throat.", src: "story" , nw: 1, h: "On the way down." },
+  { k: "belly_talk", g: "Vore", n: "Belly Talk", how: "Have a conversation with your pred from inside them.", src: "story" , nw: 1, h: "Chatting from somewhere dark." },
+  { k: "overstuffed", g: "Vore", n: "Overstuffed", how: "A pred is so full they can barely move.", src: "story" , nw: 1, h: "Too full to move." },
+  { k: "seconds", g: "Vore", n: "Seconds, Please", how: "A pred eats two prey one after another.", src: "story" , nw: 1, h: "Room for more." },
+  { k: "saved_later", g: "Vore", n: "Saved for Later", how: "Get kept alive as a snack for later.", src: "story" , nw: 1, h: "Not now. Later." },
+  { k: "hiccuped", g: "Vore", n: "Hic!", how: "Get hiccuped or regurgitated back up.", src: "story", s: 1, h: "Hic!" },
+  { k: "vore_chain", g: "Vore", n: "Bigger Fish", how: "Your pred gets eaten by an even bigger pred while you're inside.", src: "story", s: 1, h: "Always a bigger fish." },
+  { k: "curves", g: "Vore", n: "Gone to the Hips", how: "Get digested into your pred's curves or weight.", src: "story", s: 1, h: "You went somewhere soft." },
+  { k: "pred_feast", g: "Vore", n: "Feast", how: "As the pred, eat three or more prey in one chat.", src: "story" , nw: 1, h: "A real appetite." },
+  { k: "endo_nap", g: "Vore", n: "Belly Nap", how: "Fall asleep inside a pred.", src: "story" , nw: 1, h: "So warm and sleepy." },
+  { k: "resident", g: "Vore", n: "Full-Time Resident", how: "Spend 20 replies inside someone in one chat.", src: "app" , nw: 1, h: "Make yourself at home." },
+  { k: "rub_all", g: "Vore", n: "Belly Expert", how: "Rub a belly, balls and breasts.", src: "app" , nw: 1, h: "Every soft spot." },
+  { k: "micro_meal", g: "Vore", n: "Speck", how: "Get swallowed while tiny enough to vanish in one gulp.", src: "story" , nw: 1, h: "Gone in one gulp." },
+  // Fetish
+  { k: "feet", g: "Fetish", n: "Underfoot Fan", how: "A foot worship or foot play scene.", src: "story" , nw: 1, h: "Toes." },
+  { k: "musk", g: "Fetish", n: "Musk Drunk", how: "Get drenched in someone's musk or scent.", src: "story" , nw: 1, h: "Smells strong." },
+  { k: "weight_gain", g: "Fetish", n: "Well Fed", how: "Someone visibly gains weight.", src: "story" , nw: 1, h: "A little softer." },
+  { k: "stuffing", g: "Fetish", n: "Stuffed Silly", how: "Someone stuffs themselves with food until bloated.", src: "story" , nw: 1, h: "One more bite." },
+  { k: "blimp", g: "Fetish", n: "Blimp", how: "Inflation with air, water or anything but cum.", src: "story" , nw: 1, h: "Bigger and rounder." },
+  { k: "expecting", g: "Fetish", n: "Expecting", how: "A pregnancy happens.", src: "story" , nw: 1, h: "Something on the way." },
+  { k: "bred", g: "Fetish", n: "Bred", how: "A breeding scene.", src: "story" , nw: 1, h: "Making more." },
+  { k: "milk", g: "Fetish", n: "Milk Maid", how: "Lactation or milking.", src: "story" , nw: 1, h: "Something to drink." },
+  { k: "shrunk", g: "Fetish", n: "Pocket-Sized", how: "You get shrunk.", src: "story" , nw: 1, h: "Smaller than you were." },
+  { k: "growth", g: "Fetish", n: "Growth Spurt", how: "Someone grows to giant size.", src: "story" , nw: 1, h: "Taller than the trees." },
+  { k: "underfoot", g: "Fetish", n: "Watch Your Step", how: "Nearly get stepped on or squished by a giant.", src: "story", s: 1, h: "Watch your step." },
+  { k: "hypno", g: "Fetish", n: "Spiral Eyes", how: "Get hypnotized.", src: "story" , nw: 1, h: "Look into my eyes." },
+  { k: "tf", g: "Fetish", n: "Changed", how: "A transformation scene.", src: "story" , nw: 1, h: "Not yourself anymore." },
+  { k: "goo", g: "Fetish", n: "Gooey", how: "Get engulfed by slime or goo.", src: "story" , nw: 1, h: "Squishy." },
+  { k: "tentacles", g: "Fetish", n: "Tentacled", how: "Tentacles get involved.", src: "story" , nw: 1, h: "Too many arms." },
+  { k: "tied", g: "Fetish", n: "Tied Up", how: "A bondage scene.", src: "story" , nw: 1, h: "Can't move." },
+  { k: "tickle", g: "Fetish", n: "Tickle Torture", how: "A tickling scene.", src: "story" , nw: 1, h: "Stop, stop!" },
+  { k: "spanked", g: "Fetish", n: "Red Cheeks", how: "A spanking.", src: "story" , nw: 1, h: "Smack." },
+  { k: "collared", g: "Fetish", n: "Good Pet", how: "You get collared or leashed.", src: "story", s: 1, h: "Who's a good…" },
+  { k: "marked", g: "Fetish", n: "Claimed", how: "Someone marks you as theirs (scent, bite or brand).", src: "story" , nw: 1, h: "Mine." },
+  { k: "knotted", g: "Fetish", n: "Tied Together", how: "Get knotted.", src: "story", s: 1, h: "Stuck." },
+  { k: "eggs", g: "Fetish", n: "Clutch", how: "Eggs get laid in someone.", src: "story", s: 1, h: "Cracking." },
+  { k: "golden", g: "Fetish", n: "Golden", how: "A watersports scene.", src: "story", s: 1, h: "Warm." },
+  { k: "glazed", g: "Fetish", n: "Glazed", how: "Get covered head to toe in cum.", src: "story", s: 1, h: "Sticky." },
+  { k: "belch_off", g: "Fetish", n: "Belch-Off", how: "A burping contest.", src: "story", s: 1, h: "Who's louder?" },
+  { k: "wind_breaker", g: "Fetish", n: "Wind Breaker", how: "A farting scene.", src: "story" , nw: 1, h: "Excuse you." },
+  { k: "drool", g: "Fetish", n: "Slobbered", how: "Get drenched in drool.", src: "story" , nw: 1, h: "Wet." },
+  { k: "domme", g: "Fetish", n: "On Your Knees", how: "Get thoroughly dominated.", src: "story" , nw: 1, h: "Kneel." },
+  { k: "in_charge", g: "Fetish", n: "In Charge", how: "Thoroughly dominate someone yourself.", src: "story" , nw: 1, h: "Your turn to lead." },
+  // RPG & combat
+  { k: "first_blood", g: "RPG & combat", n: "First Blood", how: "Land the first hit in a fight.", src: "story" , nw: 1, h: "Strike first." },
+  { k: "victor", g: "RPG & combat", n: "Victor", how: "Win a fight.", src: "story" , nw: 1, h: "Still standing." },
+  { k: "flawless", g: "RPG & combat", n: "Flawless", how: "Win a fight without getting hurt.", src: "story" , nw: 1, h: "Not a scratch." },
+  { k: "ko", g: "RPG & combat", n: "Seeing Stars", how: "Get knocked out.", src: "story", s: 1, h: "Lights out." },
+  { k: "scratch", g: "RPG & combat", n: "'Tis But a Scratch", how: "Get badly wounded.", src: "app" , nw: 1, h: "Ouch." },
+  { k: "spellcaster", g: "RPG & combat", n: "Spellcaster", how: "Cast a spell yourself.", src: "story" , nw: 1, h: "Say the words." },
+  { k: "elementalist", g: "RPG & combat", n: "Elementalist", how: "Hear four different kinds of spell.", src: "app" , nw: 1, h: "Fire, ice, and more." },
+  { k: "patched", g: "RPG & combat", n: "Patched Up", how: "Get healed.", src: "story" , nw: 1, h: "Feeling better." },
+  { k: "bottoms_up", g: "RPG & combat", n: "Bottoms Up", how: "Drink a potion.", src: "story" , nw: 1, h: "Glug." },
+  { k: "dragonslayer", g: "RPG & combat", n: "Dragonslayer", how: "Defeat a dragon.", src: "story", s: 1, h: "Big, scaly, beaten." },
+  { k: "boss", g: "RPG & combat", n: "Boss Fight", how: "Defeat a powerful boss or champion.", src: "story" , nw: 1, h: "The big one." },
+  { k: "crowd", g: "RPG & combat", n: "Crowd Pleaser", how: "Win a fight in an arena.", src: "story" , nw: 1, h: "They're cheering." },
+  { k: "retreat", g: "RPG & combat", n: "Tactical Retreat", how: "Run away from a fight.", src: "story", s: 1, h: "Legs, don't fail me." },
+  { k: "captured", g: "RPG & combat", n: "Captured", how: "Get taken prisoner.", src: "story" , nw: 1, h: "Behind bars." },
+  { k: "jailbreak", g: "RPG & combat", n: "Jailbreak", how: "Escape captivity.", src: "story" , nw: 1, h: "Freedom." },
+  { k: "butterfingers", g: "RPG & combat", n: "Butterfingers", how: "Lose your weapon in a fight.", src: "story", s: 1, h: "Oops." },
+  { k: "gunslinger", g: "RPG & combat", n: "Gunslinger", how: "Win a gunfight.", src: "story" , nw: 1, h: "Quick draw." },
+  { k: "ambushed", g: "RPG & combat", n: "Ambushed", how: "Walk into an ambush.", src: "story" , nw: 1, h: "Out of nowhere." },
+  { k: "tamer", g: "RPG & combat", n: "Beast Tamer", how: "Tame or befriend a wild creature.", src: "story" , nw: 1, h: "Good beast." },
+  { k: "party_up", g: "RPG & combat", n: "Party Up", how: "Someone joins your side.", src: "story" , nw: 1, h: "Not alone anymore." },
+  { k: "betrayed", g: "RPG & combat", n: "Et Tu", how: "Get betrayed by an ally.", src: "story", s: 1, h: "Trust no one." },
+  { k: "level_up", g: "RPG & combat", n: "Level Up", how: "Learn a new skill or power.", src: "story" , nw: 1, h: "Stronger." },
+  { k: "legendary", g: "RPG & combat", n: "Legendary Loot", how: "Find a legendary or magical item.", src: "story" , nw: 1, h: "It glows." },
+  { k: "shopper", g: "RPG & combat", n: "Retail Therapy", how: "Buy something from a shop or merchant.", src: "story" , nw: 1, h: "Coin for goods." },
+  { k: "rich", g: "RPG & combat", n: "Treasure Hoard", how: "Hold 1,000 gold in an RPG bot.", src: "app" },
+  { k: "gold_10k", g: "RPG & combat", n: "Dragon's Hoard", how: "Hold 10,000 gold.", src: "app" , nw: 1, h: "A mountain of gold." },
+  { k: "broke", g: "RPG & combat", n: "Flat Broke", how: "Hit 0 gold after having some.", src: "app", s: 1, h: "Empty pockets." },
+  { k: "big_spender", g: "RPG & combat", n: "Big Spender", how: "Spend 1,000 gold in total.", src: "app" , nw: 1, h: "Easy come, easy go." },
+  { k: "hoarder", g: "RPG & combat", n: "Bottomless Bag", how: "Carry 20 items at once.", src: "app" },
+  { k: "quests_1", g: "RPG & combat", n: "Adventurer", how: "Finish a quest.", src: "app" , nw: 1, h: "Job done." },
+  { k: "quests_5", g: "RPG & combat", n: "Questing", how: "Finish 5 quests.", src: "app" },
+  { k: "quests_20", g: "RPG & combat", n: "Hero of the Realm", how: "Finish 20 quests.", src: "app" , nw: 1, h: "The realm thanks you." },
+  { k: "quest_board", g: "RPG & combat", n: "Busy Schedule", how: "Have 5 quests open at once.", src: "app" , nw: 1, h: "So much to do." },
+  { k: "wanderer", g: "RPG & combat", n: "Wanderer", how: "Visit 10 different places in one chat.", src: "app" , nw: 1, h: "On the road." },
+  { k: "globetrotter", g: "RPG & combat", n: "Globetrotter", how: "Hear 15 different kinds of place.", src: "app" , nw: 1, h: "Seen it all." },
+  { k: "deep_dive", g: "RPG & combat", n: "Deep Dive", how: "Go underwater.", src: "app" , nw: 1, h: "Hold your breath." },
+  { k: "storm_chaser", g: "RPG & combat", n: "Storm Chaser", how: "Get caught out in a storm.", src: "app" , nw: 1, h: "Thunder and rain." },
+  { k: "into_dark", g: "RPG & combat", n: "Into the Dark", how: "Explore a cave.", src: "app" , nw: 1, h: "Bring a torch." },
+  { k: "airborne", g: "RPG & combat", n: "Airborne", how: "Take to the skies.", src: "app" , nw: 1, h: "Up, up." },
+  { k: "bards_ear", g: "RPG & combat", n: "Bard's Ear", how: "Hear 10 different kinds of music.", src: "app" , nw: 1, h: "Many tunes." },
+  // Lewd & silly (round 1 + new)
+  { k: "first_climax", g: "Lewd & silly", n: "First Finish", how: "A climax happens in a chat.", src: "app" },
+  { k: "insatiable", g: "Lewd & silly", n: "Insatiable", how: "10 climaxes in one chat.", src: "app" },
+  { k: "pumped", g: "Lewd & silly", n: "Pumped Full", how: "Cum inflation.", src: "app" },
+  { k: "flood", g: "Lewd & silly", n: "Flood Warning", how: "An excessive, nonstop cumming scene.", src: "story", s: 1, h: "Too much." },
+  { k: "number_two", g: "Lewd & silly", n: "Number Two", how: "A scat scene.", src: "app" },
+  { k: "flushed", g: "Lewd & silly", n: "Flushed", how: "Tap a toilet flush.", src: "app", s: 1, h: "Down it goes." },
+  { k: "mid_smooch", g: "Lewd & silly", n: "Mid-Smooch", how: "Someone burps during a kiss.", src: "story", s: 1, h: "Rude." },
+  { k: "gape", g: "Lewd & silly", n: "Wide Open", how: "A gape scene.", src: "story" },
+  { k: "safety", g: "Lewd & silly", n: "Safety First", how: "A condom gets used.", src: "story" },
+  { k: "taste", g: "Lewd & silly", n: "Licked Clean", how: "A licking scene.", src: "app" },
+  { k: "toot", g: "Lewd & silly", n: "Toot", how: "Tap a fart sound.", src: "app" },
+  { k: "button_masher", g: "Lewd & silly", n: "Button Masher", how: "Tap sound words 100 times.", src: "app" },
+  { k: "soundboard", g: "Lewd & silly", n: "Soundboard", how: "Tap sound words 500 times.", src: "app" , nw: 1, h: "Tap, tap, tap…" },
+  { k: "sound_collector", g: "Lewd & silly", n: "Sound Collector", how: "Tap 30 different kinds of sound.", src: "app" },
+  { k: "smacked", g: "Lewd & silly", n: "Smack", how: "Smack the cock on the rub pad.", src: "app", s: 1, h: "Swipe fast." },
+  { k: "lantern", g: "Lewd & silly", n: "Lamplighter", how: "Blow out and relight the lantern 10 times.", src: "app", s: 1, h: "Puff." },
+  { k: "public", g: "Lewd & silly", n: "Exhibitionist", how: "Get caught in the act by onlookers.", src: "story", s: 1, h: "Everyone's watching." },
+  { k: "quickie", g: "Lewd & silly", n: "Quickie", how: "Finish embarrassingly fast.", src: "story", s: 1, h: "Already?" },
+  { k: "messy_kiss", g: "Lewd & silly", n: "Sloppy Seconds", how: "A very sloppy, wet make-out.", src: "story" , nw: 1, h: "Wet lips." },
+  // Chatting
+  { k: "msgs_100", g: "Chatting", n: "Regular", how: "100 messages with one bot.", src: "app" },
+  { k: "msgs_1000", g: "Chatting", n: "Devoted", how: "1,000 messages with one bot.", src: "app" },
+  { k: "total_10k", g: "Chatting", n: "Lanternkeeper", how: "10,000 messages in total.", src: "app" },
+  { k: "long_chat", g: "Chatting", n: "Epic Tale", how: "One chat reaches 300 messages.", src: "app" },
+  { k: "bots_10", g: "Chatting", n: "Collector", how: "Have 10 bots.", src: "app" },
+  { k: "bots_50", g: "Chatting", n: "Menagerie", how: "Have 50 bots.", src: "app" },
+  { k: "streak_7", g: "Chatting", n: "Every Night", how: "Chat 7 days in a row.", src: "app" },
+  { k: "streak_30", g: "Chatting", n: "Moth to the Lantern", how: "Chat on 30 different days.", src: "app" },
+  { k: "night_owl", g: "Chatting", n: "Night Owl", how: "Send a message between 2 and 5 am.", src: "app", s: 1, h: "Late." },
+  { k: "first_quiz", g: "Chatting", n: "Know What You Want", how: "Make a bot with the character quiz.", src: "app" },
+  { k: "quizmaster", g: "Chatting", n: "Quizmaster", how: "Make 10 bots with the quiz.", src: "app" , nw: 1, h: "Lots of answers." },
+  { k: "first_surprise", g: "Chatting", n: "Lucky Dip", how: "Make a bot with Surprise me.", src: "app" },
+  { k: "daily_keep", g: "Chatting", n: "Daily Special", how: "Keep or chat with a daily bot.", src: "app" },
+  { k: "daily_7", g: "Chatting", n: "Regular Customer", how: "Keep 7 daily bots.", src: "app" },
+  { k: "first_branch", g: "Chatting", n: "What If", how: "Branch a chat.", src: "app" },
+  { k: "picky", g: "Chatting", n: "Picky Eater", how: "Ask for 10 new versions of one reply.", src: "app", s: 1, h: "Not that one. Not that one either." },
+  { k: "librarian", g: "Chatting", n: "Librarian", how: "Make 10 tags of your own.", src: "app" },
+  { k: "many_faces", g: "Chatting", n: "Many Faces", how: "Have 5 personas.", src: "app" },
+  { k: "worldbuilder", g: "Chatting", n: "Worldbuilder", how: "Have a world bot.", src: "app" , nw: 1, h: "A whole world." },
+  { k: "ensemble", g: "Chatting", n: "Ensemble Cast", how: "Have a group bot.", src: "app" , nw: 1, h: "A crowd of your own." },
+  { k: "bookworm", g: "Chatting", n: "Bookworm", how: "Make a shared lorebook.", src: "app" , nw: 1, h: "Write it down." },
+  // Play
+  { k: "nat20", g: "Play", n: "Natural 20", how: "Roll a natural 20.", src: "app" },
+  { k: "nat1", g: "Play", n: "Critical Fail", how: "Roll a natural 1.", src: "app" },
+  { k: "blessed", g: "Play", n: "Blessed", how: "Three natural 20s in one chat.", src: "app", s: 1, h: "The dice love you." },
+  { k: "cursed", g: "Play", n: "Cursed Dice", how: "Three natural 1s in one chat.", src: "app", s: 1, h: "The dice hate you." },
+  { k: "dicey", g: "Play", n: "Dice Goblin", how: "Roll 100 times.", src: "app" , nw: 1, h: "Roll, roll, roll." },
+  { k: "hot_streak", g: "Play", n: "Hot Streak", how: "Win 5 dice contests in a row.", src: "app" , nw: 1, h: "Can't lose." },
+  { k: "gauge_max", g: "Play", n: "Maxed Out", how: "A status gauge hits 100.", src: "app" },
+  { k: "pacer", g: "Play", n: "In Rhythm", how: "Follow the stroke pacer all the way to the finish.", src: "app" },
+  { k: "breakout", g: "Play", n: "Breakout", how: "Win a strong struggle in Struggle or Submit.", src: "app", soon: 1 },
+  { k: "surrender", g: "Play", n: "Surrender", how: "Give in completely in Struggle or Submit.", src: "app", soon: 1 },
+  { k: "duelist", g: "Play", n: "Duelist", how: "Win a dice duel.", src: "app", soon: 1 },
+  { k: "had_teeth", g: "Play", n: "It Had Teeth", how: "Open the mimic chest.", src: "app", s: 1, h: "Not every chest is a chest.", soon: 1 },
+  { k: "bargain", g: "Play", n: "Sharp Bargainer", how: "Haggle a price down by half.", src: "app", soon: 1 }
+];
+const ACH_BY = Object.fromEntries(ACH.map(a => [a.k, a]));
+const achOn = () => S.settings.achOn !== false;
+let ACHS = null;
+const achBlank = () => ({ got: {}, bots: {}, custom: [], n: {}, days: [], ch: {} });
+async function achLoad() { const a = await Store.get("ach"); const st = a && typeof a === "object" ? a : {}; ACHS = ACHS ? achMerge(ACHS, st) : { ...achBlank(), ...st }; return ACHS; }
+let achT = 0;
+function achSave() { clearTimeout(achT); achT = setTimeout(() => Store.set("ach", ACHS).catch(() => {}), 300); }
+// two devices: keep every badge from both, the earliest time, and the higher counters
+function achMerge(a, b) {
+  a = a || {}; b = b || {}; const out = achBlank();
+  for (const src of [a, b]) {
+    for (const [k, v] of Object.entries(src.got || {})) if (!out.got[k] || v.at < out.got[k].at) out.got[k] = v;
+    for (const [bot, m] of Object.entries(src.bots || {})) { out.bots[bot] = out.bots[bot] || {}; for (const [k, at] of Object.entries(m)) if (!out.bots[bot][k] || at < out.bots[bot][k]) out.bots[bot][k] = at; }
+    for (const c of src.custom || []) if (!out.custom.some(x => x.id === c.id)) out.custom.push(c);
+    for (const [k, v] of Object.entries(src.n || {})) { const o = out.n[k]; out.n[k] = typeof v === "number" ? Math.max(o || 0, v) : Array.isArray(v) ? [...new Set([...(o || []), ...v])] : v && typeof v === "object" ? (() => { const r = { ...(o || {}) }; for (const [x, y] of Object.entries(v)) r[x] = Math.max(r[x] || 0, y); return r; })() : v; }
+    out.days = [...new Set([...out.days, ...(src.days || [])])].sort();
+    for (const [c, v] of Object.entries(src.ch || {})) { const o = out.ch[c] || {}; const r = { ...o }; for (const [k, x] of Object.entries(v)) r[k] = typeof x === "number" ? Math.max(o[k] || 0, x) : Array.isArray(x) ? [...new Set([...(o[k] || []), ...x])] : x; out.ch[c] = r; }
+  }
+  return out;
+}
+const achN = (k, by = 1) => { const n = ACHS.n; n[k] = (n[k] || 0) + by; return n[k]; };
+const achSet = (k, v) => { const n = ACHS.n; const s = new Set(n[k] || []); s.add(v); n[k] = [...s]; return n[k].length; };
+const achCh = id => (ACHS.ch[id] = ACHS.ch[id] || {});
+// earn a badge (for a bot's shelf too when one is given); a toast + chime when it's new
+function achGrant(key, botId, chatId, custom) {
+  if (!ACHS || !achOn()) return false;
+  const now = Date.now(); let fresh = false, firstEver = false;
+  if (botId) { const m = ACHS.bots[botId] = ACHS.bots[botId] || {}; if (!m[key]) { m[key] = now; fresh = true; } }
+  if (!ACHS.got[key]) { ACHS.got[key] = { at: now, bot: botId || null, chat: chatId || null }; fresh = true; firstEver = true; }
+  if (!fresh) return false;
+  achSave();
+  const a = ACH_BY[key], bb = key.startsWith("bot:") ? botBadge(botId, key.slice(4)) : null;
+  const name = custom?.name || a?.n || bb?.name || key;
+  achToast(name, botId ? (byId(botId)?.name || "") : "", custom ? "One-off" : bb ? "Bot badge" : firstEver ? "" : "New for this bot");
+  try { renderPanes(); } catch {}
+  return true;
+}
+const botBadge = (botId, id) => ((byId(botId) || {}).badges || []).find(b => b.id === id);
+// the toast: one at a time, quest chime (the owner's pick)
+const ACH_Q = []; let achShowing = false;
+function achToast(name, bot, note) { ACH_Q.push({ name, bot, note }); if (!achShowing) achNext(); }
+function achNext() {
+  const x = ACH_Q.shift(); if (!x) { achShowing = false; return; }
+  achShowing = true;
+  const el = document.createElement("div"); el.className = "ach-toast"; el.setAttribute("role", "status");
+  el.innerHTML = `<span class="ach-medal">★</span><span class="ach-tx"><b>${esc(x.name)}</b><small>Achievement unlocked${x.bot ? " · " + esc(x.bot) : ""}${x.note ? " · " + esc(x.note) : ""}</small></span>`;
+  el.onclick = () => { el.remove(); openTrophies(); };
+  document.body.appendChild(el);
+  if (S.settings.sfxSound !== false && !S.settings.ambMuted) { try { playBuf("sounds/extra/sting/bb-s-quest.ogg", { vol: (S.settings.sfxVolume ?? 0.7) * 0.9 }); } catch {} }
+  setTimeout(() => { el.classList.add("out"); setTimeout(() => { el.remove(); achNext(); }, 450); }, ACH_Q.length > 1 ? 2000 : 3400);
+}
+// the prompt: story badges not yet on this bot's shelf, the bot's own badges, and (rarely) a one-off award
+function achAwardOk(c, chat) {
+  const n = chat.messages.filter(m => m.role === "assistant").length, last = (ACHS?.ch[chat.id] || {}).lastAward;
+  return n - (last == null ? -999 : last) >= (c.badgeAI ? 6 : 20);
+}
+function achPrompt(c, chat) {
+  if (!achOn() || !ACHS) return { sys: "", part: "" };
+  const u = uname(), mine = ACHS.bots[c.id] || {};
+  const story = ACH.filter(a => a.src === "story" && !mine[a.k]).map(a => `${a.k}: ${a.how}`);
+  const own = (c.badges || []).filter(b => b.name && !mine["bot:" + b.id]).map(b => `bot:${b.id}: ${b.how || b.name}`);
+  const award = achAwardOk(c, chat);
+  if (!story.length && !own.length && !award) return { sys: "", part: "" };
+  let sys = `\n\n# Achievements\nThe app awards badges when certain things happen to ${u} in the story ("you" below means ${u}). After each reply, put the key of every badge below that this reply makes true in the badges field (several separated by commas), or none. Only list a key when it clearly happens in this reply; never steer the story toward a badge.\n${[...own, ...story].join("\n")}`;
+  if (award) sys += `\n\nRarely, when something truly memorable happens that no badge above covers, you may also give ${u} one special badge in the award field: a short catchy title, a dash, and the reason (award: Title - reason). ${c.badgeAI ? "This bot may hand these out a little more freely, but still only for standout moments." : "Most replies have none; only big moments."}`;
+  return { sys, part: ` | badges: keys or none${award ? " | award: none or Title - reason" : ""}` };
+}
+// after every reply: story badges from the tag, one-off awards, and everything the app can see for itself
+function achAfterReply(m, c, chat, rpgBefore) {
+  if (!ACHS || !achOn() || !m || !c || !chat) return;
+  const ch = achCh(chat.id), bot = c.id, t = msgText(m), sc = sceneNow();
+  for (const raw of String(m.badges || "").split(/[,;]/)) {
+    const k = raw.trim().toLowerCase().replace(/\s+/g, "_"); if (!k || k === "none") continue;
+    if (k.startsWith("bot:")) { if (botBadge(bot, k.slice(4))) achGrant(k, bot, chat.id); }
+    else if (ACH_BY[k] && !ACH_BY[k].soon) achGrant(k, bot, chat.id);
+  }
+  const aw = String(m.award || "").trim();
+  if (aw && !/^none\b/i.test(aw) && achAwardOk(c, chat)) {
+    const [title, ...why] = aw.split(/\s+[-–—:]\s+/); const name = title.replace(/^["']|["']$/g, "").trim().slice(0, 60);
+    if (name) { const x = { id: uid(), name, why: why.join(" - ").trim().slice(0, 200), bot, chat: chat.id, at: Date.now() }; ACHS.custom.push(x); ch.lastAward = chat.messages.filter(y => y.role === "assistant").length; achGrant("one:" + x.id, bot, chat.id, x); }
+  }
+  // counts
+  const per = ACHS.n.msgs = ACHS.n.msgs || {}; per[bot] = (per[bot] || 0) + 1;
+  if (per[bot] >= 100) achGrant("msgs_100", bot, chat.id); if (per[bot] >= 1000) achGrant("msgs_1000", bot, chat.id);
+  if (achN("total") >= 10000) achGrant("total_10k", bot, chat.id);
+  if (chat.messages.length >= 300) achGrant("long_chat", bot, chat.id);
+  if ((m.alts || []).length >= 11) achGrant("picky", bot, chat.id);
+  if (m.gauges && Object.values(m.gauges).some(v => +v >= 100)) achGrant("gauge_max", bot, chat.id);
+  if (m.pace === "cum" && pacerOn()) achGrant("pacer", bot, chat.id);
+  if (m.harm === "heavy") achGrant("scratch", bot, chat.id);
+  // being swallowed: the hearing moves inside
+  const asst = chat.messages.filter(x => x.role === "assistant"), prev = asst.at(-2);
+  if (sc.hear === "inside") {
+    if (!prev || (prev.hear || "outside") !== "inside") {
+      achGrant("first_swallow", bot, chat.id);
+      const meals = ACHS.n.meals = ACHS.n.meals || {}; meals[bot] = (meals[bot] || 0) + 1;
+      if (meals[bot] >= 5) achGrant("repeat_meal", bot, chat.id); if (Object.keys(meals).length >= 10) achGrant("many_preds", bot, chat.id);
+    }
+    ch.inside = (ch.inside || 0) + 1; if (ch.inside >= 20) achGrant("resident", bot, chat.id);
+  }
+  if (asst.slice(-5).length === 5 && asst.slice(-5).every(x => x.act === "struggle")) achGrant("wiggle", bot, chat.id);
+  if (sc.act === "inflate") achGrant("pumped", bot, chat.id);
+  if (sc.act === "shit") achGrant("number_two", bot, chat.id);
+  if (sc.act === "lick") achGrant("taste", bot, chat.id);
+  if ((["sex", "oral", "mess"].includes(m.act) || m.pace === "cum") && CLIMAX.test(t)) { ch.climax = (ch.climax || 0) + 1; achGrant("first_climax", bot, chat.id); if (ch.climax >= 10) achGrant("insatiable", bot, chat.id); }
+  // places, weather and music
+  if (m.place) { const pl = new Set(ch.places || []); pl.add(String(m.place).toLowerCase().slice(0, 40)); ch.places = [...pl].slice(-40); if (pl.size >= 10) achGrant("wanderer", bot, chat.id); }
+  if (m.amb && m.amb !== "none") {
+    if (achSet("ambs", m.amb) >= 15) achGrant("globetrotter", bot, chat.id);
+    if (/^underwater/.test(m.amb)) achGrant("deep_dive", bot, chat.id);
+    if (m.amb === "storm") achGrant("storm_chaser", bot, chat.id);
+    if (m.amb === "cave") achGrant("into_dark", bot, chat.id);
+    if (m.amb === "flying") achGrant("airborne", bot, chat.id);
+  }
+  if (m.music && m.music !== "none" && achSet("music", m.music) >= 10) achGrant("bards_ear", bot, chat.id);
+  if (typeof SPELL_WORDS !== "undefined" && SPELL_WORDS.test(t) && achSet("spells", spellType(t)) >= 4) achGrant("elementalist", bot, chat.id);
+  // gold, bag and quests
+  if (rpgBefore && rpgOn(c)) {
+    const after = rpgState(c, chat), g = +after.gold || 0, g0 = +rpgBefore.gold || 0;
+    if (g >= 1000) achGrant("rich", bot, chat.id); if (g >= 10000) achGrant("gold_10k", bot, chat.id);
+    if (g === 0 && g0 > 0) achGrant("broke", bot, chat.id);
+    if (g < g0 && achN("spent", g0 - g) >= 1000) achGrant("big_spender", bot, chat.id);
+    if ([...after.items.values()].reduce((a, q) => a + (+q || 0), 0) >= 20) achGrant("hoarder", bot, chat.id);
+    const newDone = after.quests.filter(q => q.done && !rpgBefore.quests.find(x => x.name === q.name && x.done)).length;
+    if (newDone) { const d = achN("quests", newDone); achGrant("quests_1", bot, chat.id); if (d >= 5) achGrant("quests_5", bot, chat.id); if (d >= 20) achGrant("quests_20", bot, chat.id); }
+    if (after.quests.filter(q => !q.done).length >= 5) achGrant("quest_board", bot, chat.id);
+  }
+  achSave();
+}
+// when you send: days, night owl, dice
+function achOnSend(m, c, chat) {
+  if (!ACHS || !achOn() || !c || !chat) return;
+  const d = new Date(), today = dayKey(d);
+  if (!ACHS.days.includes(today)) ACHS.days = [...ACHS.days, today].sort();
+  if (ACHS.days.length >= 30) achGrant("streak_30", c.id, chat.id);
+  let run = 0; for (let i = 0; i < 7; i++) { const x = new Date(d); x.setDate(d.getDate() - i); if (ACHS.days.includes(dayKey(x))) run++; else break; }
+  if (run >= 7) achGrant("streak_7", c.id, chat.id);
+  if (d.getHours() >= 2 && d.getHours() < 5) achGrant("night_owl", c.id, chat.id);
+  const per = ACHS.n.msgs = ACHS.n.msgs || {}; per[c.id] = (per[c.id] || 0) + 1; achN("total");
+  if (m.roll) {
+    const ch = achCh(chat.id), n = +m.roll.n;
+    if (achN("dice") >= 100) achGrant("dicey", c.id, chat.id);
+    if (n === 20) { achGrant("nat20", c.id, chat.id); ch.nat20 = (ch.nat20 || 0) + 1; if (ch.nat20 >= 3) achGrant("blessed", c.id, chat.id); }
+    if (n === 1) { achGrant("nat1", c.id, chat.id); ch.nat1 = (ch.nat1 || 0) + 1; if (ch.nat1 >= 3) achGrant("cursed", c.id, chat.id); }
+    if (m.contest) { ACHS.n.streak = m.contest.win === "you" ? (ACHS.n.streak || 0) + 1 : 0; if (ACHS.n.streak >= 5) achGrant("hot_streak", c.id, chat.id); }
+  }
+  achSave();
+}
+// small events from around the app
+function achEvent(kind, x = {}) {
+  if (!ACHS || !achOn()) return;
+  const bot = S.charId || null, chat = S.chat?.id || null;
+  if (kind === "tap") {
+    if (achN("taps") >= 100) achGrant("button_masher", bot, chat); if (ACHS.n.taps >= 500) achGrant("soundboard", bot, chat);
+    if (x.k && achSet("tapKeys", x.k) >= 30) achGrant("sound_collector", bot, chat);
+    if (/fart|gas_fart|wetfart|dryfart/.test(x.k || "") || x.cat === "fart") achGrant("toot", bot, chat);
+    if ((x.k || "") === "flush" || x.sub === "flush") achGrant("flushed", bot, chat);
+  }
+  else if (kind === "rub") { achGrant("first_rub", bot, chat); if (achN("rubs") >= 500) achGrant("rubs_500", bot, chat); if (x.part && achSet("rubParts", x.part) >= 3) achGrant("rub_all", bot, chat); }
+  else if (kind === "smack") achGrant("smacked", bot, chat);
+  else if (kind === "lantern") { if (achN("lantern") >= 20) achGrant("lantern", null, null); }
+  else if (kind === "branch") achGrant("first_branch", bot, chat);
+  else if (kind === "made") { if (x.from === "quiz") { achGrant("first_quiz", x.id, null); if (achN("quizBots") >= 10) achGrant("quizmaster", x.id, null); } if (x.from === "surprise") achGrant("first_surprise", x.id, null); }
+  else if (kind === "daily") { achGrant("daily_keep", x.id, null); if (achN("dailies") >= 7) achGrant("daily_7", x.id, null); }
+  achSave();
+}
+// collection badges, checked when Home is drawn
+function achHome() {
+  if (!ACHS || !achOn()) return;
+  const n = S.chars.length;
+  if (n >= 10) achGrant("bots_10"); if (n >= 50) achGrant("bots_50");
+  if (S.chars.some(c => c.kind === "world")) achGrant("worldbuilder"); if (S.chars.some(c => c.kind === "group")) achGrant("ensemble");
+  if ((S.personas || []).length >= 5) achGrant("many_faces"); if ((S.books || []).length >= 1) achGrant("bookworm");
+  if ((S.settings.myTags || []).length >= 10) achGrant("librarian");
+}
+// ---- trophy page and shelves
+const achEarned = (k, botId) => botId ? !!(ACHS?.bots[botId] || {})[k] : !!ACHS?.got[k];
+function medal(on, secret) { return `<span class="ach-md${on ? " on" : ""}">${on ? "★" : secret ? "?" : "☆"}</span>`; }
+function openTrophies(botId) {
+  if (!ACHS) return;
+  let tab = botId ? "bot" : "All";
+  openSheet("Trophies", b => {
+    const draw = () => {
+      const listed = ACH.filter(a => !a.soon || achEarned(a.k));
+      const got = listed.filter(a => ACHS.got[a.k]).length, pct = Math.round(got / listed.length * 100);
+      const tabs = [...(botId ? [["bot", byId(botId)?.name || "This bot"]] : []), ["All", "All"], ...ACH_GROUPS.map(g => [g, g]), ["one", "One-offs"]];
+      let rows = "";
+      if (tab === "one") {
+        const cs = ACHS.custom.slice().sort((a, b) => b.at - a.at);
+        rows = cs.length ? cs.map(x => `<div class="ach-row on">${medal(true)}<span class="grow"><b>${esc(x.name)}</b><span class="sub">${esc(x.why || "")}</span><span class="sub">${esc(byId(x.bot)?.name || "")} · ${esc(fmtWhen(x.at))}</span></span></div>`).join("") : '<p class="note">No one-off badges yet. The story hands these out for big, memorable moments.</p>';
+      } else {
+        const own = tab === "bot" ? ((byId(botId) || {}).badges || []).filter(x => x.name).map(x => ({ k: "bot:" + x.id, n: x.name, how: x.how || "", own: true })) : [];
+        const items = tab === "bot" ? [...own, ...ACH.filter(a => achEarned(a.k, botId))] : tab === "All" ? ACH : ACH.filter(a => a.g === tab);
+        const custom = tab === "bot" ? ACHS.custom.filter(x => x.bot === botId) : [];
+        rows = items.map(a => { const on = tab === "bot" ? achEarned(a.k, botId) : !!ACHS.got[a.k]; const at = tab === "bot" ? (ACHS.bots[botId] || {})[a.k] : ACHS.got[a.k]?.at; const who = tab !== "bot" && ACHS.got[a.k]?.bot ? byId(ACHS.got[a.k].bot)?.name : "";
+          if (!on && (a.s || a.nw)) return `<div class="ach-row">${medal(false, true)}<span class="grow"><b>???</b><span class="sub">${esc(a.h || "Secret")}</span></span></div>`;
+          return `<div class="ach-row${on ? " on" : ""}">${medal(on)}<span class="grow"><b>${esc(a.n)}</b>${a.own ? ' <span class="badge">this bot</span>' : ""}<span class="sub">${esc(a.how)}</span>${on ? `<span class="sub">${esc([who, fmtWhen(at)].filter(Boolean).join(" · "))}</span>` : a.soon ? '<span class="sub">Comes with the minigames</span>' : ""}</span></div>`; }).join("")
+          + custom.map(x => `<div class="ach-row on">${medal(true)}<span class="grow"><b>${esc(x.name)}</b> <span class="badge">one-off</span><span class="sub">${esc(x.why || "")}</span></span></div>`).join("");
+        if (!rows) rows = '<p class="note">No badges with this bot yet.</p>';
+      }
+      b.innerHTML = `<div class="ach-sum"><div class="ach-big">${got}<span>/ ${listed.length}</span></div><div class="grow"><div class="ach-bar"><i style="width:${pct}%"></i></div><div class="hint">${pct}% earned · ${ACHS.custom.length} one-off${ACHS.custom.length === 1 ? "" : "s"}</div></div></div>
+        <div class="tabs ach-tabs">${tabs.map(([k, l]) => `<button type="button" class="tab ${tab === k ? "on" : ""}" data-t="${esc(k)}">${esc(l)}</button>`).join("")}</div>
+        <div class="ach-list">${rows}</div>`;
+      b.querySelectorAll(".ach-tabs [data-t]").forEach(x => x.onclick = () => { tab = x.dataset.t; draw(); });
+    };
+    draw();
+  });
+}
+// a bot's shelf on its profile
+function achShelf(c) {
+  if (!ACHS || !achOn()) return "";
+  const mine = ACHS.bots[c.id] || {}, keys = Object.keys(mine).sort((a, b) => mine[b] - mine[a]);
+  const name = k => k.startsWith("one:") ? (ACHS.custom.find(x => "one:" + x.id === k)?.name) : k.startsWith("bot:") ? botBadge(c.id, k.slice(4))?.name : ACH_BY[k]?.n;
+  const own = (c.badges || []).filter(b => b.name), ownLeft = own.filter(b => !mine["bot:" + b.id]).length;
+  return `<div class="stack"><div class="lbl">Badges · ${keys.length}${own.length ? ` <span style="font-weight:400;text-transform:none;letter-spacing:0">(${ownLeft} of this bot's own left)</span>` : ""}</div>${keys.length ? `<div class="ach-shelf">${keys.slice(0, 12).map(k => `<span class="ach-chip">★ ${esc(name(k) || "Badge")}</span>`).join("")}${keys.length > 12 ? `<span class="ach-chip">+${keys.length - 12}</span>` : ""}</div>` : '<p class="hint" style="margin:0">None yet.</p>'}<button type="button" class="btn small" id="pfBadges">See badges</button></div>`;
+}
+// the bot editor's Badges section: the bot's own badges + the "invent more" switch
+function badgeEditor(work) {
+  const box = $("cBadges"); if (!box) return;
+  work.badges = (work.badges || []).map(b => ({ id: b.id || uid(), name: b.name || "", how: b.how || "" }));
+  const draw = () => {
+    box.innerHTML = `<label class="check"><input type="checkbox" id="cBadgeAI" ${work.badgeAI ? "checked" : ""}> Let the story invent extra one-off badges more freely in this bot's chats</label>
+      ${work.badges.map((x, i) => `<div class="bdg-row" data-i="${i}"><input class="bdg-n" value="${esc(x.name)}" placeholder="Badge name, e.g. Vex's Favourite Snack"><textarea class="bdg-h" style="min-height:52px" placeholder="How to earn it, e.g. Get eaten by Vex three times">${esc(x.how)}</textarea><button type="button" class="btn small danger" data-rm>Remove</button></div>`).join("")}
+      <button type="button" class="btn small" id="cBadgeAdd">＋ Add a badge</button>`;
+    $("cBadgeAI").onchange = e => { work.badgeAI = e.target.checked; };
+    box.querySelectorAll(".bdg-row").forEach(r => { const x = work.badges[+r.dataset.i]; r.querySelector(".bdg-n").oninput = e => { x.name = e.target.value; }; r.querySelector(".bdg-h").oninput = e => { x.how = e.target.value; }; r.querySelector("[data-rm]").onclick = () => { work.badges.splice(+r.dataset.i, 1); draw(); }; });
+    $("cBadgeAdd").onclick = () => { work.badges.push({ id: uid(), name: "", how: "" }); draw(); box.querySelector(".bdg-row:last-of-type .bdg-n")?.focus(); };
+  };
+  draw();
+}
 
 /* ---------- Chat ---------- */
 async function openChat(id, chatId) {
@@ -2664,6 +3111,7 @@ async function sendInner() {
       try { await rollScene([{ n: pr.n, who: uname(), known: true }, { n: fate, who: foe }], { text: res.win === "you" ? `${uname()} wins` : res.win === "them" ? `${foe} wins` : "Tie", cls: "r-" + res.win + (res.crit ? " crit" : "") }); }
       finally { S.rolling = false; setBusy(false); }
     } else { S.chat.messages.push(m); $("input").value = ""; autoGrow(); clearAttach(); }
+    try { achOnSend(m, char(), S.chat); } catch {}
   }
   else if (!S.chat.messages.length || S.chat.messages.at(-1).role === "assistant") return;
   S.openActs = null;
@@ -2725,6 +3173,7 @@ async function generate(upto, existing, cont) {
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
     const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null, hear: p.hear || null, music: p.music || null, event: p.event || null, vore: p.vore || null, rpg: rpgOn(c) ? parseRpgDelta(p) : null };
+    if (p.badges) meta.badges = p.badges; if (p.award) meta.award = p.award;
     const rpgBefore = rpgOn(c) ? rpgState(c, chat) : null;
     const gv = parseGauges(p.gauges, c); if (gv) { meta.gauges = { ...gaugeValues(c, chat), ...gv }; chat.gauges = { ...meta.gauges }; }
     if (p.pace) meta.pace = p.pace; else if (pacerOn()) meta.pace = null;
@@ -3169,6 +3618,8 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
     <div class="group"><h3>You</h3>
       <button class="btn" id="sPersonas">Manage personas (playing as ${esc(uname())})</button>
       <button class="btn" id="sTags">Manage tags and tag notes</button>
+      <label class="check"><input type="checkbox" id="sAch" ${st.achOn !== false ? "checked" : ""}> Achievements: earn badges as you play (the story is told which ones exist)</label>
+      <button class="btn" id="sTrophies">🏆 Trophies</button>
       <label class="check"><input type="checkbox" id="sDaily" ${st.dailyOn !== false ? "checked" : ""}> Daily bot: once a day, invent a new bot from your favourite tags (uses your AI key once a day)</label>
     </div>
     <div class="group"><h3>All chats</h3>
@@ -3219,6 +3670,8 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   drawn();
   $("sPersonas").onclick = () => openPersonas();
   $("sTags").onclick = () => openTags();
+  $("sAch").onchange = async e => { S.settings.achOn = e.target.checked; await saveSettings(); };
+  $("sTrophies").onclick = () => openTrophies();
   $("sDaily").onchange = async e => { S.settings.dailyOn = e.target.checked; await saveSettings(); drawDaily(); if (e.target.checked) dailyMake(); };
   ruleTabs($("sGlobal"));
   drawAccount($("sAccount"));
@@ -3485,13 +3938,14 @@ function editChar(c, isNew, fromDraft) {
       </div>`}
       <div class="group"><h3>Dice</h3>${field("Rolls allowed per message", `<select id="cRollLim">${[[0, "Unlimited rerolls"], [1, "1 (no rerolls)"], [2, "2"], [3, "3"], [5, "5"]].map(([v, l]) => `<option value="${v}" ${(+work.rollLimit || 0) === v ? "selected" : ""}>${l}</option>`).join("")}</select>`, "How many times you can roll 🎲 before sending one message, so you can't keep rolling for the number you want. With a limit, a roll can't be thrown away either.")}</div>
       <div class="group"><h3>Status gauges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Bars at the top of the chat (fullness, arousal, health…) that the AI moves as the story goes.</p><div id="cGauges" class="stack"></div></div>
+      <div class="group"><h3>Badges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Achievements special to this bot. The story awards them when they happen.</p><div id="cBadges" class="stack"></div></div>
       <div class="group"><h3>Gold, inventory and quests</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">For adventures: a gold counter, a bag and a quest log under the chat header. The AI keeps them up to date and you can edit them.</p><div id="cRpg" class="stack"></div></div>
       <div id="cMsg" class="hint"></div>
       <button class="btn primary" id="cSave">${isNew ? "Create " + KINDS[K].label.toLowerCase() : "Save changes"}</button>
       ${isNew ? "" : `<button class="btn danger" id="cDel">Delete ${KINDS[K].label.toLowerCase()}</button>`}`;
 
     ruleTabs($("cInstr"));
-    gaugeEditor(work); rpgEditor(work);
+    gaugeEditor(work); rpgEditor(work); badgeEditor(work);
     const greets = [work.firstMessage || "", ...(work.altGreetings || [])];
     let gi = 0;
     const grab = () => {
@@ -4001,6 +4455,7 @@ $("railQ").oninput = e => { RAIL.q = e.target.value.trim().toLowerCase(); render
 
 // --- Branches: a copy of the chat up to a message, opened as its own chat
 async function branchFrom(i) {
+  try { achEvent("branch"); } catch {}
   const src = S.chat, n = i + 1;
   const ch = JSON.parse(JSON.stringify({ ...src, messages: src.messages.slice(0, n) }));
   Object.assign(ch, { id: uid(), created: Date.now(), branchOf: { chat: src.id, n, at: Date.now() } });
@@ -4427,7 +4882,7 @@ function rubStart(e) {
       if (!still) {
         if (scn.act === "struggle" && now > nextPoke) { body.poke(2.2 + Math.random() * 2); nextPoke = now + 500 + Math.random() * 1400; } // the prey kicks back
         body.step(dt, hx, hy, mx, my);
-        if (body.ev.smack && now - lastSmack > 280) { lastSmack = now; playKey("plap"); try { navigator.vibrate?.(20); } catch {} }
+        if (body.ev.smack && now - lastSmack > 280) { lastSmack = now; playKey("plap"); try { achEvent("smack"); } catch {} try { navigator.vibrate?.(20); } catch {} }
         if (body.ev.clap) playKey("squish");
       }
       mx *= 0.4; my *= 0.4;
@@ -4448,7 +4903,7 @@ function rubStart(e) {
     hx += dx * 1.15; hy += dy * 1.15; const m = Math.hypot(hx, hy), lim = R * 0.85; if (m > lim) { hx *= lim / m; hy *= lim / m; }
     if (!open && (travel > 10 || performance.now() - t0 > 220)) openPad();
     const now = performance.now();
-    if (since > 110 && now - lastPlay > 380) { since = 0; lastPlay = now; strokes++; if (!still) body.poke(1.1); playKey(rubSound(part, scn, strokes)); try { navigator.vibrate?.(12); } catch {} }
+    if (since > 110 && now - lastPlay > 380) { since = 0; lastPlay = now; strokes++; if (!still) body.poke(1.1); playKey(rubSound(part, scn, strokes)); try { navigator.vibrate?.(12); } catch {} try { achEvent("rub", { part }); } catch {} }
   };
   const hold = setTimeout(() => { if (!open && RUB.on) openPad(); }, 220);
   const end = async () => {
@@ -4623,6 +5078,7 @@ async function playOne(types, vol, delay = 0) {
 async function onReply(m, rpgBefore) {
   if (!m || !S.chat) return;
   const st = S.settings, c = char(), t = msgText(m), sc = sceneNow();
+  try { achAfterReply(m, c, S.chat, rpgBefore); } catch (e) { console.warn(e); }
   // the vore picture belches when the reply describes a burp
   if (/\b(burp|belch|urp)\w*/i.test(t) && document.querySelector(".vg-svg")) setTimeout(voreBurp, 700);
   // music events
@@ -5325,6 +5781,7 @@ function lanternSVG(cls = "") {
   $("spLantern").innerHTML = lanternSVG();
   $("spTitle").innerHTML = [..."Lantern"].map((ch, i) => `<span style="animation-delay:${0.35 + i * 0.05}s">${ch}</span>`).join("") + [..."room"].map((ch, i) => `<span class="a" style="animation-delay:${0.7 + i * 0.05}s">${ch}</span>`).join("");
   $("logoBtn").onclick = () => {
+    try { achEvent("lantern"); } catch {}
     const l = $("logoLantern").querySelector(".lantern"), btn = $("logoBtn");
     if (l.classList.contains("out")) { l.classList.remove("out"); void l.getBoundingClientRect(); l.classList.add("relit"); btn.classList.remove("dark"); }
     else { l.classList.remove("relit"); l.classList.add("out"); btn.classList.add("dark"); }
@@ -5888,6 +6345,7 @@ function fxLayer(sp) {
 function burst(sp) {
   const cat = sp.dataset.fx || "wave", M = FX_MOTION[cat] || FX_MOTION.wave, key = sp.closest("[data-k]")?.dataset.k;
   if (SFX_BY[key]) playKey(key); else playSfx(cat, sp.textContent.trim(), sp.dataset.sub);
+  try { achEvent("tap", { k: key || sp.dataset.sub || cat, cat, sub: sp.dataset.sub }); } catch {}
   sp.animate([{ transform: "scale(1)" }, { transform: "scale(1.28) rotate(-3deg)" }, { transform: "scale(1)" }], { duration: 320, easing: "ease-out" });
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   // bursts stay inside the chat window: they're drawn in a layer laid exactly over it
@@ -6827,6 +7285,7 @@ const Sync = {
     if (k === "recent") return this.merge(k, mine, theirs);
     if (k === "sndgone") return { ...lose, ...win };
     if (k === "settings" || k === "drafts") return { ...lose, ...win };
+    if (k === "ach") return achMerge(lose, win);
     return win;
   },
   async pullAll(all) {
@@ -7102,6 +7561,7 @@ async function migrateChats() {
   if (!S.chars.length && !(await Store.get("seeded"))) { S.chars = [sampleChar()]; await Store.set("seeded", true); }
   await saveSettings(); await saveChars(); await savePersonas();
   renderHome();
+  await achLoad().catch(() => {});
   BOOT_DONE(); setTimeout(dailyTick, 2500); refreshSfxAvail().catch(() => {}); // which sounds the chats may write
   { const q = new URLSearchParams(location.search).get("open"); if (q) { history.replaceState(null, "", location.pathname);
       if (q === "new") setTimeout(() => $("btnNewChar")?.click(), 300);
