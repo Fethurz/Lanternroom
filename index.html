@@ -949,7 +949,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.50 · Oct 17";
+const VERSION = "1.51 · Oct 17";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2455,7 +2455,7 @@ setInterval(() => { if (!document.hidden && !$("home").hidden) dailyTick(); }, 6
 /* ---------- Achievements (v1.50) ---------- */
 // src "app": the app counts it; "story": the reply's hidden badges field reports it (the app also spots some itself).
 // s: secret until earned (shows only the tiny hint h); soon: needs a minigame that isn't built yet.
-const ACH_GROUPS = ["Vore", "Fetish", "RPG & combat", "Lewd & silly", "Chatting", "Play"];
+const ACH_GROUPS = ["Vore", "Fetish", "Dark & taboo", "RPG & combat", "Lewd & silly", "Chatting", "Play"];
 const ACH = [
   // Vore (owner-approved round 1)
   { k: "first_swallow", g: "Vore", n: "Down the Hatch", how: "Get swallowed.", src: "story" },
@@ -2586,6 +2586,37 @@ const ACH = [
   { k: "public", g: "Lewd & silly", n: "Exhibitionist", how: "Get caught in the act by onlookers.", src: "story", s: 1, h: "Everyone's watching." },
   { k: "quickie", g: "Lewd & silly", n: "Quickie", how: "Finish embarrassingly fast.", src: "story", s: 1, h: "Already?" },
   { k: "messy_kiss", g: "Lewd & silly", n: "Sloppy Seconds", how: "A very sloppy, wet make-out.", src: "story" , nw: 1, h: "Wet lips." },
+  // round 3 (owner's request, 2026-10-17): small preds, age gaps between adults, family, force, murder; surprises like round 2
+  { k: "tiny_pred", g: "Vore", n: "Small but Hungry", how: "Get swallowed whole by a pred smaller than you.", src: "story" , nw: 1, h: "Size isn't everything." },
+  { k: "punch_up", g: "Vore", n: "Punching Up", how: "As a smaller pred, swallow someone bigger than you.", src: "story" , nw: 1, h: "Bite off more than you can chew." },
+  { k: "runt_stretch", g: "Vore", n: "Overstuffed Runt", how: "A small pred stretches enormously around much bigger prey.", src: "story" , nw: 1, h: "How did that fit?" },
+  { k: "elder_pred", g: "Vore", n: "Elder's Appetite", how: "Get eaten by an adult pred far older than you.", src: "story" , nw: 1, h: "Old and hungry." },
+  { k: "upstart_pred", g: "Vore", n: "Hungry Upstart", how: "Get eaten by an adult pred much younger than you.", src: "story" , nw: 1, h: "Young and hungry." },
+  { k: "family_meal", g: "Vore", n: "Family Dinner", how: "Get eaten by one of your character's adult relatives.", src: "story" , nw: 1, h: "Blood is thicker." },
+  { k: "forced_meal", g: "Vore", n: "No Say in It", how: "Get swallowed completely against your will, begging the whole way down.", src: "story" , nw: 1, h: "They didn't ask." },
+  { k: "hide_body", g: "Vore", n: "Ate the Evidence", how: "A pred eats someone to get rid of a body or a witness.", src: "story" , nw: 1, h: "No body, no crime." },
+  { k: "age_gap", g: "Fetish", n: "Just a Number", how: "A romance or sex scene between two adults with a big age gap.", src: "story" , nw: 1, h: "Years apart." },
+  { k: "older_lover", g: "Fetish", n: "Experienced Hands", how: "Get seduced by an adult far older than you.", src: "story" , nw: 1, h: "They've done this before." },
+  { k: "younger_lover", g: "Fetish", n: "Fresh Blood", how: "Seduce an adult much younger than you.", src: "story" , nw: 1, h: "Barely grown into it." },
+  { k: "corruption", g: "Fetish", n: "Corrupted", how: "Someone pure or innocent is corrupted.", src: "story" , nw: 1, h: "Not so innocent now." },
+  { k: "blackmail", g: "Fetish", n: "Leverage", how: "Get blackmailed or coerced into something lewd.", src: "story" , nw: 1, h: "Or else." },
+  { k: "humiliation", g: "Fetish", n: "Public Shame", how: "A public humiliation scene.", src: "story" , nw: 1, h: "Everyone's watching." },
+  { k: "noncon", g: "Dark & taboo", n: "Taken", how: "Your character is raped or forced into sex.", src: "story" , nw: 1, h: "No wasn't an answer." },
+  { k: "noncon_dom", g: "Dark & taboo", n: "Takes What They Want", how: "Your character forces themselves on someone.", src: "story" , nw: 1, h: "You didn't ask." },
+  { k: "dubcon", g: "Dark & taboo", n: "Blurred Lines", how: "A dubious-consent scene: drugged, hypnotized or tricked into it.", src: "story" , nw: 1, h: "Did they agree?" },
+  { k: "kept_toy", g: "Dark & taboo", n: "Kept Toy", how: "Get held captive and used.", src: "story" , nw: 1, h: "Locked away." },
+  { k: "breaking", g: "Dark & taboo", n: "Broken In", how: "Someone's will is broken until they obey.", src: "story" , nw: 1, h: "Resistance fades." },
+  { k: "incest", g: "Dark & taboo", n: "All in the Family", how: "A sexual scene between adult relatives.", src: "story" , nw: 1, h: "Family ties." },
+  { k: "incest_sibling", g: "Dark & taboo", n: "Sibling Rivalry", how: "A sexual scene between adult siblings.", src: "story" , nw: 1, h: "Brothers and sisters." },
+  { k: "incest_parent", g: "Dark & taboo", n: "Parental Guidance", how: "A sexual scene between an adult and their parent.", src: "story" , nw: 1, h: "Mom? Dad?" },
+  { k: "family_secret", g: "Dark & taboo", n: "Family Secret", how: "Keep a taboo relationship hidden from the rest of the family.", src: "story" , nw: 1, h: "Nobody can know." },
+  { k: "step_family", g: "Dark & taboo", n: "Step by Step", how: "A sexual scene between adult step-relatives.", src: "story" , nw: 1, h: "Not by blood." },
+  { k: "murder", g: "Dark & taboo", n: "Cold Blood", how: "Your character kills someone in cold blood.", src: "story" , nw: 1, h: "No hesitation." },
+  { k: "murdered", g: "Dark & taboo", n: "Final Breath", how: "Your character is murdered.", src: "story" , nw: 1, h: "Lights out." },
+  { k: "witness", g: "Dark & taboo", n: "Wrong Place, Wrong Time", how: "Witness a murder.", src: "story" , nw: 1, h: "You saw that." },
+  { k: "spree", g: "Dark & taboo", n: "Body Count", how: "Five killings in one chat.", src: "story" , nw: 1, h: "They keep dropping." },
+  { k: "assassin", g: "Dark & taboo", n: "Silent Blade", how: "Assassinate a chosen target.", src: "story" , nw: 1, h: "Never saw it coming." },
+  { k: "torture", g: "Dark & taboo", n: "Ask Nicely", how: "A torture or interrogation scene.", src: "story" , nw: 1, h: "Talk." },
   // Chatting
   { k: "msgs_100", g: "Chatting", n: "Regular", how: "100 messages with one bot.", src: "app" },
   { k: "msgs_1000", g: "Chatting", n: "Devoted", how: "1,000 messages with one bot.", src: "app" },
