@@ -731,6 +731,19 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .qz-sum .lbl{padding:10px 12px 4px}
 .qz-row{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:0;border-top:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;text-align:left;cursor:pointer;min-height:44px}
 .qz-row:first-child{border-top:0}.qz-rq{font-size:12px;color:var(--muted)}.qz-ra{font-weight:700}
+#daily:empty{display:none}
+.daily{position:relative;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:16px;padding:12px 14px;margin:0 0 12px;background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--accent) 16%,var(--surface)),var(--surface));display:flex;flex-direction:column;gap:6px}
+.daily.k-world{border-color:color-mix(in srgb,var(--k-world,#4fd1c5) 50%,var(--line))}.daily.k-group{border-color:color-mix(in srgb,var(--k-group,#b28dff) 50%,var(--line))}
+.dl-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.dl-name{font-family:"Young Serif",serif;font-weight:400;font-size:21px;margin:0}
+.dl-sum{margin:0;font-size:14px;color:var(--muted);line-height:1.4}
+.daily .btags,.dl-card .btags{display:flex;flex-wrap:wrap;gap:4px}
+.daily .btag{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;background:var(--surface-2);border:1px solid var(--line);color:var(--fg)}.daily .btag .tsv{width:12px;height:12px}
+.dl-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px}
+.dl-row{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}.dl-lan svg{width:30px;height:38px}
+.dl-past{background:none;border:0;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;padding:6px 4px;margin-left:auto;min-height:34px}
+.dl-mini{display:flex;justify-content:flex-end;margin:-6px 0 6px}
+.dl-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--surface);display:flex;flex-direction:column;gap:4px;flex:none}
 </style>
 </head>
 <body>
@@ -756,6 +769,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
     <div class="home-scroll">
       <button class="persona-bar" id="personaBar"></button>
       <p class="tagline" id="tagline">Your characters, with memory that holds.</p>
+      <div id="daily"></div>
       <div class="seg" id="homeTabs"><button type="button" data-tab="all" class="on">All</button><button type="button" data-tab="recent">Recent</button><button type="button" data-tab="fav">★ Favorites</button><button type="button" data-tab="hidden">Hidden</button></div>
       <div class="searchrow"><input id="search" type="search" placeholder="Search names or tags" autocomplete="off"><button class="btn small" id="btnTagAll" hidden>✦ Tag untagged</button></div>
       <div class="tagrow" id="tagFilter"></div>
@@ -908,7 +922,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.48 · Oct 17";
+const VERSION = "1.49 · Oct 17";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1530,6 +1544,7 @@ function tagIconAuto(t) { const s = String(t || "").toLowerCase(); for (const [r
 // the owner can pick an icon (or none) and a colour per tag in the tag manager
 function tagIcon(t) { const k = String(t || "").toLowerCase(), m = (S.settings && S.settings.tagMeta || {})[k] || {}; const svg = m.icon === "none" ? "" : m.icon && TAG_SVG[m.icon] ? TAG_SVG[m.icon] : tagIconAuto(k); return svg && m.color ? svg.replace(/style="color:[^"]*"/, `style="color:${m.color}"`) : svg; }
 function renderHome() {
+  dailyLoad().then(drawDaily).catch(() => {});
   updateAmbience();
   $("personaBar").innerHTML = `Playing as <b>${esc(uname())}</b><span class="chg">Change</span>`;
   const list = $("charList");
@@ -2275,6 +2290,122 @@ async function genFinish(edit) {
   closeSheet(); renderHome();
   if (edit) editChar(w, false); else openChat(w.id);
 }
+
+/* ---------- Daily bot (v1.49): once a day the generator invents one bot from the owner's favourite tags ---------- */
+// Store "daily" = { day, status: "making"|"new"|"kept"|"skipped"|"error", kind, form, tags, card, err, charId, at }
+// Store "dailyPast" = [{ id, day, kind, form, tags, card, at }] (unkept dailies, kept forever until the owner deletes them)
+const DAILY = { cur: null, past: [], busy: false };
+const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const dailyOn = () => S.settings.dailyOn !== false;
+async function dailyLoad() { if (!DAILY.busy) DAILY.cur = (await Store.get("daily")) || null; const p = await Store.get("dailyPast"); DAILY.past = Array.isArray(p) ? p : []; }
+// tags from the owner's bots, weighted by how much they chat with each bot; hidden tags and kinds left out
+async function dailyTagWeights() {
+  const w = {};
+  for (const c of S.chars) {
+    let msgs = 0; try { msgs = (await getIndex(c.id)).reduce((a, e) => a + (+e.count || 0), 0); } catch {}
+    for (const t of (c.tags || []).map(x => String(x).toLowerCase())) if (t && t !== "world" && t !== "group" && !tagMeta(t).hidden) w[t] = (w[t] || 0) + 1 + Math.sqrt(msgs);
+  }
+  return w;
+}
+function pickWeighted(w, n) {
+  const pool = Object.entries(w).sort((a, b) => b[1] - a[1]).slice(0, 14), out = [];
+  while (out.length < n && pool.length) { const tot = pool.reduce((a, [, v]) => a + v, 0); let r = Math.random() * tot, i = 0; for (; i < pool.length - 1; i++) { r -= pool[i][1]; if (r <= 0) break; } out.push(pool.splice(i, 1)[0][0]); }
+  return out;
+}
+async function dailyMake(force) {
+  if (DAILY.busy || !hasKey() || !dailyOn()) return;
+  await dailyLoad();
+  const today = dayKey(), cur = DAILY.cur;
+  if (!force && cur && cur.day === today && cur.status !== "error") return;
+  // yesterday's unkept daily moves to the shelf
+  if (cur && cur.card && cur.day !== today && (cur.status === "new" || cur.status === "skipped") && !DAILY.past.some(p => p.day === cur.day)) {
+    DAILY.past = [{ id: uid(), day: cur.day, kind: cur.kind, form: cur.form, tags: cur.tags, card: cur.card, at: cur.at || Date.now() }, ...DAILY.past];
+    await Store.set("dailyPast", DAILY.past);
+  }
+  const w = await dailyTagWeights();
+  let tags = pickWeighted(w, 3 + (Math.random() < 0.5 ? 1 : 0));
+  if (tags.length < 2) tags = [...new Set([...tags, ...pickWeighted(Object.fromEntries(SURPRISE_TAGS.flatMap(([, l]) => l).filter(t => !tagMeta(t).hidden).map(t => [t, 1])), 3)])].slice(0, 4);
+  // the twist: now and then a world or a group instead of a character
+  const r = Math.random(), kind = tags.includes("harem") ? "group" : r < 0.14 ? "world" : r < 0.26 ? "group" : "character";
+  const form = kind === "world" ? "auto" : tags.includes("feral") ? "feral" : tags.includes("anthro") ? "anthro" : tags.includes("human") ? "human" : "auto";
+  const notes = tags.filter(t => (S.settings.tagNotes || {})[t]).map(t => `- ${t}: ${S.settings.tagNotes[t]}`);
+  const prompt = `Today's bot: invent an original, surprising ${KINDS[kind].label.toLowerCase()} built around these tags: ${tags.join(", ")}. Make it feel fresh and distinctive, not a stock version of the tags. Include these tags in the card's tags.` + (notes.length ? `\n\nWhat these tags mean to me (follow these closely):\n${notes.join("\n")}` : "");
+  DAILY.busy = true;
+  DAILY.cur = { day: today, status: "making", kind, form, tags, at: Date.now() }; drawDaily();
+  try {
+    const card = await genCard(kind, form, prompt); card._kind = kind;
+    DAILY.cur = { day: today, status: "new", kind, form, tags, card, at: Date.now() };
+  } catch (e) { DAILY.cur = { day: today, status: "error", kind, form, tags, err: e.message, at: Date.now() }; }
+  DAILY.busy = false;
+  await Store.set("daily", DAILY.cur); drawDaily();
+}
+// a generated card → saved bot(s), like the generator's "create it" (no window)
+async function cardToBot(c, K) {
+  const w = blankChar(K);
+  Object.assign(w, { name: c.name, summary: c.summary || "", tags: c.tags || [], description: c.description || "", scenario: c.scenario || "", startPlace: c.startPlace || "", instructions: c.instructions || "", lore: c.lore || [] });
+  const greets = c.firstMessages || []; w.firstMessage = greets[0] || ""; w.altGreetings = greets.slice(1);
+  if (K === "character") { w.appearance = c.appearance || ""; w.artType = c.artType || "auto"; }
+  if (K === "world") w.cast = c.cast || [];
+  const made = [];
+  if (K === "group") for (const m of c.members || []) { const mc = Object.assign(blankChar("character"), { name: m.name, appearance: m.appearance, description: m.description, artType: m.artType || "auto" }); made.push(mc); w.members.push(mc.id); }
+  await Promise.allSettled([K === "group" ? null : ensureVisual(w), ...made.map(m => ensureVisual(m))].filter(Boolean).map(p => within(p, 25000)));
+  S.chars.unshift(...made); S.chars.unshift(w); await saveChars();
+  return w;
+}
+async function dailyKeep(chat, past) {
+  const d = past || DAILY.cur; if (!d || !d.card) return;
+  toast(d.kind === "world" ? "Picturing the world…" : "Designing the look…");
+  const w = await cardToBot(d.card, d.card._kind || d.kind);
+  w.daily = d.day; await saveChars();
+  if (past) { DAILY.past = DAILY.past.filter(p => p.id !== past.id); await Store.set("dailyPast", DAILY.past); }
+  else { DAILY.cur = { ...DAILY.cur, status: "kept", charId: w.id }; await Store.set("daily", DAILY.cur); }
+  renderHome(); if (chat) { closeSheet(); openChat(w.id); } else toast(`${w.name} is on your shelf`);
+}
+async function dailySkip() {
+  const d = DAILY.cur; if (!d) return;
+  if (d.card && !DAILY.past.some(p => p.day === d.day)) { DAILY.past = [{ id: uid(), day: d.day, kind: d.kind, form: d.form, tags: d.tags, card: d.card, at: d.at || Date.now() }, ...DAILY.past]; await Store.set("dailyPast", DAILY.past); }
+  DAILY.cur = { ...d, status: "skipped" }; await Store.set("daily", DAILY.cur); drawDaily(); toast("Moved to Past dailies");
+}
+function drawDaily() {
+  const el = $("daily"); if (!el) return;
+  const d = DAILY.cur, today = dayKey(), n = DAILY.past.length;
+  const pastLink = n ? `<button type="button" class="dl-past" id="dlPast">Past dailies (${n}) ›</button>` : "";
+  if (!dailyOn() || !d || d.day !== today || d.status === "kept" || d.status === "skipped") { el.innerHTML = pastLink ? `<div class="dl-mini">${pastLink}</div>` : ""; }
+  else if (d.status === "making") el.innerHTML = `<div class="daily dl-wait"><div class="dl-lbl">Today's bot</div><div class="dl-row"><span class="dl-lan">${lanternSVG("seq")}</span><span>Dreaming up today's ${esc(KINDS[d.kind]?.label.toLowerCase() || "bot")} from ${esc((d.tags || []).join(", "))}…</span></div></div>`;
+  else if (d.status === "error") el.innerHTML = `<div class="daily"><div class="dl-lbl">Today's bot</div><p class="dl-sum">Couldn't make today's bot: ${esc(d.err || "unknown problem")}</p><div class="dl-acts"><button type="button" class="btn small primary" id="dlRetry">Try again</button>${pastLink}</div></div>`;
+  else {
+    const c = d.card, tg = (c.tags || d.tags || []).slice(0, 6);
+    el.innerHTML = `<div class="daily k-${esc(d.kind)}"><div class="dl-lbl">Today's bot · ${esc(KINDS[d.kind]?.label || "Bot")}</div>
+      <h3 class="dl-name">${esc(c.name || "Unnamed")}</h3><p class="dl-sum">${esc(c.summary || "")}</p>
+      ${tg.length ? `<div class="btags">${tg.map(t => `<span class="btag"${tagStyle(t)}>${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</span>`).join("")}</div>` : ""}
+      <div class="dl-acts"><button type="button" class="btn small primary" id="dlChat">Start chat</button><button type="button" class="btn small" id="dlKeep">Keep</button><button type="button" class="btn small" id="dlSkip">Skip</button>${pastLink}</div></div>`;
+    $("dlChat").onclick = e => { e.target.disabled = true; dailyKeep(true); };
+    $("dlKeep").onclick = e => { e.target.disabled = true; dailyKeep(false); };
+    $("dlSkip").onclick = () => dailySkip();
+  }
+  if ($("dlRetry")) $("dlRetry").onclick = () => dailyMake(true);
+  if ($("dlPast")) $("dlPast").onclick = () => openPastDailies();
+}
+function openPastDailies() {
+  openSheet("Past dailies", b => {
+    const draw = () => {
+      if (!DAILY.past.length) { b.innerHTML = '<p class="note">No past dailies. Unkept daily bots land here and stay until you delete them.</p>'; return; }
+      b.innerHTML = `<p class="note">Daily bots you didn't keep. Keep one to make it a normal bot, or start a chat with it.</p>` + DAILY.past.map(p => `<div class="dl-card" data-id="${esc(p.id)}"><div class="dl-lbl">${esc(new Date(p.day + "T12:00").toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" }))} · ${esc(KINDS[p.kind]?.label || "Bot")}</div><b>${esc(p.card?.name || "Unnamed")}</b><p class="dl-sum">${esc(p.card?.summary || "")}</p><div class="dl-acts"><button type="button" class="btn small primary" data-chat>Start chat</button><button type="button" class="btn small" data-keep>Keep</button><button type="button" class="btn small danger" data-rm>Delete</button></div></div>`).join("");
+      b.querySelectorAll(".dl-card").forEach(r => {
+        const p = DAILY.past.find(x => x.id === r.dataset.id);
+        r.querySelector("[data-chat]").onclick = e => { e.target.disabled = true; dailyKeep(true, p); };
+        r.querySelector("[data-keep]").onclick = async e => { e.target.disabled = true; await dailyKeep(false, p); draw(); };
+        confirmBtn(r.querySelector("[data-rm]"), "Sure?", async () => { DAILY.past = DAILY.past.filter(x => x.id !== p.id); await Store.set("dailyPast", DAILY.past); draw(); drawDaily(); });
+      });
+    };
+    draw();
+  });
+}
+// checked at start, when coming back to the app and at most every 10 minutes while Home is open
+let DAILY_CHECK = 0;
+function dailyTick() { if (Date.now() - DAILY_CHECK < 60000 && DAILY.cur?.day === dayKey()) return; DAILY_CHECK = Date.now(); dailyLoad().then(() => { drawDaily(); if (!document.hidden && dailyOn()) dailyMake(); }).catch(() => {}); }
+document.addEventListener("visibilitychange", () => { if (!document.hidden) setTimeout(dailyTick, 1500); });
+setInterval(() => { if (!document.hidden && !$("home").hidden) dailyTick(); }, 600000);
 
 /* ---------- Chat ---------- */
 async function openChat(id, chatId) {
@@ -3038,6 +3169,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
     <div class="group"><h3>You</h3>
       <button class="btn" id="sPersonas">Manage personas (playing as ${esc(uname())})</button>
       <button class="btn" id="sTags">Manage tags and tag notes</button>
+      <label class="check"><input type="checkbox" id="sDaily" ${st.dailyOn !== false ? "checked" : ""}> Daily bot: once a day, invent a new bot from your favourite tags (uses your AI key once a day)</label>
     </div>
     <div class="group"><h3>All chats</h3>
       ${field("Rules for every chat", `<textarea id="sGlobal" style="min-height:100px" placeholder="e.g. Write in third person. Keep replies under 4 paragraphs. Describe smells and sounds.">${esc(st.globalInstr || "")}</textarea>`, "Applied to every character, world and group. Colored text works with [color=red]text[/color].")}
@@ -3087,6 +3219,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   drawn();
   $("sPersonas").onclick = () => openPersonas();
   $("sTags").onclick = () => openTags();
+  $("sDaily").onchange = async e => { S.settings.dailyOn = e.target.checked; await saveSettings(); drawDaily(); if (e.target.checked) dailyMake(); };
   ruleTabs($("sGlobal"));
   drawAccount($("sAccount"));
   let scaleT = null;
@@ -6969,7 +7102,7 @@ async function migrateChats() {
   if (!S.chars.length && !(await Store.get("seeded"))) { S.chars = [sampleChar()]; await Store.set("seeded", true); }
   await saveSettings(); await saveChars(); await savePersonas();
   renderHome();
-  BOOT_DONE(); refreshSfxAvail().catch(() => {}); // which sounds the chats may write
+  BOOT_DONE(); setTimeout(dailyTick, 2500); refreshSfxAvail().catch(() => {}); // which sounds the chats may write
   { const q = new URLSearchParams(location.search).get("open"); if (q) { history.replaceState(null, "", location.pathname);
       if (q === "new") setTimeout(() => $("btnNewChar")?.click(), 300);
       else if (q === "last") { const id = Object.entries(S.recent || {}).sort((a, b) => b[1] - a[1]).map(x => x[0]).find(id => S.chars.some(c => c.id === id)); if (id) setTimeout(() => openProfile(id), 300); }
