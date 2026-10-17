@@ -62,7 +62,8 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
 .char-card .snip{color:var(--muted);font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:4px}
 .char-card > div{min-width:0}
 .home-actions{display:flex;flex-wrap:wrap;gap:10px;padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--bg)}
-.home-actions .btn{flex:1;white-space:nowrap;padding-inline:12px}
+.home-actions .btn{flex:1 1 auto;white-space:nowrap;padding-inline:10px}
+.home-actions{gap:8px}
 .ph{display:grid;place-items:center;font:400 28px var(--f-display);color:var(--accent)}
 
 /* Chat */
@@ -697,6 +698,39 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 @media (max-width:420px){.rs-die{width:96px;height:96px}.rs-slot{min-width:100px}.rs-dice{gap:14px}}
 .badge.br{color:#c49bff}
 @media (prefers-reduced-motion: reduce){.fx-vig::before,.fx-vig::after,#pacer .pc-bead,#pacer .pc-track{animation:none!important}}
+.tg-group{flex:none;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.tg-group>summary{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;font-weight:700;list-style:none}
+.tg-group>summary::-webkit-details-marker{display:none}
+#tgQ,#tgGName{width:100%;padding:10px 14px;border-radius:999px;background:var(--bg);border:1px solid var(--line);flex:1;min-width:0}
+.tg-list{display:flex;flex-direction:column;padding:0 6px 6px}
+.tg-row{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:8px;border:0;border-top:1px solid var(--line);background:none;color:var(--fg);text-align:left;font:inherit;cursor:pointer}
+.tg-row .grow{flex:1;min-width:0}
+.tg-row .sub{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.tg-row .ti .tsv{width:20px;height:20px}.ti-blank{display:inline-block;width:20px}
+.tg-row.is-hidden{opacity:.55}
+.tg-row[style*="--tc"] b{color:var(--tc)}
+.te-icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px}
+.te-ic{min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:11px;display:grid;place-items:center;cursor:pointer}
+.te-ic .tsv{width:22px;height:22px}.te-ic.on{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent)}
+.te-def{background:var(--surface)!important;color:var(--muted)}
+.te-prev{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.te-prev .btag{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;padding:3px 8px;border-radius:7px;background:var(--surface-2);border:1px solid var(--line);color:var(--fg)}
+.te-prev .btag .tsv{width:13px;height:13px}
+.btag[style*="--tc"],.pf-tag[style*="--tc"],.chip[style*="--tc"]{border-color:color-mix(in srgb,var(--tc) 65%,var(--line))!important;background:color-mix(in srgb,var(--tc) 14%,var(--surface-2))!important}
+.qz-top{display:flex;flex-direction:column;gap:6px}
+.qz-bar{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden}.qz-bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.qz-step{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.qz-q{font-family:"Young Serif",serif;font-size:22px;font-weight:400;margin:6px 0 2px;line-height:1.25}
+.qz-opts{display:flex;flex-wrap:wrap;gap:8px}
+.qz-o{min-height:40px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:background-color .15s,border-color .15s,transform .1s}
+.qz-o:active{transform:scale(.96)}.qz-o.on{background:color-mix(in srgb,var(--accent) 22%,var(--surface));border-color:var(--accent);color:var(--fg)}
+.qz-o .tsv{width:16px;height:16px}.qz-n{color:var(--accent);font-size:12px}
+.qz-decide{align-self:flex-start;border-style:dashed}
+.qz-nav{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:8px;position:sticky;bottom:0;padding-top:8px;background:linear-gradient(transparent,var(--surface) 30%)}
+.qz-sum{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;flex:none}
+.qz-sum .lbl{padding:10px 12px 4px}
+.qz-row{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:0;border-top:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;text-align:left;cursor:pointer;min-height:44px}
+.qz-row:first-child{border-top:0}.qz-rq{font-size:12px;color:var(--muted)}.qz-ra{font-weight:700}
 </style>
 </head>
 <body>
@@ -707,6 +741,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
       <button type="button" class="rbtn primary" id="railNew">＋ New</button>
       <label class="rbtn" for="importCard">Import card</label>
       <button type="button" class="rbtn" id="railBooks">Lorebooks</button>
+      <button type="button" class="rbtn" id="railTags">Tags</button>
       <button type="button" class="rbtn" id="railSet">⚙ Settings</button>
     </div>
     <input id="railQ" type="search" placeholder="Find a bot" autocomplete="off" aria-label="Find a bot">
@@ -728,8 +763,9 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
     </div>
     <div class="home-actions">
       <button class="btn primary" id="btnNewChar">New</button>
-      <label class="btn" for="importCard">Import card</label>
+      <label class="btn" for="importCard">Import</label>
       <button class="btn" id="btnBooks">Lorebooks</button>
+      <button class="btn" id="btnTags">Tags</button>
       <input type="file" id="importCard" accept=".json,.png,application/json,image/png" hidden>
     </div>
   </section>
@@ -872,7 +908,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.46 · Oct 14";
+const VERSION = "1.47 · Oct 17";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1490,7 +1526,9 @@ const TAG_ICONS = [
   [/post-?apoc|apocalypse|wasteland|survival/, "radiation"], [/slice of life|cozy|daily|domestic/, "cup"], [/mentor|teacher|professor|tutor/, "book"], [/milf|mother|mom|dilf|father|dad|mature|older|middle-aged|elderly/, "wine"],
   [/\badult|ageless/, "moon"], [/\bhuman/, "human"], [/\bworld|setting|\brpg\b|\bgame/, "map"], [/\bgroup|\bparty|\bteam|\bcrew/, "group"]
 ];
-function tagIcon(t) { const s = String(t || "").toLowerCase(); for (const [re, k] of TAG_ICONS) if (re.test(s)) return TAG_SVG[k] || ""; return ""; }
+function tagIconAuto(t) { const s = String(t || "").toLowerCase(); for (const [re, k] of TAG_ICONS) if (re.test(s)) return TAG_SVG[k] || ""; return ""; }
+// the owner can pick an icon (or none) and a colour per tag in the tag manager
+function tagIcon(t) { const k = String(t || "").toLowerCase(), m = (S.settings && S.settings.tagMeta || {})[k] || {}; const svg = m.icon === "none" ? "" : m.icon && TAG_SVG[m.icon] ? TAG_SVG[m.icon] : tagIconAuto(k); return svg && m.color ? svg.replace(/style="color:[^"]*"/, `style="color:${m.color}"`) : svg; }
 function renderHome() {
   updateAmbience();
   $("personaBar").innerHTML = `Playing as <b>${esc(uname())}</b><span class="chg">Change</span>`;
@@ -1501,7 +1539,7 @@ function renderHome() {
   S.chars.forEach(c => tagsOf(c).forEach(t => { counts[t] = (counts[t] || 0) + 1; }));
   const allTags = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b)).slice(0, 40);
   for (const t of [...HF.tags]) if (!counts[t]) HF.tags.delete(t);
-  $("tagFilter").innerHTML = allTags.map(t => `<button type="button" class="chip ${HF.tags.has(t) ? "on" : ""}" data-t="${esc(t)}">${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</button>`).join("");
+  $("tagFilter").innerHTML = allTags.map(t => `<button type="button" class="chip ${HF.tags.has(t) ? "on" : ""}" data-t="${esc(t)}"${tagStyle(t)}>${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</button>`).join("");
   $("tagFilter").querySelectorAll("[data-t]").forEach(b => b.onclick = () => { const t = b.dataset.t; HF.tags.has(t) ? HF.tags.delete(t) : HF.tags.add(t); renderHome(); });
   const untagged = S.chars.filter(c => !(c.tags || []).length).length;
   $("btnTagAll").hidden = !(untagged && hasKey());
@@ -1529,7 +1567,7 @@ function renderHome() {
     const icons = [...new Map(tg.map(t => [tagIcon(t), t])).entries()].filter(([ic]) => ic).slice(0, 5);
     b.title = stripColor(sub).slice(0, 200);
     const summ = botSummary(c);
-    b.innerHTML = `<div class="name">${c.fav ? '<span class="fav-star">★</span>' : ""}${esc(c.name)}</div><div class="ph-wrap"><img alt="" loading="lazy"><span class="kind-pill">${kind === "world" ? "World" : kind === "group" ? `Group ${members(c).length}` : "Char"}</span><span class="bstats" data-stats="${c.id}" hidden></span></div><div class="cbody">${summ ? `<div class="bsum">${esc(summ)}</div>` : ""}${tg.length ? `<div class="btags">${tg.slice(0, 6).map(t => `<span class="btag">${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</span>`).join("")}${tg.length > 6 ? `<span class="btag more-t">+${tg.length - 6}</span>` : ""}</div>` : ""}<div class="btok">${fmtTok(cardTokens(c))} tokens</div></div>`;
+    b.innerHTML = `<div class="name">${c.fav ? '<span class="fav-star">★</span>' : ""}${esc(c.name)}</div><div class="ph-wrap"><img alt="" loading="lazy"><span class="kind-pill">${kind === "world" ? "World" : kind === "group" ? `Group ${members(c).length}` : "Char"}</span><span class="bstats" data-stats="${c.id}" hidden></span></div><div class="cbody">${summ ? `<div class="bsum">${esc(summ)}</div>` : ""}${tg.length ? `<div class="btags">${tg.slice(0, 6).map(t => `<span class="btag"${tagStyle(t)}>${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</span>`).join("")}${tg.length > 6 ? `<span class="btag more-t">+${tg.length - 6}</span>` : ""}</div>` : ""}<div class="btok">${fmtTok(cardTokens(c))} tokens</div></div>`;
     b.insertAdjacentHTML("beforeend", `<button type="button" class="more" aria-label="Options for ${esc(c.name)}"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>`);
     setImg(b.querySelector("img"), url, c);
     b.onclick = e => { if (e.target.closest(".more")) { cardMenu(c); return; } openProfile(c.id); };
@@ -1604,7 +1642,7 @@ async function openProfile(id) {
   openSheet(c.name, b => {
     b.innerHTML = `
       <div class="pf-top"><img class="pf-img" alt=""><div class="pf-meta"><div class="pf-kind k-${kind}">${kind === "world" ? "World" : kind === "group" ? `Group · ${members(c).length}` : "Character"}${c.fav ? ' <span class="fav-star">★</span>' : ""}${c.fromWorld && byId(c.fromWorld) ? ` · from ${esc(byId(c.fromWorld).name)}` : ""}</div><p class="pf-sum">${esc(botSummary(c)) || '<span class="hint">No description yet. Tap Edit to add one.</span>'}</p></div></div>
-      ${tags.length ? `<div class="pf-tags">${tags.map(t => `<span class="pf-tag">${tagIcon(t)}${esc(t)}</span>`).join("")}</div>` : ""}
+      ${tags.length ? `<div class="pf-tags">${tags.map(t => `<span class="pf-tag"${tagStyle(t)}>${tagIcon(t)}${esc(t)}</span>`).join("")}</div>` : ""}
       ${field("Play as", `<select id="pfP">${S.personas.map(p => `<option value="${p.id}" ${p.id === S.personaId ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>`)}
       <div class="row"><button type="button" class="btn primary" id="pfGo"></button><button type="button" class="btn" id="pfNew">New chat</button></div>
       ${people.length ? `<div class="stack"><div class="lbl">${kind === "group" ? "Talk to one of them alone" : "Characters in this world"}</div>${people.map((x, i) => `<button type="button" class="listrow pf-person" data-i="${i}"><img alt=""><span class="grow"><b>${esc(x.name)}</b><span class="sub">${esc(x.sub || "")}</span></span><span class="pf-go">Talk ›</span></button>`).join("")}</div>` : ""}
@@ -1659,16 +1697,17 @@ async function openChats(cid) {
 }
 $("btnBooks").onclick = () => openBooks();
 $("btnNewChar").onclick = () => openSheet("Create", b => {
-  const ds = Object.entries(DRAFTS || {}).filter(([id, d]) => d && (d.type === "gen" ? (d.prompt || "").trim() || d.card : d.type === "edit" && d.isNew)).sort((a, b) => b[1].at - a[1].at);
-  const dName = d => d.type === "gen" ? `${d.card?.name || "Generator draft"} · ${KINDS[d.card?._kind || d.kind]?.label || "Bot"} (generator)` : `${d.work?.name || "Untitled " + (KINDS[d.kind]?.label || "bot").toLowerCase()}`;
-  b.innerHTML = `${ds.length ? `<div class="stack"><div class="lbl">Unfinished</div>${ds.map(([id, d]) => `<div class="listrow draft-row" data-id="${esc(id)}"><span class="grow"><b>${esc(dName(d))}</b><span class="sub">Saved ${esc(fmtWhen(d.at))}</span></span><button type="button" class="btn small primary" data-go>Continue</button><button type="button" class="btn small danger" data-rm>Discard</button></div>`).join("")}</div>` : ""}<div class="menu"><button class="btn kind-opt gen-opt" id="genOpen">✦ Character generator<small>Describe what you want and the AI builds the whole bot for you.</small></button><button class="btn kind-opt gen-opt" id="genSurprise">🎲 Surprise me<small>Pick a few tags and get a brand-new bot built around them.</small></button>${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
+  const ds = Object.entries(DRAFTS || {}).filter(([id, d]) => d && (d.type === "gen" ? (d.prompt || "").trim() || d.card : d.type === "quiz" ? d.a && d.a.kind : d.type === "edit" && d.isNew)).sort((a, b) => b[1].at - a[1].at);
+  const dName = d => d.type === "quiz" ? `Quiz · ${KINDS[d.a.kind]?.label || "Bot"} (question ${(d.i || 0) + 1})` : d.type === "gen" ? `${d.card?.name || "Generator draft"} · ${KINDS[d.card?._kind || d.kind]?.label || "Bot"} (generator)` : `${d.work?.name || "Untitled " + (KINDS[d.kind]?.label || "bot").toLowerCase()}`;
+  b.innerHTML = `${ds.length ? `<div class="stack"><div class="lbl">Unfinished</div>${ds.map(([id, d]) => `<div class="listrow draft-row" data-id="${esc(id)}"><span class="grow"><b>${esc(dName(d))}</b><span class="sub">Saved ${esc(fmtWhen(d.at))}</span></span><button type="button" class="btn small primary" data-go>Continue</button><button type="button" class="btn small danger" data-rm>Discard</button></div>`).join("")}</div>` : ""}<div class="menu"><button class="btn kind-opt gen-opt" id="genOpen">✦ Character generator<small>Describe what you want and the AI builds the whole bot for you.</small></button><button class="btn kind-opt gen-opt" id="genSurprise">🎲 Surprise me<small>Pick a few tags and get a brand-new bot built around them.</small></button><button class="btn kind-opt gen-opt" id="genQuiz">📝 Character quiz<small>Answer quick questions (body, personality, species, setting, kinks…) and get a bot built from your answers.</small></button>${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
   $("genOpen").onclick = async () => { await genRestore(); openGenerator(); };
   b.querySelectorAll(".draft-row").forEach(r => {
     const id = r.dataset.id, d = DRAFTS[id];
-    r.querySelector("[data-go]").onclick = async () => { if (d.type === "gen") { await genRestore(); openGenerator(); } else editChar(d.work, true, d); };
-    confirmBtn(r.querySelector("[data-rm]"), "Sure?", async () => { await dropDraft(id); if (id === "gen") { GEN.card = null; GEN.prompt = ""; } r.remove(); });
+    r.querySelector("[data-go]").onclick = async () => { if (d.type === "quiz") { QUIZ.a = JSON.parse(JSON.stringify(d.a)); QUIZ.i = d.i || 0; qzDraw(); } else if (d.type === "gen") { await genRestore(); openGenerator(); } else editChar(d.work, true, d); };
+    confirmBtn(r.querySelector("[data-rm]"), "Sure?", async () => { await dropDraft(id); if (id === "gen") { GEN.card = null; GEN.prompt = ""; } if (id === "quiz") QUIZ.a = null; r.remove(); });
   });
   $("genSurprise").onclick = () => openSurprise();
+  $("genQuiz").onclick = () => openQuiz(QUIZ.a ? null : "new");
   b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => editChar(blankChar(x.dataset.k), true));
 });
 
@@ -1779,20 +1818,172 @@ const SURPRISE_TAGS = [["Who", ["female", "male", "futa", "nonbinary", "harem"]]
   ["Species", ["dragon", "canine", "cat", "snake", "bird", "horse", "aquatic", "insect"]], ["Kinks", ["vore", "scat", "inflation", "pregnancy", "macro", "micro", "dom", "sub", "nsfw"]],
   ["Story", ["romance", "wholesome", "villain", "comedy", "adventure", "mystery", "mentor", "mature", "royalty", "slice of life"]], ["Setting", ["fantasy", "sci-fi", "modern", "historical", "post-apocalyptic"]]];
 const SURPRISE = { tags: new Set(), kind: "any" };
+// ---------- Tag library (v1.47): the owner's own tags, notes, groups, icons and colours ----------
+// settings.tagNotes {tag: note} (since v1.28), settings.tagMeta {tag: {g: group, icon, color, hidden}},
+// settings.tagGroups [custom group names, in order], settings.myTags [tags made in the manager].
+// Built-in Surprise me tags keep their names and groups (notes and hiding only).
+const TAG_YOURS = "Your tags";
+const tagMeta = t => (S.settings.tagMeta || {})[t] || {};
+const isBuiltinTag = t => SURPRISE_TAGS.some(([, l]) => l.includes(t));
+const builtinGroupOf = t => (SURPRISE_TAGS.find(([, l]) => l.includes(t)) || [])[0];
+const tagGroupsList = () => [...SURPRISE_TAGS.map(([g]) => g), ...(S.settings.tagGroups || []), TAG_YOURS];
+function tagGroupOf(t) { const b = builtinGroupOf(t); if (b) return b; const g = tagMeta(t).g; return g && tagGroupsList().includes(g) ? g : TAG_YOURS; }
+const botTagSet = () => new Set(S.chars.flatMap(c => [...(c.tags || []), ...(c.members || []).flatMap(m => m.tags || [])].map(x => String(x).toLowerCase())).filter(t => t && t !== "world" && t !== "group"));
+function allLibTags() { return [...new Set([...SURPRISE_TAGS.flatMap(([, l]) => l), ...(S.settings.myTags || []), ...botTagSet()])]; }
+function tagBotCount(t) { return S.chars.filter(c => (c.tags || []).map(x => x.toLowerCase()).includes(t)).length; }
+// the tags shown in each Surprise me section (hidden ones left out); empty sections are dropped
+function surpriseGroups() {
+  const by = new Map(tagGroupsList().map(g => [g, []]));
+  for (const g of SURPRISE_TAGS) by.set(g[0], [...g[1]]);
+  for (const t of allLibTags()) if (!isBuiltinTag(t)) by.get(tagGroupOf(t)).push(t);
+  return [...by].map(([g, l]) => [g, [...new Set(l)].filter(t => !tagMeta(t).hidden).sort((a, b) => isBuiltinTag(a) && isBuiltinTag(b) ? 0 : a.localeCompare(b))]).filter(([, l]) => l.length);
+}
+async function setTagMeta(t, patch) {
+  const all = S.settings.tagMeta = { ...(S.settings.tagMeta || {}) };
+  const m = { ...(all[t] || {}), ...patch };
+  for (const k of Object.keys(m)) if (m[k] === "" || m[k] == null || m[k] === false) delete m[k];
+  if (Object.keys(m).length) all[t] = m; else delete all[t];
+  await saveSettings();
+}
+async function setTagNote(t, v) { const n = S.settings.tagNotes = { ...(S.settings.tagNotes || {}) }; v = String(v || "").trim(); if (v) n[t] = v; else delete n[t]; await saveSettings(); }
+// rename / merge / delete change every bot (and group member) carrying the tag
+async function retagBots(from, to) {
+  const fix = list => { const l = (list || []).map(x => String(x).toLowerCase()); if (!l.includes(from)) return list; return [...new Set(l.flatMap(x => x === from ? (to ? [to] : []) : [x]))]; };
+  for (const c of S.chars) { c.tags = fix(c.tags); if (Array.isArray(c.members)) for (const m of c.members) if (m.tags) m.tags = fix(m.tags); }
+  await saveChars();
+}
+async function renameTag(from, to) {
+  to = parseTags(to)[0]; if (!to || to === from) return from;
+  const st = S.settings, notes = st.tagNotes || {}, meta = st.tagMeta || {};
+  if (!notes[to] && notes[from]) await setTagNote(to, notes[from]);
+  if (meta[from]) await setTagMeta(to, { ...meta[from], ...(meta[to] || {}) });
+  await setTagNote(from, ""); st.tagMeta = { ...(st.tagMeta || {}) }; delete st.tagMeta[from];
+  st.myTags = [...new Set((st.myTags || []).map(x => x === from ? to : x))];
+  if (!isBuiltinTag(to) && !st.myTags.includes(to) && !botTagSet().has(from)) st.myTags.push(to);
+  await retagBots(from, to); await saveSettings();
+  return to;
+}
+async function deleteTag(t) {
+  const st = S.settings; await setTagNote(t, ""); st.tagMeta = { ...(st.tagMeta || {}) }; delete st.tagMeta[t];
+  st.myTags = (st.myTags || []).filter(x => x !== t); await retagBots(t, null); await saveSettings();
+}
+const TAG_COLS = ["#ff8fb1", "#7aa2e8", "#c49bff", "#e2766f", "#6fdc6a", "#f0a24a", "#ffd36b", "#4fd1c5", "#f1ebda", "#a8875a"];
+function openTags(focusGroup) {
+  let q = "";
+  openSheet("Tags", b => {
+    const draw = () => {
+      const tags = allLibTags().filter(t => !q || t.includes(q) || ((S.settings.tagNotes || {})[t] || "").toLowerCase().includes(q));
+      const groups = tagGroupsList().map(g => [g, tags.filter(t => tagGroupOf(t) === g).sort((a, b) => a.localeCompare(b))]).filter(([g, l]) => l.length || (S.settings.tagGroups || []).includes(g));
+      const custom = new Set(S.settings.tagGroups || []);
+      b.innerHTML = `<p class="note">Your tag library. Notes tell the generator what a tag means to you (used by Surprise me, the quiz and the daily bot). Groups become the sections in Surprise me.</p>
+        <div class="row" style="gap:8px"><button type="button" class="btn primary" id="tgNew">＋ New tag</button><button type="button" class="btn" id="tgNewG">＋ New group</button></div>
+        <input type="search" id="tgQ" placeholder="Find a tag or note" value="${esc(q)}" autocomplete="off">
+        <div id="tgGroupBar" hidden></div>
+        ${groups.map(([g, l]) => `<details class="tg-group" open data-g="${esc(g)}"><summary><span class="grow">${esc(g)}</span><span class="badge">${l.length}</span>${custom.has(g) ? `<button type="button" class="btn small" data-gren="${esc(g)}">Rename</button><button type="button" class="btn small danger" data-gdel="${esc(g)}">Delete</button>` : ""}</summary>
+          <div class="tg-list">${l.length ? l.map(t => { const m = tagMeta(t), note = (S.settings.tagNotes || {})[t], n = tagBotCount(t);
+            return `<button type="button" class="tg-row${m.hidden ? " is-hidden" : ""}" data-t="${esc(t)}"${tagStyle(t)}><span class="ti">${tagIcon(t) || '<span class="ti-blank"></span>'}</span><span class="grow"><b>${esc(t)}</b>${isBuiltinTag(t) ? ' <span class="badge">built-in</span>' : ""}${m.hidden ? ' <span class="badge">hidden</span>' : ""}<span class="sub">${n ? `${n} bot${n === 1 ? "" : "s"}` : "No bots yet"}${note ? " · " + esc(note.length > 70 ? note.slice(0, 70) + "…" : note) : ""}</span></span><span aria-hidden="true">›</span></button>`; }).join("") : '<p class="hint" style="margin:6px 0">No tags in this group yet.</p>'}</div></details>`).join("")}`;
+      const qi = $("tgQ"); qi.oninput = () => { q = qi.value.trim().toLowerCase(); const p = qi.selectionStart; draw(); const n = $("tgQ"); n.focus(); n.setSelectionRange(p, p); };
+      $("tgNew").onclick = () => editTag(null);
+      $("tgNewG").onclick = () => {
+        const bar = $("tgGroupBar"); bar.hidden = false;
+        bar.innerHTML = `<div class="row" style="gap:8px"><input id="tgGName" placeholder="Group name, e.g. Body types" style="flex:1"><button type="button" class="btn primary small" id="tgGOk">Add</button></div><div class="hint" id="tgGMsg"></div>`;
+        $("tgGName").focus();
+        $("tgGOk").onclick = async () => {
+          const name = $("tgGName").value.trim().replace(/\s+/g, " ").slice(0, 30);
+          if (!name) return; if (tagGroupsList().some(g => g.toLowerCase() === name.toLowerCase())) { $("tgGMsg").textContent = "That group already exists."; return; }
+          S.settings.tagGroups = [...(S.settings.tagGroups || []), name]; await saveSettings(); toast("Group added"); draw();
+        };
+      };
+      b.querySelectorAll("[data-t]").forEach(x => x.onclick = () => editTag(x.dataset.t));
+      b.querySelectorAll("[data-gren]").forEach(x => x.onclick = e => {
+        e.preventDefault(); const g = x.dataset.gren; const bar = $("tgGroupBar"); bar.hidden = false;
+        bar.innerHTML = `<div class="row" style="gap:8px"><input id="tgGName" value="${esc(g)}" style="flex:1"><button type="button" class="btn primary small" id="tgGOk">Rename</button></div>`;
+        $("tgGOk").onclick = async () => {
+          const name = $("tgGName").value.trim().replace(/\s+/g, " ").slice(0, 30); if (!name || name === g) return;
+          if (tagGroupsList().some(y => y.toLowerCase() === name.toLowerCase())) { toast("That group already exists"); return; }
+          S.settings.tagGroups = (S.settings.tagGroups || []).map(y => y === g ? name : y);
+          const meta = S.settings.tagMeta = { ...(S.settings.tagMeta || {}) }; for (const [t, m] of Object.entries(meta)) if (m.g === g) meta[t] = { ...m, g: name };
+          await saveSettings(); draw();
+        };
+      });
+      b.querySelectorAll("[data-gdel]").forEach(x => { x.onclick = e => e.preventDefault(); confirmBtn(x, "Sure?", async () => {
+        const g = x.dataset.gdel; S.settings.tagGroups = (S.settings.tagGroups || []).filter(y => y !== g);
+        const meta = S.settings.tagMeta = { ...(S.settings.tagMeta || {}) }; for (const [t, m] of Object.entries(meta)) if (m.g === g) { const n = { ...m }; delete n.g; if (Object.keys(n).length) meta[t] = n; else delete meta[t]; }
+        await saveSettings(); toast("Group removed; its tags moved to " + TAG_YOURS); draw();
+      }); });
+    };
+    draw();
+    if (focusGroup) { const el = [...b.querySelectorAll(".tg-group")].find(x => x.dataset.g === focusGroup); if (el) requestAnimationFrame(() => el.scrollIntoView({ block: "start" })); }
+  });
+}
+function editTag(t) {
+  const isNew = !t, builtin = !isNew && isBuiltinTag(t);
+  const m = isNew ? {} : { ...tagMeta(t) };
+  let group = isNew ? TAG_YOURS : tagGroupOf(t), icon = m.icon || "", color = m.color || "";
+  openSheet(isNew ? "New tag" : "Tag: " + t, b => {
+    const iconKeys = Object.keys(TAG_SVG);
+    const others = allLibTags().filter(x => x !== t).sort();
+    b.innerHTML = `
+      ${field("Name", `<input id="teName" value="${esc(t || "")}" ${builtin ? "disabled" : ""} placeholder="e.g. werewolf" autocomplete="off">`, builtin ? "Built-in tags keep their name. You can add a note or hide it." : "Lowercase; renaming changes it on every bot that has it.")}
+      ${field("What it means to you", `<textarea id="teNote" style="min-height:90px" placeholder="e.g. always huge, a little clumsy, loves showing off their belly">${esc((S.settings.tagNotes || {})[t] || "")}</textarea>`, "The generator follows this whenever the tag is used (Surprise me, the quiz, the daily bot).")}
+      ${builtin ? `<p class="hint">Group: <b>${esc(group)}</b></p>` : field("Group", `<div class="tabs" id="teGroup">${tagGroupsList().map(g => `<button type="button" class="tab ${g === group ? "on" : ""}" data-g="${esc(g)}">${esc(g)}</button>`).join("")}</div>`)}
+      ${field("Icon", `<div class="te-icons" id="teIcons"><button type="button" class="te-ic ${!icon ? "on" : ""}" data-i="" title="Automatic">Auto</button><button type="button" class="te-ic ${icon === "none" ? "on" : ""}" data-i="none" title="No icon">None</button>${iconKeys.map(k => `<button type="button" class="te-ic ${icon === k ? "on" : ""}" data-i="${k}" title="${k}" aria-label="${k}">${TAG_SVG[k]}</button>`).join("")}</div>`)}
+      ${field("Colour", `<div class="pe-cols" id="teCols"><button type="button" class="te-def ${!color ? "on" : ""}" data-c="" aria-label="Default colour">—</button>${TAG_COLS.map(c => `<button type="button" data-c="${c}" style="background:${c}" class="${color === c ? "on" : ""}" aria-label="Colour ${c}"></button>`).join("")}<input type="color" id="teCol" value="${esc(color || "#e8a95b")}" aria-label="Any colour"></div>`, "Shown on bot cards and tag chips.")}
+      <div id="tePrev" class="te-prev"></div>
+      <label class="check"><input type="checkbox" id="teHide" ${m.hidden ? "checked" : ""}> Hide from Surprise me, the quiz and the daily bot</label>
+      <div id="teMsg" class="hint"></div>
+      <button type="button" class="btn primary" id="teSave">${isNew ? "Add tag" : "Save"}</button>
+      ${!isNew && !builtin ? `<details class="gen-sec"><summary>Merge or delete</summary><div class="gen-body stack">
+        ${field("Merge into another tag", `<div class="row" style="gap:8px"><select id="teInto" style="flex:1"><option value="">Pick a tag…</option>${others.map(x => `<option>${esc(x)}</option>`).join("")}</select><button type="button" class="btn small" id="teMerge">Merge</button></div>`, `Every bot tagged “${esc(t)}” gets the other tag instead. Its note is kept if the other tag has none.`)}
+        <button type="button" class="btn danger" id="teDel">Delete this tag${tagBotCount(t) ? ` (removes it from ${tagBotCount(t)} bot${tagBotCount(t) === 1 ? "" : "s"})` : ""}</button></div></details>` : ""}
+      <button type="button" class="btn" id="teBack">‹ All tags</button>`;
+    const prev = () => { const name = parseTags($("teName").value)[0] || "tag"; const fake = color ? ` style="--tc:${color}"` : ""; const svg = icon === "none" ? "" : icon ? recolor(TAG_SVG[icon], color) : recolor(tagIconAuto(name), color); $("tePrev").innerHTML = `Preview: <span class="btag"${fake}>${svg ? `<span class="ti">${svg}</span>` : ""}${esc(name)}</span>`; };
+    b.querySelectorAll("#teGroup [data-g]").forEach(x => x.onclick = () => { group = x.dataset.g; b.querySelectorAll("#teGroup .tab").forEach(y => y.classList.toggle("on", y === x)); });
+    b.querySelectorAll("#teIcons [data-i]").forEach(x => x.onclick = () => { icon = x.dataset.i; b.querySelectorAll("#teIcons .te-ic").forEach(y => y.classList.toggle("on", y === x)); prev(); });
+    b.querySelectorAll("#teCols [data-c]").forEach(x => x.onclick = () => { color = x.dataset.c; b.querySelectorAll("#teCols [data-c]").forEach(y => y.classList.toggle("on", y === x)); prev(); });
+    $("teCol").oninput = e => { color = e.target.value; b.querySelectorAll("#teCols [data-c]").forEach(y => y.classList.remove("on")); prev(); };
+    $("teName").oninput = prev; prev();
+    $("teSave").onclick = async () => {
+      let name = builtin ? t : parseTags($("teName").value)[0];
+      if (!name) { $("teMsg").textContent = "Give the tag a name."; return; }
+      if (name === "world" || name === "group") { $("teMsg").textContent = "That name is used by the app itself."; return; }
+      if (!isNew && name !== t) { if (isBuiltinTag(name)) { $("teMsg").textContent = "That's a built-in tag; use Merge instead."; return; } name = await renameTag(t, name); }
+      if (isNew) {
+        if (allLibTags().includes(name)) { $("teMsg").textContent = "That tag already exists."; return; }
+        S.settings.myTags = [...new Set([...(S.settings.myTags || []), name])];
+      }
+      await setTagNote(name, $("teNote").value);
+      await setTagMeta(name, { g: builtin || group === TAG_YOURS ? "" : group, icon, color, hidden: $("teHide").checked });
+      toast(isNew ? "Tag added" : "Saved"); renderHome(); openTags(builtin ? null : group);
+    };
+    $("teBack").onclick = () => openTags();
+    if ($("teMerge")) $("teMerge").onclick = async () => {
+      const into = $("teInto").value; if (!into) { $("teMsg").textContent = "Pick the tag to merge into."; return; }
+      const notes = S.settings.tagNotes || {}; if (!notes[into] && notes[t]) await setTagNote(into, notes[t]);
+      if (!isBuiltinTag(into) && !(S.settings.myTags || []).includes(into) && !botTagSet().has(into)) S.settings.myTags = [...(S.settings.myTags || []), into];
+      await retagBots(t, into); await deleteTag(t); toast(`Merged into ${into}`); renderHome(); openTags();
+    };
+    if ($("teDel")) confirmBtn($("teDel"), "Tap again to delete", async () => { await deleteTag(t); toast("Tag deleted"); renderHome(); openTags(); });
+  });
+}
+const recolor = (svg, col) => svg && col ? svg.replace(/style="color:[^"]*"/, `style="color:${col}"`) : svg || "";
+const tagStyle = t => { const c = tagMeta(t).color; return c ? ` style="--tc:${esc(c)}"` : ""; };
+$("btnTags").onclick = () => openTags();
+$("railTags").onclick = () => openTags();
 function openSurprise() {
-  const mine = [...new Set(S.chars.flatMap(c => tagsOf(c)))].filter(t => !SURPRISE_TAGS.some(([, l]) => l.includes(t)) && t !== "world" && t !== "group").sort();
-  const groups = [...SURPRISE_TAGS, ...(mine.length ? [["Your tags", mine.slice(0, 40)]] : [])];
+  const groups = surpriseGroups();
   openSheet("Surprise me", b => {
     const draw = () => {
       b.innerHTML = `<p class="note">Pick the tags you want and the generator invents everything else. You'll see the result before it's created.</p>
         ${field("Bot type", `<div class="tabs" id="srKind">${[["any", "Any"], ...Object.entries(KINDS).map(([k, v]) => [k, v.label])].map(([k, l]) => `<button type="button" class="tab ${SURPRISE.kind === k ? "on" : ""}" data-k="${k}">${l}</button>`).join("")}</div>`)}
         ${groups.map(([g, list]) => `<div class="stack" style="gap:6px"><div class="lbl">${esc(g)}</div><div class="tabs">${list.map(t => `<button type="button" class="chip ${SURPRISE.tags.has(t) ? "on" : ""}" data-t="${esc(t)}">${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}${(S.settings.tagNotes || {})[t] ? '<span class="tn-dot" title="Has a note">✎</span>' : ""}</button>`).join("")}</div></div>`).join("")}
-        ${SURPRISE.tags.size ? `<div class="group" id="srNotes"><h3>Tag notes</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">What each tag means to you, so the bot comes out the way you picture it. Notes are remembered for next time.</p>${[...SURPRISE.tags].map(t => `<div class="field"><label>${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span> ` : ""}${esc(t)}</label><textarea data-note="${esc(t)}" rows="2" placeholder="e.g. what kind of ${esc(t)} you like, what to avoid…">${esc((S.settings.tagNotes || {})[t] || "")}</textarea></div>`).join("")}</div>` : ""}
+        ${SURPRISE.tags.size ? `<div class="group" id="srNotes"><h3>Tag notes <button type="button" class="btn small" id="srTags" style="float:right">Manage tags</button></h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">What each tag means to you, so the bot comes out the way you picture it. Notes are remembered for next time.</p>${[...SURPRISE.tags].map(t => `<div class="field"><label>${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span> ` : ""}${esc(t)}</label><textarea data-note="${esc(t)}" rows="2" placeholder="e.g. what kind of ${esc(t)} you like, what to avoid…">${esc((S.settings.tagNotes || {})[t] || "")}</textarea></div>`).join("")}</div>` : ""}
         <div id="srMsg" class="hint"></div>
         <button type="button" class="btn primary" id="srGo">🎲 Surprise me${SURPRISE.tags.size ? ` with ${SURPRISE.tags.size} tag${SURPRISE.tags.size === 1 ? "" : "s"}` : ""}</button>`;
       b.querySelectorAll("#srKind [data-k]").forEach(x => x.onclick = () => { SURPRISE.kind = x.dataset.k; draw(); });
       b.querySelectorAll("[data-t]").forEach(x => x.onclick = () => { const t = x.dataset.t; SURPRISE.tags.has(t) ? SURPRISE.tags.delete(t) : SURPRISE.tags.add(t); const y = b.scrollTop; draw(); b.scrollTop = y; });
       let noteT; b.querySelectorAll("[data-note]").forEach(ta => ta.addEventListener("input", () => { const notes = S.settings.tagNotes = { ...(S.settings.tagNotes || {}) }; const v = ta.value.trim(); if (v) notes[ta.dataset.note] = v; else delete notes[ta.dataset.note]; clearTimeout(noteT); noteT = setTimeout(saveSettings, 500); }));
+      if ($("srTags")) $("srTags").onclick = () => openTags();
       $("srGo").onclick = async () => {
         if (!SURPRISE.tags.size) { $("srMsg").textContent = "Pick at least one tag."; return; }
         if (!hasKey()) { $("srMsg").textContent = "Add your API key in Settings first."; return; }
@@ -1808,6 +1999,193 @@ function openSurprise() {
     };
     draw();
   });
+}
+/* ---------- Character quiz (v1.47): answer simple questions, the generator builds the bot ---------- */
+// One question per screen. Every question has tap answers (one or several), an "Other…" box and "You decide".
+// QUIZ.a = { kind, n (group size), q: {id: ans}, m: [{id: ans}, …] (group members) }, ans = { pick: [], other: "", decide: bool, num: "" }
+// Drafts: drafts.quiz (synced); finished answer sets: Store "quizLast"; named presets: Store "quizPresets" [{id, name, a, at}].
+const QZ_BODY = [
+  { id: "name", q: "What's their name?", t: "text", ph: "e.g. Vex" },
+  { id: "gender", q: "Gender?", t: "one", o: ["female", "male", "futa / herm", "nonbinary", "genderless"] },
+  { id: "pronouns", q: "Pronouns?", t: "one", o: ["she/her", "he/him", "they/them", "it/its"] },
+  { id: "form", q: "What are they?", t: "one", o: ["human", "anthro (furry)", "feral (animal or creature)", "monster", "slime / goo", "robot / synthetic"] },
+  { id: "species", q: "Species?", t: "many", when: a => !(a.form?.pick || []).includes("human"), o: ["wolf", "fox", "dog", "cat", "lion", "tiger", "dragon", "snake / naga", "lizard", "horse", "deer", "rabbit", "bear", "cow / bull", "goat", "shark", "orca", "bird", "bat", "rat / mouse", "hyena", "demon", "angel", "elf", "orc", "slime", "spider / insect", "plant"], tags: true },
+  { id: "age", q: "How old? (Always an adult.)", t: "age", o: ["young adult (18–25)", "adult (26–39)", "middle-aged (40–59)", "older (60+)", "ancient / immortal"] },
+  { id: "height", q: "How tall?", t: "one", o: ["pocket-sized", "short", "average", "tall", "very tall", "giant", "macro (building-sized or bigger)"] },
+  { id: "build", q: "Body build?", t: "many", o: ["skinny", "slim", "athletic", "muscular", "curvy", "soft", "chubby", "fat", "heavyset", "huge and hulking"] },
+  { id: "chest", q: "Chest?", t: "one", o: ["flat", "pecs", "small breasts", "medium breasts", "large breasts", "huge breasts", "enormous breasts"] },
+  { id: "butt", q: "Butt and hips?", t: "one", o: ["small and narrow", "average", "round", "wide hips", "thick", "enormous"] },
+  { id: "belly", q: "Belly?", t: "one", o: ["flat / toned", "abs", "soft", "pudgy", "round", "big gut", "huge"] },
+  { id: "genitals", q: "Genitals?", t: "many", o: ["pussy", "cock", "balls", "sheath", "knot", "horse cock", "barbed", "tapered (canine)", "tentacle", "slit", "smooth / none"] },
+  { id: "gsize", q: "How big down there?", t: "one", when: a => !((a.genitals?.pick || []).every(x => x === "smooth / none") && (a.genitals?.pick || []).length), o: ["small", "average", "big", "huge", "hyper"] },
+  { id: "extras", q: "Any other features?", t: "many", o: ["tail", "wings", "horns", "claws", "fangs", "fur", "scales", "feathers", "paws", "hooves", "muzzle", "big tongue", "extra limbs", "tattoos", "piercings", "glasses", "scars"] },
+  { id: "colors", q: "Colours and look (hair, fur, eyes, clothes)?", t: "text", ph: "e.g. black fur with silver tips, golden eyes, a leather harness" },
+  { id: "traits", q: "Personality?", t: "many", o: ["kind", "shy", "confident", "bratty", "playful", "teasing", "smug", "flirty", "caring", "motherly / fatherly", "protective", "possessive", "clingy", "grumpy", "cold", "cruel", "sadistic", "lazy", "gluttonous", "curious", "clumsy", "proud", "mysterious", "unhinged"] },
+  { id: "dom", q: "Dominant or submissive?", t: "one", o: ["very dominant", "dominant", "switch", "submissive", "very submissive"] },
+  { id: "toyou", q: "How do they feel about you?", t: "one", o: ["in love", "friendly", "teasing", "indifferent", "hungry for you", "possessive", "protective", "hostile", "curious"] },
+  { id: "speech", q: "How do they talk?", t: "one", o: ["soft-spoken", "loud", "crude", "proper / formal", "sarcastic", "few words", "bubbly", "growly / purring", "poetic", "with an accent"] },
+  { id: "likes", q: "Likes and dislikes?", t: "text", ph: "e.g. loves food and naps, hates being rushed" },
+  { id: "back", q: "Backstory foundations?", t: "many", o: ["noble / royal birth", "humble roots", "orphan", "ex-soldier", "scholar / scientist", "outcast", "cursed", "runaway", "criminal past", "former prey", "apex predator", "lab-made", "summoned", "last of their kind", "retired adventurer", "newly arrived"] }
+];
+const QZ_SCENE = [
+  { id: "setting", q: "Where is it set?", t: "one", o: ["modern city", "small town", "countryside / farm", "fantasy kingdom", "wilderness / forest", "jungle", "desert", "snowy north", "ocean / islands", "underground / dungeon", "magic academy", "sci-fi / space", "post-apocalyptic", "historical"] },
+  { id: "job", q: "Their job or role?", t: "one", kinds: ["character", "group"], o: ["adventurer", "mercenary", "royalty", "knight / guard", "shopkeeper / merchant", "innkeeper / chef", "farmer", "hunter", "doctor / healer", "scientist", "priest / priestess", "teacher", "student", "office worker", "idol / entertainer", "criminal", "monster of the area", "no job"] },
+  { id: "tone", q: "What should it feel like?", t: "many", kinds: ["world"], o: ["cozy", "romantic", "lewd", "comedic", "adventurous", "dark", "grim and brutal", "mysterious", "horror"] },
+  { id: "folk", q: "Who lives there?", t: "many", kinds: ["world"], o: ["humans", "anthros", "ferals", "monsters", "giants", "tiny folk", "dragons", "demons", "robots", "mixed everything"] },
+  { id: "kinks", q: "Kinks for this bot?", t: "many", o: ["oral vore", "cock vore", "unbirth", "anal vore", "breast vore", "tail vore", "digestion", "safe / endo vore", "soft vore", "hard vore", "inflation", "weight gain", "macro / micro", "same size", "scat", "musk", "feet", "breeding", "dom / sub", "none"], tags: true },
+  { id: "role", q: "Who are you to them?", t: "one", o: ["their lover", "their prey", "their pred (you eat them)", "a stranger", "a friend", "a roommate", "a coworker", "their servant", "their master / owner", "a rival", "an adventuring partner", "a customer", "a traveler passing through"] },
+  { id: "start", q: "How does the story start?", t: "one", o: ["first meeting", "already together", "you're caught", "they're hungry", "a lost bet", "a job or quest", "you wake up somewhere strange", "a date", "after a fight", "you've been shrunk"] }
+];
+const QZ_GROUP = [
+  { id: "gname", q: "A name for the group?", t: "text", ph: "e.g. The Hollow Fang pack" },
+  { id: "count", q: "How many members?", t: "one", o: ["2", "3", "4", "5"] },
+  { id: "bond", q: "How are they connected?", t: "one", o: ["family", "adventuring party", "harem", "pack / herd", "coworkers", "friends", "rivals", "couple", "cult", "royal court"] }
+];
+const QZ_WORLD = [{ id: "wname", q: "A name for the world?", t: "text", ph: "e.g. The Verdant Maw" }];
+const QZ_SEC = { you: "You", body: "Body", mind: "Personality", scene: "Story" };
+const QZ_MIND = new Set(["traits", "dom", "toyou", "speech", "likes", "back"]);
+const QUIZ = { a: null, i: 0 };
+const qzNew = kind => ({ kind, q: {}, m: [] });
+const qzKeep = now => { if (QUIZ.a) return saveDraft("quiz", { type: "quiz", a: QUIZ.a, i: QUIZ.i }, now); };
+// the questions in order for the current answers: [{q, mi}] (mi = group member index)
+function qzSteps(a) {
+  const out = [];
+  if (a.kind === "group") { for (const q of QZ_GROUP) out.push({ q, mi: null }); const n = +(a.q.count?.pick?.[0] || a.q.count?.other || 3) || 3;
+    for (let i = 0; i < Math.min(6, Math.max(2, n)); i++) for (const q of QZ_BODY) if (!q.when || q.when(a.m[i] || {})) out.push({ q, mi: i }); }
+  else if (a.kind === "world") for (const q of QZ_WORLD) out.push({ q, mi: null });
+  else for (const q of QZ_BODY) if (!q.when || q.when(a.q)) out.push({ q, mi: null });
+  for (const q of QZ_SCENE) if (!q.kinds || q.kinds.includes(a.kind)) out.push({ q, mi: null });
+  return out;
+}
+const qzBag = (a, mi) => mi == null ? a.q : (a.m[mi] = a.m[mi] || {});
+const qzAns = (a, st) => qzBag(a, st.mi)[st.q.id] || {};
+// the owner's own tags (not hidden) that fit a question: kinks get the Kinks group + custom groups, species get the Species group
+function qzTagOpts(q) {
+  if (!q.tags) return [];
+  const want = q.id === "kinks" ? ["Kinks", ...(S.settings.tagGroups || []), TAG_YOURS] : ["Species", "Form"];
+  return allLibTags().filter(t => !tagMeta(t).hidden && want.includes(tagGroupOf(t)) && !isBuiltinTag(t));
+}
+function qzSay(st, x) {
+  if (!x || (!x.decide && !(x.pick || []).length && !(x.other || "").trim() && !(x.num || "").trim())) return "";
+  if (x.decide) return "you decide";
+  const parts = [...(x.pick || [])]; if (x.num) parts.push(`${x.num} years old`); if ((x.other || "").trim()) parts.push(x.other.trim());
+  return parts.join(", ");
+}
+function openQuiz(start) {
+  if (start === "new" || !QUIZ.a) {
+    openSheet("Character quiz", b => {
+      S.sheetGuard = null;
+      Promise.all([Store.get("quizPresets"), Store.get("quizLast")]).then(([pre, last]) => {
+        pre = Array.isArray(pre) ? pre : [];
+        b.innerHTML = `<p class="note">Answer a few quick questions and the generator builds the bot from them. Tap answers, pick several where it fits, type your own, or let it decide.</p>
+          <div class="lbl">What are you making?</div>
+          <div class="menu">${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${k === "character" ? "One character: body, personality, story." : k === "group" ? "A few characters together; you answer for each member." : "A whole setting with its own people and dangers."}</small></button>`).join("")}</div>
+          ${last && last.kind ? `<button type="button" class="btn" id="qzLast">↻ Another bot from my last answers<small style="display:block;color:var(--muted);font-weight:400">${esc(KINDS[last.kind].label)}${qzSay({}, last.q.name || last.q.gname || last.q.wname) ? ": " + esc(qzSay({}, last.q.name || last.q.gname || last.q.wname)) : ""}</small></button>` : ""}
+          ${pre.length ? `<div class="lbl">Saved answer sets</div>${pre.map(p => `<div class="listrow" data-id="${esc(p.id)}"><span class="grow"><b>${esc(p.name)}</b><span class="sub">${esc(KINDS[p.a.kind]?.label || "")} · ${esc(fmtWhen(p.at))}</span></span><button type="button" class="btn small primary" data-use>Use</button><button type="button" class="btn small" data-make>Make</button><button type="button" class="btn small danger" data-rm>✕</button></div>`).join("")}` : ""}`;
+        b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => { QUIZ.a = qzNew(x.dataset.k); QUIZ.i = 0; qzKeep(); qzDraw(); });
+        if ($("qzLast")) $("qzLast").onclick = () => qzMake(JSON.parse(JSON.stringify(last)));
+        b.querySelectorAll(".listrow[data-id]").forEach(r => {
+          const p = pre.find(x => x.id === r.dataset.id);
+          r.querySelector("[data-use]").onclick = () => { QUIZ.a = JSON.parse(JSON.stringify(p.a)); QUIZ.i = qzSteps(QUIZ.a).length; qzKeep(); qzDraw(); };
+          r.querySelector("[data-make]").onclick = () => qzMake(JSON.parse(JSON.stringify(p.a)));
+          confirmBtn(r.querySelector("[data-rm]"), "Sure?", async () => { await Store.set("quizPresets", pre.filter(x => x.id !== p.id)); r.remove(); });
+        });
+      });
+    });
+    return;
+  }
+  qzDraw();
+}
+function qzDraw() {
+  const a = QUIZ.a, steps = qzSteps(a);
+  if (QUIZ.i >= steps.length) return qzReview();
+  QUIZ.i = Math.max(0, QUIZ.i);
+  const st = steps[QUIZ.i], q = st.q, bag = qzBag(a, st.mi);
+  const x = bag[q.id] = bag[q.id] || { pick: [], other: "", decide: false, num: "" };
+  const sec = st.mi != null ? `Member ${st.mi + 1}${qzSay(st, (a.m[st.mi] || {}).name) && q.id !== "name" ? ": " + qzSay(st, a.m[st.mi].name) : ""}` : QZ_GROUP.includes(q) ? "The group" : QZ_WORLD.includes(q) ? "The world" : QZ_SCENE.includes(q) ? QZ_SEC.scene : QZ_MIND.has(q.id) ? QZ_SEC.mind : ["name", "gender", "pronouns", "form", "species", "age"].includes(q.id) ? "Who" : QZ_SEC.body;
+  const opts = [...(q.o || []), ...qzTagOpts(q).filter(t => !(q.o || []).includes(t))];
+  const notes = S.settings.tagNotes || {};
+  openSheet("Character quiz", b => {
+    S.sheetGuard = "quiz";
+    b.innerHTML = `<div class="qz-top"><div class="qz-bar"><i style="width:${Math.round(QUIZ.i / steps.length * 100)}%"></i></div><div class="qz-step"><span>${esc(sec)}</span><span>${QUIZ.i + 1} / ${steps.length}</span></div></div>
+      <h3 class="qz-q">${esc(q.q)}</h3>
+      ${q.t === "many" ? '<p class="hint" style="margin:0">Pick as many as you like.</p>' : ""}
+      ${opts.length ? `<div class="qz-opts" id="qzOpts">${opts.map(o => `<button type="button" class="qz-o ${(x.pick || []).includes(o) ? "on" : ""}" data-o="${esc(o)}"${tagStyle(o)}>${tagIcon(o) ? `<span class="ti">${tagIcon(o)}</span>` : ""}${esc(o)}${notes[o] ? ' <span class="qz-n" title="Has a tag note">✎</span>' : ""}</button>`).join("")}</div>` : ""}
+      ${q.t === "age" ? field("Or an exact age", `<input id="qzNum" type="number" inputmode="numeric" min="18" max="100000" placeholder="18 or older" value="${esc(x.num || "")}">`) : ""}
+      ${field(q.t === "text" ? "Your answer" : "Other…", `<input id="qzOther" value="${esc(x.other || "")}" placeholder="${esc(q.ph || "Type your own")}" autocomplete="off">`)}
+      <button type="button" class="qz-o qz-decide ${x.decide ? "on" : ""}" id="qzDecide">✦ You decide</button>
+      <div id="qzMsg" class="hint"></div>
+      <div class="qz-nav"><button type="button" class="btn" id="qzBack">‹ Back</button><button type="button" class="btn" id="qzSkip">Skip</button><button type="button" class="btn primary" id="qzNext">${QUIZ.i === steps.length - 1 ? "Finish ›" : "Next ›"}</button></div>`;
+    const sync = () => { b.querySelectorAll("#qzOpts .qz-o").forEach(y => y.classList.toggle("on", x.pick.includes(y.dataset.o))); $("qzDecide").classList.toggle("on", !!x.decide); qzKeep(); };
+    b.querySelectorAll("#qzOpts .qz-o").forEach(y => y.onclick = () => {
+      const o = y.dataset.o; x.decide = false;
+      if (q.t === "many") { x.pick = x.pick.includes(o) ? x.pick.filter(z => z !== o) : [...x.pick, o]; if (o === "none" || o === "smooth / none") x.pick = x.pick.includes(o) ? [o] : x.pick; else x.pick = x.pick.filter(z => z !== "none" && z !== "smooth / none"); sync(); }
+      else { x.pick = x.pick.includes(o) ? [] : [o]; if (q.t === "age") { x.num = ""; $("qzNum").value = ""; } sync(); if (x.pick.length) setTimeout(next, 180); }
+    });
+    $("qzOther").addEventListener("input", e => { x.other = e.target.value; if (x.other.trim()) x.decide = false; if (q.t === "one" && x.other.trim()) x.pick = []; sync(); });
+    $("qzOther").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); next(); } });
+    if ($("qzNum")) $("qzNum").addEventListener("input", e => { x.num = e.target.value.replace(/\D/g, ""); if (x.num) { x.pick = []; x.decide = false; } sync(); });
+    $("qzDecide").onclick = () => { x.decide = !x.decide; if (x.decide) { x.pick = []; x.other = ""; x.num = ""; $("qzOther").value = ""; if ($("qzNum")) $("qzNum").value = ""; } sync(); if (x.decide) setTimeout(next, 180); };
+    function next() {
+      if (x.num && +x.num < 18) { $("qzMsg").textContent = "Characters are always adults: 18 or older."; return; }
+      QUIZ.i++; qzKeep(); qzDraw();
+    }
+    $("qzNext").onclick = next;
+    $("qzSkip").onclick = () => { if (!qzSay(st, x)) x.decide = true; next(); };
+    $("qzBack").onclick = () => { if (QUIZ.i === 0) { QUIZ.a = null; dropDraft("quiz"); openQuiz("new"); return; } QUIZ.i--; qzKeep(); qzDraw(); };
+  });
+}
+function qzReview() {
+  const a = QUIZ.a, steps = qzSteps(a);
+  openSheet("Your answers", b => {
+    S.sheetGuard = "quiz";
+    let lastMi = "x";
+    b.innerHTML = `<p class="note">Tap any answer to change it. Then make the bot; you'll see it before it's created.</p>
+      <div class="qz-sum">${steps.map((st, i) => { const head = st.mi !== lastMi && st.mi != null ? `<div class="lbl">Member ${st.mi + 1}</div>` : ""; lastMi = st.mi; return `${head}<button type="button" class="qz-row" data-i="${i}"><span class="qz-rq">${esc(st.q.q)}</span><span class="qz-ra">${esc(qzSay(st, qzAns(a, st)) || "—")}</span></button>`; }).join("")}</div>
+      <div class="group"><h3>Save these answers</h3><div class="row" style="gap:8px"><input id="qzPName" placeholder="e.g. my usual dragon" style="flex:1;min-width:0;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line)"><button type="button" class="btn small" id="qzPSave">Save</button></div><div class="hint">Start a future quiz from them, or make more bots from them in one tap.</div></div>
+      <div id="qzMsg" class="hint"></div>
+      <button type="button" class="btn primary" id="qzMake">✦ Make my ${esc(KINDS[a.kind].label.toLowerCase())}</button>
+      <button type="button" class="btn" id="qzRestart">Start a new quiz</button>`;
+    b.querySelectorAll(".qz-row").forEach(r => r.onclick = () => { QUIZ.i = +r.dataset.i; qzKeep(); qzDraw(); });
+    $("qzPSave").onclick = async () => {
+      const name = $("qzPName").value.trim(); if (!name) { $("qzMsg").textContent = "Give the answer set a name."; return; }
+      const pre = (await Store.get("quizPresets")) || []; const list = Array.isArray(pre) ? pre : [];
+      await Store.set("quizPresets", [{ id: uid(), name, a: JSON.parse(JSON.stringify(a)), at: Date.now() }, ...list.filter(p => p.name !== name)].slice(0, 40));
+      $("qzPName").value = ""; toast("Answers saved");
+    };
+    $("qzMake").onclick = () => qzMake(a);
+    confirmBtn($("qzRestart"), "Tap again to clear these answers", () => { QUIZ.a = null; dropDraft("quiz"); openQuiz("new"); });
+  });
+}
+// answers → the generator's request (tag notes for any picked answer that is a tag with a note)
+function qzPrompt(a) {
+  const steps = qzSteps(a), lines = [], used = new Set();
+  let lastMi = "x";
+  for (const st of steps) {
+    const x = qzAns(a, st), say = qzSay(st, x);
+    if (st.mi !== lastMi && st.mi != null) lines.push(`\nMember ${st.mi + 1}:`); lastMi = st.mi;
+    if (!say) continue;
+    lines.push(`- ${st.q.q.replace(/\s*\(Always an adult\.\)/, "")} ${say === "you decide" ? "(you decide; make it fit the rest)" : say}`);
+    for (const p of x.pick || []) used.add(p);
+  }
+  const notes = S.settings.tagNotes || {}, nl = [...used].filter(t => notes[t]).map(t => `- ${t}: ${notes[t]}`);
+  return `The user filled in a character quiz. Build the ${KINDS[a.kind].label.toLowerCase()} from these answers, following every answer closely; invent everything they left to you so it all fits together.${a.kind === "group" ? " Each member listed below becomes one member of the group." : ""}\n${lines.join("\n")}` +
+    (nl.length ? `\n\nWhat these mean to the user (follow these closely):\n${nl.join("\n")}` : "") +
+    `\n\nUse the picked kinks, species and traits as the card's tags where they fit.`;
+}
+function qzForm(a) {
+  const f = (a.kind === "character" ? a.q.form : (a.m[0] || {}).form)?.pick?.[0] || "";
+  return /^human/.test(f) ? "human" : /^anthro/.test(f) ? "anthro" : /^feral/.test(f) ? "feral" : "auto";
+}
+async function qzMake(a) {
+  if (!hasKey()) { toast("Add your API key in Settings first"); return; }
+  await Store.set("quizLast", JSON.parse(JSON.stringify(a)));
+  const kind = a.kind, form = kind === "world" ? "auto" : qzForm(a);
+  GEN.kind = kind; GEN.form = form; GEN.card = null; GEN.note = ""; GEN.parts = [];
+  GEN.prompt = qzPrompt(a);
+  QUIZ.a = null; await dropDraft("quiz");
+  const nm = qzSay({}, a.q.name || a.q.gname || a.q.wname);
+  await genRun(() => genCard(kind, form, GEN.prompt), `Building ${nm && nm !== "you decide" ? nm : "your " + KINDS[kind].label.toLowerCase()} from your answers…`);
 }
 async function genRun(job, label) {
   if (GEN.busy) return;
@@ -1856,6 +2234,7 @@ function genReview(err) {
       <div id="gMsg" class="hint">${err ? esc(err) : ""}</div>
       <button class="btn primary" id="gMake">✓ Looks good, create it</button>
       <button class="btn" id="gEdit">Create and open the editor</button>
+      ${GEN.prompt.trim() ? `<button class="btn" id="gMore">↻ A different one from the same ${/^The user filled in a character quiz/.test(GEN.prompt) ? "answers" : "request"}</button>` : ""}
       <button class="btn" id="gAgain">Start over</button>`;
     const picked = new Set((GEN.parts || []).filter(k => GEN_PARTS[K].some(p => p[0] === k)));
     b.querySelectorAll("#gParts [data-p]").forEach(x => { x.classList.toggle("on", picked.has(x.dataset.p)); x.onclick = () => { const k = x.dataset.p; picked.has(k) ? picked.delete(k) : picked.add(k); x.classList.toggle("on", picked.has(k)); GEN.parts = [...picked]; genKeep(); }; });
@@ -1870,6 +2249,7 @@ function genReview(err) {
     };
     $("gMake").onclick = () => genFinish(false);
     $("gEdit").onclick = () => genFinish(true);
+    if ($("gMore")) confirmBtn($("gMore"), "Tap again: this one will be replaced", () => { const form = K === "world" ? "auto" : GEN.form; GEN.note = ""; GEN.parts = []; genRun(() => genCard(K, form, GEN.prompt), "Making a different one…"); });
     $("gAgain").onclick = () => { GEN.card = null; genKeep(); if (!GEN.prompt.trim()) dropDraft("gen"); openGenerator(); };
   });
 }
@@ -2354,7 +2734,7 @@ function userClose() {
   if (!S.sheetGuard && body.querySelector("#gPrompt,#gMake,#gWait,#cSave")) S.sheetGuard = body.querySelector("#cSave") ? "edit" : body.querySelector("#gWait") ? "wait" : "gen";
   if (!S.sheetGuard) { closeSheet(); return true; }
   if ($("sheetConfirm")) return false;
-  if (S.sheetGuard === "gen") genKeep(true); else if (S.sheetGuard === "edit") body.dispatchEvent(new Event("input"));
+  if (S.sheetGuard === "gen") genKeep(true); else if (S.sheetGuard === "quiz") qzKeep(true); else if (S.sheetGuard === "edit") body.dispatchEvent(new Event("input"));
   const msg = S.sheetGuard === "wait" ? "Close? The bot keeps being written, and the result waits for you under <b>New</b>." : "Close? What you wrote is saved as a draft. Pick it up any time from <b>New</b>.";
   $("sheetBody").insertAdjacentHTML("beforebegin", `<div id="sheetConfirm" class="sheet-confirm" role="alertdialog" aria-label="Close?"><span>${msg}</span><div class="row"><button type="button" class="btn small primary" id="scKeep">Keep editing</button><button type="button" class="btn small" id="scClose">Close</button></div></div>`);
   $("scKeep").onclick = () => $("sheetConfirm").remove();
@@ -2657,6 +3037,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
     </div>
     <div class="group"><h3>You</h3>
       <button class="btn" id="sPersonas">Manage personas (playing as ${esc(uname())})</button>
+      <button class="btn" id="sTags">Manage tags and tag notes</button>
     </div>
     <div class="group"><h3>All chats</h3>
       ${field("Rules for every chat", `<textarea id="sGlobal" style="min-height:100px" placeholder="e.g. Write in third person. Keep replies under 4 paragraphs. Describe smells and sounds.">${esc(st.globalInstr || "")}</textarea>`, "Applied to every character, world and group. Colored text works with [color=red]text[/color].")}
@@ -2705,6 +3086,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   $("sProv").onchange = drawn; $("sThink").onchange = drawn;
   drawn();
   $("sPersonas").onclick = () => openPersonas();
+  $("sTags").onclick = () => openTags();
   ruleTabs($("sGlobal"));
   drawAccount($("sAccount"));
   let scaleT = null;
