@@ -19,7 +19,7 @@ const open = require("./base.js");
   await pg.click('[data-o="dragon"]'); await pg.click('[data-o="snake / naga"]'); await pg.click("#qzNext"); await pg.waitForTimeout(150);
   chk("age question", /old/.test(await q()));
   await pg.fill("#qzNum", "16"); await pg.click("#qzNext"); await pg.waitForTimeout(150);
-  chk("under 18 refused", /adults/.test(await pg.textContent("#qzMsg")));
+  chk("under 18 refused", /18/.test(await pg.textContent("#qzMsg")));
   await pg.fill("#qzNum", "340"); await pg.click("#qzNext"); await pg.waitForTimeout(150);
   await pg.screenshot({ path: `/tmp/claude-0/s/quiz_q_${W}.png` });
   // close mid-way: draft kept

@@ -908,7 +908,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.47 · Oct 17";
+const VERSION = "1.48 · Oct 17";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2010,7 +2010,7 @@ const QZ_BODY = [
   { id: "pronouns", q: "Pronouns?", t: "one", o: ["she/her", "he/him", "they/them", "it/its"] },
   { id: "form", q: "What are they?", t: "one", o: ["human", "anthro (furry)", "feral (animal or creature)", "monster", "slime / goo", "robot / synthetic"] },
   { id: "species", q: "Species?", t: "many", when: a => !(a.form?.pick || []).includes("human"), o: ["wolf", "fox", "dog", "cat", "lion", "tiger", "dragon", "snake / naga", "lizard", "horse", "deer", "rabbit", "bear", "cow / bull", "goat", "shark", "orca", "bird", "bat", "rat / mouse", "hyena", "demon", "angel", "elf", "orc", "slime", "spider / insect", "plant"], tags: true },
-  { id: "age", q: "How old? (Always an adult.)", t: "age", o: ["young adult (18–25)", "adult (26–39)", "middle-aged (40–59)", "older (60+)", "ancient / immortal"] },
+  { id: "age", q: "How old?", t: "age", o: ["young adult (18–25)", "adult (26–39)", "middle-aged (40–59)", "older (60+)", "ancient / immortal"] },
   { id: "height", q: "How tall?", t: "one", o: ["pocket-sized", "short", "average", "tall", "very tall", "giant", "macro (building-sized or bigger)"] },
   { id: "build", q: "Body build?", t: "many", o: ["skinny", "slim", "athletic", "muscular", "curvy", "soft", "chubby", "fat", "heavyset", "huge and hulking"] },
   { id: "chest", q: "Chest?", t: "one", o: ["flat", "pecs", "small breasts", "medium breasts", "large breasts", "huge breasts", "enormous breasts"] },
@@ -2127,7 +2127,7 @@ function qzDraw() {
     if ($("qzNum")) $("qzNum").addEventListener("input", e => { x.num = e.target.value.replace(/\D/g, ""); if (x.num) { x.pick = []; x.decide = false; } sync(); });
     $("qzDecide").onclick = () => { x.decide = !x.decide; if (x.decide) { x.pick = []; x.other = ""; x.num = ""; $("qzOther").value = ""; if ($("qzNum")) $("qzNum").value = ""; } sync(); if (x.decide) setTimeout(next, 180); };
     function next() {
-      if (x.num && +x.num < 18) { $("qzMsg").textContent = "Characters are always adults: 18 or older."; return; }
+      if (x.num && +x.num < 18) { $("qzMsg").textContent = "Ages start at 18."; return; }
       QUIZ.i++; qzKeep(); qzDraw();
     }
     $("qzNext").onclick = next;
@@ -2165,7 +2165,7 @@ function qzPrompt(a) {
     const x = qzAns(a, st), say = qzSay(st, x);
     if (st.mi !== lastMi && st.mi != null) lines.push(`\nMember ${st.mi + 1}:`); lastMi = st.mi;
     if (!say) continue;
-    lines.push(`- ${st.q.q.replace(/\s*\(Always an adult\.\)/, "")} ${say === "you decide" ? "(you decide; make it fit the rest)" : say}`);
+    lines.push(`- ${st.q.q} ${say === "you decide" ? "(you decide; make it fit the rest)" : say}`);
     for (const p of x.pick || []) used.add(p);
   }
   const notes = S.settings.tagNotes || {}, nl = [...used].filter(t => notes[t]).map(t => `- ${t}: ${notes[t]}`);
