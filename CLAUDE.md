@@ -121,7 +121,7 @@ v1.0 initial single-file app → v1.1 send-button fix → v1.2 steadier replies,
     - **Cock**:
       - Bends along a curve whose root never turns (the pad's `phi` with a 0.45 bend, ±0.7).
       - Squashes along its length, and moves only when a hand drags it, never with the nuts.
-      - Idles with a heartbeat throb (about 72 a minute, a strong pulse then a softer one): about 7% more girth toward the head and a slight lift, root fixed.
+      - Idles with a heartbeat throb (about 72 a minute, a strong pulse then a softer one): about 2% more girth toward the head, no lift, root fixed (2026-10-18, owner: the 7% throb with a lift was too much); the beat fades out while a hand is on it and returns over ~1 s. The swing damping (`cock.w *= 0.86^k`) had slipped into a code comment, so the cock wobbled forever after a rub; restored, it settles in about a second and snaps to rest when nearly still.
     - Bench reactions: Gulp, Struggle, Rub, Step/bounce, drag to push, plus Wobble strength and Idle sway sliders. Every approved pred works as male, female or herm, in the empty, full or cock state.
     - The owner rejected these earlier versions:
       - affine stretch/shear layers: too stiff, the nuts detached, the belly's backing slab clipped through the top of the torso;
