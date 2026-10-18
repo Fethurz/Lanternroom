@@ -653,6 +653,49 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 #rollNow[hidden]{display:none}
 #rubNow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:8px 12px 0;font-size:13px}
 #rubNow[hidden]{display:none}
+#gameNow{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px 0;font-size:13px}
+#gameNow[hidden]{display:none}
+.game-offer{font:inherit;font-size:13px;display:inline-flex;align-items:center;gap:6px;color:var(--fg);background:color-mix(in srgb,var(--accent) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:999px;padding:5px 12px;min-height:34px;cursor:pointer}
+.game-offer svg,.game-res svg{width:18px;height:18px;flex:none;color:var(--accent)}
+.game-res{display:inline-flex;align-items:center;gap:6px;flex:1 1 100%;color:var(--fg)}
+.game-res i{font-style:normal;color:var(--muted);font-size:12px}
+.game{display:grid;gap:10px;justify-items:center;text-align:center}
+.game .hint{max-width:52ch}
+.st-cv{width:min(300px,78vw);height:min(300px,78vw);border-radius:50%;display:block}
+.game-cue{min-height:1.3em;color:var(--fg)}
+.game-bar{width:min(280px,90%);height:8px;border-radius:99px;background:var(--bg);overflow:hidden}
+.game-bar>div{height:100%;width:100%;background:var(--ok);transition:width .2s}
+.game-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.game-push{width:110px;height:110px;border-radius:50%;font-size:1.05rem}
+.game .btn.on{outline:2px solid var(--accent);outline-offset:2px}
+.duel-row{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;width:100%;max-width:420px}
+.duel-side{display:grid;gap:4px;justify-items:center}
+.game .die{width:78px;height:78px;display:block}
+.game .die.roll{animation:dieTumble .7s ease-out}
+@keyframes dieTumble{0%{transform:rotate(-200deg) scale(.6)}70%{transform:rotate(15deg) scale(1.1)}100%{transform:none}}
+.foe-die,.die.foe-die{--accent-hi:#d4c2ff;--accent-lo:#7d5cc4;--accent-ink:#1b1020}
+.pips{display:flex;gap:5px;justify-content:center}
+.pips i{width:11px;height:11px;border-radius:50%;border:1px solid var(--line);display:block}
+.pips i.w{background:var(--accent);border-color:var(--accent)}
+.chests{display:flex;gap:10px;justify-content:center;padding-top:22px}
+.chest{width:88px;height:100px;border:0;padding:0;background:none;cursor:pointer}
+.chest svg{width:100%;height:100%;display:block}
+.chest .lid{transform-origin:50% 60%;transition:transform .35s ease}
+.chest.open .lid{transform:translateY(-14px) rotate(-14deg)}
+.chest.mimic.open .lid{transform:translateY(-27px)}
+.chest .fangs,.chest .teeth{opacity:0;transition:opacity .2s}
+.chest.mimic.open .fangs,.chest.mimic.open .teeth{opacity:1}
+.chest .tongue{transform-origin:46px 26px;animation:mimicLick 1.6s ease-in-out infinite}
+@keyframes mimicLick{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg) translateY(1px)}}
+.chest .drip{animation:mimicDrip 1.8s ease-in infinite}
+@keyframes mimicDrip{0%{transform:translateY(0);opacity:1}80%{transform:translateY(14px);opacity:1}100%{transform:translateY(18px);opacity:0}}
+.shop{width:100%;max-width:460px;display:grid;gap:8px;text-align:left}
+.shop-item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-height:44px;cursor:pointer;font:inherit;color:var(--fg);width:100%;text-align:left}
+.shop-item.on{border-color:var(--accent)}
+.shop-item small{color:var(--muted);display:block}
+.shop-item b{color:var(--accent);white-space:nowrap;font-variant-numeric:tabular-nums}
+.game input[type=range]{width:min(320px,90%);accent-color:var(--accent)}
+@media (prefers-reduced-motion: reduce){.game .die.roll,.chest .tongue,.chest .drip{animation:none}.chest .lid{transition:none}}
 #rubNow .hint{flex:1;color:var(--muted)}
 #rubNow .rub-tell{font:inherit;font-size:12.5px;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:999px;padding:5px 11px;min-height:30px;cursor:pointer}
 #rubNow .rub-tell.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
@@ -837,6 +880,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
     <div id="attach" hidden><img id="attachImg" alt="Image to send"><span class="hint" style="flex:1;color:var(--muted);font-size:13px">Image attached. Add a message or just send.</span><button type="button" class="icon" id="attachX" aria-label="Remove image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div id="rollNow" hidden></div>
     <div id="rubNow" hidden></div>
+    <div id="gameNow" hidden></div>
     <form id="composer" autocomplete="off">
       <button type="button" class="icon" id="btnAttach" aria-label="Send an image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.5l-8.3 8.3a5 5 0 0 1-7.1-7.1l8.6-8.6a3.3 3.3 0 0 1 4.7 4.7L10.3 18.4a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/></svg></button>
       <input type="file" id="imgCam" accept="image/*" capture="environment" hidden>
@@ -949,7 +993,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.51 · Oct 17";
+const VERSION = "1.52 · Oct 18";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1223,7 +1267,8 @@ function parseTag(raw) {
     music: MUS_KEYS.includes(low("music")) ? low("music") : null, event: EVT_KEYS.includes(low("event")) ? low("event") : null,
     gold: f.gold || null, items: f.items || null, quests: f.quests || null,
     vore: parseVore(f.vore, f),
-    badges: f.badges || f.badge || null, award: f.award || null
+    badges: f.badges || f.badge || null, award: f.award || null,
+    duel: f.duel && !/^(none|no|n\/a|-)?$/i.test(f.duel.trim()) ? f.duel.trim().slice(0, 120) : null
   };
 }
 
@@ -1364,10 +1409,12 @@ function buildPrompt(c, chat, upto, cont) {
   if (pacePart) sys += `\n\n# Pace\nThe user follows an on-screen stroke pacer that your pace field controls. Set it from the scene's sexual intensity: stop when nothing sexual is happening or for a pause, slow for teasing and build-up, steady for ongoing sex, fast as things get intense, edge to make ${u} hold right at the brink (use it for denial and teasing near the peak), cum at the moment of climax. Build up naturally over several replies and use edge before cum when it fits.`;
   const musicPart = musicOn() ? ` | music: one of ${MUS_KEYS.join("/")} | event: one of ${EVT_KEYS.join("/")}` : "";
   const rpgPart = rpgOn(c) ? " | gold: +n/-n | items: +Name/-Name | quests: +Name/done Name" : "";
+  const duelPart = S.settings.gamesOn !== false ? " | duel: stakes (only when someone challenges " + u + " to a small contest or scuffle)" : "";
+  if (duelPart) sys += `\n\n# Duels\nWhen a character challenges ${u} to a small contest or scuffle (arm-wrestling, a shove, a bet, a quick sparring match, a race), add duel: and the stakes in a few words (for example "loser buys the drinks" or "the loser gets eaten"); the app then lets ${u} play a quick dice duel and tells you the result. Never use it for real fights, which play out in the story. Leave the field out otherwise.`;
   if (musicPart) sys += `\n\n# Music and events\nmusic is the background music that fits the scene right now. Use none for ordinary moments; only pick music for scenes that call for it: a tavern or inn, a village, a city, a club, party or rave, a forest, a cave, deep water, a dungeon, crypt, temple or other evil place, somewhere magical, a calm or idle moment, romance, sleep or a quiet night, danger or a creeping threat, horror, somewhere eerie, mysterious or unnerving, a fight, an epic or grand moment, space or sci-fi. Music follows the setting and mood, never the action: vore or sex in a club still gets club music, in a tavern tavern music, and none when the setting has no music. event is something that happened in this reply: attack when a blow, shot or spell is coming at someone and the reply ends before it is known whether it lands; danger when a fight or real threat begins; victory when ${u}'s side wins a fight; defeat when ${u}'s side loses one; sad for a very sad, tragic or dramatic moment (a death, a farewell); quest when a quest or goal is completed; item when ${u} finds or receives something valuable, magical or rare; coins when ${u} gains money; otherwise none.`;
   const achP = achPrompt(c, chat); sys += achP.sys;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}${vorePart}${achP.part}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; savanna for grasslands, plains and prairies; jungle for jungles and rainforests; party for a lively party or club full of people talking; castle for castle halls, keeps, fortresses and throne rooms; lava near volcanoes, lava fields or molten hellscapes; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, mess only while someone is cumming right now (spurting, pumping a load, excessive nonstop cumming) or while cum is still described dripping, leaking or pouring; once the climax is over and nothing is flowing, it is no longer mess, inflate while someone's belly (or balls, womb) is being filled up or swollen with cum (cum inflation), kiss while characters are kissing or making out, lick while someone is licking or slowly tasting someone's body (not oral sex), shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}${duelPart}${vorePart}${achP.part}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; savanna for grasslands, plains and prairies; jungle for jungles and rainforests; party for a lively party or club full of people talking; castle for castle halls, keeps, fortresses and throne rooms; lava near volcanoes, lava fields or molten hellscapes; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, mess only while someone is cumming right now (spurting, pumping a load, excessive nonstop cumming) or while cum is still described dripping, leaking or pouring; once the climax is over and nothing is flowing, it is no longer mess, inflate while someone's belly (or balls, womb) is being filled up or swollen with cum (cum inflation), kiss while characters are kissing or making out, lick while someone is licking or slowly tasting someone's body (not oral sex), shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
   if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
@@ -1391,6 +1438,7 @@ function buildPrompt(c, chat, upto, cont) {
     if (m.role === "assistant" && m.turn && m.speaker) content = `**${m.speaker}:** ${content}`;
     if (m.role === "user" && m.roll && diceOn()) content = (content || "") + rollNote(m, u, c);
     if (m.role === "user" && m.rub) content = (content || "") + rubNote(m, u);
+    if (m.role === "user" && m.game) content = (content || "") + gameNote(m, u);
     if (m.role === "assistant" && m.mood && !(m.turn && hist[i + 1]?.turn === m.turn)) content += `\n[[mood: ${m.mood} | place: ${m.place || chat.place || "unknown"}${c.kind === "group" && m.focus ? ` | focus: ${m.focus}` : ""}${m.gauges && gs.length ? " | gauges: " + Object.entries(m.gauges).map(([k, v]) => k + "=" + v).join(", ") : ""}${m.pace && pacePart ? " | pace: " + m.pace : ""}]]`;
     if (budget - content.length < 0 && out.length >= 2) break;
     budget -= content.length;
@@ -2454,7 +2502,7 @@ setInterval(() => { if (!document.hidden && !$("home").hidden) dailyTick(); }, 6
 
 /* ---------- Achievements (v1.50) ---------- */
 // src "app": the app counts it; "story": the reply's hidden badges field reports it (the app also spots some itself).
-// s: secret until earned (shows only the tiny hint h); soon: needs a minigame that isn't built yet.
+// s: secret until earned (shows only the tiny hint h); soon: needs a feature that isn't built yet (the minigame ones are live since v1.52).
 const ACH_GROUPS = ["Vore", "Fetish", "Dark & taboo", "RPG & combat", "Lewd & silly", "Chatting", "Play"];
 const ACH = [
   // Vore (owner-approved round 1)
@@ -2648,11 +2696,11 @@ const ACH = [
   { k: "hot_streak", g: "Play", n: "Hot Streak", how: "Win 5 dice contests in a row.", src: "app" , nw: 1, h: "Can't lose." },
   { k: "gauge_max", g: "Play", n: "Maxed Out", how: "A status gauge hits 100.", src: "app" },
   { k: "pacer", g: "Play", n: "In Rhythm", how: "Follow the stroke pacer all the way to the finish.", src: "app" },
-  { k: "breakout", g: "Play", n: "Breakout", how: "Win a strong struggle in Struggle or Submit.", src: "app", soon: 1 },
-  { k: "surrender", g: "Play", n: "Surrender", how: "Give in completely in Struggle or Submit.", src: "app", soon: 1 },
-  { k: "duelist", g: "Play", n: "Duelist", how: "Win a dice duel.", src: "app", soon: 1 },
-  { k: "had_teeth", g: "Play", n: "It Had Teeth", how: "Open the mimic chest.", src: "app", s: 1, h: "Not every chest is a chest.", soon: 1 },
-  { k: "bargain", g: "Play", n: "Sharp Bargainer", how: "Haggle a price down by half.", src: "app", soon: 1 }
+  { k: "breakout", g: "Play", n: "Breakout", how: "Win a strong struggle in Struggle or Submit.", src: "app" },
+  { k: "surrender", g: "Play", n: "Surrender", how: "Give in completely in Struggle or Submit.", src: "app" },
+  { k: "duelist", g: "Play", n: "Duelist", how: "Win a dice duel.", src: "app" },
+  { k: "had_teeth", g: "Play", n: "It Had Teeth", how: "Open the mimic chest.", src: "app", s: 1, h: "Not every chest is a chest." },
+  { k: "bargain", g: "Play", n: "Sharp Bargainer", how: "Haggle a price down by half.", src: "app" }
 ];
 const ACH_BY = Object.fromEntries(ACH.map(a => [a.k, a]));
 const achOn = () => S.settings.achOn !== false;
@@ -3007,6 +3055,7 @@ function renderMsgs(keepScroll) {
     }
     if (m.roll && m.role === "user") d.insertAdjacentHTML("beforeend", contestLine(m, c));
     if (m.rub && m.role === "user") d.insertAdjacentHTML("beforeend", rubLine(m));
+    if (m.game && m.role === "user") d.insertAdjacentHTML("beforeend", gameLine(m));
     if (S.seen && !S.seen.has(m.id)) { d.classList.add("enter"); S.seen.add(m.id); }
     if (m.role === "assistant" && i === lastAsst && m.turn) {
       const sw = document.createElement("div"); sw.className = "swipe";
@@ -3125,10 +3174,12 @@ async function send() {
 }
 async function sendInner() {
   if (S.busy) return;
-  const t = $("input").value.trim();
+  const pgm = S.chat?.pendingGame;
+  let t = $("input").value.trim(); if (!t && !S.pendingImage && pgm) t = pgm.act || "*…*";
   if (t || S.pendingImage) {
     const m = { id: uid(), role: "user", content: t };
     if (S.pendingImage) m.image = S.pendingImage;
+    if (pgm) { m.game = { kind: pgm.kind, short: pgm.short, text: pgm.text }; S.chat.pendingGame = null; drawGames(sceneNow()); } // the minigame's result, for the story
     const rb = S.chat.pendingRub; if (rb) { if (rb.tell) m.rub = { part: rb.part, amt: rb.amt }; S.chat.pendingRub = null; drawRubChip(); } // a rub goes with this message only if the owner said so
     const pr = diceOn() && S.chat.pendingRoll;
     if (pr) {
@@ -3204,7 +3255,7 @@ async function generate(upto, existing, cont) {
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
     const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null, hear: p.hear || null, music: p.music || null, event: p.event || null, vore: p.vore || null, rpg: rpgOn(c) ? parseRpgDelta(p) : null };
-    if (p.badges) meta.badges = p.badges; if (p.award) meta.award = p.award;
+    if (p.badges) meta.badges = p.badges; if (p.award) meta.award = p.award; if (p.duel) meta.duel = p.duel;
     const rpgBefore = rpgOn(c) ? rpgState(c, chat) : null;
     const gv = parseGauges(p.gauges, c); if (gv) { meta.gauges = { ...gaugeValues(c, chat), ...gv }; chat.gauges = { ...meta.gauges }; }
     if (p.pace) meta.pace = p.pace; else if (pacerOn()) meta.pace = null;
@@ -4357,6 +4408,7 @@ $("btnMore").onclick = () => openSheet("Options", b => {
     <button class="btn" id="oMem">View memory</button>
     <button class="btn" id="oPer">Playing as ${esc(uname())} · switch persona</button>
     <button class="btn" id="oDice">🎲 Dice rolls: ${diceOn() ? "on" : "off"}</button>
+    ${S.settings.gamesOn !== false ? `<button class="btn" id="oDuel">⚔ Start a dice duel (a small scuffle or contest)</button>` : ""}
     <button class="btn" id="oPacer">〰 Stroke pacer: ${pacerOn() ? "on" : "off"}</button>
     <button class="btn danger" id="oReset">Clear this chat</button></div>
     <p class="note">New chat keeps this one in your chat list. Clear this chat erases this conversation and its memory.</p>`;
@@ -4366,6 +4418,7 @@ $("btnMore").onclick = () => openSheet("Options", b => {
   $("oEdit").onclick = () => editChar(char(), false);
   $("oMem").onclick = openMemory;
   $("oPer").onclick = () => openPersonas();
+  if ($("oDuel")) $("oDuel").onclick = () => openDuel(null, async () => {});
   $("oDice").onclick = async () => { S.chat.dice = !diceOn(); await saveChat(); syncPlay(); renderMsgs(true); $("oDice").textContent = `🎲 Dice rolls: ${diceOn() ? "on" : "off"}`; toast(diceOn() ? "Dice on: your actions get a d20 roll" : "Dice off for this chat"); };
   $("oPacer").onclick = async () => { S.chat.pacer = !pacerOn(); await saveChat(); renderPacer(); $("oPacer").textContent = `〰 Stroke pacer: ${pacerOn() ? "on" : "off"}`; };
   confirmBtn($("oReset"), "Tap again to erase this chat", async () => { const keep = { id: S.chat.id, personaId: S.chat.personaId, created: S.chat.created }; S.chat = { ...newChat(char(), keep.personaId), ...keep }; await saveChat(); closeSheet(); S.seen = new Set(S.chat.messages.map(m => m.id)); updateStage(); renderMsgs(); });
@@ -4385,7 +4438,7 @@ function editMessage(i) {
 
 $("btnChats").onclick = () => openChats(S.charId);
 $("btnBack").onclick = () => { if (S.busy && !S.genAC) return; S.genAC?.abort(); leaveChat(); };
-function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; drawPendingRoll(); drawRub(null); updateFx(null); renderPacer(); renderGauges(); renderHome(); };
+function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; drawPendingRoll(); drawRub(null); drawGames(null); updateFx(null); renderPacer(); renderGauges(); renderHome(); };
 
 /* ---------- Installed app: back button, offline, install ---------- */
 // The phone's back button (and the browser's) closes the open window first, then leaves the chat, and only exits from Home.
@@ -4959,6 +5012,357 @@ function rubNote(m, u) {
   return `\n[${u} rubbed the full ${RUB_NAME[m.rub.part] || "belly"} ${how} before this message, and it gurgled and sloshed under ${u}'s hands. Let the scene react to it.]`;
 }
 const rubLine = m => m.rub ? `<div class="rub-line">${RUB_ICON.hand}Rubbed the ${esc(RUB_NAME[m.rub.part] || "belly")}</div>` : "";
+
+/* ---------- Minigames (v1.52): Struggle or Submit, Dice duels, Treasure chest mimic, Market haggle ---------- */
+// Approved on the Minigame Bench (https://claude.ai/artifact/Jr1TGzL6L5qBGtn3EQJJpt). Each game opens in the sheet and,
+// when it ends, leaves its result on a chip by the message box; the result goes with the owner's next message as a
+// note the story must follow (`m.game`). Offers appear on the same chip row when the scene calls for them.
+const GAME_ICON = {
+  struggle: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><circle cx="10" cy="10" r="4.5"/><path d="M10 1.5v3M10 15.5v3M1.5 10h3M15.5 10h3M4 4l2 2M14 14l2 2M4 16l2-2M14 6l2-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  duel: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 3l10 10M17 3L7 13M5 15l-2 2M15 15l2 2M11 13l2 2M9 13l-2 2"/></svg>',
+  chest: '<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="9" width="15" height="8" rx="1.5" fill="#a8744a"/><path d="M2.5 9V7.5C2.5 4.5 6 3 10 3s7.5 1.5 7.5 4.5V9z" fill="#c4915c"/><rect x="8.6" y="8" width="2.8" height="3.4" rx=".6" fill="#f0c674"/></svg>',
+  haggle: '<svg viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="7" cy="13" rx="5" ry="2.3" fill="#b8862f"/><ellipse cx="7" cy="11" rx="5" ry="2.3" fill="#f5cf6a"/><path d="M12 4h6v3l-3 3-3-3z" fill="#c99a62"/><circle cx="15" cy="5.5" r=".9" fill="#2a1a06"/></svg>'
+};
+// a sound of one type from the owner's or the built-in sounds (gems, stings…)
+async function playType(type, vol) {
+  try { const pool = await poolFor([type]); if (!pool.length) return null; const x = pool[Math.floor(Math.random() * pool.length)], url = await sndURL(x.id); if (!url) return null;
+    return playBuf(url, { vol: vol ?? Math.max(0, Math.min(1, S.settings.sfxVolume ?? 0.7)), cap: type.startsWith("sting_") ? 0 : 4 }); } catch { return null; }
+}
+// win/loss music stops the moment the owner taps or clicks anywhere (owner's note)
+async function playStingStoppable(type) {
+  if (S.settings.sfxSound === false) return;
+  const h = await playType(type); if (!h) return;
+  const armed = performance.now();
+  const stop = () => { if (performance.now() - armed < 200) return; h.stop(); document.removeEventListener("pointerdown", stop, true); };
+  document.addEventListener("pointerdown", stop, true);
+}
+// what kind of vore the scene is, and whether you're on the way in or already inside
+function voreKindNow() {
+  const msgs = (S.chat?.messages || []).filter(m => m.role !== "image" && m.content), recent = msgs.slice(-6).map(msgText).join("\n");
+  const tagged = [...msgs].reverse().find(m => m.vore?.type)?.vore?.type;
+  if (["oral", "anal", "cock", "breast", "unbirth", "tail"].includes(tagged)) return tagged;
+  if (VORE.cockvore.test(recent)) return "cock";
+  if (VORE.unbirth.test(recent)) return "unbirth";
+  if (BREASTVORE.test(recent)) return "breast";
+  if (/\btail ?vore\b|\b(into|inside|down) (his|her|their|its) tail\b/i.test(recent)) return "tail";
+  if (/\banal vore\b|\b(up|into|inside) (his|her|their|its) (ass|rear|rump|backside|tailhole|anus|asshole)\b/i.test(recent)) return "anal";
+  return "oral";
+}
+function struggleStage(scn) {
+  if (!S.chat || !scn) return null;
+  const last = msgText(S.chat.messages.filter(m => m.role === "assistant").at(-1)), u = uname().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  if (scn.hear === "inside" && scn.act !== "swallow") return "inside";
+  const goingIn = new RegExp(`\\b(swallow|gulp|slurp|devour|suck|stuff|push|cram|engulf)\\w*\\s+(you|${u})\\b|\\b(you|${u})\\b[^.!?\\n]{0,70}\\b(slid|slide|sliding|squeez\\w*|pulled|sucked|sinking|sink|vanish\\w*|disappear\\w*|forced|pushed)\\b[^.!?\\n]{0,20}\\b(down|into|in|deeper)\\b`, "i");
+  if (["swallow", "vore", "struggle"].includes(scn.act) && goingIn.test(last)) return "in";
+  if (scn.hear === "inside") return "inside";
+  return null;
+}
+const GAMES = { offers: [] };
+const shopWords = /\b(shop|store|stall|merchant|vendor|trader|shopkeeper|market|wares|for sale|haggl\w*|bargain\w*|peddler|blacksmith|apothecary)\b/i;
+const chestWords = /\b(chests?|coffers?|treasure|hoard|strongbox|lockbox|treasure trove)\b/i;
+function gameOffers(scn) {
+  const c = char(); if (!S.chat || !c || S.settings.gamesOn === false) return [];
+  const lastA = S.chat.messages.filter(m => m.role === "assistant").at(-1); if (!lastA) return [];
+  const t = msgText(lastA), done = S.chat.gamesDone || {}, out = [];
+  const st = struggleStage(scn); if (st) out.push({ k: "struggle", stage: st, label: st === "in" ? "Fight going in" : "Struggle" });
+  if (lastA.duel && done.duel !== lastA.id) out.push({ k: "duel", label: "Duel", stakes: lastA.duel });
+  if (rpgOn(c) && chestWords.test(t) && done.chest !== lastA.id) out.push({ k: "chest", label: "Open a chest" });
+  if (rpgOn(c) && shopWords.test(t) && done.haggle !== lastA.id) out.push({ k: "haggle", label: "Haggle" });
+  return out;
+}
+function drawGames(scn) {
+  const box = $("gameNow"); if (!box) return;
+  GAMES.offers = S.chat && !$("chat").hidden ? gameOffers(scn) : [];
+  const pend = S.chat?.pendingGame;
+  box.hidden = !GAMES.offers.length && !pend;
+  if (box.hidden) { box.innerHTML = ""; return; }
+  box.innerHTML = (pend ? `<span class="game-res">${GAME_ICON[pend.kind] || ""}<span>${esc(pend.short)}</span><i>goes with your next message</i><button type="button" class="icon" id="gameX" aria-label="Drop this result">✕</button></span>` : "")
+    + GAMES.offers.map((o, i) => `<button type="button" class="game-offer" data-g="${i}">${GAME_ICON[o.k]}${esc(o.label)}</button>`).join("");
+  box.querySelectorAll("[data-g]").forEach(b => b.onclick = () => openGame(GAMES.offers[+b.dataset.g]));
+  if ($("gameX")) $("gameX").onclick = async () => { S.chat.pendingGame = null; await saveChat(); drawGames(sceneNow()); };
+}
+// a finished game: the result waits by the message box and goes with the next message
+async function gameResult(kind, short, text, act) {
+  if (!S.chat) return;
+  S.chat.pendingGame = { kind, short, text, act, at: Date.now() };
+  await saveChat(); drawGames(sceneNow());
+}
+function gameNote(m, u) { return `\n[Minigame result, decided by the app; the story must follow it: ${m.game.text}]`; }
+const gameLine = m => m.game ? `<div class="rub-line">${GAME_ICON[m.game.kind] || ""}${esc(m.game.short)}</div>` : "";
+function openGame(o) {
+  if (!o || !S.chat) return;
+  const lastA = S.chat.messages.filter(m => m.role === "assistant").at(-1);
+  const markDone = async () => { if (o.k !== "struggle" && lastA) { S.chat.gamesDone = { ...(S.chat.gamesDone || {}), [o.k]: lastA.id }; await saveChat(); } };
+  if (o.k === "struggle") return openStruggle(o.stage);
+  if (o.k === "duel") return openDuel(o.stakes, markDone);
+  if (o.k === "chest") return openChest(markDone);
+  if (o.k === "haggle") return openHaggle(markDone);
+}
+const gamePlaying = cv => cv && cv.isConnected && !$("sheet").hidden;
+
+/* -- Struggle or Submit: a way in for every vore type, and an inside view per body part -- */
+const VORE_WAYS = {
+  oral: { label: "Oral", inside: "stomach", from: "Throat", to: "Gut", wall: "#5e1a2a", wall2: "#c0566a", fold: "#3a0c16", w: 1, ridge: 48 },
+  anal: { label: "Anal", inside: "stomach", from: "Ass", to: "Gut", wall: "#4e1820", wall2: "#a4505a", fold: "#2c0a10", w: 0.95, ridge: 30, coil: true },
+  cock: { label: "Cock", inside: "balls", from: "Tip", to: "Nuts", wall: "#8a4a58", wall2: "#e0a0aa", fold: "#5a2a36", w: 0.8, ridge: 56, streak: "#f6f3ea" },
+  unbirth: { label: "Unbirth", inside: "womb", from: "Pussy", to: "Womb", wall: "#7a1f4e", wall2: "#ec7aa4", fold: "#4a0f2e", w: 0.9, ridge: 40, streak: "#ff9cc6", glow: "#ff9cc6" },
+  breast: { label: "Breast", inside: "breast", from: "Nipple", to: "Boob", wall: "#8a5260", wall2: "#eab0b8", fold: "#5c3040", w: 0.75, ridge: 60, streak: "#f3e4bd" },
+  tail: { label: "Tail", inside: "tail", from: "Tail", to: "Gut", wall: "#3e3150", wall2: "#8a78a8", fold: "#221a30", w: 0.85, ridge: 26, scales: true }
+};
+const VORE_INSIDES = {
+  stomach: { say: "Inside the stomach", wall: "#6a1e2c", wall2: "#c0566a", fold: "#3e0d18", fluid: "#8fdc6a", fluidOp: .55, bubbles: true, sound: "gurgle" },
+  womb: { say: "Inside the womb", wall: "#7a1f4e", wall2: "#e0729c", fold: "#4a0f2e", fluid: "#ff9cc6", fluidOp: .45, glow: "#ff9cc6", sound: "squish" },
+  balls: { say: "Inside the balls", wall: "#8a4a58", wall2: "#d89aa4", fold: "#5a2a36", fluid: "#f6f3ea", fluidOp: .82, bubbles: true, sound: "cumslosh" },
+  breast: { say: "Inside the breast", wall: "#8a5260", wall2: "#e6a8b0", fold: "#5c3040", fluid: "#f3e4bd", fluidOp: .8, sound: "slosh" },
+  tail: { say: "Inside the tail", wall: "#3e3150", wall2: "#7d6a9a", fold: "#221a30", fluid: "#8fdc6a", fluidOp: .4, long: true, ridges: true, sound: "squish" }
+};
+function openStruggle(stage) {
+  const kind = voreKindNow(), W = VORE_WAYS[kind], tube = stage === "in", T = tube ? { ...W, tunnel: true, sound: "squish" } : VORE_INSIDES[W.inside];
+  openSheet(tube ? `${W.from} to ${W.to}` : "Struggle or Submit", b => {
+    b.innerHTML = `<div class="game"><p class="hint">${tube ? "You're being pulled in. Push when it eases up to climb back out; rest when it pulls." : "Push while the walls loosen, rest while they clench."} Your result goes to the story.</p>
+      <canvas id="stCv" class="st-cv" width="600" height="600" aria-label="${tube ? "The way in" : "Inside view"}"></canvas>
+      <div class="game-cue" id="stCue">Tap Start</div>
+      <div class="game-bar" aria-label="Stamina"><div id="stStam"></div></div>
+      <div class="game-row"><button type="button" class="btn game-push" id="stPush" disabled>Push</button></div>
+      <div class="game-row"><button type="button" class="btn ghost" id="stGo">Start (15 s)</button><button type="button" class="btn ghost" id="stGive" disabled>Give in</button></div></div>`;
+    const cv = $("stCv"), ctx = cv.getContext("2d"), still = matchMedia("(prefers-reduced-motion: reduce)").matches, cue = $("stCue");
+    const N = 56, DEPTH = 100, SINK_LOOSE = 3.2, SINK_CLENCH = 10, CLIMB = 6; // no struggle: pulled all the way in at about 15 s
+    let phase = "clench", open = 0.82, good = 0, bad = 0, stam = 100, on = false, end = 0, gurg = 0, t0 = performance.now(), last = t0, timers = [];
+    let bulge = { a: -Math.PI / 2, f: 0 }, squeeze = 0, you = { x: 0, y: 0, vx: 0, vy: 0, kick: 0 }, bubbles = [], depth = tube ? 8 : 0, waves = [];
+    const setPhase = p => { phase = p; cue.textContent = p === "loose" ? (tube ? "It eases: climb!" : "Loosening: push!") : (tube ? "It pulls you in: hold on" : "Clenching: rest"); };
+    const wallR = (a, t) => { const fold = Math.sin(a * 7 + t * 1.3) * 0.025 + Math.sin(a * 11 - t * 2.1) * 0.015 + Math.sin(a * 3 + t * 0.7) * 0.02; let d = a - bulge.a; d = Math.atan2(Math.sin(d), Math.cos(d)); return open + fold + bulge.f * 0.22 * Math.exp(-d * d * 9) - squeeze * 0.05 * (1 + Math.sin(a * 5 + t * 6)); };
+    const frame = now => {
+      if (!gamePlaying(cv)) { on = false; timers.forEach(clearTimeout); return; }
+      const t = (now - t0) / 1000, dt = Math.min(0.05, (now - last) / 1000); last = now;
+      open += ((phase === "loose" ? 1 : 0.74) - open) * (still ? 1 : 0.06); bulge.f *= 0.92; squeeze *= 0.9;
+      if (tube && on) { depth = Math.min(DEPTH, depth + (phase === "clench" ? SINK_CLENCH : SINK_LOOSE) * dt); if (depth >= DEPTH) finish(false, true); }
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, 600, 600);
+      const bg = ctx.createRadialGradient(300, 300, 60, 300, 300, 320); bg.addColorStop(0, T.wall); bg.addColorStop(1, "#140810"); ctx.fillStyle = bg; ctx.fillRect(0, 0, 600, 600);
+      ctx.translate(300, 300);
+      if (tube) {
+        for (const w of waves) w.y += still ? 0 : 3.4; waves = waves.filter(w => w.y < 380);
+        const wob = T.coil ? y => Math.sin(y / 70 + depth / 12) * 26 : () => 0;
+        const half = y => { let h = (96 * open + 10) * T.w; for (const w of waves) h -= 36 * T.w * Math.exp(-((y - w.y) ** 2) / 1800); return Math.max(38, h + Math.sin(y / 40 + depth / 6) * 4); };
+        ctx.beginPath(); for (let y = -320; y <= 320; y += 8) ctx.lineTo(wob(y) - half(y), y); for (let y = 320; y >= -320; y -= 8) ctx.lineTo(wob(y) + half(y), y); ctx.closePath();
+        const g = ctx.createLinearGradient(0, -300, 0, 300); g.addColorStop(0, T.wall2); g.addColorStop(0.55, T.wall); g.addColorStop(1, "#1a060c"); ctx.fillStyle = g; ctx.fill();
+        ctx.save(); ctx.clip();
+        const sh = ctx.createLinearGradient(-130, 0, 130, 0); sh.addColorStop(0, "rgba(0,0,0,.5)"); sh.addColorStop(0.32, "rgba(255,255,255,.07)"); sh.addColorStop(0.6, "rgba(0,0,0,0)"); sh.addColorStop(1, "rgba(0,0,0,.5)"); ctx.fillStyle = sh; ctx.fillRect(-190, -320, 380, 640);
+        ctx.strokeStyle = T.fold; ctx.lineWidth = T.scales ? 3 : 5; ctx.globalAlpha = 0.5;
+        for (let y0 = -330 - (depth * 9) % T.ridge; y0 < 340; y0 += T.ridge) { ctx.beginPath(); ctx.ellipse(wob(y0), y0, half(y0), T.scales ? 7 : 11, 0, 0, Math.PI); ctx.stroke(); if (T.scales) for (let x = -half(y0) + 14; x < half(y0) - 10; x += 22) { ctx.beginPath(); ctx.arc(wob(y0) + x, y0 + 12, 9, 0, Math.PI); ctx.stroke(); } }
+        if (T.streak) { ctx.globalAlpha = 0.35; ctx.strokeStyle = T.streak; ctx.lineWidth = 4; for (const k of [-0.45, 0.2, 0.55]) { ctx.beginPath(); for (let y = -320; y <= 320; y += 8) ctx.lineTo(wob(y) + half(y) * k + Math.sin(y / 30 - depth / 3) * 3, y); ctx.stroke(); } }
+        ctx.globalAlpha = 0.16; ctx.strokeStyle = "#fff"; ctx.lineWidth = 5; ctx.beginPath(); for (let y = -320; y <= 320; y += 8) ctx.lineTo(wob(y) - half(y) + 18, y); ctx.stroke(); ctx.globalAlpha = 1;
+        if (T.glow) { const w = ctx.createRadialGradient(0, 0, 10, 0, 0, 260); w.addColorStop(0, T.glow + "44"); w.addColorStop(1, T.glow + "00"); ctx.fillStyle = w; ctx.fillRect(-300, -300, 600, 600); }
+        ctx.restore();
+        ctx.strokeStyle = T.fold; ctx.lineWidth = 6;
+        ctx.beginPath(); for (let y = -320; y <= 320; y += 8) ctx.lineTo(wob(y) - half(y), y); ctx.stroke();
+        ctx.beginPath(); for (let y = -320; y <= 320; y += 8) ctx.lineTo(wob(y) + half(y), y); ctx.stroke();
+        ctx.fillStyle = "rgba(0,0,0,.45)"; ctx.fillRect(186, -150, 10, 300); ctx.fillStyle = T.wall2; ctx.fillRect(186, -150, 10, 300 * depth / DEPTH);
+        ctx.fillStyle = "#efeaf6"; ctx.font = "600 20px system-ui"; ctx.textAlign = "right"; ctx.fillText(T.from, 200, -164); ctx.fillText(T.to, 200, 182);
+        for (const w of waves) if (Math.abs(w.y) < 50) { you.vy += 0.3; squeeze = Math.max(squeeze, 0.6); }
+        you.x += (wob(you.y - 10) - you.x) * 0.2;
+      } else {
+        const sx = T.long ? 1.25 : 1, sy = T.long ? 0.72 : 1;
+        const pts = Array.from({ length: N }, (_, i) => { const a = i / N * Math.PI * 2, r = wallR(a, t) * 240; return [Math.cos(a) * r * sx, Math.sin(a) * r * sy]; });
+        const path = (sc = 1) => { ctx.beginPath(); for (let i = 0; i <= N; i++) { const [x0, y0] = pts[i % N], [x1, y1] = pts[(i + 1) % N]; const mx = (x0 + x1) / 2 * sc, my = (y0 + y1) / 2 * sc; i ? ctx.quadraticCurveTo(x0 * sc, y0 * sc, mx, my) : ctx.moveTo(mx, my); } ctx.closePath(); };
+        path(); const g = ctx.createRadialGradient(-40, -60, 20, 0, 0, 260); g.addColorStop(0, T.wall2); g.addColorStop(0.7, T.wall); g.addColorStop(1, T.fold); ctx.fillStyle = g; ctx.fill();
+        ctx.save(); path(); ctx.clip(); ctx.strokeStyle = T.fold; ctx.lineCap = "round";
+        if (T.ridges) for (let k = -5; k <= 5; k++) { ctx.lineWidth = 7; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.ellipse(k * 46 + Math.sin(t * 2 + k) * 4, 0, 14, 200, 0, 0, Math.PI * 2); ctx.stroke(); }
+        else for (const sc of [0.86, 0.68, 0.5]) { ctx.lineWidth = 10 * sc; ctx.globalAlpha = 0.35; path(sc); ctx.stroke(); }
+        ctx.globalAlpha = 1;
+        const lvl = 70 - squeeze * 20 + Math.sin(t * 1.7) * 6;
+        ctx.beginPath(); ctx.moveTo(-320, 320); for (let x = -320; x <= 320; x += 16) ctx.lineTo(x, lvl + Math.sin(x / 40 + t * 2.4) * 7 + Math.sin(x / 23 - t * 3.1) * 4 + (bulge.f * 12) * Math.sin(x / 30 + t * 8)); ctx.lineTo(320, 320); ctx.closePath();
+        ctx.fillStyle = T.fluid; ctx.globalAlpha = T.fluidOp; ctx.fill(); ctx.globalAlpha = 0.25; ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke(); ctx.globalAlpha = 1;
+        if (T.bubbles && Math.random() < 0.15 && !still) bubbles.push({ x: (Math.random() - 0.5) * 300, y: 200, r: 3 + Math.random() * 8, v: 0.6 + Math.random() * 1.2 });
+        for (const bb of bubbles) { bb.y -= bb.v; ctx.beginPath(); ctx.arc(bb.x + Math.sin(bb.y / 15) * 3, bb.y, bb.r, 0, Math.PI * 2); ctx.strokeStyle = T.fluid; ctx.globalAlpha = 0.8; ctx.lineWidth = 2; ctx.stroke(); ctx.globalAlpha = 1; }
+        bubbles = bubbles.filter(bb => bb.y > lvl - 4);
+        if (T.glow) { const w = ctx.createRadialGradient(0, -20, 10, 0, 0, 220); w.addColorStop(0, T.glow + "55"); w.addColorStop(1, T.glow + "00"); ctx.fillStyle = w; ctx.fillRect(-300, -300, 600, 600); }
+        ctx.strokeStyle = "#fff"; ctx.globalAlpha = 0.12; ctx.lineWidth = 6; path(0.94); ctx.stroke(); ctx.globalAlpha = 1;
+        ctx.restore(); ctx.strokeStyle = T.fold; ctx.lineWidth = 6; path(); ctx.stroke();
+      }
+      // you: a small ball in your persona colour
+      you.vx += -you.x * (tube ? 0 : 0.05); you.vy += -you.y * 0.05; you.vx *= 0.85; you.vy *= 0.85; if (!tube) you.x += you.vx; you.y += you.vy; you.kick *= 0.88;
+      const col = personaColor(), r = 16;
+      ctx.save(); ctx.translate(you.x, you.y - 10); ctx.scale(1 - squeeze * 0.14 + you.kick * 0.1, 1 + squeeze * 0.1 - you.kick * 0.08);
+      ctx.shadowColor = "rgba(0,0,0,.55)"; ctx.shadowBlur = 10;
+      const yb = ctx.createRadialGradient(-5, -6, 2, 0, 0, r); yb.addColorStop(0, shade(col, 0.6)); yb.addColorStop(0.5, col); yb.addColorStop(1, shade(col, -0.35));
+      ctx.fillStyle = yb; ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      if (phase === "clench") { ctx.setTransform(1, 0, 0, 1, 0, 0); const v = ctx.createRadialGradient(300, 300, 200, 300, 300, 320); v.addColorStop(0, "rgba(200,30,50,0)"); v.addColorStop(1, `rgba(200,30,50,${0.25 + squeeze * 0.4})`); ctx.fillStyle = v; ctx.fillRect(0, 0, 600, 600); }
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+    const cycle = () => { if (!on) return; setPhase(phase === "loose" ? "clench" : "loose"); if (phase === "clench") { if (tube) waves.push({ y: -330 }); squeeze = 1; if (Math.random() < 0.6) playKey("squish"); } timers.push(setTimeout(cycle, phase === "loose" ? 1100 + Math.random() * 700 : 900 + Math.random() * 800)); };
+    const finish = (gave, pulledIn) => {
+      if (!on && !gave) return;
+      on = false; timers.forEach(clearTimeout); timers = []; $("stPush").disabled = true; $("stGive").disabled = true; $("stGo").disabled = false; setPhase("clench");
+      cue.textContent = pulledIn ? `All the way in: ${T.to}` : "Done";
+      const res = gave ? "gave in" : good >= 8 && good > bad * 2 ? "strong" : good >= 3 ? "weak" : "gave in";
+      if (pulledIn) playKey("gulp"); else if (res === "strong" && !tube && Math.random() < 0.6) setTimeout(() => playKey("burp"), 300);
+      const pct = Math.round(depth), where = tube ? (pulledIn ? ` and was pulled all the way in (${W.from.toLowerCase()} to ${W.to.toLowerCase()})` : depth < 20 ? ` and is almost back out at the ${W.from.toLowerCase()}` : ` and ended up ${pct}% of the way in`) : "";
+      const u = uname(), act = res === "gave in" ? (tube ? `${u} stopped fighting and let themselves be pulled in` : `${u} stopped struggling and gave in`) : `${u} put up a ${res} struggle ${tube ? "against being pulled in" : "against the walls"} (${good} well-timed pushes, ${bad} wasted)`;
+      const short = res === "gave in" ? (tube ? "Gave in on the way in" : "Gave in") : `${res === "strong" ? "Strong" : "Weak"} struggle${tube ? (pulledIn ? ", pulled in" : depth < 20 ? ", nearly out" : `, ${pct}% in`) : ""}`;
+      gameResult("struggle", short, `${act}${where}.`, res === "gave in" ? "*I stop fighting.*" : "*I struggle with everything I've got.*");
+      if (res === "strong" && (!tube || depth < 20)) achGrant("breakout", S.charId, S.chat?.id);
+      if (res === "gave in") achGrant("surrender", S.charId, S.chat?.id);
+    };
+    $("stGo").onclick = () => {
+      acx(); good = 0; bad = 0; stam = 100; depth = tube ? 8 : 0; waves = []; $("stStam").style.width = "100%"; on = true; end = performance.now() + 15000;
+      $("stPush").disabled = false; $("stGive").disabled = false; $("stGo").disabled = true; setPhase("loose"); timers.push(setTimeout(cycle, 1200));
+      const tick = () => { if (!on) return; if (!gamePlaying(cv)) { on = false; return; } if (performance.now() > end) return finish(false); if (performance.now() > gurg) { playKey(T.sound); gurg = performance.now() + 2500 + Math.random() * 3000; } stam = Math.min(100, stam + 0.8); $("stStam").style.width = stam + "%"; timers.push(setTimeout(tick, 200)); };
+      tick();
+    };
+    $("stPush").onclick = () => {
+      if (!on) return;
+      try { navigator.vibrate?.(25); } catch {}
+      bulge.a = -Math.PI / 2 + (tube ? 0 : (Math.random() - 0.5) * 2.4);
+      if (phase === "loose" && stam > 8) { good++; stam -= 6; playKey("struggle"); bulge.f = 1; you.kick = 1; you.vy -= 7; if (!tube) you.vx += Math.cos(bulge.a) * 6; if (tube) depth = Math.max(0, depth - CLIMB); }
+      else { bad++; stam -= 14; playKey("squish"); squeeze = 1; if (!tube) you.vx += (Math.random() - 0.5) * 8; if (tube) depth = Math.min(DEPTH, depth + 3); }
+      $("stStam").style.width = Math.max(0, stam) + "%"; if (stam <= 0) finish(true);
+    };
+    $("stGive").onclick = () => finish(true);
+  });
+}
+
+/* -- Dice duels: small scuffles and contests, best of three, the app's d20 -- */
+function openDuel(stakes, markDone) {
+  const c = char(), foe = foeName(c), BEATS = { attack: "trick", trick: "defend", defend: "attack" }, NAME = { attack: "Attack", defend: "Defend", trick: "Trick" };
+  let you = 0, them = 0, round = 0, busy = false, over = false;
+  openSheet(`Duel with ${foe}`, b => {
+    b.innerHTML = `<div class="game"><p class="hint">For small scuffles and contests. Stakes: <b>${esc(stakes || "the story decides")}</b>. Attack beats Trick, Trick beats Defend, Defend beats Attack; winning the pick adds +4. Best of three.</p>
+      <div class="duel-row"><div class="duel-side"><span>${esc(uname())}</span><span id="dzY">${DIE_SVG(20)}</span><div class="pips" id="dzPY"></div></div><span class="hint">vs</span><div class="duel-side"><span>${esc(foe)}</span><span id="dzT" class="foe-die">${DIE_SVG(20)}</span><div class="pips" id="dzPT"></div></div></div>
+      <div class="game-row" id="dzPicks">${Object.keys(NAME).map(k => `<button type="button" class="btn ghost" data-p="${k}">${NAME[k]}</button>`).join("")}</div>
+      <p class="hint" id="dzLog"></p></div>`;
+    const pips = () => { $("dzPY").innerHTML = [0, 1].map(i => `<i class="${i < you ? "w" : ""}"></i>`).join(""); $("dzPT").innerHTML = [0, 1].map(i => `<i class="${i < them ? "w" : ""}"></i>`).join(""); };
+    pips();
+    b.querySelectorAll("[data-p]").forEach(btn => btn.onclick = async () => {
+      if (busy || over) return; busy = true; round++; acx();
+      const mine = btn.dataset.p, theirs = Object.keys(NAME)[Math.floor(Math.random() * 3)];
+      b.querySelectorAll("[data-p]").forEach(x => x.classList.toggle("on", x === btn));
+      playKey("whoosh"); diceSound("tumble");
+      const ry = d20(), rt = d20(), by = BEATS[mine] === theirs ? 4 : 0, bt = BEATS[theirs] === mine ? 4 : 0;
+      $("dzY").innerHTML = DIE_SVG(ry, "die roll"); $("dzT").innerHTML = DIE_SVG(rt, "die roll");
+      await new Promise(r => setTimeout(r, 750)); diceSound("land");
+      const ty = ry + by, tt = rt + bt, win = ty === tt ? null : ty > tt ? "you" : "them";
+      playKey(win === "you" ? (mine === "attack" ? "slash" : mine === "trick" ? "punch" : "clang") : win === "them" ? "punch" : "clang");
+      if (win === "you") you++; else if (win === "them") them++; pips();
+      $("dzLog").innerHTML = `Round ${round}: you picked <b>${NAME[mine]}</b>, ${esc(foe)} picked <b>${NAME[theirs]}</b>. You: ${ry}${by ? " +4" : ""} = ${ty}. ${esc(foe)}: ${rt}${bt ? " +4" : ""} = ${tt}. ${win ? (win === "you" ? "You take the round." : `${esc(foe)} takes the round.`) : "A clash, nobody scores."}`;
+      busy = false;
+      if (you >= 2 || them >= 2) {
+        over = true; await markDone();
+        setTimeout(() => playStingStoppable(you >= 2 ? "sting_victory" : "sting_defeat"), 400);
+        const u = uname(), won = you >= 2;
+        $("dzLog").insertAdjacentHTML("beforeend", `<br><b>${won ? `You won ${you}–${them}.` : `${esc(foe)} won ${them}–${you}.`}</b> The result goes with your next message.`);
+        gameResult("duel", won ? `Won the duel ${you}–${them}` : `Lost the duel ${them}–${you}`, `${won ? u : foe} won a dice duel against ${won ? foe : u}, ${Math.max(you, them)}–${Math.min(you, them)} (a small scuffle or contest, not a real fight). Stakes: ${stakes || "as the story set them"}. ${won ? foe : u} faces those stakes.`, won ? "*I win the duel.*" : "*I lose the duel.*");
+        if (won) achGrant("duelist", S.charId, S.chat?.id);
+      }
+    });
+  });
+}
+
+/* -- Treasure chest mimic: RPG bots, three chests, sometimes a mimic -- */
+const CHEST_SVG = `<svg viewBox="0 0 92 84" aria-hidden="true" style="overflow:visible"><rect x="10" y="38" width="72" height="40" rx="5" fill="#8a5a2b" stroke="#4a2c12" stroke-width="2"/><rect x="10" y="50" width="72" height="5" fill="#c9a24a"/><rect x="40" y="46" width="12" height="14" rx="2" fill="#e8c46b" stroke="#6b4a14"/>
+  <g class="teeth"><path d="M12 13 H80 V38 H12 Z" fill="#2a040c"/><ellipse cx="46" cy="25" rx="20" ry="8" fill="#0e0206"/><path d="M12 13 V38 M80 13 V38" stroke="#4a2c12" stroke-width="2"/><path d="M12 34 Q46 30 80 34 V38 H12 Z" fill="#7a1828"/>
+    <path d="M12 38 L14.6 31.6 L16.2 38 L19.1 32.2 L20.5 38 L23.4 26.2 L24.8 38 L27.6 30.9 L29 38 L31.9 30.5 L33.5 38 L36.2 31.7 L37.8 38 L40.6 30.4 L42.1 38 L45 31.2 L46.4 38 L49.2 30.8 L50.8 38 L53.5 31.4 L55.1 38 L57.9 30.3 L59.4 38 L62.2 31.1 L63.7 38 L66.6 30.7 L68.1 38 L70.9 25.6 L72.4 38 L75.1 31 L76.8 38 L79.4 31.8 L80 38 Z" fill="#f6f0e2" stroke="#5a3a20" stroke-width=".7" stroke-linejoin="round"/>
+    <defs><linearGradient id="mtg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a2a42"/><stop offset=".35" stop-color="#e2647f"/><stop offset="1" stop-color="#ea7590"/></linearGradient></defs>
+    <g class="tongue"><path d="M30 23 C29 34 28 46 29 55 C30 65 37 71 46 71 C55 71 62 65 63 55 C64 46 63 34 62 23 Z" fill="url(#mtg)" stroke="#7a1f33" stroke-width="1.2"/><path d="M46 28 C46 42 46 55 46 66" stroke="#a83350" stroke-width="1.6" fill="none"/><ellipse cx="37" cy="47" rx="4" ry="8" fill="#fff" fill-opacity=".35" transform="rotate(-6 37 47)"/><ellipse cx="56" cy="56" rx="2.4" ry="4" fill="#fff" fill-opacity=".3"/></g>
+    <path d="M22 38 C22 44 23 49 22 53" stroke="#f0c8d4" stroke-opacity=".7" stroke-width="1" fill="none"/><circle class="drip" cx="22" cy="54" r="1.6" fill="#f0c8d4" fill-opacity=".8"/><path d="M70 38 C71 45 70 50 71 56" stroke="#f0c8d4" stroke-opacity=".7" stroke-width="1" fill="none"/><circle class="drip" cx="71" cy="57" r="1.4" fill="#f0c8d4" fill-opacity=".8" style="animation-delay:.7s"/></g>
+  <g class="lid"><g class="fangs"><path d="M12 40 H80 V43 Q46 46 12 43 Z" fill="#7a1828"/><path d="M12 40 L14.5 47.6 L16.2 40 L19 47.1 L20.5 40 L23.2 51.6 L24.7 40 L27.5 47.8 L29 40 L31.7 46.4 L33.2 40 L36.1 47.5 L37.7 40 L40.4 47.2 L42 40 L44.7 46.9 L46.4 40 L49.2 47.7 L50.8 40 L53.4 46.6 L55.1 40 L57.8 47.3 L59.3 40 L62.1 47 L63.6 40 L66.4 46.5 L68.1 40 L70.7 51.2 L72.4 40 L75.1 47.4 L76.7 40 L79.4 46.8 L80 40 Z" fill="#f6f0e2" stroke="#5a3a20" stroke-width=".7" stroke-linejoin="round"/></g>
+    <path d="M10 40v-10c0-12 16-20 36-20s36 8 36 20v10z" fill="#9c6a35" stroke="#4a2c12" stroke-width="2"/><rect x="10" y="32" width="72" height="5" fill="#c9a24a"/></g></svg>`;
+function openChest(markDone) {
+  const mimicAt = Math.random() < 0.25 ? -1 : Math.floor(Math.random() * 3); // sometimes there's no mimic (owner)
+  openSheet("Three chests", b => {
+    b.innerHTML = `<div class="game"><p class="hint">Pick one. Not every chest is a chest.</p>
+      <div class="chests">${[0, 1, 2].map(i => `<button type="button" class="chest" data-i="${i}" aria-label="Chest ${i + 1}">${CHEST_SVG}</button>`).join("")}</div>
+      <p class="game-cue" id="chLog"></p><span id="chRoll"></span></div>`;
+    b.querySelectorAll(".chest").forEach(btn => btn.onclick = async () => {
+      b.querySelectorAll(".chest").forEach(x => x.disabled = true); acx(); await markDone();
+      const mimic = +btn.dataset.i === mimicAt, u = uname(), c = char();
+      if (mimic) btn.classList.add("mimic"); btn.classList.add("open");
+      if (!mimic) {
+        const gem = Math.random() < 0.35, gold = 20 + Math.floor(Math.random() * 10) * 10;
+        if (gem) { playType("gem"); await rpgEdit({ items: [{ name: "Sapphire", d: 1 }] }); } else { playKey("coins"); await rpgEdit({ gold }); }
+        $("chLog").textContent = gem ? "A glittering sapphire, into your bag." : `A pile of gold: +${gold} gold.`;
+        gameResult("chest", gem ? "Found a sapphire" : `Found ${gold} gold`, `${u} opened a chest and found ${gem ? "a sapphire (now in the bag)" : `${gold} gold (already added)`}.${mimicAt >= 0 ? " One of the other chests was a mimic." : ""}`, "*I open the chest.*");
+        return;
+      }
+      achGrant("had_teeth", S.charId, S.chat?.id);
+      playKey("chomp"); $("chLog").textContent = "It's a mimic! Rolling to see what happens…";
+      await new Promise(r => setTimeout(r, 500)); diceSound("tumble");
+      const n = d20(); $("chRoll").innerHTML = DIE_SVG(n, "die roll foe-die");
+      await new Promise(r => setTimeout(r, 800)); diceSound("land");
+      let short, text;
+      if (n >= 15) { playKey("whoosh"); short = "Mimic: got away"; text = `The chest was a mimic. ${u} rolled ${n} and yanked free just in time, unhurt.`; }
+      else if (n >= 8) { playKey("chomp"); setTimeout(() => playKey("punch"), 250); short = "Mimic: bitten"; text = `The chest was a mimic. ${u} rolled ${n}: it bit down hard on ${u}'s arm before ${u} tore free (hurt, not swallowed).`; }
+      else { playKey("gulp"); setTimeout(() => playKey("gurgle"), 900); short = "Mimic: swallowed!"; text = `The chest was a mimic. ${u} rolled ${n}: its fat tongue wrapped around ${u} and it swallowed ${u} whole. The scene turns to vore: ${u} is now inside the mimic.`; }
+      $("chLog").textContent = `You rolled ${n}. ${short}.`;
+      gameResult("chest", short, text, "*I open the chest.*");
+    });
+  });
+}
+
+/* -- Market haggle: the AI stocks the shop; buy and sell with a slider and a d20 against the shopkeeper's mood -- */
+function openHaggle(markDone) {
+  const c = char(), chat = S.chat, u = uname();
+  openSheet("Haggle", async b => {
+    b.innerHTML = `<div class="game"><p class="hint">Asking what's for sale…</p>${lanternSVG("seq")}</div>`;
+    const s = rpgState(c, chat), bag = [...s.items].map(([k, q]) => ({ name: s.names.get(k), qty: q }));
+    let shop;
+    try {
+      const scene = chat.messages.filter(m => m.role !== "image").slice(-3).map(m => `${m.role === "user" ? u : c.name}: ${msgText(m)}`).join("\n").slice(-2500);
+      shop = await dsJSON([{ role: "system", content: `You stock a shop for a roleplay game. Reply with JSON only: {"shopkeeper": name, "mood": "cheerful" | "grumpy" | "annoyed", "items": [{"name", "desc" (under 8 words), "price" (gold, whole number)}], "buys": [{"name", "price"}]}. items: what this shop sells, as many as fit it (3 to 6), priced for this world. buys: what the shopkeeper would pay for each item ${u} carries (fair but a little low; leave out what they wouldn't buy).` },
+        { role: "user", content: `The scene:\n${scene}\n\n${u} has ${s.gold} gold. ${u}'s bag: ${bag.map(x => x.name).join(", ") || "empty"}.` }], { maxTokens: 700, plain: true });
+    } catch (e) { b.innerHTML = `<div class="game"><p class="hint">Couldn't stock the shop: ${esc(e.message)}</p><button type="button" class="btn ghost" id="hgRetry">Try again</button></div>`; $("hgRetry").onclick = () => openHaggle(markDone); return; }
+    const items = (shop.items || []).filter(x => x && x.name && +x.price > 0).slice(0, 6).map(x => ({ name: String(x.name), desc: String(x.desc || ""), price: Math.round(+x.price) }));
+    const buys = new Map((shop.buys || []).filter(x => x && x.name && +x.price > 0).map(x => [itemKey(x.name), Math.round(+x.price)]));
+    const keeper = String(shop.shopkeeper || "The shopkeeper"), MOODS = ["annoyed", "grumpy", "cheerful"];
+    const moods = chat.shopMood || (chat.shopMood = {});
+    let mood = moods[keeper]?.mood ?? Math.max(0, MOODS.indexOf(shop.mood)), markup = moods[keeper]?.markup || 1, mode = "buy", sel = 0, deals = [];
+    await markDone();
+    const keep = async () => { moods[keeper] = { mood, markup }; await saveChat(); };
+    const draw = () => {
+      const st = rpgState(c, chat), mine = [...st.items].map(([k, q]) => ({ name: st.names.get(k), qty: q, price: buys.get(k) || 0 })).filter(x => x.price > 0);
+      const list = mode === "buy" ? items.map(x => ({ ...x, price: Math.round(x.price * markup) })) : mine.map(x => ({ name: x.name, desc: x.qty > 1 ? `You have ${x.qty}` : "From your bag", price: x.price }));
+      const it = list[sel] || list[0]; if (!list[sel]) sel = 0;
+      b.innerHTML = `<div class="game"><p class="hint">${esc(keeper)} is <b>${MOODS[mood]}</b>${markup > 1 ? ` · prices up ${Math.round((markup - 1) * 100)}%` : ""} · you have <b>${st.gold}</b> gold</p>
+        <div class="game-row"><button type="button" class="btn ghost ${mode === "buy" ? "on" : ""}" id="hgBuy">Buy</button><button type="button" class="btn ghost ${mode === "sell" ? "on" : ""}" id="hgSell">Sell</button></div>
+        <div class="shop">${list.map((x, i) => `<button type="button" class="shop-item ${i === sel ? "on" : ""}" data-i="${i}"><span>${esc(x.name)}<small>${esc(x.desc)}</small></span><b>${x.price} g</b></button>`).join("") || `<p class="hint">${mode === "buy" ? "Nothing for sale." : `${esc(keeper)} doesn't want anything you carry.`}</p>`}</div>
+        ${it ? `<label class="hint" for="hgOff">${mode === "buy" ? "Your offer" : "Your asking price"}: <b id="hgVal">${it.price}</b> gold</label><input type="range" id="hgOff" min="${Math.max(1, Math.round(it.price * (mode === "buy" ? 0.4 : 0.3)))}" max="${Math.round(it.price * (mode === "buy" ? 1.1 : 1.6))}" value="${it.price}">
+        <div class="game-row"><button type="button" class="btn" id="hgGo">${mode === "buy" ? "Make offer" : "Offer it"}</button><button type="button" class="btn ghost" id="hgDone">Done</button></div>` : `<div class="game-row"><button type="button" class="btn ghost" id="hgDone">Done</button></div>`}
+        <p class="hint" id="hgLog"></p><span id="hgRoll"></span></div>`;
+      $("hgBuy").onclick = () => { mode = "buy"; sel = 0; draw(); }; $("hgSell").onclick = () => { mode = "sell"; sel = 0; draw(); };
+      b.querySelectorAll(".shop-item").forEach(x => x.onclick = () => { sel = +x.dataset.i; draw(); });
+      $("hgDone").onclick = async () => {
+        await keep(); closeSheet();
+        if (deals.length) gameResult("haggle", deals.length === 1 ? deals[0].short : `${deals.length} deals with ${keeper}`, `${u} haggled with ${keeper}: ${deals.map(d => d.text).join("; ")}. Gold and the bag are already updated.`, "*I finish my shopping.*");
+      };
+      if (!it) return;
+      $("hgOff").oninput = e => $("hgVal").textContent = e.target.value;
+      $("hgGo").onclick = async () => {
+        const offer = +$("hgOff").value, st2 = rpgState(c, chat);
+        if (mode === "buy" && offer > st2.gold) { $("hgLog").textContent = "You don't have that much gold."; return; }
+        acx(); diceSound("tumble"); const n = d20(); $("hgRoll").innerHTML = DIE_SVG(n, "die roll foe-die");
+        await new Promise(r => setTimeout(r, 750)); diceSound("land");
+        // buying: an offer near the price helps; selling: asking less than it's worth helps. A cheerful shopkeeper helps both.
+        const fair = mode === "buy" ? offer / it.price : it.price / offer, score = n + (mood - 1) * 3 + (fair - 0.75) * 40;
+        if (score >= 22) {
+          if (mode === "buy") { await rpgEdit({ gold: -offer, items: [{ name: it.name, d: 1 }] }); deals.push({ short: `Bought ${it.name}`, text: `bought ${it.name} for ${offer} gold (asked ${it.price})` }); if (offer <= items.find(x => x.name === it.name).price / 2) achGrant("bargain", S.charId, chat.id); }
+          else { await rpgEdit({ gold: offer, items: [{ name: it.name, d: -1 }] }); deals.push({ short: `Sold ${it.name}`, text: `sold ${it.name} for ${offer} gold` }); }
+          playKey("coins"); setTimeout(() => playType(mode === "buy" && fair < 0.8 ? "sting_quest" : "item"), 350);
+          $("hgLog").textContent = `Rolled ${n}. Deal!`; await keep(); setTimeout(draw, 1200);
+        } else if (score >= 13) {
+          // meets you partway: buying, between your offer and the price; selling, never above what you asked (owner)
+          const counter = mode === "buy" ? Math.round((offer + it.price) / 2) : Math.min(offer, Math.round((offer + it.price * 0.7) / 2));
+          $("hgLog").textContent = mode === "buy" ? `Rolled ${n}. ${keeper} counters: ${counter} gold.` : `Rolled ${n}. ${keeper} would give you ${counter} gold.`;
+          $("hgOff").value = counter; $("hgVal").textContent = counter;
+        } else {
+          mood = Math.max(0, mood - 1); if (mood === 0) markup = Math.min(1.6, markup + 0.15); // annoyed: prices go up (owner)
+          $("hgLog").textContent = `Rolled ${n}. ${keeper} scowls (now ${MOODS[mood]}).${mood === 0 ? " Prices just went up." : ""}`; await keep();
+          if (mood === 0 && mode === "buy") setTimeout(draw, 1200);
+        }
+      };
+    };
+    draw();
+  });
+}
 
 // the note the AI gets for a rolled message
 function rollNote(m, u, c) {
@@ -5752,10 +6156,12 @@ function playSettings(panels) {
   const a = document.createElement("div"); a.className = "group"; a.id = "sPlay";
   a.innerHTML = `<h3>Play</h3>
     <label class="check"><input type="checkbox" id="sDice" ${st.diceDefault ? "checked" : ""}> 🎲 Dice on in new chats: tap 🎲 before sending to make your action a contest roll (each chat has its own switch under ⋯)</label>
+    <label class="check"><input type="checkbox" id="sGames" ${st.gamesOn !== false ? "checked" : ""}> Minigames: Struggle or Submit, dice duels, mimic chests and haggling, offered by the message box when the scene calls for them</label>
     <label class="check"><input type="checkbox" id="sGauges" ${st.gaugesOn !== false ? "checked" : ""}> Show status gauges (set them up per bot in its editor)</label>
     <label class="check"><input type="checkbox" id="sPacerBuzz" ${st.pacerBuzz !== false ? "checked" : ""}> Stroke pacer buzzes the phone with each stroke (switch the pacer on per chat under ⋯)</label>`;
   panels.chats.appendChild(a);
   a.querySelector("#sDice").onchange = e => { st.diceDefault = e.target.checked; save(); };
+  a.querySelector("#sGames").onchange = e => { st.gamesOn = e.target.checked; save(); };
   a.querySelector("#sGauges").onchange = e => { st.gaugesOn = e.target.checked; save(); };
   a.querySelector("#sPacerBuzz").onchange = e => { st.pacerBuzz = e.target.checked; save(); };
   const f = document.createElement("div"); f.className = "group"; f.id = "sFx";
@@ -6955,7 +7361,7 @@ async function ambienceStep() {
   const scn = inChat ? sceneNow() : { amb: "none", act: "none", harm: "none" }, { amb, act } = scn;
   const wantAmb = inChat && st.ambOn !== false && !st.ambMuted && amb !== "none" ? amb : null;
   const wantAct = inChat && st.actOn !== false && !st.ambMuted && act !== "none" ? act : null;
-  try { updateFx(inChat ? scn : null); renderPacer(); renderVore(); drawRub(inChat ? scn : null); } catch {}
+  try { updateFx(inChat ? scn : null); renderPacer(); renderVore(); drawRub(inChat ? scn : null); drawGames(inChat ? scn : null); } catch {}
   if (btn) btn.title = "Background: " + (AMB_LABEL[amb] || "none") + (act !== "none" ? ` · ${act}` : "") + (st.ambMuted ? " (muted)" : "");
   if (!inChat && (AMBS.amb || AMBS.act || LIVE.size)) {
     // left the chat or the app: everything stops at once, no fade
