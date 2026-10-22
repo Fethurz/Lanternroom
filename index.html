@@ -638,6 +638,17 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 #rollNow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:8px 12px 0;font-size:13px}
 #rollNow[hidden]{display:none}
 #rubNow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:8px 12px 0;font-size:13px}
+#asBar{position:relative;z-index:1;display:flex;align-items:center;gap:6px;overflow-x:auto;padding:6px 10px 2px;font-size:13px}#asBar[hidden]{display:none}
+#asBar .as-l{flex:none;color:var(--muted);font-size:12px}#asBar .chip{flex:none;display:inline-flex;align-items:center;gap:6px}
+#choiceBar{position:relative;z-index:1;display:flex;flex-direction:column;gap:6px;padding:8px 10px;max-height:45vh;overflow-y:auto}#choiceBar[hidden]{display:none}
+#choiceBar .choice{display:flex;align-items:flex-start;gap:8px;text-align:left;min-height:40px;padding:9px 12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));background:color-mix(in srgb,var(--accent) 10%,var(--surface,var(--bg)));color:var(--text,inherit);font:inherit;font-size:14px;line-height:1.4;cursor:pointer}
+#choiceBar .choice:hover{background:color-mix(in srgb,var(--accent) 20%,var(--surface,var(--bg)))}#choiceBar .choice.risky{border-style:dashed}
+#choiceBar .ch-die{flex:none;width:20px;height:20px;color:var(--accent);margin-top:1px}#choiceBar .ch-die svg{width:20px;height:20px}
+#choiceBar .ch-own{align-self:flex-end;background:none;border:0;color:var(--muted);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;min-height:34px}
+#chat.choosing #composer{display:none}
+.cur-sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-top:8px}
+.cur-set{display:flex;align-items:center;gap:4px;padding:6px 8px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:inherit;font:inherit;font-size:12px;text-align:left;cursor:pointer}.cur-set svg{width:20px;height:20px;flex:none}.cur-set.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--bg))}
+.pg-one{padding:10px 12px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:6px}.pg-one p{margin:0}.pg-one .p-dot{margin-left:8px}
 #rubNow[hidden]{display:none}
 #gameNow{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px 0;font-size:13px}
 #gameNow[hidden]{display:none}
@@ -867,6 +878,8 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
     <div id="rollNow" hidden></div>
     <div id="rubNow" hidden></div>
     <div id="gameNow" hidden></div>
+    <div id="asBar" hidden></div>
+    <div id="choiceBar" hidden></div>
     <form id="composer" autocomplete="off">
       <button type="button" class="icon" id="btnAttach" aria-label="Send an image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.5l-8.3 8.3a5 5 0 0 1-7.1-7.1l8.6-8.6a3.3 3.3 0 0 1 4.7 4.7L10.3 18.4a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/></svg></button>
       <input type="file" id="imgCam" accept="image/*" capture="environment" hidden>
@@ -979,7 +992,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.54 · Oct 21";
+const VERSION = "1.55 · Oct 21";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1416,7 +1429,8 @@ function buildPrompt(c, chat, upto, cont) {
   }
   if (c.kind === "group") sys += `\n\nEnd each reply where the moment naturally ends: never close with a question, cliffhanger or prompt aimed at ${u} just to get a response.`;
   if (c.scenario) sys += `\n\n# Scenario\n${fill(c.scenario, c)}`;
-  if (p.description) sys += `\n\n# About ${u} (the user's character)\n${fill(p.description, c)}`;
+  if (isGroupP(p)) sys += groupPersonaPrompt(p, u);
+  else if (p.description) sys += `\n\n# About ${u} (the user's character)\n${fill(p.description, c)}`;
   if (chat.summary) sys += `\n\n# Story so far\n${chat.summary}`;
   if (chat.facts.length) sys += `\n\n# Established facts (never contradict these)\n` + chat.facts.map(f => "- " + f.t).join("\n");
   const lore = activeLore(c, chat.messages.slice(0, upto));
@@ -1442,6 +1456,7 @@ function buildPrompt(c, chat, upto, cont) {
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
   sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}${duelPart}${vorePart}${achP.part}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; savanna for grasslands, plains and prairies; jungle for jungles and rainforests; party for a lively party or club full of people talking; castle for castle halls, keeps, fortresses and throne rooms; lava near volcanoes, lava fields or molten hellscapes; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity labels what is LITERALLY, PHYSICALLY happening between characters in this reply, never a figure of speech or a passing mention: swallow only while a person or creature is being swallowed whole by someone's mouth or throat right now (never swallowing food, drink, saliva, words, pride or nerves, never 'swallowed by darkness', a crowd or the night); chew only while a living person or creature is being bitten, chewed, crushed between teeth or torn apart (hard vore; never eating food); struggle only while living prey is squirming inside someone's stomach, balls or womb (never a fight, wrestling or struggling with a task); vore while anyone is actually inside someone's stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling (never a hungry look, a threat to eat someone or a dream of it); sex only during actual penetrative sex (never thrusting a sword, pounding a door, riding a horse); oral only during actual oral sex; mess only while someone is cumming right now (spurting, pumping a load, excessive nonstop cumming) or while cum is still described dripping, leaking or pouring; once the climax is over and nothing is flowing, it is no longer mess; inflate while someone's belly (or balls, womb) is being filled up or swollen with cum (cum inflation); kiss only while characters are kissing each other on the lips or making out (never a peck on a hand or a cheek in greeting, never lips described alone); lick only while someone is licking another body (not oral sex, never licking their own lips, a spoon or food); shit only while someone is actually pooping or shitting (never swearing like 'oh shit'); otherwise none. When unsure, use none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
+  if (choicesOn(c, chat)) sys += choicesPrompt(u);
   if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
   const blankStart = chat.messages[0]?.greeting && !chat.messages[0].content;
@@ -1465,6 +1480,8 @@ function buildPrompt(c, chat, upto, cont) {
     if (m.role === "user" && m.roll && diceOn()) content = (content || "") + rollNote(m, u, c);
     if (m.role === "user" && m.rub) content = (content || "") + rubNote(m, u);
     if (m.role === "user" && m.game) content = (content || "") + gameNote(m, u);
+    if (m.role === "user" && m.choice) content = (content || "") + choiceNote(m, u);
+    if (m.role === "user" && m.speaker && !m.groupAdd) content = `**${m.speaker}:** ${content}`;
     if (m.role === "assistant" && m.mood && !(m.turn && hist[i + 1]?.turn === m.turn)) content += `\n[[mood: ${m.mood} | place: ${m.place || chat.place || "unknown"}${c.kind === "group" && m.focus ? ` | focus: ${m.focus}` : ""}${m.gauges && gs.length ? " | gauges: " + Object.entries(m.gauges).map(([k, v]) => k + "=" + v).join(", ") : ""}${m.pace && pacePart ? " | pace: " + m.pace : ""}]]`;
     if (budget - content.length < 0 && out.length >= 2) break;
     budget -= content.length;
@@ -1674,7 +1691,8 @@ function renderHome() {
   });
   if (HF.tab === "recent") shown.sort((a, b) => S.recent[b.id] - S.recent[a.id]);
   if (!S.chars.length) list.innerHTML = '<p class="note">Nothing here yet. Tap New to create a character, world or group, or import a character card.</p>';
-  else if (!shown.length) list.innerHTML = `<p class="note">${HF.q || HF.tags.size ? "Nothing matches that search." : HF.tab === "recent" ? "Bots you chat with will show up here, most recent first." : HF.tab === "fav" ? "No favorites yet. Tap ⋯ on a card and choose Favorite." : HF.tab === "hidden" ? "No hidden bots. Tap ⋯ on a card and choose Hide." : "Everything is hidden or in another tab."}</p>`;
+  else if (!shown.length) list.innerHTML = `<p class="note">${HF.q || HF.tags.size ? `Nothing matches that search.${HF.q ? `</p><button type="button" class="btn" id="mkSearch">✦ Make a bot of “${esc($("search").value.trim())}”</button><p class="note" hidden>` : ""}` : HF.tab === "recent" ? "Bots you chat with will show up here, most recent first." : HF.tab === "fav" ? "No favorites yet. Tap ⋯ on a card and choose Favorite." : HF.tab === "hidden" ? "No hidden bots. Tap ⋯ on a card and choose Hide." : "Everything is hidden or in another tab."}</p>`;
+  if ($("mkSearch")) $("mkSearch").onclick = () => openSearchMake($("search").value.trim());
   for (const c of shown) {
     const b = document.createElement("div");
     b.className = "char-card"; b.tabIndex = 0; b.setAttribute("role", "button");
@@ -1766,6 +1784,7 @@ async function openProfile(id) {
       <div class="row"><button type="button" class="btn primary" id="pfGo"></button><button type="button" class="btn" id="pfNew">New chat</button></div>
       ${people.length ? `<div class="stack"><div class="lbl">${kind === "group" ? "Talk to one of them alone" : "Characters in this world"}</div>${people.map((x, i) => `<button type="button" class="listrow pf-person" data-i="${i}"><img alt=""><span class="grow"><b>${esc(x.name)}</b><span class="sub">${esc(x.sub || "")}</span></span><span class="pf-go">Talk ›</span></button>`).join("")}</div>` : ""}
       ${achShelf(c)}
+      ${idx.length ? `<div class="stack"><div class="lbl">People in this story</div><div class="stack" id="pfPeople">${c.people?.found ? "" : '<p class="hint" style="margin:0">Side characters, places and groups you\'ve met can become bots of their own.</p>'}</div><button type="button" class="btn small" id="pfFind">${c.people?.found ? "↻ Look again" : "✦ Find people in this story"}</button></div>` : ""}
       <div class="stack"><div class="lbl">Chats · ${idx.length}</div><div class="stack" id="pfChats"></div></div>
       <div class="row"><button type="button" class="btn small" id="pfEdit">Edit</button><button type="button" class="btn small" id="pfManage">Manage chats</button><button type="button" class="btn small" id="pfMore">More…</button></div>`;
     setImg(b.querySelector(".pf-img"), thumbURL(c), c);
@@ -1784,6 +1803,7 @@ async function openProfile(id) {
     }
     b.querySelectorAll(".pf-person").forEach(el => { const x = people[+el.dataset.i]; setImg(el.querySelector("img"), x.img || (x.who ? thumbURL(x.who) : ""), x.who || { name: x.name }); el.onclick = () => x.go(); });
     $("pfEdit").onclick = () => editChar(c, false);
+    if ($("pfFind")) { if (c.people?.found) drawStoryPeople(c, $("pfPeople")); $("pfFind").onclick = () => storyPeople(c, $("pfPeople")); }
     if ($("pfBadges")) $("pfBadges").onclick = () => openTrophies(c.id);
     $("pfManage").onclick = () => openChats(id);
     $("pfMore").onclick = () => cardMenu(c);
@@ -1820,7 +1840,7 @@ $("btnBooks").onclick = () => openBooks();
 $("btnNewChar").onclick = () => openSheet("Create", b => {
   const ds = Object.entries(DRAFTS || {}).filter(([id, d]) => d && (d.type === "gen" ? (d.prompt || "").trim() || d.card : d.type === "quiz" ? d.a && d.a.kind : d.type === "edit" && d.isNew)).sort((a, b) => b[1].at - a[1].at);
   const dName = d => d.type === "quiz" ? `Quiz · ${KINDS[d.a.kind]?.label || "Bot"} (question ${(d.i || 0) + 1})` : d.type === "gen" ? `${d.card?.name || "Generator draft"} · ${KINDS[d.card?._kind || d.kind]?.label || "Bot"} (generator)` : `${d.work?.name || "Untitled " + (KINDS[d.kind]?.label || "bot").toLowerCase()}`;
-  b.innerHTML = `${ds.length ? `<div class="stack"><div class="lbl">Unfinished</div>${ds.map(([id, d]) => `<div class="listrow draft-row" data-id="${esc(id)}"><span class="grow"><b>${esc(dName(d))}</b><span class="sub">Saved ${esc(fmtWhen(d.at))}</span></span><button type="button" class="btn small primary" data-go>Continue</button><button type="button" class="btn small danger" data-rm>Discard</button></div>`).join("")}</div>` : ""}<div class="menu"><button class="btn kind-opt gen-opt" id="genOpen">✦ Character generator<small>Describe what you want and the AI builds the whole bot for you.</small></button><button class="btn kind-opt gen-opt" id="genSurprise">🎲 Surprise me<small>Pick a few tags and get a brand-new bot built around them.</small></button><button class="btn kind-opt gen-opt" id="genQuiz">📝 Character quiz<small>Answer quick questions (body, personality, species, setting, kinks…) and get a bot built from your answers.</small></button>${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
+  b.innerHTML = `${ds.length ? `<div class="stack"><div class="lbl">Unfinished</div>${ds.map(([id, d]) => `<div class="listrow draft-row" data-id="${esc(id)}"><span class="grow"><b>${esc(dName(d))}</b><span class="sub">Saved ${esc(fmtWhen(d.at))}</span></span><button type="button" class="btn small primary" data-go>Continue</button><button type="button" class="btn small danger" data-rm>Discard</button></div>`).join("")}</div>` : ""}<div class="menu"><button class="btn kind-opt gen-opt" id="genOpen">✦ Character generator<small>Describe what you want and the AI builds the whole bot for you.</small></button><button class="btn kind-opt gen-opt" id="genSurprise">🎲 Surprise me<small>Pick a few tags and get a brand-new bot built around them.</small></button><button class="btn kind-opt gen-opt" id="genQuiz">📝 Character quiz<small>Answer quick questions (body, personality, species, setting, kinks…) and get a bot built from your answers.</small></button><button class="btn kind-opt gen-opt" id="genSearch">🔎 Search a character<small>Type a franchise or a name (like Mario) and pick who or what to make from it.</small></button>${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
   $("genOpen").onclick = async () => { await genRestore(); openGenerator(); };
   b.querySelectorAll(".draft-row").forEach(r => {
     const id = r.dataset.id, d = DRAFTS[id];
@@ -1829,6 +1849,7 @@ $("btnNewChar").onclick = () => openSheet("Create", b => {
   });
   $("genSurprise").onclick = () => openSurprise();
   $("genQuiz").onclick = () => openQuiz(QUIZ.a ? null : "new");
+  $("genSearch").onclick = () => openSearchMake();
   b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => editChar(blankChar(x.dataset.k), true));
 });
 
@@ -2174,6 +2195,7 @@ const qzNew = kind => ({ kind, q: {}, m: [] });
 const qzKeep = now => { if (QUIZ.a) return saveDraft("quiz", { type: "quiz", a: QUIZ.a, i: QUIZ.i }, now); };
 // the questions in order for the current answers: [{q, mi}] (mi = group member index)
 function qzSteps(a) {
+  if (a.kind === "persona") return QZ_BODY.filter(q => QZ_PERSONA.has(q.id) && (!q.when || q.when(a.q))).map(q => ({ q, mi: null }));
   const out = [];
   if (a.kind === "group") { for (const q of QZ_GROUP) out.push({ q, mi: null }); const n = +(a.q.count?.pick?.[0] || a.q.count?.other || 3) || 3;
     for (let i = 0; i < Math.min(6, Math.max(2, n)); i++) for (const q of QZ_BODY) if (!q.when || q.when(a.m[i] || {})) out.push({ q, mi: i }); }
@@ -2230,7 +2252,7 @@ function qzDraw() {
   const sec = st.mi != null ? `Member ${st.mi + 1}${qzSay(st, (a.m[st.mi] || {}).name) && q.id !== "name" ? ": " + qzSay(st, a.m[st.mi].name) : ""}` : QZ_GROUP.includes(q) ? "The group" : QZ_WORLD.includes(q) ? "The world" : QZ_SCENE.includes(q) ? QZ_SEC.scene : QZ_MIND.has(q.id) ? QZ_SEC.mind : ["name", "gender", "pronouns", "form", "species", "age"].includes(q.id) ? "Who" : QZ_SEC.body;
   const opts = [...(q.o || []), ...qzTagOpts(q).filter(t => !(q.o || []).includes(t))];
   const notes = S.settings.tagNotes || {};
-  openSheet("Character quiz", b => {
+  openSheet(a.kind === "persona" ? "Persona quiz" : "Character quiz", b => {
     S.sheetGuard = "quiz";
     b.innerHTML = `<div class="qz-top"><div class="qz-bar"><i style="width:${Math.round(QUIZ.i / steps.length * 100)}%"></i></div><div class="qz-step"><span>${esc(sec)}</span><span>${QUIZ.i + 1} / ${steps.length}</span></div></div>
       <h3 class="qz-q">${esc(q.q)}</h3>
@@ -2269,7 +2291,7 @@ function qzReview() {
       <div class="qz-sum">${steps.map((st, i) => { const head = st.mi !== lastMi && st.mi != null ? `<div class="lbl">Member ${st.mi + 1}</div>` : ""; lastMi = st.mi; return `${head}<button type="button" class="qz-row" data-i="${i}"><span class="qz-rq">${esc(st.q.q)}</span><span class="qz-ra">${esc(qzSay(st, qzAns(a, st)) || "—")}</span></button>`; }).join("")}</div>
       <div class="group"><h3>Save these answers</h3><div class="row" style="gap:8px"><input id="qzPName" placeholder="e.g. my usual dragon" style="flex:1;min-width:0;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line)"><button type="button" class="btn small" id="qzPSave">Save</button></div><div class="hint">Start a future quiz from them, or make more bots from them in one tap.</div></div>
       <div id="qzMsg" class="hint"></div>
-      <button type="button" class="btn primary" id="qzMake">✦ Make my ${esc(KINDS[a.kind].label.toLowerCase())}</button>
+      <button type="button" class="btn primary" id="qzMake">✦ Make my ${esc(qzKindLabel(a.kind).toLowerCase())}</button>
       <button type="button" class="btn" id="qzRestart">Start a new quiz</button>`;
     b.querySelectorAll(".qz-row").forEach(r => r.onclick = () => { QUIZ.i = +r.dataset.i; qzKeep(); qzDraw(); });
     $("qzPSave").onclick = async () => {
@@ -2294,7 +2316,7 @@ function qzPrompt(a) {
     for (const p of x.pick || []) used.add(p);
   }
   const notes = S.settings.tagNotes || {}, nl = [...used].filter(t => notes[t]).map(t => `- ${t}: ${notes[t]}`);
-  return `The user filled in a character quiz. Build the ${KINDS[a.kind].label.toLowerCase()} from these answers, following every answer closely; invent everything they left to you so it all fits together.${a.kind === "group" ? " Each member listed below becomes one member of the group." : ""}\n${lines.join("\n")}` +
+  return `The user filled in a character quiz. Build the ${a.kind === "persona" ? "player persona (the user's own character, kept brief)" : KINDS[a.kind].label.toLowerCase()} from these answers, following every answer closely; invent everything they left to you so it all fits together.${a.kind === "group" ? " Each member listed below becomes one member of the group." : ""}\n${lines.join("\n")}` +
     (nl.length ? `\n\nWhat these mean to the user (follow these closely):\n${nl.join("\n")}` : "") +
     `\n\nUse the picked kinks, species and traits as the card's tags where they fit.`;
 }
@@ -2304,6 +2326,7 @@ function qzForm(a) {
 }
 async function qzMake(a) {
   if (!hasKey()) { toast("Add your API key in Settings first"); return; }
+  if (a.kind === "persona") { const pr = qzPrompt(a); QUIZ.a = null; await dropDraft("quiz"); PGEN.prompt = pr; PGEN.group = false; PGEN.card = null; return pgRun(() => pgCard(pr, false), "Building your persona from your answers…"); }
   await Store.set("quizLast", JSON.parse(JSON.stringify(a)));
   const kind = a.kind, form = kind === "world" ? "auto" : qzForm(a);
   GEN.kind = kind; GEN.form = form; GEN.card = null; GEN.note = ""; GEN.parts = [];
@@ -2387,6 +2410,7 @@ async function genFinish(edit) {
   if (K === "character") { w.appearance = c.appearance || ""; w.artType = c.artType || "auto"; }
   if (K === "world") w.cast = c.cast || [];
   w.badges = (c.badges || []).map(x => ({ id: uid(), name: x.name, how: x.how }));
+  { const o = /^Spin-off/.test(GEN.prompt) && GEN.from && byId(GEN.from); if (o) { w.tags = [...new Set([...(w.tags || []), ...tagsOf(o).filter(t => t !== "world" && t !== "group")])]; w.lore = [...(w.lore || []), ...JSON.parse(JSON.stringify(o.lore || []))]; w.bookIds = [...new Set([...(w.bookIds || []), ...(o.bookIds || [])])]; w.spunFrom = o.id; } }
   const made = [];
   if (K === "group") {
     for (const m of c.members || []) {
@@ -3014,6 +3038,7 @@ function updateStage() {
   renderPanes();
 }
 function renderSpeakers() {
+  try { renderAsBar(); renderChoices(); } catch {}
   const c = char(), box = $("speakers");
   if (!c || c.kind !== "group" || !members(c).length) { box.hidden = true; return; }
   box.hidden = false;
@@ -3078,7 +3103,7 @@ function renderMsgs(keepScroll) {
       d.innerHTML = `<div class="who-l">Blank start</div><p>Set the scene yourself. Write the opening as your first message and ${esc(c.name)} will pick it up from there.</p><p class="hint">Swipe ‹ for the written openings.</p>`;
     } else {
       d.className = "msg " + m.role;
-      const label = m.role === "user" ? uname() : c.kind === "world" ? `${c.name} · Narrator` : c.name;
+      const label = m.role === "user" ? (m.groupAdd ? `${uname()} · together` : m.speaker || uname()) : c.kind === "world" ? `${c.name} · Narrator` : c.name;
       d.innerHTML = `<div class="who-l">${esc(label)}</div>` + (m.image ? `<img class="uimg" src="${esc(m.image)}" alt="Image you sent">` : "") + fmt(m.content);
     }
     if (m.roll && m.role === "user") d.insertAdjacentHTML("beforeend", contestLine(m, c));
@@ -3105,6 +3130,7 @@ function renderMsgs(keepScroll) {
       btns.push(["del", S.confirmDel === m.id ? (after ? `Tap again: delete this and ${after} after it` : "Tap again to delete") : (after ? `Delete (and ${after} after)` : "Delete")]);
       if (m.role === "assistant" && i === lastAsst) btns.push(["reroll", "New version"]);
       if (m.role !== "image") btns.push(["branch", "⑂ Branch from here"]);
+      if (m.role !== "image") btns.push(["spin", "✦ Make a bot from someone here"]);
       acts.innerHTML = btns.map(([a, l]) => `<button type="button" class="btn small ${a === "del" ? "danger" : ""}" data-act="${a}">${l}</button>`).join("");
       tail.appendChild(acts);
     }
@@ -3162,6 +3188,7 @@ $("msgs").addEventListener("click", async e => {
   }
   else if (act === "edit") editMessage(i);
   else if (act === "branch") branchFrom(i);
+  else if (act === "spin") { S.openActs = null; renderMsgs(true); spinPick(i); }
   else if (act === "redraw") { m.url = imgURL(m.full || m.prompt, 768, 512, Math.floor(Math.random() * 1e6)); await saveChat(); renderMsgs(true); }
 });
 async function applyAlt(m) { m.content = m.alts[m.alt]; if (m.altMeta?.[m.alt]) { Object.assign(m, m.altMeta[m.alt]); if (m.speaker && m.altMeta[m.alt].focus) m.speaker = m.altMeta[m.alt].focus; if (m.gauges) S.chat.gauges = { ...m.gauges }; } await saveChat(); renderMsgs(true); renderGauges(); renderPacer(); }
@@ -3188,7 +3215,7 @@ function showMsgTop(i) {
   const box = $("msgs"), el = box.querySelector(`[data-i="${i}"]`);
   if (el) box.scrollTop = Math.max(0, el.offsetTop - 8);
 }
-function setBusy(b) { S.busy = b; $("send").disabled = b; $("btnIllustrate").disabled = b; $("btnCont").disabled = b; $("send").classList.toggle("busy", b); }
+function setBusy(b) { S.busy = b; $("send").disabled = b; $("btnIllustrate").disabled = b; $("btnCont").disabled = b; $("send").classList.toggle("busy", b); try { renderChoices(); } catch {} }
 $("btnCont").onclick = async () => {
   if (S.busy || !S.chat) return;
   const t = $("input").value.trim();
@@ -3202,11 +3229,14 @@ async function send() {
 }
 async function sendInner() {
   if (S.busy) return;
+  let groupAll = false;
   const pgm = S.chat?.pendingGame;
   let t = $("input").value.trim(); if (!t && !S.pendingImage && pgm) t = pgm.act || "*…*";
   if (t || S.pendingImage) {
     const m = { id: uid(), role: "user", content: t };
     if (S.pendingImage) m.image = S.pendingImage;
+    if (S.pendingChoice) { m.choice = S.pendingChoice; S.pendingChoice = null; }
+    { const gp = persona(); if (isGroupP(gp)) { const ms = groupMembersP(gp), mm = ms.find(x => x.id === S.chat.speakAs); if (mm) { m.speaker = mm.name; m.as = mm.id; } else groupAll = ms.length >= 2; } }
     if (pgm) { m.game = { kind: pgm.kind, short: pgm.short, text: pgm.text }; S.chat.pendingGame = null; drawGames(sceneNow()); } // the minigame's result, for the story
     const rb = S.chat.pendingRub; if (rb) { if (rb.tell) m.rub = { part: rb.part, amt: rb.amt }; S.chat.pendingRub = null; drawRubChip(); } // a rub goes with this message only if the owner said so
     const pr = diceOn() && S.chat.pendingRoll;
@@ -3229,6 +3259,7 @@ async function sendInner() {
   S.openActs = null;
   await saveChat(); renderMsgs(); drawPendingRoll();
   { const box = $("msgs"); box.scrollTop = box.scrollHeight; }
+  if (groupAll) { setBusy(true); try { await groupAdd(S.chat.messages.filter(x => x.role === "user").at(-1)); } finally { setBusy(false); } }
   await generate(S.chat.messages.length, null);
 }
 async function reroll(i) {
@@ -3279,14 +3310,14 @@ async function generate(upto, existing, cont) {
         }
       });
       if (revealP) await revealP;
-      p = parseTag(raw);
+      { const chx = takeChoices(raw); p = parseTag(chx.text); p.choices = chx.list; }
       if (!garbled(stripColor(p.text), c)) break;
       if (attempt === 0) { bubble.classList.add("typing"); bubble.innerHTML = `<span class="typing-l"><span>That came out garbled. Trying again…</span>${lanternSVG("seq")}</span>`; }
       else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
     p.text = fixFormat(p.text); // narration in closed asterisks, speech in quotes (v1.54)
-    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null, hear: p.hear || null, music: p.music || null, event: p.event || null, vore: p.vore || null, rpg: rpgOn(c) ? parseRpgDelta(p) : null };
+    const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null, hear: p.hear || null, music: p.music || null, event: p.event || null, vore: p.vore || null, rpg: rpgOn(c) ? parseRpgDelta(p) : null, choices: p.choices || null };
     if (p.badges) meta.badges = p.badges; if (p.award) meta.award = p.award; if (p.duel) meta.duel = p.duel;
     const rpgBefore = rpgOn(c) ? rpgState(c, chat) : null;
     const gv = parseGauges(p.gauges, c); if (gv) { meta.gauges = { ...gaugeValues(c, chat), ...gv }; chat.gauges = { ...meta.gauges }; }
@@ -3857,15 +3888,20 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
 const PERSONA_COLS = ["#6fc3d8", "#8fe08a", "#c7a6ff", "#ff8fb8", "#ffd36b", "#ff9f6b", "#f2f2f2", "#7d9cff"];
 function openPersonas() {
   openSheet("Personas", b => {
-    b.innerHTML = `<p class="note">A persona is who you play. Every character, world and group keeps a separate chat for each persona.</p><div class="stack" id="pList"></div><button class="btn primary" id="pNew">New persona</button>`;
+    b.innerHTML = `<p class="note">A persona is who you play. Every character, world and group keeps a separate chat for each persona. A group persona is several of them played together.</p><div class="stack" id="pList"></div>
+      <div class="row"><button class="btn primary" id="pNew">New persona</button><button class="btn" id="pGroup">New group persona</button></div>
+      <div class="menu"><button class="btn kind-opt gen-opt" id="pDesc">✦ Describe a persona<small>A few words about who you want to be; the AI writes a short persona (or a whole group).</small></button><button class="btn kind-opt gen-opt" id="pSurp">🎲 Surprise persona<small>Pick a few tags and get someone new to play.</small></button><button class="btn kind-opt gen-opt" id="pQuiz">📝 Persona quiz<small>Tap through quick questions about your look and personality.</small></button></div>`;
     for (const p of S.personas) {
       const row = document.createElement("div"); row.className = "listrow" + (p.id === S.personaId ? " on" : "");
-      row.innerHTML = `<div class="grow"><div><span class="p-dot" style="background:${esc(personaColor(p))}"></span><b>${esc(p.name || "Unnamed")}</b>${p.id === S.personaId ? '<span class="badge">Active</span>' : ""}</div><div class="sub">${esc((p.description || "No description").slice(0, 90))}</div></div>${p.id === S.personaId ? "" : '<button class="btn small" data-use>Use</button>'}<button class="btn small" data-edit>Edit</button>`;
+      row.innerHTML = `<div class="grow"><div><span class="p-dot" style="background:${esc(personaColor(p))}"></span><b>${esc(p.name || "Unnamed")}</b>${p.id === S.personaId ? '<span class="badge">Active</span>' : ""}</div><div class="sub">${isGroupP(p) ? `Group · ${esc(groupMembersP(p).map(m => m.name).join(", "))}` : esc((p.description || "No description").slice(0, 90))}</div></div>${p.id === S.personaId ? "" : '<button class="btn small" data-use>Use</button>'}<button class="btn small" data-edit>Edit</button>`;
       row.querySelector("[data-use]")?.addEventListener("click", () => usePersona(p.id));
       row.querySelector("[data-edit]").onclick = () => editPersona(p, false);
       $("pList").appendChild(row);
     }
     $("pNew").onclick = () => editPersona({ id: uid(), name: "", description: "" }, true);
+    $("pGroup").onclick = () => editPersona({ id: uid(), name: "", description: "", members: [] }, true);
+    $("pDesc").onclick = () => openPersonaMaker("describe"); $("pSurp").onclick = () => openPersonaMaker("surprise");
+    $("pQuiz").onclick = () => { QUIZ.a = qzNew("persona"); QUIZ.i = 0; qzKeep(); qzDraw(); };
   });
 }
 async function usePersona(id) {
@@ -3874,20 +3910,25 @@ async function usePersona(id) {
   if (!$("chat").hidden) toast(`Playing as ${personaName(id)}`);
 }
 function editPersona(p, isNew) {
-  const work = { ...p };
-  openSheet(isNew ? "New persona" : "Edit persona", b => {
+  const work = { ...p }, grp = Array.isArray(p.members), chosen = new Set(p.members || []);
+  openSheet(isNew ? (grp ? "New group persona" : "New persona") : (grp ? "Edit group persona" : "Edit persona"), b => {
     b.innerHTML = `
       ${field("Name", `<input id="peName" value="${esc(work.name)}" placeholder="Who you play">`)}
-      ${field("Description", `<textarea id="peDesc" data-x="persona" style="min-height:140px" placeholder="Appearance, personality, background">${esc(work.description)}</textarea>`, "Characters see this, and it's used when illustrating scenes.")}
+      ${field(grp ? "About the group" : "Description", `<textarea id="peDesc" data-x="persona" style="min-height:${grp ? 70 : 140}px" placeholder="${grp ? "How they belong together (optional)" : "Appearance, personality, background"}">${esc(work.description)}</textarea>`, grp ? "Each member's own description is used too." : "Characters see this, and it's used when illustrating scenes.")}
+      ${grp ? `<div class="group"><h3>Members</h3><div id="peMem" class="stack"></div><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Add a new member:</p><input id="peNewN" placeholder="Name"><textarea id="peNewD" style="min-height:60px" placeholder="Look and personality (optional)"></textarea><button type="button" class="btn small" id="peNewAdd">Add member</button></div>` : ""}
       ${field("Your colour", `<div class="pe-cols" id="peCols">${PERSONA_COLS.map(c => `<button type="button" data-c="${c}" style="background:${c}" class="${(work.color || PERSONA_COLS[0]) === c ? "on" : ""}" aria-label="Colour ${c}"></button>`).join("")}<input type="color" id="peCol" value="${esc(work.color || PERSONA_COLS[0])}" aria-label="Any colour"></div>`, "How you show up in pictures the app draws for you.")}
       <button class="btn primary" id="peSave">${isNew ? "Create and use" : "Save"}</button>
       ${!isNew && S.personas.length > 1 ? '<button class="btn danger" id="peDel">Delete persona</button>' : ""}`;
     wireExpand(b, () => `Persona name: ${$("peName").value}`);
+    const drawMem = () => { const box = $("peMem"); if (!box) return; const list = S.personas.filter(x => !isGroupP(x) && x.id !== work.id && !Array.isArray(x.members)); box.innerHTML = list.length ? list.map(x => `<label class="checkrow"><input type="checkbox" data-id="${esc(x.id)}" ${chosen.has(x.id) ? "checked" : ""}><span class="p-dot" style="background:${esc(personaColor(x))}"></span><span>${esc(x.name)}</span></label>`).join("") : '<p class="note">No personas to add yet. Add a new member below.</p>'; box.querySelectorAll("[data-id]").forEach(i => i.onchange = () => { i.checked ? chosen.add(i.dataset.id) : chosen.delete(i.dataset.id); }); };
+    drawMem();
+    if ($("peNewAdd")) $("peNewAdd").onclick = () => { const n = $("peNewN").value.trim(); if (!n) { $("peNewN").focus(); return; } const np = { id: uid(), name: n, description: $("peNewD").value.trim(), color: PERSONA_COLS[(S.personas.length + 1) % PERSONA_COLS.length] }; S.personas.push(np); chosen.add(np.id); $("peNewN").value = ""; $("peNewD").value = ""; drawMem(); };
     const pick = c => { work.color = c; $("peCol").value = c; b.querySelectorAll("#peCols button").forEach(x => x.classList.toggle("on", x.dataset.c === c)); };
     b.querySelectorAll("#peCols button").forEach(x => x.onclick = () => pick(x.dataset.c)); $("peCol").oninput = e => pick(e.target.value);
     $("peSave").onclick = async () => {
       work.name = $("peName").value.trim(); work.description = $("peDesc").value.trim();
       if (!work.name) { $("peName").focus(); $("peName").placeholder = "A name is required"; return; }
+      if (grp) { work.members = [...chosen].filter(id => S.personas.some(x => x.id === id)); if (!work.members.length) { $("peNewN").focus(); $("peNewN").placeholder = "Add or tick at least one member"; return; } }
       const i = S.personas.findIndex(x => x.id === work.id);
       if (i < 0) S.personas.push(work); else S.personas[i] = work;
       if (isNew) S.personaId = work.id;
@@ -4051,6 +4092,7 @@ function editChar(c, isNew, fromDraft) {
         <input type="file" id="cPic" accept="image/*" hidden>
       </div>`}
       <div class="group"><h3>Dice</h3>${field("Rolls allowed per message", `<select id="cRollLim">${[[0, "Unlimited rerolls"], [1, "1 (no rerolls)"], [2, "2"], [3, "3"], [5, "5"]].map(([v, l]) => `<option value="${v}" ${(+work.rollLimit || 0) === v ? "selected" : ""}>${l}</option>`).join("")}</select>`, "How many times you can roll 🎲 before sending one message, so you can't keep rolling for the number you want. With a limit, a roll can't be thrown away either.")}</div>
+      <div class="group"><h3>Choices mode</h3><label class="check"><input type="checkbox" id="cChoices" ${work.choices ? "checked" : ""}> Play by picking choices: 3-4 after every reply (you can still write your own; risky ones roll a d20)</label></div>
       ${VORE_PIC ? `<div class="group"><h3>Vore picture</h3>${field("Usual weight", `<input type="range" id="cWeight" min="0" max="100" step="5" value="${+work.weight || 0}" aria-label="Usual weight">`, "How heavy this bot is in the vore picture before eating anyone, from slim to very fat. Weight from digested prey goes on top and can burn off again.")}</div>` : ""}
       <div class="group"><h3>Status gauges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Bars at the top of the chat (fullness, arousal, health…) that the AI moves as the story goes.</p><div id="cGauges" class="stack"></div></div>
       <div class="group"><h3>Badges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Achievements special to this bot. The story awards them when they happen.</p><div id="cBadges" class="stack"></div></div>
@@ -4071,6 +4113,7 @@ function editChar(c, isNew, fromDraft) {
       greets[gi] = $("cFirst").value; work.firstMessage = (greets[0] || "").trim(); work.altGreetings = greets.slice(1);
       work.startPlace = $("cPlace").value.trim();
       if ($("cRollLim")) work.rollLimit = +$("cRollLim").value || 0;
+      if ($("cChoices")) work.choices = $("cChoices").checked;
       work.tags = parseTags($("cTags").value); work.instructions = $("cInstr").value.trim();
       if ($("cWeight")) work.weight = +$("cWeight").value || 0;
       if ($("cVis")) {
@@ -4442,6 +4485,7 @@ $("btnMore").onclick = () => openSheet("Options", b => {
     <button class="btn" id="oMem">View memory</button>
     <button class="btn" id="oPer">Playing as ${esc(uname())} · switch persona</button>
     <button class="btn" id="oDice">🎲 Dice rolls: ${diceOn() ? "on" : "off"}</button>
+    <button class="btn" id="oChoices">☰ Choices mode: ${choicesOn() ? "on" : "off"}</button>
     ${S.settings.gamesOn !== false ? `<button class="btn" id="oDuel">⚔ Start a dice duel (a small scuffle or contest)</button>` : ""}
     <button class="btn" id="oPacer">〰 Stroke pacer: ${pacerOn() ? "on" : "off"}</button>
     <button class="btn danger" id="oReset">Clear this chat</button></div>
@@ -4452,6 +4496,7 @@ $("btnMore").onclick = () => openSheet("Options", b => {
   $("oEdit").onclick = () => editChar(char(), false);
   $("oMem").onclick = openMemory;
   $("oPer").onclick = () => openPersonas();
+  $("oChoices").onclick = async () => { S.chat.choices = !choicesOn(); await saveChat(); renderChoices(); $("oChoices").textContent = `☰ Choices mode: ${choicesOn() ? "on" : "off"}`; toast(choicesOn() ? "Choices on: they show after the next reply" : "Choices off for this chat"); };
   if ($("oDuel")) $("oDuel").onclick = () => openDuel(null, async () => {});
   $("oDice").onclick = async () => { S.chat.dice = !diceOn(); await saveChat(); syncPlay(); renderMsgs(true); $("oDice").textContent = `🎲 Dice rolls: ${diceOn() ? "on" : "off"}`; toast(diceOn() ? "Dice on: your actions get a d20 roll" : "Dice off for this chat"); };
   $("oPacer").onclick = async () => { S.chat.pacer = !pacerOn(); await saveChat(); renderPacer(); $("oPacer").textContent = `〰 Stroke pacer: ${pacerOn() ? "on" : "off"}`; };
@@ -4472,7 +4517,7 @@ function editMessage(i) {
 
 $("btnChats").onclick = () => openChats(S.charId);
 $("btnBack").onclick = () => { if (S.busy && !S.genAC) return; S.genAC?.abort(); leaveChat(); };
-function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; drawPendingRoll(); drawRub(null); drawGames(null); updateFx(null); renderPacer(); renderGauges(); renderHome(); };
+function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("home").hidden = false; S.charId = null; S.chat = null; S.writeOwn = false; drawPendingRoll(); drawRub(null); drawGames(null); renderAsBar(); renderChoices(); updateFx(null); renderPacer(); renderGauges(); renderHome(); };
 
 /* ---------- Installed app: back button, offline, install ---------- */
 // The phone's back button (and the browser's) closes the open window first, then leaves the chat, and only exits from Home.
@@ -4539,7 +4584,7 @@ function renderSide() {
     box.innerHTML = `<div class="sd-port" id="sdPort" style="--ring:${MOOD_COLOR[ch.mood] || "var(--accent)"}" role="button" tabindex="0" aria-label="Show portrait"><img alt=""><div class="sd-name">${esc(focus ? focus.name : c.name)}</div></div>
       <div class="sd-meta"><span class="mood-chip">${esc(mood)}</span>${ch.place ? `<span>📍 ${esc(ch.place)}</span>` : ""}</div>
       ${c.kind === "group" ? `<div><span class="lbl">Who replies next</span><div class="sd-mem" style="margin-top:6px">${["", ...members(c).map(m => m.name)].map(n => `<button type="button" data-n="${esc(n)}" class="${S.nextSpeaker === n ? "on" : ""}">${n ? `<img alt="">` : ""}${n ? esc(n) : "Anyone"}</button>`).join("")}</div></div>` : ""}
-      ${rpgOn(c) ? (() => { const rs = rpgState(c, ch); return `<div class="sd-card"><span class="lbl">Gold, bag and quests</span><div class="sd-rpg"><button type="button" data-rpg="gold">${RPG_ICON.gold} ${rs.gold}</button><button type="button" data-rpg="bag">${RPG_ICON.bag} ${[...rs.items.values()].reduce((a, q) => a + q, 0)}</button><button type="button" data-rpg="quests">${RPG_ICON.quest} ${rs.quests.filter(q => !q.done).length}</button></div></div>`; })() : ""}
+      ${rpgOn(c) ? (() => { const rs = rpgState(c, ch); return `<div class="sd-card"><span class="lbl">${esc(capFirst(curOf(c).name))}, bag and quests</span><div class="sd-rpg"><button type="button" data-rpg="gold">${curIcon(c, "coin")} ${rs.gold}</button><button type="button" data-rpg="bag">${curIcon(c, "bag")} ${[...rs.items.values()].reduce((a, q) => a + q, 0)}</button><button type="button" data-rpg="quests">${RPG_ICON.quest} ${rs.quests.filter(q => !q.done).length}</button></div></div>`; })() : ""}
       ${(() => { const vs = voreState(); if (!vs || !silMode(vs)) return ""; silSet(vs); setTimeout(silKick); return `<div class="sd-card sd-vore"><span class="lbl">Vore</span>${silHTML(vs)}<div class="vg-cap">${esc(voreCaption(vs))}</div></div>`; })()}
       ${sound ? `<div class="sd-card"><span class="lbl">Scene sounds</span><div>${esc(sound)}${S.settings.ambMuted ? " (muted)" : ""}</div></div>` : ""}
       ${ch.summary ? `<div class="sd-card"><span class="lbl">Story so far</span><div class="sd-sum">${esc(ch.summary)}</div></div>` : ""}
@@ -5616,7 +5661,8 @@ function rpgPrompt(c, chat) {
   const s = rpgState(c, chat), u = uname();
   const bag = [...s.items].map(([k, q]) => (q > 1 ? q + " " : "") + s.names.get(k)).join(", ") || "nothing";
   const qs = s.quests.filter(q => !q.done).map(q => q.name).join("; ") || "none";
-  return `\n\n# ${u}'s gold, inventory and quests\nGold: ${s.gold}. Bag: ${bag}. Open quests: ${qs}.\nKeep these consistent with the story: ${u} can only use, give or sell what is in the bag, and can only pay with gold they have. When the story changes them, say so in the hidden line (gold: +n or -n; items: +Name or -Name, with a count like +2 Arrows; quests: +New quest or done Quest name). Leave those fields out when nothing changed.`;
+  const cur = curOf(c).name;
+  return `\n\n# ${u}'s ${cur}, inventory and quests\n${capFirst(cur)}: ${s.gold}. Bag: ${bag}. Open quests: ${qs}.\nThe money in this story is called ${cur}. Keep these consistent with the story: ${u} can only use, give or sell what is in the bag, and can only pay with the ${cur} they have. When the story changes them, say so in the hidden line (gold: +n or -n, counted in ${cur}; items: +Name or -Name, with a count like +2 Arrows; quests: +New quest or done Quest name). Leave those fields out when nothing changed.`;
 }
 // the slim bar under the chat header
 const RPG_ICON = {
@@ -5629,18 +5675,18 @@ function renderRpg() {
   const c = char(); if (!S.chat || $("chat").hidden || !rpgOn(c)) { bar.hidden = true; bar.innerHTML = ""; return; }
   const s = rpgState(c, S.chat), nItems = [...s.items.values()].reduce((a, q) => a + q, 0), open = s.quests.filter(q => !q.done).length;
   bar.hidden = false;
-  bar.innerHTML = `<button type="button" data-rpg="gold" aria-label="Gold: ${s.gold}">${RPG_ICON.gold}<b>${s.gold}</b></button><button type="button" data-rpg="bag" aria-label="Inventory">${RPG_ICON.bag}<span>Bag</span><i>${nItems}</i></button><button type="button" data-rpg="quests" aria-label="Quests">${RPG_ICON.quest}<span>Quests</span><i>${open}</i></button>`;
+  bar.innerHTML = `<button type="button" data-rpg="gold" aria-label="${esc(capFirst(curOf(c).name))}: ${s.gold}">${curIcon(c, "coin")}<b>${s.gold}</b></button><button type="button" data-rpg="bag" aria-label="Inventory">${curIcon(c, "bag")}<span>Bag</span><i>${nItems}</i></button><button type="button" data-rpg="quests" aria-label="Quests">${RPG_ICON.quest}<span>Quests</span><i>${open}</i></button>`;
   bar.querySelectorAll("button").forEach(b => b.onclick = () => openRpg(b.dataset.rpg));
 }
 async function rpgEdit(op) { S.chat.rpgEdits = [...(S.chat.rpgEdits || []), op]; await saveChat(); renderRpg(); renderPanes(); }
 function openRpg(which) {
   const c = char(), vol = S.settings.sfxVolume ?? 0.7;
   if (which === "bag") playOne(["bag"], vol * 0.8);
-  openSheet(which === "gold" ? "Gold" : which === "bag" ? "Inventory" : "Quests", b => {
+  openSheet(which === "gold" ? capFirst(curOf(c).name) : which === "bag" ? "Inventory" : "Quests", b => {
     const draw = () => {
       const s = rpgState(c, S.chat);
       if (which === "gold") {
-        b.innerHTML = `<div class="rpg-gold">${RPG_ICON.gold}<b>${s.gold}</b></div>
+        b.innerHTML = `<div class="rpg-gold">${curIcon(c, "coin")}<b>${s.gold}</b></div>
           <div class="row" style="gap:6px;justify-content:center">${[-10, -1, 1, 10].map(d => `<button type="button" class="btn small" data-d="${d}">${d > 0 ? "+" : ""}${d}</button>`).join("")}</div>
           ${field("Set exactly", `<div class="row" style="gap:6px"><input type="number" id="rgSet" min="0" value="${s.gold}" style="flex:1"><button type="button" class="btn small" id="rgOk">Set</button></div>`, "The AI also changes your gold as the story goes.")}`;
         const change = async d => { if (!d) return; await rpgEdit({ gold: d }); if (d > 0) playOne(["coins"], vol); draw(); };
@@ -5668,13 +5714,328 @@ function rpgEditor(work) {
   work.rpg = work.rpg || { on: false, gold: 0, items: "", quests: "" };
   const r = work.rpg;
   box.innerHTML = `<label class="check"><input type="checkbox" id="cRpgOn" ${r.on ? "checked" : ""}> Gold, inventory and quests in this bot's chats</label>
-    ${field("Starting gold", `<input type="number" id="cRpgGold" min="0" value="${esc(r.gold || 0)}">`)}
+    ${field("Currency", `<div class="row" style="gap:6px"><input id="cCurName" value="${esc(curOf(work).name)}" placeholder="gold" style="flex:1;min-width:0"><button type="button" class="btn small" id="cCurAI">✦ Let the AI pick</button></div><div class="cur-sets" id="cCurSets"></div>`, "What the money is called in this bot's world, and its coin and bag icons.")}
+    ${field("Starting money", `<input type="number" id="cRpgGold" min="0" value="${esc(r.gold || 0)}">`)}
     ${field("Starting items", `<textarea id="cRpgItems" style="min-height:70px" placeholder="One per line, e.g.\n2 Health potion\nRusty sword">${esc(r.items || "")}</textarea>`)}
     ${field("Starting quests", `<textarea id="cRpgQuests" style="min-height:60px" placeholder="One per line">${esc(r.quests || "")}</textarea>`)}`;
-  $("cRpgOn").onchange = e => { r.on = e.target.checked; };
+  const drawSets = () => { const cur = curOf(work); $("cCurSets").innerHTML = Object.entries(CUR_SETS).map(([k, v]) => `<button type="button" class="cur-set ${cur.set === k ? "on" : ""}" data-s="${k}" title="${esc(v.label)}">${v.coin}${v.bag}<span>${esc(v.label)}</span></button>`).join(""); $("cCurSets").querySelectorAll("[data-s]").forEach(x => x.onclick = () => { r.cur = { ...curOf(work), set: x.dataset.s }; drawSets(); }); };
+  drawSets();
+  $("cCurName").oninput = e => { r.cur = { ...curOf(work), name: e.target.value.trim().toLowerCase() }; };
+  const aiPick = async () => { if (!hasKey()) { toast("Add your API key in Settings first"); return; } const btn = $("cCurAI"); btn.disabled = true; btn.textContent = "Picking…"; try { r.cur = await pickCurrency({ ...work, name: $("cName")?.value || work.name, description: $("cDesc")?.value || work.description, scenario: $("cScen")?.value || work.scenario }); $("cCurName").value = r.cur.name; drawSets(); } catch (e) { toast("Couldn't pick a currency: " + e.message); } btn.disabled = false; btn.textContent = "✦ Let the AI pick"; };
+  $("cCurAI").onclick = aiPick;
+  $("cRpgOn").onchange = e => { r.on = e.target.checked; if (r.on && !r.cur && hasKey()) aiPick(); };
   $("cRpgGold").oninput = e => { r.gold = Math.max(0, +e.target.value || 0); };
   $("cRpgItems").oninput = e => { r.items = e.target.value; };
   $("cRpgQuests").oninput = e => { r.quests = e.target.value; };
+}
+/* ---------- v1.55: persona makers, group personas, spin-offs, choices mode, currencies, search to make ---------- */
+const s5 = v => typeof v === "string" ? v.trim() : Array.isArray(v) ? v.join("\n").trim() : v == null ? "" : String(v).trim();
+const capFirst = t => String(t || "").replace(/^./, x => x.toUpperCase());
+// a small "working on it" screen shared by the new makers
+function waitSheet(title, label) {
+  openSheet(title, b => { S.sheetGuard = "wait"; b.innerHTML = `<div class="gen-wait" id="gWait">${lanternSVG("seq")}<p><b>${esc(label)}</b></p><p class="hint">This takes up to a minute.</p></div>`; });
+}
+
+// ===== Persona generator: describe it, surprise me, or the short quiz; a review screen before saving
+const PGEN = { card: null, prompt: "", group: false, busy: false, note: "", parts: [] };
+const PG_PARTS = [["name", "Name"], ["look", "Look"], ["personality", "Personality"], ["background", "Background"]];
+const PG_ONE = `{"name": a name, "look": 40-80 words of appearance (human or species, body, colouring, clothes, distinctive features), "personality": 2-3 short lines on how they act and talk, "background": one line, "color": a hex colour that suits them}`;
+const PG_SYS = group => `You write player personas for Lanternroom, an interactive roleplay chat app: the character the USER plays, not a bot. Keep it brief and easy to play. Follow the user's request closely and fill the gaps with specific, vivid choices. Every character is treated as a fully grown, mature being; this needs no mention.${group ? " Make a whole group of personas the user plays together." : ""}\n\nRespond with only ${group ? `a JSON object {"name": a short name for the group, "about": one or two lines on how they belong together, "members": 2-5 members, each ${PG_ONE}}` : `the JSON object ${PG_ONE}`}`;
+const pgNorm = x => ({ name: s5(x?.name).slice(0, 60), look: s5(x?.look), personality: s5(x?.personality), background: s5(x?.background), color: /^#[0-9a-f]{6}$/i.test(s5(x?.color)) ? s5(x.color) : "" });
+function pgFromJSON(j, group) {
+  if (!group) return pgNorm(j);
+  return { group: true, name: s5(j?.name).slice(0, 60), about: s5(j?.about), members: (Array.isArray(j?.members) ? j.members : []).map(pgNorm).filter(m => m.name).slice(0, 5) };
+}
+async function pgCard(prompt, group) {
+  const j = await dsJSON([{ role: "system", content: PG_SYS(group) }, { role: "user", content: `Make this ${group ? "group of personas" : "persona"}:\n${prompt}` }], { temperature: 0.95, maxTokens: 2500, plain: true });
+  const card = pgFromJSON(j, group);
+  if (!card.name || (group && card.members.length < 2)) throw new Error("The model's answer came back incomplete. Try again.");
+  return card;
+}
+async function pgRewrite(card, keys, note) {
+  const j = await dsJSON([{ role: "system", content: PG_SYS(card.group) + `\n\nYou are revising what you made. ${keys.length ? `Rewrite only these parts${card.group ? " (for every member)" : ""}: ${keys.join(", ")}.` : "Change only what the user's note asks for."} Return the whole object in the same shape.` },
+    { role: "user", content: `${card.group ? "Group" : "Persona"}:\n${JSON.stringify(card)}\n\nWhat the user wants changed:\n${note || "Fresh ideas for those parts, still matching the request: " + PGEN.prompt}` }], { temperature: 0.95, maxTokens: 2500, plain: true });
+  const upd = pgFromJSON(j, card.group);
+  if (!card.group) { for (const k of keys.length ? keys : ["name", "look", "personality", "background"]) if (upd[k]) card[k] = upd[k]; if (upd.color) card.color = upd.color; return card; }
+  if (upd.members.length >= 2) { if (!keys.length) return { ...upd, group: true }; card.members = card.members.map((m, i) => { const u = upd.members[i] || {}; for (const k of keys) if (u[k]) m[k] = u[k]; return m; }); }
+  if (keys.includes("name") && upd.name) card.name = upd.name;
+  return card;
+}
+const pgDesc = m => [m.look, m.personality, m.background ? `Background: ${m.background}` : ""].filter(Boolean).join("\n\n");
+async function pgRun(job, label) {
+  if (PGEN.busy) return; PGEN.busy = true;
+  waitSheet("Persona maker", label);
+  try { PGEN.card = await job(); PGEN.busy = false; if ($("gWait")) pgReview(); else toast(`${PGEN.card.name} is ready. Open Personas to see it.`); }
+  catch (e) { PGEN.busy = false; if (PGEN.card) pgReview(e.message); else openPersonaMaker(PGEN.group ? "group" : "describe", e.message); }
+}
+function pgReview(err) {
+  const c = PGEN.card; if (!c) return openPersonas();
+  const one = m => `<div class="pg-one"><b>${esc(m.name)}</b>${m.color ? `<span class="p-dot" style="background:${esc(m.color)}"></span>` : ""}<p>${esc(m.look)}</p><p>${esc(m.personality).replace(/\n/g, "<br>")}</p>${m.background ? `<p class="hint">${esc(m.background)}</p>` : ""}</div>`;
+  openSheet(c.group ? "Your new group" : "Your new persona", b => {
+    S.sheetGuard = "gen";
+    b.innerHTML = `${c.group ? `<div class="gen-sum"><h3>${esc(c.name)}</h3><p>${esc(c.about || "")}</p></div>${c.members.map(one).join("")}` : one(c)}
+      <div class="group"><h3>Does this look right?</h3><p class="note">Save it as is, or pick parts to rewrite and say what to change.</p>
+        <div class="tabs" id="pgParts">${PG_PARTS.map(([k, l]) => `<button type="button" class="tab" data-p="${k}">${l}</button>`).join("")}</div>
+        <textarea id="pgNote" style="min-height:70px" placeholder="e.g. make them taller, give them a tail, less shy"></textarea>
+        <button class="btn" id="pgRe">Rewrite</button></div>
+      <div id="pgMsg" class="hint">${err ? esc(err) : ""}</div>
+      <button class="btn primary" id="pgUse">✓ Save and play as ${esc(c.name)}</button>
+      <button class="btn" id="pgSave">Save</button>
+      ${PGEN.prompt ? `<button class="btn" id="pgMore">↻ A different one</button>` : ""}
+      <button class="btn" id="pgAgain">Start over</button>`;
+    const picked = new Set(PGEN.parts || []);
+    b.querySelectorAll("#pgParts [data-p]").forEach(x => { x.classList.toggle("on", picked.has(x.dataset.p)); x.onclick = () => { const k = x.dataset.p; picked.has(k) ? picked.delete(k) : picked.add(k); x.classList.toggle("on", picked.has(k)); PGEN.parts = [...picked]; }; });
+    $("pgNote").value = PGEN.note || ""; $("pgNote").oninput = e => { PGEN.note = e.target.value; };
+    $("pgRe").onclick = () => { const note = $("pgNote").value.trim(); if (!picked.size && !note) { $("pgMsg").textContent = "Pick the parts to rewrite, or describe what to change."; return; } PGEN.note = ""; PGEN.parts = []; pgRun(() => pgRewrite(JSON.parse(JSON.stringify(c)), [...picked], note), "Rewriting…"); };
+    $("pgUse").onclick = () => pgSave(true); $("pgSave").onclick = () => pgSave(false);
+    if ($("pgMore")) confirmBtn($("pgMore"), "Tap again: this one will be replaced", () => pgRun(() => pgCard(PGEN.prompt, c.group), "Making a different one…"));
+    $("pgAgain").onclick = () => { PGEN.card = null; openPersonaMaker(c.group ? "group" : "describe"); };
+  });
+}
+async function pgSave(use) {
+  const c = PGEN.card; if (!c) return;
+  const col = m => m.color || PERSONA_COLS[Math.floor(Math.random() * PERSONA_COLS.length)];
+  let p;
+  if (!c.group) { p = { id: uid(), name: c.name, description: pgDesc(c), color: col(c) }; S.personas.push(p); }
+  else {
+    const ms = c.members.map(m => ({ id: uid(), name: m.name, description: pgDesc(m), color: col(m) }));
+    p = { id: uid(), name: c.name, description: c.about || "", color: col(c.members[0] || {}), members: ms.map(m => m.id) };
+    S.personas.push(...ms, p);
+  }
+  if (use) S.personaId = p.id;
+  await savePersonas(); PGEN.card = null; PGEN.prompt = "";
+  toast(use ? `Playing as ${p.name}` : `${p.name} saved`);
+  if (use && !$("chat").hidden && S.charId) { closeSheet(); await openChat(S.charId); } else { renderHome(); openPersonas(); }
+}
+function openPersonaMaker(mode, msg) {
+  PGEN.group = mode === "group" || (mode === "surprise-group");
+  const surprise = /^surprise/.test(mode), tags = PGEN.tags = PGEN.tags || new Set();
+  const groups = surpriseGroups().filter(([g]) => ["Who", "Form", "Species", "Story", "Setting"].includes(g) || !SURPRISE_TAGS.some(([x]) => x === g));
+  openSheet(surprise ? "Surprise persona" : "Describe a persona", b => {
+    const draw = () => {
+      b.innerHTML = `${field("Make", `<div class="tabs" id="pmKind"><button type="button" class="tab ${PGEN.group ? "" : "on"}" data-g="0">One persona</button><button type="button" class="tab ${PGEN.group ? "on" : ""}" data-g="1">A group of personas</button></div>`)}
+        ${surprise ? groups.map(([g, list]) => `<div class="stack" style="gap:6px"><div class="lbl">${esc(g)}</div><div class="tabs">${list.map(t => `<button type="button" class="chip ${tags.has(t) ? "on" : ""}" data-t="${esc(t)}">${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</button>`).join("")}</div></div>`).join("")
+          : field(PGEN.group ? "Who are they?" : "Who are you?", `<textarea id="pmPrompt" style="min-height:120px" placeholder="${PGEN.group ? "e.g. three adventuring friends: a cocky fox rogue, a shy bear healer and a loud human knight" : "e.g. a short, chubby otter who's always hungry and talks too much"}">${esc(PGEN.prompt && !/^Surprise/.test(PGEN.prompt) ? PGEN.prompt : "")}</textarea>`, "A few words is enough. Personas are kept short.")}
+        <div id="pmMsg" class="hint">${esc(msg || "")}</div>
+        <button class="btn primary" id="pmGo">${surprise ? "🎲 Surprise me" : "✦ Make it"}</button>`;
+      b.querySelectorAll("#pmKind [data-g]").forEach(x => x.onclick = () => { PGEN.group = x.dataset.g === "1"; const y = b.scrollTop; draw(); b.scrollTop = y; });
+      b.querySelectorAll("[data-t]").forEach(x => x.onclick = () => { const t = x.dataset.t; tags.has(t) ? tags.delete(t) : tags.add(t); const y = b.scrollTop; draw(); b.scrollTop = y; });
+      $("pmGo").onclick = () => {
+        if (!hasKey()) { $("pmMsg").textContent = "Add your API key in Settings first."; return; }
+        let prompt;
+        if (surprise) { prompt = `Surprise me: invent an original, distinctive ${PGEN.group ? "group of personas" : "persona"}${tags.size ? ` that fits these tags: ${[...tags].join(", ")}` : ""}.`; const notes = [...tags].filter(t => (S.settings.tagNotes || {})[t]).map(t => `- ${t}: ${S.settings.tagNotes[t]}`); if (notes.length) prompt += `\n\nWhat these tags mean to me:\n${notes.join("\n")}`; }
+        else { prompt = $("pmPrompt").value.trim(); if (!prompt) { $("pmMsg").textContent = "Write a few words first."; return; } }
+        PGEN.prompt = prompt; PGEN.card = null;
+        pgRun(() => pgCard(prompt, PGEN.group), PGEN.group ? "Making your group…" : "Making your persona…");
+      };
+    };
+    draw();
+  });
+}
+// the persona quiz: the character quiz's body and personality questions only
+const QZ_PERSONA = new Set(["name", "gender", "pronouns", "form", "species", "height", "build", "chest", "extras", "colors", "traits", "speech"]);
+const qzKindLabel = k => k === "persona" ? "Persona" : KINDS[k].label;
+
+// ===== Group personas: several personas played together; chips pick who you speak as
+const isGroupP = p => Array.isArray(p?.members) && p.members.length > 0;
+const groupMembersP = p => (p?.members || []).map(id => S.personas.find(x => x.id === id)).filter(Boolean);
+function renderAsBar() {
+  const box = $("asBar"); if (!box) return;
+  const p = S.chat && !$("chat").hidden ? persona() : null, ms = isGroupP(p) ? groupMembersP(p) : [];
+  if (ms.length < 1) { box.hidden = true; box.innerHTML = ""; return; }
+  const cur = S.chat.speakAs && ms.some(m => m.id === S.chat.speakAs) ? S.chat.speakAs : "all";
+  box.hidden = false;
+  box.innerHTML = `<span class="as-l">You speak as</span>` + [["all", "Everyone"], ...ms.map(m => [m.id, m.name])].map(([id, n]) => `<button type="button" class="chip ${cur === id ? "on" : ""}" data-id="${esc(id)}">${id !== "all" ? `<span class="p-dot" style="background:${esc(personaColor(ms.find(m => m.id === id)))}"></span>` : ""}${esc(n)}</button>`).join("");
+  box.querySelectorAll("[data-id]").forEach(b => b.onclick = async () => { S.chat.speakAs = b.dataset.id; await saveChat(); renderAsBar(); });
+}
+// an Everyone message: the AI first writes the other members' additions as a message of yours, then the bot replies
+async function groupAdd(m) {
+  const g = persona(), ms = groupMembersP(g), c = char(); if (ms.length < 2) return;
+  const recent = S.chat.messages.filter(x => x.role !== "image").slice(-9, -1).map(x => `${x.role === "user" ? (x.speaker || uname()) : speakerLabel(c)}: ${x.content}`).join("\n\n");
+  setStatus(`${g.name} join in…`);
+  try {
+    const j = await dsJSON([{ role: "system", content: `You write for the user's own group of characters in an interactive roleplay. The group, ${g.name}:\n${ms.map(x => `- ${x.name}: ${x.description}`).join("\n")}\n\nThe user just wrote a message for the whole group. Add short contributions from the members who would naturally join in, building on what the user wrote: what they do (in closed *asterisks*) and say (in quotes), 1-3 sentences each, at least one member. Describe anything physical in explicit, specific detail. Never write for ${c.name} or anyone outside the group, and never decide how others react. Respond with only JSON: {"adds": [{"name": member name, "text": their part}]}` },
+      { role: "user", content: `${recent ? `The story so far:\n${recent}\n\n` : ""}The group's message:\n${m.content}` }], { temperature: 0.9, maxTokens: 900, plain: true });
+    const adds = (Array.isArray(j?.adds) ? j.adds : []).map(a => ({ who: ms.find(x => x.name.toLowerCase() === s5(a?.name).toLowerCase()), text: s5(a?.text) })).filter(a => a.who && a.text);
+    if (adds.length) { S.chat.messages.push({ id: uid(), role: "user", content: adds.map(a => `**${a.who.name}:** ${fixFormat(a.text)}`).join("\n\n"), groupAdd: true }); await saveChat(); renderMsgs(); }
+  } catch (e) { setStatus("The group's additions were skipped: " + e.message, true); return; }
+  setStatus("");
+}
+function groupPersonaPrompt(p, u) {
+  const ms = groupMembersP(p);
+  return `\n\n# ${u} (the user's group of characters)\n${p.description ? fill(p.description, char()) + "\n" : ""}${ms.map(m => `## ${m.name}\n${fill(m.description || "", char())}`).join("\n")}\n${u} is several characters the user plays: ${ms.map(m => m.name).join(", ")}. Never write their words, thoughts or actions. A user message that starts with **Name:** is that member acting or speaking.`;
+}
+
+// ===== Spin-offs: a character, group, world or lorebook from someone or something in a chat
+async function spinFind(c, msgs) {
+  const u = uname(), txt = msgs.filter(m => m.role !== "image" && m.content).map(m => `${m.role === "user" ? (m.speaker || u) : (m.speaker || speakerLabel(c))}: ${stripColor(m.content)}`).join("\n\n").slice(-14000);
+  const j = await dsJSON([{ role: "system", content: `List who and what in this roleplay chat could become its own bot in a chat app: side characters (not ${u}, the user, and not ${c.name} unless it is a world or group), groups and factions, places or the setting as a world, and a lorebook of the setting's places, people and terms when there is enough. Up to 10. Respond with only JSON: {"found": [{"name", "kind": "character" | "group" | "world" | "lorebook", "about": one short line}]}` },
+    { role: "user", content: `The bot: ${c.name}. ${botSummary(c)}\n\nThe chat:\n${txt}` }], { temperature: 0.4, maxTokens: 1200, plain: true });
+  return (Array.isArray(j?.found) ? j.found : []).map(x => ({ name: s5(x?.name).slice(0, 60), kind: ["character", "group", "world", "lorebook"].includes(x?.kind) ? x.kind : "character", about: s5(x?.about).slice(0, 160) })).filter(x => x.name);
+}
+// what the chat says about someone: the messages that mention them (or the latest ones)
+function spinContext(msgs, name) {
+  const key = String(name).split(/\s+/)[0].toLowerCase(), u = uname();
+  const hits = msgs.filter(m => m.role !== "image" && m.content && m.content.toLowerCase().includes(key));
+  return (hits.length ? hits : msgs.slice(-12)).map(m => `${m.role === "user" ? u : "Story"}: ${stripColor(m.content)}`).join("\n\n").slice(-7000);
+}
+const KIND_ICON = { character: "👤", group: "👥", world: "🗺", lorebook: "📖" };
+function spinList(c, found, msgs, title) {
+  openSheet(title || "Make a bot from this story", b => {
+    b.innerHTML = found.length ? `<p class="note">Pick who or what to make. The new bot keeps their look and personality from the chat, plus ${esc(c.name)}'s world, lore and tags.</p><div class="stack">${found.map((x, i) => `<div class="listrow"><span class="grow"><b>${KIND_ICON[x.kind]} ${esc(x.name)}</b> <span class="badge">${x.kind === "lorebook" ? "Lorebook" : KINDS[x.kind].label}</span><span class="sub">${esc(x.about)}</span></span><button type="button" class="btn small primary" data-i="${i}">Make</button></div>`).join("")}</div>`
+      : `<p class="note">Nobody in this part of the story stands out enough to become their own bot yet.</p>`;
+    b.querySelectorAll("[data-i]").forEach(x => x.onclick = () => spinMake(c, found[+x.dataset.i], msgs));
+  });
+}
+async function spinPick(i) {
+  const c = char(), msgs = S.chat.messages.slice(0, i + 1);
+  if (!hasKey()) { toast("Add your API key in Settings first"); return; }
+  waitSheet("Make a bot from this story", "Looking for people and places in the story…");
+  try { spinList(c, await spinFind(c, msgs.slice(-16)), msgs); } catch (e) { closeSheet(); toast("Couldn't read the story: " + e.message); }
+}
+async function spinMake(c, x, msgs) {
+  const ctx = spinContext(msgs, x.name);
+  const prompt = `Spin-off from an existing roleplay: make a ${x.kind === "lorebook" ? "lorebook" : KINDS[x.kind].label.toLowerCase()} of "${x.name}"${x.about ? ` (${x.about})` : ""}. Keep everything the chat established about them exactly (look, personality, way of talking, relationships), and fill in the rest so it fits. They come from the setting of the bot ${c.name}: ${botSummary(c)}\n\nWhat the chat shows:\n${ctx}`;
+  if (x.kind === "lorebook") return bookRun(prompt, `Writing the ${x.name} lorebook…`, [c.id]);
+  GEN.kind = x.kind; GEN.form = "auto"; GEN.card = null; GEN.note = ""; GEN.parts = []; GEN.prompt = prompt; GEN.from = c.id;
+  await genRun(() => genCard(x.kind, "auto", prompt), `Making ${x.name}…`);
+}
+// the profile's "People in this story": the AI reads the latest chat with this bot
+async function storyPeople(c, box) {
+  const idx = (await getIndex(c.id)).sort((a, b) => b.updated - a.updated), e = idx[0];
+  const chat = e ? await Store.get("c2:" + e.id) : null;
+  if (!chat || chat.messages.filter(m => m.role === "assistant").length < 2) { box.innerHTML = '<p class="hint" style="margin:0">Chat a little first; then the AI can find who you\'ve met.</p>'; return; }
+  if (!hasKey()) { box.innerHTML = '<p class="hint" style="margin:0">Add your API key in Settings first.</p>'; return; }
+  box.innerHTML = `<p class="hint" style="margin:0">Reading the story…</p>`;
+  try {
+    const found = await spinFind(c, chat.messages.slice(-30));
+    c.people = { at: Date.now(), chat: e.id, found }; await saveChars();
+    drawStoryPeople(c, box, chat.messages);
+  } catch (err) { box.innerHTML = `<p class="hint" style="margin:0">${esc(err.message)}</p>`; }
+}
+function drawStoryPeople(c, box, msgs) {
+  const f = c.people?.found || [];
+  box.innerHTML = f.length ? f.map((x, i) => `<div class="listrow"><span class="grow"><b>${KIND_ICON[x.kind]} ${esc(x.name)}</b><span class="sub">${esc(x.about)}</span></span><button type="button" class="btn small" data-i="${i}">Make</button></div>`).join("") : '<p class="hint" style="margin:0">No one stands out yet.</p>';
+  box.querySelectorAll("[data-i]").forEach(b => b.onclick = async () => { const ch = msgs || (await Store.get("c2:" + c.people.chat))?.messages || []; spinMake(c, f[+b.dataset.i], ch); });
+}
+
+// ===== Lorebooks made by the AI (search results and spin-offs): written, then opened in the lorebook editor to check and save
+async function bookCard(prompt) {
+  const j = await dsJSON([{ role: "system", content: `You write lorebooks for Lanternroom, a roleplay chat app: entries that load into the story when their keywords come up. Respond with only JSON: {"name": the lorebook's name, "entries": 6-15 entries {"keys": "comma, separated, keywords", "text": 40-120 words}} covering the key places, people, factions, creatures, items, terms and rules. Every character is treated as a fully grown, mature being; this needs no mention.` },
+    { role: "user", content: prompt }], { temperature: 0.7, maxTokens: 5000, plain: true });
+  const entries = (Array.isArray(j?.entries) ? j.entries : []).map(l => ({ keys: Array.isArray(l?.keys) ? l.keys.join(", ") : s5(l?.keys), text: s5(l?.text) })).filter(l => l.keys && l.text);
+  if (!entries.length) throw new Error("The model's answer came back incomplete. Try again.");
+  return { id: uid(), name: s5(j?.name).slice(0, 80) || "New lorebook", entries };
+}
+async function bookRun(prompt, label, useWith) {
+  waitSheet("Lorebook", label);
+  try { const bk = await bookCard(prompt); if (!$("gWait")) { toast("The lorebook is ready"); } editBook(bk, true, useWith || []); $("sheetBody").insertAdjacentHTML("afterbegin", `<p class="note">Written by the AI from what it knows. Check the entries, tick who should use it, then tap Create lorebook.</p>`); }
+  catch (e) { closeSheet(); toast("Couldn't write the lorebook: " + e.message); }
+}
+
+// ===== Choices mode: replies end with 3-4 choices to tap; risky ones roll a d20
+const choicesOn = (c = char(), chat = S.chat) => !!chat && (chat.choices ?? !!c?.choices);
+const CHOICE_RE = /\[\[\s*choices?\s*:([\s\S]*?)\]\]/i;
+function takeChoices(text) {
+  const m = String(text || "").match(CHOICE_RE); if (!m) return { text, list: null };
+  const list = m[1].split(/\s*;;\s*|\n+/).map(s => s.replace(/^\s*(\d+[.)]|[-•])\s*/, "").trim()).filter(Boolean).slice(0, 6)
+    .map(s => ({ t: s.replace(/\[\s*risky\s*\]/ig, "").replace(/\s+/g, " ").trim(), risky: /\[\s*risky\s*\]/i.test(s) })).filter(x => x.t);
+  return { text: (text.slice(0, m.index) + text.slice(m.index + m[0].length)).trim(), list: list.length ? list : null };
+}
+const DIE_MINI = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8 17.5 6v8L10 18.2 2.5 14V6z" fill="currentColor" opacity=".25"/><path d="M10 1.8 17.5 6v8L10 18.2 2.5 14V6zM10 1.8v6.4M2.5 6l7.5 2.2L17.5 6M10 8.2 6 15M10 8.2 14 15M6 15h8" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
+function renderChoices() {
+  const box = $("choiceBar"), chatEl = $("chat"); if (!box) return;
+  const c = char(), last = S.chat?.messages?.filter(m => m.role !== "image").at(-1);
+  const on = !!(S.chat && !chatEl.hidden && choicesOn(c) && last?.role === "assistant" && last.choices?.length && !S.busy);
+  chatEl.classList.toggle("choosing", on && !S.writeOwn);
+  if (!on) { box.hidden = true; box.innerHTML = ""; return; }
+  box.hidden = false;
+  box.innerHTML = last.choices.map((x, i) => `<button type="button" class="choice${x.risky ? " risky" : ""}" data-i="${i}">${x.risky ? `<span class="ch-die" title="Risky: rolls a d20">${DIE_MINI}</span>` : ""}<span>${fmt(x.t)}</span></button>`).join("")
+    + `<button type="button" class="ch-own" id="chOwn">${S.writeOwn ? "Hide the message box" : "✎ Write my own"}</button>`;
+  box.querySelectorAll(".choice").forEach(b => b.onclick = () => pickChoice(last.choices[+b.dataset.i]));
+  $("chOwn").onclick = () => { S.writeOwn = !S.writeOwn; renderChoices(); if (S.writeOwn) $("input").focus(); };
+}
+async function pickChoice(x) {
+  if (S.busy || !x) return;
+  let n = null;
+  if (x.risky) {
+    n = d20(); setBusy(true); S.rolling = true;
+    try { await rollScene([{ n, who: uname(), known: true }], { text: n === 20 ? "Spectacular!" : n >= 14 ? "It works" : n >= 8 ? "Partly" : n === 1 ? "Disaster" : "It goes wrong", cls: (n >= 8 ? "r-you" : "r-them") + (n === 20 || n === 1 ? " crit" : "") }); }
+    finally { S.rolling = false; setBusy(false); }
+  }
+  S.pendingChoice = { risky: !!x.risky, n }; S.writeOwn = false;
+  $("input").value = x.t; await send();
+}
+const choiceNote = (m, u) => m.choice?.risky && m.choice.n ? `\n[${u} tried something risky and rolled ${m.choice.n} on a d20 (1 = a disaster, 2-7 it fails, 8-13 it only partly works, 14-19 it works, 20 = spectacular). Narrate exactly that outcome.]` : "";
+function choicesPrompt(u) {
+  return `\n\n# Choices\nThis chat is played by picking choices. After the reply, before the final hidden line, add one line exactly like [[choices: first ;; second ;; third]] with 3-4 options for what ${u} could do next, in varied tones (one bold, one careful, one sly or clever, and a lewd one whenever the scene allows it). Each option is one short line of what ${u} does and/or says, actions in *asterisks* and speech in quotes, like *I draw my blade.* "Back off!" Add [risky] at the end of any option with a real chance to fail. Never pick for ${u}; the reply still ends where the moment naturally ends.`;
+}
+
+// ===== Currencies: each RPG bot's money and its icon set (the AI picks, the owner can change it)
+const CUR_SETS = {
+  gold: { label: "Fantasy gold", coin: RPG_ICON.gold, bag: RPG_ICON.bag },
+  cash: { label: "Modern cash", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="6" width="15" height="9" rx="1.2" fill="#3f8f57"/><rect x="3.5" y="4.5" width="15" height="9" rx="1.2" fill="#5fbf78"/><circle cx="11" cy="9" r="2.4" fill="#a8e6b6"/><path d="M11 7.4v3.2" stroke="#2e6b40" stroke-width="1"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="5" width="14" height="11" rx="2" fill="#6b4a2f"/><rect x="3" y="5" width="14" height="4" rx="2" fill="#8a6240"/><rect x="12" y="9" width="5" height="3" rx="1" fill="#c9a06a"/></svg>` },
+  credits: { label: "Sci-fi credits", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2 17 6v8l-7 4-7-4V6z" fill="#1f6f8b"/><path d="M10 4.5 14.8 7.2v5.6L10 15.5l-4.8-2.7V7.2z" fill="#4fd1e8"/><path d="M12 8.3a2.6 2.6 0 1 0 0 3.4" fill="none" stroke="#0d3a4a" stroke-width="1.4"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="6" width="14" height="10" rx="1.5" fill="#3a4a5a"/><rect x="3" y="6" width="14" height="3" fill="#56708a"/><path d="M7 6V4.5h6V6" fill="none" stroke="#8fb2cc" stroke-width="1.4"/><rect x="8" y="10.5" width="4" height="2" rx=".5" fill="#4fd1e8"/></svg>` },
+  gems: { label: "Gems and crystals", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3h10l3 5-8 10L2 8z" fill="#8e5bd8"/><path d="M5 3h10l3 5H2z" fill="#b48cff"/><path d="M2 8l8 10 8-10M7 8l3 10 3-10M5 3l2 5 3-5 3 5 2-5" fill="none" stroke="#e2d2ff" stroke-width=".8"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4h8l-1.5 2.5h-5z" fill="#5a3a8a"/><path d="M4 9c0-2.5 3-3.5 6-3.5s6 1 6 3.5v4c0 2.5-3 3.5-6 3.5s-6-1-6-3.5z" fill="#7a4fb8"/><path d="M7 6.5h6" stroke="#e8c96a" stroke-width="1.4"/></svg>` },
+  caps: { label: "Bottle caps", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l1.3 1.2 1.7-.5.7 1.6 1.7.4-.1 1.8 1.4 1.1-.9 1.5.6 1.7-1.6.8-.2 1.8-1.8-.1-1.1 1.4-1.5-1-1.5 1-1.1-1.4-1.8.1-.2-1.8-1.6-.8.6-1.7-.9-1.5 1.4-1.1-.1-1.8 1.7-.4.7-1.6 1.7.5z" fill="#c43c32"/><circle cx="10" cy="10" r="4.3" fill="#e5594d"/><circle cx="10" cy="10" r="2" fill="#f2d9a6"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 6h10v10H5z" fill="#5e6b3c"/><path d="M5 6h10v3H5z" fill="#748548"/><path d="M7.5 6V4h5v2" fill="none" stroke="#3d4628" stroke-width="1.4"/><rect x="8" y="10" width="4" height="3" fill="#3d4628"/></svg>` },
+  shells: { label: "Shells and barter", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 17c-4.5 0-7-3.5-7-7.5C3 5.8 6 3 10 3s7 2.8 7 6.5c0 4-2.5 7.5-7 7.5z" fill="#f2c7a8"/><path d="M10 17V5M10 17 5.5 7M10 17l4.5-10M10 17 3.5 10M10 17l6.5-7" stroke="#c98b6a" stroke-width="1"/><path d="M8 17h4l-2 1.5z" fill="#c98b6a"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 8h13l-1.5 8.5h-10z" fill="#c9a067"/><path d="M4 10.5h12M4.5 13h11M7 8l-.5 8.5M10 8v8.5M13 8l.5 8.5" stroke="#8a6a3e" stroke-width=".9"/><path d="M6 8c0-3 8-3 8 0" fill="none" stroke="#8a6a3e" stroke-width="1.4"/></svg>` },
+  shards: { label: "Magic shards (like glimmer)", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5 13 9l-3 9.5L7 9z" fill="#5fd0ff"/><path d="M10 1.5 13 9l-3 1.2L7 9z" fill="#c8f1ff"/><circle cx="15.5" cy="4.5" r="1.1" fill="#c8f1ff"/><circle cx="4" cy="13" r=".9" fill="#c8f1ff"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5 16.5 6.2v7.6L10 17.5l-6.5-3.7V6.2z" fill="#2b3f66"/><path d="M10 2.5 16.5 6.2 10 10 3.5 6.2z" fill="#3f5c94"/><circle cx="10" cy="10" r="2" fill="#5fd0ff"/></svg>` },
+  tokens: { label: "Plain tokens", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="#8a8f9a"/><circle cx="10" cy="10" r="5.5" fill="#b9bec8"/><circle cx="10" cy="10" r="1.6" fill="#5b606a"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7l7-3.5L17 7v8l-7 3.5L3 15z" fill="#7a7f8a"/><path d="M3 7l7 3.5L17 7 10 3.5z" fill="#a3a8b2"/><path d="M10 10.5v8" stroke="#5b606a" stroke-width="1"/></svg>` }
+};
+const curOf = c => ({ name: s5(c?.rpg?.cur?.name) || "gold", set: CUR_SETS[c?.rpg?.cur?.set] ? c.rpg.cur.set : "gold" });
+const curIcon = (c, which) => CUR_SETS[curOf(c).set][which];
+async function pickCurrency(w) {
+  const j = await dsJSON([{ role: "system", content: `Pick the money used in this roleplay bot's setting. Respond with only JSON: {"name": the currency's name in lowercase as the characters would say it (gold, dollars, credits, glimmer, caps, crowns, coins…), "set": one of ${Object.keys(CUR_SETS).join(", ")} (the icon style that fits best)}` },
+    { role: "user", content: `${w.name}\n${w.description || ""}\n${w.scenario || ""}`.slice(0, 5000) }], { temperature: 0.3, maxTokens: 120, plain: true });
+  return { name: s5(j?.name).toLowerCase().slice(0, 30) || "gold", set: CUR_SETS[j?.set] ? j.set : "gold" };
+}
+
+// ===== Search to make a bot: the AI lists what it knows from a franchise or name
+function openSearchMake(q = "") {
+  openSheet("Search to make a bot", b => {
+    b.innerHTML = `<p class="note">Type a franchise, game, show, book or a name. The AI lists the characters, groups, worlds and lorebooks it knows from it.</p>
+      <div class="row" style="gap:8px"><input id="smQ" value="${esc(q)}" placeholder="e.g. Mario" style="flex:1;min-width:0;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line)"><button type="button" class="btn primary small" id="smGo">Search</button></div>
+      <div id="smMsg" class="hint"></div><div id="smList" class="stack"></div>`;
+    const go = async () => {
+      const t = $("smQ").value.trim(); if (!t) { $("smQ").focus(); return; }
+      if (!hasKey()) { $("smMsg").textContent = "Add your API key in Settings first."; return; }
+      $("smMsg").textContent = "Searching…"; $("smList").innerHTML = "";
+      try {
+        const j = await dsJSON([{ role: "system", content: `The user wants to make roleplay bots from something they know. From what they typed (a franchise, game, show, book or a character's name), list what you know well from it. Respond with only JSON: {"franchise": its name, "results": up to 14 items {"name", "kind": "character" | "group" | "world" | "lorebook", "about": one short line}}. Include the main and notable characters, natural groups, the world or setting, and one lorebook of its places, people and terms. Only things that really exist in it; an empty list if you don't know it.` },
+          { role: "user", content: t }], { temperature: 0.3, maxTokens: 1500, plain: true });
+        const fr = s5(j?.franchise) || t, res = (Array.isArray(j?.results) ? j.results : []).map(x => ({ name: s5(x?.name).slice(0, 60), kind: ["character", "group", "world", "lorebook"].includes(x?.kind) ? x.kind : "character", about: s5(x?.about).slice(0, 160) })).filter(x => x.name);
+        $("smMsg").textContent = res.length ? `From ${fr}:` : `The AI doesn't know "${t}" well enough. Try another spelling, or use the Character generator.`;
+        $("smList").innerHTML = ["character", "group", "world", "lorebook"].map(k => { const l = res.map((x, i) => [x, i]).filter(([x]) => x.kind === k); return l.length ? `<div class="lbl">${k === "lorebook" ? "Lorebooks" : KINDS[k].label + "s"}</div>` + l.map(([x, i]) => `<div class="listrow"><span class="grow"><b>${KIND_ICON[k]} ${esc(x.name)}</b><span class="sub">${esc(x.about)}</span></span><button type="button" class="btn small primary" data-i="${i}">Make</button></div>`).join("") : ""; }).join("");
+        $("smList").querySelectorAll("[data-i]").forEach(x => x.onclick = () => smOptions(res[+x.dataset.i], fr));
+      } catch (e) { $("smMsg").textContent = e.message; }
+    };
+    $("smGo").onclick = go; $("smQ").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); go(); } };
+    if (q) go();
+  });
+}
+function smOptions(x, fr) {
+  let acc = "faithful";
+  openSheet(x.name, b => {
+    const draw = () => {
+      b.innerHTML = `<p class="note">${esc(x.about || "")} <span class="badge">${x.kind === "lorebook" ? "Lorebook" : KINDS[x.kind].label}</span></p>
+        ${field("How close to the original?", `<div class="tabs" id="smAcc">${[["faithful", "Faithful"], ["changes", "Faithful with changes"], ["reimagined", "Reimagined"]].map(([k, l]) => `<button type="button" class="tab ${acc === k ? "on" : ""}" data-a="${k}">${l}</button>`).join("")}</div>`)}
+        ${acc === "changes" ? field("Your changes", `<textarea id="smCh" style="min-height:80px" placeholder="e.g. make him a dragon anthro, set it in a modern city"></textarea>`) : ""}
+        ${field("Note (optional)", `<textarea id="smNote" style="min-height:60px" placeholder="Anything else: kinks, tone, how they treat you…"></textarea>`)}
+        <div id="smMsg2" class="hint"></div>
+        <button type="button" class="btn primary" id="smMake">✦ Make ${esc(x.name)}</button>`;
+      b.querySelectorAll("#smAcc [data-a]").forEach(t => t.onclick = () => { acc = t.dataset.a; draw(); });
+      $("smMake").onclick = async () => {
+        const ch = $("smCh")?.value.trim() || "", note = $("smNote").value.trim();
+        if (acc === "changes" && !ch) { $("smMsg2").textContent = "Write the changes you want."; return; }
+        const how = acc === "faithful" ? "Stay perfectly faithful to the source: look, personality, history, relationships and way of talking." : acc === "changes" ? `Stay faithful to the source except for these changes: ${ch}` : "Reimagine them freely: keep the name and the core idea, and change anything else in interesting ways.";
+        const prompt = `Make a ${x.kind === "lorebook" ? "lorebook" : KINDS[x.kind].label.toLowerCase()} of ${x.name} from ${fr}${x.about ? ` (${x.about})` : ""}. Use what you know of the source. ${how}${note ? `\nAlso: ${note}` : ""}`;
+        if (x.kind === "lorebook") return bookRun(prompt, `Writing the ${x.name} lorebook…`);
+        GEN.kind = x.kind; GEN.form = "auto"; GEN.card = null; GEN.note = ""; GEN.parts = []; GEN.prompt = prompt; GEN.from = null;
+        await genRun(() => genCard(x.kind, "auto", prompt), `Making ${x.name}…`);
+      };
+    };
+    draw();
+  });
 }
 // tap words in fights and spellcasting: the sentence around a sound decides which weapon or spell it is
 function combatSub(sp, t, cat) {
