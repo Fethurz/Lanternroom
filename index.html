@@ -85,7 +85,7 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
 .msg{max-width:88%;padding:10px 14px;border-radius:18px;word-wrap:break-word;overflow-wrap:anywhere}
 .msg.assistant{align-self:flex-start;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-bottom-left-radius:6px}
 .msg.user{align-self:flex-end;background:var(--user);border-bottom-right-radius:6px}
-.msg em.act{color:var(--act);font-style:italic}
+.msg em.act{color:color-mix(in srgb,var(--act) 60%,transparent);font-style:italic} /* actions noticeably fainter than speech (v1.54) */
 .msg .q{color:var(--quote)}
 .msg.typing{color:var(--muted)}
 .msg.img{padding:6px;background:var(--surface);border:1px solid var(--line);align-self:center;max-width:94%}
@@ -979,7 +979,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.53 · Oct 18";
+const VERSION = "1.54 · Oct 21";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1039,6 +1039,46 @@ function fmt(text) {
        .replace(/\*([^*\n]+)\*/g, "<em class=act>$1</em>")
        .replace(/\n/g, "<br>");
   return h;
+}
+
+// v1.54: the format fix for new replies. Narration and actions belong in closed *asterisks*, speech in "quotes":
+// loose text outside both is wrapped as an action, unclosed asterisks and quotes are closed at the end of the line.
+// Colour/sound tags, bold words and group **Name:** labels are kept whole (a lone sound word is left as it is).
+function fixFormat(text) {
+  const keep = [], put = (s, type) => { keep.push({ s, type }); return "" + String.fromCharCode(0xE100 + keep.length - 1) + ""; };
+  let t = String(text || "");
+  t = t.replace(/\[sfx=[^\]]*\][\s\S]*?\[\/sfx\]/gi, m => put(m, "sfx"))
+       .replace(/\[colou?r=[^\]]*\][\s\S]*?\[\/colou?r\]/gi, m => put(m, "color"))
+       .replace(/\*\*\*[^*\n]+\*\*\*/g, m => put(m, "sfx"))
+       .replace(/\*\*[^*\n]+\*\*/g, m => put(m, "bold"));
+  const PH = /([-])/g, info = ch => keep[ch.charCodeAt(0) - 0xE100];
+  const wordy = run => /[\p{L}\p{N}]/u.test(run.replace(PH, (m, ch) => info(ch).type === "color" ? info(ch).s.replace(/\[[^\]]*\]/g, "") : ""));
+  const out = t.split("\n").map(line => {
+    let head = "", rest = line;
+    const lab = rest.match(/^(\s*)([-])(\s*)/);   // a group reply's **Name:** label stays outside
+    if (lab && info(lab[2]).type === "bold" && /:\*\*$|\*\*:?$/.test(info(lab[2]).s) && /:/.test(info(lab[2]).s)) { head = lab[0]; rest = rest.slice(lab[0].length); }
+    if (!rest.trim()) return line;
+    let o = "", run = "", q = null, act = false;
+    const flush = () => {
+      if (!run) return;
+      if (wordy(run)) { const lead = run.match(/^\s*/)[0], tail = run.match(/\s*$/)[0]; o += lead + "*" + run.trim() + "*" + tail; }
+      else o += run;
+      run = "";
+    };
+    for (const ch of rest) {
+      if (q) { o += ch; if (ch === '"' || (q === "“" && ch === "”")) q = null; continue; }
+      if (act) { o += ch; if (ch === "*") act = false; continue; }
+      if (ch === '"' || ch === "“") { flush(); q = ch; o += ch; continue; }
+      if (ch === "*") { flush(); act = true; o += ch; continue; }
+      run += ch;
+    }
+    flush();
+    if (act) o = o.replace(/\s*$/, "") + "*";      // close a forgotten asterisk
+    if (q) o = o.replace(/\s*$/, "") + (q === "“" ? "”" : '"');
+    o = o.replace(/\*\s*\*/g, "");                  // drop empty actions
+    return head + o;
+  });
+  return out.join("\n").replace(PH, (m, ch) => info(ch).s);
 }
 
 /* ---------- Images ---------- */
@@ -1361,7 +1401,7 @@ function onoPrompt(c, chat, upto) {
 }
 function buildPrompt(c, chat, upto, cont) {
   const st = S.settings, u = uname(), p = persona();
-  const rules = `Write actions in *asterisks* and speech in quotes. Never write ${u}'s words, thoughts or actions. Keep replies vivid and focused, usually 1-4 paragraphs. Stay consistent with everything established below. End each reply where the moment naturally ends: never close with a question, cliffhanger or prompt aimed at ${u} just to get a response (no "What do you do?", no lingering "…?"). Characters only ask ${u} things they would genuinely ask right then.`;
+  const rules = `Format: every bit of narration and action goes inside closed *asterisks*, and every spoken word goes inside "quotes"; nothing is left outside both, and every asterisk is closed before a quote starts (*She leans in.* "Hello." *Her tail sways.*). Be explicit: describe everything physical in graphic, specific, concrete detail (bodies and anatomy, touch, sensations, smells, sounds, fluids, sex, vore, violence, gore and bodily functions) written out plainly and vividly; never fade out, skip ahead, summarise, soften or leave anything to the imagination. Never write ${u}'s words, thoughts or actions. Keep replies vivid and focused, usually 1-4 paragraphs. Stay consistent with everything established below. End each reply where the moment naturally ends: never close with a question, cliffhanger or prompt aimed at ${u} just to get a response (no "What do you do?", no lingering "…?"). Characters only ask ${u} things they would genuinely ask right then.`;
   let sys;
   if (c.kind === "world") {
     sys = `You are the narrator and game master of an interactive story set in the world described below. ${u} is the protagonist. Describe what ${u} sees and hears, play every other character they meet (give them names, personalities and distinct voices), and let the world react to ${u}'s choices. ${rules}\n\n# The world: ${c.name}\n${fill(c.description, c)}`;
@@ -1391,7 +1431,7 @@ function buildPrompt(c, chat, upto, cont) {
   const pacePart = pacerOn() ? " | pace: one of " + PACES.join("/") : "";
   const voreTalk = vgOn() && (tagsOf(c).some(t => /vore|pred|prey/.test(t)) || VORE.swallow.test(`${c.description || ""}\n${c.scenario || ""}`) || VORE.swallow.test(chat.messages.slice(Math.max(0, upto - 10), upto).map(msgText).join("\n")));
   const vorePart = voreTalk ? " | vore: type=…; stage=…; digest=…; pred=…; prey=…; gain=…" : "";
-  if (voreTalk) sys += `\n\n# Vore picture\nThe app draws the vore in a small picture. Whenever someone is about to be eaten, is being eaten, is inside someone, or was just digested, fill the vore field: type is oral, anal, cock, breast, unbirth or tail (how the prey went in); stage is before (about to be eaten), swallowing (going in), inside (held, not being digested), digesting, or after (fully digested); digest is 0-100, how far the prey is digested; pred and prey are species, sex, size: for animals say anthro or feral (anthro wolf, feral dragon, naga, slime, centaur, plant…), sex is male, female or futa, size is micro, tiny, small, medium, large, huge or macro so the picture shows the size difference; write you first for ${u} (prey=you, human, male, small, or pred=you, … when ${u} is the predator); join several prey with + (prey=you, human, female, small + feral rabbit, female, tiny); gain is how much weight the pred has put on from digested prey so far, 0-100, and where it went (belly, hips, chest or all), carried over between replies (right now ${+chat.gain || 0}); lower it when the story has the weight burned or worked off. Example: vore: type=oral; stage=digesting; digest=40; pred=feral dragon, female, huge; prey=you, human, male, small; gain=10, belly. Write vore: none when nobody is being eaten.`;
+  if (voreTalk) sys += `\n\n# Vore picture\nThe app draws the vore in a small picture. Only for real vore, a person or creature literally being eaten whole (a figure of speech like 'swallowed by darkness', eating food or a passing threat never counts): whenever someone is clearly about to be eaten in this very scene, is being eaten, is inside someone, or was just digested, fill the vore field: type is oral, anal, cock, breast, unbirth or tail (how the prey went in); stage is before (about to be eaten), swallowing (going in), inside (held, not being digested), digesting, or after (fully digested); digest is 0-100, how far the prey is digested; pred and prey are species, sex, size: for animals say anthro or feral (anthro wolf, feral dragon, naga, slime, centaur, plant…), sex is male, female or futa, size is micro, tiny, small, medium, large, huge or macro so the picture shows the size difference; write you first for ${u} (prey=you, human, male, small, or pred=you, … when ${u} is the predator); join several prey with + (prey=you, human, female, small + feral rabbit, female, tiny); gain is how much weight the pred has put on from digested prey so far, 0-100, and where it went (belly, hips, chest or all), carried over between replies (right now ${+chat.gain || 0}); lower it when the story has the weight burned or worked off. Example: vore: type=oral; stage=digesting; digest=40; pred=feral dragon, female, huge; prey=you, human, male, small; gain=10, belly. Write vore: none when nobody is being eaten.`;
   if (pacePart) sys += `\n\n# Pace\nThe user follows an on-screen stroke pacer that your pace field controls. Set it from the scene's sexual intensity: stop when nothing sexual is happening or for a pause, slow for teasing and build-up, steady for ongoing sex, fast as things get intense, edge to make ${u} hold right at the brink (use it for denial and teasing near the peak), cum at the moment of climax. Build up naturally over several replies and use edge before cum when it fits.`;
   const musicPart = musicOn() ? ` | music: one of ${MUS_KEYS.join("/")} | event: one of ${EVT_KEYS.join("/")}` : "";
   const rpgPart = rpgOn(c) ? " | gold: +n/-n | items: +Name/-Name | quests: +Name/done Name" : "";
@@ -1400,7 +1440,7 @@ function buildPrompt(c, chat, upto, cont) {
   if (musicPart) sys += `\n\n# Music and events\nmusic is the background music that fits the scene right now. Use none for ordinary moments; only pick music for scenes that call for it: a tavern or inn, a village, a city, a club, party or rave, a forest, a cave, deep water, a dungeon, crypt, temple or other evil place, somewhere magical, a calm or idle moment, romance, sleep or a quiet night, danger or a creeping threat, horror, somewhere eerie, mysterious or unnerving, a fight, an epic or grand moment, space or sci-fi. Music follows the setting and mood, never the action: vore or sex in a club still gets club music, in a tavern tavern music, and none when the setting has no music. event is something that happened in this reply: attack when a blow, shot or spell is coming at someone and the reply ends before it is known whether it lands; danger when a fight or real threat begins; victory when ${u}'s side wins a fight; defeat when ${u}'s side loses one; sad for a very sad, tragic or dramatic moment (a death, a farewell); quest when a quest or goal is completed; item when ${u} finds or receives something valuable, magical or rare; coins when ${u} gains money; otherwise none.`;
   const achP = achPrompt(c, chat); sys += achP.sys;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}${duelPart}${vorePart}${achP.part}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; savanna for grasslands, plains and prairies; jungle for jungles and rainforests; party for a lively party or club full of people talking; castle for castle halls, keeps, fortresses and throne rooms; lava near volcanoes, lava fields or molten hellscapes; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity is swallow while someone is being swallowed or gulped down, chew while prey is being bitten, chewed, crushed between teeth or torn apart (hard vore), struggle while living prey is squirming inside a stomach, balls or womb, vore while anyone is inside a stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling, sex during penetrative sex, oral during oral sex, mess only while someone is cumming right now (spurting, pumping a load, excessive nonstop cumming) or while cum is still described dripping, leaking or pouring; once the climax is over and nothing is flowing, it is no longer mess, inflate while someone's belly (or balls, womb) is being filled up or swollen with cum (cum inflation), kiss while characters are kissing or making out, lick while someone is licking or slowly tasting someone's body (not oral sex), shit while someone is pooping or shitting, otherwise none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}${duelPart}${vorePart}${achP.part}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; savanna for grasslands, plains and prairies; jungle for jungles and rainforests; party for a lively party or club full of people talking; castle for castle halls, keeps, fortresses and throne rooms; lava near volcanoes, lava fields or molten hellscapes; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity labels what is LITERALLY, PHYSICALLY happening between characters in this reply, never a figure of speech or a passing mention: swallow only while a person or creature is being swallowed whole by someone's mouth or throat right now (never swallowing food, drink, saliva, words, pride or nerves, never 'swallowed by darkness', a crowd or the night); chew only while a living person or creature is being bitten, chewed, crushed between teeth or torn apart (hard vore; never eating food); struggle only while living prey is squirming inside someone's stomach, balls or womb (never a fight, wrestling or struggling with a task); vore while anyone is actually inside someone's stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling (never a hungry look, a threat to eat someone or a dream of it); sex only during actual penetrative sex (never thrusting a sword, pounding a door, riding a horse); oral only during actual oral sex; mess only while someone is cumming right now (spurting, pumping a load, excessive nonstop cumming) or while cum is still described dripping, leaking or pouring; once the climax is over and nothing is flowing, it is no longer mess; inflate while someone's belly (or balls, womb) is being filled up or swollen with cum (cum inflation); kiss only while characters are kissing each other on the lips or making out (never a peck on a hand or a cheek in greeting, never lips described alone); lick only while someone is licking another body (not oral sex, never licking their own lips, a spoon or food); shit only while someone is actually pooping or shitting (never swearing like 'oh shit'); otherwise none. When unsure, use none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
   if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
@@ -1821,7 +1861,7 @@ function genSpec(kind, form) {
 - "tags": 4-10 short lowercase tags (gender, form, genre, themes, kinks the card involves)
 - "summary": 2-4 plain sentences for the user, describing what this bot is like and how chatting with it will feel
 - "scenario": where and how the story starts, 80-180 words; refer to the user as {{user}}${kind === "character" ? " and the character as {{char}}" : ""}
-- "firstMessages": an array of 2 different openings, 120-250 words each, in the story's voice with *actions* in asterisks and dialogue in quotes, ending where the moment naturally pauses, never with a question or prompt aimed at {{user}} just to get a reply; never speak or act for {{user}}${kind === "group" ? "; start each character's part with **Name:**" : ""}
+- "firstMessages": an array of 2 different openings, 120-250 words each, in the story's voice with every action and all narration inside closed *asterisks* and dialogue in quotes (nothing outside both), anything physical described in explicit, specific detail, ending where the moment naturally pauses, never with a question or prompt aimed at {{user}} just to get a reply; never speak or act for {{user}}${kind === "group" ? "; start each character's part with **Name:**" : ""}
 - "startPlace": the starting location in 2-6 words
 - "instructions": special rules the AI follows in every reply for this bot, as 2-8 lines each starting with "- " (how to portray it, recurring mechanics, trackers or stats, colored text for thoughts, pacing)
 - "lore": 3-8 entries {"keys": "comma, separated, keywords", "text": "40-120 words"} for facts that only matter when they come up (people, places, items, abilities, mechanics)
@@ -2692,7 +2732,7 @@ const ACH_BY = Object.fromEntries(ACH.map(a => [a.k, a]));
 const achOn = () => S.settings.achOn !== false;
 let ACHS = null;
 const achBlank = () => ({ got: {}, bots: {}, custom: [], n: {}, days: [], ch: {} });
-async function achLoad() { const a = await Store.get("ach"); const st = a && typeof a === "object" ? a : {}; ACHS = ACHS ? achMerge(ACHS, st) : { ...achBlank(), ...st }; return ACHS; }
+async function achLoad() { const a = await Store.get("ach"); const st = a && typeof a === "object" ? a : {}; ACHS = achMerge(ACHS || {}, st); return ACHS; }
 let achT = 0;
 function achSave() { clearTimeout(achT); achT = setTimeout(() => Store.set("ach", ACHS).catch(() => {}), 300); }
 // two devices: keep every badge from both, the earliest time, and the higher counters
@@ -2700,7 +2740,8 @@ function achMerge(a, b) {
   a = a || {}; b = b || {}; const out = achBlank();
   for (const src of [a, b]) {
     for (const [k, v] of Object.entries(src.got || {})) if (!out.got[k] || v.at < out.got[k].at) out.got[k] = v;
-    for (const [bot, m] of Object.entries(src.bots || {})) { out.bots[bot] = out.bots[bot] || {}; for (const [k, at] of Object.entries(m)) if (!out.bots[bot][k] || at < out.bots[bot][k]) out.bots[bot][k] = at; }
+    // bot shelves hold story badges only; app-counted badges are account-wide (older copies are dropped, v1.54)
+    for (const [bot, m] of Object.entries(src.bots || {})) { out.bots[bot] = out.bots[bot] || {}; for (const [k, at] of Object.entries(m)) if (ACH_BY[k]?.src !== "app" && (!out.bots[bot][k] || at < out.bots[bot][k])) out.bots[bot][k] = at; }
     for (const c of src.custom || []) if (!out.custom.some(x => x.id === c.id)) out.custom.push(c);
     for (const [k, v] of Object.entries(src.n || {})) { const o = out.n[k]; out.n[k] = typeof v === "number" ? Math.max(o || 0, v) : Array.isArray(v) ? [...new Set([...(o || []), ...v])] : v && typeof v === "object" ? (() => { const r = { ...(o || {}) }; for (const [x, y] of Object.entries(v)) r[x] = Math.max(r[x] || 0, y); return r; })() : v; }
     out.days = [...new Set([...out.days, ...(src.days || [])])].sort();
@@ -2714,6 +2755,7 @@ const achCh = id => (ACHS.ch[id] = ACHS.ch[id] || {});
 // earn a badge (for a bot's shelf too when one is given); a toast + chime when it's new
 function achGrant(key, botId, chatId, custom) {
   if (!ACHS || !achOn()) return false;
+  if (ACH_BY[key]?.src === "app") botId = null; // app-counted badges are earned once for the whole account, never again per bot (v1.54)
   const now = Date.now(); let fresh = false, firstEver = false;
   if (botId) { const m = ACHS.bots[botId] = ACHS.bots[botId] || {}; if (!m[key]) { m[key] = now; fresh = true; } }
   if (!ACHS.got[key]) { ACHS.got[key] = { at: now, bot: botId || null, chat: chatId || null }; fresh = true; firstEver = true; }
@@ -3180,10 +3222,13 @@ async function sendInner() {
       finally { S.rolling = false; setBusy(false); }
     } else { S.chat.messages.push(m); $("input").value = ""; autoGrow(); clearAttach(); }
     try { achOnSend(m, char(), S.chat); } catch {}
+    // phones: the box drops to one line and the keyboard closes, so the new message and the reply are in view (v1.54)
+    if (!matchMedia("(pointer:fine)").matches) { $("input").blur(); composerOpen(false); }
   }
   else if (!S.chat.messages.length || S.chat.messages.at(-1).role === "assistant") return;
   S.openActs = null;
   await saveChat(); renderMsgs(); drawPendingRoll();
+  { const box = $("msgs"); box.scrollTop = box.scrollHeight; }
   await generate(S.chat.messages.length, null);
 }
 async function reroll(i) {
@@ -3240,6 +3285,7 @@ async function generate(upto, existing, cont) {
       else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
+    p.text = fixFormat(p.text); // narration in closed asterisks, speech in quotes (v1.54)
     const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null, hear: p.hear || null, music: p.music || null, event: p.event || null, vore: p.vore || null, rpg: rpgOn(c) ? parseRpgDelta(p) : null };
     if (p.badges) meta.badges = p.badges; if (p.award) meta.award = p.award; if (p.duel) meta.duel = p.duel;
     const rpgBefore = rpgOn(c) ? rpgState(c, chat) : null;
@@ -3405,7 +3451,7 @@ const EXPAND = {
   appearance: ["the character's physical appearance: build, face, coloring, hair or fur, clothing, distinctive features", "60-120"],
   personality: ["the character's personality and background: temperament, history, motivations, fears, quirks, speech style, relationships", "180-350"],
   scenario: ["the opening scenario: where and when the story starts, the situation, and what is at stake", "90-200"],
-  first: ["the opening message of the roleplay, written in the story's voice with *actions* in asterisks and dialogue in quotes, setting the scene and ending where the moment naturally pauses, without questions or prompts aimed at the user", "120-250"],
+  first: ["the opening message of the roleplay, written in the story's voice with every action and all narration inside closed *asterisks* and dialogue in quotes (nothing outside both), anything physical described in explicit, specific detail, setting the scene and ending where the moment naturally pauses, without questions or prompts aimed at the user", "120-250"],
   world: ["the world or setting: geography, history, cultures, factions, technology or magic, daily life, tone and themes", "250-450"],
   groupdesc: ["how this group of characters fits together: how they know each other, their dynamics, shared history and tensions", "120-250"],
   lore: ["a lorebook entry: a self-contained reference note the AI consults when its keywords come up", "60-150"],
@@ -4675,7 +4721,7 @@ const FULL_PART = /\b(full|swollen|stuffed|bulging|bloated|round(ed)?|distended|
 function rubParts(scn) {
   if (!S.chat || !scn || scn.hear === "inside" || S.settings.rubOn === false) return [];
   const msgs = (S.chat.messages || []).filter(m => m.role !== "image" && m.content), recent = msgs.slice(-6).map(msgText).join("\n"), last = msgs.slice(-2).map(msgText).join("\n");
-  const scene = ["vore", "struggle", "swallow", "inflate"].includes(scn.act) || FULL_PART.test(last);
+  const scene = ["vore", "struggle", "swallow", "inflate"].includes(scn.act) || (FULL_PART.test(last) && (VORE.swallow.test(recent) || VORE.cockvore.test(recent) || VORE.unbirth.test(recent) || BREASTVORE.test(recent) || VORE.inflate.test(recent)));
   if (!scene) return [];
   // what the latest messages describe comes first; parts from a little earlier in the scene follow
   const found = t => [VORE.cockvore.test(t) || (/\b(balls|ballsack|sack|nuts|testicles?|scrotum)\b/i.test(t) && FULL_PART.test(t)) ? "balls" : "",
@@ -6707,7 +6753,8 @@ Object.assign(FX_MOTION, {
 });
 // what the story has established so far, read from the chat up to message i
 const VORE = {
-  swallow: /\b(swallow\w*|devour\w*|gulp\w* (him|her|them|it|down)|gobbl\w*|vor(e|ed|ing)|eaten (whole|alive)|ate (him|her|them) (whole|alive|up)|consum(ed|es|ing)|slid(es)? down (his|her|their|its|the) (throat|gullet)|into (his|her|their|its|the) (stomach|belly|gut|maw))\b/i,
+  // swallowing a PERSON (v1.54: "swallowed by darkness", "swallows nervously", "consumed by rage" no longer count)
+  swallow: /\b((swallow|gulp|gobbl|devour)\w* (him|her|them|you|me|it|his prey|her prey|their prey|the prey) ?(whole|down|alive|up)?\b|(swallowed|gulped|gobbled|devoured) (whole|alive)|vor(e|ed|ing)\b|eaten (whole|alive)|ate (him|her|them|you) (whole|alive|up)|(slid(es|ing)?|squeez\w*|pushed|forced|sinks?|sank|disappear\w*) (down|into) (his|her|their|its|the|a) (throat|gullet|maw|stomach|belly|gut)|(into|inside) (his|her|their|its|the) (stomach|belly|gut|maw) (whole|alive)?)/i,
   digest: /\b(digest\w*|dissolv\w*|melt\w* (down|away)|broken down|break(ing|s)? down|churn\w*|gurgled away|turned (in)?to (fat|mush|sludge|slurry|chyme|soup|padding|cum|cream)|reduced to|absorbed)\b/i,
   dead: /\b(dead|died|dies|death|lifeless|perish\w*|killed|went still|gone still|stopped (moving|struggling|squirming|kicking)|fell silent|no longer (moving|struggling|alive)|nothing (left|remain\w*)|remains|(only|just) bones)\b/i,
   unbirth: /\b(unbirth\w*|womb|(in|into|inside|up) (his|her|their|its|the) (pussy|cunt|slit|sex|folds|vagina|birth canal))\b/i,
@@ -7403,15 +7450,15 @@ const AMB_GUESS = [["underwater_inside", /\b(submarine|diving bell|underwater (b
 function guessAct(msgs) {
   const t2 = msgs.slice(-2).map(msgText).join("\n"), t6 = msgs.slice(-6).map(msgText).join("\n");
   if (/\b(blow.?job|deep.?throat\w*|fellatio|cunnilingus|gag(s|ging|ged)? on|sucks? (on )?(his|her|their|my|your) (cock|dick|shaft|length|clit)|(cock|dick|shaft) (in|down) (her|his|their|my|your) (mouth|throat)|eats? (her|him|them) out)\b/i.test(t2)) return "oral";
-  if (/\b(swallow(s|ing)?|gulp(s|ing)?|slid(es|ing)? down (her|his|their|its|the) (throat|gullet))\b/i.test(msgText(msgs.at(-1))) && !/\b(stomach|belly)\b/i.test(msgText(msgs.at(-1)))) return "swallow";
-  if (/\b(thrust(s|ing)?|fuck(s|ing|ed)?|pound(s|ing)?|rid(es|ing) (him|her|them)|penetrat\w*|hips slap\w*|bounc(es|ing) on)\b/i.test(t2)) return "sex";
+  if (VORE.swallow.test(msgText(msgs.at(-1))) && /\b(throat|gullet|maw|mouth|jaws|lips|tongue)\b/i.test(msgText(msgs.at(-1))) && !/\b(stomach|belly)\b/i.test(msgText(msgs.at(-1)))) return "swallow";
+  if (/\b(fuck(s|ing|ed)? (him|her|them|you|me)|(thrust|pound|slam|plow|drive|bury|sink)\w* (his|her|their|my|your) (cock|dick|shaft|length|member|hips)|(cock|dick|shaft|member|length) (thrusts?|pounds?|slides?|plunges?|buries|sinks?) (into|inside|deep)|rid(es|ing) (his|her|their|my|your) (cock|dick|shaft)|(into|inside) (her|his|their|my|your) (pussy|cunt|ass|hole)|penetrat\w* (him|her|them|you|me)|hips slap\w*)\b/i.test(t2)) return "sex";
   if (VORE.scat.test(msgText(msgs.at(-1)))) return "shit";
   if (VORE.inflate.test(msgText(msgs.at(-1))) && VORE.cumword.test(msgText(msgs.at(-1)))) return "inflate";
   if (/\b(dripping (with|in) cum|covered in cum|cum-?(soaked|covered|drenched|filled|inflated|stuffed)|leaking cum|cum (leaks|drips|oozes|pours|gushes|floods)|(gallons|torrents?|flood) of cum)\b/i.test(msgText(msgs.at(-1)))) return "mess";
-  if (/\b(chew(s|ing|ed)?|chomp\w*|gnaw\w*|munch\w*|crunch(es|ing)? (down )?on|bit(es|ing)? (down on|into|off)|tear(s|ing)? (into|off|apart)|tore (into|off|apart)|rip(s|ping)? (off|apart|into))\b/i.test(msgText(msgs.at(-1))) && /\b(teeth|jaws?|fangs?|mouth|maw|bite|bites|chew\w*|chomp\w*|gnaw\w*|munch\w*)\b/i.test(msgText(msgs.at(-1)))) return "chew";
-  if (VORE.swallow.test(t6) && /\b(stomach|belly|gut|inside)\b/i.test(t6) && !/\b(spat|spits? (him|her|them) out|escap\w*|freed|regurgitat\w*|came out|pushed out)\b/i.test(t2)) return /\b(squirm\w*|struggl\w*|thrash\w*|kick(s|ing)?|wriggl\w*|writh\w*|pound(s|ing)? (on|against))\b/i.test(t2) ? "struggle" : "vore";
-  if (/\b(lick(s|ing|ed)?|lap(s|ping|ped)? (at|up|along)|tongue (drags?|slides?|runs?|trails?|laps?|swirls?) (up|over|along|across|against))\b/i.test(msgText(msgs.at(-1))) && !/\b(pussy|clit|cock|dick|shaft|cunt|ass ?hole)\b/i.test(msgText(msgs.at(-1)))) return "lick";
-  if (/\b(kiss(es|ing|ed)?|making out|make out|smooch\w*|lips (lock|press|meet|crash)\w*|tongues? (dance|tangle|swirl)\w*)\b/i.test(msgText(msgs.at(-1)))) return "kiss";
+  if (/\b(chew(s|ing|ed)?|chomp\w*|gnaw\w*|munch\w*|crunch(es|ing)? (down )?on|bit(es|ing)? (down on|into|off)|tear(s|ing)? (into|off|apart)|tore (into|off|apart)|rip(s|ping)? (off|apart|into)) (him|her|them|you|me|the prey|his prey|her prey|their prey|(his|her|their|your|my) (body|leg|legs|arm|arms|torso|head|flesh|bones?))\b/i.test(msgText(msgs.at(-1))) && /\b(teeth|jaws?|fangs?|maw)\b/i.test(msgText(msgs.at(-1)))) return "chew";
+  if (VORE.swallow.test(t6) && /\b(stomach|belly|gut|womb|balls)\b/i.test(t2) && !/\b(spat|spits? (him|her|them|you) out|escap\w*|freed|regurgitat\w*|came out|pushed out)\b/i.test(t2)) return /\b(squirm\w*|struggl\w*|thrash\w*|kick(s|ing)?|wriggl\w*|writh\w*|pound(s|ing)? (on|against))\b[^.!?\n]{0,60}\b(inside|stomach|belly|gut|womb|walls?)\b|\b(inside|stomach|belly|gut|womb)\b[^.!?\n]{0,60}\b(squirm\w*|struggl\w*|thrash\w*|kick(s|ing)?|wriggl\w*|writh\w*)/i.test(t2) ? "struggle" : "vore";
+  if (/\b(lick(s|ing|ed)? (his|her|their|your|my) (neck|cheek|face|chest|belly|stomach|body|thigh|thighs|feet|paws?|ears?|skin|fur|scales)|lick(s|ing|ed)? (him|her|them|you|me)\b(?!\s+(own|lips|lip|fingers?|hand|hands|knuckles|cheek|forehead|head|ring|feet|paws?|claws?|teeth|chops|muzzle|spoon|plate|bowl))|tongue (drags?|slides?|runs?|trails?|laps?|swirls?) (up|over|along|across|against) (his|her|their|your|my) (neck|cheek|face|chest|belly|body|thigh|skin|fur|scales))\b/i.test(msgText(msgs.at(-1))) && !/\b(pussy|clit|cock|dick|shaft|cunt|ass ?hole)\b/i.test(msgText(msgs.at(-1)))) return "lick";
+  if (/\b(kiss(es|ed|ing)? (him|her|them|you|me)\b(?!\s+(own|lips|lip|fingers?|hand|hands|knuckles|cheek|forehead|head|ring|feet|paws?|claws?|teeth|chops|muzzle|spoon|plate|bowl))( (deeply|hard|hungrily|passionately|softly|slowly))?( on the (lips|mouth))?\b(?! on the (hand|cheek|forehead|knuckles|head))|making out|make out|lips (lock|press|meet|crash)\w* (together|against (his|her|their|your|my) (lips|mouth))|tongues? (dance|tangle|swirl)\w*)/i.test(msgText(msgs.at(-1)))) return "kiss";
   return "none";
 }
 // is someone cumming right now (mess), is cum only dripping (drip), or is it over (none)?
