@@ -7,7 +7,7 @@ const open = require("./base.js");
     const a = { id: uid(), name: "Bram", description: "A big bear.", color: "#ffaa33" }, k = { id: uid(), name: "Kit", description: "A small fox.", color: "#33aaff" };
     const g = { id: uid(), name: "The Den", description: "", color: "#ffaa33", members: [a.id, k.id] };
     S.personas.push(a, k, g); S.personaId = g.id; await savePersonas();
-    const c = S.chars[0]; c.choices = true; c.rpg = { on: true, gold: 120, items: "2 Health potion", quests: "", cur: { name: "glimmer", set: "shards" } }; await saveChars();
+    const c = S.chars[0]; c.choices = true; c.rpg = { on: true, gold: 120, items: "2 Health potion", quests: "", cur: { name: "glimmer", set: "shards", coin: "bones:coin", bag: "gems:bag", coinCol: "#ff4f8b" } }; await saveChars();
     await openChat(c.id);
   });
   await pg.waitForTimeout(500);

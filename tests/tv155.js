@@ -109,9 +109,13 @@ const open = require("./base.js");
   sys = JSON.stringify(calls.filter(c => c.stream).at(-1).messages);
   chk("prompt names the currency", /called credits/.test(sys) && /Credits: 50/.test(sys));
   await pg.evaluate(() => editChar(char(), false)); await wait(400);
-  chk("editor: choices switch and currency sets", !!await pg.$("#cChoices") && (await pg.$$("#cCurSets .cur-set")).length === 8);
-  await pg.click('#cCurSets [data-s="caps"]'); await pg.fill("#cCurName", "caps"); await pg.click("#cSave"); await wait(600);
-  chk("currency saved", await pg.evaluate(() => { const c = S.chars.find(x => x.rpg?.cur?.set === "caps"); return !!c && c.rpg.cur.name === "caps"; }));
+  chk("editor: choices switch and every icon for money and bag (" + (await pg.$$("#cCoinIcons .cur-ic")).length + ")", !!await pg.$("#cChoices") && (await pg.$$("#cCoinIcons .cur-ic")).length === 18 && (await pg.$$("#cBagIcons .cur-ic")).length === 18);
+  await pg.click('#cCoinIcons [data-k="bones:coin"]'); await pg.click('#cBagIcons [data-k="credits:coin"]');
+  await pg.evaluate(() => { const i = document.getElementById("cCoinCol"); i.value = "#ff3366"; i.dispatchEvent(new Event("input")); });
+  chk("the picked colour tints the icons", await pg.evaluate(() => /hsl\(/.test(document.querySelector('#cCoinIcons [data-k="bones:coin"]').innerHTML)));
+  await pg.fill("#cCurName", "bones"); await pg.click("#cSave"); await wait(600);
+  chk("currency icons and colour saved", await pg.evaluate(() => { const c = S.chars.find(x => x.rpg?.cur?.coin === "bones:coin"); return !!c && c.rpg.cur.bag === "credits:coin" && c.rpg.cur.coinCol === "#ff3366" && c.rpg.cur.name === "bones"; }));
+  chk("credits coin has no C", await pg.evaluate(() => !/M12 8\.3a2\.6/.test(CUR_SETS.credits.coin)));
   await pg.evaluate(async () => { const c = char() || S.chars[0]; c.rpg.cur = null; const r = await pickCurrency(c); window.__cur = r; });
   chk("the AI picks a currency", await pg.evaluate(() => window.__cur?.name === "credits" && window.__cur.set === "credits"));
 

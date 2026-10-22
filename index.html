@@ -647,6 +647,8 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 #choiceBar .ch-own{align-self:flex-end;background:none;border:0;color:var(--muted);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;min-height:34px}
 #chat.choosing #composer{display:none}
 .cur-sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-top:8px}
+.cur-icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px;margin-top:6px}.cur-ic{display:grid;place-items:center;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer;padding:0}.cur-ic svg{width:24px;height:24px}.cur-ic.on{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent)}
+.cur-col{align-items:center;gap:8px;margin-top:6px;font-size:13px}.cur-col label{display:flex;align-items:center;gap:8px}.cur-col input[type=color]{width:44px;height:34px;padding:0;border:1px solid var(--line);border-radius:8px;background:none}
 .cur-set{display:flex;align-items:center;gap:4px;padding:6px 8px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:inherit;font:inherit;font-size:12px;text-align:left;cursor:pointer}.cur-set svg{width:20px;height:20px;flex:none}.cur-set.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--bg))}
 .pg-one{padding:10px 12px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:6px}.pg-one p{margin:0}.pg-one .p-dot{margin-left:8px}
 #rubNow[hidden]{display:none}
@@ -992,7 +994,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.55 · Oct 21";
+const VERSION = "1.56 · Oct 21";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -5714,14 +5716,30 @@ function rpgEditor(work) {
   work.rpg = work.rpg || { on: false, gold: 0, items: "", quests: "" };
   const r = work.rpg;
   box.innerHTML = `<label class="check"><input type="checkbox" id="cRpgOn" ${r.on ? "checked" : ""}> Gold, inventory and quests in this bot's chats</label>
-    ${field("Currency", `<div class="row" style="gap:6px"><input id="cCurName" value="${esc(curOf(work).name)}" placeholder="gold" style="flex:1;min-width:0"><button type="button" class="btn small" id="cCurAI">✦ Let the AI pick</button></div><div class="cur-sets" id="cCurSets"></div>`, "What the money is called in this bot's world, and its coin and bag icons.")}
+    ${field("Currency", `<div class="row" style="gap:6px"><input id="cCurName" value="${esc(curOf(work).name)}" placeholder="gold" style="flex:1;min-width:0"><button type="button" class="btn small" id="cCurAI">✦ Let the AI pick</button></div>
+      <div class="lbl" style="margin-top:10px">Money icon</div><div class="cur-icons" id="cCoinIcons"></div>
+      <div class="row cur-col"><label>Colour <input type="color" id="cCoinCol"></label><button type="button" class="btn small" id="cCoinColX">Original colours</button></div>
+      <div class="lbl" style="margin-top:10px">Bag icon</div><div class="cur-icons" id="cBagIcons"></div>
+      <div class="row cur-col"><label>Colour <input type="color" id="cBagCol"></label><button type="button" class="btn small" id="cBagColX">Original colours</button></div>`, "What the money is called in this bot's world. Any icon works for either the money or the bag, in any colour.")}
     ${field("Starting money", `<input type="number" id="cRpgGold" min="0" value="${esc(r.gold || 0)}">`)}
     ${field("Starting items", `<textarea id="cRpgItems" style="min-height:70px" placeholder="One per line, e.g.\n2 Health potion\nRusty sword">${esc(r.items || "")}</textarea>`)}
     ${field("Starting quests", `<textarea id="cRpgQuests" style="min-height:60px" placeholder="One per line">${esc(r.quests || "")}</textarea>`)}`;
-  const drawSets = () => { const cur = curOf(work); $("cCurSets").innerHTML = Object.entries(CUR_SETS).map(([k, v]) => `<button type="button" class="cur-set ${cur.set === k ? "on" : ""}" data-s="${k}" title="${esc(v.label)}">${v.coin}${v.bag}<span>${esc(v.label)}</span></button>`).join(""); $("cCurSets").querySelectorAll("[data-s]").forEach(x => x.onclick = () => { r.cur = { ...curOf(work), set: x.dataset.s }; drawSets(); }); };
+  const drawSets = () => {
+    const cur = curOf(work);
+    for (const [which, box, colIn] of [["coin", "cCoinIcons", "cCoinCol"], ["bag", "cBagIcons", "cBagCol"]]) {
+      const col = cur[which + "Col"];
+      $(box).innerHTML = Object.entries(CUR_ICONS).map(([k, svg]) => `<button type="button" class="cur-ic ${cur[which] === k ? "on" : ""}" data-k="${k}" title="${esc(CUR_SETS[k.split(":")[0]].label)} ${k.endsWith("bag") ? "bag" : "money"}" aria-label="${esc(CUR_SETS[k.split(":")[0]].label)} ${k.endsWith("bag") ? "bag" : "money"}">${col ? tintSVG(svg, col) : svg}</button>`).join("");
+      $(box).querySelectorAll("[data-k]").forEach(x => x.onclick = () => { r.cur = { ...curOf(work), [which]: x.dataset.k }; drawSets(); });
+      $(colIn).value = col || "#e8b54a";
+    }
+  };
+  for (const which of ["coin", "bag"]) {
+    $(which === "coin" ? "cCoinCol" : "cBagCol").oninput = e => { r.cur = { ...curOf(work), [which + "Col"]: e.target.value }; drawSets(); };
+    $(which === "coin" ? "cCoinColX" : "cBagColX").onclick = () => { r.cur = { ...curOf(work), [which + "Col"]: "" }; drawSets(); };
+  }
   drawSets();
   $("cCurName").oninput = e => { r.cur = { ...curOf(work), name: e.target.value.trim().toLowerCase() }; };
-  const aiPick = async () => { if (!hasKey()) { toast("Add your API key in Settings first"); return; } const btn = $("cCurAI"); btn.disabled = true; btn.textContent = "Picking…"; try { r.cur = await pickCurrency({ ...work, name: $("cName")?.value || work.name, description: $("cDesc")?.value || work.description, scenario: $("cScen")?.value || work.scenario }); $("cCurName").value = r.cur.name; drawSets(); } catch (e) { toast("Couldn't pick a currency: " + e.message); } btn.disabled = false; btn.textContent = "✦ Let the AI pick"; };
+  const aiPick = async () => { if (!hasKey()) { toast("Add your API key in Settings first"); return; } const btn = $("cCurAI"); btn.disabled = true; btn.textContent = "Picking…"; try { const keep = curOf(work); r.cur = await pickCurrency({ ...work, name: $("cName")?.value || work.name, description: $("cDesc")?.value || work.description, scenario: $("cScen")?.value || work.scenario }); r.cur = { ...r.cur, coin: r.cur.set + ":coin", bag: r.cur.set + ":bag", coinCol: keep.coinCol, bagCol: keep.bagCol }; $("cCurName").value = r.cur.name; drawSets(); } catch (e) { toast("Couldn't pick a currency: " + e.message); } btn.disabled = false; btn.textContent = "✦ Let the AI pick"; };
   $("cCurAI").onclick = aiPick;
   $("cRpgOn").onchange = e => { r.on = e.target.checked; if (r.on && !r.cur && hasKey()) aiPick(); };
   $("cRpgGold").oninput = e => { r.gold = Math.max(0, +e.target.value || 0); };
@@ -5975,15 +5993,29 @@ function choicesPrompt(u) {
 const CUR_SETS = {
   gold: { label: "Fantasy gold", coin: RPG_ICON.gold, bag: RPG_ICON.bag },
   cash: { label: "Modern cash", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="6" width="15" height="9" rx="1.2" fill="#3f8f57"/><rect x="3.5" y="4.5" width="15" height="9" rx="1.2" fill="#5fbf78"/><circle cx="11" cy="9" r="2.4" fill="#a8e6b6"/><path d="M11 7.4v3.2" stroke="#2e6b40" stroke-width="1"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="5" width="14" height="11" rx="2" fill="#6b4a2f"/><rect x="3" y="5" width="14" height="4" rx="2" fill="#8a6240"/><rect x="12" y="9" width="5" height="3" rx="1" fill="#c9a06a"/></svg>` },
-  credits: { label: "Sci-fi credits", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2 17 6v8l-7 4-7-4V6z" fill="#1f6f8b"/><path d="M10 4.5 14.8 7.2v5.6L10 15.5l-4.8-2.7V7.2z" fill="#4fd1e8"/><path d="M12 8.3a2.6 2.6 0 1 0 0 3.4" fill="none" stroke="#0d3a4a" stroke-width="1.4"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="6" width="14" height="10" rx="1.5" fill="#3a4a5a"/><rect x="3" y="6" width="14" height="3" fill="#56708a"/><path d="M7 6V4.5h6V6" fill="none" stroke="#8fb2cc" stroke-width="1.4"/><rect x="8" y="10.5" width="4" height="2" rx=".5" fill="#4fd1e8"/></svg>` },
+  credits: { label: "Sci-fi credits", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2 17 6v8l-7 4-7-4V6z" fill="#1f6f8b"/><path d="M10 4.5 14.8 7.2v5.6L10 15.5l-4.8-2.7V7.2z" fill="#4fd1e8"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="6" width="14" height="10" rx="1.5" fill="#3a4a5a"/><rect x="3" y="6" width="14" height="3" fill="#56708a"/><path d="M7 6V4.5h6V6" fill="none" stroke="#8fb2cc" stroke-width="1.4"/><rect x="8" y="10.5" width="4" height="2" rx=".5" fill="#4fd1e8"/></svg>` },
   gems: { label: "Gems and crystals", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3h10l3 5-8 10L2 8z" fill="#8e5bd8"/><path d="M5 3h10l3 5H2z" fill="#b48cff"/><path d="M2 8l8 10 8-10M7 8l3 10 3-10M5 3l2 5 3-5 3 5 2-5" fill="none" stroke="#e2d2ff" stroke-width=".8"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4h8l-1.5 2.5h-5z" fill="#5a3a8a"/><path d="M4 9c0-2.5 3-3.5 6-3.5s6 1 6 3.5v4c0 2.5-3 3.5-6 3.5s-6-1-6-3.5z" fill="#7a4fb8"/><path d="M7 6.5h6" stroke="#e8c96a" stroke-width="1.4"/></svg>` },
   caps: { label: "Bottle caps", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5l1.3 1.2 1.7-.5.7 1.6 1.7.4-.1 1.8 1.4 1.1-.9 1.5.6 1.7-1.6.8-.2 1.8-1.8-.1-1.1 1.4-1.5-1-1.5 1-1.1-1.4-1.8.1-.2-1.8-1.6-.8.6-1.7-.9-1.5 1.4-1.1-.1-1.8 1.7-.4.7-1.6 1.7.5z" fill="#c43c32"/><circle cx="10" cy="10" r="4.3" fill="#e5594d"/><circle cx="10" cy="10" r="2" fill="#f2d9a6"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 6h10v10H5z" fill="#5e6b3c"/><path d="M5 6h10v3H5z" fill="#748548"/><path d="M7.5 6V4h5v2" fill="none" stroke="#3d4628" stroke-width="1.4"/><rect x="8" y="10" width="4" height="3" fill="#3d4628"/></svg>` },
   shells: { label: "Shells and barter", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 17c-4.5 0-7-3.5-7-7.5C3 5.8 6 3 10 3s7 2.8 7 6.5c0 4-2.5 7.5-7 7.5z" fill="#f2c7a8"/><path d="M10 17V5M10 17 5.5 7M10 17l4.5-10M10 17 3.5 10M10 17l6.5-7" stroke="#c98b6a" stroke-width="1"/><path d="M8 17h4l-2 1.5z" fill="#c98b6a"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 8h13l-1.5 8.5h-10z" fill="#c9a067"/><path d="M4 10.5h12M4.5 13h11M7 8l-.5 8.5M10 8v8.5M13 8l.5 8.5" stroke="#8a6a3e" stroke-width=".9"/><path d="M6 8c0-3 8-3 8 0" fill="none" stroke="#8a6a3e" stroke-width="1.4"/></svg>` },
   shards: { label: "Magic shards (like glimmer)", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5 13 9l-3 9.5L7 9z" fill="#5fd0ff"/><path d="M10 1.5 13 9l-3 1.2L7 9z" fill="#c8f1ff"/><circle cx="15.5" cy="4.5" r="1.1" fill="#c8f1ff"/><circle cx="4" cy="13" r=".9" fill="#c8f1ff"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5 16.5 6.2v7.6L10 17.5l-6.5-3.7V6.2z" fill="#2b3f66"/><path d="M10 2.5 16.5 6.2 10 10 3.5 6.2z" fill="#3f5c94"/><circle cx="10" cy="10" r="2" fill="#5fd0ff"/></svg>` },
-  tokens: { label: "Plain tokens", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="#8a8f9a"/><circle cx="10" cy="10" r="5.5" fill="#b9bec8"/><circle cx="10" cy="10" r="1.6" fill="#5b606a"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7l7-3.5L17 7v8l-7 3.5L3 15z" fill="#7a7f8a"/><path d="M3 7l7 3.5L17 7 10 3.5z" fill="#a3a8b2"/><path d="M10 10.5v8" stroke="#5b606a" stroke-width="1"/></svg>` }
+  tokens: { label: "Plain tokens", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="#8a8f9a"/><circle cx="10" cy="10" r="5.5" fill="#b9bec8"/><circle cx="10" cy="10" r="1.6" fill="#5b606a"/></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7l7-3.5L17 7v8l-7 3.5L3 15z" fill="#7a7f8a"/><path d="M3 7l7 3.5L17 7 10 3.5z" fill="#a3a8b2"/><path d="M10 10.5v8" stroke="#5b606a" stroke-width="1"/></svg>` },
+  bones: { label: "Bones", coin: `<svg viewBox="0 0 20 20" aria-hidden="true"><g transform="rotate(-35 10 10)"><rect x="5" y="8.6" width="10" height="2.8" rx="1" fill="#e9dfc8"/><circle cx="4.6" cy="8.4" r="2.1" fill="#e9dfc8"/><circle cx="4.6" cy="11.6" r="2.1" fill="#e9dfc8"/><circle cx="15.4" cy="8.4" r="2.1" fill="#e9dfc8"/><circle cx="15.4" cy="11.6" r="2.1" fill="#e9dfc8"/><rect x="5.5" y="10.5" width="9" height=".9" fill="#c9bb98"/></g></svg>`, bag: `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 8c0-2 2-3 5-3s5 1 5 3l1 7c0 1.5-2.5 2.5-6 2.5S4 16.5 4 15z" fill="#8a7458"/><path d="M7 5.5 10 7l3-1.5" fill="none" stroke="#5e4c36" stroke-width="1.2"/><g transform="rotate(-20 10 12)"><rect x="7" y="11.3" width="6" height="1.6" rx=".6" fill="#e9dfc8"/><circle cx="6.8" cy="11.2" r="1.1" fill="#e9dfc8"/><circle cx="6.8" cy="13" r="1.1" fill="#e9dfc8"/><circle cx="13.2" cy="11.2" r="1.1" fill="#e9dfc8"/><circle cx="13.2" cy="13" r="1.1" fill="#e9dfc8"/></g></svg>` }
 };
-const curOf = c => ({ name: s5(c?.rpg?.cur?.name) || "gold", set: CUR_SETS[c?.rpg?.cur?.set] ? c.rpg.cur.set : "gold" });
-const curIcon = (c, which) => CUR_SETS[curOf(c).set][which];
+// every set's coin and bag, any of them usable for either; each picked icon can take its own colour
+const CUR_ICONS = Object.fromEntries(Object.entries(CUR_SETS).flatMap(([k, v]) => [[k + ":coin", v.coin], [k + ":bag", v.bag]]));
+const okHex = v => /^#[0-9a-f]{6}$/i.test(v || "") ? v : "";
+function curOf(c) {
+  const x = c?.rpg?.cur || {}, set = CUR_SETS[x.set] ? x.set : "gold";
+  return { name: s5(x.name) || "gold", set, coin: CUR_ICONS[x.coin] ? x.coin : set + ":coin", bag: CUR_ICONS[x.bag] ? x.bag : set + ":bag", coinCol: okHex(x.coinCol), bagCol: okHex(x.bagCol) };
+}
+// recolour an icon: every colour keeps its own lightness and takes the chosen hue and saturation, so the shading stays
+function tintSVG(svg, hex) {
+  const hsl = h => { const r = parseInt(h.slice(1, 3), 16) / 255, g = parseInt(h.slice(3, 5), 16) / 255, b = parseInt(h.slice(5, 7), 16) / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
+    if (!d) return [0, 0, l]; const sat = d / (1 - Math.abs(2 * l - 1)); const hue = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; return [(hue * 60 + 360) % 360, sat, l]; };
+  const [th, ts, tl] = hsl(hex);
+  return svg.replace(/#([0-9a-f]{6})\b/gi, m => { const [, , l] = hsl(m); const L = Math.min(0.92, Math.max(0.08, l * 0.75 + tl * 0.25)); return `hsl(${th.toFixed(0)} ${(ts * 100).toFixed(0)}% ${(L * 100).toFixed(0)}%)`; });
+}
+const curIcon = (c, which) => { const x = curOf(c), svg = CUR_ICONS[x[which]] || CUR_ICONS["gold:" + which], col = x[which + "Col"]; return col ? tintSVG(svg, col) : svg; };
 async function pickCurrency(w) {
   const j = await dsJSON([{ role: "system", content: `Pick the money used in this roleplay bot's setting. Respond with only JSON: {"name": the currency's name in lowercase as the characters would say it (gold, dollars, credits, glimmer, caps, crowns, coins…), "set": one of ${Object.keys(CUR_SETS).join(", ")} (the icon style that fits best)}` },
     { role: "user", content: `${w.name}\n${w.description || ""}\n${w.scenario || ""}`.slice(0, 5000) }], { temperature: 0.3, maxTokens: 120, plain: true });
