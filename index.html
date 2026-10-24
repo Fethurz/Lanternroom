@@ -1281,6 +1281,12 @@ function applyTheme() {
   if (typeof renderHome === "function" && document.getElementById("home") && !document.getElementById("home").hidden && Array.isArray(S.chars) && S.chars.length) { clearTimeout(applyTheme.t); applyTheme.t = setTimeout(() => renderHome(), 150); }
 }
 
+function dailyNewer(a, b) {
+  if (!a) return b; if (!b) return a;
+  if ((a.day || "") !== (b.day || "")) return (a.day || "") > (b.day || "") ? a : b;
+  const rank = x => ({ kept: 4, skipped: 3, new: 2, error: 1, making: 0 })[x.status] ?? 0;
+  return rank(a) > rank(b) ? a : b;
+}
 /* ---------- Storage (IndexedDB, falls back to localStorage) ---------- */
 const Store = {
   db: null,
@@ -1323,7 +1329,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.57 · Oct 21";
+const VERSION = "1.58 · Oct 23";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -3215,7 +3221,7 @@ for (const [key, name, how, steps] of LADDERS) steps.forEach((n, i) => ACH.push(
 const ACH_BY = Object.fromEntries(ACH.map(a => [a.k, a]));
 const achOn = () => S.settings.achOn !== false;
 let ACHS = null;
-const achBlank = () => ({ got: {}, bots: {}, custom: [], n: {}, days: [], ch: {}, shop: { owned: {}, wear: {}, wearAt: 0, tries: 0 } });
+const achBlank = () => ({ got: {}, bots: {}, custom: [], n: {}, days: [], ch: {}, shop: { owned: {}, wear: {}, wearAt: 0, wearT: {}, tries: 0 } });
 async function achLoad() { const a = await Store.get("ach"); const st = a && typeof a === "object" ? a : {}; ACHS = achMerge(ACHS || {}, st); return ACHS; }
 let achT = 0;
 function achSave() { clearTimeout(achT); achT = setTimeout(() => Store.set("ach", ACHS).catch(() => {}), 300); }
@@ -3230,7 +3236,13 @@ function achMerge(a, b) {
     for (const [k, v] of Object.entries(src.n || {})) { const o = out.n[k]; out.n[k] = typeof v === "number" ? Math.max(o || 0, v) : Array.isArray(v) ? [...new Set([...(o || []), ...v])] : v && typeof v === "object" ? (() => { const r = { ...(o || {}) }; for (const [x, y] of Object.entries(v)) r[x] = Math.max(r[x] || 0, y); return r; })() : v; }
     out.days = [...new Set([...out.days, ...(src.days || [])])].sort();
     // the shop: everything bought on either device, and whatever was put on last
-    if (src.shop) { const sh = out.shop; for (const [id, at] of Object.entries(src.shop.owned || {})) if (!sh.owned[id] || at < sh.owned[id]) sh.owned[id] = at; if (src.shop.wear && (src.shop.wearAt || 0) >= (sh.wearAt || 0)) { sh.wear = { ...src.shop.wear }; sh.wearAt = src.shop.wearAt || 0; } sh.tries = Math.max(sh.tries || 0, src.shop.tries || 0); }
+    if (src.shop) {
+      const sh = out.shop, w = src.shop.wear || {}, t = src.shop.wearT || {};
+      for (const [id, at] of Object.entries(src.shop.owned || {})) if (!sh.owned[id] || at < sh.owned[id]) sh.owned[id] = at;
+      // every slot keeps whichever device changed it last (v1.58)
+      for (const slot of new Set([...Object.keys(w), ...Object.keys(t)])) { const at = t[slot] || src.shop.wearAt || 0; if (at >= (sh.wearT[slot] || 0)) { sh.wear[slot] = w[slot]; sh.wearT[slot] = at; } }
+      sh.wearAt = Math.max(sh.wearAt || 0, src.shop.wearAt || 0); sh.tries = Math.max(sh.tries || 0, src.shop.tries || 0);
+    }
     for (const [c, v] of Object.entries(src.ch || {})) { const o = out.ch[c] || {}; const r = { ...o }; for (const [k, x] of Object.entries(v)) r[k] = typeof x === "number" ? Math.max(o[k] || 0, x) : Array.isArray(x) ? [...new Set([...(o[k] || []), ...x])] : x; out.ch[c] = r; }
   }
   return out;
@@ -3401,11 +3413,13 @@ const achEarned = (k, botId) => botId ? !!(ACHS?.bots[botId] || {})[k] : !!ACHS?
 function medal(on, secret) { return `<span class="ach-md${on ? " on" : ""}">${on ? "★" : secret ? "?" : "☆"}</span>`; }
 const ptsTag = r => `<span class="ach-pts rp-${r}">${RAR[r][0]} · ${RAR[r][1]}</span>`;
 function ladProg(a) { const l = a.lv && LADDERS.find(x => a.k.startsWith(`lad_${x[0]}_`)); if (!l) return ""; let v = 0; try { v = +l[4]() || 0; } catch {} return `<span class="ach-prog">${Math.min(v, l[3][a.lv - 1]).toLocaleString("en-US")} / ${l[3][a.lv - 1].toLocaleString("en-US")}</span>`; }
+let achRedraw = null;
 function openTrophies(botId, startTab) {
   if (!ACHS) return;
   let tab = startTab || (botId ? "bot" : "All");
   openSheet("Trophies", b => {
     const draw = () => {
+      if (!b.isConnected) return;
       const on0 = achOn(); if (!on0 && (tab === "shop" || tab === "wear")) tab = "All";
       const listed = ACH.filter(a => !a.soon || achEarned(a.k));
       const got = listed.filter(a => ACHS.got[a.k]).length, pct = Math.round(got / listed.length * 100), pts = achPoints();
@@ -3433,7 +3447,7 @@ function openTrophies(botId, startTab) {
       if (tab === "shop") wireShop(b, draw); else if (tab === "wear") wireWardrobe(b, draw);
       b.querySelector(".ach-tabs .tab.on")?.scrollIntoView({ block: "nearest", inline: "nearest" });
     };
-    draw();
+    achRedraw = draw; draw();
   });
 }
 // a bot's shelf on its profile
@@ -3446,7 +3460,7 @@ function achShelf(c) {
 }
 /* ---------- Lantern Shop (v1.57): badge points, rarity medals, the shop, the wardrobe and what you wear ---------- */
 // Points come from what's earned (worked out fresh each time, so badges from before the shop count too) minus what's bought.
-// ACHS.shop = { owned: {itemId: at}, wear: {flame, lantern, theme, bubble, finish, finFlame}, wearAt, tries }
+// ACHS.shop = { owned: {itemId: at}, wear: {flame, lantern, theme, bubble, finish, finFlame}, wearT: {slot: when it was changed}, wearAt, tries }
 const RAR = { common: ["Common", 10], rare: ["Rare", 25], secret: ["Secret", 50], bot: ["Bot badge", 20], one: ["One-off", 40], l1: ["Level I", 10], l2: ["Level II", 25], l3: ["Level III", 40], l4: ["Level IV", 60], l5: ["Level V", 90] };
 const RAR_ICON = { common: "★", rare: "✦", secret: "◆", bot: "✶", one: "✺", l1: "I", l2: "II", l3: "III", l4: "IV", l5: "V" };
 function achRarity(a) { if (!a) return "common"; if (a.own || String(a.k || "").startsWith("bot:")) return "bot"; if (a.lv) return "l" + a.lv; if (a.s || a.nw) return "secret"; return a.r ? "rare" : "common"; }
@@ -3539,7 +3553,7 @@ function shopBuy(it) {
   toast(`${it.n} is yours`); try { playBuf("sounds/extra/sting/bb-s-quest.ogg", { vol: (S.settings.sfxVolume ?? 0.7) * 0.7 }); } catch {}
   shopBadges(); return true;
 }
-function shopWear(cat, key) { const sh = shopOf(); sh.wear = { ...sh.wear, [cat]: key || "" }; sh.wearAt = Date.now(); achSave(); applyCosmetics(); shopBadges(); }
+function shopWear(cat, key) { const sh = shopOf(), now = Date.now(); sh.wear = { ...sh.wear, [cat]: key || "" }; sh.wearT = { ...(sh.wearT || {}), [cat]: now }; sh.wearAt = now; achSave(); applyCosmetics(); shopBadges(); }
 function shopBadges() {
   if (!ACHS) return; const sh = shopOf(), n = Object.keys(sh.owned).length, w = sh.wear, slots = ["flame", "lantern", "theme", "bubble", "finish"].filter(k => w[k]).length;
   if (n >= 1) achGrant("shop_first"); if (n >= 15) achGrant("shop_15"); if (achPoints().spent >= 3000) achGrant("shop_3000");
@@ -3568,7 +3582,7 @@ function wardrobeTab() {
 }
 function wireWardrobe(b, redraw) {
   b.querySelectorAll(".wd-it").forEach(x => x.onclick = () => { shopWear(x.dataset.cat, x.dataset.key); redraw(); });
-  if ($("wdFinFlame")) $("wdFinFlame").onchange = e => { const sh = shopOf(); sh.wear = { ...sh.wear, finFlame: e.target.checked }; sh.wearAt = Date.now(); achSave(); applyCosmetics(); };
+  if ($("wdFinFlame")) $("wdFinFlame").onchange = e => { const sh = shopOf(); const now = Date.now(); sh.wear = { ...sh.wear, finFlame: e.target.checked }; sh.wearT = { ...(sh.wearT || {}), finFlame: now }; sh.wearAt = now; achSave(); applyCosmetics(); };
 }
 // ---- ladders: granted from the counters whenever something is counted
 function achLadders() {
@@ -8767,8 +8781,10 @@ const Sync = {
   applying: false, timer: null, busy: false, status: "", sent: {},
   save() { try { localStorage.setItem("lr_sync", JSON.stringify(this.st)); } catch {} },
   on() { return !!this.st.refresh; },
-  synced: k => /^(settings|chars|personas|activePersona|books|recent|seeded|sounds|sndfix|sndgone|drafts|chats:|c2:|snd:)/.test(k),
-  listKey: k => /^(chars|personas|books|sounds|chats:)/.test(k),
+  // v1.58: badges/points/shop (ach), the daily bot and quiz answer sets were never on this list, so they stayed on each device
+  synced: k => /^(settings|chars|personas|activePersona|books|recent|seeded|sounds|sndfix|sndgone|drafts|chats:|c2:|snd:|ach$|daily$|dailyPast$|quizLast$|quizPresets$)/.test(k),
+  NEW158: ["ach", "daily", "dailyPast", "quizLast", "quizPresets"],
+  listKey: k => /^(chars|personas|books|sounds|chats:|dailyPast$|quizPresets$)/.test(k),
   mark(k) {
     if (this.applying || !this.on() || !this.synced(k)) return;
     const d = new Set(this.st.dirty || []); d.add(k); this.st.dirty = [...d];
@@ -8832,7 +8848,9 @@ const Sync = {
   },
   merge(k, mine, theirs) {
     const byId = (a, b) => { const m = new Map(); for (const x of a || []) if (x && x.id) m.set(x.id, x); for (const x of b || []) if (x && x.id) m.set(x.id, x); return [...m.values()]; };
-    if (k === "chars" || k === "personas" || k === "books" || k === "sounds" || k.startsWith("chats:")) return byId(mine, theirs); // the account's copy wins for the same id
+    if (k === "chars" || k === "personas" || k === "books" || k === "sounds" || k === "dailyPast" || k === "quizPresets" || k.startsWith("chats:")) return byId(mine, theirs); // the account's copy wins for the same id
+    if (k === "ach") return achMerge(mine, theirs);
+    if (k === "daily") return dailyNewer(mine, theirs);
     if (k === "recent") { const o = { ...(mine || {}) }; for (const [id, t] of Object.entries(theirs || {})) o[id] = Math.max(o[id] || 0, t); return o; }
     if (k === "settings") return { ...(mine || {}), ...(theirs || {}) };
     return theirs;
@@ -8853,6 +8871,7 @@ const Sync = {
     if (k === "sndgone") return { ...lose, ...win };
     if (k === "settings" || k === "drafts") return { ...lose, ...win };
     if (k === "ach") return achMerge(lose, win);
+    if (k === "daily") return dailyNewer(lose, win);
     return win;
   },
   async pullAll(all) {
@@ -9044,6 +9063,8 @@ const Sync = {
     }
     if (any(/^sndfix$/)) SNDFIX = null;
     if (any(/^drafts$/)) DRAFTS = (await Store.get("drafts")) || {};
+    if (any(/^ach$/)) { await achLoad(); applyCosmetics(); if (!$("sheet").hidden && $("sheetBody").querySelector(".ach-sum")) achRedraw?.(); }
+    if (any(/^(daily|dailyPast)$/)) await dailyLoad().then(drawDaily).catch(() => {});
     if (!$("chat").hidden && S.chat && S.chat.id && !S.busy && any(new RegExp("^c2:" + S.chat.id + "$"))) { const c = await Store.get("c2:" + S.chat.id); if (c) { S.chat = c; renderMsgs(true); updateStage(); renderGauges(); renderPacer(); } }
     if (!$("home").hidden && $("sheet").hidden) renderHome();
     renderPanes();
@@ -9134,6 +9155,7 @@ async function migrateChats() {
       if (q === "new") setTimeout(() => $("btnNewChar")?.click(), 300);
       else if (q === "last") { const id = Object.entries(S.recent || {}).sort((a, b) => b[1] - a[1]).map(x => x[0]).find(id => S.chars.some(c => c.id === id)); if (id) setTimeout(() => openProfile(id), 300); }
       else if (q === "settings") setTimeout(() => $("btnSettings")?.click(), 300); } }
+  if (Sync.on() && !Sync.st.m158) { for (const k of Sync.NEW158) if ((await Store.get(k)) !== undefined) Sync.mark(k); Sync.st.m158 = 1; Sync.save(); }
   if (Sync.on()) Sync.push().then(() => Sync.pull());
   setTimeout(() => { $("splash").classList.add("hide"); setTimeout(() => $("splash").remove(), 700); }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 1900);
 })();

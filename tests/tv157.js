@@ -110,8 +110,8 @@ const fs = require("fs");
   chk("Default takes it off", await pg.evaluate(() => !document.documentElement.classList.contains("st-star") && !ACHS.shop.wear.theme));
 
   // ---- two devices: owned items union, the later outfit wins
-  const mg = await pg.evaluate(() => { const a = { shop: { owned: { "flame:candle": 5 }, wear: { flame: "candle" }, wearAt: 10 } }, c = { shop: { owned: { "theme:sea": 7 }, wear: { theme: "sea" }, wearAt: 20 } }; const o = achMerge(a, c).shop; return Object.keys(o.owned).length === 2 && o.wear.theme === "sea" && !o.wear.flame; });
-  chk("sync merges purchases and keeps the newest outfit", mg);
+  const mg = await pg.evaluate(() => { const a = { shop: { owned: { "flame:candle": 5 }, wear: { flame: "candle" }, wearAt: 10 } }, c = { shop: { owned: { "theme:sea": 7 }, wear: { theme: "sea" }, wearAt: 20 } }; const o = achMerge(a, c).shop; return Object.keys(o.owned).length === 2 && o.wear.theme === "sea" && o.wear.flame === "candle"; });
+  chk("sync merges purchases and each worn slot", mg);
 
   // ---- every flame and lantern draws in every place it shows
   const draws = await pg.evaluate(() => SHOP.filter(x => x.cat === "flame" || x.cat === "lantern").every(it => { const h = lanternSVG("seq", it.cat === "flame" ? { flame: it.key } : { lantern: it.key }); return /^<svg class="lantern/.test(h) && !/undefined/.test(h); }));
