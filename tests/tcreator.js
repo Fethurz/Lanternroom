@@ -5,7 +5,7 @@ const open = require("./base.js");
   const W = +(process.env.W || 390);
   const sysOf = body => String(body.messages?.[0]?.content || ""), userOf = body => String(body.messages?.[1]?.content || "");
   const plan = {
-    pairs: [{ a: "Brutal", b: "Subtle" }, { a: "Proud", b: "Watchful" }],
+    pairs: [{ a: "Brutal", b: "Subtle", ca: "#ff0000", cb: "#0000ff" }, { a: "Proud", b: "Watchful", ca: "nope" }],
     questions: [
       { q: "The knight charges. What do you do?", scene: "A knight in silver armour charges up the hill at you.", about: "temperament", opts: [{ t: "*I rake my claws across his shield.*", lean: "Brutal", sets: "fights head on" }, { t: "*I melt into the mist and wait.*", lean: "Subtle", sets: "patient" }, { t: "*I watch which way he favours.*", lean: "Watchful", sets: "careful" }] },
       { q: "What do they call you?", scene: "The dying knight asks your name.", about: "name", opts: [{ t: "\"Vyrax.\"", lean: "", sets: "named Vyrax" }, { t: "\"Sereth.\"", lean: "", sets: "named Sereth" }] },
@@ -56,6 +56,15 @@ const open = require("./base.js");
   const st1 = await pg.evaluate(() => ({ cr: S.chat.messages.find(m => m.role === "user")?.create, step: S.chat.messages.at(-1).crStep, tr: crNowTraits(S.chat), bar: $("ownBar").textContent }));
   chk("the pick is stored on your message", st1.cr && st1.cr.i === 0 && st1.cr.opt === 0);
   chk("traits lean Brutal after the pick", st1.tr[0].a === "Brutal" && st1.tr[0].v === 35 && /1 \/ 4/.test(st1.bar));
+  chk("the AI's trait colours are kept, a bad one falls back", st1.tr[0].ca === "#ff0000" && st1.tr[0].cb === "#0000ff" && st1.tr[1].ca === "#e8a95b" && st1.tr[1].cb === "#6fdc6a");
+  const dot = await pg.evaluate(() => new Promise(r => setTimeout(() => { const i = document.querySelector('#ownBar .trait[data-tr="Brutal"] i'); r(i && getComputedStyle(i).backgroundColor); }, 1100)));
+  const want35 = await pg.evaluate(() => { const h = mixHex("#ff0000", "#0000ff", .35); return `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3, 5), 16)}, ${parseInt(h.slice(5, 7), 16)})`; });
+  chk("the dot takes the shade at its point on the spectrum (" + dot + ")", dot === want35);
+  // every single point moves the shade a little, with no jumps anywhere along the way
+  // judged in OKLab, where about 0.02 is the smallest difference the eye notices
+  const grad = await pg.evaluate(() => { const pairs = [["#ff0000", "#0000ff"], ["#e2766f", "#7fb2ff"], ["#f2c14e", "#5fd39a"]], d = (x, y, u, v) => { const a = OKLAB.to(mixHex(x, y, u / 100)), b = OKLAB.to(mixHex(x, y, v / 100)); return Math.hypot(...a.map((q, k) => q - b[k])); }; let big = 0, ten = 1; for (const [x, y] of pairs) { for (let v = 1; v <= 100; v++) big = Math.max(big, d(x, y, v - 1, v)); for (let v = 15; v <= 100; v++) ten = Math.min(ten, d(x, y, v - 15, v)); } return { big, ten, ends: mixHex("#ff0000", "#0000ff", 0) === "#ff0000" && mixHex("#ff0000", "#0000ff", 1) === "#0000ff" }; });
+  chk(`colours shift gradually: one point is too small to see (${grad.big.toFixed(3)}), fifteen points always show (${grad.ten.toFixed(3)})`, grad.ends && grad.big < 0.02 && grad.ten > 0.02);
+  chk("the side names tint by degree, no bold switch", await pg.evaluate(() => { const el = document.querySelector('#ownBar .trait[data-tr="Brutal"]'); return !el.querySelector(".lean") && /color-mix/.test(el.querySelector(".ta").getAttribute("style")) && /linear-gradient/.test(el.querySelector(".tbar").getAttribute("style")); }));
   sys = lastSys();
   chk("next prompt: shows the last choice and leads into the next moment", /Settled so far/.test(sys) && /rake my claws/.test(sys) && /What colour is your fire/.test(sys) && /a little brutal/.test(sys));
   chk("pinned question offers its options", st1.step === 1 && (await pg.$$("#choiceBar .choice")).length === 2);
@@ -93,6 +102,7 @@ const open = require("./base.js");
   Q.push({ traits: "Brutal/Subtle=5, Proud/Watchful=44" });
   await pg.fill("#input", "*I roar.*"); await pg.evaluate(() => send()); await idle(); await wait(200);
   chk("traits drift a little from the tag", await pg.evaluate(() => S.chat.own.traits[0].v === 22 && S.chat.own.traits[1].v === 44));
+  chk("the dot slides to its new shade", await pg.evaluate(() => new Promise(r => setTimeout(() => { const h = mixHex("#ff0000", "#0000ff", .22), want = `rgb(${parseInt(h.slice(1, 3), 16)}, ${parseInt(h.slice(3, 5), 16)}, ${parseInt(h.slice(5, 7), 16)})`; r(getComputedStyle(document.querySelector('#ownBar .trait[data-tr="Brutal"] i')).backgroundColor === want); }, 1200))));
   // chat lists
   const ix = await pg.evaluate(async id => (await getIndex(id)).find(e => e.id === S.chat.id), ids.d);
   chk("chat index carries the character's name", ix && ix.own === "Vyrax" && await pg.evaluate(() => chatPreview({ ...S.chat, messages: [{ role: "user", content: "hi" }] }).startsWith("Vyrax:")));
@@ -101,7 +111,11 @@ const open = require("./base.js");
   await pg.evaluate(() => closeSheet());
   // edit and save as a persona
   await pg.click("#ownOpen"); await wait(250);
-  await pg.fill("#owBg", "Queen of the peak."); await pg.click("#owKeep"); await wait(400);
+  await pg.fill("#owBg", "Queen of the peak.");
+  await pg.evaluate(() => { const c = document.querySelector('.tr-edit [data-c="cb"]'); c.value = "#00ff00"; c.dispatchEvent(new Event("input")); });
+  chk("changing a colour updates the preview", await pg.evaluate(() => /#00ff00/.test(document.querySelector('.tr-prev[data-p="0"]').innerHTML)));
+  await pg.click("#owKeep"); await wait(400);
+  chk("the new colour is saved on the chat's character", await pg.evaluate(() => S.chat.own.traits[0].cb === "#00ff00" && S.chat.own.traits[0].ca === "#ff0000"));
   const per = await pg.evaluate(() => { const p = S.personas.find(x => x.name === "Vyrax"); return p && { desc: p.description, col: p.color, saved: S.chat.own.savedAs === p.id, bg: S.chat.own.background, badge: !!ACHS.got.made_official }; });
   chk("saved as a real persona with its nature", per && /Queen of the peak/.test(per.desc) && /Nature:/.test(per.desc) && per.col === "#cc3322" && per.saved && per.badge);
   await pg.click("#ownOpen"); await wait(250);
@@ -167,12 +181,13 @@ const open = require("./base.js");
   await pg.check("#cCrOn"); await pg.click('#cCrStyle [data-s="quiz"]'); await wait(100);
   await pg.click("#cCrPair"); await wait(100);
   await pg.fill('.cr-pair [data-f="a"]', "greedy"); await pg.fill('.cr-pair [data-f="b"]', "Generous");
+  await pg.evaluate(() => { const c = document.querySelector('.cr-pair [data-f="cb"]'); c.value = "#123456"; c.dispatchEvent(new Event("input")); });
   await pg.click("#cCrPin"); await wait(100);
   await pg.fill('.cr-pin [data-f="q"]', "Which god do you pray to?"); await pg.fill('.cr-pin [data-f="opts"]', "The Moon\nThe Deep\n");
   await pg.click("#cCrPin"); await wait(100); // an empty one is dropped
   await pg.click("#cSave"); await wait(600);
   const ed = await pg.evaluate(id => byId(id).creator, ids.n);
-  chk("editor saves the switch, style, pairs and questions", ed && ed.on && ed.style === "quiz" && ed.pairs[0].a === "Greedy" && ed.pairs[0].b === "Generous" && ed.pins.length === 1 && ed.pins[0].opts.join() === "The Moon,The Deep");
+  chk("editor saves the switch, style, pairs and questions", ed && ed.on && ed.style === "quiz" && ed.pairs[0].a === "Greedy" && ed.pairs[0].b === "Generous" && ed.pairs[0].cb === "#123456" && ed.pairs[0].ca === "#e2766f" && ed.pins.length === 1 && ed.pins[0].opts.join() === "The Moon,The Deep");
 
   // ---- the generator can turn it on
   const gen = await pg.evaluate(async () => {

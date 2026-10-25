@@ -461,6 +461,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .char-card .tags{margin-top:3px}
 .char-card .tags span{font-size:10px;padding:0 6px}
 .seg button{font-size:13px;padding:7px 4px}
+#homeTabs button{white-space:nowrap;min-width:0;padding:7px 2px;font-size:12.5px;min-height:34px}
 .char-card .more{position:absolute;top:4px;right:4px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
 .char-card .more:active{background:var(--surface-2)}
 .char-card .name{padding-right:34px}
@@ -639,14 +640,19 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 #rollNow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:8px 12px 0;font-size:13px}
 #rollNow[hidden]{display:none}
 #rubNow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:8px 12px 0;font-size:13px}
+.char-card.k-persona{--kc:#6fc3d8}.char-card.k-persona .kind-pill{background:color-mix(in srgb,var(--kc) 30%,var(--surface));color:var(--fg)}.char-card.k-persona .name .p-dot{display:inline-block;vertical-align:middle}
+.pf-kind.k-persona{color:var(--kc)}.pb-note{grid-column:1/-1;margin:0 0 4px}
 #ownBar{position:relative;z-index:3;display:flex;flex-direction:column;gap:5px;padding:5px 12px 6px;background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:12px}#ownBar[hidden]{display:none}
 .own-row{display:flex;align-items:center;gap:8px;min-width:0}.own-l{font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.own-n{color:var(--muted);flex:none}.own-go{margin-left:auto}
 #ownBar .btn.small{min-height:34px;padding:4px 12px;font-size:13px;flex:none}
 .own-chip{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:34px;max-width:40%;padding:0 11px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:13px;font-weight:700;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .traits{display:flex;flex-wrap:wrap;gap:3px 12px;flex:1;min-width:0}
-.trait{display:flex;align-items:center;gap:5px;flex:1 1 130px;min-width:0;font-size:11.5px;color:var(--muted);white-space:nowrap}.trait .lean{color:var(--fg);font-weight:700}
-.tbar{position:relative;flex:1;min-width:30px;height:5px;border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 50%,var(--surface-2)),var(--surface-2) 50%,color-mix(in srgb,var(--accent) 50%,var(--surface-2)))}
-.tbar i{position:absolute;top:50%;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px color-mix(in srgb,var(--accent) 70%,transparent);transition:left .5s}
+.trait{display:flex;align-items:center;gap:5px;flex:1 1 130px;min-width:0;font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap}.trait .ta,.trait .tb{transition:color .8s ease}
+.tbar{position:relative;flex:1;min-width:30px;height:5px;border-radius:99px;background:var(--surface-2)}
+.tbar i{position:absolute;top:50%;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:var(--accent);transition:left .8s ease,background-color .8s ease,box-shadow .8s ease}
+#owCol{height:40px;padding:3px;border-radius:10px;cursor:pointer}
+.tr-edit input[type=color]{flex:0 0 34px;width:34px;height:34px;padding:2px;border-radius:8px}.tr-prev{margin:-2px 0 6px}
+.cr-pair input[type=color]{flex:0 0 34px;width:34px;height:34px;padding:2px;border-radius:8px}.cr-pair input:not([type]){min-width:0;flex:1}
 .pg-one .traits,#sheet .traits{margin:4px 0}
 .cr-opts{display:flex;flex-direction:column;gap:8px}
 .cr-o{display:block;text-align:left;min-height:42px;padding:10px 13px;border-radius:12px;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));background:color-mix(in srgb,var(--accent) 8%,var(--surface));color:var(--fg);font:inherit;font-size:15px;line-height:1.4;cursor:pointer;transition:background-color .15s,transform .1s}
@@ -1078,7 +1084,7 @@ html.sb-sticker.sb-sticker #msgs .msg:not(.img) em.act,.shop-sb.sb-sticker .msg 
       <button class="persona-bar" id="personaBar"></button>
       <p class="tagline" id="tagline">Your characters, with memory that holds.</p>
       <div id="daily"></div>
-      <div class="seg" id="homeTabs"><button type="button" data-tab="all" class="on">All</button><button type="button" data-tab="recent">Recent</button><button type="button" data-tab="fav">★ Favorites</button><button type="button" data-tab="hidden">Hidden</button></div>
+      <div class="seg" id="homeTabs"><button type="button" data-tab="all" class="on">All</button><button type="button" data-tab="recent">Recent</button><button type="button" data-tab="fav">★ Favorites</button><button type="button" data-tab="hidden">Hidden</button><button type="button" data-tab="personas">Personas</button></div>
       <div class="searchrow"><input id="search" type="search" placeholder="Search names or tags" autocomplete="off"><button class="btn small" id="btnTagAll" hidden>✦ Tag untagged</button></div>
       <div class="tagrow" id="tagFilter"></div>
       <div id="charList"></div>
@@ -1343,7 +1349,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.59 · Oct 25";
+const VERSION = "1.60 · Oct 25";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1365,9 +1371,9 @@ const DEFAULTS = {
   globalInstr: "", sfxColors: true, sfxSound: true, sfxVolume: 0.7, builtinPack: true, ambOn: true, ambVol: 0.35, actOn: true, actVol: 0.5, ambMuted: false, musicOn: true, musicVol: 0.2, autoSfx: true, rpgOn: true,
   sfxRules: "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, stomach gurgles and growls (never breathing)\n- white: breathing, panting, sighs, huffs, gasps and exhales\n- #a8875a (brown): farts\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses\n- #f1ebda (cream): cum, ejaculation and semen sounds, and the sloshing or gurgling of full balls or cum-filled bellies\n- #ff6fae (pink): sex sounds, like hips slapping and thrusting"
 };
-const S = { recent: {}, settings: { ...DEFAULTS }, chars: [], personas: [], books: [], personaId: null, charId: null, chat: null, busy: false, openActs: null, nextSpeaker: "" };
+const S = { recent: {}, settings: { ...DEFAULTS }, chars: [], pbots: [], personas: [], books: [], personaId: null, charId: null, chat: null, busy: false, openActs: null, nextSpeaker: "" };
 const $ = id => document.getElementById(id);
-const byId = id => S.chars.find(c => c.id === id);
+const byId = id => S.chars.find(c => c.id === id) || (S.pbots || []).find(c => c.id === id); // persona chats' stand-in bots too (v1.60)
 const char = () => byId(S.charId);
 const members = c => (c?.members || []).map(byId).filter(Boolean);
 const persona = () => { const own = ownPersona(); if (own) return own; const pid = (S.chat && S.chat.personaId) || S.personaId; return S.personas.find(p => p.id === pid) || S.personas[0] || { id: "default", name: "User", description: "" }; };
@@ -1889,7 +1895,7 @@ async function deleteAllChats(cid) {
   for (const e of await getIndex(cid)) await Store.del("c2:" + e.id);
   await Store.del("chats:" + cid);
 }
-async function saveChars() { await Store.set("chars", S.chars); }
+async function saveChars() { await Store.set("chars", S.chars); await Store.set("pbots", S.pbots || []); }
 async function markRecent(cid) { S.recent[cid] = Date.now(); await Store.set("recent", S.recent); }
 async function saveChat() {
   if (!S.charId || !S.chat) return;
@@ -2036,6 +2042,8 @@ function renderHome() {
   const untagged = S.chars.filter(c => !(c.tags || []).length).length;
   $("btnTagAll").hidden = !(untagged && hasKey());
   if (!$("btnTagAll").disabled) $("btnTagAll").textContent = `✦ Tag ${untagged} untagged`;
+  $("tagFilter").hidden = HF.tab === "personas"; $("btnTagAll").hidden = $("btnTagAll").hidden || HF.tab === "personas";
+  if (HF.tab === "personas") { renderPersonaTab(list); $("tagline").textContent = hasKey() ? "Your characters, with memory that holds." : "Start by adding your API key in Settings."; renderPanes(); return; }
   const shown = S.chars.filter(c => {
     if (HF.tab === "hidden" ? !c.hidden : c.hidden) return false;
     if (HF.tab === "fav" && !c.fav) return false;
@@ -2128,6 +2136,7 @@ async function spinOff(world, entry) {
 }
 async function openProfile(id) {
   const c = byId(id); if (!c) return;
+  if (c.fromPersona) return openPBProfile(c.fromPersona); // a persona chat's stand-in has the persona's own profile
   const kind = c.kind || "character", idx = (await getIndex(id)).sort((a, b) => b.updated - a.updated);
   const people = kind === "group" ? members(c).map(m => ({ name: m.name, sub: botSummary(m), img: thumbURL(m), go: async () => openProfile(m.id), who: m }))
     : kind === "world" ? (c.cast || []).filter(x => (x.type || "character") === "character").map(x => ({ name: x.name, sub: String(x.details || "").replace(/\s+/g, " ").slice(0, 120), go: async () => openProfile((await spinOff(c, x)).id), who: S.chars.find(y => y.fromWorld === c.id && y.name === x.name) })) : [];
@@ -2171,7 +2180,7 @@ async function openChats(cid) {
   const c = byId(cid);
   const idx = (await getIndex(cid)).sort((a, b) => b.updated - a.updated);
   openSheet(`Chats · ${c.name}`, b => {
-    b.innerHTML = `<div class="row" style="align-items:center"><select id="ncP" style="flex:2;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line)">${S.personas.map(p => `<option value="${p.id}" ${p.id === S.personaId ? "selected" : ""}>As ${esc(p.name)}</option>`).join("")}</select><button class="btn primary" id="ncGo" style="flex:1">New chat</button></div>${crOn(c) ? "" : `<button type="button" class="btn small" id="ncCreate">✦ New chat with a character made for it</button>`}<div class="stack" id="chList"></div>`;
+    b.innerHTML = `<div class="row" style="align-items:center"><select id="ncP" style="flex:2;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line)">${(c.fromPersona ? pbTalkers(c.fromPersona) : S.personas).map(p => `<option value="${p.id}" ${p.id === S.personaId ? "selected" : ""}>As ${esc(p.name)}</option>`).join("")}</select><button class="btn primary" id="ncGo" style="flex:1">New chat</button></div>${crOn(c) ? "" : `<button type="button" class="btn small" id="ncCreate">✦ New chat with a character made for it</button>`}<div class="stack" id="chList"></div>`;
     if ($("ncCreate")) $("ncCreate").onclick = () => newOwnChat(cid);
     const box = $("chList");
     if (!idx.length) box.innerHTML = '<p class="note">No chats yet. Start one above.</p>';
@@ -2187,8 +2196,8 @@ async function openChats(cid) {
       box.appendChild(row);
     }
     $("ncGo").onclick = async () => {
-      const pid = $("ncP").value;
-      S.personaId = pid; await savePersonas();
+      const pid = $("ncP").value; if (!pid) return;
+      if (!c.fromPersona) { S.personaId = pid; await savePersonas(); }
       const ch = newChat(c, pid);
       S.charId = cid; S.chat = ch; await saveChat();
       closeSheet(); await openChat(cid, ch.id);
@@ -3645,6 +3654,7 @@ function badgeEditor(work) {
 async function openChat(id, chatId) {
   S.genAC?.abort(); // a reply still coming in the old chat stops
   S.charId = id; S.nextSpeaker = ""; S.chat = null; clearAttach();
+  { const pp = pbPersona(byId(id)); if (pp) await pbSync(pp); }
   const c = char();
   let chat = chatId ? await Store.get("c2:" + chatId) : null;
   if (!chat) {
@@ -3668,6 +3678,7 @@ async function openChat(id, chatId) {
   syncPlay();
   updateStage(); renderMsgs(); renderSpeakers(); setStatus(""); renderGauges(); renderPacer(); renderOwnBar();
   if (S.chat.creating) setTimeout(() => { if (S.chat?.creating && S.charId === id) crResume(); }, 0);
+  else if (c.fromPersona && !S.chat.messages.length) setTimeout(() => { if (S.charId === id) pbOpening(); }, 0);
   const need = c.kind === "group" ? members(c) : [c];
   (async () => {
     let changed = false;
@@ -4566,6 +4577,7 @@ function openPersonas() {
   });
 }
 async function usePersona(id) {
+  if (!$("chat").hidden && char()?.fromPersona === id) { toast("That's who you're talking to. Pick another persona."); return; }
   S.personaId = id; await savePersonas(); closeSheet();
   if (!$("chat").hidden && S.charId) await openChat(S.charId); else renderHome();
   if (!$("chat").hidden) toast(`Playing as ${personaName(id)}`);
@@ -5145,7 +5157,7 @@ $("btnMore").onclick = () => openSheet("Options", b => {
     <button class="btn" id="oNew">${crOn(c) ? "New chat (makes a new character)" : S.chat.own || S.chat.creating ? "New chat" : `New chat as ${esc(uname())}`}</button>
     ${crOn(c) ? "" : `<button class="btn" id="oCreate">✦ New chat with a character made for it</button>`}
     <button class="btn" id="oIll">Illustrate this moment</button>
-    <button class="btn" id="oEdit">Edit ${KINDS[c.kind || "character"].label.toLowerCase()} & lorebook</button>
+    <button class="btn" id="oEdit">${c.fromPersona ? "Edit this persona" : `Edit ${KINDS[c.kind || "character"].label.toLowerCase()} & lorebook`}</button>
     <button class="btn" id="oMem">View memory</button>
     ${S.chat.own ? `<button class="btn" id="oOwn">Your character: ${esc(S.chat.own.name)} · edit or save as a persona</button>` : S.chat.creating ? "" : `<button class="btn" id="oPer">Playing as ${esc(uname())} · switch persona</button>`}
     <button class="btn" id="oDice">🎲 Dice rolls: ${diceOn() ? "on" : "off"}</button>
@@ -5159,7 +5171,7 @@ $("btnMore").onclick = () => openSheet("Options", b => {
   if ($("oCreate")) $("oCreate").onclick = () => newOwnChat(S.charId);
   if ($("oOwn")) $("oOwn").onclick = () => openOwn();
   $("oNew").onclick = async () => { const ch = newChat(c, S.chat.personaId); S.chat = ch; await saveChat(); closeSheet(); await openChat(S.charId, ch.id); };
-  $("oEdit").onclick = () => editChar(char(), false);
+  $("oEdit").onclick = () => { const pp = pbPersona(char()); if (pp) editPersona(pp, false); else editChar(char(), false); };
   $("oMem").onclick = openMemory;
   if ($("oPer")) $("oPer").onclick = () => openPersonas();
   $("oChoices").onclick = async () => { S.chat.choices = !choicesOn(); await saveChat(); renderChoices(); $("oChoices").textContent = `☰ Choices mode: ${choicesOn() ? "on" : "off"}`; toast(choicesOn() ? "Choices on: they show after the next reply" : "Choices off for this chat"); };
@@ -6667,8 +6679,27 @@ const CR_STEP = 15, CR_DRIFT = 8;
 const crOf = c => c?.creator && typeof c.creator === "object" ? c.creator : {};
 const crOn = c => !!crOf(c).on;
 const crStyle = c => crOf(c).style === "quiz" ? "quiz" : "story";
-const crPairs = list => (Array.isArray(list) ? list : []).map(p => Array.isArray(p) ? { a: s5(p[0]), b: s5(p[1]) } : { a: s5(p?.a), b: s5(p?.b) })
-  .filter(p => p.a && p.b && p.a.toLowerCase() !== p.b.toLowerCase()).map(p => ({ a: capFirst(p.a.slice(0, 24)), b: capFirst(p.b.slice(0, 24)) })).slice(0, 3);
+// each side of a pair has its own colour (the AI picks them, the owner can change them); pairs without get these
+const TRAIT_COLS = [["#e2766f", "#7fb2ff"], ["#e8a95b", "#6fdc6a"], ["#ff6fae", "#c49bff"]];
+const hexOk = v => /^#[0-9a-f]{6}$/i.test(String(v || "").trim()) ? String(v).trim().toLowerCase() : "";
+const crPairs = list => (Array.isArray(list) ? list : []).map(p => Array.isArray(p) ? { a: s5(p[0]), b: s5(p[1]), ca: p[2], cb: p[3] } : { a: s5(p?.a), b: s5(p?.b), ca: p?.ca, cb: p?.cb })
+  .filter(p => p.a && p.b && p.a.toLowerCase() !== p.b.toLowerCase()).slice(0, 3)
+  .map((p, i) => ({ a: capFirst(p.a.slice(0, 24)), b: capFirst(p.b.slice(0, 24)), ca: hexOk(p.ca) || TRAIT_COLS[i][0], cb: hexOk(p.cb) || TRAIT_COLS[i][1] }));
+// the colour between the two sides' colours, by how far the trait leans (0 = side a, 100 = side b). Mixed in OKLab,
+// where equal steps look equal to the eye and the middle doesn't turn muddy, so every point moves the shade a little
+const OKLAB = {
+  to(h) { const c = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+    const l = Math.cbrt(0.4122214708 * c[0] + 0.5363325363 * c[1] + 0.0514459929 * c[2]), m = Math.cbrt(0.2119034982 * c[0] + 0.6806995451 * c[1] + 0.1073969566 * c[2]), q = Math.cbrt(0.0883024619 * c[0] + 0.2817188376 * c[1] + 0.6299787005 * c[2]);
+    return [0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * q, 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * q, 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * q]; },
+  from([L, A, B]) { const l = (L + 0.3963377774 * A + 0.2158037573 * B) ** 3, m = (L - 0.1055613458 * A - 0.0638541728 * B) ** 3, q = (L - 0.0894841775 * A - 1.2914855480 * B) ** 3;
+    return "#" + [4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * q, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * q, -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * q]
+      .map(v => Math.round(255 * Math.max(0, Math.min(1, v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055))).toString(16).padStart(2, "0")).join(""); }
+};
+function mixHex(a, b, t) {
+  const x = OKLAB.to(hexOk(a) || "#888888"), y = OKLAB.to(hexOk(b) || "#888888"), k = Math.max(0, Math.min(1, t));
+  return OKLAB.from(x.map((v, i) => v + (y[i] - v) * k));
+}
+const traitCols = (t, i) => ({ ca: hexOk(t.ca) || TRAIT_COLS[i % 3][0], cb: hexOk(t.cb) || TRAIT_COLS[i % 3][1] });
 const crPins = list => (Array.isArray(list) ? list : []).map(p => ({ q: s5(p?.q).slice(0, 200), opts: (Array.isArray(p?.opts) ? p.opts : String(p?.opts || "").split("\n")).map(s5).filter(Boolean).slice(0, 6) })).filter(p => p.q);
 const CR_DEFAULT_PAIRS = [{ a: "Bold", b: "Careful" }, { a: "Kind", b: "Ruthless" }];
 // the persona of a chat that has its own character (or is still making one); persona() asks this first
@@ -6685,13 +6716,13 @@ The questions, 7-9 in a natural order:
 - first 2-3 temperament moments: a situation where HOW the player acts shows who they are (Choice of the Dragon opens with a knight charging at you: claw him, burn him, toy with him or fly off). Every option leans toward one side of a trait pair.
 - then identity, as fits the setting: their name (the options are names that suit the setting), what they are when the setting allows a choice (species, kind, form, class), their look (body, colouring, a distinctive feature), their place or role here, and what they want.${pins.length ? `\n- these questions from the bot's author, kept word for word with their options (add lean and sets to each option):\n${pins.map(p => `  - ${p.q}${p.opts.length ? ` (options: ${p.opts.join(" / ")})` : ""}`).join("\n")}` : ""}
 Each question has 3-4 options: short, vivid, varied and really different from each other.${story ? ` Each question also gets "scene": one or two lines on the story moment the narration leads into right before the question is asked (the first one opens the story in the middle of something happening). Options are what the player does or says, in first person, actions in *asterisks* and speech in quotes, like *I rake my claws across his shield.*` : " Options are plain answers in a few words."}
-Trait pairs: ${given.length ? `use exactly these: ${given.map(p => `${p.a} / ${p.b}`).join(", ")}` : `pick 2-3 opposed pairs that matter in this setting (like Brutal / Subtle, Cunning / Honourable, Proud / Watchful), one or two words per side`}.
+Trait pairs: ${given.length ? `use exactly these: ${given.map(p => `${p.a} / ${p.b}`).join(", ")}` : `pick 2-3 opposed pairs that matter in this setting (like Brutal / Subtle, Cunning / Honourable, Proud / Watchful), one or two words per side, each side with a hex colour that suits it (two clearly different colours per pair, bright enough to read on a dark background)`}.
 Every character is treated as a fully grown, mature being; this needs no mention.
 
-Respond with only JSON: {"pairs": [{"a": one side, "b": the other side}], "questions": [{"q": the question${story ? `, "scene": the moment` : ""}, "about": "temperament" | "name" | "form" | "look" | "role" | "goal" | "other", "opts": [{"t": the option, "lean": the trait side it leans toward, or "", "sets": what this answer settles about the player, in a few words}]}]}`;
+Respond with only JSON: {"pairs": [{"a": one side, "b": the other side, "ca": side a's colour, "cb": side b's colour}], "questions": [{"q": the question${story ? `, "scene": the moment` : ""}, "about": "temperament" | "name" | "form" | "look" | "role" | "goal" | "other", "opts": [{"t": the option, "lean": the trait side it leans toward, or "", "sets": what this answer settles about the player, in a few words}]}]}`;
   const user = `The bot: ${c.name} (${KINDS[c.kind || "character"].label}). ${botSummary(c)}${c.scenario ? `\n\nScenario: ${fill(c.scenario, c)}` : ""}\n\n${String(fill(c.description || "", c)).slice(0, 2500)}`;
   const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: user }], { temperature: 0.9, maxTokens: 4000, plain: true });
-  const pairs = given.length ? given : crPairs(j?.pairs).length ? crPairs(j.pairs) : CR_DEFAULT_PAIRS.map(p => ({ ...p }));
+  const pairs = given.length ? given : crPairs(j?.pairs).length ? crPairs(j.pairs) : crPairs(CR_DEFAULT_PAIRS);
   const sides = new Map(pairs.flatMap(p => [[p.a.toLowerCase(), p.a], [p.b.toLowerCase(), p.b]]));
   const qs = (Array.isArray(j?.questions) ? j.questions : []).map(q => ({
     q: s5(q?.q).slice(0, 240), scene: story ? s5(q?.scene).slice(0, 400) : "", about: s5(q?.about).toLowerCase().slice(0, 20) || "other",
@@ -6712,7 +6743,7 @@ function crAnswers(chat, upto) {
 }
 const crTotal = chat => chat?.creating?.plan?.qs?.length || 0;
 function crTraits(pairs, leans) {
-  const t = (pairs || []).map(p => ({ a: p.a, b: p.b, v: 50 }));
+  const t = (pairs || []).map((p, i) => ({ a: p.a, b: p.b, ...traitCols(p, i), v: 50 }));
   for (const l of leans) { const L = String(l || "").toLowerCase(); if (!L) continue; for (const x of t) { if (x.a.toLowerCase() === L) x.v = Math.max(0, x.v - CR_STEP); else if (x.b.toLowerCase() === L) x.v = Math.min(100, x.v + CR_STEP); } }
   return t;
 }
@@ -6722,9 +6753,25 @@ function traitWords(t) {
   if (s < 10) return `balanced between ${t.a.toLowerCase()} and ${t.b.toLowerCase()}`;
   return `${s >= 45 ? "utterly" : s >= 30 ? "very" : s >= 18 ? "quite" : "a little"} ${(d < 0 ? t.a : t.b).toLowerCase()}`;
 }
-// a two-ended bar: the dot sits between the sides, the side it leans to is brighter
-const traitBar = t => `<span class="trait" title="${esc(t.a)} ${100 - t.v} · ${esc(t.b)} ${t.v}"><span class="${t.v < 45 ? "lean" : ""}">${esc(t.a)}</span><span class="tbar"><i style="left:${Math.max(0, Math.min(100, t.v))}%"></i></span><span class="${t.v > 55 ? "lean" : ""}">${esc(t.b)}</span></span>`;
-const traitBars = list => list.length ? `<div class="traits">${list.map(traitBar).join("")}</div>` : "";
+// a spectrum, not two boxes: the bar is one smooth blend from side a's colour to side b's, the dot sits on it in exactly
+// the shade beneath it (so each point shifts the colour a little), and each side's name tints by how far it leans there
+function traitStyle(t, i, v = t.v) {
+  const { ca, cb } = traitCols(t, i), k = Math.max(0, Math.min(100, v)), col = mixHex(ca, cb, k / 100);
+  const da = mixHex(ca, "#2c2739", 0.45), db = mixHex(cb, "#2c2739", 0.45), stops = [0, 25, 50, 75, 100].map(x => mixHex(da, db, x / 100) + " " + x + "%").join(",");
+  const tint = w => `color:color-mix(in srgb,${w[0]} ${Math.round(12 + 0.88 * w[1])}%,var(--muted))`;
+  return { col, bar: `background:linear-gradient(90deg,${stops})`, dot: `left:${k}%;background:${col};box-shadow:0 0 0 2px var(--bg),0 0 8px ${col}`, la: tint([ca, 100 - k]), lb: tint([cb, k]) };
+}
+const traitBar = (t, i = 0) => { const x = traitStyle(t, i); return `<span class="trait" data-tr="${esc(t.a)}" title="${esc(capFirst(traitWords(t)))} (${esc(t.a)} ${100 - t.v} · ${esc(t.b)} ${t.v})"><span class="ta" style="${x.la}">${esc(t.a)}</span><span class="tbar" style="${x.bar}"><i style="${x.dot}"></i></span><span class="tb" style="${x.lb}">${esc(t.b)}</span></span>`; };
+const traitBars = list => list.length ? `<div class="traits">${list.map((t, i) => traitBar(t, i)).join("")}</div>` : "";
+// the top bar starts each trait where it was last drawn and slides it (and its colour) to the new value
+let TRAIT_PREV = {};
+function traitSlide(box, list, key) {
+  list.forEach((t, i) => {
+    const el = box.querySelector(`.trait[data-tr="${CSS.escape(t.a)}"]`), k = key + "|" + t.a, before = TRAIT_PREV[k];
+    if (el && before != null && before !== t.v) { const set = x => { el.querySelector("i").style.cssText = x.dot; el.querySelector(".ta").style.cssText = x.la; el.querySelector(".tb").style.cssText = x.lb; }; set(traitStyle(t, i, before)); requestAnimationFrame(() => requestAnimationFrame(() => set(traitStyle(t, i)))); }
+    TRAIT_PREV[k] = t.v;
+  });
+}
 // what the model is told while the character is being made (story style) and afterwards (the traits)
 function crPrompt(c, chat, upto, u) {
   const cr = chat.creating;
@@ -6764,12 +6811,14 @@ function renderOwnBar() {
   const tr = crNowTraits(chat);
   if (chat.own) {
     box.innerHTML = `<div class="own-row"><button type="button" class="own-chip" id="ownOpen" aria-label="Your character in this chat"><span class="p-dot" style="background:${esc(chat.own.color || "#6fc3d8")}"></span>${esc(chat.own.name)}</button>${traitBars(tr)}</div>`;
+    traitSlide(box, tr, chat.id);
     $("ownOpen").onclick = () => openOwn();
     return;
   }
   const cr = chat.creating, n = crAnswers(chat).length, N = crTotal(chat);
   const act = !cr.plan ? (S.busy ? "" : "Start") : cr.card ? "Review your character" : n >= N ? "Finish your character" : cr.style === "quiz" ? "Continue" : "";
   box.innerHTML = `<div class="own-row"><span class="own-l">✦ Creating your character</span>${N ? `<span class="own-n">${Math.min(n, N)} / ${N}</span>` : ""}${act ? `<button type="button" class="btn small primary own-go" id="ownGo">${act}</button>` : `<span class="own-go"></span>`}<button type="button" class="btn small" id="ownSkip">Skip</button></div>${N ? `<div class="qz-bar"><i style="width:${Math.round(Math.min(n, N) / N * 100)}%"></i></div>` : ""}${traitBars(tr)}`;
+  traitSlide(box, tr, chat.id);
   if ($("ownGo")) $("ownGo").onclick = () => { if (!cr.plan) crStart(); else if (cr.card) crReview(); else if (n >= N) crFinish(); else crQuizDraw(); };
   confirmBtn($("ownSkip"), `Tap again: play as ${personaName(chat.personaId)} instead`, () => crSkip());
 }
@@ -6879,7 +6928,7 @@ function crReview(err) {
 }
 async function crBegin() {
   const chat = S.chat, c = char(), cr = chat?.creating, card = cr?.card; if (!card || S.busy) return;
-  chat.own = { name: card.name, look: card.look, personality: card.personality, background: card.background, color: card.color || PERSONA_COLS[Math.floor(Math.random() * PERSONA_COLS.length)], traits: (card.traits || []).map(t => ({ a: t.a, b: t.b, v: t.v, v0: t.v })), answers: card.answers || [], style: cr.style, at: Date.now() };
+  chat.own = { name: card.name, look: card.look, personality: card.personality, background: card.background, color: card.color || PERSONA_COLS[Math.floor(Math.random() * PERSONA_COLS.length)], traits: (card.traits || []).map((t, i) => ({ a: t.a, b: t.b, ...traitCols(t, i), v: t.v, v0: t.v })), answers: card.answers || [], style: cr.style, at: Date.now() };
   delete chat.creating;
   if (cr.style === "quiz" && !chat.messages.length) {
     const greets = openingsOf(c), focus = c.kind === "group" ? (members(c)[0]?.name || "") : "", meta = { mood: "neutral", focus, place: c.startPlace || "" };
@@ -6916,11 +6965,13 @@ function openOwn() {
       ${field("Personality", `<textarea id="owPers" style="min-height:70px">${esc(o.personality || "")}</textarea>`)}
       ${field("Background", `<input id="owBg" value="${esc(o.background || "")}">`)}
       ${field("Colour", `<input type="color" id="owCol" value="${esc(/^#[0-9a-f]{6}$/i.test(o.color || "") ? o.color : "#6fc3d8")}">`)}
-      ${(o.traits || []).length ? `<div class="stack"><div class="lbl">Nature</div>${o.traits.map((t, i) => `<div class="tr-edit"><span>${esc(t.a)}</span><input type="range" min="0" max="100" step="1" value="${t.v}" data-i="${i}" aria-label="${esc(t.a)} to ${esc(t.b)}"><span>${esc(t.b)}</span></div>`).join("")}<p class="hint" style="margin:0">The story moves these a little when your actions lean one way.</p></div>` : ""}
+      ${(o.traits || []).length ? `<div class="stack"><div class="lbl">Nature</div>${o.traits.map((t, i) => { const tc = traitCols(t, i); return `<div class="tr-edit" data-i="${i}"><input type="color" data-c="ca" value="${tc.ca}" aria-label="${esc(t.a)} colour"><span>${esc(t.a)}</span><input type="range" min="0" max="100" step="1" value="${t.v}" data-i="${i}" aria-label="${esc(t.a)} to ${esc(t.b)}"><span>${esc(t.b)}</span><input type="color" data-c="cb" value="${tc.cb}" aria-label="${esc(t.b)} colour"></div><div class="tr-prev" data-p="${i}">${traitBar(t, i)}</div>`; }).join("")}<p class="hint" style="margin:0">The story moves these a little when your actions lean one way.</p></div>` : ""}
       ${(o.answers || []).length ? `<details class="gen-sec"><summary>Your choices · ${o.answers.length}</summary><div class="gen-body">${o.answers.map(a => `<p><span class="hint">${esc(a.q)}</span><br>${fmt(a.a)}</p>`).join("")}</div></details>` : ""}
       <button class="btn primary" id="owSave">Save</button>
       <button class="btn" id="owKeep">${saved ? `Update the saved persona “${esc(saved.name)}”` : "☆ Save as a persona"}</button>`;
-    const grabO = () => { o.name = $("owName").value.trim() || o.name; o.look = $("owLook").value.trim(); o.personality = $("owPers").value.trim(); o.background = $("owBg").value.trim(); o.color = $("owCol").value; b.querySelectorAll(".tr-edit input").forEach(r => { o.traits[+r.dataset.i].v = +r.value; }); };
+    const work = (o.traits || []).map((t, i) => ({ ...t, ...traitCols(t, i) }));
+    b.querySelectorAll(".tr-edit").forEach(r => { const i = +r.dataset.i, w = work[i]; r.querySelectorAll("input").forEach(inp => inp.addEventListener("input", () => { if (inp.dataset.c) w[inp.dataset.c] = inp.value; else w.v = +inp.value; b.querySelector(`.tr-prev[data-p="${i}"]`).innerHTML = traitBar(w, i); })); });
+    const grabO = () => { o.name = $("owName").value.trim() || o.name; o.look = $("owLook").value.trim(); o.personality = $("owPers").value.trim(); o.background = $("owBg").value.trim(); o.color = $("owCol").value; work.forEach((w, i) => Object.assign(o.traits[i], { v: w.v, ca: w.ca, cb: w.cb })); };
     $("owSave").onclick = async () => { grabO(); await saveChat(); closeSheet(); renderOwnBar(); renderMsgs(true); try { achEvent("trait", { traits: o.traits }); } catch {} };
     $("owKeep").onclick = async () => {
       grabO();
@@ -6943,16 +6994,16 @@ function creatorEditor(work) {
     box.innerHTML = `<label class="check"><input type="checkbox" id="cCrOn" ${cr.on ? "checked" : ""}> Start every new chat by creating a character for it (instead of playing one of your personas)</label>
       ${field("How it plays", `<div class="tabs" id="cCrStyle"><button type="button" class="tab ${cr.style !== "quiz" ? "on" : ""}" data-s="story">In the story</button><button type="button" class="tab ${cr.style === "quiz" ? "on" : ""}" data-s="quiz">Quiz screens</button></div>`, cr.style === "quiz" ? "One question per screen before the chat starts; then the bot's opening plays." : "The opening scenes ask the questions as story moments, like Choice of the Dragon.")}
       <div class="lbl">Trait pairs</div>
-      ${cr.pairs.map((p, i) => `<div class="row cr-pair" data-i="${i}" style="gap:6px;align-items:center"><input data-f="a" value="${esc(p.a || "")}" placeholder="e.g. Brutal" aria-label="One side"><span class="hint">↔</span><input data-f="b" value="${esc(p.b || "")}" placeholder="e.g. Subtle" aria-label="Other side"><button type="button" class="icon" data-rm aria-label="Remove pair">✕</button></div>`).join("")}
+      ${cr.pairs.map((p, i) => { const tc = traitCols(p, i); return `<div class="row cr-pair" data-i="${i}" style="gap:6px;align-items:center"><input type="color" data-f="ca" value="${tc.ca}" aria-label="First side's colour"><input data-f="a" value="${esc(p.a || "")}" placeholder="e.g. Brutal" aria-label="One side"><span class="hint">↔</span><input data-f="b" value="${esc(p.b || "")}" placeholder="e.g. Subtle" aria-label="Other side"><input type="color" data-f="cb" value="${tc.cb}" aria-label="Second side's colour"><button type="button" class="icon" data-rm aria-label="Remove pair">✕</button></div>`; }).join("")}
       ${cr.pairs.length < 3 ? `<button type="button" class="btn small" id="cCrPair">+ Add a pair</button>` : ""}
-      <p class="hint" style="margin:0">Leave empty and the AI picks 2-3 that fit the setting.</p>
+      <p class="hint" style="margin:0">Each side has its own colour; the trait's dot shifts toward the colour of the side it leans to. Leave empty and the AI picks 2-3 pairs and their colours.</p>
       <div class="lbl">Must-ask questions</div>
       ${cr.pins.map((p, i) => `<div class="cr-pin stack" data-i="${i}"><div class="row" style="gap:6px;align-items:center"><input data-f="q" value="${esc(p.q || "")}" placeholder="e.g. What colour are your scales?" aria-label="Question"><button type="button" class="icon" data-rm aria-label="Remove question">✕</button></div><textarea data-f="opts" style="min-height:60px" placeholder="Options, one per line (optional)">${esc((p.opts || []).join("\n"))}</textarea></div>`).join("")}
       <button type="button" class="btn small" id="cCrPin">+ Add a question</button>
       <p class="hint" style="margin:0">The AI writes the rest to fit the bot. Any bot's New chat can also make a character, even with this off.</p>`;
     $("cCrOn").onchange = e => { cr.on = e.target.checked; bump(); };
     box.querySelectorAll("#cCrStyle [data-s]").forEach(x => x.onclick = () => { cr.style = x.dataset.s; draw(); bump(); });
-    if ($("cCrPair")) $("cCrPair").onclick = () => { cr.pairs.push({ a: "", b: "" }); draw(); };
+    if ($("cCrPair")) $("cCrPair").onclick = () => { const i = cr.pairs.length; cr.pairs.push({ a: "", b: "", ca: TRAIT_COLS[i][0], cb: TRAIT_COLS[i][1] }); draw(); };
     $("cCrPin").onclick = () => { cr.pins.push({ q: "", opts: [] }); draw(); };
     box.querySelectorAll(".cr-pair").forEach(r => { const p = cr.pairs[+r.dataset.i]; r.querySelectorAll("[data-f]").forEach(inp => inp.addEventListener("input", () => { p[inp.dataset.f] = inp.value; })); r.querySelector("[data-rm]").onclick = () => { cr.pairs.splice(+r.dataset.i, 1); draw(); bump(); }; });
     box.querySelectorAll(".cr-pin").forEach(r => { const p = cr.pins[+r.dataset.i]; r.querySelectorAll("[data-f]").forEach(inp => inp.addEventListener("input", () => { p[inp.dataset.f] = inp.dataset.f === "opts" ? inp.value.split("\n") : inp.value; })); r.querySelector("[data-rm]").onclick = () => { cr.pins.splice(+r.dataset.i, 1); draw(); bump(); }; });
@@ -6964,6 +7015,94 @@ const crClean = cr => cr && typeof cr === "object" ? { on: !!cr.on, style: cr.st
 async function newOwnChat(cid) {
   const c = byId(cid); if (!c) return;
   const ch = newChat(c, S.personaId, { create: true }); S.charId = cid; S.chat = ch; await saveChat(); closeSheet(); await openChat(cid, ch.id);
+}
+
+
+// ===== Persona chats (v1.60): talk to one of your own personas while playing another. Each persona gets a stand-in bot
+// in S.pbots (Store key "pbots", synced), never in S.chars, so they stay out of the bot grid, search, tags, the rail,
+// the daily bot and the bot counts; they live in Home's Personas tab. byId() finds them, so chats work as usual.
+const PB_SCEN = "{{char}} and {{user}} meet. Nothing about their past together is set unless the story says so.";
+const pbOf = pid => (S.pbots || []).find(x => x.fromPersona === pid);
+const pbPersona = c => c?.fromPersona ? S.personas.find(p => p.id === c.fromPersona) : null;
+// who you can talk as: every persona except this one (and groups that include it)
+const pbTalkers = pid => S.personas.filter(p => p.id !== pid && !(isGroupP(p) && (p.members || []).includes(pid)));
+// make (or refresh) the stand-in bot from the persona, so edits to the persona always show up
+async function pbSync(p, create) {
+  let c = pbOf(p.id);
+  if (!c && !create) return null;
+  if (!c) { c = Object.assign(blankChar("character"), { fromPersona: p.id, seed: Math.abs(hash(p.id)) % 1e6 }); S.pbots = [...(S.pbots || []), c]; }
+  const desc = p.description || "", first = desc.replace(/\s+/g, " ").trim();
+  const want = { name: p.name || "Persona", description: desc, scenario: PB_SCEN, summary: first.slice(0, 200), tags: [] };
+  if (Object.entries(want).some(([k, v]) => JSON.stringify(c[k]) !== JSON.stringify(v))) { Object.assign(c, want); await saveChars(); }
+  return c;
+}
+function renderPersonaTab(list) {
+  const q = HF.q, ps = S.personas.filter(p => !isGroupP(p) && (!q || (p.name || "").toLowerCase().includes(q) || (p.description || "").toLowerCase().includes(q)));
+  const intro = `<p class="note pb-note">Talk to your own personas while playing another one. They stay here, apart from your bots.</p>`;
+  if (!ps.length) { list.innerHTML = intro + `<p class="note">${q ? "No persona matches that search." : "No personas yet."}</p><button type="button" class="btn" id="pbMake">Open Personas</button>`; $("pbMake").onclick = () => openPersonas(); return; }
+  list.innerHTML = intro;
+  for (const p of ps) {
+    const c = pbOf(p.id) || { id: "", name: p.name, seed: Math.abs(hash(p.id)) % 1e6, kind: "character", description: p.description || "" };
+    const b = document.createElement("div");
+    b.className = "char-card k-persona"; b.tabIndex = 0; b.setAttribute("role", "button"); b.style.setProperty("--kc", personaColor(p));
+    const summ = String(p.description || "").replace(/\s+/g, " ").trim().slice(0, 160);
+    b.innerHTML = `<div class="name"><span class="p-dot" style="background:${esc(personaColor(p))}"></span> ${esc(p.name)}</div><div class="ph-wrap"><img alt="" loading="lazy"><span class="kind-pill">Persona</span><span class="bstats" ${c.id ? `data-stats="${c.id}"` : ""} hidden></span></div><div class="cbody">${summ ? `<div class="bsum">${esc(summ)}</div>` : ""}</div>`;
+    setImg(b.querySelector("img"), c.id ? thumbURL(c) : "", c);
+    b.onclick = () => openPBProfile(p.id);
+    b.onkeydown = e => { if (e.key === "Enter") openPBProfile(p.id); };
+    list.appendChild(b);
+    if (c.id) getIndex(c.id).then(idx => { const el = list.querySelector(`[data-stats="${c.id}"]`); if (!el || !idx.length) return; const msgs = idx.reduce((a, e) => a + (+e.count || 0), 0); el.hidden = false; el.innerHTML = `<span title="${msgs} messages">${STAT_MSG}${fmtNum(msgs)}</span><span title="${idx.length} chats">${STAT_CHAT}${fmtNum(idx.length)}</span>`; });
+  }
+}
+async function openPBProfile(pid) {
+  const p = S.personas.find(x => x.id === pid); if (!p) return;
+  const c = pbOf(pid), idx = c ? (await getIndex(c.id)).sort((a, b) => b.updated - a.updated) : [];
+  // Talk as: whoever you last talked to them as, else your current persona, else the first one that can
+  const talk = pbTalkers(pid), lastAs = idx.find(e => !e.own && talk.some(x => x.id === e.personaId))?.personaId;
+  const def = lastAs || (talk.find(x => x.id === S.personaId) ? S.personaId : talk[0]?.id);
+  openSheet(p.name, b => {
+    b.innerHTML = `<div class="pf-top"><img class="pf-img" alt=""><div class="pf-meta"><div class="pf-kind k-persona" style="--kc:${esc(personaColor(p))}">Your persona</div><p class="pf-sum">${esc(String(p.description || "").slice(0, 400)) || '<span class="hint">No description yet. Tap Edit persona to add one.</span>'}</p></div></div>
+      ${talk.length ? `${field("Talk as", `<select id="pbAs">${talk.map(x => `<option value="${x.id}" ${x.id === def ? "selected" : ""}>${esc(x.name)}</option>`).join("")}</select>`)}
+      <div class="row"><button type="button" class="btn primary" id="pbGo"></button><button type="button" class="btn" id="pbNew">New chat</button></div>
+      <p class="hint" style="margin:0">Each new chat opens with a scene written for the two of them (swipe for a blank start).</p>`
+      : `<p class="note">Make another persona first: you talk to ${esc(p.name)} as one of your other personas.</p><button type="button" class="btn primary" id="pbPer">Open Personas</button>`}
+      <div class="stack"><div class="lbl">Chats · ${idx.length}</div><div class="stack" id="pbChats">${idx.length ? "" : '<p class="note">No chats yet.</p>'}</div></div>
+      <div class="row"><button type="button" class="btn small" id="pbEdit">Edit persona</button>${c ? `<button type="button" class="btn small" id="pbManage">Manage chats</button>` : ""}</div>`;
+    setImg(b.querySelector(".pf-img"), c ? thumbURL(c) : "", c || { name: p.name, seed: 1 });
+    if ($("pbPer")) $("pbPer").onclick = () => openPersonas();
+    $("pbEdit").onclick = () => editPersona(p, false);
+    if ($("pbManage")) $("pbManage").onclick = () => openChats(c.id);
+    const box = $("pbChats");
+    for (const e of idx.slice(0, 12)) {
+      const r = document.createElement("button"); r.type = "button"; r.className = "listrow";
+      r.innerHTML = `<span class="grow"><b>As ${esc(chatWho(e))}</b> <span class="badge">${e.count}</span><span class="sub">${fmtWhen(e.updated)} · ${esc(e.preview || "No messages yet")}</span></span>`;
+      r.onclick = async () => { closeSheet(); await pbSync(p, true); openChat(c.id, e.id); };
+      box.appendChild(r);
+    }
+    if (!talk.length) return;
+    const goLabel = () => { $("pbGo").textContent = idx.some(e => e.personaId === $("pbAs").value && !e.own) ? "Continue chat" : "Start chatting"; };
+    goLabel(); $("pbAs").onchange = goLabel;
+    const start = async fresh => {
+      const as = $("pbAs").value, bot = await pbSync(p, true), last = idx.find(e => e.personaId === as && !e.own);
+      closeSheet();
+      if (last && !fresh) return openChat(bot.id, last.id);
+      const ch = newChat(bot, as); S.charId = bot.id; S.chat = ch; await saveChat(); await openChat(bot.id, ch.id);
+    };
+    $("pbGo").onclick = () => start(false); $("pbNew").onclick = () => start(true);
+  });
+}
+// a new chat with a persona: the AI writes the opening for the two of them; the blank start is the swipe-over
+async function pbOpening(tries = 0) {
+  const chat = S.chat, c = char();
+  if (!chat || !c?.fromPersona || chat.messages.length || chat.creating) return;
+  if (S.busy) { if (tries < 30) setTimeout(() => { if (S.chat === chat) pbOpening(tries + 1); }, 200); return; }
+  if (!hasKey()) { setStatus("Add your API key in Settings, then tap ≫ to start the scene.", true); return; }
+  await generate(0, null);
+  const m = chat.messages[0];
+  if (S.chat === chat && m?.role === "assistant" && !m.greeting) {
+    m.greeting = true; m.alts = [...(m.alts || [m.content]), ""]; m.altMeta = [...(m.altMeta || [{}]), { mood: "neutral", place: c.startPlace || "", focus: "" }];
+    await saveChat(); renderMsgs(true);
+  }
 }
 
 // ===== Currencies: each RPG bot's money and its icon set (the AI picks, the owner can change it)
@@ -9139,9 +9278,9 @@ const Sync = {
   save() { try { localStorage.setItem("lr_sync", JSON.stringify(this.st)); } catch {} },
   on() { return !!this.st.refresh; },
   // v1.58: badges/points/shop (ach), the daily bot and quiz answer sets were never on this list, so they stayed on each device
-  synced: k => /^(settings|chars|personas|activePersona|books|recent|seeded|sounds|sndfix|sndgone|drafts|chats:|c2:|snd:|ach$|daily$|dailyPast$|quizLast$|quizPresets$)/.test(k),
+  synced: k => /^(settings|chars|pbots$|personas|activePersona|books|recent|seeded|sounds|sndfix|sndgone|drafts|chats:|c2:|snd:|ach$|daily$|dailyPast$|quizLast$|quizPresets$)/.test(k),
   NEW158: ["ach", "daily", "dailyPast", "quizLast", "quizPresets"],
-  listKey: k => /^(chars|personas|books|sounds|chats:|dailyPast$|quizPresets$)/.test(k),
+  listKey: k => /^(chars|pbots$|personas|books|sounds|chats:|dailyPast$|quizPresets$)/.test(k),
   mark(k) {
     if (this.applying || !this.on() || !this.synced(k)) return;
     const d = new Set(this.st.dirty || []); d.add(k); this.st.dirty = [...d];
@@ -9205,7 +9344,7 @@ const Sync = {
   },
   merge(k, mine, theirs) {
     const byId = (a, b) => { const m = new Map(); for (const x of a || []) if (x && x.id) m.set(x.id, x); for (const x of b || []) if (x && x.id) m.set(x.id, x); return [...m.values()]; };
-    if (k === "chars" || k === "personas" || k === "books" || k === "sounds" || k === "dailyPast" || k === "quizPresets" || k.startsWith("chats:")) return byId(mine, theirs); // the account's copy wins for the same id
+    if (k === "chars" || k === "pbots" || k === "personas" || k === "books" || k === "sounds" || k === "dailyPast" || k === "quizPresets" || k.startsWith("chats:")) return byId(mine, theirs); // the account's copy wins for the same id
     if (k === "ach") return achMerge(mine, theirs);
     if (k === "daily") return dailyNewer(mine, theirs);
     if (k === "recent") { const o = { ...(mine || {}) }; for (const [id, t] of Object.entries(theirs || {})) o[id] = Math.max(o[id] || 0, t); return o; }
@@ -9406,6 +9545,7 @@ const Sync = {
     const any = re => !keys || keys.some(k => re.test(k));
     if (any(/^settings$/)) { S.settings = { ...DEFAULTS, ...((await Store.get("settings")) || {}) }; applyTheme(); }
     if (any(/^chars$/)) S.chars = (await Store.get("chars")) || [];
+    if (any(/^pbots$/)) { const v = await Store.get("pbots"); if (Array.isArray(v)) S.pbots = v; }
     if (any(/^(personas|activePersona)$/)) { S.personas = (await Store.get("personas")) || S.personas; S.personaId = (await Store.get("activePersona")) || S.personaId; }
     if (any(/^books$/)) S.books = (await Store.get("books")) || [];
     if (any(/^recent$/)) S.recent = (await Store.get("recent")) || {};
@@ -9491,6 +9631,7 @@ async function migrateChats() {
   S.settings.v = 4;
   applyScale(); applyTheme();
   S.chars = (await Store.get("chars")) || [];
+  { const v = await Store.get("pbots"); S.pbots = Array.isArray(v) ? v : []; }
   await drafts();
   S.recent = (await Store.get("recent")) || {};
   S.books = (await Store.get("books")) || [];
