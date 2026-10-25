@@ -639,6 +639,19 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 #rollNow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:8px 12px 0;font-size:13px}
 #rollNow[hidden]{display:none}
 #rubNow{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:8px 12px 0;font-size:13px}
+#ownBar{position:relative;z-index:3;display:flex;flex-direction:column;gap:5px;padding:5px 12px 6px;background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:12px}#ownBar[hidden]{display:none}
+.own-row{display:flex;align-items:center;gap:8px;min-width:0}.own-l{font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.own-n{color:var(--muted);flex:none}.own-go{margin-left:auto}
+#ownBar .btn.small{min-height:34px;padding:4px 12px;font-size:13px;flex:none}
+.own-chip{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:34px;max-width:40%;padding:0 11px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:13px;font-weight:700;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.traits{display:flex;flex-wrap:wrap;gap:3px 12px;flex:1;min-width:0}
+.trait{display:flex;align-items:center;gap:5px;flex:1 1 130px;min-width:0;font-size:11.5px;color:var(--muted);white-space:nowrap}.trait .lean{color:var(--fg);font-weight:700}
+.tbar{position:relative;flex:1;min-width:30px;height:5px;border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 50%,var(--surface-2)),var(--surface-2) 50%,color-mix(in srgb,var(--accent) 50%,var(--surface-2)))}
+.tbar i{position:absolute;top:50%;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px color-mix(in srgb,var(--accent) 70%,transparent);transition:left .5s}
+.pg-one .traits,#sheet .traits{margin:4px 0}
+.cr-opts{display:flex;flex-direction:column;gap:8px}
+.cr-o{display:block;text-align:left;min-height:42px;padding:10px 13px;border-radius:12px;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));background:color-mix(in srgb,var(--accent) 8%,var(--surface));color:var(--fg);font:inherit;font-size:15px;line-height:1.4;cursor:pointer;transition:background-color .15s,transform .1s}
+.cr-o:active{transform:scale(.98)}.cr-o.on{background:color-mix(in srgb,var(--accent) 24%,var(--surface));border-color:var(--accent)}
+.tr-edit{display:flex;align-items:center;gap:8px;font-size:13px}.tr-edit span{flex:0 0 76px;overflow:hidden;text-overflow:ellipsis}.tr-edit span:last-child{text-align:right}.tr-edit input{flex:1;min-width:0}
 #asBar{position:relative;z-index:1;display:flex;align-items:center;gap:6px;overflow-x:auto;padding:6px 10px 2px;font-size:13px}#asBar[hidden]{display:none}
 #asBar .as-l{flex:none;color:var(--muted);font-size:12px}#asBar .chip{flex:none;display:inline-flex;align-items:center;gap:6px}
 #choiceBar{position:relative;z-index:1;display:flex;flex-direction:column;gap:6px;padding:8px 10px;max-height:45vh;overflow-y:auto}#choiceBar[hidden]{display:none}
@@ -1097,6 +1110,7 @@ html.sb-sticker.sb-sticker #msgs .msg:not(.img) em.act,.shop-sb.sb-sticker .msg 
     </header>
     <div id="gauges" hidden aria-label="Status"></div>
     <div id="rpgbar" hidden aria-label="Gold, inventory and quests"></div>
+    <div id="ownBar" hidden aria-label="Your character in this chat"></div>
     <div id="ambPop" hidden role="dialog" aria-label="Sounds in this chat"></div>
     <div id="pacer" hidden aria-label="Stroke pacer"><div class="pc-track"><div class="pc-bead"></div></div><div class="pc-cue"></div><div class="pc-burst"></div><button type="button" class="pc-min" aria-label="Hide the pacer for this chat">✕</button></div>
     <div id="voreCard" hidden></div>
@@ -1329,7 +1343,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.58 · Oct 23";
+const VERSION = "1.59 · Oct 25";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1356,7 +1370,7 @@ const $ = id => document.getElementById(id);
 const byId = id => S.chars.find(c => c.id === id);
 const char = () => byId(S.charId);
 const members = c => (c?.members || []).map(byId).filter(Boolean);
-const persona = () => { const pid = (S.chat && S.chat.personaId) || S.personaId; return S.personas.find(p => p.id === pid) || S.personas[0] || { id: "default", name: "User", description: "" }; };
+const persona = () => { const own = ownPersona(); if (own) return own; const pid = (S.chat && S.chat.personaId) || S.personaId; return S.personas.find(p => p.id === pid) || S.personas[0] || { id: "default", name: "User", description: "" }; };
 const personaName = pid => (S.personas.find(p => p.id === pid)?.name) || "Unknown persona";
 const uname = () => (persona().name || "").trim() || "User";
 const chatKey = (cid, pid = S.personaId) => `chat:${cid}:${pid}`;
@@ -1643,7 +1657,7 @@ function parseTag(raw) {
     music: MUS_KEYS.includes(low("music")) ? low("music") : null, event: EVT_KEYS.includes(low("event")) ? low("event") : null,
     gold: f.gold || null, items: f.items || null, quests: f.quests || null,
     vore: parseVore(f.vore, f),
-    badges: f.badges || f.badge || null, award: f.award || null,
+    badges: f.badges || f.badge || null, award: f.award || null, traits: f.traits || null,
     duel: f.duel && !/^(none|no|n\/a|-)?$/i.test(f.duel.trim()) ? f.duel.trim().slice(0, 120) : null
   };
 }
@@ -1767,7 +1781,9 @@ function buildPrompt(c, chat, upto, cont) {
   if (c.kind === "group") sys += `\n\nEnd each reply where the moment naturally ends: never close with a question, cliffhanger or prompt aimed at ${u} just to get a response.`;
   if (c.scenario) sys += `\n\n# Scenario\n${fill(c.scenario, c)}`;
   if (isGroupP(p)) sys += groupPersonaPrompt(p, u);
+  else if (p.own && !chat.own) {} // still being made: the character creation section says what's settled
   else if (p.description) sys += `\n\n# About ${u} (the user's character)\n${fill(p.description, c)}`;
+  sys += crPrompt(c, chat, upto, u);
   if (chat.summary) sys += `\n\n# Story so far\n${chat.summary}`;
   if (chat.facts.length) sys += `\n\n# Established facts (never contradict these)\n` + chat.facts.map(f => "- " + f.t).join("\n");
   const lore = activeLore(c, chat.messages.slice(0, upto));
@@ -1791,9 +1807,9 @@ function buildPrompt(c, chat, upto, cont) {
   if (musicPart) sys += `\n\n# Music and events\nmusic is the background music that fits the scene right now. Use none for ordinary moments; only pick music for scenes that call for it: a tavern or inn, a village, a city, a club, party or rave, a forest, a cave, deep water, a dungeon, crypt, temple or other evil place, somewhere magical, a calm or idle moment, romance, sleep or a quiet night, danger or a creeping threat, horror, somewhere eerie, mysterious or unnerving, a fight, an epic or grand moment, space or sci-fi. Music follows the setting and mood, never the action: vore or sex in a club still gets club music, in a tavern tavern music, and none when the setting has no music. event is something that happened in this reply: attack when a blow, shot or spell is coming at someone and the reply ends before it is known whether it lands; danger when a fight or real threat begins; victory when ${u}'s side wins a fight; defeat when ${u}'s side loses one; sad for a very sad, tragic or dramatic moment (a death, a farewell); quest when a quest or goal is completed; item when ${u} finds or receives something valuable, magical or rare; coins when ${u} gains money; otherwise none.`;
   const achP = achPrompt(c, chat); sys += achP.sys;
   const focusPart = c.kind === "group" ? " | focus: name of the character who spoke (the one who spoke most if several did)" : "";
-  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}${duelPart}${vorePart}${achP.part}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; savanna for grasslands, plains and prairies; jungle for jungles and rainforests; party for a lively party or club full of people talking; castle for castle halls, keeps, fortresses and throne rooms; lava near volcanoes, lava fields or molten hellscapes; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity labels what is LITERALLY, PHYSICALLY happening between characters in this reply, never a figure of speech or a passing mention: swallow only while a person or creature is being swallowed whole by someone's mouth or throat right now (never swallowing food, drink, saliva, words, pride or nerves, never 'swallowed by darkness', a crowd or the night); chew only while a living person or creature is being bitten, chewed, crushed between teeth or torn apart (hard vore; never eating food); struggle only while living prey is squirming inside someone's stomach, balls or womb (never a fight, wrestling or struggling with a task); vore while anyone is actually inside someone's stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling (never a hungry look, a threat to eat someone or a dream of it); sex only during actual penetrative sex (never thrusting a sword, pounding a door, riding a horse); oral only during actual oral sex; mess only while someone is cumming right now (spurting, pumping a load, excessive nonstop cumming) or while cum is still described dripping, leaking or pouring; once the climax is over and nothing is flowing, it is no longer mess; inflate while someone's belly (or balls, womb) is being filled up or swollen with cum (cum inflation); kiss only while characters are kissing each other on the lips or making out (never a peck on a hand or a cheek in greeting, never lips described alone); lick only while someone is licking another body (not oral sex, never licking their own lips, a spoon or food); shit only while someone is actually pooping or shitting (never swearing like 'oh shit'); otherwise none. When unsure, use none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
+  sys += `\n\nAfter every reply, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} | harm: none/light/heavy | hearing: inside/outside${musicPart}${focusPart}${gaugePart}${pacePart}${rpgPart}${duelPart}${vorePart}${crTagPart(chat)}${achP.part}]]\nambience is the background soundscape of where the scene is right now (combat while a fight is happening; indoors for a quiet room; none if nothing fits). Weather is heard from where the characters are: rain or storm out in the open; light_rain for a calm drizzle (birds still singing); rain_shelter under a tent, umbrella, tarp, awning or overhang; rain_vehicle inside a car, wagon, carriage, small hut, shed or barn with rain drumming on the roof; rain_indoors or storm_indoors inside a house or building while it rains or storms outside; wind for windy open places (mountains, cliffs, plains, rooftops); wind_indoors for wind howling around a building; shower in a running shower; shower_nearby when a shower is running in the next room. desert for open desert; savanna for grasslands, plains and prairies; jungle for jungles and rainforests; party for a lively party or club full of people talking; castle for castle halls, keeps, fortresses and throne rooms; lava near volcanoes, lava fields or molten hellscapes; arena for a cheering crowd (arenas, tournaments, fighting pits, stadiums, sports games); road while driving or riding along a road, or beside a busy road; underwater for being in open water, underwater_inside for being underwater but enclosed (a submarine, diving bell, underwater base, a sealed bubble or pod); panic for a screaming, fleeing crowd (attacks on a town, disasters); flying while riding or being carried by something with big wings; gunfight while guns are firing (combat is for fights without guns). activity labels what is LITERALLY, PHYSICALLY happening between characters in this reply, never a figure of speech or a passing mention: swallow only while a person or creature is being swallowed whole by someone's mouth or throat right now (never swallowing food, drink, saliva, words, pride or nerves, never 'swallowed by darkness', a crowd or the night); chew only while a living person or creature is being bitten, chewed, crushed between teeth or torn apart (hard vore; never eating food); struggle only while living prey is squirming inside someone's stomach, balls or womb (never a fight, wrestling or struggling with a task); vore while anyone is actually inside someone's stomach, balls or womb (oral and anal vore, cock vore, unbirthing) or being digested and not struggling (never a hungry look, a threat to eat someone or a dream of it); sex only during actual penetrative sex (never thrusting a sword, pounding a door, riding a horse); oral only during actual oral sex; mess only while someone is cumming right now (spurting, pumping a load, excessive nonstop cumming) or while cum is still described dripping, leaking or pouring; once the climax is over and nothing is flowing, it is no longer mess; inflate while someone's belly (or balls, womb) is being filled up or swollen with cum (cum inflation); kiss only while characters are kissing each other on the lips or making out (never a peck on a hand or a cheek in greeting, never lips described alone); lick only while someone is licking another body (not oral sex, never licking their own lips, a spoon or food); shit only while someone is actually pooping or shitting (never swearing like 'oh shit'); otherwise none. When unsure, use none. harm is only about ${u}'s own body: light while ${u} is being hurt (hit, cut, burned, bruised), heavy while ${u} is badly wounded, bleeding out or close to death, otherwise none (being swallowed or held inside a stomach is none unless it is actually hurting ${u}). hearing is inside while ${u} is inside someone's body (swallowed, in a stomach, womb or balls, being digested), otherwise outside.`;
   if (c.kind === "group" && S.nextSpeaker) sys += `\n\nThis turn, only ${S.nextSpeaker} responds.`;
-  if (choicesOn(c, chat)) sys += choicesPrompt(u);
+  if (choicesOn(c, chat) && !chat.creating) sys += choicesPrompt(u);
   if (diceOn()) sys += `\n\n# Dice\nThis chat uses dice. When ${u}'s message comes with a contest roll, the result has already been decided and you must narrate exactly that outcome, even when ${u} loses. A natural 20 is a critical success (spectacular), a natural 1 a critical failure (disastrous). Messages without a roll play out normally.`;
 
   const blankStart = chat.messages[0]?.greeting && !chat.messages[0].content;
@@ -1818,6 +1834,7 @@ function buildPrompt(c, chat, upto, cont) {
     if (m.role === "user" && m.rub) content = (content || "") + rubNote(m, u);
     if (m.role === "user" && m.game) content = (content || "") + gameNote(m, u);
     if (m.role === "user" && m.choice) content = (content || "") + choiceNote(m, u);
+    if (m.role === "user" && m.create?.last && !chat.creating) content = (content || "") + `\n[That was the last character-creation choice: who ${u} is, is now settled (see About ${u}). Carry the story on naturally from this moment.]`;
     if (m.role === "user" && m.speaker && !m.groupAdd) content = `**${m.speaker}:** ${content}`;
     if (m.role === "assistant" && m.mood && !(m.turn && hist[i + 1]?.turn === m.turn)) content += `\n[[mood: ${m.mood} | place: ${m.place || chat.place || "unknown"}${c.kind === "group" && m.focus ? ` | focus: ${m.focus}` : ""}${m.gauges && gs.length ? " | gauges: " + Object.entries(m.gauges).map(([k, v]) => k + "=" + v).join(", ") : ""}${m.pace && pacePart ? " | pace: " + m.pace : ""}]]`;
     if (budget - content.length < 0 && out.length >= 2) break;
@@ -1838,13 +1855,15 @@ function buildPrompt(c, chat, upto, cont) {
 const greetingsOf = c => [c.firstMessage, ...(c.altGreetings || [])].map(g => fill(g, c).trim()).filter(Boolean);
 // every bot also offers a blank opening (empty text) as its last choice: the user sets the scene
 const openingsOf = c => { const g = greetingsOf(c); return g.length ? [...g, ""] : []; };
-function newChat(c, pid) {
+function newChat(c, pid, opt = {}) {
   const prev = S.chat; S.chat = { personaId: pid || S.personaId };
+  const create = opt.create ?? crOn(c);
   const greets = openingsOf(c);
   S.chat = prev;
   const focus = c.kind === "group" ? (members(c)[0]?.name || "") : "";
   const meta = { mood: "neutral", focus, place: c.startPlace || "" };
-  return { messages: greets.length ? [{ id: uid(), role: "assistant", greeting: true, content: greets[0], alts: greets, alt: 0, altMeta: greets.map(() => ({ ...meta })), ...meta }] : [],
+  return { messages: greets.length && !create ? [{ id: uid(), role: "assistant", greeting: true, content: greets[0], alts: greets, alt: 0, altMeta: greets.map(() => ({ ...meta })), ...meta }] : [],
+           ...(create ? { creating: { style: opt.style || crStyle(c) } } : {}),
            summary: "", summarizedUpTo: 0, facts: [], turnsSinceFacts: 0, mood: "neutral", place: c.startPlace || "", focus,
            id: uid(), personaId: pid || S.personaId, created: Date.now() };
 }
@@ -1853,11 +1872,11 @@ function chatPreview(chat) {
   const last = [...chat.messages].reverse().find(m => m.role !== "image");
   if (!last) return "";
   const t = stripColor(last.content).replace(/\*/g, "").trim() || (last.image ? "📷 Image" : "");
-  return ((last.role === "user" ? personaName(chat.personaId) + ": " : "") + t).slice(0, 120);
+  return ((last.role === "user" ? (chat.own?.name || (chat.creating ? "You" : personaName(chat.personaId))) + ": " : "") + t).slice(0, 120);
 }
 async function touchIndex(cid, chat) {
   const idx = await getIndex(cid);
-  const e = { id: chat.id, personaId: chat.personaId, created: chat.created || Date.now(), updated: Date.now(), count: chat.messages.filter(m => m.role !== "image").length, preview: chatPreview(chat), ...(chat.branchOf ? { branch: true } : {}) };
+  const e = { id: chat.id, personaId: chat.personaId, created: chat.created || Date.now(), updated: Date.now(), count: chat.messages.filter(m => m.role !== "image").length, preview: chatPreview(chat), ...(chat.branchOf ? { branch: true } : {}), ...(chat.own || chat.creating ? { own: chat.own?.name || "New character" } : {}) };
   const i = idx.findIndex(x => x.id === chat.id);
   if (i < 0) idx.push(e); else idx[i] = e;
   await Store.set("chats:" + cid, idx);
@@ -2119,6 +2138,7 @@ async function openProfile(id) {
       ${tags.length ? `<div class="pf-tags">${tags.map(t => `<span class="pf-tag"${tagStyle(t)}>${tagIcon(t)}${esc(t)}</span>`).join("")}</div>` : ""}
       ${field("Play as", `<select id="pfP">${S.personas.map(p => `<option value="${p.id}" ${p.id === S.personaId ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>`)}
       <div class="row"><button type="button" class="btn primary" id="pfGo"></button><button type="button" class="btn" id="pfNew">New chat</button></div>
+      ${crOn(c) ? `<p class="hint" style="margin:0">Every new chat starts by creating your character for it.</p>` : `<button type="button" class="btn small" id="pfCreate">✦ New chat with a character made for it</button>`}
       ${people.length ? `<div class="stack"><div class="lbl">${kind === "group" ? "Talk to one of them alone" : "Characters in this world"}</div>${people.map((x, i) => `<button type="button" class="listrow pf-person" data-i="${i}"><img alt=""><span class="grow"><b>${esc(x.name)}</b><span class="sub">${esc(x.sub || "")}</span></span><span class="pf-go">Talk ›</span></button>`).join("")}</div>` : ""}
       ${achShelf(c)}
       ${idx.length ? `<div class="stack"><div class="lbl">People in this story</div><div class="stack" id="pfPeople">${c.people?.found ? "" : '<p class="hint" style="margin:0">Side characters, places and groups you\'ve met can become bots of their own.</p>'}</div><button type="button" class="btn small" id="pfFind">${c.people?.found ? "↻ Look again" : "✦ Find people in this story"}</button></div>` : ""}
@@ -2129,12 +2149,13 @@ async function openProfile(id) {
     goLabel();
     $("pfP").onchange = async e => { S.personaId = e.target.value; await savePersonas(); goLabel(); };
     $("pfGo").onclick = () => { closeSheet(); openChat(id); };
+    if ($("pfCreate")) $("pfCreate").onclick = () => newOwnChat(id);
     $("pfNew").onclick = async () => { const ch = newChat(c, S.personaId); S.charId = id; S.chat = ch; await saveChat(); closeSheet(); await openChat(id, ch.id); };
     const box = $("pfChats");
     box.innerHTML = idx.length ? "" : '<p class="note">No chats yet.</p>';
     for (const e of idx.slice(0, 12)) {
       const r = document.createElement("button"); r.type = "button"; r.className = "listrow" + (S.chat && S.chat.id === e.id ? " on" : "");
-      r.innerHTML = `<span class="grow"><b>${esc(personaName(e.personaId))}</b> <span class="badge">${e.count}</span>${e.branch ? ' <span class="badge br">⑂ Branch</span>' : ""}<span class="sub">${fmtWhen(e.updated)} · ${esc(e.preview || "No messages yet")}</span></span>`;
+      r.innerHTML = `<span class="grow"><b>${esc(chatWho(e))}</b> <span class="badge">${e.count}</span>${e.own ? ' <span class="badge">✦ Own</span>' : ""}${e.branch ? ' <span class="badge br">⑂ Branch</span>' : ""}<span class="sub">${fmtWhen(e.updated)} · ${esc(e.preview || "No messages yet")}</span></span>`;
       r.onclick = () => { closeSheet(); openChat(id, e.id); };
       box.appendChild(r);
     }
@@ -2150,12 +2171,13 @@ async function openChats(cid) {
   const c = byId(cid);
   const idx = (await getIndex(cid)).sort((a, b) => b.updated - a.updated);
   openSheet(`Chats · ${c.name}`, b => {
-    b.innerHTML = `<div class="row" style="align-items:center"><select id="ncP" style="flex:2;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line)">${S.personas.map(p => `<option value="${p.id}" ${p.id === S.personaId ? "selected" : ""}>As ${esc(p.name)}</option>`).join("")}</select><button class="btn primary" id="ncGo" style="flex:1">New chat</button></div><div class="stack" id="chList"></div>`;
+    b.innerHTML = `<div class="row" style="align-items:center"><select id="ncP" style="flex:2;padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line)">${S.personas.map(p => `<option value="${p.id}" ${p.id === S.personaId ? "selected" : ""}>As ${esc(p.name)}</option>`).join("")}</select><button class="btn primary" id="ncGo" style="flex:1">New chat</button></div>${crOn(c) ? "" : `<button type="button" class="btn small" id="ncCreate">✦ New chat with a character made for it</button>`}<div class="stack" id="chList"></div>`;
+    if ($("ncCreate")) $("ncCreate").onclick = () => newOwnChat(cid);
     const box = $("chList");
     if (!idx.length) box.innerHTML = '<p class="note">No chats yet. Start one above.</p>';
     for (const e of idx) {
       const row = document.createElement("div"); row.className = "listrow" + (S.chat && S.chat.id === e.id ? " on" : "");
-      row.innerHTML = `<button type="button" class="grow" style="text-align:left;padding:0" data-open><div><b>${esc(personaName(e.personaId))}</b><span class="badge">${e.count} message${e.count === 1 ? "" : "s"}</span>${e.branch ? '<span class="badge br">⑂ Branch</span>' : ""}${S.chat && S.chat.id === e.id ? '<span class="badge">Open</span>' : ""}</div><div class="sub">${fmtWhen(e.updated)} · ${esc(e.preview || "No messages yet")}</div></button><button type="button" class="btn small danger" data-del>Delete</button>`;
+      row.innerHTML = `<button type="button" class="grow" style="text-align:left;padding:0" data-open><div><b>${esc(chatWho(e))}</b>${e.own ? '<span class="badge">✦ Own</span>' : ""}<span class="badge">${e.count} message${e.count === 1 ? "" : "s"}</span>${e.branch ? '<span class="badge br">⑂ Branch</span>' : ""}${S.chat && S.chat.id === e.id ? '<span class="badge">Open</span>' : ""}</div><div class="sub">${fmtWhen(e.updated)} · ${esc(e.preview || "No messages yet")}</div></button><button type="button" class="btn small danger" data-del>Delete</button>`;
       row.querySelector("[data-open]").onclick = () => { closeSheet(); openChat(cid, e.id); };
       confirmBtn(row.querySelector("[data-del]"), "Sure?", async () => {
         await deleteChat(cid, e.id);
@@ -2223,7 +2245,8 @@ function genSpec(kind, form) {
 - "startPlace": the starting location in 2-6 words
 - "instructions": special rules the AI follows in every reply for this bot, as 2-8 lines each starting with "- " (how to portray it, recurring mechanics, trackers or stats, colored text for thoughts, pacing)
 - "lore": 3-8 entries {"keys": "comma, separated, keywords", "text": "40-120 words"} for facts that only matter when they come up (people, places, items, abilities, mechanics)
-- "badges": 2-4 achievements special to this bot {"name": a short catchy title, "how": what {{user}} must do or go through in the story to earn it}`;
+- "badges": 2-4 achievements special to this bot {"name": a short catchy title, "how": what {{user}} must do or go through in the story to earn it}
+- "creator": only when the story is about {{user}} being someone this setting defines (a dragon, a new recruit, a reborn hero, a monster, one of the world's folk) rather than bringing a character of their own: {"on": true, "style": "story", "pairs": 2-3 opposed traits that matter here, like [["Brutal", "Subtle"], ["Cunning", "Honourable"]]}, so each chat opens by creating {{user}}'s character through choices; otherwise null`;
   if (kind === "world") return common + `
 - "description": the world itself, 250-450 words: geography, history, cultures, power, daily life, tone
 - "cast": 5-10 listings {"name", "type": one of "character" | "group" | "species" | "location" | "concept", "details": 60-150 words}, covering the key characters, factions, species, places and setting rules`;
@@ -2247,6 +2270,7 @@ function genNormalize(j, kind, form) {
   if ("cast" in j) out.cast = (Array.isArray(j.cast) ? j.cast : []).map(x => ({ name: str(x.name), type: WORLD_TYPES[x.type] ? x.type : "character", details: str(x.details) })).filter(x => x.name);
   if ("members" in j) out.members = (Array.isArray(j.members) ? j.members : []).map(m => ({ name: str(m.name), artType: art(m.artType), appearance: str(m.appearance), description: str(m.description) })).filter(m => m.name);
   if ("artType" in j || kind === "character") out.artType = art(j.artType);
+  if ("creator" in j) out.creator = j.creator && typeof j.creator === "object" && j.creator.on ? crClean({ ...j.creator, on: true }) : null;
   if ("badges" in j) out.badges = (Array.isArray(j.badges) ? j.badges : []).map(x => ({ name: str(x.name).slice(0, 60), how: str(x.how).slice(0, 200) })).filter(x => x.name).slice(0, 6);
   for (const k of ["name", "summary", "appearance", "description", "scenario", "startPlace"]) if (k in j) out[k] = str(j[k]);
   return out;
@@ -2699,6 +2723,7 @@ function genReview(err) {
   const parts = [];
   if (K === "character") parts.push(sec(`Look · ${ART[c.artType]?.label || "Auto"}`, txt(c.appearance)), sec("Personality & background", txt(c.description)));
   if (K === "world") parts.push(sec("World", txt(c.description)), sec(`Listings · ${(c.cast || []).length}`, (c.cast || []).map(x => `<p><b>${esc(x.name)}</b> <span class="badge">${esc(WORLD_TYPES[x.type])}</span><br>${esc(x.details)}</p>`).join("")));
+  if (c.creator?.on) parts.push(sec("Character creator", `<p>Each chat opens by making your character${c.creator.style === "quiz" ? " with quiz screens" : " through the story"}.${(c.creator.pairs || []).length ? ` Traits: ${c.creator.pairs.map(p => esc(p.a) + " ↔ " + esc(p.b)).join(", ")}.` : ""}</p>`));
   if (K === "group") parts.push(sec("About the group", txt(c.description)), sec(`Members · ${(c.members || []).length}`, (c.members || []).map(m => `<p><b>${esc(m.name)}</b> <span class="badge">${esc(ART[m.artType]?.label || "Auto")}</span><br>${esc(m.appearance)}</p><p>${esc(m.description)}</p>`).join("")));
   parts.push(sec(K === "world" ? "Opening situation" : "Scenario", txt(c.scenario) + (c.startPlace ? `<p class="hint">Starts at: ${esc(c.startPlace)}</p>` : "")));
   parts.push(sec(`Openings · ${(c.firstMessages || []).length}`, (c.firstMessages || []).map((g, i) => `<p><b>#${i + 1}</b><br>${fmt(g)}</p>`).join("")));
@@ -2747,6 +2772,7 @@ async function genFinish(edit) {
   if (K === "character") { w.appearance = c.appearance || ""; w.artType = c.artType || "auto"; }
   if (K === "world") w.cast = c.cast || [];
   w.badges = (c.badges || []).map(x => ({ id: uid(), name: x.name, how: x.how }));
+  if (c.creator?.on) w.creator = crClean(c.creator);
   { const o = /^Spin-off/.test(GEN.prompt) && GEN.from && byId(GEN.from); if (o) { w.tags = [...new Set([...(w.tags || []), ...tagsOf(o).filter(t => t !== "world" && t !== "group")])]; w.lore = [...(w.lore || []), ...JSON.parse(JSON.stringify(o.lore || []))]; w.bookIds = [...new Set([...(w.bookIds || []), ...(o.bookIds || [])])]; w.spunFrom = o.id; } }
   const made = [];
   if (K === "group") {
@@ -2820,6 +2846,7 @@ async function cardToBot(c, K) {
   if (K === "character") { w.appearance = c.appearance || ""; w.artType = c.artType || "auto"; }
   if (K === "world") w.cast = c.cast || [];
   w.badges = (c.badges || []).map(x => ({ id: uid(), name: x.name, how: x.how }));
+  if (c.creator?.on) w.creator = crClean(c.creator);
   const made = [];
   if (K === "group") for (const m of c.members || []) { const mc = Object.assign(blankChar("character"), { name: m.name, appearance: m.appearance, description: m.description, artType: m.artType || "auto" }); made.push(mc); w.members.push(mc.id); }
   await Promise.allSettled([K === "group" ? null : ensureVisual(w), ...made.map(m => ensureVisual(m))].filter(Boolean).map(p => within(p, 25000)));
@@ -3065,6 +3092,11 @@ const ACH = [
   { k: "first_quiz", g: "Chatting", n: "Know What You Want", how: "Make a bot with the character quiz.", src: "app" },
   { k: "quizmaster", g: "Chatting", n: "Quizmaster", how: "Make 10 bots with the quiz.", src: "app" , nw: 1, h: "Lots of answers." },
   { k: "first_surprise", g: "Chatting", n: "Lucky Dip", how: "Make a bot with Surprise me.", src: "app" },
+  { k: "born_anew", g: "Chatting", n: "Born Anew", how: "Create a character for a chat.", src: "app" },
+  { k: "many_lives", r: 1, g: "Chatting", n: "Many Lives", how: "Create 10 characters for chats.", src: "app", nw: 1, h: "Again, and again." },
+  { k: "made_official", g: "Chatting", n: "Made It Official", how: "Save a chat's own character as a persona.", src: "app" },
+  { k: "all_the_way", g: "Chatting", n: "No Half Measures", how: "Push one of your character's traits all the way to one end.", src: "app", nw: 1, h: "All the way." },
+  { k: "change_heart", g: "Chatting", n: "Change of Heart", how: "Let one of your character's traits drift 40 points from where creation left it.", src: "app", nw: 1, h: "People change." },
   { k: "daily_keep", g: "Chatting", n: "Daily Special", how: "Keep or chat with a daily bot.", src: "app" },
   { k: "daily_7", r: 1, g: "Chatting", n: "Regular Customer", how: "Keep 7 daily bots.", src: "app" },
   { k: "first_branch", g: "Chatting", n: "What If", how: "Branch a chat.", src: "app" },
@@ -3394,6 +3426,9 @@ function achEvent(kind, x = {}) {
   else if (kind === "lantern") { if (achN("lantern") >= 20) achGrant("lantern", null, null); }
   else if (kind === "branch") achGrant("first_branch", bot, chat);
   else if (kind === "made") { if (x.from === "quiz") { achGrant("first_quiz", x.id, null); if (achN("quizBots") >= 10) achGrant("quizmaster", x.id, null); } if (x.from === "surprise") achGrant("first_surprise", x.id, null); }
+  else if (kind === "self") { achGrant("born_anew", bot, chat); if (achN("selves") >= 10) achGrant("many_lives", bot, chat); }
+  else if (kind === "selfkeep") achGrant("made_official", bot, chat);
+  else if (kind === "trait") { const tr = x.traits || []; if (tr.some(t => t.v <= 0 || t.v >= 100)) achGrant("all_the_way", bot, chat); if (tr.some(t => Math.abs(t.v - (t.v0 ?? t.v)) >= 40)) achGrant("change_heart", bot, chat); }
   else if (kind === "daily") { achGrant("daily_keep", x.id, null); if (achN("dailies") >= 7) achGrant("daily_7", x.id, null); }
   achLadders(); achSave();
 }
@@ -3631,7 +3666,8 @@ async function openChat(id, chatId) {
   S.seen = new Set(S.chat.messages.map(m => m.id));
   markRecent(id);
   syncPlay();
-  updateStage(); renderMsgs(); renderSpeakers(); setStatus(""); renderGauges(); renderPacer();
+  updateStage(); renderMsgs(); renderSpeakers(); setStatus(""); renderGauges(); renderPacer(); renderOwnBar();
+  if (S.chat.creating) setTimeout(() => { if (S.chat?.creating && S.charId === id) crResume(); }, 0);
   const need = c.kind === "group" ? members(c) : [c];
   (async () => {
     let changed = false;
@@ -3857,6 +3893,7 @@ async function sendInner() {
     const m = { id: uid(), role: "user", content: t };
     if (S.pendingImage) m.image = S.pendingImage;
     if (S.pendingChoice) { m.choice = S.pendingChoice; S.pendingChoice = null; }
+    crAttach(m); // a story-style character creation: this message answers the current question
     { const gp = persona(); if (isGroupP(gp)) { const ms = groupMembersP(gp), mm = ms.find(x => x.id === S.chat.speakAs); if (mm) { m.speaker = mm.name; m.as = mm.id; } else groupAll = ms.length >= 2; } }
     if (pgm) { m.game = { kind: pgm.kind, short: pgm.short, text: pgm.text }; S.chat.pendingGame = null; drawGames(sceneNow()); } // the minigame's result, for the story
     const rb = S.chat.pendingRub; if (rb) { if (rb.tell) m.rub = { part: rb.part, amt: rb.amt }; S.chat.pendingRub = null; drawRubChip(); } // a rub goes with this message only if the owner said so
@@ -3881,6 +3918,7 @@ async function sendInner() {
   await saveChat(); renderMsgs(); drawPendingRoll();
   { const box = $("msgs"); box.scrollTop = box.scrollHeight; }
   if (groupAll) { setBusy(true); try { await groupAdd(S.chat.messages.filter(x => x.role === "user").at(-1)); } finally { setBusy(false); } }
+  if (crStoryDone(S.chat)) { renderOwnBar(); renderChoices(); return crFinish(); } // the last creation question was answered
   await generate(S.chat.messages.length, null);
 }
 async function reroll(i) {
@@ -3943,6 +3981,8 @@ async function generate(upto, existing, cont) {
     const rpgBefore = rpgOn(c) ? rpgState(c, chat) : null;
     const gv = parseGauges(p.gauges, c); if (gv) { meta.gauges = { ...gaugeValues(c, chat), ...gv }; chat.gauges = { ...meta.gauges }; }
     if (p.pace) meta.pace = p.pace; else if (pacerOn()) meta.pace = null;
+    if (chat.creating?.style === "story" && chat.creating.plan) { const ci = crAnswers(chat, upto).length, q = chat.creating.plan.qs[ci]; if (q) { meta.crStep = ci; meta.choices = q.opts.map((o, k) => ({ t: o.t, risky: false, cr: k })); } }
+    if (chat.own && p.traits && crTraitsFromTag(p.traits, chat)) renderOwnBar();
     const segs = c.kind === "group" ? splitSpeakers(p.text).filter(x => x.text.trim()) : [];
     const multi = segs.filter(x => x.who).length >= 2 || (segs.length >= 2 && segs.some(x => x.who));
     if (!multi && segs.length === 1 && segs[0].who) { meta.focus = memberByName(c, segs[0].who)?.name || segs[0].who; p.text = segs[0].text.trim(); } // one speaker: no label needed
@@ -4081,7 +4121,7 @@ function userClose() {
   if (!S.sheetGuard) { closeSheet(); return true; }
   if ($("sheetConfirm")) return false;
   if (S.sheetGuard === "gen") genKeep(true); else if (S.sheetGuard === "quiz") qzKeep(true); else if (S.sheetGuard === "edit") body.dispatchEvent(new Event("input"));
-  const msg = S.sheetGuard === "wait" ? "Close? The bot keeps being written, and the result waits for you under <b>New</b>." : "Close? What you wrote is saved as a draft. Pick it up any time from <b>New</b>.";
+  const msg = S.sheetGuard === "creator" ? "Close? Your answers are kept. Pick up from the bar at the top of the chat." : S.sheetGuard === "wait" ? "Close? The bot keeps being written, and the result waits for you under <b>New</b>." : "Close? What you wrote is saved as a draft. Pick it up any time from <b>New</b>.";
   $("sheetBody").insertAdjacentHTML("beforebegin", `<div id="sheetConfirm" class="sheet-confirm" role="alertdialog" aria-label="Close?"><span>${msg}</span><div class="row"><button type="button" class="btn small primary" id="scKeep">Keep editing</button><button type="button" class="btn small" id="scClose">Close</button></div></div>`);
   $("scKeep").onclick = () => $("sheetConfirm").remove();
   $("scClose").onclick = () => closeSheet();
@@ -4713,6 +4753,7 @@ function editChar(c, isNew, fromDraft) {
         <input type="file" id="cPic" accept="image/*" hidden>
       </div>`}
       <div class="group"><h3>Dice</h3>${field("Rolls allowed per message", `<select id="cRollLim">${[[0, "Unlimited rerolls"], [1, "1 (no rerolls)"], [2, "2"], [3, "3"], [5, "5"]].map(([v, l]) => `<option value="${v}" ${(+work.rollLimit || 0) === v ? "selected" : ""}>${l}</option>`).join("")}</select>`, "How many times you can roll 🎲 before sending one message, so you can't keep rolling for the number you want. With a limit, a roll can't be thrown away either.")}</div>
+      <div class="group"><h3>Character creator</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Make a character for each chat from questions that fit this bot's setting, like Choice of the Dragon. Your answers also set a few traits the story keeps in mind.</p><div id="cCreator" class="stack"></div></div>
       <div class="group"><h3>Choices mode</h3><label class="check"><input type="checkbox" id="cChoices" ${work.choices ? "checked" : ""}> Play by picking choices: 3-4 after every reply (you can still write your own; risky ones roll a d20)</label></div>
       ${VORE_PIC ? `<div class="group"><h3>Vore picture</h3>${field("Usual weight", `<input type="range" id="cWeight" min="0" max="100" step="5" value="${+work.weight || 0}" aria-label="Usual weight">`, "How heavy this bot is in the vore picture before eating anyone, from slim to very fat. Weight from digested prey goes on top and can burn off again.")}</div>` : ""}
       <div class="group"><h3>Status gauges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Bars at the top of the chat (fullness, arousal, health…) that the AI moves as the story goes.</p><div id="cGauges" class="stack"></div></div>
@@ -4723,7 +4764,7 @@ function editChar(c, isNew, fromDraft) {
       ${isNew ? "" : `<button class="btn danger" id="cDel">Delete ${KINDS[K].label.toLowerCase()}</button>`}`;
 
     ruleTabs($("cInstr"));
-    gaugeEditor(work); rpgEditor(work); badgeEditor(work);
+    gaugeEditor(work); rpgEditor(work); badgeEditor(work); creatorEditor(work);
     const greets = [work.firstMessage || "", ...(work.altGreetings || [])];
     let gi = 0;
     const grab = () => {
@@ -4938,6 +4979,7 @@ function editChar(c, isNew, fromDraft) {
       work.lore = work.lore.filter(l => l.text.trim());
       work.cast = work.cast.filter(x => x.name.trim() || x.details.trim());
       work.gauges = (work.gauges || []).filter(g => (g.name || "").trim()).map(g => ({ ...g, name: g.name.trim() }));
+      if (work.creator) work.creator = crClean(work.creator);
       work.altGreetings = (work.altGreetings || []).map(g => g.trim()).filter(Boolean);
       if (K !== "group" && !work.customPortrait && !work.visualManual && work.visualSrc !== cardSig(work)) {
         $("cSave").disabled = true; $("cSave").textContent = K === "world" ? "Picturing the world…" : "Designing their look…";
@@ -5100,11 +5142,12 @@ $("btnMore").onclick = () => openSheet("Options", b => {
   const c = char();
   b.innerHTML = `<div class="menu">
     <button class="btn" id="oChats">Chats with ${esc(c.name)}</button>
-    <button class="btn" id="oNew">New chat as ${esc(uname())}</button>
+    <button class="btn" id="oNew">${crOn(c) ? "New chat (makes a new character)" : S.chat.own || S.chat.creating ? "New chat" : `New chat as ${esc(uname())}`}</button>
+    ${crOn(c) ? "" : `<button class="btn" id="oCreate">✦ New chat with a character made for it</button>`}
     <button class="btn" id="oIll">Illustrate this moment</button>
     <button class="btn" id="oEdit">Edit ${KINDS[c.kind || "character"].label.toLowerCase()} & lorebook</button>
     <button class="btn" id="oMem">View memory</button>
-    <button class="btn" id="oPer">Playing as ${esc(uname())} · switch persona</button>
+    ${S.chat.own ? `<button class="btn" id="oOwn">Your character: ${esc(S.chat.own.name)} · edit or save as a persona</button>` : S.chat.creating ? "" : `<button class="btn" id="oPer">Playing as ${esc(uname())} · switch persona</button>`}
     <button class="btn" id="oDice">🎲 Dice rolls: ${diceOn() ? "on" : "off"}</button>
     <button class="btn" id="oChoices">☰ Choices mode: ${choicesOn() ? "on" : "off"}</button>
     ${S.settings.gamesOn !== false ? `<button class="btn" id="oDuel">⚔ Start a dice duel (a small scuffle or contest)</button>` : ""}
@@ -5113,10 +5156,12 @@ $("btnMore").onclick = () => openSheet("Options", b => {
     <p class="note">New chat keeps this one in your chat list. Clear this chat erases this conversation and its memory.</p>`;
   $("oIll").onclick = () => { closeSheet(); illustrate(); };
   $("oChats").onclick = () => openChats(S.charId);
+  if ($("oCreate")) $("oCreate").onclick = () => newOwnChat(S.charId);
+  if ($("oOwn")) $("oOwn").onclick = () => openOwn();
   $("oNew").onclick = async () => { const ch = newChat(c, S.chat.personaId); S.chat = ch; await saveChat(); closeSheet(); await openChat(S.charId, ch.id); };
   $("oEdit").onclick = () => editChar(char(), false);
   $("oMem").onclick = openMemory;
-  $("oPer").onclick = () => openPersonas();
+  if ($("oPer")) $("oPer").onclick = () => openPersonas();
   $("oChoices").onclick = async () => { S.chat.choices = !choicesOn(); await saveChat(); renderChoices(); $("oChoices").textContent = `☰ Choices mode: ${choicesOn() ? "on" : "off"}`; toast(choicesOn() ? "Choices on: they show after the next reply" : "Choices off for this chat"); };
   if ($("oDuel")) $("oDuel").onclick = () => openDuel(null, async () => {});
   $("oDice").onclick = async () => { S.chat.dice = !diceOn(); await saveChat(); syncPlay(); renderMsgs(true); $("oDice").textContent = `🎲 Dice rolls: ${diceOn() ? "on" : "off"}`; toast(diceOn() ? "Dice on: your actions get a d20 roll" : "Dice off for this chat"); };
@@ -6584,7 +6629,9 @@ const DIE_MINI = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8 1
 function renderChoices() {
   const box = $("choiceBar"), chatEl = $("chat"); if (!box) return;
   const c = char(), last = S.chat?.messages?.filter(m => m.role !== "image").at(-1);
-  const on = !!(S.chat && !chatEl.hidden && choicesOn(c) && last?.role === "assistant" && last.choices?.length && !S.busy);
+  renderOwnBar();
+  const making = last?.crStep != null && !!S.chat?.creating;
+  const on = !!(S.chat && !chatEl.hidden && (choicesOn(c) || making) && last?.role === "assistant" && last.choices?.length && !S.busy);
   chatEl.classList.toggle("choosing", on && !S.writeOwn);
   if (!on) { box.hidden = true; box.innerHTML = ""; return; }
   box.hidden = false;
@@ -6595,6 +6642,7 @@ function renderChoices() {
 }
 async function pickChoice(x) {
   if (S.busy || !x) return;
+  if (x.cr != null) { S.pendingCreate = { i: S.chat.messages.filter(m => m.role !== "image").at(-1)?.crStep, opt: x.cr }; S.writeOwn = false; $("input").value = x.t; return send(); }
   let n = null;
   if (x.risky) {
     n = d20(); setBusy(true); S.rolling = true;
@@ -6607,6 +6655,315 @@ async function pickChoice(x) {
 const choiceNote = (m, u) => m.choice?.risky && m.choice.n ? `\n[${u} tried something risky and rolled ${m.choice.n} on a d20 (1 = a disaster, 2-7 it fails, 8-13 it only partly works, 14-19 it works, 20 = spectacular). Narrate exactly that outcome.]` : "";
 function choicesPrompt(u) {
   return `\n\n# Choices\nThis chat is played by picking choices. After the reply, before the final hidden line, add one line exactly like [[choices: first ;; second ;; third]] with 3-4 options for what ${u} could do next, in varied tones (one bold, one careful, one sly or clever, and a lewd one whenever the scene allows it). Each option is one short line of what ${u} does and/or says, actions in *asterisks* and speech in quotes, like *I draw my blade.* "Back off!" Add [risky] at the end of any option with a real chance to fail. Never pick for ${u}; the reply still ends where the moment naturally ends.`;
+}
+
+// ===== Character creator (v1.59): a character made for one chat from choices that fit the bot's setting, in the spirit of
+// Choice of Games' "Choice of the Dragon": how you act in the opening moments sets opposed traits, then the story asks
+// your name and look. Bot: c.creator {on, style "story"|"quiz", pins [{q, opts[]}], pairs [{a, b}]}.
+// Chat while creating: chat.creating {style, plan {pairs, qs [{q, scene, about, opts [{t, lean, sets}]}]}, answers (quiz), i (quiz), card}.
+// Story answers live on the user messages (m.create {i, opt}), so deleting messages keeps everything consistent.
+// Chat after: chat.own {name, look, personality, background, color, traits [{a, b, v, v0}], answers, style, savedAs, at}.
+const CR_STEP = 15, CR_DRIFT = 8;
+const crOf = c => c?.creator && typeof c.creator === "object" ? c.creator : {};
+const crOn = c => !!crOf(c).on;
+const crStyle = c => crOf(c).style === "quiz" ? "quiz" : "story";
+const crPairs = list => (Array.isArray(list) ? list : []).map(p => Array.isArray(p) ? { a: s5(p[0]), b: s5(p[1]) } : { a: s5(p?.a), b: s5(p?.b) })
+  .filter(p => p.a && p.b && p.a.toLowerCase() !== p.b.toLowerCase()).map(p => ({ a: capFirst(p.a.slice(0, 24)), b: capFirst(p.b.slice(0, 24)) })).slice(0, 3);
+const crPins = list => (Array.isArray(list) ? list : []).map(p => ({ q: s5(p?.q).slice(0, 200), opts: (Array.isArray(p?.opts) ? p.opts : String(p?.opts || "").split("\n")).map(s5).filter(Boolean).slice(0, 6) })).filter(p => p.q);
+const CR_DEFAULT_PAIRS = [{ a: "Bold", b: "Careful" }, { a: "Kind", b: "Ruthless" }];
+// the persona of a chat that has its own character (or is still making one); persona() asks this first
+function ownPersona(chat = S.chat) {
+  if (!chat || !(chat.own || chat.creating)) return null;
+  const o = chat.own || {};
+  return { id: "own:" + (chat.id || ""), own: true, name: o.name || "You", description: chat.own ? pgDesc(o) : "", color: o.color || (S.personas.find(p => p.id === chat.personaId) || {}).color || "#6fc3d8" };
+}
+const chatWho = e => e.own || personaName(e.personaId);
+async function crPlan(c, style) {
+  const cfg = crOf(c), given = crPairs(cfg.pairs), pins = crPins(cfg.pins), story = style !== "quiz";
+  const sys = `You design the character creation that opens a roleplay chat in Lanternroom, an interactive roleplay app, in the spirit of Choice of Games' "Choice of the Dragon": the player's own character is built from multiple-choice answers that fit this bot's setting, so they arrive as someone who belongs there.
+The questions, 7-9 in a natural order:
+- first 2-3 temperament moments: a situation where HOW the player acts shows who they are (Choice of the Dragon opens with a knight charging at you: claw him, burn him, toy with him or fly off). Every option leans toward one side of a trait pair.
+- then identity, as fits the setting: their name (the options are names that suit the setting), what they are when the setting allows a choice (species, kind, form, class), their look (body, colouring, a distinctive feature), their place or role here, and what they want.${pins.length ? `\n- these questions from the bot's author, kept word for word with their options (add lean and sets to each option):\n${pins.map(p => `  - ${p.q}${p.opts.length ? ` (options: ${p.opts.join(" / ")})` : ""}`).join("\n")}` : ""}
+Each question has 3-4 options: short, vivid, varied and really different from each other.${story ? ` Each question also gets "scene": one or two lines on the story moment the narration leads into right before the question is asked (the first one opens the story in the middle of something happening). Options are what the player does or says, in first person, actions in *asterisks* and speech in quotes, like *I rake my claws across his shield.*` : " Options are plain answers in a few words."}
+Trait pairs: ${given.length ? `use exactly these: ${given.map(p => `${p.a} / ${p.b}`).join(", ")}` : `pick 2-3 opposed pairs that matter in this setting (like Brutal / Subtle, Cunning / Honourable, Proud / Watchful), one or two words per side`}.
+Every character is treated as a fully grown, mature being; this needs no mention.
+
+Respond with only JSON: {"pairs": [{"a": one side, "b": the other side}], "questions": [{"q": the question${story ? `, "scene": the moment` : ""}, "about": "temperament" | "name" | "form" | "look" | "role" | "goal" | "other", "opts": [{"t": the option, "lean": the trait side it leans toward, or "", "sets": what this answer settles about the player, in a few words}]}]}`;
+  const user = `The bot: ${c.name} (${KINDS[c.kind || "character"].label}). ${botSummary(c)}${c.scenario ? `\n\nScenario: ${fill(c.scenario, c)}` : ""}\n\n${String(fill(c.description || "", c)).slice(0, 2500)}`;
+  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: user }], { temperature: 0.9, maxTokens: 4000, plain: true });
+  const pairs = given.length ? given : crPairs(j?.pairs).length ? crPairs(j.pairs) : CR_DEFAULT_PAIRS.map(p => ({ ...p }));
+  const sides = new Map(pairs.flatMap(p => [[p.a.toLowerCase(), p.a], [p.b.toLowerCase(), p.b]]));
+  const qs = (Array.isArray(j?.questions) ? j.questions : []).map(q => ({
+    q: s5(q?.q).slice(0, 240), scene: story ? s5(q?.scene).slice(0, 400) : "", about: s5(q?.about).toLowerCase().slice(0, 20) || "other",
+    opts: (Array.isArray(q?.opts) ? q.opts : []).map(o => typeof o === "string" ? { t: o } : o).map(o => ({ t: s5(o?.t).slice(0, 240), lean: sides.get(s5(o?.lean).toLowerCase()) || "", sets: s5(o?.sets).slice(0, 120) })).filter(o => o.t).slice(0, 5)
+  })).filter(q => q.q).slice(0, 12);
+  // the author's questions are always asked, even if the model left one out
+  for (const p of pins.slice().reverse()) if (!qs.some(q => q.q.toLowerCase() === p.q.toLowerCase())) qs.splice(Math.min(1, qs.length), 0, { q: p.q, scene: story ? p.q : "", about: "other", opts: p.opts.map(t => ({ t, lean: "", sets: t })) });
+  if (!qs.some(q => q.about === "name")) qs.push({ q: "What is your name?", scene: story ? "Someone asks who you are." : "", about: "name", opts: [] });
+  if (qs.length < 3) throw new Error("The model's answer came back incomplete. Try again.");
+  return { pairs, qs };
+}
+// the answers so far: story ones from the user messages before `upto`, quiz ones from the chat
+function crAnswers(chat, upto) {
+  const cr = chat?.creating, qs = cr?.plan?.qs || [];
+  const raw = cr?.style === "quiz" ? (cr.answers || []).slice(0, cr.i ?? 0).map((a, i) => a && { i, opt: a.opt, t: a.t })
+    : chat.messages.slice(0, upto ?? chat.messages.length).filter(m => m.role === "user" && m.create).map(m => ({ i: m.create.i, opt: m.create.opt, t: m.content }));
+  return raw.filter(Boolean).map(a => { const q = qs[a.i] || {}, o = (q.opts || [])[a.opt]; return { i: a.i, q: q.q || "", t: stripColor(a.t || "").trim(), lean: o?.lean || "", sets: o?.sets || "" }; });
+}
+const crTotal = chat => chat?.creating?.plan?.qs?.length || 0;
+function crTraits(pairs, leans) {
+  const t = (pairs || []).map(p => ({ a: p.a, b: p.b, v: 50 }));
+  for (const l of leans) { const L = String(l || "").toLowerCase(); if (!L) continue; for (const x of t) { if (x.a.toLowerCase() === L) x.v = Math.max(0, x.v - CR_STEP); else if (x.b.toLowerCase() === L) x.v = Math.min(100, x.v + CR_STEP); } }
+  return t;
+}
+const crNowTraits = chat => chat?.own ? chat.own.traits || [] : chat?.creating?.plan ? crTraits(chat.creating.plan.pairs, crAnswers(chat).map(a => a.lean)) : [];
+function traitWords(t) {
+  const d = t.v - 50, s = Math.abs(d);
+  if (s < 10) return `balanced between ${t.a.toLowerCase()} and ${t.b.toLowerCase()}`;
+  return `${s >= 45 ? "utterly" : s >= 30 ? "very" : s >= 18 ? "quite" : "a little"} ${(d < 0 ? t.a : t.b).toLowerCase()}`;
+}
+// a two-ended bar: the dot sits between the sides, the side it leans to is brighter
+const traitBar = t => `<span class="trait" title="${esc(t.a)} ${100 - t.v} · ${esc(t.b)} ${t.v}"><span class="${t.v < 45 ? "lean" : ""}">${esc(t.a)}</span><span class="tbar"><i style="left:${Math.max(0, Math.min(100, t.v))}%"></i></span><span class="${t.v > 55 ? "lean" : ""}">${esc(t.b)}</span></span>`;
+const traitBars = list => list.length ? `<div class="traits">${list.map(traitBar).join("")}</div>` : "";
+// what the model is told while the character is being made (story style) and afterwards (the traits)
+function crPrompt(c, chat, upto, u) {
+  const cr = chat.creating;
+  if (cr && cr.style === "story" && cr.plan) {
+    const done = crAnswers(chat, upto), q = cr.plan.qs[done.length], t = crTraits(cr.plan.pairs, done.map(a => a.lean));
+    let s = `\n\n# Character creation\nThis chat opens by creating the player's own character through the story itself, like Choice of Games' "Choice of the Dragon". Here "${u}" means that character. Beyond what is settled below, their name, look, kind and past are not decided yet: never invent them, and narrate them as "you" in the second person until the story's choices settle them. Each choice the player makes shapes who they are, so let it matter.`;
+    if (done.length) s += `\nSettled so far:\n${done.map(a => `- ${a.q} → ${a.t}${a.sets ? ` (${a.sets})` : ""}`).join("\n")}`;
+    if (t.length) s += `\nTheir nature so far: ${t.map(traitWords).join(", ")}.`;
+    if (q) s += `\nThis reply: ${done.length ? "show what their last choice does, vividly and in a way that fits who they are becoming, then" : "open the story in the middle of something happening, then"} lead straight into this moment and stop right at it: ${q.scene || q.q} (the question it puts to them: ${q.q}). 100-250 words. Do not list options or write a choices line: the app shows their options${q.opts.length ? ` (${q.opts.map(o => o.t).join(" / ")})` : ""}.`;
+    return s;
+  }
+  const tr = chat.own?.traits || [];
+  if (!tr.length) return "";
+  return `\n\n# ${u}'s nature\n${tr.map(x => `- ${x.a} / ${x.b}: ${x.v} (0 = fully ${x.a.toLowerCase()}, 100 = fully ${x.b.toLowerCase()}); ${traitWords(x)}`).join("\n")}\nThese come from the choices ${u} made. Let the world read ${u} this way (their reputation, how others react to them, what comes naturally to them), but never decide ${u}'s actions. When ${u}'s own actions clearly lean one way, move that value a few points (at most 5 per reply) in the traits field.`;
+}
+const crTagPart = chat => chat?.own?.traits?.length ? ` | traits: ${chat.own.traits.map(x => `${x.a}/${x.b}=number`).join(", ")}` : "";
+// the hidden tag's traits field → small moves on the chat's own traits
+function crTraitsFromTag(str, chat) {
+  const tr = chat?.own?.traits; if (!str || !tr?.length) return false;
+  let moved = false;
+  for (const part of String(str).split(/[,;]/)) {
+    const m = part.match(/^\s*([^=:]+?)\s*[=:]\s*(-?\d+(?:\.\d+)?)/); if (!m) continue;
+    const k = m[1].toLowerCase().replace(/\s+/g, ""), x = tr.find(t => k === `${t.a}/${t.b}`.toLowerCase().replace(/\s+/g, "") || k === t.a.toLowerCase() || k === `${t.a}-${t.b}`.toLowerCase());
+    if (!x) continue;
+    const want = Math.max(0, Math.min(100, Math.round(+m[2]))), v = Math.max(x.v - CR_DRIFT, Math.min(x.v + CR_DRIFT, want));
+    if (v !== x.v) { x.v = v; moved = true; }
+  }
+  if (moved) try { achEvent("trait", { traits: tr }); } catch {}
+  return moved;
+}
+// the bar under the chat header: progress while making the character, then its name and traits
+function renderOwnBar() {
+  const box = $("ownBar"); if (!box) return;
+  const chat = S.chat, on = chat && !$("chat").hidden && (chat.own || chat.creating);
+  if (!on) { box.hidden = true; box.innerHTML = ""; return; }
+  box.hidden = false;
+  const tr = crNowTraits(chat);
+  if (chat.own) {
+    box.innerHTML = `<div class="own-row"><button type="button" class="own-chip" id="ownOpen" aria-label="Your character in this chat"><span class="p-dot" style="background:${esc(chat.own.color || "#6fc3d8")}"></span>${esc(chat.own.name)}</button>${traitBars(tr)}</div>`;
+    $("ownOpen").onclick = () => openOwn();
+    return;
+  }
+  const cr = chat.creating, n = crAnswers(chat).length, N = crTotal(chat);
+  const act = !cr.plan ? (S.busy ? "" : "Start") : cr.card ? "Review your character" : n >= N ? "Finish your character" : cr.style === "quiz" ? "Continue" : "";
+  box.innerHTML = `<div class="own-row"><span class="own-l">✦ Creating your character</span>${N ? `<span class="own-n">${Math.min(n, N)} / ${N}</span>` : ""}${act ? `<button type="button" class="btn small primary own-go" id="ownGo">${act}</button>` : `<span class="own-go"></span>`}<button type="button" class="btn small" id="ownSkip">Skip</button></div>${N ? `<div class="qz-bar"><i style="width:${Math.round(Math.min(n, N) / N * 100)}%"></i></div>` : ""}${traitBars(tr)}`;
+  if ($("ownGo")) $("ownGo").onclick = () => { if (!cr.plan) crStart(); else if (cr.card) crReview(); else if (n >= N) crFinish(); else crQuizDraw(); };
+  confirmBtn($("ownSkip"), `Tap again: play as ${personaName(chat.personaId)} instead`, () => crSkip());
+}
+// start (or pick up) the creation of an open chat
+async function crStart() {
+  const chat = S.chat, c = char(), cr = chat?.creating; if (!cr || S.busy) return;
+  if (!hasKey()) { renderOwnBar(); setStatus("Add your API key in Settings first, then tap Start above.", true); return; }
+  if (!cr.plan) {
+    if (cr.style === "quiz") waitSheet("Your character", "Writing questions that fit this story…");
+    setBusy(true); setStatus(cr.style === "quiz" ? "" : "Setting the scene for your character…");
+    try { cr.plan = await crPlan(c, cr.style); if (S.chat === chat) await saveChat(); }
+    catch (e) { setBusy(false); if ($("gWait")) closeSheet(); if (S.chat === chat) { setStatus("Couldn't set up the character creation: " + e.message, true); renderOwnBar(); } return; }
+    setBusy(false); setStatus("");
+    if (S.chat !== chat) return;
+  }
+  renderOwnBar();
+  if (cr.style === "quiz") return cr.card ? crReview() : crAnswers(chat).length >= crTotal(chat) ? crFinish() : crQuizDraw();
+  if (!chat.messages.length) await generate(0, null);
+}
+// called when a chat opens
+function crResume(tries = 0) {
+  const chat = S.chat, cr = chat?.creating; if (!cr) return;
+  // a reply in the chat just left may still be winding down: wait for it (up to ~6 s)
+  if (S.busy) { if (tries < 30) setTimeout(() => { if (S.chat === chat) crResume(tries + 1); }, 200); return; }
+  if (!cr.plan || (cr.style === "story" && !S.chat.messages.length)) return crStart();
+  if (cr.style === "quiz") { if (cr.card) crReview(); else if (crAnswers(S.chat).length < crTotal(S.chat)) crQuizDraw(); }
+}
+// story style: the user message that answers the current question carries m.create
+function crAttach(m) {
+  const chat = S.chat, cr = chat?.creating; const pick = S.pendingCreate; S.pendingCreate = null;
+  if (!cr || cr.style !== "story" || !cr.plan) return;
+  const last = chat.messages.filter(x => x.role !== "image").at(-1), i = crAnswers(chat).length;
+  if (last?.role !== "assistant" || last.crStep !== i || i >= crTotal(chat)) return;
+  m.create = { i, opt: pick && pick.i === i ? pick.opt : null }; if (i === crTotal(chat) - 1) m.create.last = true;
+  delete cr.card;
+}
+const crStoryDone = chat => chat?.creating?.style === "story" && chat.creating.plan && crAnswers(chat).length >= crTotal(chat);
+// quiz style: one question per screen
+function crQuizDraw() {
+  const chat = S.chat, cr = chat?.creating; if (!cr?.plan) return;
+  const qs = cr.plan.qs; cr.answers = cr.answers || []; cr.i = Math.max(0, Math.min(cr.i || 0, qs.length));
+  if (cr.i >= qs.length) return crFinish();
+  const q = qs[cr.i], a = cr.answers[cr.i] || {}, tr = crNowTraits(chat), c = char();
+  openSheet("Your character", b => {
+    S.sheetGuard = "creator";
+    b.innerHTML = `<div class="qz-top"><div class="qz-bar"><i style="width:${Math.round(cr.i / qs.length * 100)}%"></i></div><div class="qz-step"><span>For ${esc(c.name)}</span><span>${cr.i + 1} / ${qs.length}</span></div></div>
+      ${traitBars(tr)}
+      <h3 class="qz-q">${esc(q.q)}</h3>
+      ${q.opts.length ? `<div class="cr-opts">${q.opts.map((o, k) => `<button type="button" class="cr-o ${a.opt === k ? "on" : ""}" data-k="${k}">${fmt(o.t)}</button>`).join("")}</div>` : ""}
+      ${field(q.opts.length ? "Or your own answer" : "Your answer", `<input id="crOther" value="${esc(a.opt == null ? a.t || "" : "")}" placeholder="Type your own" autocomplete="off">`)}
+      <div id="crMsg" class="hint"></div>
+      <div class="qz-nav"><button type="button" class="btn" id="crBack">‹ Back</button><button type="button" class="btn primary" id="crNext">${cr.i === qs.length - 1 ? "Finish ›" : "Next ›"}</button></div>`;
+    const go = async () => { cr.i++; delete cr.card; await saveChat(); renderOwnBar(); crQuizDraw(); };
+    b.querySelectorAll(".cr-o").forEach(x => x.onclick = () => { const k = +x.dataset.k; cr.answers[cr.i] = { opt: k, t: q.opts[k].t }; b.querySelectorAll(".cr-o").forEach(y => y.classList.toggle("on", y === x)); setTimeout(go, 180); });
+    const own = () => { const t = $("crOther").value.trim(); if (t) { cr.answers[cr.i] = { opt: null, t }; return true; } return cr.answers[cr.i] != null; };
+    $("crOther").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("crNext").click(); } });
+    $("crNext").onclick = () => { if (!own()) { $("crMsg").textContent = "Pick an answer or write your own."; return; } go(); };
+    $("crBack").onclick = async () => { if (cr.i > 0) { cr.i--; await saveChat(); renderOwnBar(); crQuizDraw(); } else closeSheet(); };
+  });
+}
+// every question answered: the AI writes the character from the answers
+async function crBuild(c, chat) {
+  const ans = crAnswers(chat), pairs = chat.creating.plan.pairs, t0 = crTraits(pairs, ans.map(a => a.lean));
+  const story = chat.creating.style === "story" ? chat.messages.filter(m => m.role !== "image" && m.content).slice(-18).map(m => `${m.role === "user" ? "Player" : "Story"}: ${stripColor(m.content)}`).join("\n\n").slice(-9000) : "";
+  const j = await dsJSON([{ role: "system", content: `You write the player's own character for a roleplay chat in Lanternroom, from the choices they made in its character creation (like Choice of Games' "Choice of the Dragon"). Keep every choice exactly as made; fill what they left open with specific, vivid choices that fit the setting. Every character is treated as a fully grown, mature being; this needs no mention.\n\nRespond with only JSON: {"name": their name (the one from their answers when they gave one), "look": 40-80 words of appearance (what they are, body, colouring, clothes, distinctive features), "personality": 2-3 short lines on how they act and talk, shaped by their traits, "background": one line, "color": a hex colour that suits them, "traits": [{"a": first side, "b": second side, "v": 0-100}] (the same pairs; start from the values given and move one by at most 15, only where a written answer clearly leans that way)}` },
+    { role: "user", content: `The setting: ${c.name}. ${botSummary(c)}\n\nTheir answers:\n${ans.map(a => `- ${a.q} → ${a.t}${a.sets ? ` (${a.sets})` : ""}`).join("\n")}\n\nTraits from their picks (0 = fully the first side, 100 = fully the second):\n${t0.map(x => `- ${x.a} / ${x.b}: ${x.v}`).join("\n")}${story ? `\n\nThe creation scenes:\n${story}` : ""}` }], { temperature: 0.8, maxTokens: 2000, plain: true });
+  const card = pgNorm(j);
+  if (!card.name) throw new Error("The model's answer came back incomplete. Try again.");
+  const got = Array.isArray(j?.traits) ? j.traits : [];
+  card.traits = t0.map(x => { const g = got.find(y => s5(y?.a).toLowerCase() === x.a.toLowerCase()); const v = g && Number.isFinite(+g.v) ? Math.round(+g.v) : x.v; return { ...x, v: Math.max(0, Math.min(100, Math.max(x.v - 15, Math.min(x.v + 15, v)))) }; });
+  card.answers = ans.map(a => ({ q: a.q, a: a.t }));
+  return card;
+}
+async function crFinish() {
+  const chat = S.chat, c = char(); if (!chat?.creating || S.busy) return;
+  if (!hasKey()) { setStatus("Add your API key in Settings first.", true); return; }
+  waitSheet("Your character", "Bringing your character to life…");
+  setBusy(true);
+  try { const card = await crBuild(c, chat); chat.creating.card = card; await saveChat(); setBusy(false); if (S.chat === chat) { renderOwnBar(); crReview(); } }
+  catch (e) { setBusy(false); if ($("gWait")) closeSheet(); if (S.chat === chat) { setStatus("Couldn't make your character: " + e.message, true); renderOwnBar(); } }
+}
+function crReview(err) {
+  const chat = S.chat, cr = chat?.creating, card = cr?.card; if (!card) return;
+  openSheet("Your character", b => {
+    S.sheetGuard = "creator";
+    b.innerHTML = `<div class="pg-one"><b>${esc(card.name)}</b>${card.color ? `<span class="p-dot" style="background:${esc(card.color)}"></span>` : ""}${traitBars(card.traits || [])}<p>${esc(card.look)}</p><p>${esc(card.personality).replace(/\n/g, "<br>")}</p>${card.background ? `<p class="hint">${esc(card.background)}</p>` : ""}</div>
+      <details class="gen-sec"><summary>Your choices · ${(card.answers || []).length}</summary><div class="gen-body">${(card.answers || []).map(a => `<p><span class="hint">${esc(a.q)}</span><br>${fmt(a.a)}</p>`).join("")}</div></details>
+      <div class="group"><h3>Does this look right?</h3><p class="note">Begin as is, or pick parts to rewrite and say what to change.</p>
+        <div class="tabs" id="crParts">${PG_PARTS.map(([k, l]) => `<button type="button" class="tab" data-p="${k}">${l}</button>`).join("")}</div>
+        <textarea id="crNote" style="min-height:70px" placeholder="e.g. a scar over one eye, quieter, a longer name"></textarea>
+        <button class="btn" id="crRe">Rewrite</button></div>
+      <div id="crMsg" class="hint">${err ? esc(err) : ""}</div>
+      <button class="btn primary" id="crBegin">✓ Begin the story as ${esc(card.name)}</button>
+      <button class="btn" id="crAgain">↻ Start the creation over</button>`;
+    const picked = new Set();
+    b.querySelectorAll("#crParts [data-p]").forEach(x => x.onclick = () => { const k = x.dataset.p; picked.has(k) ? picked.delete(k) : picked.add(k); x.classList.toggle("on", picked.has(k)); });
+    $("crRe").onclick = async () => {
+      const note = $("crNote").value.trim(); if (!picked.size && !note) { $("crMsg").textContent = "Pick the parts to rewrite, or describe what to change."; return; }
+      if (S.busy) return; waitSheet("Your character", "Rewriting…"); setBusy(true);
+      PGEN.prompt = (card.answers || []).map(a => `${a.q} → ${a.a}`).join("; ");
+      try { const keep = { traits: card.traits, answers: card.answers }; const upd = await pgRewrite(JSON.parse(JSON.stringify(card)), [...picked], note); cr.card = { ...upd, ...keep }; await saveChat(); setBusy(false); renderOwnBar(); crReview(); }
+      catch (e) { setBusy(false); crReview(e.message); } finally { PGEN.prompt = ""; }
+    };
+    $("crBegin").onclick = () => crBegin();
+    confirmBtn($("crAgain"), "Tap again: your answers will be cleared", () => crRestart());
+  });
+}
+async function crBegin() {
+  const chat = S.chat, c = char(), cr = chat?.creating, card = cr?.card; if (!card || S.busy) return;
+  chat.own = { name: card.name, look: card.look, personality: card.personality, background: card.background, color: card.color || PERSONA_COLS[Math.floor(Math.random() * PERSONA_COLS.length)], traits: (card.traits || []).map(t => ({ a: t.a, b: t.b, v: t.v, v0: t.v })), answers: card.answers || [], style: cr.style, at: Date.now() };
+  delete chat.creating;
+  if (cr.style === "quiz" && !chat.messages.length) {
+    const greets = openingsOf(c), focus = c.kind === "group" ? (members(c)[0]?.name || "") : "", meta = { mood: "neutral", focus, place: c.startPlace || "" };
+    if (greets.length) chat.messages.push({ id: uid(), role: "assistant", greeting: true, content: greets[0], alts: greets, alt: 0, altMeta: greets.map(() => ({ ...meta })), ...meta });
+  }
+  await saveChat(); closeSheet();
+  try { achEvent("self"); } catch {}
+  S.seen = new Set(chat.messages.map(m => m.id));
+  renderMsgs(true); updateStage(); renderOwnBar(); renderChoices();
+  toast(`Playing as ${chat.own.name} in this chat`);
+  if (cr.style === "story" && chat.messages.at(-1)?.role === "user") await generate(chat.messages.length, null);
+}
+async function crRestart() {
+  const chat = S.chat; if (!chat?.creating) return;
+  chat.creating = { style: chat.creating.style }; chat.messages = []; S.seen = new Set();
+  await saveChat(); closeSheet(); renderMsgs(true); renderOwnBar(); crStart();
+}
+// skip: the chat starts over with the usual persona and opening
+async function crSkip() {
+  const chat = S.chat, c = char(); if (!chat?.creating || S.busy) return;
+  const keep = { id: chat.id, personaId: chat.personaId, created: chat.created };
+  S.chat = { ...newChat(c, keep.personaId, { create: false }), ...keep };
+  await saveChat(); closeSheet(); S.seen = new Set(S.chat.messages.map(m => m.id));
+  renderMsgs(true); updateStage(); renderOwnBar(); renderChoices();
+}
+// the chat's character: edit it, or keep it as a real persona
+function openOwn() {
+  const chat = S.chat, o = chat?.own; if (!o) return;
+  const saved = o.savedAs && S.personas.find(p => p.id === o.savedAs);
+  openSheet("Your character in this chat", b => {
+    b.innerHTML = `<p class="note">Made for this chat only. Save it as a persona to play it anywhere.</p>
+      ${field("Name", `<input id="owName" value="${esc(o.name)}">`)}
+      ${field("Look", `<textarea id="owLook" style="min-height:90px">${esc(o.look || "")}</textarea>`)}
+      ${field("Personality", `<textarea id="owPers" style="min-height:70px">${esc(o.personality || "")}</textarea>`)}
+      ${field("Background", `<input id="owBg" value="${esc(o.background || "")}">`)}
+      ${field("Colour", `<input type="color" id="owCol" value="${esc(/^#[0-9a-f]{6}$/i.test(o.color || "") ? o.color : "#6fc3d8")}">`)}
+      ${(o.traits || []).length ? `<div class="stack"><div class="lbl">Nature</div>${o.traits.map((t, i) => `<div class="tr-edit"><span>${esc(t.a)}</span><input type="range" min="0" max="100" step="1" value="${t.v}" data-i="${i}" aria-label="${esc(t.a)} to ${esc(t.b)}"><span>${esc(t.b)}</span></div>`).join("")}<p class="hint" style="margin:0">The story moves these a little when your actions lean one way.</p></div>` : ""}
+      ${(o.answers || []).length ? `<details class="gen-sec"><summary>Your choices · ${o.answers.length}</summary><div class="gen-body">${o.answers.map(a => `<p><span class="hint">${esc(a.q)}</span><br>${fmt(a.a)}</p>`).join("")}</div></details>` : ""}
+      <button class="btn primary" id="owSave">Save</button>
+      <button class="btn" id="owKeep">${saved ? `Update the saved persona “${esc(saved.name)}”` : "☆ Save as a persona"}</button>`;
+    const grabO = () => { o.name = $("owName").value.trim() || o.name; o.look = $("owLook").value.trim(); o.personality = $("owPers").value.trim(); o.background = $("owBg").value.trim(); o.color = $("owCol").value; b.querySelectorAll(".tr-edit input").forEach(r => { o.traits[+r.dataset.i].v = +r.value; }); };
+    $("owSave").onclick = async () => { grabO(); await saveChat(); closeSheet(); renderOwnBar(); renderMsgs(true); try { achEvent("trait", { traits: o.traits }); } catch {} };
+    $("owKeep").onclick = async () => {
+      grabO();
+      const desc = pgDesc(o) + ((o.traits || []).length ? `\n\nNature: ${o.traits.map(traitWords).join(", ")}.` : "");
+      const p = saved || { id: uid() }; Object.assign(p, { name: o.name, description: desc, color: o.color });
+      if (!saved) S.personas.push(p);
+      o.savedAs = p.id; await savePersonas(); await saveChat(); closeSheet(); renderOwnBar();
+      toast(saved ? `${p.name} updated in Personas` : `${p.name} saved to Personas`);
+      try { achEvent("selfkeep"); } catch {}
+    };
+  });
+}
+// the bot editor's "Character creator" group
+function creatorEditor(work) {
+  const box = $("cCreator"); if (!box) return;
+  const cr = work.creator = { on: false, style: "story", pins: [], pairs: [], ...(work.creator || {}) };
+  cr.pins = Array.isArray(cr.pins) ? cr.pins : []; cr.pairs = Array.isArray(cr.pairs) ? cr.pairs : [];
+  const bump = () => box.dispatchEvent(new Event("input", { bubbles: true }));
+  const draw = () => {
+    box.innerHTML = `<label class="check"><input type="checkbox" id="cCrOn" ${cr.on ? "checked" : ""}> Start every new chat by creating a character for it (instead of playing one of your personas)</label>
+      ${field("How it plays", `<div class="tabs" id="cCrStyle"><button type="button" class="tab ${cr.style !== "quiz" ? "on" : ""}" data-s="story">In the story</button><button type="button" class="tab ${cr.style === "quiz" ? "on" : ""}" data-s="quiz">Quiz screens</button></div>`, cr.style === "quiz" ? "One question per screen before the chat starts; then the bot's opening plays." : "The opening scenes ask the questions as story moments, like Choice of the Dragon.")}
+      <div class="lbl">Trait pairs</div>
+      ${cr.pairs.map((p, i) => `<div class="row cr-pair" data-i="${i}" style="gap:6px;align-items:center"><input data-f="a" value="${esc(p.a || "")}" placeholder="e.g. Brutal" aria-label="One side"><span class="hint">↔</span><input data-f="b" value="${esc(p.b || "")}" placeholder="e.g. Subtle" aria-label="Other side"><button type="button" class="icon" data-rm aria-label="Remove pair">✕</button></div>`).join("")}
+      ${cr.pairs.length < 3 ? `<button type="button" class="btn small" id="cCrPair">+ Add a pair</button>` : ""}
+      <p class="hint" style="margin:0">Leave empty and the AI picks 2-3 that fit the setting.</p>
+      <div class="lbl">Must-ask questions</div>
+      ${cr.pins.map((p, i) => `<div class="cr-pin stack" data-i="${i}"><div class="row" style="gap:6px;align-items:center"><input data-f="q" value="${esc(p.q || "")}" placeholder="e.g. What colour are your scales?" aria-label="Question"><button type="button" class="icon" data-rm aria-label="Remove question">✕</button></div><textarea data-f="opts" style="min-height:60px" placeholder="Options, one per line (optional)">${esc((p.opts || []).join("\n"))}</textarea></div>`).join("")}
+      <button type="button" class="btn small" id="cCrPin">+ Add a question</button>
+      <p class="hint" style="margin:0">The AI writes the rest to fit the bot. Any bot's New chat can also make a character, even with this off.</p>`;
+    $("cCrOn").onchange = e => { cr.on = e.target.checked; bump(); };
+    box.querySelectorAll("#cCrStyle [data-s]").forEach(x => x.onclick = () => { cr.style = x.dataset.s; draw(); bump(); });
+    if ($("cCrPair")) $("cCrPair").onclick = () => { cr.pairs.push({ a: "", b: "" }); draw(); };
+    $("cCrPin").onclick = () => { cr.pins.push({ q: "", opts: [] }); draw(); };
+    box.querySelectorAll(".cr-pair").forEach(r => { const p = cr.pairs[+r.dataset.i]; r.querySelectorAll("[data-f]").forEach(inp => inp.addEventListener("input", () => { p[inp.dataset.f] = inp.value; })); r.querySelector("[data-rm]").onclick = () => { cr.pairs.splice(+r.dataset.i, 1); draw(); bump(); }; });
+    box.querySelectorAll(".cr-pin").forEach(r => { const p = cr.pins[+r.dataset.i]; r.querySelectorAll("[data-f]").forEach(inp => inp.addEventListener("input", () => { p[inp.dataset.f] = inp.dataset.f === "opts" ? inp.value.split("\n") : inp.value; })); r.querySelector("[data-rm]").onclick = () => { cr.pins.splice(+r.dataset.i, 1); draw(); bump(); }; });
+  };
+  draw();
+}
+const crClean = cr => cr && typeof cr === "object" ? { on: !!cr.on, style: cr.style === "quiz" ? "quiz" : "story", pins: crPins(cr.pins).map(p => ({ q: p.q, opts: p.opts })), pairs: crPairs(cr.pairs) } : undefined;
+// a new chat that makes its own character
+async function newOwnChat(cid) {
+  const c = byId(cid); if (!c) return;
+  const ch = newChat(c, S.personaId, { create: true }); S.charId = cid; S.chat = ch; await saveChat(); closeSheet(); await openChat(cid, ch.id);
 }
 
 // ===== Currencies: each RPG bot's money and its icon set (the AI picks, the owner can change it)
