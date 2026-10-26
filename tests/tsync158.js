@@ -28,14 +28,14 @@ const open = require("./base.js");
   const login = pg => pg.evaluate(() => { Sync.st = { refresh: "r", access: "a", exp: Date.now() + 1e9, uid: "u1", email: "x", ver: {}, dirty: [], pulled: "1970-01-01T00:00:00Z" }; Sync.save(); });
   // both devices are already logged in and each earned/bought things with v1.57, when badges stayed on the device
   await login(A.pg); await login(B.pg);
-  const old = (pg, ach, daily) => pg.evaluate(async ([ach, daily]) => { Sync.applying = true; await Store.set("ach", { ...achBlank(), ...ach }); if (daily) await Store.set("daily", daily); Sync.applying = false; ACHS = null; await achLoad(); }, [ach, daily]);
+  const old = (pg, ach, daily) => pg.evaluate(async ([ach, daily]) => { Sync.applying = true; await Store.set("ach", { ...achBlank(), ...ach }); if (daily) await Store.set("daily", { ...daily, day: typeof dailyDay === "function" ? dailyDay() : daily.day }); Sync.applying = false; ACHS = null; await achLoad(); }, [ach, daily]);
   await old(A.pg, { got: { first_swallow: { at: 10, bot: null }, vore_wedged: { at: 11, bot: null } }, shop: { owned: { "flame:candle": 20 }, wear: { flame: "candle" }, wearAt: 100 } }, { day: "2026-10-23", status: "kept", kind: "character", tags: [], card: { name: "Daisy" }, at: 5 });
   await old(B.pg, { got: { nat20: { at: 12, bot: null } }, shop: { owned: { "theme:star": 30 }, wear: { theme: "star" }, wearAt: 200 } }, null);
   // the update arrives: each device restarts (boot sends what it has once), then they sync back and forth
   for (const d of [A, B]) { await d.pg.evaluate(() => { localStorage.setItem("lr_sync", JSON.stringify(Sync.st)); }); await d.pg.reload(); await d.pg.evaluate(() => BOOTED); await d.pg.waitForTimeout(800); }
   const round = async () => { for (const d of [A, B, A, B]) { await d.pg.evaluate(async () => { await Sync.push(); await Sync.pull(); await Sync.push(); }); await d.pg.waitForTimeout(250); } };
   await round();
-  const st = pg => pg.evaluate(() => ({ got: Object.keys(ACHS.got).sort().join(","), owned: Object.keys(ACHS.shop.owned).sort().join(","), wear: JSON.stringify(ACHS.shop.wear), pts: achPoints(), star: document.documentElement.classList.contains("st-star"), daily: DAILY.cur?.card?.name || "" }));
+  const st = pg => pg.evaluate(() => ({ got: Object.keys(ACHS.got).sort().join(","), owned: Object.keys(ACHS.shop.owned).sort().join(","), wear: JSON.stringify(Object.fromEntries(Object.entries(ACHS.shop.wear).sort())) /* the same outfit can list its slots in any order */, pts: achPoints(), star: document.documentElement.classList.contains("st-star"), daily: DAILY.cur?.card?.name || "" }));
   const a1 = await st(A.pg), b1 = await st(B.pg);
   console.log("A", JSON.stringify(a1)); console.log("B", JSON.stringify(b1));
   chk("old badges from both devices end up on both", a1.got === b1.got && /first_swallow/.test(a1.got) && /nat20/.test(a1.got) && /vore_wedged/.test(b1.got));
