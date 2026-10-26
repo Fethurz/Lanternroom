@@ -6,7 +6,7 @@ const open = require("./base.js");
   let nUsers = 0;
   const json = body => {
     const s = sysOf(body), u = userOf_(body);
-    if (/You invent the regulars/.test(s)) { const n = +(u.match(/Invent (\d+)/) || [0, 3])[1]; return { users: Array.from({ length: n }, () => { const i = ++nUsers; return { name: `User ${i}`, handle: `user_${i}`, bio: `Bio of user ${i}.`, taste: i % 2 ? ["vore", "dragon"] : ["romance", "fantasy"], voice: "lowercase, lots of emoji" }; }) }; }
+    if (/You invent the regulars/.test(s)) { const n = [...u.matchAll(/^(\d+)\. /gm)].length || +(u.match(/Invent (\d+)/) || [0, 3])[1]; return { users: Array.from({ length: n }, () => { const i = ++nUsers; return { name: `User ${i}`, handle: `user_${i}`, bio: `Bio of user ${i}.`, taste: i % 2 ? ["vore", "dragon"] : ["romance", "fantasy"], voice: "lowercase, lots of emoji" }; }) }; }
     if (/write new bot listings/.test(s)) { const hs = [...u.matchAll(/- @(\w+)/g)].map(m => m[1]); return { posts: hs.map((h, i) => ({ by: h, kind: i === 1 ? "world" : "character", name: `Bot ${h}-${Math.random().toString(36).slice(2, 6)}`, tags: ["vore", "dragon"], summary: `A bot by ${h}.`, appearance: "Big and scaly.", description: "Grumpy but kind.", scenario: "A cave. {{user}} arrives.", firstMessage: "*The dragon yawns.* \"Hello, {{user}}.\"", cast: i === 1 ? [{ name: "Cave", type: "location", details: "Dark." }] : undefined })) }; }
     if (/write the comments people leave/.test(s)) { const ks = [...u.matchAll(/Listing key (\S+):/g)].map(m => m[1]), hs = [...u.matchAll(/- @(\w+):/g)].map(m => m[1]); const n = +(u.match(/Write (\d+) new comments/) || [0, 2])[1]; return { comments: Array.from({ length: n }, (_, i) => ({ on: ks[i % ks.length], by: hs[i % hs.length], text: `comment ${i} on ${ks[i % ks.length]} 🔥`, replyTo: "" })) }; }
     if (/^You are @(\w+)/.test(s)) { const h = s.match(/^You are @(\w+)/)[1]; return { text: `thanks!! from ${h}` }; }
@@ -22,9 +22,10 @@ const open = require("./base.js");
   chk("Home (or the PC rail) has a Community button", await pg.evaluate(() => !$("btnComm").hidden && !$("railComm").hidden));
   // first visit: people and a page of bots appear
   await openComm();
-  await until(() => COMM && COMM.posts.length >= 6 && document.querySelectorAll(".cm-card").length >= 6); await wait(300);
-  const s1 = await pg.evaluate(() => ({ users: COMM.users.length, posts: COMM.posts.length, cards: document.querySelectorAll(".cm-card").length, intro: /made-up community/.test(document.querySelector(".cm-intro")?.textContent || "") }));
-  chk(`first visit makes the regulars and a page of bots (${s1.users} users, ${s1.posts} bots)`, s1.users === 12 && s1.posts === 6 && s1.cards === 6 && s1.intro);
+  await until(() => COMM && COMM.posts.length >= 6 && document.querySelectorAll(".cm-card").length >= 6, null, 30000); await wait(300);
+  const s1 = await pg.evaluate(() => ({ users: COMM.users.length, posts: COMM.posts.length, cards: document.querySelectorAll(".cm-card").length, label: /made-up|made up|written by the AI|invented/i.test($("sheetBody").textContent) }));
+  chk(`first visit makes 36 regulars and a page of bots (${s1.users} users, ${s1.posts} bots)`, s1.users === 36 && s1.posts === 6 && s1.cards === 6);
+  chk("nothing in the community says it's made up", !s1.label);
   chk("every community prompt keeps the adults line", commCalls().length >= 3 && commCalls().every(c => /fully grown, mature being/.test(sysOf(c))));
   chk("listings follow the owner's own tags", commCalls().some(c => /write new bot listings/.test(sysOf(c)) && /Popular tags on the site right now/.test(userOf_(c))));
   // counts are the same every time and grow with age
@@ -46,7 +47,7 @@ const open = require("./base.js");
   chk("a listing opens with its poster, tags, counts and comments", await pg.evaluate(() => !!$("cmAdd") && !!$("cmChat") && /Comments ·/.test($("sheetBody").textContent) && !!document.querySelector(".cm-by-big")));
   await pg.fill("#cmText", "love this dragon!!"); await pg.click("#cmSend"); await wait(200);
   const pend = await pg.evaluate(id => ({ mine: (COMM.comments[id] || []).filter(x => x.by === "me").length, pending: COMM.pending.filter(p => p.target === id), author: COMM.posts.find(p => p.id === id).by }), pid);
-  chk("your comment is posted and someone will answer in 1-4 minutes", pend.mine === 1 && pend.pending.length >= 1 && pend.pending.every(p => p.due - Date.now() > 40e3 && p.due - Date.now() < 4.2 * 60e3));
+  chk("your comment is posted and someone will answer after a while (their speed; later if they're asleep)", pend.mine === 1 && pend.pending.length >= 1 && pend.pending.every(p => p.due - Date.now() > 30e3));
   chk("…shown as writing a reply", /writing a reply/.test(await pg.textContent("#sheetBody")));
   // time passes: the reply lands
   await pg.evaluate(() => { COMM.pending.forEach(p => { p.due = Date.now() - 1; }); return Store.set("comm", COMM); });
