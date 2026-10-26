@@ -1,4 +1,5 @@
-const { SPRITES } = require("./sprites.js"), { full } = require("./render.js");
+const { SPRITES } = require("./sprites.js");
+const full = rows => rows.map(r => r.length === 16 ? r : r + [...r].reverse().join(""));
 // drop the most redundant symmetric column pairs until the sprite is W wide
 const edges = g => g.reduce((t, r) => { const l = r.findIndex(c => c !== "."), q = r.length - 1 - [...r].reverse().findIndex(c => c !== "."); return t + (l >= 0 && r[l] === "o") + (l >= 0 && r[q] === "o"); }, 0);
 const runs = g => g.reduce((t, r) => t + r.filter((c, k) => "egwa".includes(c) && c !== r[k - 1]).length, 0);

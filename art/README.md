@@ -4,6 +4,6 @@
 `pixel/` holds the pixel-art sources: `sprites.js` (25 sprites drawn 16×16, mostly as mirrored 8-wide halves),
 `pal.js` (colourways, skin tones, hair colours), `narrow.js` (narrows every sprite to 12×16 by dropping
 redundant column pairs; eyes and details are never merged or lost, outlines are repaired), `render.js`
-(SVG renderer: 24×24 tile, stepped round/soft/square frames). `pfp-bench-round2.html` is the rating page
+(SVG renderer: 24×24 tile, stepped round/soft/square frames; the view zooms to a 19.2-unit window centred on the drawn pixels, 5 screen px per pixel at 96 px, so the sprite fills the frame). `pfp-bench-round2.html` is the rating page
 (PFP Bench https://claude.ai/artifact/5UK3LZnrLV17sM8Guz9m56, db collection `pfp`: x_<sprite>, xf_<frame>,
 xp_<colourway>, general2). The owner asked for narrower sprites on 2026-10-26.
