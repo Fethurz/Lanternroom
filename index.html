@@ -647,6 +647,35 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 /* community (v1.62) */
 .cm-btn{position:relative}.cm-dot{position:absolute;top:2px;right:2px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;background:var(--accent);color:var(--accent-ink);font:700 10px/16px var(--f-body,inherit);text-align:center;box-shadow:0 0 0 2px var(--bg)}.cm-dot[hidden]{display:none}
 #railComm{position:relative}#railComm .cm-dot{position:static;display:inline-block;margin-left:4px;box-shadow:none}
+/* pixel pictures (v1.65) */
+.px-av{flex:none;display:inline-block;object-fit:cover;border-radius:50%;overflow:hidden;line-height:0;vertical-align:middle}span.px-av{border-radius:0}.px-av svg{display:block;width:100%;height:100%;image-rendering:pixelated}
+img.px-av{border-radius:50%}
+.pix-pop{position:fixed;inset:0;z-index:400;background:rgba(8,6,12,.72);display:flex;align-items:flex-end;justify-content:center;padding:0 max(0px,env(safe-area-inset-right,0px)) 0 max(0px,env(safe-area-inset-left,0px));animation:fadeIn .16s ease}
+.pix-card{width:min(560px,100%);max-height:calc(100dvh / var(--z,1) - 24px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:20px 20px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px}
+@media (min-width:700px){.pix-pop{align-items:center}.pix-card{border-radius:20px}}
+.pix-top{display:flex;align-items:center;justify-content:space-between}.pix-top b{font-family:var(--f-display,Georgia,serif);font-size:18px;font-weight:400}
+.pix-x{width:36px;height:36px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);font-size:16px}
+.pix-prev{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.pix-big{width:112px;height:112px;display:inline-flex;line-height:0}.pix-big img{width:112px;height:112px;border-radius:50%;object-fit:cover}.pix-big svg{width:112px;height:112px}
+.pix-small{display:inline-flex;align-items:center;gap:8px}
+.pix-body{display:flex;flex-direction:column;gap:8px;min-height:120px}.pix-body .hint{margin:0}.pix-body .lbl{margin:4px 0 0}
+.pix-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:8px}
+.pix-cell{display:flex;align-items:center;justify-content:center;padding:3px;border-radius:14px;border:2px solid transparent;background:var(--surface-2);min-height:60px}.pix-cell.on{border-color:var(--accent)}
+.pix-sws{display:flex;flex-wrap:wrap;gap:8px}
+.pix-sw{width:34px;height:34px;border-radius:50%;background:var(--c);border:2px solid var(--line);position:relative;overflow:hidden;font-size:15px;color:var(--fg)}.pix-sw.on{border-color:var(--fg);box-shadow:0 0 0 2px var(--accent)}
+.pix-any{background:conic-gradient(#ff6b6b,#ffd36b,#7fc85a,#48c8bc,#6b8bff,#c86bff,#ff6b6b)}.pix-any input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.pix-er{background:var(--surface-2)}
+.pix-pal{display:flex;align-items:center;gap:4px;padding:6px 10px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);font-size:13px;min-height:34px}.pix-pal.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.pix-pal i{width:16px;height:16px;border-radius:50%;display:inline-block}.pix-pal span{margin-left:4px}
+.pix-picks{display:flex;flex-wrap:wrap;gap:10px}.pix-pick{display:flex;align-items:center;gap:6px;font-size:13px}.pix-pick input{width:44px;height:34px;padding:0;border:1px solid var(--line);border-radius:8px;background:none}
+.pix-fr{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 12px;border-radius:14px;border:2px solid transparent;background:var(--surface-2);font-size:13px}.pix-fr.on{border-color:var(--accent)}
+.pix-draw{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.pix-canvas{display:grid;grid-template-columns:repeat(12,1fr);width:min(252px,100%);aspect-ratio:12/16;background:var(--bg);background-image:linear-gradient(45deg,rgba(255,255,255,.05) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.05) 75%),linear-gradient(45deg,rgba(255,255,255,.05) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.05) 75%);background-size:42px 42px;background-position:0 0,21px 21px;border:1px solid var(--line);border-radius:6px;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden}
+.pix-canvas i{display:block;border-right:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+.pix-tools{flex:1;min-width:200px;display:flex;flex-direction:column;gap:10px}
+.pix-card .row > *{flex:0 0 auto;min-width:0}
+.pix-foot{align-items:center;flex-wrap:nowrap;position:sticky;bottom:calc(-14px - env(safe-area-inset-bottom,0px));margin:0 -16px calc(-14px - env(safe-area-inset-bottom,0px));padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line)}.pix-card .pix-foot .grow{flex:1 1 auto}
+.pix-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.pix-tabs::-webkit-scrollbar{display:none}.pix-tabs .tab{flex:none;padding:6px 11px}
+.pix-tools .row{gap:6px}.pix-tools .chip{min-height:34px}
+.pp-pic{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .cm-av{flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:color-mix(in srgb,var(--av) 30%,var(--surface-2));border:1.5px solid var(--av);color:var(--av);font-family:var(--f-display,Georgia,serif);line-height:1}
 .cm-intro{margin:0 0 6px;font-size:12.5px}.cm-tabs{margin-bottom:8px}.cm-tabs #cmRefresh{margin-left:auto}
 .cm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
@@ -1561,22 +1590,215 @@ function initialSVG(c) {
   const cs = getComputedStyle(document.documentElement), ac = cs.getPropertyValue("--accent").trim() || "#e8a95b", bg = cs.getPropertyValue("--surface-2").trim() || "#2c2739";
   return "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100"><rect width="80" height="100" fill="${bg}"/><text x="40" y="62" font-family="Georgia,serif" font-size="40" fill="${ac}" text-anchor="middle">${l}</text></svg>`);
 }
+// Bots without a portrait show a pixel picture (their own, else a fitting stand-in; v1.65).
 function setImg(img, url, c) {
-  if (!url) { img.src = initialSVG(c); return; }
-  img.onerror = () => { img.onerror = null; img.src = initialSVG(c); };
+  if (!url) { img.src = pixURL(botPix(c)); return; }
+  img.onerror = () => { img.onerror = null; img.src = pixURL(botPix(c)); };
   if (img.getAttribute("src") !== url) img.src = url;
+}
+
+/* ---------- Pixel pictures (v1.65) ----------
+   Owner-approved on the PFP Bench (19 sprites, round/soft frames, 8 colourways; own colours, uploads and
+   a pixel maker). A picture is a spec {s: sprite key or "own", rows (own: 192 keys, 12×16), pal: colourway or
+   "custom", cols {b, c, a, bg} (custom), skin, hair (index or hex, people sprites), frame round|soft}.
+   Keys: . clear, o outline, b base, s shade, h highlight, e dark, w white, a accent, c second, d its shade, g glow. */
+const PIX_SPRITES = [
+  ["cat","Cat","creature","..............o......o....oo....oo....obo..obo....oab..bao....obboobbo...obbbbbbbbo..obhbbbbhbo..obeebbeebo..obewbbwebo..obbbaabbbo..osbboobbso...osbbbbso.....osssso.......oooo................"],
+  ["wolf","Wolf","creature",".o........o..oo......oo..obo....obo..obbo..obbo..obaboobabo..obbbbbbbbo.obbhbbbbhbboobbbbbbbbbboobeebbbbeeboobewbccbwebo.obbbccbbbo..osbceecbso...oscoocso.....osccso.......oooo................"],
+  ["fox","Fox","creature",".............o........o..oo......oo..oeo....oeo..obeo..oebo..obbboobbbo.obbbbbbbbbboobhbbbbbbhboobeebbbbeeboobewbbbbweboowwbbbbbbwwo.owwwbbwwwo...owweewwo.....owwwwo.......oooo................"],
+  ["bear","Bear","creature",".............ooo....ooo.obsbo..obsboobsbboobbsbo.obbbbbbbbo.obbhbbbbhbboobbbbbbbbbboobeebbbbeeboobewbbbbweboobbbbccbbbboobbbccccbbbo.obbceecbbo..osbcoocbso...osbccbso.....oooooo..............."],
+  ["bunny","Bunny","creature","..oo....oo...obao..oabo..obao..oabo..obao..oabo..obao..oabo..obbo..obbo...obboobbo...obbbbbbbbo..obhbbbbhbo..obeebbeebo..obewbbwebo..oabbaabbao...obboobbo....osbbbbso.....oooooo..............."],
+  ["dog","Dog","creature","..............oooooooo....obbbbbbo...obbbbbbbbo.ocbhbbbbhbcoocbbbbbbbbcooceebbbbeecoocewbbbbwecoocbbwwwwbbco.obwweewwbo..obwwoowwbo...owwaawwo....obwaawbo.....oooooo..........................."],
+  ["owl","Owl","creature",".............o........o..oo......oo..oboooooobo..obbbbbbbbo.obccbbbbccboocwecbbcewcooceecbbceecoobccbaabccboobbbbaabbbboobbbbbbbbbboobhbhbbhbhbo.obhbhhbhbo..obbbbbbbbo...oooooooo.............."],
+  ["ghost","Ghost","creature","................oooo.......ohhhho.....ohhhhhho...ohhhhhhhho..ohhhhhhhho.ohhehhhhehhoohhehhhhehhoohhhhhhhhhhoohaaheehaahoohhhheehhhhoohhhhhhhhhhoohhhhhhhhhhoohhohoohohho.oo.o..o.oo............."],
+  ["skull","Skull","creature","...............oooooo.....obbbbbbo...obbbbbbbbo..obhbbbbhbo.obbbbbbbbbboobeebbbbeeboobeebbbbeeboobbebbbbebboobbbbeebbbbo.obbbbbbbbo...obbssbbo....ossbbsso.....oooooo..........................."],
+  ["alien","Alien","creature","...............oooooo.....obbbbbbo...obhbbbbhbo.obbbbbbbbbboobbbbbbbbbbooeeebbbbeeeooeweebbeeweoobeeebbeeebo.obbbbbbbbo..obbbbbbbbo...obbbbbbo.....obeebo.......obbo.........oo................."],
+  ["robot","Robot","creature",".....oo.........oaao.........oo......oooooooooo..obbbbbbbbo.obhbbbbbbhboobeeeeeeeeboobegeeeegeboobeeeeeeeeboobbbbbbbbbboobsbsbbsbsboobbbbbbbbbbo.oooooooooo....obbbbo.....oooooooo.............."],
+  ["pumpkin","Pumpkin","creature","................occo......oocoocoo...obsbbbbsbo.obsbbbbbbsboobsbbbbbbsboobgsbbbbsgboobgsbbbbsgboobsbbggbbsboobsbbbbbbsboobggggggggboobgbgbbgbgbo.osbbbbbbso...osbbbbso.....oooooo..............."],
+  ["octopus","Octopus","creature","................oooo......oobbbboo...obhbbbbhbo..obbbbbbbbo.obbbbbbbbbboobbeebbeebboobbwebbewbboobbbbbbbbbbo.obbbbbbbbo..obbbbbbbbo.obboobboobboobboobboobboob.ob..bo.boo..o....o..o............"],
+  ["knight","Knight","person","...............oooooo.....obhhhhbo...obhbbbbhbo..obbbbbbbbo.obbbbbbbbbboobbssssssbboobseeeeeesboobbsbssbsbboobbbbbbbbbboobsbsbbsbsbo.obbbbbbbbo..osbbbbbbso...osssssso.....oooooo..............."],
+  ["wizard","Wizard","person",".....oo.........occo........occo.......occcco.....occaacco...occcccccco.oooooooooooo.obbbbbbbbo..obebbbbebo..obbbbbbbbo..owbbbbbbwo..owwwwwwwwo..owwwwwwwwo...owwwwwwo.....oooooo..............."],
+  ["girl","Long hair","human","...............oooooo.....occcccco...ocdccccdco..occbbbbcco..ocbbbbbbco..ocbebbebco..ocbebbebco..ocabbbbaco..ocbbbbbbco..ocbbaabbco..ocsbbbbsco..occossocco..ocoddddoco...oddddddo.....oooooo..."],
+  ["guy","Short hair","human","...............oooooo.....occcccco...occdccdcco..ocbbbbbbco..obbbbbbbbo..obbebbebbo..obbebbebbo.osbbbbbbbbso.obbbssbbbo..obbbbbbbbo..obbboobbbo...obbbbbbo.....osssso.....oddddddo...oddddddddo."],
+  ["hood","Hooded","person","...oooooo.....occcccco....occcccco...occcccccco..ocddddddco.ocdeeeeeedcoocdeeeeeedcoocdegeegedcoocdeeeeeedcoocdeeeeeedcooccdeeeedccoocccddddcccooccccccccccooccccccccccooooooooooooo............"],
+  ["lantern","Lantern","object","................oooo.......o....o......oooooo.....occcccco...oooooooooo..oceeeeeeco..oceeggeeco..ocegwwgeco..oceggggeco..oceeggeeco..oceeeeeeco..oooooooooo...occcccco....oooooooo.............."]
+];
+const PIX_PALS = {"ember":{"n":"Ember","o":"#2a1208","b":"#e8a95b","s":"#b86a2c","h":"#ffd89a","e":"#2a1208","w":"#fff6e6","a":"#ff7a6b","c":"#7a4a2a","d":"#4a2a16","g":"#ffef7a","bg":["#4a2418","#2a140c"]},"moss":{"n":"Moss","o":"#0f2410","b":"#7fc85a","s":"#4a8a36","h":"#c6f0a4","e":"#0f2410","w":"#f2ffe8","a":"#ff8fa8","c":"#c8b07a","d":"#8a7448","g":"#fff07a","bg":["#22402a","#122418"]},"dusk":{"n":"Dusk","o":"#1a0e30","b":"#a884f0","s":"#6e4fc0","h":"#dccaff","e":"#1a0e30","w":"#f6f0ff","a":"#ff8fc8","c":"#4a3a7a","d":"#2e2450","g":"#7ff0ff","bg":["#33245a","#1a1232"]},"tide":{"n":"Tide","o":"#06222a","b":"#48c8bc","s":"#2a8890","h":"#b8f2ea","e":"#06222a","w":"#effffd","a":"#ff9a8a","c":"#e8d8a8","d":"#a89868","g":"#fff8a8","bg":["#123a44","#08202a"]},"rose":{"n":"Rose","o":"#2e0a1a","b":"#f27aab","s":"#b84878","h":"#ffd0e2","e":"#2e0a1a","w":"#fff2f8","a":"#ff4a6a","c":"#5a2a4a","d":"#3a1830","g":"#ffe07a","bg":["#4a1a34","#2a0c1c"]},"bone":{"n":"Bone","o":"#22201a","b":"#e6dcc4","s":"#a89878","h":"#fffaee","e":"#22201a","w":"#ffffff","a":"#e2766f","c":"#6a5a48","d":"#443a2e","g":"#ff6a4a","bg":["#3c3830","#1e1c18"]},"blood":{"n":"Blood","o":"#1a0304","b":"#d63a3a","s":"#8a1a22","h":"#ff9a8a","e":"#1a0304","w":"#ffe8e0","a":"#ffd04a","c":"#2a1418","d":"#160a0c","g":"#ffe84a","bg":["#3a0c10","#1c0406"]},"frost":{"n":"Frost","o":"#0c1a2e","b":"#a0ccf8","s":"#5f8ac4","h":"#eef8ff","e":"#0c1a2e","w":"#ffffff","a":"#ff9ab8","c":"#e8eef8","d":"#a8b8d0","g":"#7ff8ff","bg":["#1e3050","#0c1628"]}};
+const PIX_SKINS = [["#f6d6bc","#d8a888","#fff0e2"],["#e8b48c","#c08860","#f8d4b4"],["#c88a5a","#9a6038","#e2aa7c"],["#9a6440","#6e4226","#b88058"],["#6a4028","#482814","#8a5a3a"],["#dfe8f0","#a8b8c8","#ffffff"]];
+const PIX_HAIRS = [["#2a1a14","#160c08"],["#7a4a2a","#4a2a16"],["#e8c070","#b08a40"],["#c8402a","#8a2414"],["#f0f0f0","#b8b8c0"],["#5a7aff","#3a50c0"],["#ff6aa8","#c03a78"],["#4ad0a0","#2a9070"]];
+const PIX_W = 12, PIX_H = 16, PIX_KEYS = "obshewacdg";
+const PIX_BY = Object.fromEntries(PIX_SPRITES.map(s => [s[0], s]));
+const PIX_FRAMES = [["round", "Pixel circle"], ["soft", "Soft square"]];
+const PIX_KEYNAMES = { o: "Outline", b: "Main", s: "Shade", h: "Shine", e: "Dark", w: "White", a: "Detail", c: "Second", d: "Second shade", g: "Glow" };
+let PIXN = 0;
+const pixHex = h => /^#[0-9a-f]{6}$/i.test(h || "") ? h : null;
+const pixDark = (h, t) => mixHex(h, "#000000", t), pixLight = (h, t) => mixHex(h, "#ffffff", t);
+function pixSkin(v) { if (Number.isInteger(v)) return PIX_SKINS[((v % PIX_SKINS.length) + PIX_SKINS.length) % PIX_SKINS.length]; const h = pixHex(v); return h ? [h, pixDark(h, .3), pixLight(h, .45)] : PIX_SKINS[0]; }
+function pixHair(v) { if (Number.isInteger(v)) return PIX_HAIRS[((v % PIX_HAIRS.length) + PIX_HAIRS.length) % PIX_HAIRS.length]; const h = pixHex(v); return h ? [h, pixDark(h, .4)] : PIX_HAIRS[0]; }
+function pixCustom(cols = {}) {
+  const b = pixHex(cols.b) || "#e8a95b", c = pixHex(cols.c) || pixDark(b, .55), a = pixHex(cols.a) || "#ff7a6b", bg = pixHex(cols.bg) || pixDark(b, .72);
+  return { o: pixDark(b, .84), b, s: pixDark(b, .33), h: pixLight(b, .5), e: pixDark(b, .84), w: pixLight(b, .9), a, c, d: pixDark(c, .4), g: pixLight(a, .45), bg: [bg, pixDark(bg, .45)] };
+}
+function pixRows(spec) { if (spec?.s === "own") { const r = String(spec.rows || "").replace(/[^.obshewacdg]/g, ".").padEnd(PIX_W * PIX_H, ".").slice(0, PIX_W * PIX_H); return r; } return (PIX_BY[spec?.s] || PIX_SPRITES[0])[3]; }
+function pixColors(spec) {
+  const p = spec?.pal === "custom" ? pixCustom(spec.cols) : { ...(PIX_PALS[spec?.pal] || PIX_PALS.ember) };
+  if ((PIX_BY[spec?.s] || [])[2] === "human" || (spec?.s === "own" && (spec.skin != null || spec.hair != null))) {
+    if (spec.skin != null) { const k = pixSkin(spec.skin); p.b = k[0]; p.s = k[1]; p.h = k[2]; }
+    if (spec.hair != null) { const k = pixHair(spec.hair); p.c = k[0]; p.d = k[1]; }
+  }
+  return p;
+}
+const PIX_MASK = { round: "M8 0h8v1h2v1h2v1h1v1h1v2h1v2h1v8h-1v2h-1v2h-1v1h-1v1h-2v1h-2v1h-8v-1h-2v-1h-2v-1h-1v-1h-1v-2h-1v-2h-1v-8h1v-2h1v-2h1v-1h1v-1h2v-1h2z", soft: "M3 0h18v1h1v1h1v1h1v18h-1v1h-1v1h-1v1h-18v-1h-1v-1h-1v-1h-1v-18h1v-1h1v-1h1z" };
+// The sprite sits on a 24-unit tile; the view zooms to a 19.2-unit window centred on what's drawn (5 screen px per pixel at 96 px).
+function pixSVG(spec, size = 34) {
+  const rows = pixRows(spec), col = pixColors(spec), ox = (24 - PIX_W) / 2, oy = 5;
+  let px = "", t = PIX_H, b = -1;
+  for (let y = 0; y < PIX_H; y++) for (let x = 0; x < PIX_W; x++) { const k = rows[y * PIX_W + x]; if (k === "." || !col[k]) continue; t = Math.min(t, y); b = Math.max(b, y); px += `<rect x="${x + ox}" y="${y + oy}" width="1" height="1" fill="${col[k]}"/>`; }
+  if (b < 0) { t = 0; b = PIX_H - 1; }
+  const V = 19.2, vx = 2.4, vy = Math.round((oy + (t + b + 1) / 2 + 0.4 - V / 2) * 5) / 5;
+  let bg = `<rect width="24" height="24" fill="${col.bg[1]}"/><rect width="24" height="13" fill="${col.bg[0]}"/>`;
+  for (let x = 0; x < 24; x += 2) bg += `<rect x="${x + (x % 4 ? 1 : 0)}" y="13" width="1" height="1" fill="${col.bg[0]}"/>`;
+  const id = "lrpx" + (++PIXN), m = PIX_MASK[spec?.frame] || PIX_MASK.round;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vx} ${vy} ${V} ${V}" width="${size}" height="${size}" shape-rendering="crispEdges" aria-hidden="true"><defs><clipPath id="${id}"><path d="${m}" transform="translate(${vx} ${vy}) scale(0.8)"/></clipPath></defs><g clip-path="url(#${id})">${bg}${px}</g></svg>`;
+}
+const pixURL = spec => "data:image/svg+xml," + encodeURIComponent(pixSVG(spec, 96));
+const pixOk = spec => !!spec && typeof spec === "object" && (PIX_BY[spec.s] || spec.s === "own");
+// A fitting picture from a bit of text (a bot's or person's description), the same every time for the same seed.
+const PIX_GUESS = [[/\b(wolf|wolves|werewolf|lupine|husky)\b/i, "wolf"], [/\b(fox|vixen|kitsune)\b/i, "fox"], [/\b(cat|feline|kitty|tiger|lion|panther|leopard|neko)\b/i, "cat"], [/\b(bear|panda|ursine)\b/i, "bear"], [/\b(bunny|rabbit|hare|lagomorph)\b/i, "bunny"], [/\b(dog|puppy|hound|canine)\b/i, "dog"], [/\b(owl|bird|avian|harpy|raven|crow|gryphon)\b/i, "owl"], [/\b(ghost|spirit|phantom|spectre|specter|haunt)/i, "ghost"], [/\b(skull|skeleton|undead|lich|necromanc|bones?)\b/i, "skull"], [/\b(alien|xeno|extraterrestrial|space)\b/i, "alien"], [/\b(robot|android|cyborg|mech|synth|ai\b|machine)/i, "robot"], [/\b(pumpkin|halloween|spooky|autumn)\b/i, "pumpkin"], [/\b(octopus|tentacle|squid|kraken|cephalopod|eldritch)/i, "octopus"], [/\b(knight|paladin|warrior|soldier|guard|armou?r)\b/i, "knight"], [/\b(wizard|mage|witch|sorcer|warlock|magic)/i, "wizard"], [/\b(rogue|assassin|thief|cult|hooded|shadow|mysterious)\b/i, "hood"], [/\b(lantern|candle|light)\b/i, "lantern"], [/\b(she|her|woman|girl|lady|female|wife|queen|mistress)\b/i, "girl"], [/\b(he|him|his|man|guy|boy|male|husband|king|master)\b/i, "guy"]];
+function pixAuto(seed, text = "", guess = 0.75) {
+  const r = n => (hash(seed + ":" + n) >>> 0) / 4294967296;
+  let s = null;
+  if (r(1) < guess) for (const [re, k] of PIX_GUESS) if (re.test(text)) { s = k; break; }
+  if (!s) s = PIX_SPRITES[Math.floor(r(2) * PIX_SPRITES.length)][0];
+  const pals = Object.keys(PIX_PALS), spec = { s, pal: pals[Math.floor(r(3) * pals.length)], frame: r(4) < 0.62 ? "round" : "soft" };
+  if (PIX_BY[s][2] === "human") { spec.skin = Math.floor(r(5) * PIX_SKINS.length); spec.hair = Math.floor(r(6) * PIX_HAIRS.length); }
+  return spec;
+}
+const botPixText = c => [c?.name, ...(c?.tags || []), c?.appearance, (c?.description || "").slice(0, 400)].filter(Boolean).join(" ");
+// A bot's own pixel picture (picked in the editor), else a fitting stand-in.
+const botPix = c => pixOk(c?.pix) ? c.pix : c?.kind === "world" ? { ...pixAuto(c?.id || c?.name || "w", "", 0), s: "lantern" } : pixAuto(c?.id || c?.name || "?", botPixText(c));
+// Persona pictures: an upload (p.pic) or a pixel picture (p.pix).
+const personaPic = p => p?.pic ? p.pic : pixOk(p?.pix) ? pixURL(p.pix) : "";
+function picHTML(o, size = 34, cls = "") { // o = {pic} or {pix}
+  if (o?.pic) return `<img class="px-av ${cls}" src="${esc(o.pic)}" alt="" style="width:${size}px;height:${size}px">`;
+  if (pixOk(o?.pix)) return `<span class="px-av ${cls} f-${o.pix.frame === "soft" ? "soft" : "round"}" style="width:${size}px;height:${size}px">${pixSVG(o.pix, size)}</span>`;
+  return "";
+}
+
+// The picture picker: a layer over whatever is open. Resolves {pix}, {pic}, {none: true} or null (closed).
+function openPix(cur = {}, opt = {}) {
+  return new Promise(resolve => {
+    document.getElementById("pixPop")?.remove();
+    const pop = document.createElement("div"); pop.id = "pixPop"; pop.className = "pix-pop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", opt.title || "Picture");
+    document.body.appendChild(pop);
+    const base = pixOk(cur.pix) ? cur.pix : pixAuto(opt.seed || uid(), opt.text || "");
+    let spec = JSON.parse(JSON.stringify(base)), pic = cur.pic || "", mode = cur.pic ? "pic" : "pix", tab = cur.pic ? "up" : "pic";
+    let draft = spec.s === "own" ? pixRows(spec) : null, tool = "b", mirror = true, undo = [];
+    const done = v => { pop.remove(); document.removeEventListener("keydown", onKey, true); resolve(v); };
+    const onKey = e => { if (e.key === "Escape") { e.stopPropagation(); e.preventDefault(); done(null); } };
+    document.addEventListener("keydown", onKey, true);
+    pop._close = () => done(null);
+    const isHuman = () => (PIX_BY[spec.s] || [])[2] === "human" || (spec.s === "own" && (spec.skin != null || spec.hair != null));
+    const prev = () => mode === "pic" && pic ? `<img src="${esc(pic)}" alt="">` : pixSVG(spec, 112);
+    const sw = (on, attr, bgc, title) => `<button type="button" class="pix-sw ${on ? "on" : ""}" ${attr} title="${esc(title)}" aria-label="${esc(title)}" style="--c:${esc(bgc)}"></button>`;
+    function body() {
+      if (tab === "pic") return `<div class="pix-grid">${PIX_SPRITES.map(s => `<button type="button" class="pix-cell ${mode === "pix" && spec.s === s[0] ? "on" : ""}" data-s="${s[0]}" aria-label="${esc(s[1])}">${pixSVG({ ...spec, s: s[0], skin: spec.skin ?? 1, hair: spec.hair ?? 0 }, 52)}</button>`).join("")}${draft ? `<button type="button" class="pix-cell ${mode === "pix" && spec.s === "own" ? "on" : ""}" data-s="own" aria-label="My drawing">${pixSVG({ ...spec, s: "own", rows: draft }, 52)}</button>` : ""}</div><p class="hint">Change colours, the frame or draw your own in the other tabs.</p>`;
+      if (tab === "col") {
+        const c = spec.pal === "custom" ? pixCustom(spec.cols) : PIX_PALS[spec.pal] || PIX_PALS.ember;
+        let h = `<div class="lbl">Colours</div><div class="pix-sws">${Object.entries(PIX_PALS).map(([k, p]) => `<button type="button" class="pix-pal ${spec.pal === k ? "on" : ""}" data-pal="${k}"><i style="background:${p.b}"></i><i style="background:${p.c}"></i><i style="background:${p.bg[0]}"></i><span>${esc(p.n)}</span></button>`).join("")}<button type="button" class="pix-pal ${spec.pal === "custom" ? "on" : ""}" data-pal="custom"><i style="background:conic-gradient(#e8a95b,#7fc85a,#48c8bc,#a884f0,#f27aab,#e8a95b)"></i><span>Your own</span></button></div>`;
+        if (spec.pal === "custom") h += `<div class="pix-picks">${[["b", "Main"], ["c", "Second"], ["a", "Detail"], ["bg", "Backdrop"]].map(([k, n]) => `<label class="pix-pick"><input type="color" data-col="${k}" value="${k === "bg" ? c.bg[0] : c[k]}"><span>${n}</span></label>`).join("")}</div>`;
+        if (isHuman()) {
+          const sk = pixSkin(spec.skin ?? 1)[0], hr = pixHair(spec.hair ?? 0)[0];
+          h += `<div class="lbl">Skin</div><div class="pix-sws">${PIX_SKINS.map((k, i) => sw(spec.skin === i, `data-skin="${i}"`, k[0], "Skin " + (i + 1))).join("")}<label class="pix-sw pix-any ${typeof spec.skin === "string" ? "on" : ""}" title="Any colour"><input type="color" data-anyskin value="${sk}"></label></div>`;
+          h += `<div class="lbl">Hair and clothes</div><div class="pix-sws">${PIX_HAIRS.map((k, i) => sw(spec.hair === i, `data-hair="${i}"`, k[0], "Hair " + (i + 1))).join("")}<label class="pix-sw pix-any ${typeof spec.hair === "string" ? "on" : ""}" title="Any colour"><input type="color" data-anyhair value="${hr}"></label></div>`;
+        }
+        return h;
+      }
+      if (tab === "frame") return `<div class="pix-sws">${PIX_FRAMES.map(([k, n]) => `<button type="button" class="pix-fr ${(spec.frame || "round") === k ? "on" : ""}" data-fr="${k}">${pixSVG({ ...spec, frame: k }, 64)}<span>${n}</span></button>`).join("")}</div>`;
+      if (tab === "draw") {
+        if (!draft) return `<p class="note">Draw your own picture on a 12×16 grid, in the same pixel style. It takes the colours from the Colours tab, so you can recolour it any time.</p><div class="row"><button type="button" class="btn" id="pxBlank">Start blank</button><button type="button" class="btn primary" id="pxFrom">Start from ${esc((PIX_BY[spec.s] || PIX_SPRITES[0])[1])}</button></div>`;
+        const col = pixColors({ ...spec, s: "own", rows: draft });
+        return `<div class="pix-draw"><div class="pix-canvas" id="pxCanvas" style="--bg:${col.bg[0]}">${[...draft].map((k, i) => `<i data-i="${i}" style="${k !== "." ? `background:${col[k]}` : ""}"></i>`).join("")}</div>
+          <div class="pix-tools"><div class="pix-sws">${[...PIX_KEYS].map(k => `<button type="button" class="pix-sw ${tool === k ? "on" : ""}" data-tool="${k}" style="--c:${col[k]}" title="${PIX_KEYNAMES[k]}" aria-label="${PIX_KEYNAMES[k]}"></button>`).join("")}<button type="button" class="pix-sw pix-er ${tool === "." ? "on" : ""}" data-tool="." title="Eraser" aria-label="Eraser">⌫</button></div>
+          <div class="row"><button type="button" class="chip ${mirror ? "on" : ""}" id="pxMir">⇋ Mirror</button><button type="button" class="chip ${tool === "fill" ? "on" : ""}" id="pxFill">Fill</button><button type="button" class="chip" id="pxUndo" ${undo.length ? "" : "disabled"}>Undo</button><button type="button" class="chip" id="pxClear">Clear</button><button type="button" class="chip" id="pxNew">Start over</button></div>
+          <p class="hint">Tap or drag to paint. ${PIX_KEYNAMES[tool === "fill" ? fillKey : tool] || "Eraser"}${tool === "fill" ? " fill" : ""}. Change what each colour looks like in Colours.</p></div></div>`;
+      }
+      return `<p class="note">Use a picture of your own instead.</p><div class="row"><label class="btn ${pic ? "" : "primary"}" for="pxFile">${pic ? "Choose another" : "Choose a picture"}</label><input type="file" id="pxFile" accept="image/*" hidden>${pic && mode === "pic" ? `<button type="button" class="btn" id="pxPix">Use the pixel picture instead</button>` : ""}</div>`;
+    }
+    let fillKey = "b";
+    function draw() {
+      pop.innerHTML = `<div class="pix-card"><div class="pix-top"><b>${esc(opt.title || "Picture")}</b><button type="button" class="pix-x" id="pxX" aria-label="Close">✕</button></div>
+        <div class="pix-prev"><span class="pix-big f-${spec.frame === "soft" ? "soft" : "round"}">${prev()}</span><span class="pix-small">${mode === "pix" ? pixSVG(spec, 34) + pixSVG(spec, 22) : ""}</span>${mode === "pix" ? `<button type="button" class="chip" id="pxDice">🎲 Surprise me</button>` : ""}</div>
+        <div class="tabs pix-tabs">${[["pic", "Picture"], ["col", "Colours"], ["frame", "Frame"], ["draw", "Draw"], ...(opt.upload === false ? [] : [["up", "Upload"]])].map(([k, n]) => `<button type="button" class="tab ${tab === k ? "on" : ""}" data-tab="${k}">${n}</button>`).join("")}</div>
+        <div class="pix-body">${body()}</div>
+        <div class="row pix-foot">${opt.none ? `<button type="button" class="btn" id="pxNone">${esc(opt.none)}</button>` : ""}<span class="grow"></span><button type="button" class="btn" id="pxCancel">Cancel</button><button type="button" class="btn primary" id="pxSave">Save</button></div></div>`;
+      wire();
+    }
+    const q = s => pop.querySelector(s), qa = s => pop.querySelectorAll(s);
+    function paint(i) {
+      const k = tool === "fill" ? null : tool, put = (j, v) => { draft = draft.slice(0, j) + v + draft.slice(j + 1); };
+      const twin = j => ((j / PIX_W) | 0) * PIX_W + PIX_W - 1 - j % PIX_W;
+      const flood = i0 => { const from = draft[i0], to = fillKey; if (from === to) return; const st = [i0], seen = new Set(); while (st.length) { const j = st.pop(); if (seen.has(j) || draft[j] !== from) continue; seen.add(j); put(j, to); const x = j % PIX_W, y = (j / PIX_W) | 0; if (x > 0) st.push(j - 1); if (x < PIX_W - 1) st.push(j + 1); if (y > 0) st.push(j - PIX_W); if (y < PIX_H - 1) st.push(j + PIX_W); } };
+      if (tool === "fill") { flood(i); if (mirror) flood(twin(i)); }
+      else { put(i, k); if (mirror) put(twin(i), k); }
+      spec = { ...spec, s: "own", rows: draft }; mode = "pix";
+    }
+    function refreshCanvas() {
+      const col = pixColors(spec), cv = q("#pxCanvas"); if (!cv) return;
+      cv.querySelectorAll("i").forEach((el, i) => { const k = draft[i]; el.style.background = k !== "." ? col[k] : ""; });
+      q(".pix-big").innerHTML = prev(); q(".pix-small").innerHTML = pixSVG(spec, 34) + pixSVG(spec, 22);
+      const u = q("#pxUndo"); if (u) u.disabled = !undo.length;
+    }
+    function wire() {
+      q("#pxX").onclick = q("#pxCancel").onclick = () => done(null);
+      q("#pxSave").onclick = () => { if (mode === "pic" && pic) return done({ pic }); if (spec.s === "own" && !/[^.]/.test(draft || "")) return toast("Draw something first"); done({ pix: spec }); };
+      if (q("#pxNone")) q("#pxNone").onclick = () => done({ none: true });
+      if (q("#pxDice")) q("#pxDice").onclick = () => { spec = pixAuto(uid(), "", 0); mode = "pix"; draw(); };
+      qa("[data-tab]").forEach(b => b.onclick = () => { tab = b.dataset.tab; if (tab !== "up" && mode === "pic" && tab !== "pic") mode = "pix"; draw(); });
+      qa("[data-s]").forEach(b => b.onclick = () => { const s = b.dataset.s; spec = { ...spec, s }; if (s === "own") spec.rows = draft; else delete spec.rows; if (PIX_BY[s]?.[2] === "human") { spec.skin ??= 1; spec.hair ??= 0; } mode = "pix"; draw(); });
+      qa("[data-pal]").forEach(b => b.onclick = () => { const k = b.dataset.pal; spec = { ...spec, pal: k }; if (k === "custom" && !spec.cols) { const c = PIX_PALS[base.pal] || PIX_PALS.ember; spec.cols = { b: c.b, c: c.c, a: c.a, bg: c.bg[0] }; } mode = "pix"; draw(); });
+      qa("[data-col]").forEach(i => i.oninput = () => { spec = { ...spec, cols: { ...spec.cols, [i.dataset.col]: i.value } }; q(".pix-big").innerHTML = prev(); q(".pix-small").innerHTML = pixSVG(spec, 34) + pixSVG(spec, 22); });
+      qa("[data-col]").forEach(i => i.onchange = () => draw());
+      qa("[data-skin]").forEach(b => b.onclick = () => { spec = { ...spec, skin: +b.dataset.skin }; draw(); });
+      qa("[data-hair]").forEach(b => b.onclick = () => { spec = { ...spec, hair: +b.dataset.hair }; draw(); });
+      if (q("[data-anyskin]")) q("[data-anyskin]").onchange = e => { spec = { ...spec, skin: e.target.value }; draw(); };
+      if (q("[data-anyhair]")) q("[data-anyhair]").onchange = e => { spec = { ...spec, hair: e.target.value }; draw(); };
+      qa("[data-fr]").forEach(b => b.onclick = () => { spec = { ...spec, frame: b.dataset.fr }; draw(); });
+      if (q("#pxBlank")) q("#pxBlank").onclick = () => { draft = ".".repeat(PIX_W * PIX_H); spec = { ...spec, s: "own", rows: draft }; mode = "pix"; draw(); };
+      if (q("#pxFrom")) q("#pxFrom").onclick = () => { const s = PIX_BY[spec.s] || PIX_SPRITES[0]; draft = s[3]; if (s[2] === "human") { spec.skin ??= 1; spec.hair ??= 0; } spec = { ...spec, s: "own", rows: draft }; mode = "pix"; draw(); };
+      if (q("#pxNew")) q("#pxNew").onclick = () => { draft = null; undo = []; draw(); };
+      if (q("#pxMir")) q("#pxMir").onclick = () => { mirror = !mirror; draw(); };
+      if (q("#pxFill")) q("#pxFill").onclick = () => { if (tool !== "fill") { fillKey = tool === "." ? "." : tool; tool = "fill"; } else tool = fillKey; draw(); };
+      if (q("#pxUndo")) q("#pxUndo").onclick = () => { if (!undo.length) return; draft = undo.pop(); spec = { ...spec, rows: draft }; draw(); };
+      if (q("#pxClear")) q("#pxClear").onclick = () => { undo.push(draft); draft = ".".repeat(PIX_W * PIX_H); spec = { ...spec, s: "own", rows: draft }; draw(); };
+      qa("[data-tool]").forEach(b => b.onclick = () => { if (tool === "fill") fillKey = b.dataset.tool; else tool = b.dataset.tool; draw(); });
+      const cv = q("#pxCanvas");
+      if (cv) {
+        let down = false;
+        const at = e => { const r = cv.getBoundingClientRect(), x = Math.floor((e.clientX - r.left) / r.width * PIX_W), y = Math.floor((e.clientY - r.top) / r.height * PIX_H); return x >= 0 && y >= 0 && x < PIX_W && y < PIX_H ? y * PIX_W + x : -1; };
+        cv.onpointerdown = e => { e.preventDefault(); const i = at(e); if (i < 0) return; undo.push(draft); if (undo.length > 40) undo.shift(); down = tool !== "fill"; try { cv.setPointerCapture(e.pointerId); } catch {} paint(i); refreshCanvas(); };
+        cv.onpointermove = e => { if (!down) return; const i = at(e); if (i >= 0) { paint(i); refreshCanvas(); } };
+        cv.onpointerup = cv.onpointercancel = () => { down = false; };
+      }
+      if (q("#pxFile")) q("#pxFile").onchange = async e => { const f = e.target.files?.[0]; if (!f) return; try { pic = await mePicFrom(f); mode = "pic"; draw(); } catch (err) { toast(err.message); } };
+      if (q("#pxPix")) q("#pxPix").onclick = () => { mode = "pix"; tab = "pic"; draw(); };
+    }
+    draw();
+  });
 }
 function looks(c) { return (c.visual || "").trim() || (c.appearance || "").trim() || (c.kind === "world" ? (c.description || c.name).slice(0, 300) : `a person named ${c.name}`); }
 // One portrait per character: mood shows only as the ring around it, never as a different picture.
 function portraitURL(c, _mood, seed) {
   const mood = "neutral";
   if (c.customPortrait) return c.customPortrait;
+  if (pixOk(c.pix)) return pixURL(c.pix);
   if (!S.settings.portraits) return "";
   const t = artOf(c);
   return imgURL(`${S.settings.imgStyle}, ${ART[t].subject}, ${looks(c)}, ${mood} ${t === "feral" ? "expression" : "facial expression"}, ${t === "feral" ? "head and upper body" : "head and shoulders"}, centered, looking at viewer, clean simple background, well-proportioned, clean linework, adult`, 512, 640, seed ?? c.seed);
 }
 function coverURL(c, seed) {
   if (c.customPortrait) return c.customPortrait;
+  if (pixOk(c.pix)) return pixURL(c.pix);
   if (!S.settings.portraits) return "";
   return imgURL(`${S.settings.imgStyle}, ${looks(c)}, sweeping establishing shot, environment key art, atmospheric, no people, no text`, 640, 800, seed ?? c.seed);
 }
@@ -4723,7 +4945,7 @@ function openPersonas() {
       <div class="menu"><button class="btn kind-opt gen-opt" id="pDesc">✦ Describe a persona<small>A few words about who you want to be; the AI writes a short persona (or a whole group).</small></button><button class="btn kind-opt gen-opt" id="pSurp">🎲 Surprise persona<small>Pick a few tags and get someone new to play.</small></button><button class="btn kind-opt gen-opt" id="pQuiz">📝 Persona quiz<small>Tap through quick questions about your look and personality.</small></button></div>`;
     for (const p of S.personas) {
       const row = document.createElement("div"); row.className = "listrow" + (p.id === S.personaId ? " on" : "");
-      row.innerHTML = `<div class="grow"><div><span class="p-dot" style="background:${esc(personaColor(p))}"></span><b>${esc(p.name || "Unnamed")}</b>${p.id === S.personaId ? '<span class="badge">Active</span>' : ""}</div><div class="sub">${isGroupP(p) ? `Group · ${esc(groupMembersP(p).map(m => m.name).join(", "))}` : esc((p.description || "No description").slice(0, 90))}</div></div>${p.id === S.personaId ? "" : '<button class="btn small" data-use>Use</button>'}<button class="btn small" data-edit>Edit</button>`;
+      row.innerHTML = `${picHTML(personaPicOf(p), 40)}<div class="grow"><div><span class="p-dot" style="background:${esc(personaColor(p))}"></span><b>${esc(p.name || "Unnamed")}</b>${p.id === S.personaId ? '<span class="badge">Active</span>' : ""}</div><div class="sub">${isGroupP(p) ? `Group · ${esc(groupMembersP(p).map(m => m.name).join(", "))}` : esc((p.description || "No description").slice(0, 90))}</div></div>${p.id === S.personaId ? "" : '<button class="btn small" data-use>Use</button>'}<button class="btn small" data-edit>Edit</button>`;
       row.querySelector("[data-use]")?.addEventListener("click", () => usePersona(p.id));
       row.querySelector("[data-edit]").onclick = () => editPersona(p, false);
       $("pList").appendChild(row);
@@ -4740,6 +4962,8 @@ async function usePersona(id) {
   if (!$("chat").hidden && S.charId) await openChat(S.charId); else renderHome();
   if (!$("chat").hidden) toast(`Playing as ${personaName(id)}`);
 }
+// A persona's picture: their upload or pixel picture, else a fitting pixel stand-in (v1.65).
+const personaPicOf = p => p?.pic ? { pic: p.pic } : { pix: pixOk(p?.pix) ? p.pix : pixAuto(p?.id || "p", p?.description || "") };
 function editPersona(p, isNew) {
   const work = { ...p }, grp = Array.isArray(p.members), chosen = new Set(p.members || []);
   openSheet(isNew ? (grp ? "New group persona" : "New persona") : (grp ? "Edit group persona" : "Edit persona"), b => {
@@ -4747,6 +4971,7 @@ function editPersona(p, isNew) {
       ${field("Name", `<input id="peName" value="${esc(work.name)}" placeholder="Who you play">`)}
       ${field(grp ? "About the group" : "Description", `<textarea id="peDesc" data-x="persona" style="min-height:${grp ? 70 : 140}px" placeholder="${grp ? "How they belong together (optional)" : "Appearance, personality, background"}">${esc(work.description)}</textarea>`, grp ? "Each member's own description is used too." : "Characters see this, and it's used when illustrating scenes.")}
       ${grp ? `<div class="group"><h3>Members</h3><div id="peMem" class="stack"></div><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Add a new member:</p><input id="peNewN" placeholder="Name"><textarea id="peNewD" style="min-height:60px" placeholder="Look and personality (optional)"></textarea><button type="button" class="btn small" id="peNewAdd">Add member</button></div>` : ""}
+      ${field("Picture", `<div class="pp-pic"><span id="pePicV">${picHTML(personaPicOf(work), 64)}</span><button type="button" class="btn small" id="pePic">${work.pic || work.pix ? "Change picture" : "Choose a picture"}</button></div>`, work.pic || work.pix ? "" : "A pixel stand-in until you choose one. Upload your own or make one in pixels.")}
       ${field("Your colour", `<div class="pe-cols" id="peCols">${PERSONA_COLS.map(c => `<button type="button" data-c="${c}" style="background:${c}" class="${(work.color || PERSONA_COLS[0]) === c ? "on" : ""}" aria-label="Colour ${c}"></button>`).join("")}<input type="color" id="peCol" value="${esc(work.color || PERSONA_COLS[0])}" aria-label="Any colour"></div>`, "How you show up in pictures the app draws for you.")}
       <button class="btn primary" id="peSave">${isNew ? "Create and use" : "Save"}</button>
       ${!isNew && S.personas.length > 1 ? '<button class="btn danger" id="peDel">Delete persona</button>' : ""}`;
@@ -4754,6 +4979,7 @@ function editPersona(p, isNew) {
     const drawMem = () => { const box = $("peMem"); if (!box) return; const list = S.personas.filter(x => !isGroupP(x) && x.id !== work.id && !Array.isArray(x.members)); box.innerHTML = list.length ? list.map(x => `<label class="checkrow"><input type="checkbox" data-id="${esc(x.id)}" ${chosen.has(x.id) ? "checked" : ""}><span class="p-dot" style="background:${esc(personaColor(x))}"></span><span>${esc(x.name)}</span></label>`).join("") : '<p class="note">No personas to add yet. Add a new member below.</p>'; box.querySelectorAll("[data-id]").forEach(i => i.onchange = () => { i.checked ? chosen.add(i.dataset.id) : chosen.delete(i.dataset.id); }); };
     drawMem();
     if ($("peNewAdd")) $("peNewAdd").onclick = () => { const n = $("peNewN").value.trim(); if (!n) { $("peNewN").focus(); return; } const np = { id: uid(), name: n, description: $("peNewD").value.trim(), color: PERSONA_COLS[(S.personas.length + 1) % PERSONA_COLS.length] }; S.personas.push(np); chosen.add(np.id); $("peNewN").value = ""; $("peNewD").value = ""; drawMem(); };
+    $("pePic").onclick = async () => { const r = await openPix(work.pic ? { pic: work.pic } : work.pix ? { pix: work.pix } : {}, { title: "Persona picture", seed: work.id, text: $("peDesc")?.value || work.description, none: work.pic || work.pix ? "No picture" : "" }); if (!r) return; if (r.none) { delete work.pic; delete work.pix; } else if (r.pic) { work.pic = r.pic; delete work.pix; } else { work.pix = r.pix; delete work.pic; } $("pePicV").innerHTML = picHTML(personaPicOf(work), 64); $("pePic").textContent = work.pic || work.pix ? "Change picture" : "Choose a picture"; };
     const pick = c => { work.color = c; $("peCol").value = c; b.querySelectorAll("#peCols button").forEach(x => x.classList.toggle("on", x.dataset.c === c)); };
     b.querySelectorAll("#peCols button").forEach(x => x.onclick = () => pick(x.dataset.c)); $("peCol").oninput = e => pick(e.target.value);
     $("peSave").onclick = async () => {
@@ -4921,6 +5147,7 @@ function editChar(c, isNew, fromDraft) {
         <div id="cPick"></div>`}
         <div class="row"><label class="btn" for="cPic">${work.customPortrait ? "Replace uploaded image" : "Upload my own image instead"}</label>${work.customPortrait ? '<button class="btn" type="button" id="cPicClear">Use generated pictures</button>' : ""}</div>
         <input type="file" id="cPic" accept="image/*" hidden>
+        <div class="pp-pic"><span id="cPixV">${picHTML({ pix: botPix(work) }, 56)}</span><span class="grow hint">${work.pix ? (work.customPortrait ? "Your pixel picture (the uploaded image is shown first)." : "Shown instead of generated pictures.") : "Shown when there's no picture to load."}</span><button type="button" class="btn small" id="cPix">${work.pix ? "Change pixel picture" : "Make a pixel picture"}</button>${work.pix ? '<button type="button" class="btn small" id="cPixX">Stop using it</button>' : ""}</div>
       </div>`}
       <div class="group"><h3>Dice</h3>${field("Rolls allowed per message", `<select id="cRollLim">${[[0, "Unlimited rerolls"], [1, "1 (no rerolls)"], [2, "2"], [3, "3"], [5, "5"]].map(([v, l]) => `<option value="${v}" ${(+work.rollLimit || 0) === v ? "selected" : ""}>${l}</option>`).join("")}</select>`, "How many times you can roll 🎲 before sending one message, so you can't keep rolling for the number you want. With a limit, a roll can't be thrown away either.")}</div>
       <div class="group"><h3>Character creator</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Make a character for each chat from questions that fit this bot's setting, like Choice of the Dragon. Your answers also set a few traits the story keeps in mind.</p><div id="cCreator" class="stack"></div></div>
@@ -5130,6 +5357,8 @@ function editChar(c, isNew, fromDraft) {
       grab(); work.customPortrait = await shrinkImage(f); editChar(work, isNew);
     };
     if ($("cPicClear")) $("cPicClear").onclick = () => { grab(); work.customPortrait = ""; editChar(work, isNew); };
+    if ($("cPix")) $("cPix").onclick = async () => { grab(); const r = await openPix({ pix: botPix(work) }, { title: "Pixel picture", seed: work.id, text: botPixText(work), upload: false }); if (!r?.pix) return; work.pix = r.pix; editChar(work, isNew); };
+    if ($("cPixX")) $("cPixX").onclick = () => { grab(); delete work.pix; editChar(work, isNew); };
 
     // everything typed is kept as a draft until it's saved; closing asks first
     S.sheetGuard = "edit";
@@ -5366,7 +5595,8 @@ function syncNav() {
 }
 addEventListener("popstate", () => {
   if (POP_IGNORE) { POP_IGNORE--; if (WANT_GUARD) { WANT_GUARD = false; syncNav(); } return; }
-  if (!$("ambPop").hidden) $("ambPop").hidden = true;
+  if (document.getElementById("pixPop")) document.getElementById("pixPop")._close();
+  else if (!$("ambPop").hidden) $("ambPop").hidden = true;
   else if (!$("sheet").hidden) userClose();
   else if (!$("chat").hidden && (!S.busy || S.genAC)) { S.genAC?.abort(); leaveChat(); }
   syncNav();
@@ -7190,7 +7420,7 @@ async function pbSync(p, create) {
   if (!c && !create) return null;
   if (!c) { c = Object.assign(blankChar("character"), { fromPersona: p.id, seed: Math.abs(hash(p.id)) % 1e6 }); S.pbots = [...(S.pbots || []), c]; }
   const desc = p.description || "", first = desc.replace(/\s+/g, " ").trim();
-  const want = { name: p.name || "Persona", description: desc, scenario: PB_SCEN, summary: first.slice(0, 200), tags: [] };
+  const want = { name: p.name || "Persona", description: desc, scenario: PB_SCEN, summary: first.slice(0, 200), tags: [], customPortrait: p.pic || "", pix: pixOk(p.pix) ? p.pix : pixAuto(p.id, desc) };
   if (Object.entries(want).some(([k, v]) => JSON.stringify(c[k]) !== JSON.stringify(v))) { Object.assign(c, want); await saveChars(); }
   return c;
 }
@@ -7205,7 +7435,7 @@ function renderPersonaTab(list) {
     b.className = "char-card k-persona"; b.tabIndex = 0; b.setAttribute("role", "button"); b.style.setProperty("--kc", personaColor(p));
     const summ = String(p.description || "").replace(/\s+/g, " ").trim().slice(0, 160);
     b.innerHTML = `<div class="name"><span class="p-dot" style="background:${esc(personaColor(p))}"></span> ${esc(p.name)}</div><div class="ph-wrap"><img alt="" loading="lazy"><span class="kind-pill">Persona</span><span class="bstats" ${c.id ? `data-stats="${c.id}"` : ""} hidden></span></div><div class="cbody">${summ ? `<div class="bsum">${esc(summ)}</div>` : ""}</div>`;
-    setImg(b.querySelector("img"), c.id ? thumbURL(c) : "", c);
+    { const pp = personaPicOf(p); setImg(b.querySelector("img"), pp.pic || pixURL(pp.pix), c); }
     b.onclick = () => openPBProfile(p.id);
     b.onkeydown = e => { if (e.key === "Enter") openPBProfile(p.id); };
     list.appendChild(b);
@@ -7325,8 +7555,12 @@ const pubOf = c => COMM?.pub?.[c.id]?.on ? COMM.pub[c.id] : null;
 const pubStats = c => { const p = pubOf(c); if (!p) return { likes: 0, chats: 0 }; const s = commStats("bot:" + c.id, p.heat, p.since || p.at); return { likes: s.likes, chats: Math.round(s.chats * 0.6) }; };
 const cLikes = x => x.by === "me" ? Math.round(6 * seeded(x.id, 4) * (1 - Math.exp(-(Date.now() - x.at) / 7.2e6))) : Math.round((x.heat ?? 1) * 25 * seeded(x.id, 5) * (1 - Math.exp(-(Date.now() - x.at) / 4.3e7))) + (commLiked(x.id) ? 1 : 0);
 const commN = t => (COMM?.comments?.[t] || []).length;
-const avatarOf = (u, size = 34) => { const n = u?.name || "?", col = u?.color || "#888"; return `<span class="cm-av" style="--av:${esc(col)};width:${size}px;height:${size}px;font-size:${Math.round(size * 0.45)}px">${esc(n.trim()[0]?.toUpperCase() || "?")}</span>`; };
-const meAvatar = (size = 34) => COMM?.me?.pic ? `<img class="cm-av cm-img" src="${esc(COMM.me.pic)}" alt="" style="width:${size}px;height:${size}px">` : avatarOf({ name: meName(), color: personaColor() }, size);
+// Most people wear a pixel picture (picked from their taste, the same on every device until they change it); about 1 in 8 keep the plain letter.
+const userPix = u => { if (!u?.id) return null; if (u.pix !== undefined) return pixOk(u.pix) ? u.pix : null; if (hash(u.id + ":pfp") % 100 < 12) return null; return pixAuto(u.id, [...(u.taste || []), u.bio, u.focus].join(" "), 0.45); };
+const avatarOf = (u, size = 34) => { const px = userPix(u); if (px) return picHTML({ pix: px }, size, "cm-px"); const n = u?.name || "?", col = u?.color || "#888"; return `<span class="cm-av" style="--av:${esc(col)};width:${size}px;height:${size}px;font-size:${Math.round(size * 0.45)}px">${esc(n.trim()[0]?.toUpperCase() || "?")}</span>`; };
+// Your community picture: your own (upload or pixel), else your active persona's, else your initial.
+const mePicOf = () => COMM?.me?.pic ? { pic: COMM.me.pic } : pixOk(COMM?.me?.pix) ? { pix: COMM.me.pix } : (() => { const p = S.personas.find(x => x.id === S.personaId); return p?.pic ? { pic: p.pic } : pixOk(p?.pix) ? { pix: p.pix } : null; })();
+const meAvatar = (size = 34) => { const o = mePicOf(); return o ? picHTML(o, size, "cm-img") : avatarOf({ name: meName(), color: personaColor() }, size); };
 // a picture from the phone or PC, cropped square and shrunk, as your community profile picture
 async function mePicFrom(file) {
   const url = URL.createObjectURL(file);
@@ -7525,7 +7759,7 @@ async function commTick(force) {
     const pops = [];
     { if (!COMM.tickB) COMM.tickB = now - day / r.blogs; const due = (now - COMM.tickB) / day * r.blogs; if (due >= 1) { const k = Math.min(3, Math.floor(due)); const got = await commBlogs(k); for (const b of got) if (follows(b.by)) pops.push([b.by, `posted: ${b.title || b.text.slice(0, 40)}`, () => openBlog(b.id)]); COMM.tickB = due > 4 ? now : COMM.tickB + k / r.blogs * day; changed = true; } }
     { if (!COMM.tickU) COMM.tickU = now; const due = (now - COMM.tickU) / day * r.updates; if (due >= 1 && COMM.posts.length > 3) { const k = Math.min(2, Math.floor(due)); const got = await commUpdates(k); for (const [p, up] of got) if (follows(p.by) || p.added) pops.push([p.by, `updated ${p.card.name} to v${up.ver}`, () => openPost(p.id)]); COMM.tickU = due > 3 ? now : COMM.tickU + k / r.updates * day; changed = true; } }
-    { if (!COMM.tickF) COMM.tickF = now; const due = (now - COMM.tickF) / day * (r.profiles || 4); if (due >= 1 && COMM.users.length) { const k = Math.min(4, Math.floor(due)); const got = await commProfileUpdates(k); for (const [u, what] of got) if (follows(u.id)) pops.push([u.id, what.some(w => w[0] === "status") ? `new status: ${what.find(w => w[0] === "status")[1]}` : "updated their profile", () => openCommUser(u.id)]); COMM.tickF = due > 4 ? now : COMM.tickF + k / (r.profiles || 4) * day; changed = true; } }
+    { if (!COMM.tickF) COMM.tickF = now; const due = (now - COMM.tickF) / day * (r.profiles || 4); if (due >= 1 && COMM.users.length) { const k = Math.min(4, Math.floor(due)); const got = await commProfileUpdates(k); for (const [u, what] of got) if (follows(u.id)) pops.push([u.id, what.some(w => w[0] === "status") ? `new status: ${what.find(w => w[0] === "status")[1]}` : what.some(w => w[0] === "pic") ? "has a new profile picture" : "updated their profile", () => openCommUser(u.id)]); COMM.tickF = due > 4 ? now : COMM.tickF + k / (r.profiles || 4) * day; changed = true; } }
     for (const p of COMM.posts.filter(p => follows(p.by) && now - p.at < 5 * 60e3 && !p.popped)) { p.popped = 1; pops.push([p.by, `posted a new bot: ${p.card.name}`, () => openPost(p.id)]); }
     for (const [by, text, go] of pops.slice(0, 3)) { const u = userOf(by); if (u) feedNotify(u, text, go); }
     if (changed || COMM_DIRTY) { commTrim(); await commFlush(); }
@@ -7563,7 +7797,7 @@ async function openCommunity(tab) {
     } else if (COMM_TAB === "dms") { body = dmListHTML();
     } else if (COMM_TAB === "yours") {
       const pub = S.chars.filter(c => pubOf(c)), priv = S.chars.filter(c => !pubOf(c) && !c.hidden);
-      body = `<div class="cm-me">${meAvatar(64)}<div class="stack" style="gap:6px"><label class="btn small" for="cmPic">${COMM.me?.pic ? "Change picture" : "Upload a profile picture"}</label><input type="file" id="cmPic" accept="image/*" hidden>${COMM.me?.pic ? `<button type="button" class="btn small" id="cmPicX">Remove picture</button>` : ""}</div></div><p class="hint" style="margin:0 0 6px">${fmtK(myFollowers())} followers · following ${Object.values(COMM.follow).filter(x => x.v).length}</p>${field("Your name in the community", `<input id="cmMe" value="${esc(COMM.me?.name || "")}" placeholder="${esc(uname())}" autocomplete="off">`)}
+      body = `<div class="cm-me">${meAvatar(64)}<div class="stack" style="gap:6px"><button type="button" class="btn small" id="cmPic">${COMM.me?.pic || COMM.me?.pix ? "Change picture" : "Choose a profile picture"}</button>${COMM.me?.pic || COMM.me?.pix ? `<button type="button" class="btn small" id="cmPicX">Use my persona's picture</button>` : ""}</div></div><p class="hint" style="margin:0 0 6px">${fmtK(myFollowers())} followers · following ${Object.values(COMM.follow).filter(x => x.v).length}</p>${field("Your name in the community", `<input id="cmMe" value="${esc(COMM.me?.name || "")}" placeholder="${esc(uname())}" autocomplete="off">`)}
         <div class="lbl">Public · ${pub.length}</div>${pub.length ? pub.map(c => { const s = pubStats(c); return `<div class="listrow cm-mine" data-id="${esc(c.id)}"><span class="grow"><b>${esc(c.name)}</b><span class="sub">♥ ${fmtK(s.likes)} · ${fmtK(s.chats)} chats · ${commN("bot:" + c.id)} comments · public since ${esc(fmtWhen(pubOf(c).since || pubOf(c).at))}</span></span><button type="button" class="btn small" data-cm="${esc(c.id)}">Comments</button></div>`; }).join("") : `<p class="hint" style="margin:0">None yet. Share a bot below, or from its profile.</p>`}
         ${priv.length ? `<div class="lbl">Share one</div>${priv.slice(0, 30).map(c => `<div class="listrow"><span class="grow"><b>${esc(c.name)}</b><span class="sub">${esc(botSummary(c).slice(0, 90))}</span></span><button type="button" class="btn small" data-share="${esc(c.id)}">🌐 Make public</button></div>`).join("")}` : ""}`;
     } else {
@@ -7583,8 +7817,8 @@ async function openCommunity(tab) {
     b.querySelectorAll("[data-upd]").forEach(x => x.onclick = async () => { x.disabled = true; await commCopyUpdate(byId(x.dataset.upd)); draw(); });
     if ($("dmNew")) $("dmNew").onclick = () => { COMM_TAB = "people"; draw(); };
     if ($("cmMe")) $("cmMe").onchange = e => { COMM.me = { ...COMM.me, name: e.target.value.trim().slice(0, 40), at: Date.now() }; commSave(); };
-    if ($("cmPic")) $("cmPic").onchange = async e => { const f = e.target.files?.[0]; if (!f) return; try { COMM.me = { ...COMM.me, pic: await mePicFrom(f), at: Date.now() }; commSave(); toast("Profile picture set"); draw(); } catch (err) { toast(err.message); } };
-    if ($("cmPicX")) $("cmPicX").onclick = () => { COMM.me = { ...COMM.me, pic: "", at: Date.now() }; commSave(); draw(); };
+    if ($("cmPic")) $("cmPic").onclick = async () => { const r = await openPix(mePicOf() || {}, { title: "Your community picture", seed: "me", text: uname() }); if (!r || r.none) return; COMM.me = { ...COMM.me, pic: r.pic || "", pix: r.pix || null, at: Date.now() }; commSave(); toast("Profile picture set"); draw(); };
+    if ($("cmPicX")) $("cmPicX").onclick = () => { COMM.me = { ...COMM.me, pic: "", pix: null, at: Date.now() }; commSave(); draw(); };
   });
   COMM_VIEW = draw; draw();
   if (hasKey() && !COMM.posts.length) commTick(true).then(() => { if (COMM_VIEW === draw) commRedraw(); });
@@ -7749,7 +7983,7 @@ async function commDress(list) {
 async function commProfileUpdates(k) {
   const now = Date.now(), pool = COMM.users.filter(u => u.fit && !asleepAt(u, now)).map(u => [u, (follows(u.id) ? 2.5 : 1) * (0.3 + (u.active ?? 0.5)) * Math.random()]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
   if (!pool.length) return [];
-  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} update their profiles now and then, the way real users do: a new status, a tweaked bio, something new they unlocked and now wear, or pinning a different bot. Each person changes one or two things that fit what's going on with them, in their own typing style. Cosmetic options (use only these keys) - ${fitCatalog()}. ${COMM_ADULT}\n\nRespond with only JSON: {"updates": [{"handle", "status": new status or "", "bio": new bio or "", "outfit": {"theme", "accent", "flame", "lantern", "finish"} with only the parts that changed, or {}, "pin": the exact name of one of their bots to pin, or ""}]}` },
+  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} update their profiles now and then, the way real users do: a new status, a tweaked bio, something new they unlocked and now wear, or pinning a different bot. Each person changes one or two things that fit what's going on with them, in their own typing style. Cosmetic options (use only these keys) - ${fitCatalog()}. ${COMM_ADULT}\n\nRespond with only JSON: {"updates": [{"handle", "status": new status or "", "bio": new bio or "", "outfit": {"theme", "accent", "flame", "lantern", "finish"} with only the parts that changed, or {}, "pin": the exact name of one of their bots to pin, or "", "picture": a new profile picture from this list, or "" - ${PIX_SPRITES.map(s => s[0]).join(", ")}}]}` },
     { role: "user", content: pool.map(u => `- @${u.handle} (${u.role || "regular"}). Bio: ${u.bio} Status: ${u.status || "(none)"}. Wears: ${JSON.stringify(fitOf(u))}. Types: ${u.style || u.voice}. Their bots: ${commUserPosts(u).slice(0, 5).map(p => `"${p.card.name}"`).join(", ") || "none"}. Recent: ${(COMM.blogs || []).filter(b => b.by === u.id).slice(0, 1).map(b => b.title || b.text.slice(0, 60)).join("") || "nothing"}`).join("\n") }], { temperature: 1, maxTokens: 1800, plain: true });
   const out = [];
   for (const x of Array.isArray(j?.updates) ? j.updates : []) {
@@ -7760,6 +7994,7 @@ async function commProfileUpdates(k) {
     const o = x?.outfit && typeof x.outfit === "object" ? x.outfit : {}, cur = fitOf(u), nx = fitClean({ ...cur, ...o });
     if (Object.keys(o).length && JSON.stringify(nx) !== JSON.stringify(cur)) { u.fit = nx; what.push(["look", ""]); }
     const pin = commUserPosts(u).find(p => p.card.name.toLowerCase() === s5(x?.pin).toLowerCase()); if (pin && pin.id !== u.pin) { u.pin = pin.id; what.push(["pin", pin.card.name]); }
+    const pk = s5(x?.picture).toLowerCase().trim(), old = userPix(u); if (PIX_BY[pk] && (!old || old.s !== pk || Math.random() < 0.5)) { u.pix = { ...pixAuto(u.id + ":" + at, "", 0), s: pk }; what.push(["pic", ""]); }
     if (!what.length) continue;
     u.hist = [...(u.hist || []), ...what.map(([w, t]) => ({ at, what: w, text: t }))].slice(-20); u.last = Math.max(u.last || 0, at); out.push([u, what]);
   }
@@ -7840,7 +8075,7 @@ function feedHTML() {
     if (x.kind === "update") return `<button type="button" class="listrow fd-row" data-post="${esc(x.p.id)}">${avatarOf(u, 34)}<span class="grow">${who} updated <b>${esc(x.p.card.name)}</b> to v${esc(x.up.ver)} ${when}<span class="sub">${esc(x.up.note).slice(0, 140)}</span></span></button>`;
     if (x.kind === "blog") return `<button type="button" class="listrow fd-row" data-blog="${esc(x.b.id)}">${avatarOf(u, 34)}<span class="grow">${who} posted ${when}<span class="sub"><b>${esc(x.b.title || "")}</b> ${esc(x.b.text).slice(0, 120)}</span></span></button>`;
     if (x.kind === "copy") return `<div class="listrow fd-row fd-copy">${avatarOf(u, 34)}<span class="grow">Your copy of <b>${esc(x.c.name)}</b> can be updated to v${esc(x.up.ver)} ${when}<span class="sub">${esc(x.up.note).slice(0, 140)}</span></span><button type="button" class="btn small primary" data-upd="${esc(x.c.id)}">Update my copy</button></div>`;
-    if (x.kind === "prof") return `<button type="button" class="listrow fd-row" data-u="${esc(x.by)}">${avatarOf(u, 34)}<span class="grow">${who} ${x.h.what === "status" ? "changed their status" : x.h.what === "bio" ? "updated their bio" : x.h.what === "pin" ? "pinned a bot" : "got a new look"} ${when}${x.h.text ? `<span class="sub">${esc(x.h.text).slice(0, 120)}</span>` : ""}</span></button>`;
+    if (x.kind === "prof") return `<button type="button" class="listrow fd-row" data-u="${esc(x.by)}">${avatarOf(u, 34)}<span class="grow">${who} ${x.h.what === "status" ? "changed their status" : x.h.what === "bio" ? "updated their bio" : x.h.what === "pin" ? "pinned a bot" : x.h.what === "pic" ? "changed their profile picture" : "got a new look"} ${when}${x.h.text ? `<span class="sub">${esc(x.h.text).slice(0, 120)}</span>` : ""}</span></button>`;
     return `<button type="button" class="listrow fd-row" data-u="${esc(x.by)}">${avatarOf(u, 34)}<span class="grow">${who} followed you ${when}</span></button>`; }).join("");
 }
 function blogCard(b) {

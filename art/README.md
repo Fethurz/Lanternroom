@@ -7,3 +7,5 @@ redundant column pairs; eyes and details are never merged or lost, outlines are 
 (SVG renderer: 24×24 tile, stepped round/soft/square frames; the view zooms to a 19.2-unit window centred on the drawn pixels, 5 screen px per pixel at 96 px, so the sprite fills the frame). `pfp-bench-round2.html` is the rating page
 (PFP Bench https://claude.ai/artifact/5UK3LZnrLV17sM8Guz9m56, db collection `pfp`: x_<sprite>, xf_<frame>,
 xp_<colourway>, general2). The owner asked for narrower sprites on 2026-10-26.
+
+Built into the app in v1.65 (`PIX_SPRITES` etc. in index.html hold the 19 kept sprites, already narrowed).
