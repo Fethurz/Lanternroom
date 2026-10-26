@@ -264,6 +264,7 @@ body{background:radial-gradient(120% 70% at 50% -10%,var(--glow) 0%,var(--bg) 55
 #charList .btag.more-t{color:var(--muted)}
 #charList .btok{margin-top:auto;padding:8px 0 7px;border-top:1px solid var(--line);text-align:center;font:11px ui-monospace,Menlo,monospace;color:var(--muted)}
 #charList .char-card .more{top:2px!important;right:2px!important;background:transparent}
+.ap-head{display:flex;align-items:center;justify-content:space-between;margin:-4px -4px 0 0}.ap-head b{font-size:14px}.ap-x{width:34px;height:34px;min-width:34px}
 #ambPop{position:absolute;right:8px;top:66px;z-index:6;width:min(300px,calc(100% - 16px));background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px;box-shadow:0 14px 36px -12px rgba(0,0,0,.8);animation:fadeIn .15s ease}
 #ambPop .ap-row{display:flex;flex-direction:column;gap:4px}
 #ambPop .ap-top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:34px}
@@ -813,7 +814,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .dl-head+.dl-sum{margin-top:6px}
 .dl-row{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}.dl-lan svg{width:30px;height:38px}
 .dl-past{background:none;border:0;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;padding:6px 4px;margin-left:auto;min-height:34px}
-.dl-mini{display:flex;justify-content:flex-end;margin:-6px 0 6px}
+.dl-mini{display:flex;justify-content:flex-end;align-items:center;margin:-6px 0 6px}.dl-next{color:var(--muted);font-size:12.5px;margin-right:auto;padding-left:4px}
 .dl-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--surface);display:flex;flex-direction:column;gap:4px;flex:none}
 .ach-toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:300;display:flex;align-items:center;gap:10px;padding:10px 16px 10px 10px;border-radius:16px;background:var(--surface-2);border:1px solid color-mix(in srgb,var(--accent) 50%,var(--line));box-shadow:0 14px 34px -12px rgba(0,0,0,.7),0 0 24px -8px color-mix(in srgb,var(--accent) 60%,transparent);max-width:calc(100vw - 32px);cursor:pointer;animation:achIn .45s cubic-bezier(.2,1.4,.4,1)}
 .ach-toast.out{animation:achOut .45s ease-in forwards}
@@ -895,15 +896,46 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 #stFx .rise,.sh-fx .rise{animation:shRise 6s infinite linear}
 #stFx .wall,.sh-fx .wall{animation:shWall 5s ease-in-out infinite alternate;transform-origin:center}
 #stFx .fall,.sh-fx .fall{animation:shFall 10s linear infinite}
-/* finishes on the real app */
-html.sf-on .btn.primary{background:var(--fin)!important;background-size:var(--fs,100% 100%)!important;color:var(--fink)!important;border-color:transparent!important;position:relative;overflow:hidden}
-html.sf-on .tab.on,html.sf-on .chip.on,html.sf-on .wd-it.on{background:var(--fin);background-size:var(--fs,100% 100%);color:var(--fink);border-color:transparent}
-html.sf-on .topbar h1 span,html.sf-on #splash .sp-t .a{background:var(--fin);background-size:var(--fs,100% 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 1px 0 rgba(0,0,0,.55))}
-html.sf-on .ach-bar i{background:var(--fin);background-size:var(--fs,100% 100%)}
-html.sf-on .shop-head b{background:var(--fin);background-size:var(--fs,100% 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-html.sf-a-flow .btn.primary,html.sf-a-flow .topbar h1 span,html.sf-a-flow .tab.on,html.sf-a-flow .ach-bar i{animation:shFlow 6s linear infinite}
-html.sf-a-huey .btn.primary,html.sf-a-huey .topbar h1 span,html.sf-a-huey .tab.on,html.sf-a-huey .ach-bar i{animation:shHuey 6s linear infinite}
-html.sf-a-twk .btn.primary,html.sf-a-twk .topbar h1 span,html.sf-a-twk .tab.on{animation:shFlow 14s linear infinite}
+/* finishes on the real app (v1.61): a palette for the whole app, in four parts the Wardrobe switches (html.sfp-<part>) */
+/* buttons, tabs & chips */
+html.sfp-ctl .btn.primary{background:var(--fin)!important;background-size:var(--fs,100% 100%)!important;color:var(--fink)!important;border-color:transparent!important;position:relative;overflow:hidden}
+html.sfp-ctl .btn:not(.primary):not(.danger),html.sfp-ctl .tab,html.sfp-ctl .chip,html.sfp-ctl .wd-it,html.sfp-ctl .qz-o,html.sfp-ctl .cr-o,html.sfp-ctl .own-chip,html.sfp-ctl #choiceBar .choice{border-color:color-mix(in srgb,var(--fin-c) 55%,var(--line))!important}
+html.sfp-ctl .btn:not(.primary):not(.danger){background:linear-gradient(180deg,color-mix(in srgb,var(--fin-c) 12%,var(--surface-2)),var(--surface-2))}
+html.sfp-ctl .tab.on,html.sfp-ctl .chip.on,html.sfp-ctl .wd-it.on,html.sfp-ctl .seg button.on,html.sfp-ctl .qz-o.on,html.sfp-ctl .cr-o.on{background:var(--fin)!important;background-size:var(--fs,100% 100%)!important;color:var(--fink)!important;border-color:transparent!important}
+html.sfp-ctl .switch input:checked+span{background:var(--fin)!important;background-size:var(--fs,100% 100%)!important;border-color:transparent!important}
+html.sfp-ctl .switch input:checked+span::after{background:var(--fin-l);box-shadow:0 0 0 2px var(--fink),0 1px 3px rgba(0,0,0,.5)}
+html.sfp-ctl input[type=range],html.sfp-ctl input[type=checkbox],html.sfp-ctl input[type=radio],html.sfp-ctl progress{accent-color:var(--fin-c)}
+html.sfp-ctl #choiceBar .choice{background:color-mix(in srgb,var(--fin-c) 10%,var(--surface))}
+html.sfp-ctl #send,html.sfp-ctl .icon.on{color:var(--fin-c)}
+html.sfp-ctl input:focus,html.sfp-ctl textarea:focus,html.sfp-ctl select:focus{border-color:var(--fin-c)!important;outline-color:var(--fin-c)}
+/* text & titles */
+html.sfp-txt .topbar h1 span,html.sfp-txt #splash .sp-t .a,html.sfp-txt #sheetTitle,html.sfp-txt .group h3,html.sfp-txt .lbl,html.sfp-txt .field>label,html.sfp-txt .char-card .name,html.sfp-txt .rrow .rn,html.sfp-txt .pf-kind,html.sfp-txt .dl-name,html.sfp-txt .dl-lbl,html.sfp-txt .qz-q,html.sfp-txt #chatName,html.sfp-txt .shop-head b,html.sfp-txt .ach-row.on .grow>b,html.sfp-txt .ach-tx b,html.sfp-txt .own-l,html.sfp-txt .pg-one>b,html.sfp-txt .rl-h,html.sfp-txt #railPersona b,html.sfp-txt .persona-bar b,html.sfp-txt .ver,html.sfp-txt .tagline{background:var(--fin-t);background-size:100% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent;text-shadow:none}
+html.sfp-txt a{color:var(--fin-l)}
+html.sfp-txt .topbar h1 span,html.sfp-txt #splash .sp-t .a{background:var(--fin-t);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 1px 0 rgba(0,0,0,.55))}
+/* bubbles, bars & badges */
+html.sfp-bar:not(.sb-any) #msgs .msg.user{background:linear-gradient(160deg,color-mix(in srgb,var(--fin-c) 28%,var(--user-1,var(--user))),color-mix(in srgb,var(--fin-d) 34%,var(--user-2,var(--user))))!important}
+html.sfp-bar #msgs .msg.user{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fin-c) 60%,transparent)}
+html.sfp-bar #msgs .msg .who-l{background:var(--fin-t);-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent}
+html.sfp-bar .gauge .gbar i,html.sfp-bar .qz-bar i,html.sfp-bar .ach-bar i,html.sfp-bar #pacer .pc-bead{background:var(--fin)!important;background-size:var(--fs,100% 100%)!important}
+html.sfp-bar #gauges,html.sfp-bar #rpgbar,html.sfp-bar #ownBar{border-bottom-color:color-mix(in srgb,var(--fin-c) 50%,var(--line))}
+html.sfp-bar .tbar i{box-shadow:0 0 0 2px var(--fin-c),0 0 9px var(--fin-c)!important}
+html.sfp-bar .badge,html.sfp-bar .btag,html.sfp-bar .kind-pill,html.sfp-bar .bstats{border-color:color-mix(in srgb,var(--fin-c) 55%,var(--line))!important}
+html.sfp-bar .badge{color:var(--fin-l)}
+html.sfp-bar .ach-toast,html.sfp-bar #achToast{border-color:var(--fin-c)!important;box-shadow:0 8px 30px -8px rgba(0,0,0,.7),0 0 18px -4px var(--fin-c)!important}
+/* lantern, panels & glows (the lantern's metal and flame come from --lm-*/--fl-*, set only while this part is on) */
+html.sfp-glow .panel,html.sfp-glow .char-card,html.sfp-glow .group,html.sfp-glow .listrow,html.sfp-glow .daily,html.sfp-glow .pg-one,html.sfp-glow #ambPop,html.sfp-glow .msg{border-color:color-mix(in srgb,var(--fin-c) 40%,var(--line))!important}
+html.sfp-glow .panel{box-shadow:0 -20px 50px -20px rgba(0,0,0,.8),0 -8px 34px -14px var(--fin-c)}
+html.sfp-glow #charList .char-card{border-top-color:var(--fin-c)!important}
+html.sfp-glow .avatar{border-color:var(--fin-c)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--bg) 80%,transparent),0 0 16px -2px var(--fin-c)!important}
+html.sfp-glow .lantern{filter:drop-shadow(0 0 10px color-mix(in srgb,var(--fin-c) 55%,transparent))}
+html.sfp-glow body{background-image:radial-gradient(120% 70% at 50% -10%,color-mix(in srgb,var(--fin-c) 13%,transparent),transparent 62%),radial-gradient(90% 60% at 50% 115%,color-mix(in srgb,var(--fin-d) 22%,transparent),transparent 70%);background-attachment:fixed}
+html.sfp-glow .topbar,html.sfp-glow .chatbar{box-shadow:0 1px 0 color-mix(in srgb,var(--fin-c) 35%,transparent)}
+/* moving finishes keep moving on the big pieces */
+html.sf-a-flow.sfp-ctl .btn.primary,html.sf-a-flow.sfp-txt .topbar h1 span,html.sf-a-flow.sfp-ctl .tab.on,html.sf-a-flow.sfp-bar .ach-bar i{animation:shFlow 6s linear infinite}
+html.sf-a-huey.sfp-ctl .btn.primary,html.sf-a-huey.sfp-txt .topbar h1 span,html.sf-a-huey.sfp-ctl .tab.on,html.sf-a-huey.sfp-bar .ach-bar i{animation:shHuey 6s linear infinite}
+html.sf-a-twk.sfp-ctl .btn.primary,html.sf-a-twk.sfp-txt .topbar h1 span,html.sf-a-twk.sfp-ctl .tab.on{animation:shFlow 14s linear infinite}
+.wd-parts{display:flex;flex-direction:column;gap:6px;margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:12px}
+.wd-part{display:flex;align-items:center;gap:10px;justify-content:space-between;min-height:40px}.wd-part b{display:block;font-size:14px}.wd-part small{display:block;color:var(--muted);font-size:12px;line-height:1.3}
 @keyframes shSeqFade{0%,28%{opacity:0}52%,100%{opacity:1}}
 @keyframes shBreathe{50%{transform:scale(1.07,.9)}}
 @keyframes shBeat{0%,100%{transform:scale(1)}12%{transform:scale(1.16)}24%{transform:scale(.98)}36%{transform:scale(1.1)}55%{transform:scale(1)}}
@@ -1305,7 +1337,8 @@ function dailyNewer(a, b) {
   if (!a) return b; if (!b) return a;
   if ((a.day || "") !== (b.day || "")) return (a.day || "") > (b.day || "") ? a : b;
   const rank = x => ({ kept: 4, skipped: 3, new: 2, error: 1, making: 0 })[x.status] ?? 0;
-  return rank(a) > rank(b) ? a : b;
+  if (rank(a) !== rank(b)) return rank(a) > rank(b) ? a : b;
+  return (a.at || 0) <= (b.at || 0) ? a : b; // same progress: the one made first, so every device settles on the same bot
 }
 /* ---------- Storage (IndexedDB, falls back to localStorage) ---------- */
 const Store = {
@@ -1349,7 +1382,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.60 · Oct 25";
+const VERSION = "1.61 · Oct 26";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2805,6 +2838,19 @@ async function genFinish(edit) {
 const DAILY = { cur: null, past: [], busy: false };
 const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const dailyOn = () => S.settings.dailyOn !== false;
+// v1.61: the daily bot's day turns at 12:00 noon in Chicago (CDT in summer, CST in winter), the same on every device
+const DAILY_TZ = "America/Chicago", DAILY_HOUR = 12;
+const dailyDay = (t = Date.now()) => { try { return new Intl.DateTimeFormat("en-CA", { timeZone: DAILY_TZ, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(t - DAILY_HOUR * 3600e3)); } catch { return dayKey(new Date(t - DAILY_HOUR * 3600e3)); } };
+// the next refresh, for the banner ("A new one at noon")
+function dailyNextAt(t = Date.now()) { let lo = t, hi = t + 26 * 3600e3; const d0 = dailyDay(t); while (hi - lo > 60e3) { const mid = (lo + hi) / 2; if (dailyDay(mid) === d0) lo = mid; else hi = mid; } return hi; }
+// before making one, wait for the account's copy, so a device that just opened doesn't make a second bot for the same day
+async function dailySyncFirst() {
+  if (typeof Sync === "undefined" || !Sync.on()) return;
+  for (let i = 0; i < 40 && Sync.busy; i++) await new Promise(r => setTimeout(r, 250));
+  try { await within(Sync.pull(), 12000); } catch {}
+  for (let i = 0; i < 40 && Sync.busy; i++) await new Promise(r => setTimeout(r, 250));
+}
+const DAILY_CLAIM = 10 * 60e3; // another device saying "I'm making today's" holds for 10 minutes
 async function dailyLoad() { if (!DAILY.busy) DAILY.cur = (await Store.get("daily")) || null; const p = await Store.get("dailyPast"); DAILY.past = Array.isArray(p) ? p : []; }
 // tags from the owner's bots, weighted by how much they chat with each bot; hidden tags and kinds left out
 async function dailyTagWeights() {
@@ -2822,11 +2868,18 @@ function pickWeighted(w, n) {
 }
 async function dailyMake(force) {
   if (DAILY.busy || !hasKey() || !dailyOn()) return;
+  DAILY.busy = true; // held while the account is checked, so two checks never both start one
+  try { await dailySyncFirst(); } finally { DAILY.busy = false; }
   await dailyLoad();
-  const today = dayKey(), cur = DAILY.cur;
-  if (!force && cur && cur.day === today && cur.status !== "error") return;
+  const today = dailyDay(), cur = DAILY.cur;
+  if (!force && cur && cur.day >= today) {
+    if (cur.status === "making" && Date.now() - (cur.at || 0) < DAILY_CLAIM) return; // another device is on it
+    if (cur.status === "error" && Date.now() - (cur.at || 0) < 30 * 60e3) return; // failed lately: Try again, or wait a bit
+    if (cur.status !== "making" && cur.status !== "error") return;
+  }
+  if (DAILY.busy) return;
   // yesterday's unkept daily moves to the shelf
-  if (cur && cur.card && cur.day !== today && (cur.status === "new" || cur.status === "skipped") && !DAILY.past.some(p => p.day === cur.day)) {
+  if (cur && cur.card && cur.day < today && (cur.status === "new" || cur.status === "skipped") && !DAILY.past.some(p => p.day === cur.day)) {
     DAILY.past = [{ id: uid(), day: cur.day, kind: cur.kind, form: cur.form, tags: cur.tags, card: cur.card, at: cur.at || Date.now() }, ...DAILY.past];
     await Store.set("dailyPast", DAILY.past);
   }
@@ -2839,12 +2892,17 @@ async function dailyMake(force) {
   const notes = tags.filter(t => (S.settings.tagNotes || {})[t]).map(t => `- ${t}: ${S.settings.tagNotes[t]}`);
   const prompt = `Today's bot: invent an original, surprising ${KINDS[kind].label.toLowerCase()} built around these tags: ${tags.join(", ")}. Make it feel fresh and distinctive, not a stock version of the tags. Include these tags in the card's tags.` + (notes.length ? `\n\nWhat these tags mean to me (follow these closely):\n${notes.join("\n")}` : "");
   DAILY.busy = true;
+  // claim today's bot on the account first, so the other devices wait for this one instead of making their own
   DAILY.cur = { day: today, status: "making", kind, form, tags, at: Date.now() }; drawDaily();
+  try { await Store.set("daily", DAILY.cur); if (typeof Sync !== "undefined" && Sync.on()) Sync.push().catch(() => {}); } catch {}
   try {
     const card = await genCard(kind, form, prompt); card._kind = kind;
     DAILY.cur = { day: today, status: "new", kind, form, tags, card, at: Date.now() };
   } catch (e) { DAILY.cur = { day: today, status: "error", kind, form, tags, err: e.message, at: Date.now() }; }
   DAILY.busy = false;
+  // another device may have finished today's first while this one was writing: keep theirs, so there is only one
+  const acct = await Store.get("daily");
+  if (acct && acct.day === today && acct.at < DAILY.cur.at && acct.status !== "making" && acct.status !== "error") DAILY.cur = acct;
   await Store.set("daily", DAILY.cur); drawDaily();
 }
 // a generated card → saved bot(s), like the generator's "create it" (no window)
@@ -2884,9 +2942,11 @@ function dailyHighlight(d) {
 }
 function drawDaily() {
   const el = $("daily"); if (!el) return;
-  const d = DAILY.cur, today = dayKey(), n = DAILY.past.length;
+  const d = DAILY.cur, today = dailyDay(), n = DAILY.past.length;
   const pastLink = n ? `<button type="button" class="dl-past" id="dlPast">Past dailies (${n}) ›</button>` : "";
-  if (!dailyOn() || !d || d.day !== today || d.status === "kept" || d.status === "skipped") { el.innerHTML = pastLink ? `<div class="dl-mini">${pastLink}</div>` : ""; }
+  const next = new Date(dailyNextAt()).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }), nextHint = `<span class="dl-next">Next bot at ${esc(next)}</span>`;
+  // a day saved before v1.61 used the midnight date, so a later date still counts as today's
+  if (!dailyOn() || !d || d.day < today || d.status === "kept" || d.status === "skipped") { el.innerHTML = pastLink || (d && dailyOn()) ? `<div class="dl-mini">${dailyOn() && d ? nextHint : ""}${pastLink}</div>` : ""; }
   else if (d.status === "making") el.innerHTML = `<div class="daily dl-wait"><div class="dl-lbl">Today's bot</div><div class="dl-row"><span class="dl-lan">${lanternSVG("seq")}</span><span>Dreaming up today's ${esc(KINDS[d.kind]?.label.toLowerCase() || "bot")} from ${esc((d.tags || []).join(", "))}…</span></div></div>`;
   else if (d.status === "error") el.innerHTML = `<div class="daily"><div class="dl-lbl">Today's bot</div><p class="dl-sum">Couldn't make today's bot: ${esc(d.err || "unknown problem")}</p><div class="dl-acts"><button type="button" class="btn small primary" id="dlRetry">Try again</button>${pastLink}</div></div>`;
   else {
@@ -2919,7 +2979,7 @@ function openPastDailies() {
 }
 // checked at start, when coming back to the app and at most every 10 minutes while Home is open
 let DAILY_CHECK = 0;
-function dailyTick() { if (Date.now() - DAILY_CHECK < 60000 && DAILY.cur?.day === dayKey()) return; DAILY_CHECK = Date.now(); dailyLoad().then(() => { drawDaily(); if (!document.hidden && dailyOn()) dailyMake(); }).catch(() => {}); }
+function dailyTick() { if (Date.now() - DAILY_CHECK < 60000 && DAILY.cur?.day >= dailyDay()) return; DAILY_CHECK = Date.now(); dailyLoad().then(() => { drawDaily(); if (!document.hidden && dailyOn()) dailyMake(); }).catch(() => {}); }
 document.addEventListener("visibilitychange", () => { if (!document.hidden) setTimeout(dailyTick, 1500); });
 setInterval(() => { if (!document.hidden && !$("home").hidden) dailyTick(); }, 600000);
 
@@ -3504,7 +3564,7 @@ function achShelf(c) {
 }
 /* ---------- Lantern Shop (v1.57): badge points, rarity medals, the shop, the wardrobe and what you wear ---------- */
 // Points come from what's earned (worked out fresh each time, so badges from before the shop count too) minus what's bought.
-// ACHS.shop = { owned: {itemId: at}, wear: {flame, lantern, theme, bubble, finish, finFlame}, wearT: {slot: when it was changed}, wearAt, tries }
+// ACHS.shop = { owned: {itemId: at}, wear: {flame, lantern, theme, bubble, finish, finParts {ctl, txt, bar, glow}}, wearT: {slot: when it was changed}, wearAt, tries }
 const RAR = { common: ["Common", 10], rare: ["Rare", 25], secret: ["Secret", 50], bot: ["Bot badge", 20], one: ["One-off", 40], l1: ["Level I", 10], l2: ["Level II", 25], l3: ["Level III", 40], l4: ["Level IV", 60], l5: ["Level V", 90] };
 const RAR_ICON = { common: "★", rare: "✦", secret: "◆", bot: "✶", one: "✺", l1: "I", l2: "II", l3: "III", l4: "IV", l5: "V" };
 function achRarity(a) { if (!a) return "common"; if (a.own || String(a.k || "").startsWith("bot:")) return "bot"; if (a.lv) return "l" + a.lv; if (a.s || a.nw) return "secret"; return a.r ? "rare" : "common"; }
@@ -3532,18 +3592,38 @@ function applyCosmetics(force) {
   const w = wornNow(), sig = JSON.stringify(w);
   if (!force && sig === COS_SIG) return; COS_SIG = sig;
   const h = document.documentElement;
-  [...h.classList].filter(c => /^(st|sb|sf)-/.test(c)).forEach(c => h.classList.remove(c));
-  for (const p of ["--fin", "--fink", "--fs", "--lm-a", "--lm-b", "--fl-core", "--fl-mid", "--fl-base", "--fl-halo"]) h.style.removeProperty(p);
+  [...h.classList].filter(c => /^(st|sb|sf|sfp)-/.test(c)).forEach(c => h.classList.remove(c));
+  for (const p of ["--fin", "--fink", "--fs", "--fin-t", "--fin-c", "--fin-l", "--fin-d", "--lm-a", "--lm-b", "--fl-core", "--fl-mid", "--fl-base", "--fl-halo"]) h.style.removeProperty(p);
   if (w.theme && SHOP_THEME_BY[w.theme]) h.classList.add("st-" + w.theme);
   if (w.bubble && SHOP_BUBBLES.some(b => b.key === w.bubble)) h.classList.add("sb-any", "sb-" + w.bubble);
   const f = w.finish && FIN_BY[w.finish];
   if (f) {
-    h.classList.add("sf-on", "sf-" + f.key, "sf-a-" + f.fx);
+    // v1.61: a finish is a palette for the whole app; each part can be switched off in the Wardrobe (finParts)
+    const parts = finParts(w);
+    h.classList.add("sf-on", "sf-" + f.key, "sf-a-" + f.fx, ...FIN_PARTS.filter(([k]) => parts[k]).map(([k]) => "sfp-" + k));
+    const c = finCols(f);
     h.style.setProperty("--fin", f.g); h.style.setProperty("--fink", f.ink || "#1a1206"); if (f.size) h.style.setProperty("--fs", f.size);
-    h.style.setProperty("--lm-a", f.metal[0]); h.style.setProperty("--lm-b", f.metal[1]);
-    if (w.finFlame) { const [a, b, c] = f.flame; h.style.setProperty("--fl-core", a); h.style.setProperty("--fl-mid", b); h.style.setProperty("--fl-base", c); h.style.setProperty("--fl-halo", b); }
+    h.style.setProperty("--fin-t", c.text); h.style.setProperty("--fin-c", c.mid); h.style.setProperty("--fin-l", c.light); h.style.setProperty("--fin-d", c.dark);
+    if (parts.glow) {
+      h.style.setProperty("--lm-a", f.metal[0]); h.style.setProperty("--lm-b", f.metal[1]);
+      const [a, b, cc] = f.flame; h.style.setProperty("--fl-core", a); h.style.setProperty("--fl-mid", b); h.style.setProperty("--fl-base", cc); h.style.setProperty("--fl-halo", b);
+    }
   }
   applyTheme(); drawStFx(); refreshLanterns();
+}
+// the parts of the app a worn finish paints (all on unless switched off in the Wardrobe)
+const FIN_PARTS = [
+  ["ctl", "Buttons, tabs & chips", "Every button, tab, chip, switch and slider"],
+  ["txt", "Text & titles", "Titles, headings, names, labels, the logo and splash title"],
+  ["bar", "Bubbles, bars & badges", "Your message bubbles, names on messages, gauges, trait and progress bars, badges, the badge toast"],
+  ["glow", "Lantern, panels & glows", "The lantern's metal and flame, card and window borders, glows, the portrait ring, the background"]
+];
+const finParts = (w = wornNow()) => ({ ctl: true, txt: true, bar: true, glow: true, ...(w.finParts && typeof w.finParts === "object" ? w.finParts : {}) });
+// solid colours taken from a finish: text gets a version bright enough to read on the dark background
+function finLift(hex, minL) { let h = hex; for (let i = 0; i < 12 && OKLAB.to(h)[0] < minL; i++) h = mixHex(h, "#ffffff", 0.18); return h; }
+function finCols(f) {
+  const [a, b, c] = f.flame, t = [a, b, c].map(x => finLift(x, 0.74));
+  return { text: `linear-gradient(100deg,${t[0]},${t[1]} 50%,${t[2]})`, mid: finLift(b, 0.62), light: finLift(a, 0.8), dark: f.metal[0] };
 }
 function refreshLanterns() {
   for (const id of ["logoLantern", "spLantern", "railLantern"]) { const el = $(id); if (!el || !el.firstChild) continue; const out = el.querySelector(".lantern")?.classList.contains("out"); el.innerHTML = lanternSVG(out ? "out" : ""); }
@@ -3621,11 +3701,18 @@ function wardrobeTab() {
   const sh = shopOf(), w = sh.wear;
   return `<p class="note" style="margin:0">What you're wearing. Tap something you own to wear it; tap Default to go back.</p>` + SHOP_CATS.map(([cat, l]) => {
     const own = SHOP.filter(x => x.cat === cat && sh.owned[x.id]);
-    return `<div class="wd-slot"><div class="lbl">${l}</div><div class="wd-row"><button type="button" class="wd-it ${!w[cat] ? "on" : ""}" data-cat="${cat}" data-key="">Default</button>${own.map(x => `<button type="button" class="wd-it ${w[cat] === x.key ? "on" : ""}" data-cat="${cat}" data-key="${esc(x.key)}">${esc(x.n)}</button>`).join("")}</div>${!own.length ? `<p class="hint" style="margin:0">Nothing owned yet. Find these in the Shop tab.</p>` : ""}${cat === "finish" && w.finish ? `<label class="check" style="margin-top:6px"><input type="checkbox" id="wdFinFlame" ${w.finFlame ? "checked" : ""}> Finish the flame too</label>` : ""}</div>`;
+    return `<div class="wd-slot"><div class="lbl">${l}</div><div class="wd-row"><button type="button" class="wd-it ${!w[cat] ? "on" : ""}" data-cat="${cat}" data-key="">Default</button>${own.map(x => `<button type="button" class="wd-it ${w[cat] === x.key ? "on" : ""}" data-cat="${cat}" data-key="${esc(x.key)}">${esc(x.n)}</button>`).join("")}</div>${!own.length ? `<p class="hint" style="margin:0">Nothing owned yet. Find these in the Shop tab.</p>` : ""}${cat === "finish" && w.finish ? finPartsUI(w) : ""}${cat === "finish" && w.finish && false ? `<label class="check" style="margin-top:6px"><input type="checkbox" id="wdFinFlame" ${w.finFlame ? "checked" : ""}> Finish the flame too</label>` : ""}</div>`;
   }).join("");
 }
+// the finish's switches, one per part of the app (synced like the rest of the outfit: wearT.finParts)
+function finPartsUI(w) {
+  const on = finParts(w);
+  return `<div class="wd-parts"><div class="hint" style="margin:0">Where the finish shows:</div>${FIN_PARTS.map(([k, l, d]) => `<label class="wd-part"><span><b>${l}</b><small>${d}</small></span><label class="switch"><input type="checkbox" data-fp="${k}" ${on[k] ? "checked" : ""} aria-label="${esc(l)}"><span></span></label></label>`).join("")}</div>`;
+}
+function finPartSet(k, v) { const sh = shopOf(), now = Date.now(); sh.wear = { ...sh.wear, finParts: { ...finParts(sh.wear), [k]: !!v } }; sh.wearT = { ...(sh.wearT || {}), finParts: now }; sh.wearAt = now; achSave(); applyCosmetics(); }
 function wireWardrobe(b, redraw) {
   b.querySelectorAll(".wd-it").forEach(x => x.onclick = () => { shopWear(x.dataset.cat, x.dataset.key); redraw(); });
+  b.querySelectorAll("[data-fp]").forEach(x => x.onchange = () => finPartSet(x.dataset.fp, x.checked));
   if ($("wdFinFlame")) $("wdFinFlame").onchange = e => { const sh = shopOf(); const now = Date.now(); sh.wear = { ...sh.wear, finFlame: e.target.checked }; sh.wearT = { ...(sh.wearT || {}), finFlame: now }; sh.wearAt = now; achSave(); applyCosmetics(); };
 }
 // ---- ladders: granted from the counters whenever something is counted
@@ -4139,7 +4226,7 @@ function userClose() {
   return false;
 }
 $("sheetClose").onclick = userClose;
-$("sheet").addEventListener("click", e => { if (e.target.id === "sheet" && !S.sheetGuard && !$("sheetBody").querySelector("textarea,#gWait,#gMake")) closeSheet(); });
+// v1.61: windows close only with their ✕ (or the phone's back button / Esc); a tap or drag outside never closes them
 function field(label, html, hint) { return `<div class="field"><label>${label}</label>${html}${hint ? `<div class="hint">${hint}</div>` : ""}</div>`; }
 function confirmBtn(btn, label, fn) {
   btn.addEventListener("click", () => {
@@ -4478,7 +4565,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       <input type="file" id="sImport" accept=".json,application/json" hidden>
       <div id="sMsg" class="hint"></div>
     </div>
-    <p class="hint" style="text-align:center;color:var(--muted);font-size:12px;margin:0">Lanternroom version ${VERSION}</p>
+    <p class="hint ver" style="text-align:center;color:var(--muted);font-size:12px;margin:0">Lanternroom version ${VERSION}</p>
     <div>
     </div>`;
   const fmts = { sTemp: v => (+v).toFixed(2), sMax: fmtK, sCtx: fmtK, sTopK: v => String(+v), sTopP: v => (+v).toFixed(2), sRep: v => (+v).toFixed(2), sFreq: v => (+v).toFixed(2) };
@@ -9022,7 +9109,7 @@ async function ambienceStep() {
 function drawAmbPop() {
   const st = S.settings, pop = $("ambPop"), sc = S.chat ? sceneNow() : { amb: "none", act: "none" };
   const bgName = sc.amb && sc.amb !== "none" ? AMB_LABEL[sc.amb] || sc.amb : "nothing right now", actName = sc.act && sc.act !== "none" ? ACT_LABEL[sc.act] || sc.act : "nothing right now";
-  pop.innerHTML = `
+  pop.innerHTML = `<div class="ap-head"><b>Sounds</b><button type="button" class="icon ap-x" id="apX" aria-label="Close sounds">✕</button></div>
     <div class="ap-row"><div class="ap-top"><b>Background<small>${esc(bgName)}</small></b><label class="switch"><input type="checkbox" id="apAmb" aria-label="Background sounds" ${st.ambOn !== false && !st.ambMuted ? "checked" : ""}><span></span></label></div>
       <input type="range" id="apAmbVol" min="0" max="1" step="0.05" value="${st.ambVol ?? 0.35}" aria-label="Background volume"></div>
     <div class="ap-row"><div class="ap-top"><b>Scene sounds<small>${esc(actName)}</small></b><label class="switch"><input type="checkbox" id="apAct" aria-label="Scene sounds" ${st.actOn !== false && !st.ambMuted ? "checked" : ""}><span></span></label></div>
@@ -9030,6 +9117,7 @@ function drawAmbPop() {
     <div class="ap-row"><div class="ap-top"><b>Music<small>${esc(MUS.key ? MUS_LABEL[MUS.key] || MUS.key : "nothing right now")}</small></b><label class="switch"><input type="checkbox" id="apMus" aria-label="Music" ${st.musicOn !== false && !st.ambMuted ? "checked" : ""}><span></span></label></div>
       <input type="range" id="apMusVol" min="0" max="1" step="0.05" value="${st.musicVol ?? 0.2}" aria-label="Music volume"></div>`;
   const save = async () => { await saveSettings(); acx(); updateAmbience(); };
+  $("apX").onclick = () => { pop.hidden = true; };
   $("apAmb").onchange = e => { st.ambOn = e.target.checked; if (e.target.checked) { if (st.ambMuted) st.actOn = false; st.ambMuted = false; } save(); drawAmbPop(); };
   $("apAct").onchange = e => { st.actOn = e.target.checked; if (e.target.checked) { if (st.ambMuted) st.ambOn = false; st.ambMuted = false; } save(); drawAmbPop(); };
   $("apMus").onchange = e => { st.musicOn = e.target.checked; if (e.target.checked && st.ambMuted) { st.ambMuted = false; st.ambOn = false; st.actOn = false; } save(); drawAmbPop(); };
@@ -9039,7 +9127,7 @@ function drawAmbPop() {
   }
 }
 $("btnAmb").onclick = e => { e.stopPropagation(); const pop = $("ambPop"); if (pop.hidden) { drawAmbPop(); pop.hidden = false; } else pop.hidden = true; acx(); };
-document.addEventListener("click", e => { const pop = $("ambPop"); if (!pop.hidden && !e.target.closest("#ambPop,#btnAmb")) pop.hidden = true; });
+// the sound panel closes with its ✕ or the 🔊 button (v1.61), not by tapping elsewhere
 document.addEventListener("visibilitychange", () => updateAmbience());
 // first tap anywhere unlocks audio on phones
 document.addEventListener("pointerdown", () => { if (AC && AC.state !== "running" && AC.state !== "closed") AC.resume().catch(() => {}); }, { passive: true });
