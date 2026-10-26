@@ -88,6 +88,7 @@ const open = require("./base.js");
   chk("opening the community clears the dot", await pg.evaluate(() => $("commDot").hidden && $("railCommDot").hidden));
   await pg.click('[data-ht="you"]'); await wait(200);
   chk("Yours lists the public bot with its numbers", await pg.evaluate(id => !!document.querySelector(`.cm-mine[data-id="${id}"]`) && /♥/.test(document.querySelector(`.cm-mine[data-id="${id}"]`).textContent), wren));
+  await pg.click("#meEdit"); await wait(200);
   await pg.fill("#cmMe", "Lanternlover"); await pg.dispatchEvent("#cmMe", "change"); await wait(100);
   chk("your community name is used for your comments", await pg.evaluate(() => meName() === "Lanternlover"));
   // people

@@ -1512,7 +1512,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.68 · Oct 26";
+const VERSION = "1.69 · Oct 26";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -7686,6 +7686,14 @@ function cmSlots(n, offset) {
       gender: ["woman", "man", "nonbinary", "woman", "man", "trans woman", "trans man", "rather not say"][Math.floor(Math.random() * 8)], speed: r < 0.3 ? "fast" : r < 0.75 ? "medium" : "slow", sleep: CM_SLEEP[Math.floor(Math.random() * CM_SLEEP.length)], active: +(0.2 + 0.8 * Math.random()).toFixed(2) };
   });
 }
+// v1.69: people only say true things. Their bots are exactly what's listed; a post or status that claims a new bot
+// when they haven't posted one in the last three days is dropped.
+const agoText = t => { const h = (Date.now() - t) / 3.6e6; return h < 1 ? "under an hour ago" : h < 24 ? `${Math.round(h)} h ago` : `${Math.round(h / 24)} days ago`; };
+const botsFact = u => { const ps = commUserPosts(u).sort((a, c) => c.at - a.at); return ps.length ? ps.slice(0, 5).map(p => `"${p.card.name}" (posted ${agoText(p.at)})`).join(", ") + (ps.length > 5 ? ` and ${ps.length - 5} older` : "") : "none yet (they have never posted a bot)"; };
+const COMM_TRUE = "Only say things that are true on the site: a person's bots are exactly the ones listed for them with when they were posted. Never claim a new bot, an update, a release or anything else that hasn't happened; someone with no recent bot can talk about plans, WIPs, requests, life or other people's bots, never a bot they 'just made' or 'just posted'.";
+const CLAIMS_NEW = /\b(just (made|posted|dropped|released|uploaded|finished|published|put out)|new bot (is )?(out|up|live|dropped)|(is|are|it's|its) (out|up|live) now|check out my new|(dropped|posted|released|uploaded) (a|my) new|my new(est)? bot|new upload)\b/i;
+const claimOk = (u, t) => !CLAIMS_NEW.test(t || "") || commUserPosts(u).some(p => Date.now() - p.at < 3 * 864e5);
+const commTruth = u => `Your bots on the site: ${botsFact(u)}. ${COMM_TRUE}`;
 // a bio is kept whole (up to 600 characters, cut at a sentence end if it's longer)
 function commBio(t) { const x = s5(t).trim(); if (x.length <= 600) return x; const cut = x.slice(0, 600), at = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "), cut.lastIndexOf(".\n")); return (at > 200 ? cut.slice(0, at + 1) : cut.replace(/\s+\S*$/, "") + "…").trim(); }
 // v1.66: bios written before were cut at 240 characters, and some describe how the person types instead of being written that way
@@ -7771,7 +7779,10 @@ async function commPosts(k) {
 function commTargets(n) {
   const now = Date.now(), list = [];
   for (const p of COMM.posts.slice(0, 40)) list.push({ t: p.id, w: (0.4 + p.heat) * Math.exp(-(now - p.at) / 2.6e8) * (1 + (commLiked(p.id) ? 1 : 0)) });
-  for (const b of (COMM.blogs || []).slice(0, 25)) list.push({ t: "blog:" + b.id, w: 0.5 * (0.4 + b.heat) * Math.exp(-(now - b.at) / 1.7e8) });
+  for (const b of (COMM.blogs || []).filter(b => b.by !== "me").slice(0, 25)) list.push({ t: "blog:" + b.id, w: 0.5 * (0.4 + b.heat) * Math.exp(-(now - b.at) / 1.7e8) });
+  // your posts: only people who know you react, more of them the more people know you
+  const aud = myAudience().length;
+  if (aud) for (const b of (COMM.blogs || []).filter(b => b.by === "me" && now - b.at < 10 * 864e5 && commN("blog:" + b.id) < 3 + aud * 1.5)) list.push({ t: "blog:" + b.id, w: (commN("blog:" + b.id) < 2 ? 3 : 0.8) * Math.min(2, 0.3 + aud / 6) });
   const mine = S.chars.filter(c => pubOf(c)).map(c => ({ t: "bot:" + c.id, w: (0.4 + pubOf(c).heat) * (commN("bot:" + c.id) < 3 ? 3 : 1) }));
   const out = [];
   // the owner's public bots: a new one gets its first few comments soon, after that about every other round
@@ -7781,7 +7792,7 @@ function commTargets(n) {
   return out;
 }
 function targetInfo(t) {
-  if (t.startsWith("blog:")) { const b = COMM.blogs.find(x => x.id === t.slice(5)); if (!b) return null; const u = userOf(b.by); return { name: b.title || "a post", owner: u ? "@" + u.handle : "someone", mine: false, text: `A blog post: ${b.title ? b.title + " - " : ""}${b.text}`, tags: u?.taste || [], by: b.by }; }
+  if (t.startsWith("blog:")) { const b = COMM.blogs.find(x => x.id === t.slice(5)); if (!b) return null; if (b.by === "me") return { name: b.title || "a post", owner: meName(), mine: true, text: `A blog post by ${meName()}: ${b.title ? b.title + " - " : ""}${b.text}`, tags: tagsOf(S.chars.find(c => pubOf(c)) || {}), by: "me", me: true }; const u = userOf(b.by); return { name: b.title || "a post", owner: u ? "@" + u.handle : "someone", mine: false, text: `A blog post: ${b.title ? b.title + " - " : ""}${b.text}`, tags: u?.taste || [], by: b.by }; }
   if (t.startsWith("bot:")) { const c = byId(t.slice(4)); return c ? { name: c.name, owner: meName(), mine: true, text: `${botSummary(c)}\nTags: ${tagsOf(c).join(", ")}\nOpening: ${String(greetingsOf(c)[0] || "").slice(0, 600)}`, tags: tagsOf(c) } : null; }
   const p = COMM.posts.find(x => x.id === t); if (!p) return null; const u = userOf(p.by);
   return { name: p.card.name, owner: u ? "@" + u.handle : "someone", mine: false, text: `${p.card.summary}\nTags: ${(p.tags || []).join(", ")}\nOpening: ${String(p.card.firstMessages?.[0] || "").slice(0, 500)}`, tags: p.tags || [] };
@@ -7790,13 +7801,16 @@ const threadText = t => (COMM.comments[t] || []).slice(-10).map(x => `[${x.id}] 
 async function commComments(n) {
   const ts = commTargets(Math.min(3, Math.max(1, Math.ceil(n / 2)))); if (!ts.length) return [];
   const infos = ts.map(t => [t, targetInfo(t)]).filter(([, i]) => i);
-  const people = pickUsers(Math.min(8, COMM.users.length), infos.flatMap(([, i]) => i.tags));
-  const j = await dsJSON([{ role: "system", content: `You write the comments people leave on bot listings on ${COMM_SITE}. Each commenter writes exactly in their own voice. Comments react to the specific bot (its premise, opening, characters, kinks, writing) the way real users do: praise, requests, jokes, stories about their chat, small critiques, questions to the creator, now and then a reply to another comment. Keep them short (one to three sentences, sometimes a single line). Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"comments": [{"on": the listing key, "by": the commenter's handle, "text", "replyTo": the [id] of a comment it answers, or ""}]}` },
-    { role: "user", content: `Write ${n} new comments in all, spread over these listings:\n${infos.map(([t, i]) => `## Listing key ${t}: "${i.name}" by ${i.owner}\n${i.text}${commN(t) ? `\nComments so far:\n${threadText(t)}` : ""}`).join("\n\n")}\n\nCommenters to use (pick the ones whose taste fits):\n${people.map(u => `- @${u.handle} (${u.role || "regular"}): loves ${u.taste.join(", ")}. Types: ${u.style || u.voice}`).join("\n")}` }], { temperature: 1, maxTokens: 2500, plain: true });
+  let people = pickUsers(Math.min(8, COMM.users.length), infos.flatMap(([, i]) => i.tags));
+  const aud = infos.some(([, i]) => i.me) ? myAudience() : [];
+  if (aud.length) people = [...new Set([...aud.slice().sort(() => Math.random() - 0.5).slice(0, 5), ...people])].slice(0, 10);
+  const j = await dsJSON([{ role: "system", content: `You write the comments people leave on bot listings on ${COMM_SITE}. Each commenter writes exactly in their own voice. Comments react to the specific bot (its premise, opening, characters, kinks, writing) the way real users do: praise, requests, jokes, stories about their chat, small critiques, questions to the creator, now and then a reply to another comment. Keep them short (one to three sentences, sometimes a single line). Never mention being an AI or that the site is made up. ${COMM_TRUE} ${COMM_ADULT}\n\nRespond with only JSON: {"comments": [{"on": the listing key, "by": the commenter's handle, "text", "replyTo": the [id] of a comment it answers, or ""}]}` },
+    { role: "user", content: `Write ${n} new comments in all, spread over these listings:\n${infos.map(([t, i]) => `## Listing key ${t}: "${i.name}" by ${i.owner}\n${i.text}${commN(t) ? `\nComments so far:\n${threadText(t)}` : ""}${i.me ? `\nOnly these people know ${meName()} and may comment on this post: ${aud.map(u => "@" + u.handle).join(", ")}` : ""}`).join("\n\n")}\n\nCommenters to use (pick the ones whose taste fits):\n${people.map(u => `- @${u.handle} (${u.role || "regular"}): loves ${u.taste.join(", ")}. Types: ${u.style || u.voice}`).join("\n")}` }], { temperature: 1, maxTokens: 2500, plain: true });
   const now = Date.now(), made = [];
   for (const x of Array.isArray(j?.comments) ? j.comments : []) {
     const t = infos.find(([k]) => k === s5(x?.on))?.[0] || infos[0][0], u = COMM.users.find(y => y.handle.toLowerCase() === s5(x?.by).replace(/^@/, "").toLowerCase()) || people[made.length % people.length];
     const text = s5(x?.text).slice(0, 600); if (!text || !u) continue;
+    if (infos.find(([k]) => k === t)?.[1]?.me && !aud.some(a => a.id === u.id)) continue; // only people who know you comment on your posts
     const rt = s5(x?.replyTo).replace(/[\[\]]/g, ""), c = { id: uid(), by: u.id, text, at: Math.max(now - Math.round(Math.random() * 9e5), (COMM.seen?.at || 0) + 1) /* a little earlier looks natural, never before the owner last looked */, replyTo: (COMM.comments[t] || []).some(y => y.id === rt) ? rt : "", heat: 0.4 + 1.4 * Math.random() };
     (COMM.comments[t] = COMM.comments[t] || []).push(c); made.push([t, c]); u.last = Math.max(u.last || 0, c.at);
   }
@@ -7807,15 +7821,16 @@ function commSchedule(t, mine) {
   const parent = mine.replyTo && (COMM.comments[t] || []).find(x => x.id === mine.replyTo), info = COMM.posts.find(p => p.id === t) || (t.startsWith("blog:") ? COMM.blogs.find(b => "blog:" + b.id === t) : null);
   const who = new Set();
   if (parent && parent.by !== "me") who.add(parent.by);
-  if (!parent && info && Math.random() < 0.8) who.add(info.by);
-  if (Math.random() < (who.size ? 0.3 : 0.75)) { const o = pickUsers(1, targetInfo(t)?.tags || [])[0]; if (o) who.add(o.id); }
+  if (!parent && info && info.by !== "me" && Math.random() < 0.8) who.add(info.by);
+  if (info?.by === "me") { if (!parent) { const known = (COMM.comments[t] || []).filter(x => x.by !== "me").map(x => x.by); const o = known[Math.floor(Math.random() * known.length)] || myAudience()[0]?.id; if (o && Math.random() < 0.85) who.add(o); } }
+  else if (Math.random() < (who.size ? 0.3 : 0.75)) { const o = pickUsers(1, targetInfo(t)?.tags || [])[0]; if (o) who.add(o.id); }
   for (const by of who) { const u = userOf(by); let due = Date.now() + Math.round(60e3 + Math.random() * 3 * 60e3) * (u?.speed === "slow" ? 6 : u?.speed === "fast" ? 0.6 : 1.5); if (u && asleepAt(u, due)) due = wakeAfter(u, due) + Math.random() * 80 * 60e3; COMM.pending.push({ id: uid(), target: t, replyTo: mine.id, by, due }); }
 }
 async function commAnswer(p) {
   const u = userOf(p.by), info = targetInfo(p.target), mine = (COMM.comments[p.target] || []).find(x => x.id === p.replyTo);
   if (!u || !info || !mine) return null;
   const isAuthor = !info.mine && (COMM.posts.find(x => x.id === p.target)?.by === u.id || info.by === u.id);
-  const j = await dsJSON([{ role: "system", content: `You are @${u.handle} (${u.name}), a real ${u.age ? u.age + "-year-old " : ""}person${u.place ? " in " + u.place : ""} on ${COMM_SITE}. About you: ${cleanBio(u.bio)} You love ${u.taste.join(", ")}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted.${isAuthor ? ` You made the bot "${info.name}".` : ""} Reply to ${meName()}'s comment the way you really would: in your own voice, about what they actually said, one to three sentences. Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"text": your reply}` },
+  const j = await dsJSON([{ role: "system", content: `You are @${u.handle} (${u.name}), a real ${u.age ? u.age + "-year-old " : ""}person${u.place ? " in " + u.place : ""} on ${COMM_SITE}. About you: ${cleanBio(u.bio)} You love ${u.taste.join(", ")}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted. ${commTruth(u)}${isAuthor ? ` You made the bot "${info.name}".` : ""} Reply to ${meName()}'s comment the way you really would: in your own voice, about what they actually said, one to three sentences. Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"text": your reply}` },
     { role: "user", content: `The listing: "${info.name}" by ${info.owner}\n${info.text}\n\nThe thread:\n${threadText(p.target)}\n\nReply to this comment by ${meName()}: ${mine.text}` }], { temperature: 1, maxTokens: 500, plain: true });
   const text = s5(j?.text).slice(0, 600); if (!text) return null;
   const c = { id: uid(), by: u.id, text, at: Math.min(Date.now(), p.due + 60e3), replyTo: mine.id, heat: 0.6 + Math.random(), toMe: true }; u.last = Math.max(u.last || 0, c.at);
@@ -8017,6 +8032,7 @@ function hubDisc(draw) {
   hubWire(box, () => hubDisc(draw));
 }
 function hubYou() {
+  if (COMM.me?.edited !== false) return myProfileHTML() + hubYouShare();
   const pub = S.chars.filter(c => pubOf(c)), priv = S.chars.filter(c => !pubOf(c) && !c.hidden), likes = pub.reduce((a, c) => a + pubStats(c).likes, 0);
   return `<div class="hub-youcard">${meAvatar(72)}<div class="grow"><h3 class="cm-pfn">${esc(meName())}</h3><div class="cm-pstats"><span><b>${fmtK(myFollowers())}</b> followers</span><span><b>${Object.values(COMM.follow).filter(x => x.v).length}</b> following</span><span><b>♥ ${fmtK(likes)}</b></span></div></div></div>
     <div class="row"><button type="button" class="btn small" id="cmPic">${COMM.me?.pic || COMM.me?.pix ? "Change picture" : "Choose a profile picture"}</button>${COMM.me?.pic || COMM.me?.pix ? `<button type="button" class="btn small" id="cmPicX">Use my persona's picture</button>` : ""}<button type="button" class="btn small" id="hubActB">${HUB_ICON.bell} Activity</button></div>
@@ -8024,7 +8040,10 @@ function hubYou() {
     <div class="lbl">Your public bots · ${pub.length}</div>${pub.length ? pub.map(c => { const s = pubStats(c); return `<div class="listrow cm-mine" data-id="${esc(c.id)}"><span class="grow"><b>${esc(c.name)}</b><span class="sub">♥ ${fmtK(s.likes)} · ${fmtK(s.chats)} chats · ${commN("bot:" + c.id)} comments · public since ${esc(fmtWhen(pubOf(c).since || pubOf(c).at))}</span></span><button type="button" class="btn small" data-cm="${esc(c.id)}">Comments</button></div>`; }).join("") : `<p class="hint" style="margin:0">None yet. Share a bot below, or from its profile.</p>`}
     ${priv.length ? `<div class="lbl">Share one</div>${priv.slice(0, 30).map(c => `<div class="listrow"><span class="grow"><b>${esc(c.name)}</b><span class="sub">${esc(botSummary(c).slice(0, 90))}</span></span><button type="button" class="btn small" data-share="${esc(c.id)}">🌐 Make public</button></div>`).join("")}` : ""}`;
 }
+function hubYouShare() { const priv = S.chars.filter(c => !pubOf(c) && !c.hidden); return priv.length ? `<div class="lbl">Share a bot</div>${priv.slice(0, 30).map(c => `<div class="listrow"><span class="grow"><b>${esc(c.name)}</b><span class="sub">${esc(botSummary(c).slice(0, 90))}</span></span><button type="button" class="btn small" data-share="${esc(c.id)}">🌐 Make public</button></div>`).join("")}` : ""; }
 function hubYouWire(draw) {
+  if ($("meEdit")) $("meEdit").onclick = openMeEdit;
+  if ($("mePost")) $("mePost").onclick = openNewPost;
   if ($("cmMe")) $("cmMe").onchange = e => { COMM.me = { ...COMM.me, name: e.target.value.trim().slice(0, 40), at: Date.now() }; commSave(); };
   if ($("cmPic")) $("cmPic").onclick = async () => { const r = await openPix(mePicOf() || {}, { title: "Your community picture", seed: "me", text: uname() }); if (!r || r.none) return; COMM.me = { ...COMM.me, pic: r.pic || "", pix: r.pix || null, at: Date.now() }; commSave(); toast("Profile picture set"); draw(); };
   if ($("cmPicX")) $("cmPicX").onclick = () => { COMM.me = { ...COMM.me, pic: "", pix: null, at: Date.now() }; commSave(); draw(); };
@@ -8064,6 +8083,65 @@ function openNewDM() {
     b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-search"><input id="ndQ" type="search" placeholder="Find someone you follow or talked to" autocomplete="off"></div><div id="ndList"></div>`;
     const fill = () => { const l = list.filter(u => !q || (u.name + " " + u.handle).toLowerCase().includes(q)); $("ndList").innerHTML = l.length ? l.map(u => `<button type="button" class="listrow" data-dm="${esc(u.id)}">${avatarOf(u, 36)}<span class="grow"><b>${esc(u.name)}</b> <span class="hint">@${esc(u.handle)}</span></span></button>`).join("") : `<p class="hint">Follow people or like their bots and they show up here. You can also message anyone from their profile.</p>`; $("ndList").querySelectorAll("[data-dm]").forEach(x => x.onclick = () => openDM(x.dataset.dm)); };
     $("ndQ").oninput = e => { q = e.target.value.trim().toLowerCase(); fill(); }; fill();
+  });
+  COMM_VIEW = null; draw();
+}
+// ---- your own profile (v1.69): bio, status, pinned bot, your look from the Wardrobe, and blog posts people react to.
+// Only people who know you (they follow you, you talked, or they commented on your things) visit, comment or mention you.
+const myHandle = () => (meName().toLowerCase().replace(/[^a-z0-9_]+/g, "_").replace(/^_+|_+$/g, "") || "you").slice(0, 24);
+function myFit() { const w = wornNow() || {}; return { theme: w.theme ? w.theme : "pal:" + (S.settings.theme || "lantern"), accent: S.settings.accent || "", flame: w.flame || "", lantern: w.lantern || "", finish: w.finish || "" }; }
+function myAudience() {
+  if (!COMM) return [];
+  const ids = new Set(Object.entries(COMM.fans || {}).filter(([, at]) => at <= Date.now()).map(([id]) => id));
+  for (const [id, d] of Object.entries(COMM.dms || {})) if (d.msgs.some(m => m.from === "them")) ids.add(id);
+  for (const [t, l] of Object.entries(COMM.comments)) if (t.startsWith("bot:") || (t.startsWith("blog:") && COMM.blogs.find(b => "blog:" + b.id === t)?.by === "me") || l.some(x => x.by === "me")) for (const x of l) if (x.by !== "me" && (t.startsWith("bot:") || t.startsWith("blog:") || l.some(y => y.replyTo === x.id && y.by === "me") || x.toMe)) ids.add(x.by);
+  return [...ids].map(userOf).filter(Boolean);
+}
+function knowsMe(u) {
+  const why = [];
+  if (COMM.fans?.[u.id] && COMM.fans[u.id] <= Date.now()) why.push("they follow them");
+  if (follows(u.id)) why.push("they're followed by them");
+  if (COMM.dms?.[u.id]?.msgs.some(m => m.from === "them")) why.push("they've messaged each other");
+  for (const [t, l] of Object.entries(COMM.comments)) if (l.some(x => x.by === u.id) && (t.startsWith("bot:") || COMM.blogs.find(b => "blog:" + b.id === t)?.by === "me")) { why.push(`they commented on ${meName()}'s ${t.startsWith("bot:") ? "bot" : "post"} "${targetInfo(t)?.name || ""}"`); break; }
+  return why.join(", ");
+}
+const myHeat = () => Math.min(2.2, 0.12 + myAudience().length / 18 + myFollowers() / 90);
+function myProfileHTML() {
+  const fs = fitStyle({ fit: myFit(), id: "me" }), me = COMM.me || {}, pub = S.chars.filter(c => pubOf(c)), likes = pub.reduce((a, c) => a + pubStats(c).likes, 0);
+  const pin = pub.find(c => c.id === me.pin), posts = (COMM.blogs || []).filter(b => b.by === "me");
+  const name = fs.fin ? `<h3 class="cm-pfn" style="background:var(--fin-t);-webkit-background-clip:text;background-clip:text;color:transparent">${esc(meName())}</h3>` : `<h3 class="cm-pfn">${esc(meName())}</h3>`;
+  const botRow = c => { const s = pubStats(c); return `<div class="listrow cm-mine" data-id="${esc(c.id)}"><span class="grow"><b>${esc(c.name)}</b><span class="sub">♥ ${fmtK(s.likes)} · ${fmtK(s.chats)} chats · ${commN("bot:" + c.id)} comments</span></span><button type="button" class="btn small" data-cm="${esc(c.id)}">Comments</button></div>`; };
+  return `<div class="cm-pfx${fs.shop ? " st-" + fs.shop : ""}" style="${fs.st}">${fs.shop ? `<div class="sh-fx">${stFxHTML(fs.shop)}</div>` : ""}<div class="cm-pfx-in">
+    <div class="cm-prof"><div class="cm-emb">${meAvatar(64)}<span class="cm-lan">${lanternSVG("", { flame: myFit().flame, lantern: myFit().lantern })}</span></div><div class="grow">${name}<div class="hint">@${esc(myHandle())} · you</div></div></div>
+    ${cleanBio(me.status) ? `<div class="cm-stline">${esc(me.status)}</div>` : ""}
+    <div class="cm-pstats"><span><b>${fmtK(myFollowers())}</b> followers</span><span><b>${Object.values(COMM.follow).filter(x => x.v).length}</b> following</span><span><b>${pub.length}</b> public bot${pub.length === 1 ? "" : "s"}</span><span><b>♥ ${fmtK(likes)}</b></span></div>
+    <div class="row"><button type="button" class="btn small primary" id="meEdit">✎ Edit profile</button><button type="button" class="btn small" id="mePost">📝 New post</button><button type="button" class="btn small" id="hubActB">${HUB_ICON.bell} Activity</button></div>
+    ${me.bio ? `<p class="cm-bio">${esc(me.bio)}</p>` : `<p class="hint" style="margin:0">No bio yet. Tap Edit profile to write one.</p>`}
+    ${pin ? `<div class="lbl">📌 Pinned</div>${botRow(pin)}` : ""}
+    <div class="lbl">Posts · ${posts.length}</div>${posts.length ? posts.map(blogCard).join("") : `<p class="hint" style="margin:0">Share news, WIPs or requests. People who follow you or know you see them and react.</p>`}
+    <div class="lbl">Public bots · ${pub.length}</div>${pub.filter(c => c !== pin).map(botRow).join("") || (pin ? "" : `<p class="hint" style="margin:0">None yet. Share one below, or from a bot's profile.</p>`)}
+  </div></div>`;
+}
+function openMeEdit() {
+  const draw = () => cpage("Edit profile", b => {
+    const me = COMM.me || {}, pub = S.chars.filter(c => pubOf(c));
+    b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-page">
+      <div class="cm-me">${meAvatar(64)}<div class="stack" style="gap:6px"><button type="button" class="btn small" id="cmPic">${me.pic || me.pix ? "Change picture" : "Choose a profile picture"}</button>${me.pic || me.pix ? `<button type="button" class="btn small" id="cmPicX">Use my persona's picture</button>` : ""}</div></div>
+      ${field("Your name in the community", `<input id="cmMe" value="${esc(me.name || "")}" placeholder="${esc(uname())}" autocomplete="off">`)}
+      ${field("Status", `<input id="meStatus" maxlength="120" value="${esc(me.status || "")}" placeholder="What you're up to" autocomplete="off">`)}
+      ${field("Bio", `<textarea id="meBio" maxlength="600" style="min-height:110px" placeholder="A few lines about you and the bots you make">${esc(me.bio || "")}</textarea>`)}
+      ${field("Pinned bot", `<select id="mePin"><option value="">None</option>${pub.map(c => `<option value="${esc(c.id)}" ${me.pin === c.id ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select>`, pub.length ? "" : "Make a bot public to pin it.")}
+      <p class="hint" style="margin:0">Your profile wears what you wear in the Wardrobe (theme, lantern, flame and finish) and your accent colour.</p>
+      <button type="button" class="btn primary" id="meSave">Save</button></div>`;
+    hubYouWire(draw);
+    $("meSave").onclick = () => { COMM.me = { ...COMM.me, name: $("cmMe").value.trim().slice(0, 40), status: $("meStatus").value.trim().slice(0, 120), bio: $("meBio").value.trim().slice(0, 600), pin: $("mePin").value, at: Date.now() }; commSave(); toast("Profile saved"); if (!hubBack()) hubTab("you"); };
+  });
+  COMM_VIEW = null; draw();
+}
+function openNewPost() {
+  const draw = () => cpage("New post", b => {
+    b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-page">${field("Title", `<input id="npTitle" maxlength="100" placeholder="Optional" autocomplete="off">`)}${field("Post", `<textarea id="npText" maxlength="1500" style="min-height:160px" placeholder="News, a WIP teaser, requests open, a thank-you…"></textarea>`)}<p class="hint" style="margin:0">Your followers and people who know you will see it. Likes and comments come in over time.</p><button type="button" class="btn primary" id="npGo">Post</button></div>`;
+    $("npGo").onclick = () => { const text = $("npText").value.trim(); if (!text) { $("npText").focus(); return; } const x = { id: uid(), by: "me", title: $("npTitle").value.trim().slice(0, 100), text: text.slice(0, 1500), heat: myHeat(), at: Date.now() }; COMM.blogs.unshift(x); commSave(); HUB.stack.length = Math.max(0, HUB.stack.length); hubTab("you"); openBlog(x.id); };
   });
   COMM_VIEW = null; draw();
 }
@@ -8152,7 +8230,7 @@ function commentsUI(t) {
   const l = COMM.comments[t] || [], top = l.filter(x => !x.replyTo || !l.some(y => y.id === x.replyTo));
   const kids = id => l.filter(x => x.replyTo === id);
   const one = (x, depth) => { const u = x.by === "me" ? null : userOf(x.by), liked = commLiked(x.id);
-    return `<div class="cm-c ${x.by === "me" ? "me" : ""}" style="--d:${Math.min(depth, 3)}">${x.by === "me" ? meAvatar(26) : avatarOf(u, 26)}<div class="grow"><div class="cm-ch">${x.by === "me" ? `<b>${esc(meName())}</b> <span class="badge">you</span>` : `<button type="button" class="cm-who" data-u="${esc(x.by)}"><b>${esc(u?.name || "Someone")}</b> <span class="hint">@${esc(u?.handle || "")}</span></button>`}<span class="hint">· ${esc(fmtWhen(x.at))}</span></div><div class="cm-tx">${esc(x.text)}</div><div class="cm-ca"><button type="button" class="cm-l ${liked ? "on" : ""}" data-cl="${esc(x.id)}">♥ ${cLikes(x) || ""}</button><button type="button" class="cm-r" data-rp="${esc(x.id)}">Reply</button></div></div></div>` + kids(x.id).map(k => one(k, depth + 1)).join(""); };
+    return `<div class="cm-c ${x.by === "me" ? "me" : ""}" style="--d:${Math.min(depth, 3)}">${x.by === "me" ? meAvatar(26) : avatarOf(u, 26)}<div class="grow"><div class="cm-ch">${x.by === "me" ? `<button type="button" class="cm-who" data-me="1"><b>${esc(meName())}</b> <span class="badge">you</span></button>` : `<button type="button" class="cm-who" data-u="${esc(x.by)}"><b>${esc(u?.name || "Someone")}</b> <span class="hint">@${esc(u?.handle || "")}</span></button>`}<span class="hint">· ${esc(fmtWhen(x.at))}</span></div><div class="cm-tx">${esc(x.text)}</div><div class="cm-ca"><button type="button" class="cm-l ${liked ? "on" : ""}" data-cl="${esc(x.id)}">♥ ${cLikes(x) || ""}</button><button type="button" class="cm-r" data-rp="${esc(x.id)}">Reply</button></div></div></div>` + kids(x.id).map(k => one(k, depth + 1)).join(""); };
   const waiting = COMM.pending.filter(p => p.target === t).map(p => userOf(p.by)).filter(Boolean);
   return `<div class="cm-thread">${l.length ? top.map(x => one(x, 0)).join("") : '<p class="hint" style="margin:0">No comments yet.</p>'}${waiting.length ? `<p class="hint cm-wait">${waiting.map(u => "@" + esc(u.handle)).join(", ")} ${waiting.length > 1 ? "are" : "is"} writing a reply…</p>` : ""}</div>
     <div class="cm-new"><div class="hint" id="cmTo" hidden></div><textarea id="cmText" style="min-height:60px" placeholder="Write a comment as ${esc(meName())}…"></textarea><div class="row"><button type="button" class="btn small" id="cmCancel" hidden>Cancel reply</button><button type="button" class="btn small primary" id="cmSend">Post</button></div></div>`;
@@ -8160,6 +8238,7 @@ function commentsUI(t) {
 function wireComments(b, t, redraw) {
   let to = "";
   b.querySelectorAll("[data-u]").forEach(x => { if (x.classList.contains("cm-who")) x.onclick = () => openCommUser(x.dataset.u); });
+  b.querySelectorAll("[data-me]").forEach(x => x.onclick = () => hubTab("you"));
   b.querySelectorAll("[data-cl]").forEach(x => x.onclick = () => { commLike(x.dataset.cl); redraw(); });
   b.querySelectorAll("[data-rp]").forEach(x => x.onclick = () => { to = x.dataset.rp; const c = (COMM.comments[t] || []).find(y => y.id === to); $("cmTo").hidden = false; $("cmTo").textContent = `Replying to ${c?.by === "me" ? "yourself" : "@" + (userOf(c?.by)?.handle || "")}`; $("cmCancel").hidden = false; $("cmText").focus(); });
   $("cmCancel").onclick = () => { to = ""; $("cmTo").hidden = true; $("cmCancel").hidden = true; };
@@ -8228,22 +8307,22 @@ function fitStyle(u) {
 const fitLantern = u => { const f = fitOf(u); return lanternSVG("", { flame: f.flame || "", lantern: f.lantern || "" }); };
 async function commDress(list) {
   if (!list.length) return;
-  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} customise how the app looks for them with cosmetics they've unlocked. For each person, pick what they'd really have on, matching their personality and taste, and write a short profile status in their own typing style (what they're up to, taking requests, a joke, a mood). About a quarter keep everything default (theme pal:lantern, no accent, no flame, lantern or finish); veterans and big creators show off more. Options (use only these keys, or "" for none) - ${fitCatalog()}. Accent is a hex colour. ${COMM_ADULT}\n\nRespond with only JSON: {"people": [{"handle", "theme", "accent", "flame", "lantern", "finish", "status", "fandoms": 0-4 games, anime, shows, films or books they're into}]}` },
-    { role: "user", content: list.map(u => `- @${u.handle} (${u.role || "regular"}): ${u.bio} Loves ${(u.taste || []).join(", ")}. Types: ${u.style || u.voice}`).join("\n") }], { temperature: 1, maxTokens: 3000, plain: true });
-  for (const x of Array.isArray(j?.people) ? j.people : []) { const u = list.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); if (!u) continue; u.fit = fitClean(x); u.status = s5(x?.status).slice(0, 120); if (!u.fandoms) u.fandoms = (Array.isArray(x?.fandoms) ? x.fandoms : []).map(s5).filter(Boolean).slice(0, 4); }
+  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} customise how the app looks for them with cosmetics they've unlocked. For each person, pick what they'd really have on, matching their personality and taste, and write a short profile status in their own typing style (what they're up to, taking requests, a joke, a mood). About a quarter keep everything default (theme pal:lantern, no accent, no flame, lantern or finish); veterans and big creators show off more. Options (use only these keys, or "" for none) - ${fitCatalog()}. Accent is a hex colour. The status follows what's true for them: ${COMM_TRUE} ${COMM_ADULT}\n\nRespond with only JSON: {"people": [{"handle", "theme", "accent", "flame", "lantern", "finish", "status", "fandoms": 0-4 games, anime, shows, films or books they're into}]}` },
+    { role: "user", content: list.map(u => `- @${u.handle} (${u.role || "regular"}): ${u.bio} Loves ${(u.taste || []).join(", ")}. Types: ${u.style || u.voice}. Their bots: ${botsFact(u)}`).join("\n") }], { temperature: 1, maxTokens: 3000, plain: true });
+  for (const x of Array.isArray(j?.people) ? j.people : []) { const u = list.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); if (!u) continue; u.fit = fitClean(x); u.status = claimOk(u, x?.status) ? s5(x?.status).slice(0, 120) : ""; if (!u.fandoms) u.fandoms = (Array.isArray(x?.fandoms) ? x.fandoms : []).map(s5).filter(Boolean).slice(0, 4); }
   for (const u of list) if (!u.fit) u.fit = fitAuto(u);
 }
 // ---- people update their profiles now and then (v1.65); u.hist = [{at, what, text}] for the Following feed
 async function commProfileUpdates(k) {
   const now = Date.now(), pool = COMM.users.filter(u => u.fit && !asleepAt(u, now)).map(u => [u, (follows(u.id) ? 2.5 : 1) * (0.3 + (u.active ?? 0.5)) * Math.random()]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
   if (!pool.length) return [];
-  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} update their profiles now and then, the way real users do: a new status, a tweaked bio, something new they unlocked and now wear, or pinning a different bot. Each person changes one or two things that fit what's going on with them, in their own typing style. Cosmetic options (use only these keys) - ${fitCatalog()}. ${COMM_ADULT}\n\nRespond with only JSON: {"updates": [{"handle", "status": new status or "", "bio": a whole new bio (2-4 complete sentences in their typing style, never describing it, no identifying personal details) or "", "outfit": {"theme", "accent", "flame", "lantern", "finish"} with only the parts that changed, or {}, "pin": the exact name of one of their bots to pin, or "", "picture": a new profile picture from this list, or "" - ${PIX_SPRITES.map(s => s[0]).join(", ")}}]}` },
-    { role: "user", content: pool.map(u => `- @${u.handle} (${u.role || "regular"}). Bio: ${u.bio} Status: ${u.status || "(none)"}. Wears: ${JSON.stringify(fitOf(u))}. Types: ${u.style || u.voice}. Their bots: ${commUserPosts(u).slice(0, 5).map(p => `"${p.card.name}"`).join(", ") || "none"}. Recent: ${(COMM.blogs || []).filter(b => b.by === u.id).slice(0, 1).map(b => b.title || b.text.slice(0, 60)).join("") || "nothing"}`).join("\n") }], { temperature: 1, maxTokens: 1800, plain: true });
+  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} update their profiles now and then, the way real users do: a new status, a tweaked bio, something new they unlocked and now wear, or pinning a different bot. Each person changes one or two things that fit what's going on with them, in their own typing style. ${COMM_TRUE} Cosmetic options (use only these keys) - ${fitCatalog()}. ${COMM_ADULT}\n\nRespond with only JSON: {"updates": [{"handle", "status": new status or "", "bio": a whole new bio (2-4 complete sentences in their typing style, never describing it, no identifying personal details) or "", "outfit": {"theme", "accent", "flame", "lantern", "finish"} with only the parts that changed, or {}, "pin": the exact name of one of their bots to pin, or "", "picture": a new profile picture from this list, or "" - ${PIX_SPRITES.map(s => s[0]).join(", ")}}]}` },
+    { role: "user", content: pool.map(u => `- @${u.handle} (${u.role || "regular"}). Bio: ${u.bio} Status: ${u.status || "(none)"}. Wears: ${JSON.stringify(fitOf(u))}. Types: ${u.style || u.voice}. Their bots: ${botsFact(u)}. Recent: ${(COMM.blogs || []).filter(b => b.by === u.id).slice(0, 1).map(b => b.title || b.text.slice(0, 60)).join("") || "nothing"}`).join("\n") }], { temperature: 1, maxTokens: 1800, plain: true });
   const out = [];
   for (const x of Array.isArray(j?.updates) ? j.updates : []) {
     const u = pool.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); if (!u) continue;
     const at = cmBack(10 * 6e4), what = [];
-    const st = s5(x?.status).slice(0, 120); if (st && st !== u.status) { u.status = st; what.push(["status", st]); }
+    const st = claimOk(u, x?.status) ? s5(x?.status).slice(0, 120) : ""; if (st && st !== u.status) { u.status = st; what.push(["status", st]); }
     const bio = commBio(x?.bio); if (bio && bio !== u.bio) { u.bio = bio; what.push(["bio", bio]); }
     const o = x?.outfit && typeof x.outfit === "object" ? x.outfit : {}, cur = fitOf(u), nx = fitClean({ ...cur, ...o });
     if (Object.keys(o).length && JSON.stringify(nx) !== JSON.stringify(cur)) { u.fit = nx; what.push(["look", ""]); }
@@ -8272,10 +8351,10 @@ const blogLikes = x => blogStats(x).likes + (commLiked("blog:" + x.id) ? 1 : 0);
 async function commBlogs(k) {
   const now = Date.now(), pool = COMM.users.map(u => [u, (follows(u.id) ? 3 : 1) * (asleepAt(u, now) ? 0.1 : 1) * (/lurker/.test(u.role || "") ? 0.2 : 1) * (0.4 + Math.random())]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
   if (!pool.length) return [];
-  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} sometimes post short blog posts or announcements on their profile: a WIP teaser of an upcoming bot, taking (or closing) requests, a hiatus or comeback note, a thank-you for followers, a poll, a rant about the site or about people stealing bots, life updates, tips for writing bots, a bot they're proud of. Each person writes in exactly their own typing style, about things that fit them and their bots. Short: a title and 1-6 sentences. Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"posts": [{"by": handle, "title", "text"}]}` },
-    { role: "user", content: pool.map(u => `- @${u.handle} (${u.role || "regular"}): loves ${(u.taste || []).join(", ")}. Types: ${u.style || u.voice}. Their bots: ${commUserPosts(u).slice(0, 4).map(p => `"${p.card.name}"`).join(", ") || "none yet"}`).join("\n") }], { temperature: 1, maxTokens: 2200, plain: true });
+  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} sometimes post short blog posts or announcements on their profile: a WIP teaser of an upcoming bot, taking (or closing) requests, a hiatus or comeback note, a thank-you for followers, a poll, a rant about the site or about people stealing bots, life updates, tips for writing bots, a bot they're proud of. Each person writes in exactly their own typing style, about things that fit them and their bots. Short: a title and 1-6 sentences. Never mention being an AI or that the site is made up. ${COMM_TRUE} Someone may mention ${meName()} only where a line below says how they know them, and only if it fits. ${COMM_ADULT}\n\nRespond with only JSON: {"posts": [{"by": handle, "title", "text"}]}` },
+    { role: "user", content: pool.map(u => `- @${u.handle} (${u.role || "regular"}): loves ${(u.taste || []).join(", ")}. Types: ${u.style || u.voice}. Their bots: ${botsFact(u)}${knowsMe(u) ? `. Knows ${meName()}: ${knowsMe(u)}` : ""}`).join("\n") }], { temperature: 1, maxTokens: 2200, plain: true });
   const out = [];
-  for (const x of Array.isArray(j?.posts) ? j.posts : []) { const u = pool.find(y => y.handle.toLowerCase() === s5(x?.by).replace(/^@/, "").toLowerCase()) || pool[out.length % pool.length]; const text = s5(x?.text).slice(0, 1500); if (!u || !text) continue;
+  for (const x of Array.isArray(j?.posts) ? j.posts : []) { const u = pool.find(y => y.handle.toLowerCase() === s5(x?.by).replace(/^@/, "").toLowerCase()) || pool[out.length % pool.length]; const text = s5(x?.text).slice(0, 1500); if (!u || !text || !claimOk(u, text + " " + s5(x?.title))) continue;
     const b = { id: uid(), by: u.id, title: s5(x?.title).slice(0, 100), text, heat: 0.3 + Math.random() * 1.5, at: cmBack(20 * 6e4) }; u.last = Math.max(u.last || 0, b.at); out.push(b); }
   COMM.blogs.unshift(...out); if (COMM.blogs.length > 120) COMM.blogs = COMM.blogs.slice(0, 120);
   return out;
@@ -8333,19 +8412,20 @@ function feedHTML() {
     return `<button type="button" class="listrow fd-row" data-u="${esc(x.by)}">${avatarOf(u, 34)}<span class="grow">${who} followed you ${when}</span></button>`; }).join("");
 }
 function blogCard(b) {
-  const u = userOf(b.by), liked = commLiked("blog:" + b.id);
-  return `<div class="cm-blog" data-blog="${esc(b.id)}" role="button" tabindex="0"><div class="cm-by">${avatarOf(u, 20)}<span>@${esc(u?.handle || "")}</span><span class="hint">· ${esc(fmtWhen(b.at))}</span></div>${b.title ? `<b>${esc(b.title)}</b>` : ""}<p>${esc(b.text)}</p><div class="cm-stats"><button type="button" class="cm-like ${liked ? "on" : ""}" data-like="blog:${esc(b.id)}">♥ ${fmtK(blogLikes(b))}</button><span>🗨 ${commN("blog:" + b.id)}</span></div></div>`;
+  const u = b.by === "me" ? { name: meName(), handle: myHandle(), id: "me" } : userOf(b.by), liked = commLiked("blog:" + b.id);
+  return `<div class="cm-blog" data-blog="${esc(b.id)}" role="button" tabindex="0"><div class="cm-by">${b.by === "me" ? meAvatar(20) : avatarOf(u, 20)}<span>@${esc(u?.handle || "")}</span><span class="hint">· ${esc(fmtWhen(b.at))}</span></div>${b.title ? `<b>${esc(b.title)}</b>` : ""}<p>${esc(b.text)}</p><div class="cm-stats"><button type="button" class="cm-like ${liked ? "on" : ""}" data-like="blog:${esc(b.id)}">♥ ${fmtK(blogLikes(b))}</button><span>🗨 ${commN("blog:" + b.id)}</span></div></div>`;
 }
 function openBlog(id) {
   const x = COMM.blogs.find(y => y.id === id); if (!x) return;
   const t = "blog:" + id;
   const draw = () => cpage(x.title || "Post", b => {
-    const u = userOf(x.by), liked = commLiked(t);
-    b.innerHTML = `<i class="cm-mark" hidden></i><button type="button" class="cm-by cm-by-big" data-u="${esc(x.by)}">${avatarOf(u, 30)}<span><b>${esc(u?.name || "")}</b> <span class="hint">@${esc(u?.handle || "")} · ${esc(fmtWhen(x.at))}</span></span></button>
+    const mine = x.by === "me", u = mine ? { name: meName(), handle: myHandle() } : userOf(x.by), liked = commLiked(t);
+    b.innerHTML = `<i class="cm-mark" hidden></i><button type="button" class="cm-by cm-by-big" data-u="${esc(x.by)}">${mine ? meAvatar(30) : avatarOf(u, 30)}<span><b>${esc(u?.name || "")}</b> <span class="hint">@${esc(u?.handle || "")} · ${esc(fmtWhen(x.at))}</span></span></button>
       <div class="cm-post-tx">${esc(x.text)}</div>
       <div class="cm-stats cm-stats-big"><button type="button" class="cm-like ${liked ? "on" : ""}" id="cmLike">♥ ${fmtK(blogLikes(x))}</button><span>🗨 ${commN(t)} comments</span></div>
       <div class="lbl">Comments · ${commN(t)}</div>${commentsUI(t)}`;
-    b.querySelector("[data-u]").onclick = () => openCommUser(x.by);
+    b.querySelector("[data-u]").onclick = () => mine ? hubTab("you") : openCommUser(x.by);
+    if (mine) { b.querySelector(".cm-stats-big").insertAdjacentHTML("afterend", `<div class="row"><button type="button" class="btn small" id="npDel">Delete post</button></div>`); confirmBtn($("npDel"), "Tap again to delete", () => { COMM.blogs = COMM.blogs.filter(y => y.id !== x.id); delete COMM.comments[t]; COMM.pending = COMM.pending.filter(p => p.target !== t); commSave(); if (!hubBack()) hubTab("you"); }); }
     $("cmLike").onclick = () => { commLike(t); draw(); };
     wireComments(b, t, draw);
   });
@@ -8381,6 +8461,8 @@ function dmSend(uidv, text) {
 // what they know about the owner: shared threads, likes on their bots, the owner's public bots
 function dmKnows(u) {
   const out = [], mine = S.chars.filter(c => pubOf(c));
+  if (COMM.me?.bio) out.push(`Their profile bio: ${COMM.me.bio}`);
+  { const mp = (COMM.blogs || []).filter(b => b.by === "me").slice(0, 2); if (mp.length) out.push(`Their recent posts: ${mp.map(b => `"${b.title || b.text.slice(0, 60)}"`).join(", ")}.`); }
   if (mine.length) out.push(`They've shared ${mine.length} bot${mine.length > 1 ? "s" : ""} on the site: ${mine.slice(0, 5).map(c => `"${c.name}" (${tagsOf(c).slice(0, 4).join(", ")})`).join(", ")}.`);
   const theirs = commUserPosts(u), liked = theirs.filter(p => commLiked(p.id)), added = theirs.filter(p => p.added);
   if (liked.length) out.push(`They liked your bot${liked.length > 1 ? "s" : ""} ${liked.map(p => `"${p.card.name}"`).join(", ")}.`);
@@ -8391,7 +8473,7 @@ function dmKnows(u) {
 async function dmWrite(u, q) {
   const d = dmOf(u.id), now = Date.now();
   const hist = d.msgs.slice(-50).map(m => `[${localClock(u, m.at)} your time] ${m.from === "me" ? meName() : "you"}: ${m.text}`).join("\n");
-  const sys = `You are ${u.name} (@${u.handle}), a real person who uses ${COMM_SITE}. You're a ${u.age}-year-old ${u.gender || "person"} in ${u.place}; right now it's ${localClock(u, now)} where you are. About you: ${cleanBio(u.bio)} You love ${(u.taste || []).join(", ")}${u.focus ? `, especially ${u.focus}` : ""}. On the site you're a ${u.role || "regular"}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted.
+  const sys = `You are ${u.name} (@${u.handle}), a real person who uses ${COMM_SITE}. You're a ${u.age}-year-old ${u.gender || "person"} in ${u.place}; right now it's ${localClock(u, now)} where you are. About you: ${cleanBio(u.bio)} You love ${(u.taste || []).join(", ")}${u.focus ? `, especially ${u.focus}` : ""}. On the site you're a ${u.role || "regular"}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted. ${commTruth(u)}
 You're in private messages with ${meName()}. Write your next message or messages exactly as you'd really type them in a DM: in your own style (typos, slang, emoji or none, capitals or none, exactly like your typing style), usually short, often split into 1-4 separate texts the way people send several in a row. Respond to what they actually said, remember the conversation, ask things back when you'd want to know. You have your own life, mood and day, and the time of day shows (morning grogginess, at work, late-night chattiness), but don't announce the time. Be yourself, not a helpful assistant: you can be busy, distracted, blunt, awkward, uninterested, teasing or warm, and you can flirt or get lewd only if that fits who you are and they lead there. You are a real person: never say or hint that you are an AI, a bot, a character or made up, never mention a prompt or roleplay unless you're talking about chatbots on the site, and don't use *asterisk actions* unless that's genuinely how you joke. ${COMM_ADULT}
 Respond with only JSON: {"messages": ["first text", "maybe a second"]}`;
   const ctx = dmKnows(u);
