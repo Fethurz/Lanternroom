@@ -77,7 +77,8 @@ const open = require("./base.js");
   const bl0 = await pg.evaluate(id => blogLikes(COMM.blogs.find(b => b.id === id)), bid);
   await pg.click("#cmLike"); await wait(150);
   chk("a blog post opens and can be liked", await pg.evaluate(([id, n]) => blogLikes(COMM.blogs.find(b => b.id === id)) === n + 1 && /new bot coming soon/.test($("sheetBody").textContent), [bid, bl0]));
-  await pg.fill("#cmText", "can't wait!!"); await pg.click("#cmSend"); await wait(200);
+  // the author usually answers (now and then nobody does, like a real site); here they do
+  await pg.fill("#cmText", "can't wait!!"); await pg.evaluate(() => { Math._r = Math.random; Math.random = () => 0.1; }); await pg.click("#cmSend"); await wait(200); await pg.evaluate(() => { Math.random = Math._r; });
   chk("commenting on it asks the author to answer", await pg.evaluate(([id, au]) => COMM.pending.some(p => p.target === "blog:" + id && p.by === au), [bid, u0]));
   await pg.evaluate(() => { COMM.pending.forEach(p => { p.due = Date.now() - 1; }); commSave(); }); await pg.evaluate(() => commTick(true)); await wait(300);
   chk("…and they do", await pg.evaluate(id => (COMM.comments["blog:" + id] || []).some(x => x.toMe && x.text === "ty!! more soon"), bid));
