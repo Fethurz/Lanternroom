@@ -261,7 +261,7 @@ body{background:radial-gradient(120% 70% at 50% -10%,var(--glow) 0%,var(--bg) 55
 #charList .btags{display:flex;flex-wrap:wrap;gap:4px}
 #charList .btag{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 7px;border-radius:7px;background:color-mix(in srgb,var(--kc) 8%,var(--surface-2));border:1px solid var(--line);color:var(--fg)}
 #charList .btag .ti{margin:0}#charList .btag .tsv{width:12px;height:12px}
-#sheet .btags,.daily .btags{display:flex;flex-wrap:wrap;gap:4px}#sheet .btag{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;padding:2px 7px;border-radius:7px;background:var(--surface);border:1px solid var(--line);color:var(--fg)}#sheet .btag .ti{margin:0}#sheet .btag .tsv{width:12px;height:12px}
+#sheet .btags,.daily .btags,#hub .btags{display:flex;flex-wrap:wrap;gap:4px}#sheet .btag,#hub .btag{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;padding:2px 7px;border-radius:7px;background:var(--surface);border:1px solid var(--line);color:var(--fg)}#sheet .btag .ti,#hub .btag .ti{margin:0}#sheet .btag .tsv,#hub .btag .tsv{width:12px;height:12px}
 #charList .btag.more-t{color:var(--muted)}
 #charList .btok{margin-top:auto;padding:8px 0 7px;border-top:1px solid var(--line);text-align:center;font:11px ui-monospace,Menlo,monospace;color:var(--muted)}
 #charList .char-card .more{top:2px!important;right:2px!important;background:transparent}
@@ -647,6 +647,44 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 /* community (v1.62) */
 .cm-btn{position:relative}.cm-dot{position:absolute;top:2px;right:2px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;background:var(--accent);color:var(--accent-ink);font:700 10px/16px var(--f-body,inherit);text-align:center;box-shadow:0 0 0 2px var(--bg)}.cm-dot[hidden]{display:none}
 #railComm{position:relative}#railComm .cm-dot{position:static;display:inline-block;margin-left:4px;box-shadow:none}
+/* Community hub (v1.68) */
+.hub{position:fixed;inset:0;z-index:9;display:flex;flex-direction:column;background:var(--bg);color:var(--fg)}
+.hub-head{flex:none;display:flex;align-items:center;gap:6px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--surface) 70%,var(--bg))}
+.hub-t{flex:1;min-width:0;margin:0;font-family:var(--f-display,Georgia,serif);font-weight:400;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hub-brand span{color:var(--accent)}
+.hub-ic,.hub-me{position:relative;flex:none;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:transparent;border:0;color:var(--fg)}
+.hub-ic svg{width:22px;height:22px}.hub-ic:hover,.hub-ic:focus-visible{background:var(--surface-2)}
+.hub-n{position:absolute;top:2px;right:0;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font:700 10.5px/17px var(--f-body,sans-serif);font-style:normal;text-align:center}
+.hub-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.hub-body>*{max-width:960px;margin-left:auto;margin-right:auto}
+.hub-page{display:flex;flex-direction:column;gap:14px}
+.hub-nav{flex:none;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);background:color-mix(in srgb,var(--surface) 80%,var(--bg));padding:4px max(4px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(4px,env(safe-area-inset-left,0px))}
+.hub-tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:52px;background:none;border:0;border-radius:12px;color:var(--muted);font-size:11.5px;font-weight:700}
+.hub-tab svg{width:23px;height:23px}.hub-tab.on{color:var(--accent)}.hub-tab.on::before{content:"";position:absolute;top:2px;width:26px;height:3px;border-radius:2px;background:var(--accent)}
+.hub-tab .hub-n{top:4px;right:calc(50% - 22px)}.hub-av{display:inline-flex;line-height:0}.hub-tab.on .hub-av{outline:2px solid var(--accent);outline-offset:1px;border-radius:50%}
+.hub-row{display:flex;flex-direction:column;gap:8px}
+.hub-rh{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.hub-rh h3{margin:0;font-family:var(--f-display,Georgia,serif);font-weight:400;font-size:17px}
+.hub-all{background:none;border:0;color:var(--accent);font-weight:700;font-size:13px;min-height:34px}
+.hub-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:thin}
+.hub-mini{flex:none;width:min(200px,56vw);scroll-snap-align:start;display:flex;flex-direction:column;gap:5px;padding:10px 11px;border-radius:14px;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--kc,var(--accent));cursor:pointer;text-align:left}
+.hub-mini.k-character{--kc:var(--k-character,#e8a95b)}.hub-mini.k-world{--kc:var(--k-world,#4fb3a6)}.hub-mini.k-group{--kc:var(--k-group,#a884f0)}
+.hm-top{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.hm-name{font-size:15px;line-height:1.25}
+.hm-sum{margin:0;font-size:12.5px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:3.6em}
+.hm-foot{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);margin-top:auto}.hm-by{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hm-l{color:var(--fg)}
+.hub-more{align-self:center}
+.hub-search input{width:100%;min-height:44px;border-radius:999px;padding:0 18px;font-size:15px}
+.hub-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;align-items:center}.hub-chips .chip{min-height:34px}.hub-sep{flex:none;width:1px;height:20px;background:var(--line);margin:0 2px}
+.hub-tags{flex-wrap:wrap}
+.hub-people{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.hub-person{flex:none;width:96px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-size:12.5px;text-align:center}.hub-person b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hub-person .hint{font-size:11px;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.hub-youcard{display:flex;gap:14px;align-items:center}.hub-youcard .cm-pfn{margin:0 0 6px}
+.act-row.new{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
+.act-row .sub{white-space:normal}
+.hub .cm-pfx{margin:0}.hub .cm-bio{white-space:pre-wrap}
+.hub-body:has(.dm-mark){display:flex;flex-direction:column;overflow:hidden;padding-bottom:10px}.hub-body:has(.dm-mark)>*{width:100%}.hub-body:has(.dm-mark) .dm-list{flex:1;height:auto;min-height:0}
+.hub-body .listrow{width:100%}
+.hub-mini .kind-pill{font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:99px;background:color-mix(in srgb,var(--kc) 28%,var(--surface-2));color:var(--fg);border:0}
+.hub-p-you .row>*{flex:0 0 auto;min-width:0}.hub-p-you .btn svg{width:17px;height:17px}
 /* pixel pictures (v1.65) */
 .px-av{flex:none;display:inline-block;object-fit:cover;border-radius:50%;overflow:hidden;line-height:0;vertical-align:middle}span.px-av{border-radius:0}.px-av svg{display:block;width:100%;height:100%;image-rendering:pixelated}
 img.px-av{border-radius:50%}
@@ -743,7 +781,7 @@ img.px-av{border-radius:50%}
 #owCol{height:40px;padding:3px;border-radius:10px;cursor:pointer}
 .tr-edit input[type=color]{flex:0 0 34px;width:34px;height:34px;padding:2px;border-radius:8px}.tr-prev{margin:-2px 0 6px}
 .cr-pair input[type=color]{flex:0 0 34px;width:34px;height:34px;padding:2px;border-radius:8px}.cr-pair input:not([type]){min-width:0;flex:1}
-.pg-one .traits,#sheet .traits{margin:4px 0}
+.pg-one .traits,#sheet .traits,#hub .traits{margin:4px 0}
 .cr-opts{display:flex;flex-direction:column;gap:8px}
 .cr-o{display:block;text-align:left;min-height:42px;padding:10px 13px;border-radius:12px;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));background:color-mix(in srgb,var(--accent) 8%,var(--surface));color:var(--fg);font:inherit;font-size:15px;line-height:1.4;cursor:pointer;transition:background-color .15s,transform .1s}
 .cr-o:active{transform:scale(.98)}.cr-o.on{background:color-mix(in srgb,var(--accent) 24%,var(--surface));border-color:var(--accent)}
@@ -1221,6 +1259,7 @@ html.sb-sticker.sb-sticker #msgs .msg:not(.img) em.act,.shop-sb.sb-sticker .msg 
     </div>
   </section>
 
+  <section id="hub" class="hub" hidden aria-label="Community"><header class="hub-head" id="hubHead"></header><main class="hub-body" id="hubBody"></main><nav class="hub-nav" id="hubNav" aria-label="Community sections"></nav></section>
   <section id="chat" class="screen" hidden>
     <div id="scene"></div>
     <div id="stFx" aria-hidden="true"></div>
@@ -1473,7 +1512,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.67 · Oct 26";
+const VERSION = "1.68 · Oct 26";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -5485,6 +5524,7 @@ document.addEventListener("keydown", e => {
   if (e.key !== "Escape" || e.defaultPrevented) return;
   if (!$("ambPop").hidden) { $("ambPop").hidden = true; return; }
   if ($("sheet") && !$("sheet").hidden) { userClose(); return; }
+  if (HUB.open && !$("pixPop")) { if (!hubBack()) hubClose(); return; }
   if (!$("chat").hidden && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "")) leaveChat();
 });
 
@@ -5613,20 +5653,23 @@ function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("ho
 // While anything is open the app keeps one extra history entry; going back uses it up and we undo one step.
 let POP_IGNORE = 0, WANT_GUARD = false;
 function syncNav() {
-  const away = !$("sheet").hidden || !$("chat").hidden, has = history.state && history.state.lr === "in";
+  const away = !$("sheet").hidden || !$("chat").hidden || !$("hub").hidden, has = history.state && history.state.lr === "in";
   if (away && !has) { if (POP_IGNORE) WANT_GUARD = true; else history.pushState({ lr: "in" }, ""); }
   else if (!away && has && !POP_IGNORE) { POP_IGNORE++; history.back(); }
 }
 addEventListener("popstate", () => {
-  if (POP_IGNORE) { POP_IGNORE--; if (WANT_GUARD) { WANT_GUARD = false; syncNav(); } return; }
+  // our own step back: re-check, since a window may have been swapped for the hub (or the other way) meanwhile
+  if (POP_IGNORE) { POP_IGNORE--; WANT_GUARD = false; syncNav(); return; }
   if (document.getElementById("pixPop")) document.getElementById("pixPop")._close();
   else if (!$("ambPop").hidden) $("ambPop").hidden = true;
   else if (!$("sheet").hidden) userClose();
+  else if (HUB.open) { if (!hubBack()) hubClose(); }
   else if (!$("chat").hidden && (!S.busy || S.genAC)) { S.genAC?.abort(); leaveChat(); }
   syncNav();
 });
 new MutationObserver(() => queueMicrotask(syncNav)).observe($("sheet"), { attributes: true, attributeFilter: ["hidden"] });
 new MutationObserver(() => queueMicrotask(syncNav)).observe($("chat"), { attributes: true, attributeFilter: ["hidden"] });
+new MutationObserver(() => queueMicrotask(syncNav)).observe($("hub"), { attributes: true, attributeFilter: ["hidden"] });
 // offline support + updates: the service worker keeps the app and built-in sounds on the device
 const isApp = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
@@ -7646,15 +7689,28 @@ function cmSlots(n, offset) {
 // a bio is kept whole (up to 600 characters, cut at a sentence end if it's longer)
 function commBio(t) { const x = s5(t).trim(); if (x.length <= 600) return x; const cut = x.slice(0, 600), at = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "), cut.lastIndexOf(".\n")); return (at > 200 ? cut.slice(0, at + 1) : cut.replace(/\s+\S*$/, "") + "…").trim(); }
 // v1.66: bios written before were cut at 240 characters, and some describe how the person types instead of being written that way
-const BIO_TYPING = /\b(types?|typing|typed|lower ?case|all caps|caps ?lock|emojis?|punctuation|typos?|grammar|abbreviations?|exclamation (marks|points))\b/i;
+const BIO_TYPING = /\b(typ(e|es|ing|ed) (in|with|like|everything|fast|slow)|lower ?case|all caps|caps ?lock|emojis?|punctuation|typos?|grammar|abbreviat\w*|exclamation (marks|points))\b/i;
+const BIO_PRIV2 = /\b(i work|my job|work(ing)? (as|at|nights|days|from)|nurse|hospital|teacher|barista|office job|retail|night shift|college|university|(i'?m|im|i am) (a )?\d{2}\b|\d{2} ?(y\/?o|yrs?|years? old)|years? old|live in|living in|based in|moved to|grew up|hometown|time ?zone)/i;
+const BIO_TZ = /\b(EST|EDT|PST|PDT|CST|CDT|MST|GMT|UTC|CET|BST|AEST|JST|IST)\b/;
+// what a bio or status shows: whole sentences only, never typing notes or personal details (a safety net under the repair)
+function cleanBio(t) {
+  const s = String(t || "").trim(); if (!s) return "";
+  const parts = s.match(/[^.!?…\n]+[.!?…]+["')\]~*]*\s*|[^.!?…\n]+$|\n+/gu) || [s];
+  const out = parts.filter(x => !x.trim() || (!BIO_TYPING.test(x) && !BIO_PRIVATE.test(x) && !BIO_PRIV2.test(x) && !BIO_TZ.test(x)));
+  while (out.length && !out.at(-1).trim()) out.pop();
+  // a cut-off ending: no closing punctuation, and either a long bio (cut at the old 240 limit) or a dangling last word
+  const last = out.at(-1) || "", dangling = /\b(and|or|but|the|a|an|to|of|if|so|with|for|my|when|because|cause|bc|like|just|that|this|at|in|on|is|are|i)\s*$/i;
+  if (out.length > 1 && !/[.!?…)~*♡♥❤✨]\s*$|:3\s*$|[\p{Extended_Pictographic}]\s*$/u.test(last) && (s.length >= 200 || dangling.test(last))) out.pop();
+  return out.join("").trim();
+}
 const BIO_PRIVATE = new RegExp("\\b(" + CM_PLACES.map(p => p[0].split(",")[0]).join("|") + "|i work (as|at)|my job|nurse|hospital|\\d{2} ?(y/?o|yrs))\\b", "i");
-const bioNeedsFix = u => !!u.bio && (BIO_PRIVATE.test(u.bio) ||u.bio.length >= 236 && !/[.!?)~*♡♥❤✨…:3]\s*$/u.test(u.bio) || BIO_TYPING.test(u.bio));
-async function commFixBios() {
-  const list = COMM.users.filter(bioNeedsFix).slice(0, 12); if (!list.length) return false;
-  const j = await dsJSON([{ role: "system", content: `These are profile bios from ${COMM_SITE}. Some got cut off mid-sentence, and some describe how the person types ("types in lowercase", "uses lots of emoji") instead of simply being written that way. Some also give away personal details (where they live, their job, real name). Rewrite each as the complete bio that person wrote about themselves: 2-4 complete sentences, keeping what it says about their bots and tastes but dropping identifying details (Like most people on an adult site people stay anonymous: no real full name, city, country, workplace, school or other identifying details (at most a vague hint like a timezone joke or 'up late again').), written IN their typing style (shown, never described). ${COMM_ADULT}\n\nRespond with only JSON: {"bios": [{"handle", "bio"}]}` },
-    { role: "user", content: list.map(u => `- @${u.handle}. Types: ${u.style || u.voice}. Bio: ${u.bio}`).join("\n") }], { temperature: 0.9, maxTokens: 2600, plain: true });
+const bioNeedsFix = u => !!u.bio && (cleanBio(u.bio) !== u.bio.trim() || BIO_PRIVATE.test(u.bio) || BIO_PRIV2.test(u.bio) || BIO_PRIV2.test(u.status || "") || BIO_TYPING.test(u.status || "") ||u.bio.length >= 236 && !/[.!?)~*♡♥❤✨…:3]\s*$/u.test(u.bio) || BIO_TYPING.test(u.bio));
+async function commFixBios(only) {
+  const list = (only || COMM.users.filter(u => bioNeedsFix(u) && (u.bioTried || 0) < 3)).slice(0, 12); if (!list.length) return false;
+  const j = await dsJSON([{ role: "system", content: `These are profile bios from ${COMM_SITE}. Some got cut off mid-sentence, and some describe how the person types ("types in lowercase", "uses lots of emoji") instead of simply being written that way. Some also give away personal details (where they live, their job, real name). Rewrite each as the complete bio that person wrote about themselves: 2-4 complete sentences, keeping what it says about their bots and tastes but dropping identifying details (Like most people on an adult site people stay anonymous: no real full name, city, country, workplace, school or other identifying details (at most a vague hint like a timezone joke or 'up late again').), written IN their typing style (shown, never described). ${COMM_ADULT}\n\nDo the same for a status line when one is given (short, no personal details, no typing notes).\n\nRespond with only JSON: {"bios": [{"handle", "bio", "status": the fixed status or ""}]}` },
+    { role: "user", content: list.map(u => `- @${u.handle}. Types: ${u.style || u.voice}. Bio: ${u.bio}${u.status ? ` Status: ${u.status}` : ""}`).join("\n") }], { temperature: 0.9, maxTokens: 2600, plain: true });
   let n = 0;
-  for (const x of Array.isArray(j?.bios) ? j.bios : []) { const u = list.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); const bio = commBio(x?.bio); if (u && bio) { u.bio = bio; n++; } }
+  for (const x of Array.isArray(j?.bios) ? j.bios : []) { const u = list.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); const bio = commBio(x?.bio); if (u && bio) { u.bio = bio; n++; } const st = s5(x?.status).slice(0, 120); if (u && st && u.status) u.status = st; }
   list.forEach(u => { if (bioNeedsFix(u)) u.bioTried = (u.bioTried || 0) + 1; });
   return n > 0;
 }
@@ -7759,7 +7815,7 @@ async function commAnswer(p) {
   const u = userOf(p.by), info = targetInfo(p.target), mine = (COMM.comments[p.target] || []).find(x => x.id === p.replyTo);
   if (!u || !info || !mine) return null;
   const isAuthor = !info.mine && (COMM.posts.find(x => x.id === p.target)?.by === u.id || info.by === u.id);
-  const j = await dsJSON([{ role: "system", content: `You are @${u.handle} (${u.name}), a real ${u.age ? u.age + "-year-old " : ""}person${u.place ? " in " + u.place : ""} on ${COMM_SITE}. About you: ${u.bio} You love ${u.taste.join(", ")}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted.${isAuthor ? ` You made the bot "${info.name}".` : ""} Reply to ${meName()}'s comment the way you really would: in your own voice, about what they actually said, one to three sentences. Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"text": your reply}` },
+  const j = await dsJSON([{ role: "system", content: `You are @${u.handle} (${u.name}), a real ${u.age ? u.age + "-year-old " : ""}person${u.place ? " in " + u.place : ""} on ${COMM_SITE}. About you: ${cleanBio(u.bio)} You love ${u.taste.join(", ")}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted.${isAuthor ? ` You made the bot "${info.name}".` : ""} Reply to ${meName()}'s comment the way you really would: in your own voice, about what they actually said, one to three sentences. Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"text": your reply}` },
     { role: "user", content: `The listing: "${info.name}" by ${info.owner}\n${info.text}\n\nThe thread:\n${threadText(p.target)}\n\nReply to this comment by ${meName()}: ${mine.text}` }], { temperature: 1, maxTokens: 500, plain: true });
   const text = s5(j?.text).slice(0, 600); if (!text) return null;
   const c = { id: uid(), by: u.id, text, at: Math.min(Date.now(), p.due + 60e3), replyTo: mine.id, heat: 0.6 + Math.random(), toMe: true }; u.last = Math.max(u.last || 0, c.at);
@@ -7786,7 +7842,7 @@ async function commTick(force) {
     if (commFillSlots()) changed = true;
     // v1.66 repairs: pictures picked while every pick came out as the cat in Ember, and cut-off or typing-note bios
     if (!COMM.pixFix) { for (const u of COMM.users) if (pixOk(u.pix) && u.pix.pal === "ember") { const a = pixAuto(u.id + ":fix", "", 0); u.pix = { ...u.pix, pal: a.pal, frame: a.frame, ...(PIX_BY[u.pix.s]?.[2] === "human" ? { skin: a.skin ?? 1, hair: a.hair ?? 0 } : {}) }; } COMM.pixFix = 1; changed = true; }
-    if (COMM.users.some(u => bioNeedsFix(u) && (u.bioTried || 0) < 2)) { try { if (await commFixBios()) changed = true; } catch {} }
+    if (COMM.users.some(u => bioNeedsFix(u) && (u.bioTried || 0) < 3)) { try { if (await commFixBios()) changed = true; } catch {} }
     if (dmMaybeOpen()) changed = true;
     // replies to the owner that are due
     for (const p of COMM.pending.filter(p => p.due <= now).slice(0, 3)) { try { const c = await commAnswer(p); if (c) { news++; toast(`@${userOf(p.by)?.handle || "someone"} replied to you`); } } catch {} COMM.pending = COMM.pending.filter(x => x.id !== p.id); COMM.done.push(p.id); changed = true; }
@@ -7815,55 +7871,210 @@ function commUnseen() {
   let n = 0; for (const [t, l] of Object.entries(COMM.comments)) for (const x of l) if (x.at > at && x.by !== "me" && (x.toMe || mine.has(t))) n++;
   return n + dmUnread() + feedItems().filter(x => x.at > at && x.kind !== "copy").length + S.chars.filter(c => copyUpdates(c).some(u => u.at > at)).length;
 }
-function commDot() { for (const id of ["commDot", "railCommDot"]) { const el = $(id); if (el) { const n = commOn() ? commUnseen() : 0; el.hidden = !n; el.textContent = n > 9 ? "9+" : n || ""; } } for (const id of ["btnComm", "railComm"]) { const b = $(id); if (b) b.hidden = !commOn(); } }
+function commDot() { for (const id of ["commDot", "railCommDot"]) { const el = $(id); if (el) { const n = commOn() ? commUnseen() : 0; el.hidden = !n; el.textContent = n > 9 ? "9+" : n || ""; } } for (const id of ["btnComm", "railComm"]) { const b = $(id); if (b) b.hidden = !commOn(); } if (HUB.open && COMM) { hubHead(); hubNav(); } }
 let COMM_VIEW = null; // what the community window shows, so new activity can redraw it
 // only while a community window is the one showing, and never while the owner is typing in it
 function commRedraw() {
-  const body = $("sheetBody"); if (!COMM_VIEW || $("sheet").hidden || !body.querySelector(".cm-mark")) return;
+  const body = cbody(); if (!COMM_VIEW || (!HUB.open && $("sheet").hidden) || !body.querySelector(".cm-mark")) return;
   const a = document.activeElement; if (a && body.contains(a) && /INPUT|TEXTAREA/.test(a.tagName)) return; if ($("cmText")?.value.trim()) return;
   const y = body.scrollTop; COMM_VIEW(); body.scrollTop = y;
+}
+// ---- the Community hub (v1.68): its own full-screen page with a bottom bar (Home, Discover, Following, Messages, You).
+// Bots, profiles, blog posts, comment threads and DMs open as full pages inside it, with a back arrow; the phone's back
+// button and Esc step back the same way, and the hub closes from its first page.
+const HUB = { open: false, tab: "home", stack: [], cur: null, q: "", kind: "all", tag: "", sort: "popular" };
+const cbody = () => HUB.open ? $("hubBody") : $("sheetBody");
+const HUB_ICON = {
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg>',
+  discover: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4" stroke-linecap="round"/></svg>',
+  feed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.4 2.8-5.2 5.5-5.2s4.9 1.8 5.5 5.2M16 6.5a3 3 0 0 1 0 5.6M18 13.8c1.6.6 2.6 2.4 3 5.2"/></svg>',
+  dms: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 3.5V17A2.5 2.5 0 0 1 4 14.5z"/></svg>',
+  you: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg>',
+  bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0" stroke-linecap="round"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>'
+};
+const HUB_TABS = [["home", "Home"], ["discover", "Discover"], ["feed", "Following"], ["dms", "Messages"], ["you", "You"]];
+function hubShow() { if (HUB.open) return; if (!$("sheet").hidden) closeSheet(); HUB.open = true; $("hub").hidden = false; document.documentElement.classList.add("hub-on"); }
+function hubClose() { HUB.open = false; HUB.stack = []; HUB.cur = null; COMM_VIEW = null; DM_OPEN = null; clearInterval(DM_T); $("hub").hidden = true; $("hubBody").innerHTML = ""; document.documentElement.classList.remove("hub-on"); commDot(); }
+// a page inside the hub (title "__tab" = the tab's own first page); the same title redraws in place
+function cpage(title, build) {
+  hubShow();
+  const body = $("hubBody"), same = HUB.cur && HUB.cur.title === title && HUB.cur.tab === HUB.tab, y = same ? body.scrollTop : 0;
+  if (title === "__tab") HUB.stack = [];
+  else if (HUB.cur && !HUB.noPush && !same) { const at = HUB.stack.findIndex(e => e.title === title); if (at >= 0) HUB.stack.length = at; else { HUB.stack.push({ ...HUB.cur, scroll: body.scrollTop }); if (HUB.stack.length > 20) HUB.stack.shift(); } }
+  HUB.cur = { title, build, tab: HUB.tab };
+  body.innerHTML = ""; build(body); body.scrollTop = y;
+  hubHead(); hubNav();
+}
+function hubBack() {
+  const e = HUB.stack.pop(); if (!e) return false;
+  DM_OPEN = null; clearInterval(DM_T);
+  HUB.noPush = true; try { HUB.tab = e.tab || HUB.tab; e.title === "__tab" ? hubTab(HUB.tab) : cpage(e.title, e.build); } finally { HUB.noPush = false; }
+  requestAnimationFrame(() => { $("hubBody").scrollTop = e.scroll || 0; });
+  return true;
+}
+let HUB_TAB_DRAW = null;
+function hubHead() {
+  const h = $("hubHead"), page = HUB.cur && HUB.cur.title !== "__tab", act = actUnseen();
+  h.innerHTML = page
+    ? `<button type="button" class="hub-ic" id="hubBack" aria-label="Back">${HUB_ICON.back}</button><h2 class="hub-t">${esc(HUB.cur.title)}</h2><button type="button" class="hub-ic" id="hubX" aria-label="Close the community">${HUB_ICON.close}</button>`
+    : `<button type="button" class="hub-me" id="hubMe" aria-label="You">${meAvatar(32)}</button><h2 class="hub-t hub-brand">Lantern <span>Commons</span></h2><button type="button" class="hub-ic" id="hubSearch" aria-label="Search">${HUB_ICON.discover}</button><button type="button" class="hub-ic" id="hubAct" aria-label="Activity">${HUB_ICON.bell}${act ? `<i class="hub-n">${act > 9 ? "9+" : act}</i>` : ""}</button><button type="button" class="hub-ic" id="hubX" aria-label="Close the community">${HUB_ICON.close}</button>`;
+  if ($("hubBack")) $("hubBack").onclick = () => { if (!hubBack()) hubClose(); };
+  $("hubX").onclick = hubClose;
+  if ($("hubMe")) $("hubMe").onclick = () => hubTab("you");
+  if ($("hubSearch")) $("hubSearch").onclick = () => { hubTab("discover"); setTimeout(() => $("hubQ")?.focus(), 30); };
+  if ($("hubAct")) $("hubAct").onclick = openActivity;
+}
+function hubNav() {
+  const un = dmUnread(), fd = COMM ? feedItems().filter(x => x.at > (COMM.feedSeen || 0) && x.kind !== "copy").length : 0;
+  $("hubNav").innerHTML = HUB_TABS.map(([k, l]) => { const n = k === "dms" ? un : k === "feed" ? fd : 0;
+    return `<button type="button" class="hub-tab ${HUB.tab === k ? "on" : ""}" data-ht="${k}" aria-label="${l}">${k === "you" ? `<span class="hub-av">${meAvatar(24)}</span>` : HUB_ICON[k]}<span>${l}</span>${n ? `<i class="hub-n">${n > 9 ? "9+" : n}</i>` : ""}</button>`; }).join("");
+  $("hubNav").querySelectorAll("[data-ht]").forEach(b => b.onclick = () => { if (HUB.tab === b.dataset.ht && HUB.cur?.title === "__tab") { $("hubBody").scrollTo({ top: 0, behavior: "smooth" }); return; } hubTab(b.dataset.ht); });
+}
+// a compact card for the swipeable rows
+function postMini(p) {
+  const u = userOf(p.by), k = p.kind || "character";
+  return `<div class="hub-mini k-${k}" data-post="${esc(p.id)}" role="button" tabindex="0"><div class="hm-top"><span class="kind-pill">${k === "world" ? "World" : k === "group" ? "Group" : "Char"}</span>${p.card.source ? `<span class="cm-src">${esc(p.card.source)}</span>` : p.card.source === "" ? `<span class="cm-src oc">OC</span>` : ""}</div><b class="hm-name">${esc(p.card.name)}</b><p class="hm-sum">${esc(p.card.summary || "")}</p><div class="hm-foot">${avatarOf(u, 18)}<span class="hm-by">@${esc(u?.handle || "")}</span><span class="hm-l">♥ ${fmtK(postLikes(p))}</span></div></div>`;
+}
+const trendScore = p => postLikes(p) / Math.pow(1 + (Date.now() - p.at) / 864e5, 0.8);
+function hubRows() {
+  const P = COMM.posts, day = 864e5, now = Date.now(), fol = P.filter(p => follows(p.by));
+  return [
+    ["trending", "🔥 Trending", [...P].sort((a, c) => trendScore(c) - trendScore(a))],
+    ["new", P.some(p => now - p.at < day) ? "✨ New today" : "✨ Newest", [...P].sort((a, c) => c.at - a.at)],
+    ["following", "From people you follow", [...fol].sort((a, c) => c.at - a.at)],
+    ["fan", "Fan favourites", P.filter(p => p.card.source).sort((a, c) => postLikes(c) - postLikes(a))],
+    ["oc", "Original characters", P.filter(p => p.card.source === "").sort((a, c) => postLikes(c) - postLikes(a))],
+    ["worlds", "Worlds & groups", P.filter(p => p.kind === "world" || p.kind === "group").sort((a, c) => postLikes(c) - postLikes(a))],
+    ["top", "All-time favourites", [...P].sort((a, c) => postLikes(c) - postLikes(a))]
+  ].filter(r => r[2].length);
+}
+function openRow(key) {
+  const r = hubRows().find(x => x[0] === key); if (!r) return;
+  const draw = () => cpage(r[1].replace(/^\S+\s(?=[A-Z])/u, ""), b => { const list = hubRows().find(x => x[0] === key)?.[2] || [];
+    b.innerHTML = `<i class="cm-mark" hidden></i><div class="cm-grid">${list.slice(0, 60).map(postCard).join("")}</div>`; hubWire(b, draw); });
+  COMM_VIEW = draw; draw();
+}
+// clicks shared by every hub page
+function hubWire(b, draw) {
+  b.querySelectorAll("[data-post]").forEach(x => x.onclick = e => { if (e.target.closest("[data-like]")) return; openPost(x.dataset.post); });
+  b.querySelectorAll("[data-like]").forEach(x => x.onclick = () => { commLike(x.dataset.like); draw(); });
+  b.querySelectorAll("[data-u]").forEach(x => { if (!x.classList.contains("cm-who")) x.onclick = () => openCommUser(x.dataset.u); });
+  b.querySelectorAll("[data-blog]").forEach(x => x.onclick = e => { if (e.target.closest("[data-like]")) return; openBlog(x.dataset.blog); });
+  b.querySelectorAll("[data-dm]").forEach(x => x.onclick = () => openDM(x.dataset.dm));
+  b.querySelectorAll("[data-row]").forEach(x => x.onclick = () => openRow(x.dataset.row));
+  b.querySelectorAll("[data-upd]").forEach(x => x.onclick = async () => { x.disabled = true; await commCopyUpdate(byId(x.dataset.upd)); draw(); });
+  b.querySelectorAll("[data-cm]").forEach(x => x.onclick = () => openBotComments(x.dataset.cm));
+  b.querySelectorAll("[data-share]").forEach(x => x.onclick = async () => { await commPublish(byId(x.dataset.share), true); draw(); });
+}
+function hubTab(tab) {
+  HUB.tab = HUB_TABS.some(t => t[0] === tab) ? tab : "home";
+  DM_OPEN = null; clearInterval(DM_T);
+  if (HUB.tab === "feed") COMM.feedSeen = Date.now();
+  const draw = () => cpage("__tab", b => {
+    let body = "";
+    if (!hasKey()) body = `<p class="note">Add your API key in Settings first: the community is written by the AI.</p>`;
+    else if (!COMM.posts.length && HUB.tab !== "you") body = `<div class="cm-empty">${lanternSVG("seq")}<p>The community is waking up…</p></div>`;
+    else if (HUB.tab === "home") {
+      body = hubRows().map(([k, t, l]) => `<section class="hub-row"><div class="hub-rh"><h3>${esc(t)}</h3>${l.length > 4 ? `<button type="button" class="hub-all" data-row="${k}">See all ›</button>` : ""}</div><div class="hub-strip">${l.slice(0, 12).map(postMini).join("")}</div></section>`).join("");
+      const blogs = [...(COMM.blogs || [])].sort((a, c) => c.at - a.at).slice(0, 3);
+      if (blogs.length) body += `<section class="hub-row"><div class="hub-rh"><h3>📝 Fresh posts</h3></div>${blogs.map(blogCard).join("")}</section>`;
+      body += `<button type="button" class="btn small hub-more" id="cmRefresh">↻ Check for new bots</button>`;
+    } else if (HUB.tab === "discover") {
+      body = `<div class="hub-search"><input id="hubQ" type="search" placeholder="Search bots, tags and creators" value="${esc(HUB.q)}" autocomplete="off"></div><div id="hubDisc"></div>`;
+    } else if (HUB.tab === "feed") body = feedHTML();
+    else if (HUB.tab === "dms") body = dmListHTML();
+    else body = hubYou();
+    b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-page hub-p-${HUB.tab}">${body}</div>`;
+    hubWire(b, draw);
+    if ($("cmRefresh")) $("cmRefresh").onclick = async () => { $("cmRefresh").disabled = true; COMM.tickP = Math.min(COMM.tickP || Date.now(), Date.now() - 864e5 / commRate().posts * 2); await commTick(true); draw(); };
+    if ($("hubQ")) { $("hubQ").oninput = e => { HUB.q = e.target.value; hubDisc(draw); }; hubDisc(draw); }
+    if ($("dmNew")) $("dmNew").onclick = openNewDM;
+    hubYouWire(draw);
+  });
+  HUB_TAB_DRAW = draw; COMM_VIEW = draw; draw();
+}
+// Discover: search, kind and tag filters, sort; creators only show when they match the search
+function hubDisc(draw) {
+  const box = $("hubDisc"); if (!box) return;
+  const q = HUB.q.trim().toLowerCase(), tagN = {};
+  for (const p of COMM.posts) for (const t of p.tags || []) tagN[t] = (tagN[t] || 0) + 1;
+  const tags = Object.entries(tagN).sort((a, c) => c[1] - a[1]).slice(0, 18).map(x => x[0]);
+  const kinds = [["all", "All"], ["character", "Characters"], ["world", "Worlds"], ["group", "Groups"], ["fan", "Fan bots"], ["oc", "OCs"]];
+  const hit = p => (!q || [p.card.name, p.card.summary, p.card.source, ...(p.tags || []), userOf(p.by)?.handle].join(" ").toLowerCase().includes(q))
+    && (HUB.kind === "all" || (HUB.kind === "fan" ? !!p.card.source : HUB.kind === "oc" ? p.card.source === "" : (p.kind || "character") === HUB.kind))
+    && (!HUB.tag || (p.tags || []).includes(HUB.tag));
+  const list = COMM.posts.filter(hit).sort((a, c) => HUB.sort === "new" ? c.at - a.at : postLikes(c) - postLikes(a));
+  const people = q.length >= 2 ? COMM.users.filter(u => [u.name, u.handle, ...(u.taste || [])].join(" ").toLowerCase().includes(q)).slice(0, 10) : [];
+  box.innerHTML = `<div class="hub-chips">${kinds.map(([k, l]) => `<button type="button" class="chip ${HUB.kind === k ? "on" : ""}" data-hk="${k}">${l}</button>`).join("")}<span class="hub-sep"></span>${[["popular", "Popular"], ["new", "New"]].map(([k, l]) => `<button type="button" class="chip ${HUB.sort === k ? "on" : ""}" data-hs="${k}">${l}</button>`).join("")}</div>
+    <div class="hub-chips hub-tags">${tags.map(t => `<button type="button" class="chip ${HUB.tag === t ? "on" : ""}" data-htag="${esc(t)}"${tagStyle(t)}>${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</button>`).join("")}</div>
+    ${people.length ? `<div class="hub-rh"><h3>Creators</h3></div><div class="hub-people">${people.map(u => `<button type="button" class="hub-person" data-u="${esc(u.id)}">${avatarOf(u, 44)}<b>${esc(u.name)}</b><span class="hint">@${esc(u.handle)}</span></button>`).join("")}</div>` : ""}
+    <div class="hub-rh"><h3>${list.length} bot${list.length === 1 ? "" : "s"}</h3></div>${list.length ? `<div class="cm-grid">${list.slice(0, 60).map(postCard).join("")}</div>` : `<p class="hint">Nothing matches yet. Try another word or tag.</p>`}`;
+  box.querySelectorAll("[data-hk]").forEach(x => x.onclick = () => { HUB.kind = x.dataset.hk; hubDisc(draw); });
+  box.querySelectorAll("[data-hs]").forEach(x => x.onclick = () => { HUB.sort = x.dataset.hs; hubDisc(draw); });
+  box.querySelectorAll("[data-htag]").forEach(x => x.onclick = () => { HUB.tag = HUB.tag === x.dataset.htag ? "" : x.dataset.htag; hubDisc(draw); });
+  hubWire(box, () => hubDisc(draw));
+}
+function hubYou() {
+  const pub = S.chars.filter(c => pubOf(c)), priv = S.chars.filter(c => !pubOf(c) && !c.hidden), likes = pub.reduce((a, c) => a + pubStats(c).likes, 0);
+  return `<div class="hub-youcard">${meAvatar(72)}<div class="grow"><h3 class="cm-pfn">${esc(meName())}</h3><div class="cm-pstats"><span><b>${fmtK(myFollowers())}</b> followers</span><span><b>${Object.values(COMM.follow).filter(x => x.v).length}</b> following</span><span><b>♥ ${fmtK(likes)}</b></span></div></div></div>
+    <div class="row"><button type="button" class="btn small" id="cmPic">${COMM.me?.pic || COMM.me?.pix ? "Change picture" : "Choose a profile picture"}</button>${COMM.me?.pic || COMM.me?.pix ? `<button type="button" class="btn small" id="cmPicX">Use my persona's picture</button>` : ""}<button type="button" class="btn small" id="hubActB">${HUB_ICON.bell} Activity</button></div>
+    ${field("Your name in the community", `<input id="cmMe" value="${esc(COMM.me?.name || "")}" placeholder="${esc(uname())}" autocomplete="off">`)}
+    <div class="lbl">Your public bots · ${pub.length}</div>${pub.length ? pub.map(c => { const s = pubStats(c); return `<div class="listrow cm-mine" data-id="${esc(c.id)}"><span class="grow"><b>${esc(c.name)}</b><span class="sub">♥ ${fmtK(s.likes)} · ${fmtK(s.chats)} chats · ${commN("bot:" + c.id)} comments · public since ${esc(fmtWhen(pubOf(c).since || pubOf(c).at))}</span></span><button type="button" class="btn small" data-cm="${esc(c.id)}">Comments</button></div>`; }).join("") : `<p class="hint" style="margin:0">None yet. Share a bot below, or from its profile.</p>`}
+    ${priv.length ? `<div class="lbl">Share one</div>${priv.slice(0, 30).map(c => `<div class="listrow"><span class="grow"><b>${esc(c.name)}</b><span class="sub">${esc(botSummary(c).slice(0, 90))}</span></span><button type="button" class="btn small" data-share="${esc(c.id)}">🌐 Make public</button></div>`).join("")}` : ""}`;
+}
+function hubYouWire(draw) {
+  if ($("cmMe")) $("cmMe").onchange = e => { COMM.me = { ...COMM.me, name: e.target.value.trim().slice(0, 40), at: Date.now() }; commSave(); };
+  if ($("cmPic")) $("cmPic").onclick = async () => { const r = await openPix(mePicOf() || {}, { title: "Your community picture", seed: "me", text: uname() }); if (!r || r.none) return; COMM.me = { ...COMM.me, pic: r.pic || "", pix: r.pix || null, at: Date.now() }; commSave(); toast("Profile picture set"); draw(); };
+  if ($("cmPicX")) $("cmPicX").onclick = () => { COMM.me = { ...COMM.me, pic: "", pix: null, at: Date.now() }; commSave(); draw(); };
+  if ($("hubActB")) $("hubActB").onclick = openActivity;
+}
+// Activity: what happened to your things (replies, comments on your public bots, follows), newest first
+function actItems() {
+  if (!COMM) return [];
+  const out = [];
+  for (const [t, l] of Object.entries(COMM.comments)) for (const x of l) {
+    if (x.by === "me") continue;
+    if (x.toMe) out.push({ at: x.at, by: x.by, t, kind: "reply", text: x.text });
+    else if (t.startsWith("bot:")) out.push({ at: x.at, by: x.by, t, kind: "botc", text: x.text });
+  }
+  for (const [id, at] of Object.entries(COMM.fans || {})) if (at <= Date.now()) out.push({ at, by: id, kind: "follow" });
+  return out.filter(x => userOf(x.by)).sort((a, c) => c.at - a.at).slice(0, 80);
+}
+const actUnseen = () => actItems().filter(x => x.at > (COMM?.actSeen || 0)).length;
+function openActivity() {
+  const seen = COMM.actSeen || 0;
+  const draw = () => cpage("Activity", b => {
+    const items = actItems();
+    b.innerHTML = `<i class="cm-mark" hidden></i>${items.length ? items.map(x => { const u = userOf(x.by), who = `<b>@${esc(u.handle)}</b>`, when = `<span class="hint">· ${esc(fmtWhen(x.at))}</span>`, nm = x.t ? esc(targetInfo(x.t)?.name || "a bot") : "";
+      const line = x.kind === "reply" ? `${who} replied to you on <b>${nm}</b>` : x.kind === "botc" ? `${who} commented on your bot <b>${nm}</b>` : `${who} followed you`;
+      return `<button type="button" class="listrow act-row ${x.at > seen ? "new" : ""}" ${x.t ? `data-go="${esc(x.t)}"` : `data-u="${esc(x.by)}"`}>${avatarOf(u, 36)}<span class="grow">${line} ${when}${x.text ? `<span class="sub">${esc(x.text.slice(0, 140))}</span>` : ""}</span></button>`; }).join("") : `<p class="note">Nothing yet. Comment on bots, make yours public and follow people, and what they do back shows up here.</p>`}`;
+    hubWire(b, draw);
+    b.querySelectorAll("[data-go]").forEach(x => x.onclick = () => { const t = x.dataset.go; t.startsWith("bot:") ? openBotComments(t.slice(4)) : t.startsWith("blog:") ? openBlog(t.slice(5)) : openPost(t); });
+  });
+  COMM.actSeen = Date.now(); commSave(); COMM_VIEW = draw; draw();
+}
+// New message: people you follow, have talked to, or whose bots you liked or saved
+function openNewDM() {
+  let q = "";
+  const draw = () => cpage("New message", b => {
+    const ids = new Set([...Object.keys(COMM.follow || {}).filter(id => COMM.follow[id].v), ...Object.keys(COMM.dms || {}), ...COMM.posts.filter(p => commLiked(p.id) || p.added).map(p => p.by)]);
+    const list = [...ids].map(userOf).filter(Boolean);
+    b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-search"><input id="ndQ" type="search" placeholder="Find someone you follow or talked to" autocomplete="off"></div><div id="ndList"></div>`;
+    const fill = () => { const l = list.filter(u => !q || (u.name + " " + u.handle).toLowerCase().includes(q)); $("ndList").innerHTML = l.length ? l.map(u => `<button type="button" class="listrow" data-dm="${esc(u.id)}">${avatarOf(u, 36)}<span class="grow"><b>${esc(u.name)}</b> <span class="hint">@${esc(u.handle)}</span></span></button>`).join("") : `<p class="hint">Follow people or like their bots and they show up here. You can also message anyone from their profile.</p>`; $("ndList").querySelectorAll("[data-dm]").forEach(x => x.onclick = () => openDM(x.dataset.dm)); };
+    $("ndQ").oninput = e => { q = e.target.value.trim().toLowerCase(); fill(); }; fill();
+  });
+  COMM_VIEW = null; draw();
 }
 // ---- the windows
 let COMM_TAB = "popular";
 async function openCommunity(tab) {
-  await commLoad(); if (tab) COMM_TAB = tab;
+  await commLoad();
   COMM.seen = { at: Date.now() }; commSave(); commDot();
-  const draw = () => openSheet("Community", b => {
-    const un = dmUnread(), tabs = [["popular", "Popular"], ["new", "New"], ["feed", "Following"], ["dms", `Messages${un ? ` (${un})` : ""}`], ["yours", "Yours"], ["people", "People"]];
-    let body = "";
-    if (!hasKey()) body = `<p class="note">Add your API key in Settings first: the community is written by the AI.</p>`;
-    else if (COMM_TAB === "popular" || COMM_TAB === "new") {
-      const list = [...COMM.posts].sort((a, c) => COMM_TAB === "new" ? c.at - a.at : postLikes(c) - postLikes(a)).slice(0, 60);
-      body = list.length ? `<div class="cm-grid">${list.map(postCard).join("")}</div>` : `<div class="cm-empty">${lanternSVG("seq")}<p>The community is waking up…</p></div>`;
-    } else if (COMM_TAB === "feed") { body = feedHTML();
-    } else if (COMM_TAB === "dms") { body = dmListHTML();
-    } else if (COMM_TAB === "yours") {
-      const pub = S.chars.filter(c => pubOf(c)), priv = S.chars.filter(c => !pubOf(c) && !c.hidden);
-      body = `<div class="cm-me">${meAvatar(64)}<div class="stack" style="gap:6px"><button type="button" class="btn small" id="cmPic">${COMM.me?.pic || COMM.me?.pix ? "Change picture" : "Choose a profile picture"}</button>${COMM.me?.pic || COMM.me?.pix ? `<button type="button" class="btn small" id="cmPicX">Use my persona's picture</button>` : ""}</div></div><p class="hint" style="margin:0 0 6px">${fmtK(myFollowers())} followers · following ${Object.values(COMM.follow).filter(x => x.v).length}</p>${field("Your name in the community", `<input id="cmMe" value="${esc(COMM.me?.name || "")}" placeholder="${esc(uname())}" autocomplete="off">`)}
-        <div class="lbl">Public · ${pub.length}</div>${pub.length ? pub.map(c => { const s = pubStats(c); return `<div class="listrow cm-mine" data-id="${esc(c.id)}"><span class="grow"><b>${esc(c.name)}</b><span class="sub">♥ ${fmtK(s.likes)} · ${fmtK(s.chats)} chats · ${commN("bot:" + c.id)} comments · public since ${esc(fmtWhen(pubOf(c).since || pubOf(c).at))}</span></span><button type="button" class="btn small" data-cm="${esc(c.id)}">Comments</button></div>`; }).join("") : `<p class="hint" style="margin:0">None yet. Share a bot below, or from its profile.</p>`}
-        ${priv.length ? `<div class="lbl">Share one</div>${priv.slice(0, 30).map(c => `<div class="listrow"><span class="grow"><b>${esc(c.name)}</b><span class="sub">${esc(botSummary(c).slice(0, 90))}</span></span><button type="button" class="btn small" data-share="${esc(c.id)}">🌐 Make public</button></div>`).join("")}` : ""}`;
-    } else {
-      const us = [...COMM.users].sort((a, c) => commUserPosts(c).length - commUserPosts(a).length);
-      body = us.length ? us.map(u => `<button type="button" class="listrow cm-user" data-u="${esc(u.id)}"><span class="dm-av">${avatarOf(u)}${isOnline(u) ? '<i class="dm-on"></i>' : ""}</span><span class="grow"><b>${esc(u.name)}</b> <span class="hint">@${esc(u.handle)}</span><span class="sub">${esc(u.bio)}</span></span></button>`).join("") : `<p class="note">No one here yet.</p>`;
-    }
-    b.innerHTML = `<i class="cm-mark" hidden></i><div class="tabs cm-tabs">${tabs.map(([k, l]) => `<button type="button" class="tab ${COMM_TAB === k ? "on" : ""}" data-t="${k}">${l}</button>`).join("")}<button type="button" class="tab" id="cmRefresh" title="Check for new posts">↻</button></div>${body}`;
-    b.querySelectorAll(".cm-tabs [data-t]").forEach(x => x.onclick = () => { COMM_TAB = x.dataset.t; draw(); });
-    $("cmRefresh").onclick = async () => { $("cmRefresh").disabled = true; COMM.tickP = Math.min(COMM.tickP || Date.now(), Date.now() - 864e5 / commRate().posts * 2); await commTick(true); draw(); };
-    b.querySelectorAll("[data-post]").forEach(x => x.onclick = e => { if (e.target.closest("[data-like]")) return; openPost(x.dataset.post); });
-    b.querySelectorAll("[data-like]").forEach(x => x.onclick = () => { commLike(x.dataset.like); draw(); });
-    b.querySelectorAll("[data-u]").forEach(x => x.onclick = () => openCommUser(x.dataset.u));
-    b.querySelectorAll("[data-share]").forEach(x => x.onclick = async () => { await commPublish(byId(x.dataset.share), true); draw(); });
-    b.querySelectorAll("[data-cm]").forEach(x => x.onclick = () => openBotComments(x.dataset.cm));
-    b.querySelectorAll("[data-dm]").forEach(x => x.onclick = () => openDM(x.dataset.dm));
-    b.querySelectorAll("[data-blog]").forEach(x => x.onclick = e => { if (e.target.closest("[data-like]")) return; openBlog(x.dataset.blog); });
-    b.querySelectorAll("[data-upd]").forEach(x => x.onclick = async () => { x.disabled = true; await commCopyUpdate(byId(x.dataset.upd)); draw(); });
-    if ($("dmNew")) $("dmNew").onclick = () => { COMM_TAB = "people"; draw(); };
-    if ($("cmMe")) $("cmMe").onchange = e => { COMM.me = { ...COMM.me, name: e.target.value.trim().slice(0, 40), at: Date.now() }; commSave(); };
-    if ($("cmPic")) $("cmPic").onclick = async () => { const r = await openPix(mePicOf() || {}, { title: "Your community picture", seed: "me", text: uname() }); if (!r || r.none) return; COMM.me = { ...COMM.me, pic: r.pic || "", pix: r.pix || null, at: Date.now() }; commSave(); toast("Profile picture set"); draw(); };
-    if ($("cmPicX")) $("cmPicX").onclick = () => { COMM.me = { ...COMM.me, pic: "", pix: null, at: Date.now() }; commSave(); draw(); };
-  });
-  COMM_VIEW = draw; draw();
-  if (hasKey() && !COMM.posts.length) commTick(true).then(() => { if (COMM_VIEW === draw) commRedraw(); });
+  const map = { popular: "home", new: "home", people: "discover", yours: "you" };
+  hubTab(map[tab] || tab || (HUB.open ? HUB.tab : "home"));
+  if (hasKey() && !COMM.posts.length) commTick(true).then(() => commRedraw());
 }
 const commUserPosts = u => COMM.posts.filter(p => p.by === u.id);
 function postCard(p) {
@@ -7877,7 +8088,7 @@ function postCard(p) {
 function commLike(id) { COMM.liked[id] = { v: !commLiked(id), at: Date.now() }; commSave(); }
 function openPost(id) {
   const p = COMM.posts.find(x => x.id === id); if (!p) return;
-  const draw = () => openSheet(p.card.name, b => {
+  const draw = () => cpage(p.card.name, b => {
     const u = userOf(p.by), c = p.card, liked = commLiked(p.id), K = p.kind || "character";
     b.innerHTML = `<i class="cm-mark" hidden></i><button type="button" class="cm-by cm-by-big" data-u="${esc(p.by)}">${avatarOf(u, 30)}<span><b>${esc(u?.name || "Someone")}</b> <span class="hint">@${esc(u?.handle || "")} · ${esc(fmtWhen(p.at))}</span></span></button>
       <div class="pf-kind k-${K}">${K === "world" ? "World" : K === "group" ? `Group · ${(c.members || []).length}` : "Character"}${c.source ? ` · from ${esc(c.source)}` : c.source === "" ? " · OC" : ""}</div>
@@ -7895,7 +8106,7 @@ function openPost(id) {
     $("cmLike").onclick = () => { commLike(p.id); draw(); };
     if ($("cmUpd")) $("cmUpd").onclick = async () => { $("cmUpd").disabled = true; await commCopyUpdate(byId(p.added)); draw(); };
     $("cmAdd").onclick = async () => { $("cmAdd").disabled = true; $("cmAdd").textContent = "Adding…"; await commAdd(p); draw(); };
-    $("cmChat").onclick = async () => { $("cmChat").disabled = true; const w = p.added && byId(p.added) ? byId(p.added) : await commAdd(p); if (!w) return; p.myChats = (p.myChats || 0) + 1; commSave(); COMM_VIEW = null; closeSheet(); openChat(w.id); };
+    $("cmChat").onclick = async () => { $("cmChat").disabled = true; const w = p.added && byId(p.added) ? byId(p.added) : await commAdd(p); if (!w) return; p.myChats = (p.myChats || 0) + 1; commSave(); hubClose(); closeSheet(); openChat(w.id); };
     wireComments(b, p.id, draw);
   });
   COMM_VIEW = draw; draw();
@@ -7910,17 +8121,17 @@ async function commAdd(p) {
 }
 function openCommUser(id) {
   const u = userOf(id); if (!u) return;
-  const draw = () => openSheet("@" + u.handle, b => {
+  const draw = () => cpage("@" + u.handle, b => {
     const posts = commUserPosts(u), blogs = (COMM.blogs || []).filter(x => x.by === u.id), said = Object.entries(COMM.comments).flatMap(([t, l]) => l.filter(x => x.by === u.id).map(x => [t, x])).sort((a, c) => c[1].at - a[1].at).slice(0, 6);
     const likes = posts.reduce((a, p) => a + postLikes(p), 0), fw = follows(u.id), fs = fitStyle(u);
     const pin = posts.find(p => p.id === u.pin) || [...posts].sort((a, c) => postLikes(c) - postLikes(a))[0];
     const name = fs.fin ? `<h3 class="cm-pfn" style="background:${fs.fin ? "var(--fin-t)" : "none"};-webkit-background-clip:text;background-clip:text;color:transparent">${esc(u.name)}</h3>` : `<h3 class="cm-pfn">${esc(u.name)}</h3>`;
     b.innerHTML = `<i class="cm-mark" hidden></i><div class="cm-pfx${fs.shop ? " st-" + fs.shop : ""}" style="${fs.st}">${fs.shop ? `<div class="sh-fx">${stFxHTML(fs.shop)}</div>` : ""}<div class="cm-pfx-in">
       <div class="cm-prof"><div class="cm-emb">${avatarOf(u, 64)}<span class="cm-lan">${fitLantern(u)}</span></div><div class="grow">${name}<div class="hint">@${esc(u.handle)} · joined ${esc(new Date(u.at).toLocaleDateString([], { month: "short", year: "numeric" }))}${followsMe(u.id) ? ' <span class="badge cm-fy">Follows you</span>' : ""}</div><div class="hint cm-status"><span class="dm-dot ${isOnline(u) ? "on" : ""}"></span>${esc(seenText(u))}</div></div></div>
-      ${u.status ? `<div class="cm-stline">${esc(u.status)}</div>` : ""}
+      ${cleanBio(u.status) ? `<div class="cm-stline">${esc(cleanBio(u.status))}</div>` : ""}
       <div class="cm-pstats"><span><b>${fmtK(followerCount(u))}</b> followers</span><span><b>${posts.length}</b> bot${posts.length === 1 ? "" : "s"}</span><span><b>♥ ${fmtK(likes)}</b></span></div>
       <div class="row"><button type="button" class="btn ${fw ? "" : "primary"} small" id="cmFollow">${fw ? "✓ Following" : "＋ Follow"}</button><button type="button" class="btn small" id="cmDM">💬 Message</button></div>
-      <p>${esc(u.bio)}</p>${u.taste.length ? `<div class="btags">${u.taste.map(t => `<span class="btag"${tagStyle(t)}>${esc(t)}</span>`).join("")}</div>` : ""}
+      <p class="cm-bio">${esc(cleanBio(u.bio))}</p>${u.taste.length ? `<div class="btags">${u.taste.map(t => `<span class="btag"${tagStyle(t)}>${esc(t)}</span>`).join("")}</div>` : ""}
       ${pin ? `<div class="lbl">📌 Pinned</div><div class="cm-grid">${postCard(pin)}</div>` : ""}
       <div class="lbl">Bots · ${posts.length}</div>${posts.length > (pin ? 1 : 0) ? `<div class="cm-grid">${posts.filter(p => p !== pin).map(postCard).join("")}</div>` : `<p class="hint" style="margin:0">${posts.length ? "That's the only one so far." : "Hasn't posted a bot yet."}</p>`}
       ${blogs.length ? `<div class="lbl">Posts · ${blogs.length}</div>${blogs.slice(0, 6).map(blogCard).join("")}` : ""}
@@ -7934,6 +8145,7 @@ function openCommUser(id) {
     b.querySelectorAll("[data-go]").forEach(x => x.onclick = () => { const t = x.dataset.go; t.startsWith("bot:") ? openBotComments(t.slice(4)) : t.startsWith("blog:") ? openBlog(t.slice(5)) : openPost(t); });
   });
   COMM_VIEW = draw; draw();
+  if (hasKey() && bioNeedsFix(u) && !u.fixing && (u.bioTried || 0) < 3) { u.fixing = true; commFixBios([u]).then(ok => { if (ok) { commSave(); if (COMM_VIEW === draw) draw(); } }).catch(() => {}).finally(() => { delete u.fixing; }); }
 }
 // comments: a thread per listing or public bot, replies indented under what they answer
 function commentsUI(t) {
@@ -7960,7 +8172,7 @@ function wireComments(b, t, redraw) {
 }
 function openBotComments(id) {
   const c = byId(id); if (!c) return;
-  const draw = () => openSheet(`${c.name} · comments`, b => {
+  const draw = () => cpage(`${c.name} · comments`, b => {
     const s = pubStats(c);
     b.innerHTML = `<i class="cm-mark" hidden></i><div class="cm-stats cm-stats-big"><span>♥ ${fmtK(s.likes)}</span><span>💬 ${fmtK(s.chats)} chats</span><span>🗨 ${commN("bot:" + id)} comments</span></div>${pubOf(c) ? "" : '<p class="note">This bot isn\'t public right now, so no new comments arrive.</p>'}${commentsUI("bot:" + id)}`;
     wireComments(b, "bot:" + id, draw);
@@ -8127,7 +8339,7 @@ function blogCard(b) {
 function openBlog(id) {
   const x = COMM.blogs.find(y => y.id === id); if (!x) return;
   const t = "blog:" + id;
-  const draw = () => openSheet(x.title || "Post", b => {
+  const draw = () => cpage(x.title || "Post", b => {
     const u = userOf(x.by), liked = commLiked(t);
     b.innerHTML = `<i class="cm-mark" hidden></i><button type="button" class="cm-by cm-by-big" data-u="${esc(x.by)}">${avatarOf(u, 30)}<span><b>${esc(u?.name || "")}</b> <span class="hint">@${esc(u?.handle || "")} · ${esc(fmtWhen(x.at))}</span></span></button>
       <div class="cm-post-tx">${esc(x.text)}</div>
@@ -8179,7 +8391,7 @@ function dmKnows(u) {
 async function dmWrite(u, q) {
   const d = dmOf(u.id), now = Date.now();
   const hist = d.msgs.slice(-50).map(m => `[${localClock(u, m.at)} your time] ${m.from === "me" ? meName() : "you"}: ${m.text}`).join("\n");
-  const sys = `You are ${u.name} (@${u.handle}), a real person who uses ${COMM_SITE}. You're a ${u.age}-year-old ${u.gender || "person"} in ${u.place}; right now it's ${localClock(u, now)} where you are. About you: ${u.bio} You love ${(u.taste || []).join(", ")}${u.focus ? `, especially ${u.focus}` : ""}. On the site you're a ${u.role || "regular"}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted.
+  const sys = `You are ${u.name} (@${u.handle}), a real person who uses ${COMM_SITE}. You're a ${u.age}-year-old ${u.gender || "person"} in ${u.place}; right now it's ${localClock(u, now)} where you are. About you: ${cleanBio(u.bio)} You love ${(u.taste || []).join(", ")}${u.focus ? `, especially ${u.focus}` : ""}. On the site you're a ${u.role || "regular"}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted.
 You're in private messages with ${meName()}. Write your next message or messages exactly as you'd really type them in a DM: in your own style (typos, slang, emoji or none, capitals or none, exactly like your typing style), usually short, often split into 1-4 separate texts the way people send several in a row. Respond to what they actually said, remember the conversation, ask things back when you'd want to know. You have your own life, mood and day, and the time of day shows (morning grogginess, at work, late-night chattiness), but don't announce the time. Be yourself, not a helpful assistant: you can be busy, distracted, blunt, awkward, uninterested, teasing or warm, and you can flirt or get lewd only if that fits who you are and they lead there. You are a real person: never say or hint that you are an AI, a bot, a character or made up, never mention a prompt or roleplay unless you're talking about chatbots on the site, and don't use *asterisk actions* unless that's genuinely how you joke. ${COMM_ADULT}
 Respond with only JSON: {"messages": ["first text", "maybe a second"]}`;
   const ctx = dmKnows(u);
@@ -8243,14 +8455,14 @@ function dmMaybeOpen() {
 const dmUnread = () => COMM ? Object.values(COMM.dms).reduce((a, d) => a + d.msgs.filter(m => m.from === "them" && m.at > (d.read || 0)).length, 0) : 0;
 // ---- the DM windows
 let DM_OPEN = null, DM_T = 0;
-function dmRedraw() { if (DM_OPEN && $("sheetBody")?.querySelector(".dm-mark")) DM_VIEW?.(); else if (COMM_VIEW && $("sheetBody")?.querySelector(".cm-mark")) commRedraw(); }
+function dmRedraw() { if (DM_OPEN && cbody()?.querySelector(".dm-mark")) DM_VIEW?.(); else if (COMM_VIEW && cbody()?.querySelector(".cm-mark")) commRedraw(); }
 let DM_VIEW = null;
 function dmDay(t) { const d = new Date(t), n = new Date(); const y = new Date(n); y.setDate(n.getDate() - 1); return d.toDateString() === n.toDateString() ? "Today" : d.toDateString() === y.toDateString() ? "Yesterday" : d.toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" }); }
 function openDM(id) {
   const u = userOf(id); if (!u) return;
   DM_OPEN = id; clearInterval(DM_T);
   const draw = () => {
-    const body = $("sheetBody"); if (!body || !body.querySelector(".dm-mark")) return;
+    const body = cbody(); if (!body || !body.querySelector(".dm-mark")) return;
     const d = dmOf(id), now = Date.now(), q = COMM.dmq.find(x => x.user === id);
     d.read = now;
     const typing = q && now >= (q.typingAt || q.due) && !asleepAt(u, now) && (now < q.due + 90e3 || q.parts?.length);
@@ -8268,7 +8480,7 @@ function openDM(id) {
     if (stick) list.scrollTop = list.scrollHeight;
     commSave(); commDot();
   };
-  openSheet(u.name, b => {
+  cpage(u.name, b => {
     b.innerHTML = `<i class="dm-mark" hidden></i><button type="button" class="dm-head" id="dmWho">${avatarOf(u, 34)}<span><b>@${esc(u.handle)}</b><span class="dm-st"></span></span></button><div class="dm-list"></div>
       <div class="dm-comp"><textarea id="dmIn" rows="1" placeholder="Message ${esc(u.name)}…"></textarea><button type="button" class="btn primary small" id="dmSend">Send</button></div>`;
     $("dmWho").onclick = () => openCommUser(id);
@@ -8278,7 +8490,7 @@ function openDM(id) {
     $("dmIn").addEventListener("input", e => { e.target.style.height = "auto"; e.target.style.height = Math.min(120, e.target.scrollHeight) + "px"; });
   });
   DM_VIEW = draw; draw();
-  DM_T = setInterval(() => { if (!$("sheetBody")?.querySelector(".dm-mark")) { clearInterval(DM_T); DM_OPEN = null; return; } draw(); dmPump(); }, 2500);
+  DM_T = setInterval(() => { if (!cbody()?.querySelector(".dm-mark")) { clearInterval(DM_T); DM_OPEN = null; return; } draw(); dmPump(); }, 2500);
 }
 function dmListHTML() {
   const rows = Object.entries(COMM.dms).filter(([id, d]) => d.msgs.length && userOf(id)).sort((a, b) => b[1].msgs.at(-1).at - a[1].msgs.at(-1).at);

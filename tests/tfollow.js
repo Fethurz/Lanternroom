@@ -37,7 +37,7 @@ const open = require("./base.js");
   chk("someone on defaults gets the plain look", await pg.evaluate(() => { const x = document.querySelector(".cm-pfx"); return ![...x.classList].some(c => /^st-/.test(c)) && !x.querySelector(".sh-fx") && !document.querySelector(".cm-stline"); }));
   // ---- following
   await pg.evaluate(() => openCommunity("feed")); await wait(300);
-  chk("Following starts empty with a hint", /Follow people from their profiles/.test(await pg.textContent("#sheetBody")));
+  chk("Following starts empty with a hint", /Follow people from their profiles/.test(await pg.evaluate(() => cbody().textContent)));
   const fc0 = await pg.evaluate(id => followerCount(userOf(id)), u0);
   await pg.evaluate(() => { Math._r = Math.random; Math.random = () => 0.1; }); // they'll follow back
   await pg.evaluate(id => openCommUser(id), u0); await wait(300); await pg.click("#cmFollow"); await wait(200);
@@ -60,23 +60,23 @@ const open = require("./base.js");
   chk("the update prompt sees the bot and its comments, and writes a changelog", calls.some(c => /updating one of your bots/.test(sysOf(c)) && /old description/.test(userOf_(c))));
   chk("your copy is left alone until you choose", await pg.evaluate(cid => byId(cid).description === "old description" && copyUpdates(byId(cid)).length === 1, copy.id));
   // the feed
-  await pg.evaluate(() => { closeSheet(); commDot(); });
+  await pg.evaluate(() => { hubClose(); closeSheet(); commDot(); });
   chk("the Community dot counts the new things", await pg.evaluate(() => +(document.documentElement.classList.contains("wide") ? $("railCommDot") : $("commDot")).textContent >= 3));
   await pg.evaluate(() => openCommunity("feed")); await wait(300);
-  const feed = await pg.textContent("#sheetBody");
+  const feed = await pg.evaluate(() => cbody().textContent);
   chk("Following lists their new bot, blog post and update, plus your copy's update", /posted a new bot/.test(feed) && /WIP from/.test(feed) && /updated .* to v1\.1/.test(feed) && /can be updated to v1\.1/.test(feed));
   await pg.click("[data-upd]"); await wait(400);
   const after = await pg.evaluate(cid => { const c = byId(cid); return { desc: c.description, greets: greetingsOf(c).length, tags: c.tags, left: copyUpdates(c).length, msgs: S.chat.messages.length }; }, copy.id);
   chk("Update my copy applies the changes and keeps your chat", after.desc === "new improved description" && after.greets === copy.greets + 1 && after.tags.includes("slowburn") && after.left === 0 && after.msgs === msgs0);
   // the listing shows its version and changelog
   await pg.evaluate(id => openPost(id), pid); await wait(300);
-  chk("the listing shows Updated · v1.1 with the changelog", /Updated .* · v1\.1/.test(await pg.textContent("#sheetBody")));
+  chk("the listing shows Updated · v1.1 with the changelog", /Updated .* · v1\.1/.test(await pg.evaluate(() => cbody().textContent)));
   // blog posts: open, like, comment, the author answers
   const bid = await pg.evaluate(id => COMM.blogs.find(b => b.by === id).id, u0);
   await pg.evaluate(id => openBlog(id), bid); await wait(300);
   const bl0 = await pg.evaluate(id => blogLikes(COMM.blogs.find(b => b.id === id)), bid);
   await pg.click("#cmLike"); await wait(150);
-  chk("a blog post opens and can be liked", await pg.evaluate(([id, n]) => blogLikes(COMM.blogs.find(b => b.id === id)) === n + 1 && /new bot coming soon/.test($("sheetBody").textContent), [bid, bl0]));
+  chk("a blog post opens and can be liked", await pg.evaluate(([id, n]) => blogLikes(COMM.blogs.find(b => b.id === id)) === n + 1 && /new bot coming soon/.test(cbody().textContent), [bid, bl0]));
   // the author usually answers (now and then nobody does, like a real site); here they do
   await pg.fill("#cmText", "can't wait!!"); await pg.evaluate(() => { Math._r = Math.random; Math.random = () => 0.1; }); await pg.click("#cmSend"); await wait(200); await pg.evaluate(() => { Math.random = Math._r; });
   chk("commenting on it asks the author to answer", await pg.evaluate(([id, au]) => COMM.pending.some(p => p.target === "blog:" + id && p.by === au), [bid, u0]));
@@ -85,9 +85,9 @@ const open = require("./base.js");
   // they followed back
   await pg.evaluate(id => { COMM.fans[id] = Date.now() - 1000; commSave(); }, u0);
   await pg.evaluate(id => openCommUser(id), u0); await wait(300);
-  chk("'Follows you' on their profile once they follow back", /Follows you/.test(await pg.textContent("#sheetBody")));
+  chk("'Follows you' on their profile once they follow back", /Follows you/.test(await pg.evaluate(() => cbody().textContent)));
   await pg.evaluate(() => openCommunity("feed")); await wait(300);
-  chk("…and 'followed you' in the feed", /followed you/.test(await pg.textContent("#sheetBody")));
+  chk("…and 'followed you' in the feed", /followed you/.test(await pg.evaluate(() => cbody().textContent)));
   // unfollow: their new things stop showing
   await pg.evaluate(id => commFollow(id, false), u0);
   chk("unfollowing takes them out of the feed", await pg.evaluate(() => !feedItems().some(x => x.kind === "post" || x.kind === "blog" || x.kind === "update")));

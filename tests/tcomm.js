@@ -22,8 +22,8 @@ const open = require("./base.js");
   chk("Home (or the PC rail) has a Community button", await pg.evaluate(() => !$("btnComm").hidden && !$("railComm").hidden));
   // first visit: people and a page of bots appear
   await openComm();
-  await until(() => COMM && COMM.posts.length >= 6 && document.querySelectorAll(".cm-card").length >= 6, null, 30000); await wait(300);
-  const s1 = await pg.evaluate(() => ({ users: COMM.users.length, posts: COMM.posts.length, cards: document.querySelectorAll(".cm-card").length, label: /made-up|made up|written by the AI|invented/i.test($("sheetBody").textContent) }));
+  await until(() => COMM && COMM.posts.length >= 6 && document.querySelectorAll(".hub-mini").length >= 6, null, 30000); await wait(300);
+  const s1 = await pg.evaluate(() => ({ users: COMM.users.length, posts: COMM.posts.length, cards: new Set([...document.querySelectorAll(".hub-mini")].map(x => x.dataset.post)).size, label: /made-up|made up|written by the AI|invented/i.test(cbody().textContent) }));
   chk(`first visit makes 36 regulars and a page of bots (${s1.users} users, ${s1.posts} bots)`, s1.users === 36 && s1.posts === 6 && s1.cards === 6);
   chk("nothing in the community says it's made up", !s1.label);
   chk("every community prompt keeps the adults line", commCalls().length >= 3 && commCalls().every(c => /fully grown, mature being/.test(sysOf(c))));
@@ -33,9 +33,9 @@ const open = require("./base.js");
   chk("likes and chats grow with age and heat, the same on every device", st.same && st.grows && st.hot && st.fresh === 0);
   // Popular is sorted by likes, New by time
   await pg.evaluate(() => { COMM.posts.forEach((p, i) => { p.at = Date.now() - (i + 1) * 8 * 36e5; }); });
-  await pg.click('.cm-tabs [data-t="popular"]'); await wait(200);
+  await pg.click('[data-ht="discover"]'); await wait(200); await pg.click('[data-hs="popular"]'); await wait(200);
   chk("Popular puts the most liked first", await pg.evaluate(() => { const ls = [...document.querySelectorAll(".cm-card .cm-like")].map(x => +x.textContent.replace(/[^\d.k]/g, "").replace("k", "e3")); return ls.every((v, i) => !i || ls[i - 1] >= v); }));
-  await pg.click('.cm-tabs [data-t="new"]'); await wait(200);
+  await pg.click('[data-hs="new"]'); await wait(200);
   chk("New puts the newest first", await pg.evaluate(() => { const ids = [...document.querySelectorAll(".cm-card")].map(x => x.dataset.post), at = ids.map(id => COMM.posts.find(p => p.id === id).at); return at.every((v, i) => !i || at[i - 1] >= v); }));
   // a like adds one
   const pid = await pg.evaluate(() => document.querySelector(".cm-card").dataset.post);
@@ -44,12 +44,12 @@ const open = require("./base.js");
   chk("a heart adds your like", await pg.evaluate(([id, b4]) => postLikes(COMM.posts.find(p => p.id === id)) === b4 + 1 && document.querySelector(`[data-like="${id}"]`).classList.contains("on"), [pid, before]));
   // the listing
   await pg.click(`.cm-card[data-post="${pid}"] .cm-sum`); await wait(300);
-  chk("a listing opens with its poster, tags, counts and comments", await pg.evaluate(() => !!$("cmAdd") && !!$("cmChat") && /Comments ·/.test($("sheetBody").textContent) && !!document.querySelector(".cm-by-big")));
+  chk("a listing opens with its poster, tags, counts and comments", await pg.evaluate(() => !!$("cmAdd") && !!$("cmChat") && /Comments ·/.test(cbody().textContent) && !!document.querySelector(".cm-by-big")));
   // now and then nobody answers a comment, like on a real site; here the poster does
   await pg.fill("#cmText", "love this dragon!!"); await pg.evaluate(() => { Math._r = Math.random; Math.random = () => 0.1; }); await pg.click("#cmSend"); await wait(200); await pg.evaluate(() => { Math.random = Math._r; });
   const pend = await pg.evaluate(id => ({ mine: (COMM.comments[id] || []).filter(x => x.by === "me").length, pending: COMM.pending.filter(p => p.target === id), author: COMM.posts.find(p => p.id === id).by }), pid);
   chk("your comment is posted and someone will answer after a while (their speed; later if they're asleep)", pend.mine === 1 && pend.pending.length >= 1 && pend.pending.every(p => p.due - Date.now() > 30e3));
-  chk("…shown as writing a reply", /writing a reply/.test(await pg.textContent("#sheetBody")));
+  chk("…shown as writing a reply", /writing a reply/.test(await pg.evaluate(() => cbody().textContent)));
   // time passes: the reply lands
   await pg.evaluate(() => { COMM.pending.forEach(p => { p.due = Date.now() - 1; }); return Store.set("comm", COMM); });
   await pg.evaluate(() => commTick(true)); await wait(300);
@@ -84,16 +84,16 @@ const open = require("./base.js");
   const pubC = await pg.evaluate(id => { const d = document.documentElement.classList.contains("wide") ? $("railCommDot") : $("commDot"); return { n: commN("bot:" + id), dot: !d.hidden && +d.textContent > 0 }; }, wren);
   chk(`people comment on your public bot (${pubC.n}) and Home shows a dot`, pubC.n > 0 && pubC.dot);
   chk("the comment prompt gets your bot's summary and opening", calls.some(c => /write the comments people leave/.test(sysOf(c)) && /Listing key bot:/.test(userOf_(c)) && /Opening:/.test(userOf_(c))));
-  await pg.evaluate(() => closeSheet()); await openComm(); await wait(300);
+  await pg.evaluate(() => { hubClose(); closeSheet(); }); await openComm(); await wait(300);
   chk("opening the community clears the dot", await pg.evaluate(() => $("commDot").hidden && $("railCommDot").hidden));
-  await pg.click('.cm-tabs [data-t="yours"]'); await wait(200);
+  await pg.click('[data-ht="you"]'); await wait(200);
   chk("Yours lists the public bot with its numbers", await pg.evaluate(id => !!document.querySelector(`.cm-mine[data-id="${id}"]`) && /♥/.test(document.querySelector(`.cm-mine[data-id="${id}"]`).textContent), wren));
   await pg.fill("#cmMe", "Lanternlover"); await pg.dispatchEvent("#cmMe", "change"); await wait(100);
   chk("your community name is used for your comments", await pg.evaluate(() => meName() === "Lanternlover"));
   // people
-  await pg.click('.cm-tabs [data-t="people"]'); await wait(200);
-  await pg.click(".cm-user"); await wait(300);
-  chk("a user's page shows their bio, followers and bots", await pg.evaluate(() => /followers/.test($("sheetBody").textContent) && /Bio of user/.test($("sheetBody").textContent) && document.querySelectorAll(".cm-card").length >= 1));
+  chk("there is no list of every user (no People tab)", await pg.evaluate(() => !document.querySelector('[data-ht="people"], [data-t="people"], .cm-user')));
+  await pg.evaluate(() => openCommUser(COMM.posts[0].by)); await wait(300);
+  chk("a user's page shows their bio, followers and bots", await pg.evaluate(() => /followers/.test(cbody().textContent) && /Bio of user/.test(cbody().textContent) && document.querySelectorAll(".cm-card").length >= 1));
   // the pace: a day away on Busy brings more bots, a few per check
   const nb = await pg.evaluate(() => COMM.posts.length);
   await pg.evaluate(async () => { COMM.tickP = Date.now() - 864e5; await Store.set("comm", COMM); await commTick(true); });
@@ -102,7 +102,7 @@ const open = require("./base.js");
   await pg.evaluate(id => openPost(id), pid); await wait(200); await pg.fill("#cmText", "half-written");
   await pg.evaluate(() => commRedraw()); await wait(100);
   chk("new activity doesn't wipe a comment you're typing", await pg.inputValue("#cmText") === "half-written");
-  await pg.evaluate(() => closeSheet());
+  await pg.evaluate(() => { hubClose(); closeSheet(); });
   // another device's copy merges in
   const mg = await pg.evaluate(() => { const a = { ...commBlank(), users: [{ id: "u1", name: "A" }], posts: [{ id: "p1", at: 1 }], comments: { p1: [{ id: "c1", at: 1 }] }, liked: { p1: { v: true, at: 5 } } }, b2 = { ...commBlank(), users: [{ id: "u2", name: "B" }], posts: [{ id: "p2", at: 2 }], comments: { p1: [{ id: "c2", at: 2 }] }, liked: { p1: { v: false, at: 9 } } }; const m = commMerge(a, b2); return m.users.length === 2 && m.posts.length === 2 && m.comments.p1.length === 2 && m.liked.p1.v === false; });
   chk("two devices' communities merge (newer like wins)", mg);

@@ -28,7 +28,7 @@ const path = require("path");
   chk("the listing prompt allows fan bots of existing media and OCs, with any focus", !!lp && /fan bot of characters, worlds or groups from existing media/.test(sysOf(lp)) && /Any focus a real site has/.test(sysOf(lp)) && /"source"/.test(sysOf(lp)));
   chk("…fan bots only use characters who are adults in their source, never real people", /only use characters who are adults in their source material \(never characters who are minors in their source, not even aged up\) and never real people/.test(sysOf(lp)) && /fully grown, mature/.test(sysOf(lp)));
   chk("…each poster is marked fan bot or OC, with their fandoms", /This one: (a fan bot from existing media|an OC)/.test(userOf_(lp)) && /fan of Skyrim/.test(userOf_(lp)));
-  await pg.evaluate(() => openCommunity("new")); await wait(300);
+  await pg.evaluate(() => openCommunity("discover")); await wait(300);
   chk("listings show 'From Skyrim' or 'OC'", await pg.evaluate(() => { const t = [...document.querySelectorAll(".cm-src")].map(x => x.textContent); return t.includes("From Skyrim") && t.includes("OC"); }));
   chk("people know their fandoms", await pg.evaluate(() => COMM.users.some(u => (u.fandoms || []).includes("Skyrim"))));
 
@@ -50,8 +50,7 @@ const path = require("path");
   chk("a fitting picture from text (wolf bio → wolf), the same every time", await pg.evaluate(() => pixAuto("x1", "a big grey wolf").s === "wolf" && JSON.stringify(pixAuto("x1", "a big grey wolf")) === JSON.stringify(pixAuto("x1", "a big grey wolf"))));
 
   // ---- community people
-  await pg.evaluate(() => openCommunity("people")); await wait(300);
-  const ppl = await pg.evaluate(() => ({ px: document.querySelectorAll("#sheetBody .cm-user .px-av svg").length, all: document.querySelectorAll("#sheetBody .cm-user").length }));
+  const ppl = await pg.evaluate(() => ({ px: COMM.users.filter(u => /<svg/.test(avatarOf(u))).length, all: COMM.users.length }));
   chk(`most people wear a pixel picture, a few keep their letter (${ppl.px} of ${ppl.all})`, ppl.px >= ppl.all * 0.7 && ppl.px < ppl.all);
   chk("…the same picture on every device (from their id, nothing stored)", await pg.evaluate(() => COMM.users.every(u => u.pix === undefined) && JSON.stringify(userPix(COMM.users[3])) === JSON.stringify(userPix(JSON.parse(JSON.stringify(COMM.users[3]))))));
 
@@ -64,13 +63,13 @@ const path = require("path");
   await pg.evaluate(id => openCommUser(id), u0); await wait(300);
   chk("…their profile shows the owl", await pg.evaluate(() => !!document.querySelector(".cm-emb .px-av svg")));
   await pg.evaluate(() => openCommunity("feed")); await wait(300);
-  chk("…and the Following feed says they changed their status and picture", /changed their status/.test(await pg.textContent("#sheetBody")) && /changed their profile picture/.test(await pg.textContent("#sheetBody")));
+  chk("…and the Following feed says they changed their status and picture", /changed their status/.test(await pg.evaluate(() => cbody().textContent)) && /changed their profile picture/.test(await pg.evaluate(() => cbody().textContent)));
 
   // ---- your picture: the picker
   await pg.evaluate(() => openCommunity("yours")); await wait(300);
   chk("Yours offers Choose a profile picture", /Choose a profile picture/.test(await pg.textContent("#cmPic")));
   await pg.click("#cmPic"); await wait(200);
-  chk("the picker opens over the window, with Picture / Colours / Frame / Draw / Upload", await pg.evaluate(() => !!$("pixPop") && !$("sheet").hidden && [...document.querySelectorAll("#pixPop [data-tab]")].map(x => x.textContent).join() === "Picture,Colours,Frame,Draw,Upload" && document.querySelectorAll("#pixPop .pix-cell").length === 19));
+  chk("the picker opens over the window, with Picture / Colours / Frame / Draw / Upload", await pg.evaluate(() => !!$("pixPop") && HUB.open && [...document.querySelectorAll("#pixPop [data-tab]")].map(x => x.textContent).join() === "Picture,Colours,Frame,Draw,Upload" && document.querySelectorAll("#pixPop .pix-cell").length === 19));
   await pg.click('#pixPop [data-s="knight"]'); await pg.click('#pixPop [data-tab="col"]'); await pg.click('#pixPop [data-pal="custom"]');
   chk("Your own colours shows four colour pickers", await pg.evaluate(() => document.querySelectorAll("#pixPop [data-col]").length === 4));
   await pg.evaluate(() => { const i = document.querySelector('#pixPop [data-col="b"]'); i.value = "#3366ff"; i.dispatchEvent(new Event("input")); i.dispatchEvent(new Event("change")); });
@@ -79,7 +78,7 @@ const path = require("path");
   await pg.click("#pxSave"); await wait(250);
   const me1 = await pg.evaluate(() => ({ ...COMM.me.pix, gone: !$("pixPop") }));
   chk("Save: your picture is the knight, in your own blue, soft frame", me1?.s === "knight" && me1.pal === "custom" && me1.cols.b === "#3366ff" && me1.frame === "soft" && me1.gone);
-  chk("…shown on Yours", await pg.evaluate(() => !!document.querySelector(".cm-me .px-av svg") && /#3366ff/i.test(document.querySelector(".cm-me").innerHTML)));
+  chk("…shown on Yours", await pg.evaluate(() => !!document.querySelector(".hub-youcard .px-av svg") && /#3366ff/i.test(document.querySelector(".hub-youcard").innerHTML)));
   // a human sprite: skin and hair
   await pg.click("#cmPic"); await pg.click('#pixPop [data-s="girl"]'); await pg.click('#pixPop [data-tab="col"]');
   chk("people sprites add Skin and Hair rows with any-colour pickers", await pg.evaluate(() => document.querySelectorAll("#pixPop [data-skin]").length === 6 && document.querySelectorAll("#pixPop [data-hair]").length === 8 && !!document.querySelector("#pixPop [data-anyhair]")));
@@ -109,21 +108,21 @@ const path = require("path");
   await pg.click("#pxSave"); await wait(250);
   const own = await pg.evaluate(() => COMM.me.pix);
   chk("Save keeps the drawing as your picture (own pixels, in the palette keys)", own?.s === "own" && own.rows.length === 192 && own.rows[13] === "b" && own.rows[22] === "b" && own.rows[30] === "e" && own.rows[43] === "." && own.skin === 3);
-  chk("…drawn in its colours", await pg.evaluate(() => (document.querySelector(".cm-me .px-av svg").innerHTML.match(/<rect x=/g) || []).length > 12));
+  chk("…drawn in its colours", await pg.evaluate(() => (document.querySelector(".hub-youcard .px-av svg").innerHTML.match(/<rect x=/g) || []).length > 12));
   await pg.click("#cmPic"); await wait(100);
   chk("reopening the picker keeps your drawing among the pictures", await pg.evaluate(() => !!document.querySelector('#pixPop [data-s="own"].on')));
   // upload
   await pg.click('#pixPop [data-tab="up"]'); await pg.setInputFiles("#pxFile", path.join(ROOT, "icons/icon-192.png")); await wait(400);
   chk("Upload shows your picture in the preview", await pg.evaluate(() => /^data:image\/jpeg/.test(document.querySelector("#pixPop .pix-big img")?.src || "")));
   await pg.click("#pxSave"); await wait(250);
-  chk("…and saves it as your picture", await pg.evaluate(() => /^data:image\/jpeg/.test(COMM.me.pic) && !COMM.me.pix && /^data:image\/jpeg/.test(document.querySelector(".cm-me img.px-av")?.src || "")));
+  chk("…and saves it as your picture", await pg.evaluate(() => /^data:image\/jpeg/.test(COMM.me.pic) && !COMM.me.pix && /^data:image\/jpeg/.test(document.querySelector(".hub-youcard img.px-av")?.src || "")));
   // closing without saving changes nothing; Esc and the phone's back button close only the picker
   await pg.click("#cmPic"); await pg.click(`#pixPop [data-tab="pic"]`); await pg.click(`#pixPop [data-s="cat"]`); await pg.click("#pxX"); await wait(100);
   chk("✕ closes without changing anything", await pg.evaluate(() => !$("pixPop") && /^data:image\/jpeg/.test(COMM.me.pic)));
   await pg.click("#cmPic"); await pg.keyboard.press("Escape"); await wait(100);
-  chk("Esc closes the picker, the Community window stays", await pg.evaluate(() => !$("pixPop") && !$("sheet").hidden));
+  chk("Esc closes the picker, the Community window stays", await pg.evaluate(() => !$("pixPop") && HUB.open));
   await pg.click("#cmPic"); await wait(100); await pg.goBack(); await wait(300);
-  chk("the back button closes the picker, the Community window stays", await pg.evaluate(() => !$("pixPop") && !$("sheet").hidden && !!$("cmPic")));
+  chk("the back button closes the picker, the Community window stays", await pg.evaluate(() => !$("pixPop") && HUB.open && !!$("cmPic")));
   // your picture in comments
   await pg.evaluate(() => { const p = COMM.posts[0]; openPost(p.id); }); await wait(300);
   await pg.fill("#cmText", "love it"); await pg.click("#cmSend"); await wait(300);
@@ -131,7 +130,7 @@ const path = require("path");
   await pg.evaluate(() => { COMM.me = { ...COMM.me, pic: "", pix: null, at: Date.now() }; commSave(); });
 
   // ---- personas
-  await pg.evaluate(() => { closeSheet(); openPersonas(); }); await wait(300);
+  await pg.evaluate(() => { hubClose(); closeSheet(); openPersonas(); }); await wait(300);
   chk("the persona list shows a picture for every persona (a pixel stand-in until chosen)", await pg.evaluate(() => { const rows = document.querySelectorAll("#pList .listrow"); return rows.length > 0 && [...rows].every(r => r.querySelector(".px-av")); }));
   await pg.evaluate(() => editPersona(S.personas.find(p => p.id === S.personaId), false)); await wait(300);
   chk("the persona editor has Choose a picture", /Choose a picture/.test(await pg.textContent("#pePic")));

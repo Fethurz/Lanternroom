@@ -69,7 +69,7 @@ const open = require("./base.js");
   await pg.evaluate(id => { const d = dmOf(id), m = d.msgs.at(-1); m.at = Date.now() - 4 * 3.6e6; m.seenAt = null; const q = COMM.dmq.find(x => x.user === id); q.due = Date.now() - 3 * 3.6e6; q.typingAt = q.due - 20e3; }, uid0);
   await pg.evaluate(() => dmPump()); await wait(400); await pg.evaluate(() => dmPump()); await wait(300);
   chk("replies that came while the app was closed keep their real times", await pg.evaluate(id => { const th = dmOf(id).msgs.filter(m => m.from === "them").slice(-2); return th.length === 2 && Date.now() - th[0].at > 2.9 * 3.6e6 && th[1].at > th[0].at; }, uid0));
-  await pg.evaluate(() => closeSheet());
+  await pg.evaluate(() => { hubClose(); closeSheet(); });
   // ---- someone messages first
   burst = ["hiii saw u liked my bot 👀"];
   const opener = await pg.evaluate(() => { const p = COMM.posts.find(x => userOf(x.by) && !COMM.dms[x.by]); const u = userOf(p.by); u.sleep = [(Math.floor(localHour(u)) + 8) % 24, (Math.floor(localHour(u)) + 9) % 24]; COMM.liked[p.id] = { v: true, at: Date.now() }; COMM.dmNext = Date.now() - 1; COMM.dmq = COMM.dmq.filter(x => x.kind !== "open"); dmMaybeOpen(); const q = COMM.dmq.find(x => x.kind === "open"); return q && { user: q.user, by: p.by, reason: q.reason, wait: q.due - Date.now() }; });
@@ -80,10 +80,10 @@ const open = require("./base.js");
   chk("their message shows as unread, lights the dot and pops a notice", un.unread >= 1 && +un.dot >= 1 && un.toast);
   chk("the opener's prompt says why they're writing", calls.some(c => /a real person who uses/.test(sysOf(c)) && /messaging .* first/.test(userOf_(c)) && /liked your bot/.test(userOf_(c))));
   await pg.evaluate(() => openCommunity("dms")); await wait(300);
-  chk("Messages tab lists your chats, newest first, with unread counts", await pg.evaluate(() => document.querySelectorAll(".dm-row").length === 2 && !!document.querySelector(".dm-row.un .dm-n") && /Messages \(\d+\)/.test(document.querySelector(".cm-tabs").textContent)));
+  chk("Messages tab lists your chats, newest first, with unread counts", await pg.evaluate(() => document.querySelectorAll(".dm-row").length === 2 && !!document.querySelector(".dm-row.un .dm-n") && /\d/.test(document.querySelector('[data-ht="dms"] .hub-n')?.textContent || "")));
   await pg.click(".dm-row.un"); await wait(400);
   chk("opening a chat marks it read", await pg.evaluate(() => dmUnread() === 0));
-  await pg.evaluate(() => closeSheet());
+  await pg.evaluate(() => { hubClose(); closeSheet(); });
   // ---- two devices' DMs merge
   chk("DMs from two devices merge", await pg.evaluate(() => { const a = { ...commBlank(), dms: { u: { msgs: [{ id: "1", at: 1 }], read: 5 } } }, b2 = { ...commBlank(), dms: { u: { msgs: [{ id: "2", at: 2 }], read: 9 } }, dmq: [{ id: "q" }] }; const m = commMerge(a, b2); return m.dms.u.msgs.length === 2 && m.dms.u.read === 9 && m.dmq.length === 1; }));
   chk("no sideways scroll", await pg.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));

@@ -23,7 +23,7 @@ const open = require("./base.js");
   await pg.fill("#qzNum", "340"); await pg.click("#qzNext"); await pg.waitForTimeout(150);
   await pg.screenshot({ path: `/tmp/claude-0/s/quiz_q_${W}.png` });
   // close mid-way: draft kept
-  await pg.evaluate(() => userClose()); await pg.waitForTimeout(150); chk("close asks", !!await pg.$("#scClose")); await pg.click("#scClose"); await pg.waitForTimeout(700);
+  await pg.evaluate(() => userClose()); await pg.waitForTimeout(150); chk("close asks", !!await pg.$("#scClose")); await pg.click("#scClose"); await pg.waitForTimeout(700); chk("closing the quiz steps back to the window it came from", await pg.evaluate(() => !$("sheet").hidden)); await pg.evaluate(() => closeSheet());
   const dr = await pg.evaluate(async () => (await drafts()).quiz);
   chk("draft saved at question " + (dr && dr.i), dr && dr.i === 6 && dr.a.q.species.pick.length === 2);
   await pg.evaluate(() => { QUIZ.a = null; });
