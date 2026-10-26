@@ -45,7 +45,8 @@ const open = require("./base.js");
   // the listing
   await pg.click(`.cm-card[data-post="${pid}"] .cm-sum`); await wait(300);
   chk("a listing opens with its poster, tags, counts and comments", await pg.evaluate(() => !!$("cmAdd") && !!$("cmChat") && /Comments ·/.test($("sheetBody").textContent) && !!document.querySelector(".cm-by-big")));
-  await pg.fill("#cmText", "love this dragon!!"); await pg.click("#cmSend"); await wait(200);
+  // now and then nobody answers a comment, like on a real site; here the poster does
+  await pg.fill("#cmText", "love this dragon!!"); await pg.evaluate(() => { Math._r = Math.random; Math.random = () => 0.1; }); await pg.click("#cmSend"); await wait(200); await pg.evaluate(() => { Math.random = Math._r; });
   const pend = await pg.evaluate(id => ({ mine: (COMM.comments[id] || []).filter(x => x.by === "me").length, pending: COMM.pending.filter(p => p.target === id), author: COMM.posts.find(p => p.id === id).by }), pid);
   chk("your comment is posted and someone will answer after a while (their speed; later if they're asleep)", pend.mine === 1 && pend.pending.length >= 1 && pend.pending.every(p => p.due - Date.now() > 30e3));
   chk("…shown as writing a reply", /writing a reply/.test(await pg.textContent("#sheetBody")));

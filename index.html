@@ -669,6 +669,19 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .cm-ca{display:flex;gap:4px}.cm-l,.cm-r{min-height:34px;padding:0 10px;background:none;border:0;color:var(--muted);font:inherit;font-size:12.5px;cursor:pointer}.cm-l.on{color:#ff6fae}
 .cm-wait{font-style:italic;margin:0}.cm-new{display:flex;flex-direction:column;gap:6px;margin-top:10px}.cm-new .row{justify-content:flex-end}
 .cm-pub{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:8px 10px;border:1px solid var(--line);border-radius:12px}
+/* profiles in their outfit, following, blog posts (v1.64) */
+.cm-pfx{position:relative;overflow:hidden;border-radius:16px;border:1px solid var(--line);background:var(--bg);color:var(--fg);margin:-4px -2px 0}
+.cm-pfx .sh-fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;opacity:.85}
+.cm-pfx-in{position:relative;z-index:1;display:flex;flex-direction:column;gap:10px;padding:14px 12px}
+.cm-pfx .lbl,.cm-pfx .hint{color:var(--muted)}.cm-pfx p{margin:0}.cm-pfx .btn.primary{background:linear-gradient(180deg,var(--accent-hi),var(--accent));color:var(--accent-ink);border-color:transparent}
+.cm-pfx .cm-card,.cm-pfx .listrow,.cm-pfx .cm-blog{background:color-mix(in srgb,var(--surface) 88%,transparent)}
+.cm-emb{position:relative;flex:none}.cm-lan{position:absolute;right:-10px;bottom:-6px;width:32px;height:36px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}.cm-lan .lantern{width:100%;height:100%}
+.cm-pfn{margin:0;font:400 22px/1.15 var(--f-display);color:var(--fg)}
+.cm-stline{padding:7px 11px;border-radius:12px;background:color-mix(in srgb,var(--accent) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));font-size:14px}
+.cm-fy{color:var(--accent)!important;border-color:color-mix(in srgb,var(--accent) 60%,var(--line))}
+.cm-blog{display:flex;flex-direction:column;gap:5px;padding:10px 12px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);cursor:pointer}.cm-blog p{margin:0;font-size:14px;line-height:1.45;white-space:pre-wrap}
+.cm-post-tx{font-size:15px;line-height:1.5;white-space:pre-wrap;padding:4px 2px}
+.fd-row{align-items:flex-start}.fd-row .grow{line-height:1.35}.fd-copy .btn{align-self:center}
 /* DMs (v1.63) */
 .dm-head{display:flex;align-items:center;gap:10px;min-height:44px;background:none;border:0;padding:0 0 6px;color:var(--fg);font:inherit;text-align:left;cursor:pointer;border-bottom:1px solid var(--line);width:100%}
 .dm-head>span:last-child{display:flex;flex-direction:column}.dm-st{font-size:12px;color:var(--muted)}.dm-st.on{color:#6fdc6a}
@@ -1428,7 +1441,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.63 · Oct 26";
+const VERSION = "1.64 · Oct 26";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2252,6 +2265,7 @@ async function openProfile(id) {
     $("pfEdit").onclick = () => editChar(c, false);
     if ($("pfPub")) $("pfPub").onchange = async e => { await commPublish(c, e.target.checked); openProfile(c.id); };
     if ($("pfCm")) $("pfCm").onclick = () => openBotComments(c.id);
+    if ($("pfUpd")) $("pfUpd").onclick = async () => { await commCopyUpdate(c); openProfile(c.id); };
     if ($("pfFind")) { if (c.people?.found) drawStoryPeople(c, $("pfPeople")); $("pfFind").onclick = () => storyPeople(c, $("pfPeople")); }
     if ($("pfBadges")) $("pfBadges").onclick = () => openTrophies(c.id);
     $("pfManage").onclick = () => openChats(id);
@@ -7260,14 +7274,16 @@ async function pbOpening(tries = 0) {
    private messages timed like real texting (their speed, sleep at night their time, Seen, typing…, bursts, first messages).
    Likes and chat counts are worked out from each item's heat and age (commStats), so they grow on their own and
    need no syncing. */
-const COMM_RATES = { quiet: { posts: 4, comments: 12 }, normal: { posts: 8, comments: 25 }, busy: { posts: 16, comments: 50 } };
+const COMM_RATES = { quiet: { posts: 4, comments: 12, blogs: 2, updates: 1 }, normal: { posts: 8, comments: 25, blogs: 4, updates: 2 }, busy: { posts: 16, comments: 50, blogs: 7, updates: 4 } };
 const COMM_COLS = ["#e8a95b", "#ff6fae", "#7fb2ff", "#6fdc6a", "#c49bff", "#4fd1c5", "#e2766f", "#f1c56b", "#9fd3c7", "#ff9a5a"];
-let COMM = null, COMM_BUSY = false, COMM_T = 0;
+let COMM = null, COMM_BUSY = false, COMM_T = 0, COMM_DIRTY = false;
 const commOn = () => S.settings.commOn !== false;
 const commRate = () => COMM_RATES[S.settings.commLevel] || COMM_RATES.busy;
-const commBlank = () => ({ users: [], posts: [], comments: {}, pub: {}, liked: {}, pending: [], done: [], me: { name: "", at: 0 }, seen: { at: 0 }, tickP: 0, tickC: 0, dms: {}, dmq: [], dmNext: 0 });
-async function commLoad() { const v = await Store.get("comm"); COMM = commMerge(commBlank(), v && typeof v === "object" ? v : null); return COMM; }
-function commSave() { clearTimeout(COMM_T); COMM_T = setTimeout(() => { if (COMM) Store.set("comm", COMM).catch(() => {}); }, 300); }
+const commBlank = () => ({ users: [], posts: [], comments: {}, pub: {}, liked: {}, pending: [], done: [], me: { name: "", at: 0 }, seen: { at: 0 }, tickP: 0, tickC: 0, dms: {}, dmq: [], dmNext: 0, follow: {}, fans: {}, blogs: [], tickB: 0, tickU: 0 });
+// reloading never drops a change that hasn't been written yet (a like or a follow made a moment ago): it's merged in on top
+async function commLoad() { const v = await Store.get("comm"), st = commMerge(commBlank(), v && typeof v === "object" ? v : null); COMM = COMM && COMM_DIRTY ? commMerge(st, COMM) : st; return COMM; }
+function commSave() { COMM_DIRTY = true; clearTimeout(COMM_T); COMM_T = setTimeout(commFlush, 300); }
+async function commFlush() { clearTimeout(COMM_T); if (!COMM) return; const snap = COMM; try { await Store.set("comm", snap); if (COMM === snap) COMM_DIRTY = false; } catch {} }
 // two devices' copies of the community: everything from both, the newer change winning per item
 function commMerge(a, b) {
   const A = { ...commBlank(), ...(a || {}) }; if (!b) return A;
@@ -7280,9 +7296,12 @@ function commMerge(a, b) {
     pending: byId(A.pending, B.pending).filter(p => !done.includes(p.id)), done, me: (B.me?.at || 0) >= (A.me?.at || 0) ? B.me : A.me, seen: (B.seen?.at || 0) >= (A.seen?.at || 0) ? B.seen : A.seen,
     tickP: Math.max(A.tickP || 0, B.tickP || 0), tickC: Math.max(A.tickC || 0, B.tickC || 0),
     dms: (() => { const o = { ...(A.dms || {}) }; for (const [k, d] of Object.entries(B.dms || {})) { const x = o[k] || { msgs: [], read: 0 }; o[k] = { msgs: byId(x.msgs, d.msgs).sort((p, q) => p.at - q.at), read: Math.max(x.read || 0, d.read || 0) }; } return o; })(),
-    dmq: byId(A.dmq, B.dmq).filter(p => !done.includes(p.id)), dmNext: Math.max(A.dmNext || 0, B.dmNext || 0) };
+    dmq: byId(A.dmq, B.dmq).filter(p => !done.includes(p.id)), dmNext: Math.max(A.dmNext || 0, B.dmNext || 0),
+    follow: newer(A.follow, B.follow), fans: { ...(A.fans || {}), ...(B.fans || {}) }, blogs: byId(A.blogs, B.blogs).sort((p, q) => q.at - p.at), tickB: Math.max(A.tickB || 0, B.tickB || 0), tickU: Math.max(A.tickU || 0, B.tickU || 0) };
 }
 // a steady random number per item, so counts are the same on every device
+// a time a little in the past, so new things don't all look brand new, but never before the owner last looked
+const cmBack = maxMs => Math.max(Date.now() - Math.round(Math.random() * maxMs), (COMM?.seen?.at || 0) + 1);
 const seeded = (s, k = 0) => { const h = hash(String(s) + ":" + k); return (h % 100000) / 100000; };
 const userOf = id => COMM?.users.find(u => u.id === id);
 const meName = () => (COMM?.me?.name || "").trim() || uname();
@@ -7385,7 +7404,7 @@ function pickUsers(n, tags = []) {
 }
 // posters: creators post more, lurkers hardly ever
 function pickPosters(n) {
-  const now = Date.now(), w = u => (/creator|writer|shitposter|artist|veteran/.test(u.role || "") ? 3 : /lurker|new/.test(u.role || "") ? 0.3 : 1) * (asleepAt(u, now) ? 0.1 : 1) * (0.3 + (u.active ?? 0.5));
+  const now = Date.now(), w = u => (/creator|writer|shitposter|artist|veteran/.test(u.role || "") ? 3 : /lurker|new/.test(u.role || "") ? 0.3 : 1) * (asleepAt(u, now) ? 0.1 : 1) * (0.3 + (u.active ?? 0.5)) * (follows(u.id) ? 1.8 : 1);
   const pool = COMM.users.map(u => [u, w(u) * (0.5 + Math.random())]); return pool.sort((a, b) => b[1] - a[1]).slice(0, n).map(x => x[0]);
 }
 async function commPosts(k) {
@@ -7400,7 +7419,7 @@ async function commPosts(k) {
     const card = genNormalize({ name, tags: x.tags, summary: x.summary, appearance: x.appearance, description: x.description, scenario: x.scenario, firstMessages: [x.firstMessage].filter(Boolean), startPlace: "", instructions: "", lore: [], badges: [], ...(kind === "group" ? { members: x.members || [] } : {}), ...(kind === "world" ? { cast: x.cast || [] } : {}) }, kind, "auto");
     card._kind = kind;
     const id = uid(), heat = Math.max(0.15, Math.min(3.2, Math.exp((seeded(id, 7) - 0.55) * 2.4)));
-    const at = now - Math.round(seeded(id, 8) * 40) * 6e4; by.last = Math.max(by.last || 0, at);
+    const at = Math.max(now - Math.round(seeded(id, 8) * 40) * 6e4, (COMM.seen?.at || 0) + 1); by.last = Math.max(by.last || 0, at);
     made.push({ id, by: by.id, kind, card, tags: card.tags || [], heat, at });
   }
   COMM.posts.unshift(...made); commTrim(); return made;
@@ -7409,6 +7428,7 @@ async function commPosts(k) {
 function commTargets(n) {
   const now = Date.now(), list = [];
   for (const p of COMM.posts.slice(0, 40)) list.push({ t: p.id, w: (0.4 + p.heat) * Math.exp(-(now - p.at) / 2.6e8) * (1 + (commLiked(p.id) ? 1 : 0)) });
+  for (const b of (COMM.blogs || []).slice(0, 25)) list.push({ t: "blog:" + b.id, w: 0.5 * (0.4 + b.heat) * Math.exp(-(now - b.at) / 1.7e8) });
   const mine = S.chars.filter(c => pubOf(c)).map(c => ({ t: "bot:" + c.id, w: (0.4 + pubOf(c).heat) * (commN("bot:" + c.id) < 3 ? 3 : 1) }));
   const out = [];
   // the owner's public bots: a new one gets its first few comments soon, after that about every other round
@@ -7418,6 +7438,7 @@ function commTargets(n) {
   return out;
 }
 function targetInfo(t) {
+  if (t.startsWith("blog:")) { const b = COMM.blogs.find(x => x.id === t.slice(5)); if (!b) return null; const u = userOf(b.by); return { name: b.title || "a post", owner: u ? "@" + u.handle : "someone", mine: false, text: `A blog post: ${b.title ? b.title + " - " : ""}${b.text}`, tags: u?.taste || [], by: b.by }; }
   if (t.startsWith("bot:")) { const c = byId(t.slice(4)); return c ? { name: c.name, owner: meName(), mine: true, text: `${botSummary(c)}\nTags: ${tagsOf(c).join(", ")}\nOpening: ${String(greetingsOf(c)[0] || "").slice(0, 600)}`, tags: tagsOf(c) } : null; }
   const p = COMM.posts.find(x => x.id === t); if (!p) return null; const u = userOf(p.by);
   return { name: p.card.name, owner: u ? "@" + u.handle : "someone", mine: false, text: `${p.card.summary}\nTags: ${(p.tags || []).join(", ")}\nOpening: ${String(p.card.firstMessages?.[0] || "").slice(0, 500)}`, tags: p.tags || [] };
@@ -7440,7 +7461,7 @@ async function commComments(n) {
 }
 // someone answers the owner back, a few minutes after they wrote
 function commSchedule(t, mine) {
-  const parent = mine.replyTo && (COMM.comments[t] || []).find(x => x.id === mine.replyTo), info = COMM.posts.find(p => p.id === t);
+  const parent = mine.replyTo && (COMM.comments[t] || []).find(x => x.id === mine.replyTo), info = COMM.posts.find(p => p.id === t) || (t.startsWith("blog:") ? COMM.blogs.find(b => "blog:" + b.id === t) : null);
   const who = new Set();
   if (parent && parent.by !== "me") who.add(parent.by);
   if (!parent && info && Math.random() < 0.8) who.add(info.by);
@@ -7450,7 +7471,7 @@ function commSchedule(t, mine) {
 async function commAnswer(p) {
   const u = userOf(p.by), info = targetInfo(p.target), mine = (COMM.comments[p.target] || []).find(x => x.id === p.replyTo);
   if (!u || !info || !mine) return null;
-  const isAuthor = !info.mine && COMM.posts.find(x => x.id === p.target)?.by === u.id;
+  const isAuthor = !info.mine && (COMM.posts.find(x => x.id === p.target)?.by === u.id || info.by === u.id);
   const j = await dsJSON([{ role: "system", content: `You are @${u.handle} (${u.name}), a real ${u.age ? u.age + "-year-old " : ""}person${u.place ? " in " + u.place : ""} on ${COMM_SITE}. About you: ${u.bio} You love ${u.taste.join(", ")}. How you type: ${u.style || u.voice}. ${u.voice || ""}${isAuthor ? ` You made the bot "${info.name}".` : ""} Reply to ${meName()}'s comment the way you really would: in your own voice, about what they actually said, one to three sentences. Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"text": your reply}` },
     { role: "user", content: `The listing: "${info.name}" by ${info.owner}\n${info.text}\n\nThe thread:\n${threadText(p.target)}\n\nReply to this comment by ${meName()}: ${mine.text}` }], { temperature: 1, maxTokens: 500, plain: true });
   const text = s5(j?.text).slice(0, 600); if (!text) return null;
@@ -7482,9 +7503,17 @@ async function commTick(force) {
     // new listings: the first visit fills the page, then they arrive at the chosen pace
     if (!COMM.posts.length) { await commPosts(3); await commPosts(3); COMM.tickP = now; changed = true; }
     else { const due = Math.min(6, (now - (COMM.tickP || now)) / day * r.posts); if (due >= 1) { const k = Math.min(3, Math.floor(due)); await commPosts(k); COMM.tickP = due > 4 ? now : (COMM.tickP || now) + k / r.posts * day; changed = true; } }
+    // what everyone wears (after the first page of bots, so that comes quickly)
+    for (let i = 0; i < 4; i++) { const nd = COMM.users.filter(u => !u.fit).slice(0, 18); if (!nd.length) break; try { await commDress(nd); } catch { for (const u of nd) u.fit = u.fit || fitAuto(u); } changed = true; }
     // new comments
     { if (!COMM.tickC) COMM.tickC = now - day / r.comments * 4; const due = Math.min(8, (now - COMM.tickC) / day * r.comments); if (due >= 1) { const k = Math.min(6, Math.floor(due)); const got = await commComments(k); news += got.filter(([t]) => t.startsWith("bot:")).length; COMM.tickC = due > 6 ? now : COMM.tickC + k / r.comments * day; changed = true; } }
-    if (changed) { commTrim(); await Store.set("comm", COMM); }
+    // blog posts and bot updates, at the chosen pace
+    const pops = [];
+    { if (!COMM.tickB) COMM.tickB = now - day / r.blogs; const due = (now - COMM.tickB) / day * r.blogs; if (due >= 1) { const k = Math.min(3, Math.floor(due)); const got = await commBlogs(k); for (const b of got) if (follows(b.by)) pops.push([b.by, `posted: ${b.title || b.text.slice(0, 40)}`, () => openBlog(b.id)]); COMM.tickB = due > 4 ? now : COMM.tickB + k / r.blogs * day; changed = true; } }
+    { if (!COMM.tickU) COMM.tickU = now; const due = (now - COMM.tickU) / day * r.updates; if (due >= 1 && COMM.posts.length > 3) { const k = Math.min(2, Math.floor(due)); const got = await commUpdates(k); for (const [p, up] of got) if (follows(p.by) || p.added) pops.push([p.by, `updated ${p.card.name} to v${up.ver}`, () => openPost(p.id)]); COMM.tickU = due > 3 ? now : COMM.tickU + k / r.updates * day; changed = true; } }
+    for (const p of COMM.posts.filter(p => follows(p.by) && now - p.at < 5 * 60e3 && !p.popped)) { p.popped = 1; pops.push([p.by, `posted a new bot: ${p.card.name}`, () => openPost(p.id)]); }
+    for (const [by, text, go] of pops.slice(0, 3)) { const u = userOf(by); if (u) feedNotify(u, text, go); }
+    if (changed || COMM_DIRTY) { commTrim(); await commFlush(); }
     commDot(); commRedraw(); dmPump();
   } catch (e) { console.warn("community:", e.message); }
   finally { COMM_BUSY = false; }
@@ -7493,7 +7522,7 @@ async function commTick(force) {
 function commUnseen() {
   if (!COMM) return 0; const at = COMM.seen?.at || 0, mine = new Set(S.chars.filter(c => pubOf(c)).map(c => "bot:" + c.id));
   let n = 0; for (const [t, l] of Object.entries(COMM.comments)) for (const x of l) if (x.at > at && x.by !== "me" && (x.toMe || mine.has(t))) n++;
-  return n + dmUnread();
+  return n + dmUnread() + feedItems().filter(x => x.at > at && x.kind !== "copy").length + S.chars.filter(c => copyUpdates(c).some(u => u.at > at)).length;
 }
 function commDot() { for (const id of ["commDot", "railCommDot"]) { const el = $(id); if (el) { const n = commOn() ? commUnseen() : 0; el.hidden = !n; el.textContent = n > 9 ? "9+" : n || ""; } } for (const id of ["btnComm", "railComm"]) { const b = $(id); if (b) b.hidden = !commOn(); } }
 let COMM_VIEW = null; // what the community window shows, so new activity can redraw it
@@ -7509,16 +7538,17 @@ async function openCommunity(tab) {
   await commLoad(); if (tab) COMM_TAB = tab;
   COMM.seen = { at: Date.now() }; commSave(); commDot();
   const draw = () => openSheet("Community", b => {
-    const un = dmUnread(), tabs = [["popular", "Popular"], ["new", "New"], ["dms", `Messages${un ? ` (${un})` : ""}`], ["yours", "Yours"], ["people", "People"]];
+    const un = dmUnread(), tabs = [["popular", "Popular"], ["new", "New"], ["feed", "Following"], ["dms", `Messages${un ? ` (${un})` : ""}`], ["yours", "Yours"], ["people", "People"]];
     let body = "";
     if (!hasKey()) body = `<p class="note">Add your API key in Settings first: the community is written by the AI.</p>`;
     else if (COMM_TAB === "popular" || COMM_TAB === "new") {
       const list = [...COMM.posts].sort((a, c) => COMM_TAB === "new" ? c.at - a.at : postLikes(c) - postLikes(a)).slice(0, 60);
       body = list.length ? `<div class="cm-grid">${list.map(postCard).join("")}</div>` : `<div class="cm-empty">${lanternSVG("seq")}<p>The community is waking up…</p></div>`;
+    } else if (COMM_TAB === "feed") { body = feedHTML();
     } else if (COMM_TAB === "dms") { body = dmListHTML();
     } else if (COMM_TAB === "yours") {
       const pub = S.chars.filter(c => pubOf(c)), priv = S.chars.filter(c => !pubOf(c) && !c.hidden);
-      body = `${field("Your name in the community", `<input id="cmMe" value="${esc(COMM.me?.name || "")}" placeholder="${esc(uname())}" autocomplete="off">`)}
+      body = `<p class="hint" style="margin:0 0 6px">${fmtK(myFollowers())} followers · following ${Object.values(COMM.follow).filter(x => x.v).length}</p>${field("Your name in the community", `<input id="cmMe" value="${esc(COMM.me?.name || "")}" placeholder="${esc(uname())}" autocomplete="off">`)}
         <div class="lbl">Public · ${pub.length}</div>${pub.length ? pub.map(c => { const s = pubStats(c); return `<div class="listrow cm-mine" data-id="${esc(c.id)}"><span class="grow"><b>${esc(c.name)}</b><span class="sub">♥ ${fmtK(s.likes)} · ${fmtK(s.chats)} chats · ${commN("bot:" + c.id)} comments · public since ${esc(fmtWhen(pubOf(c).since || pubOf(c).at))}</span></span><button type="button" class="btn small" data-cm="${esc(c.id)}">Comments</button></div>`; }).join("") : `<p class="hint" style="margin:0">None yet. Share a bot below, or from its profile.</p>`}
         ${priv.length ? `<div class="lbl">Share one</div>${priv.slice(0, 30).map(c => `<div class="listrow"><span class="grow"><b>${esc(c.name)}</b><span class="sub">${esc(botSummary(c).slice(0, 90))}</span></span><button type="button" class="btn small" data-share="${esc(c.id)}">🌐 Make public</button></div>`).join("")}` : ""}`;
     } else {
@@ -7534,6 +7564,8 @@ async function openCommunity(tab) {
     b.querySelectorAll("[data-share]").forEach(x => x.onclick = async () => { await commPublish(byId(x.dataset.share), true); draw(); });
     b.querySelectorAll("[data-cm]").forEach(x => x.onclick = () => openBotComments(x.dataset.cm));
     b.querySelectorAll("[data-dm]").forEach(x => x.onclick = () => openDM(x.dataset.dm));
+    b.querySelectorAll("[data-blog]").forEach(x => x.onclick = e => { if (e.target.closest("[data-like]")) return; openBlog(x.dataset.blog); });
+    b.querySelectorAll("[data-upd]").forEach(x => x.onclick = async () => { x.disabled = true; await commCopyUpdate(byId(x.dataset.upd)); draw(); });
     if ($("dmNew")) $("dmNew").onclick = () => { COMM_TAB = "people"; draw(); };
     if ($("cmMe")) $("cmMe").onchange = e => { COMM.me = { name: e.target.value.trim().slice(0, 40), at: Date.now() }; commSave(); };
   });
@@ -7559,6 +7591,8 @@ function openPost(id) {
       <p class="pf-sum">${esc(c.summary || "")}</p>
       <div class="pf-tags">${(c.tags || []).map(t => `<span class="pf-tag"${tagStyle(t)}>${tagIcon(t)}${esc(t)}</span>`).join("")}</div>
       <div class="cm-stats cm-stats-big"><button type="button" class="cm-like ${liked ? "on" : ""}" id="cmLike">♥ ${fmtK(postLikes(p))}</button><span>💬 ${fmtK(postChats(p))} chats</span><span>🗨 ${commN(p.id)} comments</span></div>
+      ${(p.updates || []).length ? `<details class="gen-sec"><summary>Updated ${esc(fmtWhen(p.updates.at(-1).at))} · v${esc(p.updates.at(-1).ver)}</summary><div class="gen-body">${[...p.updates].reverse().map(up => `<p><b>v${esc(up.ver)}</b> <span class="hint">${esc(fmtWhen(up.at))}</span><br>${esc(up.note)}</p>`).join("")}</div></details>` : ""}
+      ${p.added && byId(p.added) && copyUpdates(byId(p.added)).length ? `<div class="cm-pub"><span class="grow">Your copy can be updated to v${esc(p.updates.at(-1).ver)}. Your chats stay as they are.</span><button type="button" class="btn small primary" id="cmUpd">Update my copy</button></div>` : ""}
       <div class="row"><button type="button" class="btn primary" id="cmChat">${p.added && byId(p.added) ? "Chat" : "Chat now"}</button><button type="button" class="btn" id="cmAdd" ${p.added && byId(p.added) ? "disabled" : ""}>${p.added && byId(p.added) ? "✓ In your bots" : "＋ Add to my bots"}</button></div>
       ${c.appearance ? `<details class="gen-sec"><summary>Look</summary><div class="gen-body"><p>${esc(c.appearance)}</p></div></details>` : ""}
       <details class="gen-sec"><summary>${K === "world" ? "The world" : K === "group" ? "The group" : "Personality"}</summary><div class="gen-body"><p>${esc(c.description || "").replace(/\n/g, "<br>")}</p>${(c.members || []).map(m => `<p><b>${esc(m.name)}</b><br>${esc(m.description || "")}</p>`).join("")}${(c.cast || []).map(m => `<p><b>${esc(m.name)}</b> <span class="badge">${esc(WORLD_TYPES[m.type] || "")}</span><br>${esc(m.details || "")}</p>`).join("")}</div></details>
@@ -7566,6 +7600,7 @@ function openPost(id) {
       <div class="lbl">Comments · ${commN(p.id)}</div>${commentsUI(p.id)}`;
     b.querySelector("[data-u]").onclick = () => openCommUser(p.by);
     $("cmLike").onclick = () => { commLike(p.id); draw(); };
+    if ($("cmUpd")) $("cmUpd").onclick = async () => { $("cmUpd").disabled = true; await commCopyUpdate(byId(p.added)); draw(); };
     $("cmAdd").onclick = async () => { $("cmAdd").disabled = true; $("cmAdd").textContent = "Adding…"; await commAdd(p); draw(); };
     $("cmChat").onclick = async () => { $("cmChat").disabled = true; const w = p.added && byId(p.added) ? byId(p.added) : await commAdd(p); if (!w) return; p.myChats = (p.myChats || 0) + 1; commSave(); COMM_VIEW = null; closeSheet(); openChat(w.id); };
     wireComments(b, p.id, draw);
@@ -7583,17 +7618,27 @@ async function commAdd(p) {
 function openCommUser(id) {
   const u = userOf(id); if (!u) return;
   const draw = () => openSheet("@" + u.handle, b => {
-    const posts = commUserPosts(u), said = Object.entries(COMM.comments).flatMap(([t, l]) => l.filter(x => x.by === u.id).map(x => [t, x])).sort((a, c) => c[1].at - a[1].at).slice(0, 8);
-    const likes = posts.reduce((a, p) => a + postLikes(p), 0), followers = Math.round(likes * 0.18 + 40 * seeded(u.id, 3) + posts.length * 12);
-    b.innerHTML = `<i class="cm-mark" hidden></i><div class="cm-prof">${avatarOf(u, 64)}<div><h3 style="margin:0">${esc(u.name)}</h3><div class="hint">@${esc(u.handle)} · joined ${esc(new Date(u.at).toLocaleDateString([], { month: "short", year: "numeric" }))}</div><div class="hint cm-status"><span class="dm-dot ${isOnline(u) ? "on" : ""}"></span>${esc(seenText(u))}</div><div class="cm-pstats"><span><b>${fmtK(followers)}</b> followers</span><span><b>${posts.length}</b> bot${posts.length === 1 ? "" : "s"}</span><span><b>♥ ${fmtK(likes)}</b></span></div></div></div>
-      <button type="button" class="btn primary small" id="cmDM">💬 Message</button>
+    const posts = commUserPosts(u), blogs = (COMM.blogs || []).filter(x => x.by === u.id), said = Object.entries(COMM.comments).flatMap(([t, l]) => l.filter(x => x.by === u.id).map(x => [t, x])).sort((a, c) => c[1].at - a[1].at).slice(0, 6);
+    const likes = posts.reduce((a, p) => a + postLikes(p), 0), fw = follows(u.id), fs = fitStyle(u);
+    const pin = posts.find(p => p.id === u.pin) || [...posts].sort((a, c) => postLikes(c) - postLikes(a))[0];
+    const name = fs.fin ? `<h3 class="cm-pfn" style="background:${fs.fin ? "var(--fin-t)" : "none"};-webkit-background-clip:text;background-clip:text;color:transparent">${esc(u.name)}</h3>` : `<h3 class="cm-pfn">${esc(u.name)}</h3>`;
+    b.innerHTML = `<i class="cm-mark" hidden></i><div class="cm-pfx${fs.shop ? " st-" + fs.shop : ""}" style="${fs.st}">${fs.shop ? `<div class="sh-fx">${stFxHTML(fs.shop)}</div>` : ""}<div class="cm-pfx-in">
+      <div class="cm-prof"><div class="cm-emb">${avatarOf(u, 64)}<span class="cm-lan">${fitLantern(u)}</span></div><div class="grow">${name}<div class="hint">@${esc(u.handle)} · joined ${esc(new Date(u.at).toLocaleDateString([], { month: "short", year: "numeric" }))}${followsMe(u.id) ? ' <span class="badge cm-fy">Follows you</span>' : ""}</div><div class="hint cm-status"><span class="dm-dot ${isOnline(u) ? "on" : ""}"></span>${esc(seenText(u))}</div></div></div>
+      ${u.status ? `<div class="cm-stline">${esc(u.status)}</div>` : ""}
+      <div class="cm-pstats"><span><b>${fmtK(followerCount(u))}</b> followers</span><span><b>${posts.length}</b> bot${posts.length === 1 ? "" : "s"}</span><span><b>♥ ${fmtK(likes)}</b></span></div>
+      <div class="row"><button type="button" class="btn ${fw ? "" : "primary"} small" id="cmFollow">${fw ? "✓ Following" : "＋ Follow"}</button><button type="button" class="btn small" id="cmDM">💬 Message</button></div>
       <p>${esc(u.bio)}</p>${u.taste.length ? `<div class="btags">${u.taste.map(t => `<span class="btag"${tagStyle(t)}>${esc(t)}</span>`).join("")}</div>` : ""}
-      <div class="lbl">Bots · ${posts.length}</div>${posts.length ? `<div class="cm-grid">${posts.map(postCard).join("")}</div>` : '<p class="hint" style="margin:0">Hasn\'t posted a bot yet.</p>'}
-      ${said.length ? `<div class="lbl">Recent comments</div>${said.map(([t, x]) => `<button type="button" class="listrow" data-go="${esc(t)}"><span class="grow"><span class="sub">on ${esc(targetInfo(t)?.name || "a bot")}</span>${esc(x.text)}</span></button>`).join("")}` : ""}`;
+      ${pin ? `<div class="lbl">📌 Pinned</div><div class="cm-grid">${postCard(pin)}</div>` : ""}
+      <div class="lbl">Bots · ${posts.length}</div>${posts.length > (pin ? 1 : 0) ? `<div class="cm-grid">${posts.filter(p => p !== pin).map(postCard).join("")}</div>` : `<p class="hint" style="margin:0">${posts.length ? "That's the only one so far." : "Hasn't posted a bot yet."}</p>`}
+      ${blogs.length ? `<div class="lbl">Posts · ${blogs.length}</div>${blogs.slice(0, 6).map(blogCard).join("")}` : ""}
+      ${said.length ? `<div class="lbl">Recent comments</div>${said.map(([t, x]) => `<button type="button" class="listrow" data-go="${esc(t)}"><span class="grow"><span class="sub">on ${esc(targetInfo(t)?.name || "a bot")}</span>${esc(x.text)}</span></button>`).join("")}` : ""}
+      </div></div>`;
     b.querySelectorAll("[data-post]").forEach(x => x.onclick = e => { if (e.target.closest("[data-like]")) return; openPost(x.dataset.post); });
+    b.querySelectorAll("[data-blog]").forEach(x => x.onclick = e => { if (e.target.closest("[data-like]")) return; openBlog(x.dataset.blog); });
     b.querySelectorAll("[data-like]").forEach(x => x.onclick = () => { commLike(x.dataset.like); draw(); });
     $("cmDM").onclick = () => openDM(u.id);
-    b.querySelectorAll("[data-go]").forEach(x => x.onclick = () => { const t = x.dataset.go; t.startsWith("bot:") ? openBotComments(t.slice(4)) : openPost(t); });
+    $("cmFollow").onclick = () => { commFollow(u.id, !follows(u.id)); draw(); };
+    b.querySelectorAll("[data-go]").forEach(x => x.onclick = () => { const t = x.dataset.go; t.startsWith("bot:") ? openBotComments(t.slice(4)) : t.startsWith("blog:") ? openBlog(t.slice(5)) : openPost(t); });
   });
   COMM_VIEW = draw; draw();
 }
@@ -7634,15 +7679,151 @@ async function commPublish(c, on) {
   // "at" = when this was changed (for syncing), "since" = when it first went public (its likes count from then)
   const old = COMM.pub[c.id];
   COMM.pub[c.id] = on ? { on: true, at: Date.now(), since: old?.since || Date.now(), heat: old?.heat ?? pubHeat(c) } : { ...(old || {}), on: false, at: Date.now() };
-  await Store.set("comm", COMM);
+  await commFlush();
   toast(on ? `${c.name} is public: people will find it over the next hours` : `${c.name} is private again`);
 }
 // the profile's community row for one of the owner's bots
 function pubRow(c) {
   if (!commOn() || c.fromPersona) return "";
   const p = pubOf(c), s = pubStats(c);
-  return `<div class="cm-pub"><label class="check" style="margin:0"><input type="checkbox" id="pfPub" ${p ? "checked" : ""}> 🌐 Public in the community</label>${p ? `<button type="button" class="btn small" id="pfCm">♥ ${fmtK(s.likes)} · ${fmtK(s.chats)} chats · ${commN("bot:" + c.id)} comments</button>` : ""}${c.fromComm?.by ? `<span class="hint">From ${esc(c.fromComm.by)} in the community</span>` : ""}</div>`;
+  if (COMM === null) commLoad().catch(() => {});
+  return `<div class="cm-pub"><label class="check" style="margin:0"><input type="checkbox" id="pfPub" ${p ? "checked" : ""}> 🌐 Public in the community</label>${p ? `<button type="button" class="btn small" id="pfCm">♥ ${fmtK(s.likes)} · ${fmtK(s.chats)} chats · ${commN("bot:" + c.id)} comments</button>` : ""}${c.fromComm?.by ? `<span class="hint">From ${esc(c.fromComm.by)} in the community</span>` : ""}${copyUpdates(c).length ? `<button type="button" class="btn small primary" id="pfUpd">Update to v${esc(copyUpdates(c).at(-1).ver)}</button><span class="hint">${esc(copyUpdates(c).at(-1).note).slice(0, 120)}</span>` : ""}</div>`;
 }
+// ---- v1.64: outfits, following, blog posts, bot updates
+// Each person wears cosmetics from the Lantern Shop (or keeps the defaults): u.fit {theme ("pal:<key>" or a shop theme),
+// accent, flame, lantern, finish}; u.status (a short status line); u.pin (a pinned listing id).
+// COMM.follow {userId: {v, at}}, COMM.fans {userId: at (when they follow the owner; in the future = not yet)},
+// COMM.blogs [{id, by, title, text, heat, at}], post.updates [{id, at, ver, note, fields}], COMM.tickB / tickU.
+const FIT_THEMES = () => [...Object.keys(THEMES).map(k => "pal:" + k), ...SHOP_THEMES.map(t => t.key)];
+const fitCatalog = () => `themes: ${FIT_THEMES().join(", ")}; flames: ${Object.keys(LN_FLAME_BY).join(", ")}; lanterns: ${Object.keys(LN_BODY_BY).join(", ")}; finishes: ${FINISHES.map(f => f.key).join(", ")}`;
+function fitClean(o) {
+  const ok = (v, list) => list.includes(v) ? v : "";
+  const x = o && typeof o === "object" ? o : {};
+  return { theme: ok(s5(x.theme), FIT_THEMES()) || "pal:lantern", accent: hexOk(s5(x.accent)) || "", flame: ok(s5(x.flame), Object.keys(LN_FLAME_BY)), lantern: ok(s5(x.lantern), Object.keys(LN_BODY_BY)), finish: ok(s5(x.finish), FINISHES.map(f => f.key)) };
+}
+// a fallback when the AI didn't dress someone: a quarter keep the defaults, show-offs wear more
+function fitAuto(u) {
+  const r = k => seeded(u.id, 40 + k), big = /veteran|prolific|polished|following|artist/.test(u.role || "");
+  if (r(0) < (big ? 0.1 : 0.3)) return { theme: "pal:lantern", accent: "", flame: "", lantern: "", finish: "" };
+  const pick = (list, k, p) => r(k) < p ? list[Math.floor(r(k + 10) * list.length)] : "";
+  const th = FIT_THEMES();
+  return { theme: r(1) < (big ? 0.7 : 0.4) ? th[Object.keys(THEMES).length + Math.floor(r(2) * SHOP_THEMES.length)] : th[Math.floor(r(3) * Object.keys(THEMES).length)], accent: ACCENTS[Math.floor(r(4) * ACCENTS.length)][0],
+    flame: pick(Object.keys(LN_FLAME_BY), 5, big ? 0.8 : 0.45), lantern: pick(Object.keys(LN_BODY_BY), 6, big ? 0.6 : 0.3), finish: pick(FINISHES.map(f => f.key), 7, big ? 0.6 : 0.25) };
+}
+const fitOf = u => u.fit || fitAuto(u);
+// the style for a profile in their outfit: their theme's palette, their accent and its flame, their finish's metal
+function fitStyle(u) {
+  const f = fitOf(u), th = f.theme.startsWith("pal:") ? THEMES[f.theme.slice(4)] : SHOP_THEME_BY[f.theme]?.pal, pal = th || THEMES.lantern;
+  const acc = f.accent || (f.theme.startsWith("pal:") ? (th?.accent || "#e8a95b") : "#e8a95b"), fin = f.finish && FIN_BY[f.finish];
+  const ink = OKLAB.to(acc)[0] > 0.62 ? "#1a1206" : "#fff8ee";
+  let st = palStyle(pal) + `;--accent:${acc};--accent-ink:${ink};--accent-hi:color-mix(in srgb,${acc} 80%,#fff);--accent-lo:color-mix(in srgb,${acc} 80%,#000);--fl-core:color-mix(in srgb,${acc} 22%,#fff);--fl-mid:color-mix(in srgb,${acc} 70%,#fff);--fl-base:color-mix(in srgb,${acc} 80%,#e2401a);--fl-halo:color-mix(in srgb,${acc} 70%,#fff)`;
+  if (fin) st += `;--lm-a:${fin.metal[0]};--lm-b:${fin.metal[1]};--fin:${fin.g};--fink:${fin.ink || "#1a1206"};--fin-t:${finCols(fin).text}`;
+  return { st, shop: f.theme.startsWith("pal:") ? "" : f.theme, fin, f };
+}
+const fitLantern = u => { const f = fitOf(u); return lanternSVG("", { flame: f.flame || "", lantern: f.lantern || "" }); };
+async function commDress(list) {
+  if (!list.length) return;
+  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} customise how the app looks for them with cosmetics they've unlocked. For each person, pick what they'd really have on, matching their personality and taste, and write a short profile status in their own typing style (what they're up to, taking requests, a joke, a mood). About a quarter keep everything default (theme pal:lantern, no accent, no flame, lantern or finish); veterans and big creators show off more. Options (use only these keys, or "" for none) - ${fitCatalog()}. Accent is a hex colour. ${COMM_ADULT}\n\nRespond with only JSON: {"people": [{"handle", "theme", "accent", "flame", "lantern", "finish", "status"}]}` },
+    { role: "user", content: list.map(u => `- @${u.handle} (${u.role || "regular"}): ${u.bio} Loves ${(u.taste || []).join(", ")}. Types: ${u.style || u.voice}`).join("\n") }], { temperature: 1, maxTokens: 3000, plain: true });
+  for (const x of Array.isArray(j?.people) ? j.people : []) { const u = list.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); if (!u) continue; u.fit = fitClean(x); u.status = s5(x?.status).slice(0, 120); }
+  for (const u of list) if (!u.fit) u.fit = fitAuto(u);
+}
+// ---- following
+const follows = id => !!COMM?.follow?.[id]?.v;
+const followsMe = id => { const t = COMM?.fans?.[id]; return !!t && t <= Date.now(); };
+function commFollow(id, on) {
+  const u = userOf(id); if (!u) return;
+  COMM.follow[id] = { v: !!on, at: Date.now() };
+  // some follow back, more often if you've talked
+  if (on && !COMM.fans[id]) { const talked = (COMM.dms[id]?.msgs.length || 0) > 2 || Object.values(COMM.comments).some(l => l.some(x => x.by === id && x.toMe)); if (Math.random() < (talked ? 0.6 : 0.25)) { let at = Date.now() + (3 + Math.random() * 180) * 60e3; if (asleepAt(u, at)) at = wakeAfter(u, at) + Math.random() * 3.6e6; COMM.fans[id] = at; } }
+  commSave();
+}
+const followerCount = u => { const posts = commUserPosts(u), likes = posts.reduce((a, p) => a + postLikes(p), 0); return Math.round(likes * 0.18 + 40 * seeded(u.id, 3) + posts.length * 12) + (follows(u.id) ? 1 : 0); };
+const myFollowers = () => Object.values(COMM?.fans || {}).filter(t => t <= Date.now()).length + Math.round(S.chars.filter(c => pubOf(c)).reduce((a, c) => a + pubStats(c).likes, 0) * 0.08);
+// ---- blog posts
+const blogStats = x => commStats("blog:" + x.id, x.heat * 0.6, x.at);
+const blogLikes = x => blogStats(x).likes + (commLiked("blog:" + x.id) ? 1 : 0);
+async function commBlogs(k) {
+  const now = Date.now(), pool = COMM.users.map(u => [u, (follows(u.id) ? 3 : 1) * (asleepAt(u, now) ? 0.1 : 1) * (/lurker/.test(u.role || "") ? 0.2 : 1) * (0.4 + Math.random())]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
+  if (!pool.length) return [];
+  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} sometimes post short blog posts or announcements on their profile: a WIP teaser of an upcoming bot, taking (or closing) requests, a hiatus or comeback note, a thank-you for followers, a poll, a rant about the site or about people stealing bots, life updates, tips for writing bots, a bot they're proud of. Each person writes in exactly their own typing style, about things that fit them and their bots. Short: a title and 1-6 sentences. Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"posts": [{"by": handle, "title", "text"}]}` },
+    { role: "user", content: pool.map(u => `- @${u.handle} (${u.role || "regular"}): loves ${(u.taste || []).join(", ")}. Types: ${u.style || u.voice}. Their bots: ${commUserPosts(u).slice(0, 4).map(p => `"${p.card.name}"`).join(", ") || "none yet"}`).join("\n") }], { temperature: 1, maxTokens: 2200, plain: true });
+  const out = [];
+  for (const x of Array.isArray(j?.posts) ? j.posts : []) { const u = pool.find(y => y.handle.toLowerCase() === s5(x?.by).replace(/^@/, "").toLowerCase()) || pool[out.length % pool.length]; const text = s5(x?.text).slice(0, 1500); if (!u || !text) continue;
+    const b = { id: uid(), by: u.id, title: s5(x?.title).slice(0, 100), text, heat: 0.3 + Math.random() * 1.5, at: cmBack(20 * 6e4) }; u.last = Math.max(u.last || 0, b.at); out.push(b); }
+  COMM.blogs.unshift(...out); if (COMM.blogs.length > 120) COMM.blogs = COMM.blogs.slice(0, 120);
+  return out;
+}
+// ---- bot updates: a creator reworks one of their listings and writes a changelog
+async function commUpdates(k) {
+  const now = Date.now(), cand = COMM.posts.filter(p => now - p.at > 6 * 3.6e6 && userOf(p.by)).map(p => [p, (follows(p.by) ? 3 : 1) * (p.added ? 2 : 1) * (0.3 + p.heat) * Math.random()]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
+  const out = [];
+  for (const p of cand) {
+    const u = userOf(p.by), c = p.card, ver = `1.${(p.updates || []).length + 1}`;
+    const j = await dsJSON([{ role: "system", content: `You are @${u.handle} on ${COMM_SITE}, updating one of your bots, the way creators do: a new alternate opening, a fixed personality, a reworked scenario, extra tags, a polished look. Change one to three things that make the bot better or fit what commenters asked for, and write the changelog note you'd post, in your own typing style (${u.style || u.voice}). ${COMM_ADULT}\n\nRespond with only JSON: {"note": the changelog, one to three short lines, "description": new text or "", "scenario": new text or "", "appearance": new text or "", "newOpening": an extra opening (90-160 words, narration in *asterisks*) or "", "tags": [extra lowercase tags] or []}` },
+      { role: "user", content: `Your bot "${c.name}":\nSummary: ${c.summary}\nDescription: ${c.description}\nScenario: ${c.scenario}\nOpening: ${String(c.firstMessages?.[0] || "").slice(0, 700)}${commN(p.id) ? `\n\nRecent comments:\n${threadText(p.id)}` : ""}` }], { temperature: 0.95, maxTokens: 1800, plain: true });
+    const fields = {}; for (const f of ["description", "scenario", "appearance"]) if (s5(j?.[f])) fields[f] = s5(j[f]);
+    if (s5(j?.newOpening)) fields.newOpening = s5(j.newOpening);
+    const tags = (Array.isArray(j?.tags) ? j.tags : []).map(t => s5(t).toLowerCase()).filter(t => t && !(c.tags || []).includes(t)).slice(0, 4); if (tags.length) fields.tags = tags;
+    const note = s5(j?.note).slice(0, 400); if (!note || !Object.keys(fields).length) continue;
+    // the listing changes; your copy only if you choose to update it
+    if (fields.description) c.description = fields.description; if (fields.scenario) c.scenario = fields.scenario; if (fields.appearance) c.appearance = fields.appearance;
+    if (fields.newOpening) c.firstMessages = [...(c.firstMessages || []), fields.newOpening]; if (fields.tags) { c.tags = [...(c.tags || []), ...fields.tags]; p.tags = c.tags; }
+    const up = { id: uid(), at: cmBack(15 * 6e4), ver, note, fields }; p.updates = [...(p.updates || []), up]; u.last = Math.max(u.last || 0, up.at); out.push([p, up]);
+  }
+  return out;
+}
+// your copy of a listing: which updates it hasn't had yet, and applying them (your chats are left as they are)
+const copyUpdates = c => { const p = c?.fromComm && COMM?.posts.find(x => x.id === c.fromComm.post); if (!p) return []; const had = c.fromComm.ver || 0; return (p.updates || []).filter(u => u.at > had); };
+async function commCopyUpdate(c) {
+  const ups = copyUpdates(c); if (!ups.length) return;
+  for (const up of ups) { const f = up.fields || {};
+    if (f.description) c.description = f.description; if (f.scenario) c.scenario = f.scenario; if (f.appearance && (c.kind || "character") === "character") c.appearance = f.appearance;
+    if (f.newOpening) c.altGreetings = [...(c.altGreetings || []), f.newOpening]; if (f.tags) c.tags = [...new Set([...(c.tags || []), ...f.tags])]; }
+  c.fromComm = { ...c.fromComm, ver: Math.max(...ups.map(u => u.at)) }; await saveChars();
+  toast(`${c.name} updated to v${ups.at(-1).ver}`);
+}
+// ---- the Following feed: new bots, blog posts and updates from people you follow (since you followed them), and new followers
+function feedItems() {
+  if (!COMM) return [];
+  const out = [], since = id => COMM.follow[id]?.at || 0;
+  for (const p of COMM.posts) { if (follows(p.by) && p.at > since(p.by)) out.push({ kind: "post", at: p.at, by: p.by, p }); for (const up of p.updates || []) if (follows(p.by) && up.at > since(p.by)) out.push({ kind: "update", at: up.at, by: p.by, p, up }); }
+  for (const b of COMM.blogs) if (follows(b.by) && b.at > since(b.by)) out.push({ kind: "blog", at: b.at, by: b.by, b });
+  for (const [id, t] of Object.entries(COMM.fans)) if (t <= Date.now() && userOf(id)) out.push({ kind: "fan", at: t, by: id });
+  for (const c of S.chars) for (const up of copyUpdates(c)) out.push({ kind: "copy", at: up.at, by: COMM.posts.find(x => x.id === c.fromComm.post)?.by, c, up });
+  return out.filter(x => x.at <= Date.now()).sort((a, b) => b.at - a.at).slice(0, 80);
+}
+const feedUnseen = () => feedItems().filter(x => x.at > (COMM.seen?.feed || COMM.seen?.at || 0)).length;
+function feedHTML() {
+  const items = feedItems(), nf = Object.values(COMM.follow).filter(x => x.v).length;
+  if (!items.length) return `<p class="hint" style="margin:6px 0">${nf ? "Nothing new from the people you follow yet." : "Follow people from their profiles to see their new bots, blog posts and updates here."}</p>`;
+  return items.map(x => { const u = userOf(x.by), who = `<b>${esc(u?.name || "Someone")}</b>`, when = `<span class="hint">${esc(fmtWhen(x.at))}</span>`;
+    if (x.kind === "post") return `<button type="button" class="listrow fd-row" data-post="${esc(x.p.id)}">${avatarOf(u, 34)}<span class="grow">${who} posted a new bot ${when}<span class="sub"><b>${esc(x.p.card.name)}</b> · ${esc(x.p.card.summary || "").slice(0, 110)}</span></span></button>`;
+    if (x.kind === "update") return `<button type="button" class="listrow fd-row" data-post="${esc(x.p.id)}">${avatarOf(u, 34)}<span class="grow">${who} updated <b>${esc(x.p.card.name)}</b> to v${esc(x.up.ver)} ${when}<span class="sub">${esc(x.up.note).slice(0, 140)}</span></span></button>`;
+    if (x.kind === "blog") return `<button type="button" class="listrow fd-row" data-blog="${esc(x.b.id)}">${avatarOf(u, 34)}<span class="grow">${who} posted ${when}<span class="sub"><b>${esc(x.b.title || "")}</b> ${esc(x.b.text).slice(0, 120)}</span></span></button>`;
+    if (x.kind === "copy") return `<div class="listrow fd-row fd-copy">${avatarOf(u, 34)}<span class="grow">Your copy of <b>${esc(x.c.name)}</b> can be updated to v${esc(x.up.ver)} ${when}<span class="sub">${esc(x.up.note).slice(0, 140)}</span></span><button type="button" class="btn small primary" data-upd="${esc(x.c.id)}">Update my copy</button></div>`;
+    return `<button type="button" class="listrow fd-row" data-u="${esc(x.by)}">${avatarOf(u, 34)}<span class="grow">${who} followed you ${when}</span></button>`; }).join("");
+}
+function blogCard(b) {
+  const u = userOf(b.by), liked = commLiked("blog:" + b.id);
+  return `<div class="cm-blog" data-blog="${esc(b.id)}" role="button" tabindex="0"><div class="cm-by">${avatarOf(u, 20)}<span>@${esc(u?.handle || "")}</span><span class="hint">· ${esc(fmtWhen(b.at))}</span></div>${b.title ? `<b>${esc(b.title)}</b>` : ""}<p>${esc(b.text)}</p><div class="cm-stats"><button type="button" class="cm-like ${liked ? "on" : ""}" data-like="blog:${esc(b.id)}">♥ ${fmtK(blogLikes(b))}</button><span>🗨 ${commN("blog:" + b.id)}</span></div></div>`;
+}
+function openBlog(id) {
+  const x = COMM.blogs.find(y => y.id === id); if (!x) return;
+  const t = "blog:" + id;
+  const draw = () => openSheet(x.title || "Post", b => {
+    const u = userOf(x.by), liked = commLiked(t);
+    b.innerHTML = `<i class="cm-mark" hidden></i><button type="button" class="cm-by cm-by-big" data-u="${esc(x.by)}">${avatarOf(u, 30)}<span><b>${esc(u?.name || "")}</b> <span class="hint">@${esc(u?.handle || "")} · ${esc(fmtWhen(x.at))}</span></span></button>
+      <div class="cm-post-tx">${esc(x.text)}</div>
+      <div class="cm-stats cm-stats-big"><button type="button" class="cm-like ${liked ? "on" : ""}" id="cmLike">♥ ${fmtK(blogLikes(x))}</button><span>🗨 ${commN(t)} comments</span></div>
+      <div class="lbl">Comments · ${commN(t)}</div>${commentsUI(t)}`;
+    b.querySelector("[data-u]").onclick = () => openCommUser(x.by);
+    $("cmLike").onclick = () => { commLike(t); draw(); };
+    wireComments(b, t, draw);
+  });
+  COMM_VIEW = draw; draw();
+}
+
 // ---- DMs (v1.63): private chats with the people, timed like real texting
 // COMM.dms {userId: {msgs [{id, from "me"|"them", text, at, seenAt}], read}}; COMM.dmq [{id, user, kind "reply"|"open", reason, due, typingAt, parts}]
 const dmOf = id => (COMM.dms[id] = COMM.dms[id] || { msgs: [], read: 0 });
@@ -7658,7 +7839,7 @@ function dmDelay(u, now) {
   let due = now + ms;
   if (asleepAt(u, due) || asleepAt(u, now)) due = wakeAfter(u, Math.max(due, now)) + R(5 * 60, 100 * 60);
   const seenAt = asleepAt(u, now) ? wakeAfter(u, now) + R(60, 1200) : Math.min(due - 5000, now + (live ? R(3, 25) : ms * (0.2 + 0.6 * Math.random())));
-  return { due, seenAt: Math.max(now + 2000, seenAt) };
+  return { due, seenAt: Math.max(now + 2000, Math.min(seenAt, due - 5000)) }; // they always see it before they answer
 }
 function dmSend(uidv, text) {
   const u = userOf(uidv); if (!u || !text.trim()) return;
@@ -7724,6 +7905,7 @@ async function dmPump() {
   finally { DM_BUSY = false; }
   if (moved) { commSave(); commDot(); dmRedraw(); if (COMM.dmq.some(x => x.parts?.length && x.parts[0].at <= Date.now() + 500)) setTimeout(dmPump, 600); }
 }
+function feedNotify(u, text, go) { const el = document.createElement("div"); el.className = "toast dm-toast"; el.innerHTML = `${avatarOf(u, 22)}<span><b>${esc(u.name)}</b> ${esc(text.slice(0, 80))}</span>`; el.onclick = () => { el.remove(); go(); }; document.body.appendChild(el); setTimeout(() => el.remove(), 4500); }
 function dmNotify(u, text) { const el = document.createElement("div"); el.className = "toast dm-toast"; el.innerHTML = `${avatarOf(u, 22)}<span><b>${esc(u.name)}</b> ${esc(text.slice(0, 70))}${text.length > 70 ? "…" : ""}</span>`; el.onclick = () => openDM(u.id); document.body.appendChild(el); setTimeout(() => el.remove(), 4200); }
 // now and then someone messages first: after you liked or saved their bot, answered them, shared a bot they'd love, or to check in
 function dmMaybeOpen() {
