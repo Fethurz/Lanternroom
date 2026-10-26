@@ -4,7 +4,7 @@ const open = require("./base.js");
 (async () => {
   const W = +(process.env.W || 390);
   const sysOf = b => String(b.messages?.[0]?.content || ""), userOf_ = b => String(b.messages?.[1]?.content || "");
-  const LONG = "hi!! i make vore bots mostly, big preds, soft endings sometimes. dms open but i'm slow to answer, i work nights at a hospital so don't take it personally. commissions closed rn, requests maybe. i love dragons, wolves, anything with a big belly. pls credit if u edit my bots!! also i have a cat named Biscuit and she is the boss of this house.";
+  const LONG = "hi!! i make vore bots mostly, big preds, soft endings sometimes. dms open but i'm slow to answer, i keep weird hours so don't take it personally. commissions closed rn, requests maybe. i love dragons, wolves, anything with a big belly. pls credit if u edit my bots!! also i have a cat named Biscuit and she is the boss of this house.";
   let nU = 0;
   const json = body => {
     const s = sysOf(body), u = userOf_(body);
