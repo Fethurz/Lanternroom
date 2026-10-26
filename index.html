@@ -675,6 +675,7 @@ img.px-av{border-radius:50%}
 .pix-foot{align-items:center;flex-wrap:nowrap;position:sticky;bottom:calc(-14px - env(safe-area-inset-bottom,0px));margin:0 -16px calc(-14px - env(safe-area-inset-bottom,0px));padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line)}.pix-card .pix-foot .grow{flex:1 1 auto}
 .pix-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.pix-tabs::-webkit-scrollbar{display:none}.pix-tabs .tab{flex:none;padding:6px 11px}
 .pix-tools .row{gap:6px}.pix-tools .chip{min-height:34px}
+.sheet-all{margin-left:auto;margin-right:6px;min-height:34px}.panel-head .sheet-all+.icon{margin-left:0}
 .pp-pic{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .cm-av{flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:color-mix(in srgb,var(--av) 30%,var(--surface-2));border:1.5px solid var(--av);color:var(--av);font-family:var(--f-display,Georgia,serif);line-height:1}
 .cm-intro{margin:0 0 6px;font-size:12.5px}.cm-tabs{margin-bottom:8px}.cm-tabs #cmRefresh{margin-left:auto}
@@ -1270,7 +1271,7 @@ html.sb-sticker.sb-sticker #msgs .msg:not(.img) em.act,.shop-sb.sb-sticker .msg 
 <div id="splash"><div class="sp"><span id="spLantern"></span><div class="sp-t" id="spTitle"></div></div></div>
 <div id="sheet" hidden>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
-    <div class="panel-head"><h2 id="sheetTitle"></h2><button class="icon" id="sheetClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="panel-head"><h2 id="sheetTitle"></h2><button type="button" class="chip sheet-all" id="sheetAll" hidden>Close all</button><button class="icon" id="sheetClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div id="sheetBody"></div>
   </div>
 </div>
@@ -1472,7 +1473,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.65 · Oct 26";
+const VERSION = "1.66 · Oct 26";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1666,7 +1667,7 @@ const pixOk = spec => !!spec && typeof spec === "object" && (PIX_BY[spec.s] || s
 // A fitting picture from a bit of text (a bot's or person's description), the same every time for the same seed.
 const PIX_GUESS = [[/\b(wolf|wolves|werewolf|lupine|husky)\b/i, "wolf"], [/\b(fox|vixen|kitsune)\b/i, "fox"], [/\b(cat|feline|kitty|tiger|lion|panther|leopard|neko)\b/i, "cat"], [/\b(bear|panda|ursine)\b/i, "bear"], [/\b(bunny|rabbit|hare|lagomorph)\b/i, "bunny"], [/\b(dog|puppy|hound|canine)\b/i, "dog"], [/\b(owl|bird|avian|harpy|raven|crow|gryphon)\b/i, "owl"], [/\b(ghost|spirit|phantom|spectre|specter|haunt)/i, "ghost"], [/\b(skull|skeleton|undead|lich|necromanc|bones?)\b/i, "skull"], [/\b(alien|xeno|extraterrestrial|space)\b/i, "alien"], [/\b(robot|android|cyborg|mech|synth|ai\b|machine)/i, "robot"], [/\b(pumpkin|halloween|spooky|autumn)\b/i, "pumpkin"], [/\b(octopus|tentacle|squid|kraken|cephalopod|eldritch)/i, "octopus"], [/\b(knight|paladin|warrior|soldier|guard|armou?r)\b/i, "knight"], [/\b(wizard|mage|witch|sorcer|warlock|magic)/i, "wizard"], [/\b(rogue|assassin|thief|cult|hooded|shadow|mysterious)\b/i, "hood"], [/\b(lantern|candle|light)\b/i, "lantern"], [/\b(she|her|woman|girl|lady|female|wife|queen|mistress)\b/i, "girl"], [/\b(he|him|his|man|guy|boy|male|husband|king|master)\b/i, "guy"]];
 function pixAuto(seed, text = "", guess = 0.75) {
-  const r = n => (hash(seed + ":" + n) >>> 0) / 4294967296;
+  const r = n => hash(seed + ":" + n) / 1e6; // hash() gives 0-999999
   let s = null;
   if (r(1) < guess) for (const [re, k] of PIX_GUESS) if (re.test(text)) { s = k; break; }
   if (!s) s = PIX_SPRITES[Math.floor(r(2) * PIX_SPRITES.length)][0];
@@ -4491,7 +4492,20 @@ async function illustrate() {
 $("btnIllustrate").onclick = illustrate;
 
 /* ---------- Sheets ---------- */
+// v1.66: windows remember the way you came. Opening a window from another one puts the first on a stack;
+// ✕, the phone's back button and Esc step back to it (scrolled where you left it). "Close all" closes everything.
+// A window that redraws itself (same title) replaces itself; opening one already on the stack goes back to it.
+// Guarded windows (editors, the generator, wait screens) are never stepped back to.
+S.sheetStack = []; S.sheetCur = null;
 function openSheet(title, build) {
+  const open = !$("sheet").hidden && S.sheetCur;
+  if (!open) S.sheetStack = [];
+  else if (!S.sheetNoPush && S.sheetCur.title !== title) {
+    const at = S.sheetStack.findIndex(e => e.title === title);
+    if (at >= 0) S.sheetStack.length = at;
+    else if (!S.sheetGuard && !$("sheetBody").querySelector("#gWait")) { S.sheetStack.push({ ...S.sheetCur, scroll: $("sheetBody").scrollTop }); if (S.sheetStack.length > 12) S.sheetStack.shift(); }
+  }
+  S.sheetCur = { title, build };
   S.sheetGuard = null; $("sheetConfirm")?.remove();
   // listeners a window adds to the shared body go away with that window
   S.sheetAC?.abort(); S.sheetAC = new AbortController();
@@ -4499,22 +4513,32 @@ function openSheet(title, build) {
   const body = $("sheetBody"); body.innerHTML = "";
   build(body);
   $("sheet").hidden = false; body.scrollTop = 0;
+  sheetHead();
 }
-function closeSheet() { $("sheet").hidden = true; $("sheetBody").innerHTML = ""; S.sheetGuard = null; $("sheetConfirm")?.remove(); S.sheetAC?.abort(); S.sheetAC = null; }
+function sheetHead() { const n = S.sheetStack.length, all = $("sheetAll"); if (all) all.hidden = !n; $("sheetClose").setAttribute("aria-label", n ? "Back" : "Close"); }
+function closeSheet() { $("sheet").hidden = true; $("sheetBody").innerHTML = ""; S.sheetGuard = null; $("sheetConfirm")?.remove(); S.sheetAC?.abort(); S.sheetAC = null; S.sheetStack = []; S.sheetCur = null; sheetHead(); }
+// step back to the window this one was opened from (false when there's none)
+function sheetBack() {
+  const e = S.sheetStack.pop(); if (!e) return false;
+  S.sheetNoPush = true; try { openSheet(e.title, e.build); } finally { S.sheetNoPush = false; }
+  const b = $("sheetBody"); requestAnimationFrame(() => { b.scrollTop = e.scroll || 0; });
+  return true;
+}
 // what the user does to close (✕, back button, tapping outside): the bot creator and editor ask first
 function userClose() {
   const body = $("sheetBody");
   if (!S.sheetGuard && body.querySelector("#gPrompt,#gMake,#gWait,#cSave")) S.sheetGuard = body.querySelector("#cSave") ? "edit" : body.querySelector("#gWait") ? "wait" : "gen";
-  if (!S.sheetGuard) { closeSheet(); return true; }
+  if (!S.sheetGuard) { if (!sheetBack()) closeSheet(); return true; }
   if ($("sheetConfirm")) return false;
   if (S.sheetGuard === "gen") genKeep(true); else if (S.sheetGuard === "quiz") qzKeep(true); else if (S.sheetGuard === "edit") body.dispatchEvent(new Event("input"));
   const msg = S.sheetGuard === "creator" ? "Close? Your answers are kept. Pick up from the bar at the top of the chat." : S.sheetGuard === "wait" ? "Close? The bot keeps being written, and the result waits for you under <b>New</b>." : "Close? What you wrote is saved as a draft. Pick it up any time from <b>New</b>.";
   $("sheetBody").insertAdjacentHTML("beforebegin", `<div id="sheetConfirm" class="sheet-confirm" role="alertdialog" aria-label="Close?"><span>${msg}</span><div class="row"><button type="button" class="btn small primary" id="scKeep">Keep editing</button><button type="button" class="btn small" id="scClose">Close</button></div></div>`);
   $("scKeep").onclick = () => $("sheetConfirm").remove();
-  $("scClose").onclick = () => closeSheet();
+  $("scClose").onclick = () => { $("sheetConfirm")?.remove(); S.sheetGuard = null; if (!sheetBack()) closeSheet(); };
   return false;
 }
 $("sheetClose").onclick = userClose;
+$("sheetAll").onclick = () => { S.sheetStack = []; userClose(); };
 // v1.61: windows close only with their ✕ (or the phone's back button / Esc); a tap or drag outside never closes them
 function field(label, html, hint) { return `<div class="field"><label>${label}</label>${html}${hint ? `<div class="hint">${hint}</div>` : ""}</div>`; }
 function confirmBtn(btn, label, fn) {
@@ -7529,7 +7553,7 @@ function commMerge(a, b) {
     tickP: Math.max(A.tickP || 0, B.tickP || 0), tickC: Math.max(A.tickC || 0, B.tickC || 0),
     dms: (() => { const o = { ...(A.dms || {}) }; for (const [k, d] of Object.entries(B.dms || {})) { const x = o[k] || { msgs: [], read: 0 }; o[k] = { msgs: byId(x.msgs, d.msgs).sort((p, q) => p.at - q.at), read: Math.max(x.read || 0, d.read || 0) }; } return o; })(),
     dmq: byId(A.dmq, B.dmq).filter(p => !done.includes(p.id)), dmNext: Math.max(A.dmNext || 0, B.dmNext || 0),
-    follow: newer(A.follow, B.follow), fans: { ...(A.fans || {}), ...(B.fans || {}) }, blogs: byId(A.blogs, B.blogs).sort((p, q) => q.at - p.at), tickB: Math.max(A.tickB || 0, B.tickB || 0), tickU: Math.max(A.tickU || 0, B.tickU || 0), tickF: Math.max(A.tickF || 0, B.tickF || 0) };
+    follow: newer(A.follow, B.follow), fans: { ...(A.fans || {}), ...(B.fans || {}) }, blogs: byId(A.blogs, B.blogs).sort((p, q) => q.at - p.at), tickB: Math.max(A.tickB || 0, B.tickB || 0), tickU: Math.max(A.tickU || 0, B.tickU || 0), tickF: Math.max(A.tickF || 0, B.tickF || 0), pixFix: Math.max(A.pixFix || 0, B.pixFix || 0) };
 }
 // a steady random number per item, so counts are the same on every device
 // a time a little in the past, so new things don't all look brand new, but never before the owner last looked
@@ -7619,14 +7643,28 @@ function cmSlots(n, offset) {
       gender: ["woman", "man", "nonbinary", "woman", "man", "trans woman", "trans man", "rather not say"][Math.floor(Math.random() * 8)], speed: r < 0.3 ? "fast" : r < 0.75 ? "medium" : "slow", sleep: CM_SLEEP[Math.floor(Math.random() * CM_SLEEP.length)], active: +(0.2 + 0.8 * Math.random()).toFixed(2) };
   });
 }
+// a bio is kept whole (up to 600 characters, cut at a sentence end if it's longer)
+function commBio(t) { const x = s5(t).trim(); if (x.length <= 600) return x; const cut = x.slice(0, 600), at = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "), cut.lastIndexOf(".\n")); return (at > 200 ? cut.slice(0, at + 1) : cut.replace(/\s+\S*$/, "") + "…").trim(); }
+// v1.66: bios written before were cut at 240 characters, and some describe how the person types instead of being written that way
+const BIO_TYPING = /\b(types?|typing|typed|lower ?case|all caps|caps ?lock|emojis?|punctuation|typos?|grammar|abbreviations?|exclamation (marks|points))\b/i;
+const bioNeedsFix = u => !!u.bio && (u.bio.length >= 236 && !/[.!?)~*♡♥❤✨…:3]\s*$/u.test(u.bio) || BIO_TYPING.test(u.bio));
+async function commFixBios() {
+  const list = COMM.users.filter(bioNeedsFix).slice(0, 12); if (!list.length) return false;
+  const j = await dsJSON([{ role: "system", content: `These are profile bios from ${COMM_SITE}. Some got cut off mid-sentence, and some describe how the person types ("types in lowercase", "uses lots of emoji") instead of simply being written that way. Rewrite each as the complete bio that person wrote about themselves: 2-4 complete sentences, keeping what it says about them, written IN their typing style (shown, never described). ${COMM_ADULT}\n\nRespond with only JSON: {"bios": [{"handle", "bio"}]}` },
+    { role: "user", content: list.map(u => `- @${u.handle}. Types: ${u.style || u.voice}. Bio: ${u.bio}`).join("\n") }], { temperature: 0.9, maxTokens: 2600, plain: true });
+  let n = 0;
+  for (const x of Array.isArray(j?.bios) ? j.bios : []) { const u = list.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); const bio = commBio(x?.bio); if (u && bio) { u.bio = bio; n++; } }
+  list.forEach(u => { if (bioNeedsFix(u)) u.bioTried = (u.bioTried || 0) + 1; });
+  return n > 0;
+}
 async function commUsers(n) {
   const taste = await commTaste(), have = COMM.users.map(u => u.handle), slots = cmSlots(n, COMM.users.length);
-  const j = await dsJSON([{ role: "system", content: `You invent the regulars of ${COMM_SITE}. Each one is given below as a slot (where they live, age, gender, their role on the site, what they love, how they type). Turn each slot into a believable, specific person: a name and username that fit them and that nobody else here has, a bio written by them in their own typing style, 3-6 tags they love (mixing their focus with the site's popular tags), and a one-line note on their voice and quirks. Make everyone clearly different from everyone else. ${COMM_ADULT}\n\nRespond with only JSON: {"users": [{"slot": the slot number, "name", "handle": a username without @, "bio", "taste": [tags], "voice", "fandoms": 0-4 games, anime, shows, films or books they're into (some people have none)}]}` },
+  const j = await dsJSON([{ role: "system", content: `You invent the regulars of ${COMM_SITE}. Each one is given below as a slot (where they live, age, gender, their role on the site, what they love, how they type). Turn each slot into a believable, specific person: a name and username that fit them and that nobody else here has, a bio they wrote about themselves (2-4 complete sentences: what they make or like, a bit about their life; written IN their typing style, never describing it: no notes like "types in lowercase" or "uses lots of emoji", just write that way), 3-6 tags they love (mixing their focus with the site's popular tags), and a one-line note on their voice and quirks. Make everyone clearly different from everyone else. ${COMM_ADULT}\n\nRespond with only JSON: {"users": [{"slot": the slot number, "name", "handle": a username without @, "bio", "taste": [tags], "voice", "fandoms": 0-4 games, anime, shows, films or books they're into (some people have none)}]}` },
     { role: "user", content: `Slots:\n${slots.map((x, i) => `${i + 1}. ${x.age}-year-old ${x.gender} in ${x.place}; ${x.role}; loves ${x.focus}; types: ${x.style}`).join("\n")}${have.length ? `\n\nUsernames already taken: ${have.join(", ")}` : ""}\nPopular tags on the site: ${taste.join(", ")}` }], { temperature: 1, maxTokens: 4500, plain: true });
   const now = Date.now(), out = [];
   (Array.isArray(j?.users) ? j.users : []).forEach((u, i) => {
     const k = Math.max(0, Math.min(slots.length - 1, (+u?.slot || i + 1) - 1)), sl = slots[k];
-    const x = { id: uid(), name: s5(u?.name).slice(0, 40), handle: s5(u?.handle).replace(/^@/, "").replace(/\s+/g, "_").slice(0, 24), bio: s5(u?.bio).slice(0, 240), taste: (Array.isArray(u?.taste) ? u.taste : []).map(t => s5(t).toLowerCase()).filter(Boolean).slice(0, 6), voice: s5(u?.voice).slice(0, 200), fandoms: (Array.isArray(u?.fandoms) ? u.fandoms : []).map(s5).filter(Boolean).slice(0, 4),
+    const x = { id: uid(), name: s5(u?.name).slice(0, 40), handle: s5(u?.handle).replace(/^@/, "").replace(/\s+/g, "_").slice(0, 24), bio: commBio(u?.bio), taste: (Array.isArray(u?.taste) ? u.taste : []).map(t => s5(t).toLowerCase()).filter(Boolean).slice(0, 6), voice: s5(u?.voice).slice(0, 200), fandoms: (Array.isArray(u?.fandoms) ? u.fandoms : []).map(s5).filter(Boolean).slice(0, 4),
       color: COMM_COLS[(COMM.users.length + out.length) % COMM_COLS.length], at: now - Math.round(20 + seeded(u?.handle || i, 6) * 900) * 864e5, ...sl };
     if (x.name && x.handle && !have.includes(x.handle) && !out.some(y => y.handle === x.handle)) out.push(x);
   });
@@ -7745,6 +7783,9 @@ async function commTick(force) {
     else if (COMM.users.length < 36) { await commUsers(12); changed = true; }
     else if (COMM.users.length < 80 && Math.random() < 0.05) { await commUsers(2); changed = true; }
     if (commFillSlots()) changed = true;
+    // v1.66 repairs: pictures picked while every pick came out as the cat in Ember, and cut-off or typing-note bios
+    if (!COMM.pixFix) { for (const u of COMM.users) if (pixOk(u.pix) && u.pix.pal === "ember") { const a = pixAuto(u.id + ":fix", "", 0); u.pix = { ...u.pix, pal: a.pal, frame: a.frame, ...(PIX_BY[u.pix.s]?.[2] === "human" ? { skin: a.skin ?? 1, hair: a.hair ?? 0 } : {}) }; } COMM.pixFix = 1; changed = true; }
+    if (COMM.users.some(u => bioNeedsFix(u) && (u.bioTried || 0) < 2)) { try { if (await commFixBios()) changed = true; } catch {} }
     if (dmMaybeOpen()) changed = true;
     // replies to the owner that are due
     for (const p of COMM.pending.filter(p => p.due <= now).slice(0, 3)) { try { const c = await commAnswer(p); if (c) { news++; toast(`@${userOf(p.by)?.handle || "someone"} replied to you`); } } catch {} COMM.pending = COMM.pending.filter(x => x.id !== p.id); COMM.done.push(p.id); changed = true; }
@@ -7983,14 +8024,14 @@ async function commDress(list) {
 async function commProfileUpdates(k) {
   const now = Date.now(), pool = COMM.users.filter(u => u.fit && !asleepAt(u, now)).map(u => [u, (follows(u.id) ? 2.5 : 1) * (0.3 + (u.active ?? 0.5)) * Math.random()]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
   if (!pool.length) return [];
-  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} update their profiles now and then, the way real users do: a new status, a tweaked bio, something new they unlocked and now wear, or pinning a different bot. Each person changes one or two things that fit what's going on with them, in their own typing style. Cosmetic options (use only these keys) - ${fitCatalog()}. ${COMM_ADULT}\n\nRespond with only JSON: {"updates": [{"handle", "status": new status or "", "bio": new bio or "", "outfit": {"theme", "accent", "flame", "lantern", "finish"} with only the parts that changed, or {}, "pin": the exact name of one of their bots to pin, or "", "picture": a new profile picture from this list, or "" - ${PIX_SPRITES.map(s => s[0]).join(", ")}}]}` },
+  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} update their profiles now and then, the way real users do: a new status, a tweaked bio, something new they unlocked and now wear, or pinning a different bot. Each person changes one or two things that fit what's going on with them, in their own typing style. Cosmetic options (use only these keys) - ${fitCatalog()}. ${COMM_ADULT}\n\nRespond with only JSON: {"updates": [{"handle", "status": new status or "", "bio": a whole new bio (2-4 complete sentences in their typing style, never describing it) or "", "outfit": {"theme", "accent", "flame", "lantern", "finish"} with only the parts that changed, or {}, "pin": the exact name of one of their bots to pin, or "", "picture": a new profile picture from this list, or "" - ${PIX_SPRITES.map(s => s[0]).join(", ")}}]}` },
     { role: "user", content: pool.map(u => `- @${u.handle} (${u.role || "regular"}). Bio: ${u.bio} Status: ${u.status || "(none)"}. Wears: ${JSON.stringify(fitOf(u))}. Types: ${u.style || u.voice}. Their bots: ${commUserPosts(u).slice(0, 5).map(p => `"${p.card.name}"`).join(", ") || "none"}. Recent: ${(COMM.blogs || []).filter(b => b.by === u.id).slice(0, 1).map(b => b.title || b.text.slice(0, 60)).join("") || "nothing"}`).join("\n") }], { temperature: 1, maxTokens: 1800, plain: true });
   const out = [];
   for (const x of Array.isArray(j?.updates) ? j.updates : []) {
     const u = pool.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); if (!u) continue;
     const at = cmBack(10 * 6e4), what = [];
     const st = s5(x?.status).slice(0, 120); if (st && st !== u.status) { u.status = st; what.push(["status", st]); }
-    const bio = s5(x?.bio).slice(0, 240); if (bio && bio !== u.bio) { u.bio = bio; what.push(["bio", bio]); }
+    const bio = commBio(x?.bio); if (bio && bio !== u.bio) { u.bio = bio; what.push(["bio", bio]); }
     const o = x?.outfit && typeof x.outfit === "object" ? x.outfit : {}, cur = fitOf(u), nx = fitClean({ ...cur, ...o });
     if (Object.keys(o).length && JSON.stringify(nx) !== JSON.stringify(cur)) { u.fit = nx; what.push(["look", ""]); }
     const pin = commUserPosts(u).find(p => p.card.name.toLowerCase() === s5(x?.pin).toLowerCase()); if (pin && pin.id !== u.pin) { u.pin = pin.id; what.push(["pin", pin.card.name]); }
