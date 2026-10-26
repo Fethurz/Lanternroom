@@ -1,0 +1,197 @@
+<title>Profile Picture Bench</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: a lantern-lit workbench. Tabs pick what's being rated; a grid of cards, each with the drawing in three colourways and a keep/tweak/drop row. */
+:root{
+  --bg:#16131d; --bg-deep:#0e0c13; --surface:#211d2b; --surface-2:#2c2739; --line:#3a3449;
+  --fg:#efeaf6; --muted:#a39bb6; --accent:#e8a95b; --accent-ink:#2a1a06;
+  --keep:#6fdc6a; --tweak:#f1c56b; --drop:#e2766f;
+  --f-display:"Young Serif",Georgia,"Times New Roman",serif; --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--bg-deep)}
+body{background:radial-gradient(120% 60% at 50% -10%,#2a2140 0%,var(--bg) 55%,var(--bg-deep) 100%) fixed;color:var(--fg);font:15px/1.45 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 60px;min-height:100%}
+main{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-direction:column;gap:6px}
+h1{font:400 clamp(26px,5vw,38px)/1.1 var(--f-display);margin:0;text-wrap:balance}
+h1 span{color:var(--accent)}
+.lede{margin:0;color:var(--muted);max-width:62ch}
+.status{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13px;color:var(--muted)}
+.status b{color:var(--fg);font-variant-numeric:tabular-nums}
+.bar{flex:1 1 180px;height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;max-width:320px}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.save{font-size:12.5px}.save.off{color:var(--drop)}
+nav{display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding:8px 0;background:linear-gradient(var(--bg) 70%,transparent)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav button{font:700 14px var(--f-body);min-height:38px;padding:0 16px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+nav button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+nav button:focus-visible,.v button:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hint{margin:0;color:var(--muted);font-size:13.5px;max-width:70ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:16px;background:var(--surface);border:1px solid var(--line);min-width:0;transition:border-color .2s}
+.card[data-v="keep"]{border-color:color-mix(in srgb,var(--keep) 60%,var(--line))}.card[data-v="tweak"]{border-color:color-mix(in srgb,var(--tweak) 60%,var(--line))}.card[data-v="drop"]{border-color:color-mix(in srgb,var(--drop) 55%,var(--line));opacity:.72}
+.art{display:flex;align-items:flex-end;gap:8px}
+.art svg{display:block;flex:none;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
+.art .big{width:96px;height:96px}.art .sm{width:52px;height:52px}
+.name{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.name b{font:400 18px/1.2 var(--f-display)}
+.name small{color:var(--muted);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.v{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.v button{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--fg);font:700 13.5px var(--f-body);cursor:pointer}
+.v button[data-k="keep"][aria-pressed="true"]{background:var(--keep);border-color:var(--keep);color:#0f2a0e}
+.v button[data-k="tweak"][aria-pressed="true"]{background:var(--tweak);border-color:var(--tweak);color:#2d2205}
+.v button[data-k="drop"][aria-pressed="true"]{background:var(--drop);border-color:var(--drop);color:#2d0b08}
+textarea{width:100%;min-height:38px;resize:vertical;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:14px/1.4 var(--f-body);padding:8px 10px}
+textarea::placeholder{color:color-mix(in srgb,var(--muted) 80%,transparent)}
+.general{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.general h2{font:400 20px var(--f-display);margin:0}
+.general textarea{min-height:90px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<main>
+  <header>
+    <h1>Profile Picture <span>Bench</span></h1>
+    <p class="lede">Drawn profile pictures for the Lanternroom community: the people there pick one to suit them, and you can pick one too (or upload your own). Each picture shows in three colourways. Mark what to keep, what needs a tweak (say what in the note), and what to drop. Frames and colourways are rated separately, since any picture can wear any of them.</p>
+    <div class="status"><span><b id="nDone">0</b> of <b id="nAll">0</b> rated</span><span class="bar"><i id="barI"></i></span><span id="kept"></span><span class="save" id="saveState">Connecting…</span></div>
+  </header>
+  <nav aria-label="What to rate"><button type="button" data-tab="pics" aria-pressed="true">Pictures</button><button type="button" data-tab="frames" aria-pressed="false">Frames</button><button type="button" data-tab="cols" aria-pressed="false">Colourways</button><button type="button" data-tab="notes" aria-pressed="false">General notes</button></nav>
+  <p class="hint" id="tabHint"></p>
+  <section class="grid" id="grid" aria-live="polite"></section>
+</main>
+
+<script>
+// ---- colourways: backdrop (two stops), main, shade, light, ink
+const PALS = {
+  ember: { n: "Ember", bg: ["#3a1d10", "#170c08"], main: "#e8a95b", shade: "#b86a2c", light: "#ffe2b0", ink: "#2a1206" },
+  moss: { n: "Moss", bg: ["#1d3320", "#0b160d"], main: "#8fd06b", shade: "#4f8f3d", light: "#d9f5c4", ink: "#0f2610" },
+  dusk: { n: "Dusk", bg: ["#2e1f4a", "#120c20"], main: "#b48cff", shade: "#7651c9", light: "#e6d9ff", ink: "#1c1036" },
+  tide: { n: "Tide", bg: ["#0f2f38", "#061419"], main: "#4fd1c5", shade: "#2a8f9a", light: "#c9f5f0", ink: "#06252a" },
+  rose: { n: "Rose", bg: ["#3d1a2c", "#180a12"], main: "#ff7eb3", shade: "#c44a80", light: "#ffd6e7", ink: "#2e0a1a" },
+  bone: { n: "Bone", bg: ["#34302a", "#141210"], main: "#e9dfc8", shade: "#a89a7c", light: "#fffaf0", ink: "#2a2418" },
+  blood: { n: "Blood", bg: ["#3a0c10", "#120405"], main: "#e2413f", shade: "#9a1c22", light: "#ffb3a8", ink: "#1a0304" },
+  frost: { n: "Frost", bg: ["#1c2c45", "#0a111d"], main: "#a8d4ff", shade: "#5f8fc9", light: "#f0f8ff", ink: "#0c1a2e" }
+};
+const PAL_KEYS = Object.keys(PALS);
+// ---- the drawings, on a 100×100 canvas; c = {main, shade, light, ink}
+const E = (cx, cy, r, f) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${f}"/>`;
+const P = (d, f, extra = "") => `<path d="${d}" fill="${f}" ${extra}/>`;
+const L = (d, s, w = 3) => `<path d="${d}" fill="none" stroke="${s}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const PICS = [
+  ["dragon", "Dragon", c => P("M74 20 L62 37 L70 36 Z", c.light) + P("M28 66 Q26 50 40 43 L52 37 Q62 30 72 32 Q80 38 79 50 Q78 62 66 66 L54 67 Q44 74 33 72 Z", c.main) + P("M30 64 Q40 60 52 62 Q46 70 34 70 Z", c.shade) + P("M52 37 L46 26 L58 34 Z", c.shade) + E(62, 46, 3.6, c.ink) + E(63.2, 45, 1.1, c.light) + E(34, 57, 1.6, c.ink) + L("M40 66 L42 70 M46 65 L47 69", c.light, 1.6)],
+  ["wolf", "Wolf", c => P("M26 22 L40 42 L30 46 Z M74 22 L60 42 L70 46 Z", c.shade) + P("M50 30 Q70 30 76 50 Q78 66 64 76 L50 82 L36 76 Q22 66 24 50 Q30 30 50 30 Z", c.main) + P("M50 54 Q62 56 62 66 Q58 78 50 80 Q42 78 38 66 Q38 56 50 54 Z", c.light) + E(40, 48, 3.4, c.ink) + E(60, 48, 3.4, c.ink) + P("M45 62 Q50 59 55 62 Q53 67 50 67 Q47 67 45 62 Z", c.ink)],
+  ["cat", "Cat", c => P("M28 24 L44 38 L30 46 Z M72 24 L56 38 L70 46 Z", c.main) + P("M31 30 L39 38 L33 42 Z M69 30 L61 38 L67 42 Z", c.light) + E(50, 56, 24, c.main) + P("M38 50 Q42 46 46 50 Q42 54 38 50 Z M54 50 Q58 46 62 50 Q58 54 54 50 Z", c.ink) + P("M47 60 L53 60 L50 63 Z", c.shade) + L("M50 63 Q46 67 43 65 M50 63 Q54 67 57 65", c.ink, 1.6) + L("M26 58 L38 60 M26 64 L38 63 M74 58 L62 60 M74 64 L62 63", c.light, 1.4)],
+  ["fox", "Fox", c => P("M24 20 L42 40 L28 50 Z M76 20 L58 40 L72 50 Z", c.main) + P("M28 28 L38 40 L31 45 Z M72 28 L62 40 L69 45 Z", c.ink) + P("M22 44 Q50 30 78 44 Q72 64 50 82 Q28 64 22 44 Z", c.main) + P("M22 44 Q36 50 44 64 L50 82 Q28 64 22 44 Z M78 44 Q64 50 56 64 L50 82 Q72 64 78 44 Z", c.light) + E(40, 52, 3, c.ink) + E(60, 52, 3, c.ink) + E(50, 76, 3.2, c.ink)],
+  ["slime", "Slime", c => P("M20 74 Q18 44 50 28 Q82 44 80 74 Q80 80 72 80 L28 80 Q20 80 20 74 Z", c.main) + P("M30 80 Q31 86 36 86 Q40 86 40 80 Z", c.main) + P("M34 40 Q42 32 50 31 Q40 36 36 46 Z", c.light, 'opacity=".8"') + E(40, 58, 5, c.ink) + E(60, 58, 5, c.ink) + E(41.6, 56.2, 1.6, c.light) + E(61.6, 56.2, 1.6, c.light) + L("M44 68 Q50 72 56 68", c.ink, 2.4)],
+  ["demon", "Demon", c => P("M30 36 Q18 26 22 10 Q30 24 40 30 Z M70 36 Q82 26 78 10 Q70 24 60 30 Z", c.shade) + E(50, 56, 25, c.main) + P("M36 50 L46 54 L36 56 Z M64 50 L54 54 L64 56 Z", c.ink) + P("M36 64 Q50 76 64 64 Q50 70 36 64 Z", c.ink) + P("M42 66 L44 71 L46 67 Z M54 67 L56 71 L58 66 Z", c.light)],
+  ["skull", "Skull", c => P("M50 22 Q76 22 76 48 Q76 60 68 64 L68 74 Q68 78 64 78 L36 78 Q32 78 32 74 L32 64 Q24 60 24 48 Q24 22 50 22 Z", c.main) + P("M38 44 Q46 44 46 52 Q46 58 40 58 Q34 58 34 52 Q34 44 38 44 Z M62 44 Q54 44 54 52 Q54 58 60 58 Q66 58 66 52 Q66 44 62 44 Z", c.ink) + P("M47 62 L50 56 L53 62 Z", c.ink) + L("M40 70 L40 77 M46 70 L46 77 M54 70 L54 77 M60 70 L60 77", c.shade, 2)],
+  ["mushroom", "Mushroom", c => P("M44 52 L56 52 L58 80 Q50 84 42 80 Z", c.light) + P("M18 54 Q20 24 50 22 Q80 24 82 54 Q50 62 18 54 Z", c.main) + E(36, 38, 5, c.light) + E(58, 32, 4, c.light) + E(66, 46, 3.5, c.light) + E(46, 48, 3, c.light) + P("M20 54 Q50 60 80 54 Q50 66 20 54 Z", c.shade)],
+  ["moon", "Moon", c => P("M60 20 Q34 24 32 50 Q34 78 62 80 Q42 72 42 50 Q42 28 60 20 Z", c.main) + E(46, 40, 2.4, c.shade) + E(44, 62, 3, c.shade) + P("M70 34 L72 40 L78 42 L72 44 L70 50 L68 44 L62 42 L68 40 Z", c.light) + P("M74 60 L75 63 L78 64 L75 65 L74 68 L73 65 L70 64 L73 63 Z", c.light)],
+  ["lantern", "Lantern", c => L("M44 22 Q50 14 56 22", c.shade, 3) + P("M38 24 L62 24 L64 32 L36 32 Z", c.shade) + P("M38 32 L62 32 L60 70 L40 70 Z", c.ink, 'opacity=".55"') + L("M38 32 L40 70 M62 32 L60 70 M50 32 L50 70", c.shade, 2.4) + P("M50 40 Q58 52 54 60 Q50 66 46 60 Q42 52 50 40 Z", c.main) + P("M50 50 Q53 56 51 60 Q50 62 49 60 Q47 56 50 50 Z", c.light) + P("M36 70 L64 70 L66 78 L34 78 Z", c.shade)],
+  ["ghost", "Ghost", c => P("M26 80 L26 48 Q26 22 50 22 Q74 22 74 48 L74 80 L67 74 L60 80 L53 74 L46 80 L40 74 L33 80 Z", c.light) + E(41, 46, 4.4, c.ink) + E(59, 46, 4.4, c.ink) + P("M44 58 Q50 66 56 58 Q50 62 44 58 Z", c.ink) + E(36, 54, 3, c.main) + E(64, 54, 3, c.main)],
+  ["octopus", "Octopus", c => L("M32 60 Q22 74 30 80 M42 62 Q38 78 46 82 M58 62 Q62 78 54 82 M68 60 Q78 74 70 80", c.main, 6) + P("M24 52 Q24 22 50 22 Q76 22 76 52 Q76 64 50 64 Q24 64 24 52 Z", c.main) + E(40, 46, 4, c.ink) + E(60, 46, 4, c.ink) + E(41.2, 44.8, 1.2, c.light) + E(61.2, 44.8, 1.2, c.light) + E(36, 32, 3, c.light) + E(44, 28, 2, c.light)],
+  ["snake", "Snake", c => L("M30 80 Q16 70 30 60 Q44 52 60 58 Q74 64 70 76 Q66 84 54 80", c.shade, 10) + L("M30 80 Q16 70 30 60 Q44 52 60 58 Q74 64 70 76 Q66 84 54 80", c.main, 6) + P("M48 26 Q64 22 70 34 Q72 46 60 50 Q46 52 42 40 Q40 30 48 26 Z", c.main) + L("M58 50 Q56 56 60 58", c.main, 8) + E(54, 34, 2.6, c.ink) + E(64, 34, 2.6, c.ink) + L("M70 42 L80 42 M80 42 L84 39 M80 42 L84 45", c.drop || "#e2413f", 1.8)],
+  ["bat", "Bat", c => P("M50 40 Q40 36 30 40 Q20 34 10 40 Q16 50 14 60 Q22 54 28 60 Q34 52 40 58 Q44 50 50 56 Q56 50 60 58 Q66 52 72 60 Q78 54 86 60 Q84 50 90 40 Q80 34 70 40 Q60 36 50 40 Z", c.main) + P("M42 34 L44 24 L48 32 L52 32 L56 24 L58 34 Q58 46 50 48 Q42 46 42 34 Z", c.shade) + E(46.5, 37, 1.8, c.light) + E(53.5, 37, 1.8, c.light)],
+  ["frog", "Frog", c => E(36, 38, 11, c.main) + E(64, 38, 11, c.main) + P("M20 58 Q20 40 50 40 Q80 40 80 58 Q80 78 50 78 Q20 78 20 58 Z", c.main) + E(36, 38, 6, c.light) + E(64, 38, 6, c.light) + E(36, 39, 3.2, c.ink) + E(64, 39, 3.2, c.ink) + L("M34 62 Q50 70 66 62", c.ink, 2.4) + E(28, 58, 3, c.shade) + E(72, 58, 3, c.shade)],
+  ["bunny", "Bunny", c => P("M36 50 Q26 18 34 12 Q44 14 44 48 Z M64 50 Q74 18 66 12 Q56 14 56 48 Z", c.main) + P("M37 44 Q32 22 35 17 Q40 20 41 44 Z M63 44 Q68 22 65 17 Q60 20 59 44 Z", c.light) + E(50, 62, 20, c.main) + E(42, 58, 2.8, c.ink) + E(58, 58, 2.8, c.ink) + P("M47 65 L53 65 L50 68 Z", c.shade) + L("M50 68 L50 71 M50 71 Q46 74 44 72 M50 71 Q54 74 56 72", c.ink, 1.4)],
+  ["bear", "Bear", c => E(30, 32, 10, c.main) + E(70, 32, 10, c.main) + E(30, 32, 5, c.shade) + E(70, 32, 5, c.shade) + E(50, 56, 26, c.main) + P("M50 56 Q64 56 64 68 Q64 78 50 78 Q36 78 36 68 Q36 56 50 56 Z", c.light) + E(40, 50, 3, c.ink) + E(60, 50, 3, c.ink) + P("M45 62 Q50 58 55 62 Q52 66 50 66 Q48 66 45 62 Z", c.ink)],
+  ["owl", "Owl", c => P("M26 38 L28 16 L42 30 Z M74 38 L72 16 L58 30 Z", c.shade) + P("M26 34 Q26 24 36 26 Q50 30 64 26 Q74 24 74 34 L74 66 Q74 82 50 82 Q26 82 26 66 Z", c.main) + E(39, 46, 10, c.light) + E(61, 46, 10, c.light) + E(39, 46, 5, c.ink) + E(61, 46, 5, c.ink) + P("M46 54 L54 54 L50 62 Z", c.shade) + L("M36 70 L40 74 L44 70 M50 72 L54 76 L58 72", c.shade, 1.6)],
+  ["shark", "Shark", c => P("M14 64 Q34 48 58 50 L66 30 L72 52 Q84 56 88 64 Q76 72 58 72 Q34 74 14 64 Z", c.main) + P("M20 66 Q40 72 60 70 Q76 68 86 64 Q76 72 58 72 Q34 74 20 66 Z", c.light) + E(72, 60, 2.2, c.ink) + L("M58 66 L60 69 L62 66 L64 69 L66 66", c.light, 1.4) + L("M8 80 Q18 74 28 80 Q38 86 48 80 Q58 74 68 80 Q78 86 92 80", c.shade, 3)],
+  ["eye", "Eye", c => P("M14 50 Q50 18 86 50 Q50 82 14 50 Z", c.light) + E(50, 50, 16, c.main) + E(50, 50, 7, c.ink) + E(55, 45, 3, c.light) + L("M14 50 Q50 18 86 50", c.shade, 3) + L("M30 34 L26 26 M42 28 L40 19 M58 28 L60 19 M70 34 L74 26", c.shade, 2.4)],
+  ["flame", "Flame", c => P("M50 14 Q56 30 70 40 Q84 54 74 72 Q66 86 50 86 Q34 86 26 72 Q18 56 32 44 Q34 54 42 56 Q36 36 50 14 Z", c.main) + P("M50 44 Q58 56 60 64 Q62 78 50 80 Q38 78 40 66 Q42 58 50 44 Z", c.light) + P("M50 62 Q54 68 53 73 Q50 76 47 73 Q46 68 50 62 Z", c.main)],
+  ["crystal", "Crystal", c => P("M50 16 L64 40 L56 84 L44 84 L36 40 Z", c.main) + P("M50 16 L56 40 L50 84 L44 40 Z", c.light, 'opacity=".55"') + P("M30 46 L38 58 L34 84 L24 84 L22 58 Z", c.shade) + P("M70 50 L78 62 L76 84 L66 84 L64 62 Z", c.shade) + P("M20 84 L80 84 L76 88 L24 88 Z", c.ink, 'opacity=".5"')],
+  ["rose", "Rose", c => L("M50 56 Q48 72 52 88", c.shade, 3) + P("M52 74 Q64 64 72 70 Q64 80 52 76 Z", c.shade) + P("M50 20 Q70 20 72 38 Q72 56 50 58 Q28 56 28 38 Q30 20 50 20 Z", c.main) + L("M50 30 Q60 30 60 38 Q60 46 50 46 Q42 46 42 38 Q44 32 52 34 Q56 36 54 40", c.shade, 2.4) + L("M30 40 Q36 52 50 54 Q64 52 70 40", c.shade, 2)],
+  ["crown", "Crown", c => P("M18 68 L14 32 L32 48 L50 24 L68 48 L86 32 L82 68 Z", c.main) + P("M18 68 L82 68 L80 78 L20 78 Z", c.shade) + E(50, 54, 5, c.light) + E(32, 60, 3.4, c.light) + E(68, 60, 3.4, c.light) + E(14, 30, 3, c.light) + E(50, 22, 3, c.light) + E(86, 30, 3, c.light)],
+  ["sword", "Sword", c => P("M47 14 L53 14 L54 62 L46 62 Z", c.light) + P("M50 14 L53 14 L54 62 L50 62 Z", c.shade, 'opacity=".5"') + P("M30 62 L70 62 L68 68 L32 68 Z", c.main) + P("M46 68 L54 68 L53 82 L47 82 Z", c.shade) + E(50, 86, 5, c.main)],
+  ["potion", "Potion", c => P("M44 18 L56 18 L56 34 Q76 42 76 62 Q76 84 50 84 Q24 84 24 62 Q24 42 44 34 Z", c.light, 'opacity=".35"') + P("M26 58 Q50 52 74 58 Q76 62 74 70 Q68 82 50 82 Q32 82 26 70 Q24 62 26 58 Z", c.main) + P("M42 14 L58 14 L58 20 L42 20 Z", c.shade) + E(42, 66, 3, c.light) + E(56, 72, 2, c.light) + E(52, 62, 1.6, c.light) + L("M44 34 Q28 42 26 56", c.light, 2)],
+  ["d20", "D20", c => P("M50 14 L82 32 L82 68 L50 86 L18 68 L18 32 Z", c.main) + P("M50 14 L82 32 L50 38 L18 32 Z", c.light, 'opacity=".55"') + P("M50 38 L68 66 L32 66 Z", c.shade) + L("M50 14 L50 38 M18 32 L50 38 L82 32 M18 68 L32 66 L50 86 L68 66 L82 68 M32 66 L50 38 L68 66", c.ink, 1.6) + `<text x="50" y="62" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="${c.light}">20</text>`],
+  ["paw", "Paw", c => P("M50 50 Q66 50 70 66 Q72 80 58 80 Q54 76 50 76 Q46 76 42 80 Q28 80 30 66 Q34 50 50 50 Z", c.main) + P("M24 42 Q32 38 34 48 Q34 56 28 56 Q22 54 24 42 Z M76 42 Q68 38 66 48 Q66 56 72 56 Q78 54 76 42 Z M38 26 Q46 24 46 36 Q45 44 40 44 Q34 42 38 26 Z M62 26 Q54 24 54 36 Q55 44 60 44 Q66 42 62 26 Z", c.main)],
+  ["planet", "Planet", c => E(50, 50, 22, c.main) + P("M30 42 Q50 36 70 44 Q72 50 70 54 Q50 46 30 52 Q28 48 30 42 Z", c.shade, 'opacity=".7"') + `<ellipse cx="50" cy="52" rx="38" ry="10" fill="none" stroke="${c.light}" stroke-width="3.4" transform="rotate(-16 50 52)"/>` + P("M28 50 Q50 40 72 50 L72 48 Q50 38 28 48 Z", c.main) + E(80, 22, 2, c.light) + E(20, 26, 1.4, c.light)],
+  ["coffee", "Coffee", c => L("M40 20 Q36 26 40 32 M50 16 Q46 24 50 32 M60 20 Q56 26 60 32", c.light, 2.4) + P("M24 38 L70 38 L66 76 Q64 82 58 82 L36 82 Q30 82 28 76 Z", c.main) + L("M70 46 Q84 46 82 58 Q80 68 67 66", c.main, 5) + P("M26 38 L68 38 L67 44 L27 44 Z", c.shade) + P("M36 56 Q40 52 44 56 Q48 60 52 56", c.light, 'opacity=".6"')],
+  ["cherry", "Cherry", c => L("M38 58 Q44 30 62 18 M64 60 Q62 34 62 18", c.shade, 3) + P("M62 18 Q76 16 80 26 Q68 30 62 18 Z", c.shade) + E(36, 66, 15, c.main) + E(64, 68, 14, c.main) + E(31, 61, 4, c.light) + E(60, 63, 3.6, c.light)],
+  ["jelly", "Jellyfish", c => L("M32 54 Q28 70 34 84 M42 56 Q46 70 40 84 M50 56 Q46 70 52 86 M58 56 Q62 70 56 84 M68 54 Q72 70 66 84", c.light, 2.6) + P("M20 54 Q20 22 50 22 Q80 22 80 54 Q72 50 65 56 Q58 50 50 56 Q42 50 35 56 Q28 50 20 54 Z", c.main) + E(42, 42, 2.6, c.ink) + E(58, 42, 2.6, c.ink) + P("M34 32 Q42 26 50 26 Q40 30 36 38 Z", c.light, 'opacity=".7"')],
+  ["alien", "Alien", c => P("M50 18 Q78 18 78 46 Q78 66 50 84 Q22 66 22 46 Q22 18 50 18 Z", c.main) + P("M30 46 Q42 42 46 54 Q36 60 30 46 Z M70 46 Q58 42 54 54 Q64 60 70 46 Z", c.ink) + E(36, 49, 1.6, c.light) + E(64, 49, 1.6, c.light) + L("M46 70 Q50 72 54 70", c.ink, 1.8)],
+  ["robot", "Robot", c => L("M50 14 L50 24", c.shade, 3) + E(50, 13, 4, c.light) + P("M24 26 L76 26 Q80 26 80 30 L80 70 Q80 76 74 76 L26 76 Q20 76 20 70 L20 30 Q20 26 24 26 Z", c.main) + P("M30 38 L70 38 L70 54 L30 54 Z", c.ink) + E(40, 46, 4, c.light) + E(60, 46, 4, c.light) + L("M34 64 L66 64 M42 60 L42 68 M50 60 L50 68 M58 60 L58 68", c.shade, 2) + P("M14 40 L20 40 L20 58 L14 58 Z M80 40 L86 40 L86 58 L80 58 Z", c.shade)],
+  ["pumpkin", "Pumpkin", c => P("M48 26 Q46 18 54 14 L56 18 Q52 20 53 26 Z", c.shade) + `<ellipse cx="36" cy="54" rx="16" ry="24" fill="${c.main}"/><ellipse cx="64" cy="54" rx="16" ry="24" fill="${c.main}"/><ellipse cx="50" cy="54" rx="16" ry="26" fill="${c.shade}"/>` + P("M36 46 L44 50 L36 54 Z M64 46 L56 50 L64 54 Z", c.light) + P("M34 62 L40 66 L44 62 L50 68 L56 62 L60 66 L66 62 Q60 74 50 74 Q40 74 34 62 Z", c.light)],
+  ["maw", "Maw", c => P("M14 50 Q14 20 50 20 Q86 20 86 50 Q86 80 50 80 Q14 80 14 50 Z", c.shade) + P("M22 50 Q22 30 50 30 Q78 30 78 50 Q78 72 50 72 Q22 72 22 50 Z", c.ink) + P("M34 64 Q50 52 66 64 Q62 72 50 72 Q38 72 34 64 Z", c.main) + P("M26 38 L30 46 L34 36 L38 44 L42 34 L46 42 L50 33 L54 42 L58 34 L62 44 L66 36 L70 46 L74 38 Q64 30 50 30 Q36 30 26 38 Z", c.light) + P("M30 62 L33 56 L36 63 Z M64 63 L67 56 L70 62 Z", c.light)],
+  ["halo", "Halo & wings", c => `<ellipse cx="50" cy="24" rx="16" ry="5" fill="none" stroke="${c.light}" stroke-width="3.4"/>` + P("M50 50 Q36 34 14 40 Q20 46 18 52 Q28 50 30 58 Q38 54 44 62 Q46 54 50 50 Z M50 50 Q64 34 86 40 Q80 46 82 52 Q72 50 70 58 Q62 54 56 62 Q54 54 50 50 Z", c.main) + E(50, 54, 8, c.light)],
+  ["storm", "Storm", c => P("M26 52 Q16 52 18 42 Q20 32 32 34 Q36 22 50 22 Q66 22 68 36 Q82 34 82 46 Q82 56 70 56 L30 56 Q26 56 26 52 Z", c.main) + P("M52 52 L40 70 L50 70 L44 86 L62 62 L52 62 L58 52 Z", c.light) + L("M28 64 L24 72 M70 64 L66 72", c.shade, 2.4)],
+  ["cactus", "Cactus", c => P("M42 84 L42 30 Q42 20 50 20 Q58 20 58 30 L58 84 Z", c.main) + L("M42 54 Q30 54 30 42 L30 36 M58 46 Q70 46 70 36 L70 30", c.main, 9) + L("M50 26 L50 80", c.shade, 1.6) + P("M34 80 L66 80 L62 90 L38 90 Z", c.shade) + E(50, 18, 3, c.light)],
+  ["cupcake", "Cupcake", c => P("M28 52 L72 52 L66 82 L34 82 Z", c.shade) + L("M38 54 L40 80 M50 54 L50 80 M62 54 L60 80", c.ink, 1.6) + P("M24 52 Q20 40 32 36 Q34 24 50 26 Q66 24 68 36 Q80 40 76 52 Z", c.main) + E(50, 20, 5, c.light) + P("M36 40 L38 44 M46 34 L48 38 M58 40 L60 44 M64 34 L66 38", "none", `stroke="${c.light}" stroke-width="2.4" stroke-linecap="round"`)]
+];
+// ---- frames: drawn over the backdrop
+const FRAMES = [
+  ["plain", "Plain circle", "A soft circle, nothing around it."],
+  ["ring", "Ring", "A thin ring in the picture's light colour."],
+  ["double", "Double ring", "Two rings, like a coin."],
+  ["dashed", "Stitched", "A dashed ring, like stitching."],
+  ["hex", "Hex badge", "A hexagon instead of a circle."],
+  ["stamp", "Stamp", "Scalloped edge, like a sticker."]
+];
+function shapePath(frame) {
+  if (frame === "hex") return "M50 3 L91 26.5 L91 73.5 L50 97 L9 73.5 L9 26.5 Z";
+  if (frame === "stamp") { let d = ""; const n = 22; for (let i = 0; i <= n; i++) { const a = (i / n) * Math.PI * 2, a2 = ((i + 0.5) / n) * Math.PI * 2; const p = (r, t) => `${(50 + r * Math.cos(t)).toFixed(2)} ${(50 + r * Math.sin(t)).toFixed(2)}`; d += (i ? " Q" + p(51, a2 - Math.PI / n) + " " : "M") + p(46, a); } return d + " Z"; }
+  return "M50 2 A48 48 0 1 1 49.99 2 Z";
+}
+let UID = 0;
+function pfp(pic, palKey, frame = "ring", cls = "big") {
+  const c = PALS[palKey], id = "g" + (++UID), shape = shapePath(frame);
+  const ring = frame === "ring" ? `<path d="${shape}" fill="none" stroke="${c.light}" stroke-width="2.4" opacity=".85"/>` : frame === "double" ? `<circle cx="50" cy="50" r="47" fill="none" stroke="${c.light}" stroke-width="2"/><circle cx="50" cy="50" r="42.5" fill="none" stroke="${c.main}" stroke-width="1.4" opacity=".8"/>` : frame === "dashed" ? `<circle cx="50" cy="50" r="45" fill="none" stroke="${c.light}" stroke-width="2" stroke-dasharray="5 4" opacity=".9"/>` : frame === "hex" || frame === "stamp" ? `<path d="${shape}" fill="none" stroke="${c.light}" stroke-width="2" opacity=".85"/>` : "";
+  return `<svg class="${cls}" viewBox="0 0 100 100" role="img" aria-label="${pic[1]} in ${c.n}"><defs><radialGradient id="${id}b" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="${c.bg[0]}"/><stop offset="1" stop-color="${c.bg[1]}"/></radialGradient><clipPath id="${id}c"><path d="${shape}"/></clipPath></defs><path d="${shape}" fill="url(#${id}b)"/><g clip-path="url(#${id}c)"><g transform="translate(50 52) scale(.86) translate(-50 -50)">${pic[2]({ ...c })}</g></g>${ring}</svg>`;
+}
+// ---- what's rated, and the store
+const ITEMS = { pics: PICS.map(p => ({ id: "s_" + p[0], name: p[1], kind: "Picture", art: () => [pfp(p, PAL_KEYS[(PICS.indexOf(p)) % 8]), pfp(p, PAL_KEYS[(PICS.indexOf(p) + 3) % 8], "ring", "sm"), pfp(p, PAL_KEYS[(PICS.indexOf(p) + 5) % 8], "ring", "sm")].join("") })),
+  frames: FRAMES.map(([k, n, d]) => ({ id: "f_" + k, name: n, kind: d, art: () => [pfp(PICS[1], "ember", k), pfp(PICS[4], "moss", k, "sm"), pfp(PICS[22], "rose", k, "sm")].join("") })),
+  cols: PAL_KEYS.map(k => ({ id: "p_" + k, name: PALS[k].n, kind: "Colourway", art: () => [pfp(PICS[0], k), pfp(PICS[7], k, "ring", "sm"), pfp(PICS[10], k, "ring", "sm")].join("") })) };
+const HINTS = { pics: "40 drawings. The big one shows the main colourway; the small ones show two others. The people in the community will pick ones that suit them.", frames: "The edge around a picture. Each frame is shown on three pictures.", cols: "The colour sets a picture can come in. Each is shown on three pictures.", notes: "Anything about the whole set: subjects you'd like added, a style change, how big they should look." };
+const STATE = {}; let DB = null, TAB = "pics", GENERAL = "";
+try { TAB = localStorage.getItem("pfpTab") || "pics"; } catch {}
+const total = () => ITEMS.pics.length + ITEMS.frames.length + ITEMS.cols.length;
+function counts() {
+  const all = [...ITEMS.pics, ...ITEMS.frames, ...ITEMS.cols], done = all.filter(x => STATE[x.id]?.v).length, keep = all.filter(x => STATE[x.id]?.v === "keep").length, tw = all.filter(x => STATE[x.id]?.v === "tweak").length, dr = all.filter(x => STATE[x.id]?.v === "drop").length;
+  document.getElementById("nDone").textContent = done; document.getElementById("nAll").textContent = total();
+  document.getElementById("barI").style.width = (done / total() * 100).toFixed(1) + "%";
+  document.getElementById("kept").textContent = done ? `${keep} keep · ${tw} tweak · ${dr} drop` : "";
+}
+function draw() {
+  document.querySelectorAll("nav [data-tab]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.tab === TAB)));
+  document.getElementById("tabHint").textContent = HINTS[TAB];
+  const g = document.getElementById("grid");
+  if (TAB === "notes") {
+    g.innerHTML = `<div class="general" style="grid-column:1/-1"><h2>General notes</h2><textarea id="genNote" placeholder="e.g. more monster faces, fewer objects; make the backdrops brighter">${esc(GENERAL)}</textarea></div>`;
+    const ta = document.getElementById("genNote"); let t = 0;
+    ta.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => save("general", { text: ta.value }), 600); });
+    counts(); return;
+  }
+  g.innerHTML = ITEMS[TAB].map(x => { const s = STATE[x.id] || {};
+    return `<article class="card" data-id="${x.id}" data-v="${s.v || ""}"><div class="art">${x.art()}</div><div class="name"><b>${esc(x.name)}</b><small>${esc(TAB === "pics" ? "Picture" : TAB === "frames" ? "Frame" : "Colourway")}</small></div>${TAB === "frames" ? `<p class="hint" style="margin:0">${esc(x.kind)}</p>` : ""}
+      <div class="v" role="group" aria-label="Verdict for ${esc(x.name)}">${["keep", "tweak", "drop"].map(k => `<button type="button" data-k="${k}" aria-pressed="${s.v === k}">${k[0].toUpperCase() + k.slice(1)}</button>`).join("")}</div>
+      <textarea id="n_${x.id}" placeholder="${s.v === "tweak" ? "What should change?" : "Note (optional)"}" aria-label="Note for ${esc(x.name)}">${esc(s.note || "")}</textarea></article>`; }).join("");
+  g.querySelectorAll(".card").forEach(card => {
+    const id = card.dataset.id;
+    card.querySelectorAll(".v button").forEach(b => b.onclick = () => { const cur = STATE[id] || {}; const v = cur.v === b.dataset.k ? "" : b.dataset.k; STATE[id] = { ...cur, v }; card.dataset.v = v; card.querySelectorAll(".v button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.k === v))); card.querySelector("textarea").placeholder = v === "tweak" ? "What should change?" : "Note (optional)"; counts(); save(id, STATE[id]); });
+    const ta = card.querySelector("textarea"); let t = 0;
+    ta.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => { STATE[id] = { ...(STATE[id] || {}), note: ta.value }; save(id, STATE[id]); }, 600); });
+  });
+  counts();
+}
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]); }
+const saveEl = document.getElementById("saveState");
+async function save(id, body) {
+  if (!DB) { saveEl.textContent = "Not saved: sign in to claude.ai to save your ratings"; saveEl.classList.add("off"); return; }
+  try { saveEl.textContent = "Saving…"; await DB.collection("pfp").doc(id).set({ v: body.v || "", note: body.note || "", text: body.text || "", at: Date.now() }); saveEl.textContent = "Saved"; saveEl.classList.remove("off"); }
+  catch (e) { saveEl.textContent = "Couldn't save: " + (e?.message || e?.code || "try again"); saveEl.classList.add("off"); }
+}
+document.querySelectorAll("nav [data-tab]").forEach(b => b.onclick = () => { TAB = b.dataset.tab; try { localStorage.setItem("pfpTab", TAB); } catch {} draw(); });
+draw();
+(async () => {
+  const db = window.claude?.use ? await window.claude.use("db").catch(() => null) : null;
+  if (!db) { saveEl.textContent = "Ratings can't be saved here: open this page on claude.ai while signed in"; saveEl.classList.add("off"); return; }
+  DB = db; saveEl.textContent = "Ratings save as you go";
+  db.collection("pfp").onSnapshot(snap => {
+    for (const d of snap.docs) { const x = d.data() || {}; if (d.id === "general") GENERAL = x.text || ""; else STATE[d.id] = { v: x.v || "", note: x.note || "" }; }
+    const a = document.activeElement; if (a && a.tagName === "TEXTAREA") { counts(); return; } draw();
+  }, () => { saveEl.textContent = "Lost the connection: ratings may not save"; saveEl.classList.add("off"); });
+})();
+</script>

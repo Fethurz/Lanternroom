@@ -1,0 +1,204 @@
+<title>Profile Picture Bench</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: a lantern-lit workbench. Tabs pick what's being rated; a grid of cards, each with the drawing in three colourways and a keep/tweak/drop row. */
+:root{
+  --bg:#16131d; --bg-deep:#0e0c13; --surface:#211d2b; --surface-2:#2c2739; --line:#3a3449;
+  --fg:#efeaf6; --muted:#a39bb6; --accent:#e8a95b; --accent-ink:#2a1a06;
+  --keep:#6fdc6a; --tweak:#f1c56b; --drop:#e2766f;
+  --f-display:"Young Serif",Georgia,"Times New Roman",serif; --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--bg-deep)}
+body{background:radial-gradient(120% 60% at 50% -10%,#2a2140 0%,var(--bg) 55%,var(--bg-deep) 100%) fixed;color:var(--fg);font:15px/1.45 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 60px;min-height:100%}
+main{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-direction:column;gap:6px}
+h1{font:400 clamp(26px,5vw,38px)/1.1 var(--f-display);margin:0;text-wrap:balance}
+h1 span{color:var(--accent)}
+.lede{margin:0;color:var(--muted);max-width:62ch}
+.status{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13px;color:var(--muted)}
+.status b{color:var(--fg);font-variant-numeric:tabular-nums}
+.bar{flex:1 1 180px;height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;max-width:320px}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.save{font-size:12.5px}.save.off{color:var(--drop)}
+nav{display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding:8px 0;background:linear-gradient(var(--bg) 70%,transparent)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav button{font:700 14px var(--f-body);min-height:38px;padding:0 16px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+nav button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+nav button:focus-visible,.v button:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hint{margin:0;color:var(--muted);font-size:13.5px;max-width:70ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:16px;background:var(--surface);border:1px solid var(--line);min-width:0;transition:border-color .2s}
+.card[data-v="keep"]{border-color:color-mix(in srgb,var(--keep) 60%,var(--line))}.card[data-v="tweak"]{border-color:color-mix(in srgb,var(--tweak) 60%,var(--line))}.card[data-v="drop"]{border-color:color-mix(in srgb,var(--drop) 55%,var(--line));opacity:.72}
+.art{display:flex;align-items:flex-end;gap:8px}
+.art svg{display:block;flex:none;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
+.art .big{width:96px;height:96px}.art .sm{width:52px;height:52px}.art svg{image-rendering:pixelated}
+.name{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.name b{font:400 18px/1.2 var(--f-display)}
+.name small{color:var(--muted);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.v{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.v button{min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--fg);font:700 13.5px var(--f-body);cursor:pointer}
+.v button[data-k="keep"][aria-pressed="true"]{background:var(--keep);border-color:var(--keep);color:#0f2a0e}
+.v button[data-k="tweak"][aria-pressed="true"]{background:var(--tweak);border-color:var(--tweak);color:#2d2205}
+.v button[data-k="drop"][aria-pressed="true"]{background:var(--drop);border-color:var(--drop);color:#2d0b08}
+textarea{width:100%;min-height:38px;resize:vertical;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:14px/1.4 var(--f-body);padding:8px 10px}
+textarea::placeholder{color:color-mix(in srgb,var(--muted) 80%,transparent)}
+.general{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.general h2{font:400 20px var(--f-display);margin:0}
+.general textarea{min-height:90px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<main>
+  <header>
+    <h1>Profile Picture <span>Bench</span></h1>
+    <p class="lede">Round 2: pixel art. 25 hand-made 12×16 sprites for the Lanternroom community. Each one recolours into any colourway (people mix skin tones with hair and clothes colours), so the small ones show two other looks. Mark what to keep, what needs a tweak (say what in the note), and what to drop, and add ideas for more in General notes. The round 1 drawings are saved in the project in case they're useful elsewhere.</p>
+    <div class="status"><span><b id="nDone">0</b> of <b id="nAll">0</b> rated</span><span class="bar"><i id="barI"></i></span><span id="kept"></span><span class="save" id="saveState">Connecting…</span></div>
+  </header>
+  <nav aria-label="What to rate"><button type="button" data-tab="pics" aria-pressed="true">Sprites</button><button type="button" data-tab="frames" aria-pressed="false">Frames</button><button type="button" data-tab="cols" aria-pressed="false">Colourways</button><button type="button" data-tab="notes" aria-pressed="false">General notes</button></nav>
+  <p class="hint" id="tabHint"></p>
+  <section class="grid" id="grid" aria-live="polite"></section>
+</main>
+
+<script>
+// Drawn 16×16, then narrowed to 12×16 by narrow() (redundant column pairs dropped, eyes and details kept). Most are symmetric: 8-wide left halves, mirrored. Keys: . clear, o outline, b base, s shade, h highlight,
+// e dark (eyes, mouth), w white, a accent (pink/red), c second colour, d its shade, g glow
+const SPRITES = [
+  ["cat", "Cat", "creature", ["........", "..o.....", "..oo....", "..obo...", "..oabo..", "..obbooo", ".obbbbbb", ".obhbbbb", ".obeebbb", ".obewbbb", ".obbbbba", ".osbbbbo", "..osbbbb", "...ossss", "....oooo", "........"]],
+  ["wolf", "Wolf", "creature", [".o......", ".oo.....", ".obo....", ".obbo...", ".obabooo", ".obbbbbb", "obbhbbbb", "obbbbbbb", "obeebbbb", "obewbbcc", ".obbbccc", ".osbccce", "..osccco", "...osccc", "....oooo", "........"]],
+  ["fox", "Fox", "creature", ["........", ".o......", ".eo.....", ".eeo....", ".obeo...", ".obbbooo", "obbbbbbb", "obhbbbbb", "obeebbbb", "obewbbbb", "owwbbbbb", ".owwwbbb", "..owwwwe", "...owwww", "....oooo", "........"]],
+  ["bear", "Bear", "creature", ["........", ".ooo....", "obsbo...", "obsbbooo", ".obbbbbb", "obbhbbbb", "obbbbbbb", "obeebbbb", "obewbbbb", "obbbbccc", "obbbcccc", ".obbccce", ".osbccco", "..osbccc", "...ooooo", "........"]],
+  ["bunny", "Bunny", "creature", ["..oo....", ".obao...", ".obao...", ".obao...", ".obao...", ".obbo...", "..obbooo", ".obbbbbb", ".obhbbbb", ".obeebbb", ".obewbbb", ".oabbbba", "..obbbbo", "..osbbbb", "...ooooo", "........"]],
+  ["dog", "Dog", "creature", ["........", "...ooooo", "..obbbbb", ".ocbbbbb", "occbhbbb", "occbbbbb", "occeebbb", "occewbbb", "ocdbbwww", ".odbwwwe", ".odbwwwo", "..obwwwa", "...obwwa", "....oooo", "........", "........"]],
+  ["frog", "Frog", "creature", ["........", "........", ".ooooo..", "owwwwwo.", "owweewo.", "owweewoo", "obwwwwbb", "obbbbbbb", "obhbbbbb", "obbbbbbb", "oabbbbbb", "obeeeeee", ".obbbbbb", ".osbbbbb", "..oooooo", "........"]],
+  ["owl", "Owl", "creature", ["........", ".o......", ".oo.....", ".obooooo", ".obbbbbb", "obcccbbb", "ocweecbb", "oceeecbb", "obcccbba", "obbbbbba", "obbbbbbb", "obhbbhbb", ".obbhbbh", ".obbbbbb", "..oooooo", "........"]],
+  ["slime", "Slime", "creature", ["........", "........", "........", "......oo", "....oobb", "...obhhb", "..obhbbb", "..obbbbb", ".obbeebb", ".obbewbb", ".obbbbbb", "obabbbbb", "obbbbbbe", "osbbbbbb", ".ossssss", "..oooooo"]],
+  ["ghost", "Ghost", "creature", ["........", ".....ooo", "...oohhh", "..ohhhhh", ".ohhhhhh", ".ohhhhhh", "ohheehhh", "ohheehhh", "ohhhhhhh", "ohaahhhe", "ohhhhhhe", "ohhhhhhh", "ohhhhhhh", "ohhohhho", ".oo.ooo.", "........"]],
+  ["skull", "Skull", "creature", ["........", "...ooooo", "..obbbbb", ".obbbbbb", ".obbhbbb", "obbbbbbb", "obeeebbb", "obeeebbb", "obbeebbb", "obbbbbbe", ".obbbbbb", "..osbsbs", "..obsbsb", "...ooooo", "........", "........"]],
+  ["demon", "Demon", "creature", [".o......", ".co.....", ".cco....", "..cco...", "..ocbooo", ".obbbbbb", "obbhbbbb", "obbbbbbb", "obggebbb", "obbbbbbb", "obbbbbbb", "obbeeeee", ".obewbbb", "..obbbbb", "...ooooo", "........"]],
+  ["alien", "Alien", "creature", ["........", "...ooooo", "..obbbbb", ".obhbbbb", "obbbbbbb", "obbbbbbb", "oeeebbbb", "oeweebbb", "obeeebbb", ".obbbbbb", ".obbbbbb", "..obbbbb", "...obbbe", "....obbb", ".....ooo", "........"]],
+  ["robot", "Robot", "creature", [".......o", "......oa", ".......o", ".ooooooo", ".obbbbbb", "obhbbbbb", "obeeeeee", "obegeeee", "obeeeeee", "obbbbbbb", "obsbsbsb", "obbbbbbb", ".ooooooo", "...osbbb", "..oooooo", "........"]],
+  ["mushroom", "Mushroom", "creature", ["........", "....oooo", "..oobbbb", ".obbwwbb", ".obwwwbb", "obbbbbww", "obbwbbww", "osbbbbbb", ".oosssss", "...occcc", "...ocecc", "...occcc", "...ocdca", "...odddd", "...ooooo", "........"]],
+  ["pumpkin", "Pumpkin", "creature", ["........", "......oc", "..ooooco", ".obbsbbb", "obbsbbbb", "obbsbbbb", "obggsbbb", "obbgsbbb", "obbsbbbg", "obbsbbbb", "obgggggg", "obbgbggb", ".obsbbbb", "..oosbbb", "....oooo", "........"]],
+  ["octopus", "Octopus", "creature", ["........", "....oooo", "..oobbbb", ".obhbbbb", ".obbbbbb", "obbbbbbb", "obbeebbb", "obbwebbb", "obbbbbbb", ".obbbbbb", ".obbbbbb", "obboobbo", "obboobbo", "ob.ob.ob", "o..o..o.", "........"]],
+  ["dragon", "Dragon", "creature", ["o.......", "oc......", ".oc.....", ".occoooo", "..obbbbb", ".obbbbbb", "obhbbbbb", "obbgobbb", "obbbbbbb", ".obbbccc", ".obccccc", ".obcccec", "..occccc", "...owcwc", "....oooo", "........"]],
+  ["knight", "Knight", "person", ["........", "...ooooo", "..obhhbb", ".obhbbbb", ".obbbbbb", "obbbbbbb", "obbsssss", "obseeeee", "obbsbsbs", "obbbbbbb", "obsbsbsb", ".obbbbbb", ".osbbbbb", "..osssss", "...ooooo", "........"]],
+  ["wizard", "Wizard", "person", [".......o", "......oc", ".....occ", "....occc", "...occca", "..occccc", "oooooooo", "..obbbbb", "..obebbb", "..obbbbb", ".owwbbbb", ".owwwwww", "..owwwww", "...owwww", "....oooo", "........"]],
+  ["girl", "Long hair", "human", ["........", "...ooooo", "..occccc", ".occdccc", ".occcbbb", ".occbbbb", ".occbebb", ".occbebb", ".occabbb", ".occbbbb", ".occbbba", ".occsbbb", ".occcoss", ".occoddd", "..oodddd", "...ooooo"]],
+  ["guy", "Short hair", "human", ["........", "...ooooo", "..occccc", ".occdccc", ".ocbbbbb", ".obbbbbb", ".obbebbb", ".obbebbb", "osbbbbbb", ".obbbbbs", ".obbbbbb", ".obbbbbo", "..obbbbb", "...ossss", "..oddddd", ".odddddd"]],
+  ["hood", "Hooded", "person", ["....oooo", "...occcc", "..occccc", ".occcccc", ".occdddd", "occdeeee", "occdeeee", "occdegee", "occdeeee", "occdeeee", "occcdeee", "occccddd", "occccccc", "occccccc", "oooooooo", "........"]],
+  ["vampire", "Vampire", "human", ["........", "...ooooo", "..occccc", ".occcccc", ".occbbbc", ".ocbbbbb", ".obbbbbb", ".obbgbbb", ".obbbbbb", ".obbbbbs", ".obbbbbe", ".obbbbwb", "..obbbbb", ".oaossss", "oaaodddd", "oooooooo"]],
+  ["lantern", "Lantern", "object", ["........", "......oo", ".....o..", "....oooo", "...occcc", "..oooooo", "..oceeee", "..oceeeg", "..oceegw", "..oceegg", "..oceeeg", "..oceeee", "..oooooo", "...occcc", "...ooooo", "........"]]
+];
+// creature colourways: o outline, b base, s shade, h highlight, e dark, w white, a accent, c second colour, d its shade, g glow, bg backdrop [light, dark]
+const PIX_PALS = {
+  ember: { n: "Ember", o: "#2a1208", b: "#e8a95b", s: "#b86a2c", h: "#ffd89a", e: "#2a1208", w: "#fff6e6", a: "#ff7a6b", c: "#7a4a2a", d: "#4a2a16", g: "#ffef7a", bg: ["#4a2418", "#2a140c"] },
+  moss: { n: "Moss", o: "#0f2410", b: "#7fc85a", s: "#4a8a36", h: "#c6f0a4", e: "#0f2410", w: "#f2ffe8", a: "#ff8fa8", c: "#c8b07a", d: "#8a7448", g: "#fff07a", bg: ["#22402a", "#122418"] },
+  dusk: { n: "Dusk", o: "#1a0e30", b: "#a884f0", s: "#6e4fc0", h: "#dccaff", e: "#1a0e30", w: "#f6f0ff", a: "#ff8fc8", c: "#4a3a7a", d: "#2e2450", g: "#7ff0ff", bg: ["#33245a", "#1a1232"] },
+  tide: { n: "Tide", o: "#06222a", b: "#48c8bc", s: "#2a8890", h: "#b8f2ea", e: "#06222a", w: "#effffd", a: "#ff9a8a", c: "#e8d8a8", d: "#a89868", g: "#fff8a8", bg: ["#123a44", "#08202a"] },
+  rose: { n: "Rose", o: "#2e0a1a", b: "#f27aab", s: "#b84878", h: "#ffd0e2", e: "#2e0a1a", w: "#fff2f8", a: "#ff4a6a", c: "#5a2a4a", d: "#3a1830", g: "#ffe07a", bg: ["#4a1a34", "#2a0c1c"] },
+  bone: { n: "Bone", o: "#22201a", b: "#e6dcc4", s: "#a89878", h: "#fffaee", e: "#22201a", w: "#ffffff", a: "#e2766f", c: "#6a5a48", d: "#443a2e", g: "#ff6a4a", bg: ["#3c3830", "#1e1c18"] },
+  blood: { n: "Blood", o: "#1a0304", b: "#d63a3a", s: "#8a1a22", h: "#ff9a8a", e: "#1a0304", w: "#ffe8e0", a: "#ffd04a", c: "#2a1418", d: "#160a0c", g: "#ffe84a", bg: ["#3a0c10", "#1c0406"] },
+  frost: { n: "Frost", o: "#0c1a2e", b: "#a0ccf8", s: "#5f8ac4", h: "#eef8ff", e: "#0c1a2e", w: "#ffffff", a: "#ff9ab8", c: "#e8eef8", d: "#a8b8d0", g: "#7ff8ff", bg: ["#1e3050", "#0c1628"] }
+};
+// people: skin tones (b/s/h) mixed with hair and clothes (c/d)
+const SKINS = [["#f6d6bc", "#d8a888", "#fff0e2"], ["#e8b48c", "#c08860", "#f8d4b4"], ["#c88a5a", "#9a6038", "#e2aa7c"], ["#9a6440", "#6e4226", "#b88058"], ["#6a4028", "#482814", "#8a5a3a"], ["#dfe8f0", "#a8b8c8", "#ffffff"]];
+const HAIRS = [["#2a1a14", "#160c08"], ["#7a4a2a", "#4a2a16"], ["#e8c070", "#b08a40"], ["#c8402a", "#8a2414"], ["#f0f0f0", "#b8b8c0"], ["#5a7aff", "#3a50c0"], ["#ff6aa8", "#c03a78"], ["#4ad0a0", "#2a9070"]];
+const full = rows => rows.map(r => r.length === 16 ? r : r + [...r].reverse().join(""));
+// drop the most redundant symmetric column pairs until the sprite is W wide
+const edges = g => g.reduce((t, r) => { const l = r.findIndex(c => c !== "."), q = r.length - 1 - [...r].reverse().findIndex(c => c !== "."); return t + (l >= 0 && r[l] === "o") + (l >= 0 && r[q] === "o"); }, 0);
+const runs = g => g.reduce((t, r) => t + r.filter((c, k) => "egwa".includes(c) && c !== r[k - 1]).length, 0);
+function narrow(rows, W = 12) {
+  let g = full(rows).map(r => [...r]);
+  while (g[0].length > W) {
+    const n = g[0].length, h = n / 2;
+    let best = 1, bs = -Infinity;
+    for (let j = 1; j < h; j++) { // pair j and n-1-j (never the outer edge column 0)
+      let s = 0;
+      for (const r of g) { const a = r[j], m = r[n - 1 - j];
+        if (a === r[j - 1] || a === r[j + 1]) s++; if (m === r[n - j] || m === r[n - 2 - j]) s++;
+        if (a !== "." && a !== "o" && a !== r[j - 1] && a !== r[j + 1]) s -= "egwa".includes(a) ? 1e6 : 3; }
+      const cut = g.map(r => r.filter((_, k) => k !== j && k !== n - 1 - j));
+      if (runs(cut) < runs(g)) s -= 1e6;
+      s -= 8 * (edges(g) - edges(cut)); // never merge or lose eyes and other details
+      if (s > bs) { bs = s; best = j; }
+    }
+    g = g.map(r => r.filter((_, k) => k !== best && k !== n - 1 - best));
+    g.forEach((r, y) => { const l = r.findIndex(c => c !== "."); if (l < 0) return; const q = r.length - 1 - [...r].reverse().findIndex(c => c !== ".");
+      if (r[l] !== "o" && (y === 0 || g[y - 1][l] !== "." )) r[l] = "o"; if (r[q] !== "o" && (y === 0 || g[y - 1][q] !== ".")) r[q] = "o"; });
+  }
+  return g.map(r => r.join(""));
+}
+function pixSVG(sp, pal, frame = "round", size = 96) {
+  const rows = narrow(sp[3]), cols = { ...pal }, ox = (24 - rows[0].length) / 2;
+  let rects = "";
+  // backdrop: two-tone with a soft dither band
+  let bg = `<rect width="24" height="24" fill="${pal.bg[1]}"/><rect width="24" height="13" fill="${pal.bg[0]}"/>`;
+  for (let x = 0; x < 24; x += 2) bg += `<rect x="${x + (x % 4 ? 1 : 0)}" y="13" width="1" height="1" fill="${pal.bg[0]}"/>`;
+  rows.forEach((r, y) => [...r].forEach((ch, x) => { if (ch !== "." && cols[ch]) rects += `<rect x="${x + ox}" y="${y + 5}" width="1" height="1" fill="${cols[ch]}"/>`; }));
+  const mask = frame === "round" ? `<path d="M8 0h8v1h2v1h2v1h1v1h1v2h1v2h1v8h-1v2h-1v2h-1v1h-1v1h-2v1h-2v1h-8v-1h-2v-1h-2v-1h-1v-1h-1v-2h-1v-2h-1v-8h1v-2h1v-2h1v-1h1v-1h2v-1h2z"/>` : frame === "soft" ? `<path d="M3 0h18v1h1v1h1v1h1v18h-1v1h-1v1h-1v1h-18v-1h-1v-1h-1v-1h-1v-18h1v-1h1v-1h1z"/>` : `<rect width="24" height="24"/>`;
+  const id = "m" + Math.random().toString(36).slice(2, 8);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${size}" height="${size}" shape-rendering="crispEdges"><defs><clipPath id="${id}">${mask}</clipPath></defs><g clip-path="url(#${id})">${bg}${rects}</g></svg>`;
+}
+function palFor(sp, k, i) { const p = PIX_PALS[k]; if (sp[2] !== "human") return p; const sk = SKINS[i % SKINS.length], hr = HAIRS[(i * 3 + 1) % HAIRS.length]; return { ...p, b: sk[0], s: sk[1], h: sk[2], c: hr[0], d: hr[1] }; }
+
+const PAL_KEYS = Object.keys(PIX_PALS);
+const FRAMES = [["round", "Pixel circle", "A stepped circle, like old game portraits."], ["soft", "Soft square", "A square with clipped pixel corners."], ["square", "Square", "A plain square tile."]];
+const pic = (sp, i, k, frame = "round", cls = "big") => pixSVG(sp, palFor(sp, k, i), frame, cls === "big" ? 96 : 52).replace("<svg ", `<svg class="${cls}" role="img" aria-label="${sp[1]}" `);
+const ITEMS = {
+  pics: SPRITES.map((sp, i) => ({ id: "x_" + sp[0], name: sp[1], art: () => pic(sp, i, PAL_KEYS[i % 8]) + pic(sp, i + 2, PAL_KEYS[(i + 3) % 8], "round", "sm") + pic(sp, i + 4, PAL_KEYS[(i + 5) % 8], "soft", "sm") })),
+  frames: FRAMES.map(([k, n, d]) => ({ id: "xf_" + k, name: n, kind: d, art: () => pic(SPRITES[0], 0, "ember", k) + pic(SPRITES[8], 1, "moss", k, "sm") + pic(SPRITES[20], 2, "dusk", k, "sm") })),
+  cols: PAL_KEYS.map(k => ({ id: "xp_" + k, name: PIX_PALS[k].n, art: () => pic(SPRITES[1], 0, k) + pic(SPRITES[11], 0, k, "round", "sm") + pic(SPRITES[21], PAL_KEYS.indexOf(k), k, "round", "sm") }))
+};
+const HINTS = { pics: "25 sprites. The big one shows one colourway; the small ones show two others (and the other frames). People in the community will pick ones that suit them.", frames: "The shape of the picture. Each frame is shown on three sprites.", cols: "The colour sets a sprite can come in. People sprites take a skin tone and a hair colour as well.", notes: "Anything about the whole set: subjects to add (more people? species? objects?), size, detail, how bright the backdrops are." };
+const STATE = {}; let DB = null, TAB = "pics", GENERAL = "";
+try { TAB = localStorage.getItem("pfpTab2") || "pics"; } catch {}
+const total = () => ITEMS.pics.length + ITEMS.frames.length + ITEMS.cols.length;
+function counts() {
+  const all = [...ITEMS.pics, ...ITEMS.frames, ...ITEMS.cols], done = all.filter(x => STATE[x.id]?.v).length, keep = all.filter(x => STATE[x.id]?.v === "keep").length, tw = all.filter(x => STATE[x.id]?.v === "tweak").length, dr = all.filter(x => STATE[x.id]?.v === "drop").length;
+  document.getElementById("nDone").textContent = done; document.getElementById("nAll").textContent = total();
+  document.getElementById("barI").style.width = (done / total() * 100).toFixed(1) + "%";
+  document.getElementById("kept").textContent = done ? `${keep} keep · ${tw} tweak · ${dr} drop` : "";
+}
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]); }
+function draw() {
+  document.querySelectorAll("nav [data-tab]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.tab === TAB)));
+  document.getElementById("tabHint").textContent = HINTS[TAB];
+  const g = document.getElementById("grid");
+  if (TAB === "notes") {
+    g.innerHTML = `<div class="general" style="grid-column:1/-1"><h2>General notes</h2><textarea id="genNote" placeholder="e.g. more people with different hair, a few dragons, smaller backdrops">${esc(GENERAL)}</textarea></div>`;
+    const ta = document.getElementById("genNote"); let t = 0;
+    ta.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => save("general2", { text: ta.value }), 600); });
+    counts(); return;
+  }
+  g.innerHTML = ITEMS[TAB].map(x => { const s = STATE[x.id] || {};
+    return `<article class="card" data-id="${x.id}" data-v="${s.v || ""}"><div class="art">${x.art()}</div><div class="name"><b>${esc(x.name)}</b><small>${TAB === "pics" ? "Sprite" : TAB === "frames" ? "Frame" : "Colourway"}</small></div>${x.kind ? `<p class="hint" style="margin:0">${esc(x.kind)}</p>` : ""}
+      <div class="v" role="group" aria-label="Verdict for ${esc(x.name)}">${["keep", "tweak", "drop"].map(k => `<button type="button" data-k="${k}" aria-pressed="${s.v === k}">${k[0].toUpperCase() + k.slice(1)}</button>`).join("")}</div>
+      <textarea id="n_${x.id}" placeholder="${s.v === "tweak" ? "What should change?" : "Note (optional)"}" aria-label="Note for ${esc(x.name)}">${esc(s.note || "")}</textarea></article>`; }).join("");
+  g.querySelectorAll(".card").forEach(card => {
+    const id = card.dataset.id;
+    card.querySelectorAll(".v button").forEach(b => b.onclick = () => { const cur = STATE[id] || {}; const v = cur.v === b.dataset.k ? "" : b.dataset.k; STATE[id] = { ...cur, v }; card.dataset.v = v; card.querySelectorAll(".v button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.k === v))); card.querySelector("textarea").placeholder = v === "tweak" ? "What should change?" : "Note (optional)"; counts(); save(id, STATE[id]); });
+    const ta = card.querySelector("textarea"); let t = 0;
+    ta.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => { STATE[id] = { ...(STATE[id] || {}), note: ta.value }; save(id, STATE[id]); }, 600); });
+  });
+  counts();
+}
+const saveEl = document.getElementById("saveState");
+async function save(id, body) {
+  if (!DB) { saveEl.textContent = "Not saved: sign in to claude.ai to save your ratings"; saveEl.classList.add("off"); return; }
+  try { saveEl.textContent = "Saving…"; await DB.collection("pfp").doc(id).set({ v: body.v || "", note: body.note || "", text: body.text || "", at: Date.now() }); saveEl.textContent = "Saved"; saveEl.classList.remove("off"); }
+  catch (e) { saveEl.textContent = "Couldn't save: " + (e?.message || e?.code || "try again"); saveEl.classList.add("off"); }
+}
+document.querySelectorAll("nav [data-tab]").forEach(b => b.onclick = () => { TAB = b.dataset.tab; try { localStorage.setItem("pfpTab2", TAB); } catch {} draw(); });
+draw();
+(async () => {
+  const db = window.claude?.use ? await window.claude.use("db").catch(() => null) : null;
+  if (!db) { saveEl.textContent = "Ratings can't be saved here: open this page on claude.ai while signed in"; saveEl.classList.add("off"); return; }
+  DB = db; saveEl.textContent = "Ratings save as you go";
+  db.collection("pfp").onSnapshot(snap => {
+    for (const d of snap.docs) { const x = d.data() || {}; if (d.id === "general2") GENERAL = x.text || ""; else STATE[d.id] = { v: x.v || "", note: x.note || "" }; }
+    const a = document.activeElement; if (a && a.tagName === "TEXTAREA") { counts(); return; } draw();
+  }, () => { saveEl.textContent = "Lost the connection: ratings may not save"; saveEl.classList.add("off"); });
+})();
+</script>

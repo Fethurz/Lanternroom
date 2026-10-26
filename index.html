@@ -682,6 +682,8 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .cm-blog{display:flex;flex-direction:column;gap:5px;padding:10px 12px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);cursor:pointer}.cm-blog p{margin:0;font-size:14px;line-height:1.45;white-space:pre-wrap}
 .cm-post-tx{font-size:15px;line-height:1.5;white-space:pre-wrap;padding:4px 2px}
 .fd-row{align-items:flex-start}.fd-row .grow{line-height:1.35}.fd-copy .btn{align-self:center}
+.cm-src{align-self:flex-start;font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}.cm-src.oc{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.cm-img{object-fit:cover;border:1.5px solid var(--accent);padding:0;background:var(--surface-2)}.cm-me{display:flex;align-items:center;gap:14px;margin-bottom:8px}
 /* DMs (v1.63) */
 .dm-head{display:flex;align-items:center;gap:10px;min-height:44px;background:none;border:0;padding:0 0 6px;color:var(--fg);font:inherit;text-align:left;cursor:pointer;border-bottom:1px solid var(--line);width:100%}
 .dm-head>span:last-child{display:flex;flex-direction:column}.dm-st{font-size:12px;color:var(--muted)}.dm-st.on{color:#6fdc6a}
@@ -1441,7 +1443,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.64 · Oct 26";
+const VERSION = "1.65 · Oct 26";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -7274,7 +7276,7 @@ async function pbOpening(tries = 0) {
    private messages timed like real texting (their speed, sleep at night their time, Seen, typing…, bursts, first messages).
    Likes and chat counts are worked out from each item's heat and age (commStats), so they grow on their own and
    need no syncing. */
-const COMM_RATES = { quiet: { posts: 4, comments: 12, blogs: 2, updates: 1 }, normal: { posts: 8, comments: 25, blogs: 4, updates: 2 }, busy: { posts: 16, comments: 50, blogs: 7, updates: 4 } };
+const COMM_RATES = { quiet: { posts: 4, comments: 12, blogs: 2, updates: 1, profiles: 2 }, normal: { posts: 8, comments: 25, blogs: 4, updates: 2, profiles: 4 }, busy: { posts: 16, comments: 50, blogs: 7, updates: 4, profiles: 7 } };
 const COMM_COLS = ["#e8a95b", "#ff6fae", "#7fb2ff", "#6fdc6a", "#c49bff", "#4fd1c5", "#e2766f", "#f1c56b", "#9fd3c7", "#ff9a5a"];
 let COMM = null, COMM_BUSY = false, COMM_T = 0, COMM_DIRTY = false;
 const commOn = () => S.settings.commOn !== false;
@@ -7297,7 +7299,7 @@ function commMerge(a, b) {
     tickP: Math.max(A.tickP || 0, B.tickP || 0), tickC: Math.max(A.tickC || 0, B.tickC || 0),
     dms: (() => { const o = { ...(A.dms || {}) }; for (const [k, d] of Object.entries(B.dms || {})) { const x = o[k] || { msgs: [], read: 0 }; o[k] = { msgs: byId(x.msgs, d.msgs).sort((p, q) => p.at - q.at), read: Math.max(x.read || 0, d.read || 0) }; } return o; })(),
     dmq: byId(A.dmq, B.dmq).filter(p => !done.includes(p.id)), dmNext: Math.max(A.dmNext || 0, B.dmNext || 0),
-    follow: newer(A.follow, B.follow), fans: { ...(A.fans || {}), ...(B.fans || {}) }, blogs: byId(A.blogs, B.blogs).sort((p, q) => q.at - p.at), tickB: Math.max(A.tickB || 0, B.tickB || 0), tickU: Math.max(A.tickU || 0, B.tickU || 0) };
+    follow: newer(A.follow, B.follow), fans: { ...(A.fans || {}), ...(B.fans || {}) }, blogs: byId(A.blogs, B.blogs).sort((p, q) => q.at - p.at), tickB: Math.max(A.tickB || 0, B.tickB || 0), tickU: Math.max(A.tickU || 0, B.tickU || 0), tickF: Math.max(A.tickF || 0, B.tickF || 0) };
 }
 // a steady random number per item, so counts are the same on every device
 // a time a little in the past, so new things don't all look brand new, but never before the owner last looked
@@ -7324,7 +7326,17 @@ const pubStats = c => { const p = pubOf(c); if (!p) return { likes: 0, chats: 0 
 const cLikes = x => x.by === "me" ? Math.round(6 * seeded(x.id, 4) * (1 - Math.exp(-(Date.now() - x.at) / 7.2e6))) : Math.round((x.heat ?? 1) * 25 * seeded(x.id, 5) * (1 - Math.exp(-(Date.now() - x.at) / 4.3e7))) + (commLiked(x.id) ? 1 : 0);
 const commN = t => (COMM?.comments?.[t] || []).length;
 const avatarOf = (u, size = 34) => { const n = u?.name || "?", col = u?.color || "#888"; return `<span class="cm-av" style="--av:${esc(col)};width:${size}px;height:${size}px;font-size:${Math.round(size * 0.45)}px">${esc(n.trim()[0]?.toUpperCase() || "?")}</span>`; };
-const meAvatar = (size = 34) => avatarOf({ name: meName(), color: personaColor() }, size);
+const meAvatar = (size = 34) => COMM?.me?.pic ? `<img class="cm-av cm-img" src="${esc(COMM.me.pic)}" alt="" style="width:${size}px;height:${size}px">` : avatarOf({ name: meName(), color: personaColor() }, size);
+// a picture from the phone or PC, cropped square and shrunk, as your community profile picture
+async function mePicFrom(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error("That file isn't a picture this browser can open.")); i.src = url; });
+    const side = Math.min(img.naturalWidth, img.naturalHeight), cv = document.createElement("canvas"); cv.width = cv.height = 192;
+    cv.getContext("2d").drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, 192, 192);
+    return cv.toDataURL("image/jpeg", 0.85);
+  } finally { URL.revokeObjectURL(url); }
+}
 const COMM_ADULT = "Every character is treated as a fully grown, mature being; this needs no mention.";
 const COMM_SITE = "Lantern Commons, a busy community site where people post roleplay chatbots (characters, worlds and groups) for others to chat with, like Janitor AI or Character.ai, including adult and fetish bots";
 // ---- the AI writes the people, their bots and their comments
@@ -7375,12 +7387,12 @@ function cmSlots(n, offset) {
 }
 async function commUsers(n) {
   const taste = await commTaste(), have = COMM.users.map(u => u.handle), slots = cmSlots(n, COMM.users.length);
-  const j = await dsJSON([{ role: "system", content: `You invent the regulars of ${COMM_SITE}. Each one is given below as a slot (where they live, age, gender, their role on the site, what they love, how they type). Turn each slot into a believable, specific person: a name and username that fit them and that nobody else here has, a bio written by them in their own typing style, 3-6 tags they love (mixing their focus with the site's popular tags), and a one-line note on their voice and quirks. Make everyone clearly different from everyone else. ${COMM_ADULT}\n\nRespond with only JSON: {"users": [{"slot": the slot number, "name", "handle": a username without @, "bio", "taste": [tags], "voice"}]}` },
+  const j = await dsJSON([{ role: "system", content: `You invent the regulars of ${COMM_SITE}. Each one is given below as a slot (where they live, age, gender, their role on the site, what they love, how they type). Turn each slot into a believable, specific person: a name and username that fit them and that nobody else here has, a bio written by them in their own typing style, 3-6 tags they love (mixing their focus with the site's popular tags), and a one-line note on their voice and quirks. Make everyone clearly different from everyone else. ${COMM_ADULT}\n\nRespond with only JSON: {"users": [{"slot": the slot number, "name", "handle": a username without @, "bio", "taste": [tags], "voice", "fandoms": 0-4 games, anime, shows, films or books they're into (some people have none)}]}` },
     { role: "user", content: `Slots:\n${slots.map((x, i) => `${i + 1}. ${x.age}-year-old ${x.gender} in ${x.place}; ${x.role}; loves ${x.focus}; types: ${x.style}`).join("\n")}${have.length ? `\n\nUsernames already taken: ${have.join(", ")}` : ""}\nPopular tags on the site: ${taste.join(", ")}` }], { temperature: 1, maxTokens: 4500, plain: true });
   const now = Date.now(), out = [];
   (Array.isArray(j?.users) ? j.users : []).forEach((u, i) => {
     const k = Math.max(0, Math.min(slots.length - 1, (+u?.slot || i + 1) - 1)), sl = slots[k];
-    const x = { id: uid(), name: s5(u?.name).slice(0, 40), handle: s5(u?.handle).replace(/^@/, "").replace(/\s+/g, "_").slice(0, 24), bio: s5(u?.bio).slice(0, 240), taste: (Array.isArray(u?.taste) ? u.taste : []).map(t => s5(t).toLowerCase()).filter(Boolean).slice(0, 6), voice: s5(u?.voice).slice(0, 200),
+    const x = { id: uid(), name: s5(u?.name).slice(0, 40), handle: s5(u?.handle).replace(/^@/, "").replace(/\s+/g, "_").slice(0, 24), bio: s5(u?.bio).slice(0, 240), taste: (Array.isArray(u?.taste) ? u.taste : []).map(t => s5(t).toLowerCase()).filter(Boolean).slice(0, 6), voice: s5(u?.voice).slice(0, 200), fandoms: (Array.isArray(u?.fandoms) ? u.fandoms : []).map(s5).filter(Boolean).slice(0, 4),
       color: COMM_COLS[(COMM.users.length + out.length) % COMM_COLS.length], at: now - Math.round(20 + seeded(u?.handle || i, 6) * 900) * 864e5, ...sl };
     if (x.name && x.handle && !have.includes(x.handle) && !out.some(y => y.handle === x.handle)) out.push(x);
   });
@@ -7409,15 +7421,17 @@ function pickPosters(n) {
 }
 async function commPosts(k) {
   const taste = await commTaste(), authors = pickPosters(k);
-  const j = await dsJSON([{ role: "system", content: `You write new bot listings posted on ${COMM_SITE}. Each listing is written by its poster in their own typing style and matches their taste, and quality varies the way it does on a real site: polished ones, rough ones with typos, short ones, very long ones. Each is a complete, playable bot, original and specific, with a hook. Mostly characters, sometimes a world (a setting with a narrator) or a group (2-3 characters together). ${COMM_ADULT}\n\nRespond with only JSON: {"posts": [{"by": the poster's handle, "kind": "character" | "world" | "group", "name", "tags": 4-8 lowercase tags, "summary": 2-3 sentences the poster wrote to sell it, "appearance": 40-80 words (characters only), "description": personality, background and how they treat {{user}}, 120-200 words (for a world: the world itself; for a group: how the members fit together), "scenario": where the story starts, 50-100 words, refer to the user as {{user}}, "firstMessage": the opening, 90-160 words, narration in *asterisks*, speech in quotes, never acting for {{user}}, "members": for a group, 2-3 {"name", "appearance", "description"}, "cast": for a world, 3-4 {"name", "type": "character" | "location" | "group" | "species" | "concept", "details"}}]}` },
-    { role: "user", content: `Write ${k} listing${k > 1 ? "s" : ""}, one by each of these posters:\n${authors.map(u => `- @${u.handle} (${u.name}, ${u.role || "creator"}): loves ${u.taste.join(", ")}${u.focus ? `, especially ${u.focus}` : ""}. Types: ${u.style || u.voice}`).join("\n")}\nPopular tags on the site right now: ${taste.join(", ")}` }], { temperature: 1, maxTokens: 7000, plain: true });
+  // about half are fan bots of existing media, the rest OCs; people with fandoms lean fan, the others lean OC
+  const plan = authors.map(u => Math.random() < ((u.fandoms || []).length ? 0.62 : 0.38) ? "fan" : "oc");
+  const j = await dsJSON([{ role: "system", content: `You write new bot listings posted on ${COMM_SITE}. Each listing is written by its poster in their own typing style and matches their taste, and quality varies the way it does on a real site: polished ones, rough ones with typos, short ones, very long ones. Each is a complete, playable bot with a hook. A listing is either an OC (an original character, world or group) or a fan bot of characters, worlds or groups from existing media (games, anime, manga, cartoons, films, TV shows, books, comics), as marked for each poster; a fan bot keeps the source's canon (names, looks, personalities, setting) and gives a fresh scenario. Any focus a real site has, as fits the poster: fetish and kink of any kind, vore, RPG and adventure, horror, romance, comedy, slice of life, wholesome SFW, dark stories, monster and creature bots. Fan bots only use characters who are adults in their source material (never characters who are minors in their source, not even aged up) and never real people. Mostly characters, sometimes a world (a setting with a narrator) or a group (2-3 characters together). ${COMM_ADULT}\n\nRespond with only JSON: {"posts": [{"by": the poster's handle, "source": the franchise a fan bot is from, or "" for an OC, "kind": "character" | "world" | "group", "name", "tags": 4-8 lowercase tags (a fan bot includes its franchise as a tag), "summary": 2-3 sentences the poster wrote to sell it, "appearance": 40-80 words (characters only), "description": personality, background and how they treat {{user}}, 120-200 words (for a world: the world itself; for a group: how the members fit together), "scenario": where the story starts, 50-100 words, refer to the user as {{user}}, "firstMessage": the opening, 90-160 words, narration in *asterisks*, speech in quotes, never acting for {{user}}, "members": for a group, 2-3 {"name", "appearance", "description"}, "cast": for a world, 3-4 {"name", "type": "character" | "location" | "group" | "species" | "concept", "details"}}]}` },
+    { role: "user", content: `Write ${k} listing${k > 1 ? "s" : ""}, one by each of these posters:\n${authors.map((u, i) => `- @${u.handle} (${u.name}, ${u.role || "creator"}): loves ${u.taste.join(", ")}${u.focus ? `, especially ${u.focus}` : ""}${(u.fandoms || []).length ? `; fan of ${u.fandoms.join(", ")}` : ""}. Types: ${u.style || u.voice}. This one: ${plan[i] === "fan" ? "a fan bot from existing media (one of their fandoms, or another they'd love)" : "an OC"}`).join("\n")}\nPopular tags on the site right now: ${taste.join(", ")}` }], { temperature: 1, maxTokens: 7000, plain: true });
   const now = Date.now(), made = [];
   for (const x of Array.isArray(j?.posts) ? j.posts : []) {
     const by = COMM.users.find(u => u.handle.toLowerCase() === s5(x?.by).replace(/^@/, "").toLowerCase()) || authors[made.length % authors.length];
     const kind = ["character", "world", "group"].includes(x?.kind) ? x.kind : "character", name = s5(x?.name).slice(0, 60);
     if (!name || !by) continue;
     const card = genNormalize({ name, tags: x.tags, summary: x.summary, appearance: x.appearance, description: x.description, scenario: x.scenario, firstMessages: [x.firstMessage].filter(Boolean), startPlace: "", instructions: "", lore: [], badges: [], ...(kind === "group" ? { members: x.members || [] } : {}), ...(kind === "world" ? { cast: x.cast || [] } : {}) }, kind, "auto");
-    card._kind = kind;
+    card._kind = kind; card.source = s5(x?.source).slice(0, 60);
     const id = uid(), heat = Math.max(0.15, Math.min(3.2, Math.exp((seeded(id, 7) - 0.55) * 2.4)));
     const at = Math.max(now - Math.round(seeded(id, 8) * 40) * 6e4, (COMM.seen?.at || 0) + 1); by.last = Math.max(by.last || 0, at);
     made.push({ id, by: by.id, kind, card, tags: card.tags || [], heat, at });
@@ -7511,6 +7525,7 @@ async function commTick(force) {
     const pops = [];
     { if (!COMM.tickB) COMM.tickB = now - day / r.blogs; const due = (now - COMM.tickB) / day * r.blogs; if (due >= 1) { const k = Math.min(3, Math.floor(due)); const got = await commBlogs(k); for (const b of got) if (follows(b.by)) pops.push([b.by, `posted: ${b.title || b.text.slice(0, 40)}`, () => openBlog(b.id)]); COMM.tickB = due > 4 ? now : COMM.tickB + k / r.blogs * day; changed = true; } }
     { if (!COMM.tickU) COMM.tickU = now; const due = (now - COMM.tickU) / day * r.updates; if (due >= 1 && COMM.posts.length > 3) { const k = Math.min(2, Math.floor(due)); const got = await commUpdates(k); for (const [p, up] of got) if (follows(p.by) || p.added) pops.push([p.by, `updated ${p.card.name} to v${up.ver}`, () => openPost(p.id)]); COMM.tickU = due > 3 ? now : COMM.tickU + k / r.updates * day; changed = true; } }
+    { if (!COMM.tickF) COMM.tickF = now; const due = (now - COMM.tickF) / day * (r.profiles || 4); if (due >= 1 && COMM.users.length) { const k = Math.min(4, Math.floor(due)); const got = await commProfileUpdates(k); for (const [u, what] of got) if (follows(u.id)) pops.push([u.id, what.some(w => w[0] === "status") ? `new status: ${what.find(w => w[0] === "status")[1]}` : "updated their profile", () => openCommUser(u.id)]); COMM.tickF = due > 4 ? now : COMM.tickF + k / (r.profiles || 4) * day; changed = true; } }
     for (const p of COMM.posts.filter(p => follows(p.by) && now - p.at < 5 * 60e3 && !p.popped)) { p.popped = 1; pops.push([p.by, `posted a new bot: ${p.card.name}`, () => openPost(p.id)]); }
     for (const [by, text, go] of pops.slice(0, 3)) { const u = userOf(by); if (u) feedNotify(u, text, go); }
     if (changed || COMM_DIRTY) { commTrim(); await commFlush(); }
@@ -7548,7 +7563,7 @@ async function openCommunity(tab) {
     } else if (COMM_TAB === "dms") { body = dmListHTML();
     } else if (COMM_TAB === "yours") {
       const pub = S.chars.filter(c => pubOf(c)), priv = S.chars.filter(c => !pubOf(c) && !c.hidden);
-      body = `<p class="hint" style="margin:0 0 6px">${fmtK(myFollowers())} followers · following ${Object.values(COMM.follow).filter(x => x.v).length}</p>${field("Your name in the community", `<input id="cmMe" value="${esc(COMM.me?.name || "")}" placeholder="${esc(uname())}" autocomplete="off">`)}
+      body = `<div class="cm-me">${meAvatar(64)}<div class="stack" style="gap:6px"><label class="btn small" for="cmPic">${COMM.me?.pic ? "Change picture" : "Upload a profile picture"}</label><input type="file" id="cmPic" accept="image/*" hidden>${COMM.me?.pic ? `<button type="button" class="btn small" id="cmPicX">Remove picture</button>` : ""}</div></div><p class="hint" style="margin:0 0 6px">${fmtK(myFollowers())} followers · following ${Object.values(COMM.follow).filter(x => x.v).length}</p>${field("Your name in the community", `<input id="cmMe" value="${esc(COMM.me?.name || "")}" placeholder="${esc(uname())}" autocomplete="off">`)}
         <div class="lbl">Public · ${pub.length}</div>${pub.length ? pub.map(c => { const s = pubStats(c); return `<div class="listrow cm-mine" data-id="${esc(c.id)}"><span class="grow"><b>${esc(c.name)}</b><span class="sub">♥ ${fmtK(s.likes)} · ${fmtK(s.chats)} chats · ${commN("bot:" + c.id)} comments · public since ${esc(fmtWhen(pubOf(c).since || pubOf(c).at))}</span></span><button type="button" class="btn small" data-cm="${esc(c.id)}">Comments</button></div>`; }).join("") : `<p class="hint" style="margin:0">None yet. Share a bot below, or from its profile.</p>`}
         ${priv.length ? `<div class="lbl">Share one</div>${priv.slice(0, 30).map(c => `<div class="listrow"><span class="grow"><b>${esc(c.name)}</b><span class="sub">${esc(botSummary(c).slice(0, 90))}</span></span><button type="button" class="btn small" data-share="${esc(c.id)}">🌐 Make public</button></div>`).join("")}` : ""}`;
     } else {
@@ -7567,7 +7582,9 @@ async function openCommunity(tab) {
     b.querySelectorAll("[data-blog]").forEach(x => x.onclick = e => { if (e.target.closest("[data-like]")) return; openBlog(x.dataset.blog); });
     b.querySelectorAll("[data-upd]").forEach(x => x.onclick = async () => { x.disabled = true; await commCopyUpdate(byId(x.dataset.upd)); draw(); });
     if ($("dmNew")) $("dmNew").onclick = () => { COMM_TAB = "people"; draw(); };
-    if ($("cmMe")) $("cmMe").onchange = e => { COMM.me = { name: e.target.value.trim().slice(0, 40), at: Date.now() }; commSave(); };
+    if ($("cmMe")) $("cmMe").onchange = e => { COMM.me = { ...COMM.me, name: e.target.value.trim().slice(0, 40), at: Date.now() }; commSave(); };
+    if ($("cmPic")) $("cmPic").onchange = async e => { const f = e.target.files?.[0]; if (!f) return; try { COMM.me = { ...COMM.me, pic: await mePicFrom(f), at: Date.now() }; commSave(); toast("Profile picture set"); draw(); } catch (err) { toast(err.message); } };
+    if ($("cmPicX")) $("cmPicX").onclick = () => { COMM.me = { ...COMM.me, pic: "", at: Date.now() }; commSave(); draw(); };
   });
   COMM_VIEW = draw; draw();
   if (hasKey() && !COMM.posts.length) commTick(true).then(() => { if (COMM_VIEW === draw) commRedraw(); });
@@ -7575,7 +7592,7 @@ async function openCommunity(tab) {
 const commUserPosts = u => COMM.posts.filter(p => p.by === u.id);
 function postCard(p) {
   const u = userOf(p.by), liked = commLiked(p.id), k = p.kind || "character";
-  return `<div class="cm-card k-${k}" data-post="${esc(p.id)}" role="button" tabindex="0"><div class="cm-top"><span class="kind-pill">${k === "world" ? "World" : k === "group" ? "Group" : "Char"}</span><b class="cm-name">${esc(p.card.name)}</b></div>
+  return `<div class="cm-card k-${k}" data-post="${esc(p.id)}" role="button" tabindex="0"><div class="cm-top"><span class="kind-pill">${k === "world" ? "World" : k === "group" ? "Group" : "Char"}</span><b class="cm-name">${esc(p.card.name)}</b></div>${p.card.source ? `<span class="cm-src">From ${esc(p.card.source)}</span>` : p.card.source === "" ? `<span class="cm-src oc">OC</span>` : ""}
     <div class="cm-by">${avatarOf(u, 20)}<span>@${esc(u?.handle || "someone")}</span><span class="hint">· ${esc(fmtWhen(p.at))}</span></div>
     <p class="cm-sum">${esc(p.card.summary || "")}</p>
     <div class="btags">${(p.tags || []).slice(0, 5).map(t => `<span class="btag"${tagStyle(t)}>${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</span>`).join("")}</div>
@@ -7587,7 +7604,7 @@ function openPost(id) {
   const draw = () => openSheet(p.card.name, b => {
     const u = userOf(p.by), c = p.card, liked = commLiked(p.id), K = p.kind || "character";
     b.innerHTML = `<i class="cm-mark" hidden></i><button type="button" class="cm-by cm-by-big" data-u="${esc(p.by)}">${avatarOf(u, 30)}<span><b>${esc(u?.name || "Someone")}</b> <span class="hint">@${esc(u?.handle || "")} · ${esc(fmtWhen(p.at))}</span></span></button>
-      <div class="pf-kind k-${K}">${K === "world" ? "World" : K === "group" ? `Group · ${(c.members || []).length}` : "Character"}</div>
+      <div class="pf-kind k-${K}">${K === "world" ? "World" : K === "group" ? `Group · ${(c.members || []).length}` : "Character"}${c.source ? ` · from ${esc(c.source)}` : c.source === "" ? " · OC" : ""}</div>
       <p class="pf-sum">${esc(c.summary || "")}</p>
       <div class="pf-tags">${(c.tags || []).map(t => `<span class="pf-tag"${tagStyle(t)}>${tagIcon(t)}${esc(t)}</span>`).join("")}</div>
       <div class="cm-stats cm-stats-big"><button type="button" class="cm-like ${liked ? "on" : ""}" id="cmLike">♥ ${fmtK(postLikes(p))}</button><span>💬 ${fmtK(postChats(p))} chats</span><span>🗨 ${commN(p.id)} comments</span></div>
@@ -7723,10 +7740,30 @@ function fitStyle(u) {
 const fitLantern = u => { const f = fitOf(u); return lanternSVG("", { flame: f.flame || "", lantern: f.lantern || "" }); };
 async function commDress(list) {
   if (!list.length) return;
-  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} customise how the app looks for them with cosmetics they've unlocked. For each person, pick what they'd really have on, matching their personality and taste, and write a short profile status in their own typing style (what they're up to, taking requests, a joke, a mood). About a quarter keep everything default (theme pal:lantern, no accent, no flame, lantern or finish); veterans and big creators show off more. Options (use only these keys, or "" for none) - ${fitCatalog()}. Accent is a hex colour. ${COMM_ADULT}\n\nRespond with only JSON: {"people": [{"handle", "theme", "accent", "flame", "lantern", "finish", "status"}]}` },
+  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} customise how the app looks for them with cosmetics they've unlocked. For each person, pick what they'd really have on, matching their personality and taste, and write a short profile status in their own typing style (what they're up to, taking requests, a joke, a mood). About a quarter keep everything default (theme pal:lantern, no accent, no flame, lantern or finish); veterans and big creators show off more. Options (use only these keys, or "" for none) - ${fitCatalog()}. Accent is a hex colour. ${COMM_ADULT}\n\nRespond with only JSON: {"people": [{"handle", "theme", "accent", "flame", "lantern", "finish", "status", "fandoms": 0-4 games, anime, shows, films or books they're into}]}` },
     { role: "user", content: list.map(u => `- @${u.handle} (${u.role || "regular"}): ${u.bio} Loves ${(u.taste || []).join(", ")}. Types: ${u.style || u.voice}`).join("\n") }], { temperature: 1, maxTokens: 3000, plain: true });
-  for (const x of Array.isArray(j?.people) ? j.people : []) { const u = list.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); if (!u) continue; u.fit = fitClean(x); u.status = s5(x?.status).slice(0, 120); }
+  for (const x of Array.isArray(j?.people) ? j.people : []) { const u = list.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); if (!u) continue; u.fit = fitClean(x); u.status = s5(x?.status).slice(0, 120); if (!u.fandoms) u.fandoms = (Array.isArray(x?.fandoms) ? x.fandoms : []).map(s5).filter(Boolean).slice(0, 4); }
   for (const u of list) if (!u.fit) u.fit = fitAuto(u);
+}
+// ---- people update their profiles now and then (v1.65); u.hist = [{at, what, text}] for the Following feed
+async function commProfileUpdates(k) {
+  const now = Date.now(), pool = COMM.users.filter(u => u.fit && !asleepAt(u, now)).map(u => [u, (follows(u.id) ? 2.5 : 1) * (0.3 + (u.active ?? 0.5)) * Math.random()]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
+  if (!pool.length) return [];
+  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} update their profiles now and then, the way real users do: a new status, a tweaked bio, something new they unlocked and now wear, or pinning a different bot. Each person changes one or two things that fit what's going on with them, in their own typing style. Cosmetic options (use only these keys) - ${fitCatalog()}. ${COMM_ADULT}\n\nRespond with only JSON: {"updates": [{"handle", "status": new status or "", "bio": new bio or "", "outfit": {"theme", "accent", "flame", "lantern", "finish"} with only the parts that changed, or {}, "pin": the exact name of one of their bots to pin, or ""}]}` },
+    { role: "user", content: pool.map(u => `- @${u.handle} (${u.role || "regular"}). Bio: ${u.bio} Status: ${u.status || "(none)"}. Wears: ${JSON.stringify(fitOf(u))}. Types: ${u.style || u.voice}. Their bots: ${commUserPosts(u).slice(0, 5).map(p => `"${p.card.name}"`).join(", ") || "none"}. Recent: ${(COMM.blogs || []).filter(b => b.by === u.id).slice(0, 1).map(b => b.title || b.text.slice(0, 60)).join("") || "nothing"}`).join("\n") }], { temperature: 1, maxTokens: 1800, plain: true });
+  const out = [];
+  for (const x of Array.isArray(j?.updates) ? j.updates : []) {
+    const u = pool.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); if (!u) continue;
+    const at = cmBack(10 * 6e4), what = [];
+    const st = s5(x?.status).slice(0, 120); if (st && st !== u.status) { u.status = st; what.push(["status", st]); }
+    const bio = s5(x?.bio).slice(0, 240); if (bio && bio !== u.bio) { u.bio = bio; what.push(["bio", bio]); }
+    const o = x?.outfit && typeof x.outfit === "object" ? x.outfit : {}, cur = fitOf(u), nx = fitClean({ ...cur, ...o });
+    if (Object.keys(o).length && JSON.stringify(nx) !== JSON.stringify(cur)) { u.fit = nx; what.push(["look", ""]); }
+    const pin = commUserPosts(u).find(p => p.card.name.toLowerCase() === s5(x?.pin).toLowerCase()); if (pin && pin.id !== u.pin) { u.pin = pin.id; what.push(["pin", pin.card.name]); }
+    if (!what.length) continue;
+    u.hist = [...(u.hist || []), ...what.map(([w, t]) => ({ at, what: w, text: t }))].slice(-20); u.last = Math.max(u.last || 0, at); out.push([u, what]);
+  }
+  return out;
 }
 // ---- following
 const follows = id => !!COMM?.follow?.[id]?.v;
@@ -7790,6 +7827,7 @@ function feedItems() {
   for (const p of COMM.posts) { if (follows(p.by) && p.at > since(p.by)) out.push({ kind: "post", at: p.at, by: p.by, p }); for (const up of p.updates || []) if (follows(p.by) && up.at > since(p.by)) out.push({ kind: "update", at: up.at, by: p.by, p, up }); }
   for (const b of COMM.blogs) if (follows(b.by) && b.at > since(b.by)) out.push({ kind: "blog", at: b.at, by: b.by, b });
   for (const [id, t] of Object.entries(COMM.fans)) if (t <= Date.now() && userOf(id)) out.push({ kind: "fan", at: t, by: id });
+  for (const u of COMM.users) if (follows(u.id)) for (const h of u.hist || []) if (h.at > since(u.id)) out.push({ kind: "prof", at: h.at, by: u.id, h });
   for (const c of S.chars) for (const up of copyUpdates(c)) out.push({ kind: "copy", at: up.at, by: COMM.posts.find(x => x.id === c.fromComm.post)?.by, c, up });
   return out.filter(x => x.at <= Date.now()).sort((a, b) => b.at - a.at).slice(0, 80);
 }
@@ -7802,6 +7840,7 @@ function feedHTML() {
     if (x.kind === "update") return `<button type="button" class="listrow fd-row" data-post="${esc(x.p.id)}">${avatarOf(u, 34)}<span class="grow">${who} updated <b>${esc(x.p.card.name)}</b> to v${esc(x.up.ver)} ${when}<span class="sub">${esc(x.up.note).slice(0, 140)}</span></span></button>`;
     if (x.kind === "blog") return `<button type="button" class="listrow fd-row" data-blog="${esc(x.b.id)}">${avatarOf(u, 34)}<span class="grow">${who} posted ${when}<span class="sub"><b>${esc(x.b.title || "")}</b> ${esc(x.b.text).slice(0, 120)}</span></span></button>`;
     if (x.kind === "copy") return `<div class="listrow fd-row fd-copy">${avatarOf(u, 34)}<span class="grow">Your copy of <b>${esc(x.c.name)}</b> can be updated to v${esc(x.up.ver)} ${when}<span class="sub">${esc(x.up.note).slice(0, 140)}</span></span><button type="button" class="btn small primary" data-upd="${esc(x.c.id)}">Update my copy</button></div>`;
+    if (x.kind === "prof") return `<button type="button" class="listrow fd-row" data-u="${esc(x.by)}">${avatarOf(u, 34)}<span class="grow">${who} ${x.h.what === "status" ? "changed their status" : x.h.what === "bio" ? "updated their bio" : x.h.what === "pin" ? "pinned a bot" : "got a new look"} ${when}${x.h.text ? `<span class="sub">${esc(x.h.text).slice(0, 120)}</span>` : ""}</span></button>`;
     return `<button type="button" class="listrow fd-row" data-u="${esc(x.by)}">${avatarOf(u, 34)}<span class="grow">${who} followed you ${when}</span></button>`; }).join("");
 }
 function blogCard(b) {
