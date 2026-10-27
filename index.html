@@ -773,6 +773,23 @@ img.px-av{border-radius:50%}
 .dm-empty{text-align:center;margin:auto}
 .dm-av{position:relative;flex:none;display:inline-flex}.dm-on{position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:#6fdc6a;box-shadow:0 0 0 2px var(--surface)}
 .dm-row.un b{color:var(--fg)}.dm-row.un .sub{color:var(--fg);font-weight:700}.dm-r{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}.dm-n{position:static;box-shadow:none}
+/* v1.79 lounges and group chats */
+.rm-sub{margin:0 0 10px}.rm-intro{margin:0 0 8px}
+.rm-row .rm-ic,.rm-gic{width:38px;height:38px;flex:none;display:grid;place-items:center;font-size:20px;border-radius:12px;background:var(--surface-2)}
+.rm-row.un .sub{color:var(--fg);font-weight:700}
+.rm-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#6fdc6a;margin-right:4px;vertical-align:1px}
+.rm-stack{position:relative;width:38px;height:38px}.rm-stack>*:first-child{position:absolute;left:0;top:0}.rm-stack>*:nth-child(2){position:absolute;right:0;bottom:0;box-shadow:0 0 0 2px var(--bg);border-radius:50%}
+.rm-head .rm-here{display:flex;align-items:center;gap:2px;font-size:12px;flex-wrap:wrap}.rm-hav{display:inline-flex;opacity:.55}.rm-hav.on{opacity:1}.rm-here .hint{margin-left:6px}
+.rm-list{gap:0}
+.rm-m{display:flex;gap:8px;align-items:flex-start;padding:5px 2px;max-width:100%}.rm-m.same{padding-top:0}
+.rm-av{width:30px;flex:none;background:none;border:0;padding:0;cursor:pointer;display:block}
+.rm-c{min-width:0;flex:1}.rm-h{font-size:13.5px;line-height:1.3}.rm-h .hint{font-size:11.5px}
+.rm-t{font-size:15px;line-height:1.38;white-space:pre-wrap;overflow-wrap:anywhere}
+.rm-m.me .rm-h b{color:var(--accent)}.rm-m.tome{background:color-mix(in srgb,var(--accent) 9%,transparent);border-radius:10px}
+.rm-re{font-size:12px;color:var(--muted);border-left:2px solid var(--line);padding-left:6px;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rm-sys{align-self:center;font-size:12px;color:var(--muted);margin:6px 0;text-align:center}
+.rm-typing{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);padding:4px 2px}.rm-typing .dm-typing{background:none;padding:0}
+.ng-row{cursor:pointer}.ng-row input{width:20px;height:20px;flex:none;accent-color:var(--accent)}.ng-go{position:sticky;bottom:0;background:var(--bg);padding:8px 0;align-items:center}
 .dm-toast{display:flex;align-items:center;gap:8px;cursor:pointer;max-width:min(92vw,420px)}
 .cm-status{display:flex;align-items:center;gap:5px}.dm-dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}.dm-dot.on{background:#6fdc6a}
 #ownBar{position:relative;z-index:3;display:flex;flex-direction:column;gap:5px;padding:5px 12px 6px;background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:12px}#ownBar[hidden]{display:none}
@@ -1580,7 +1597,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.78 · Oct 27";
+const VERSION = "1.79 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -3691,6 +3708,11 @@ const ACH = [
   { k: "ch_promise", g: "Chatting", n: "Pinky Promise", how: "Make a promise together.", src: "story", nw: 1, h: "Pinky swear." },
   { k: "ch_reunion", g: "Chatting", n: "Reunited", how: "Reunite with someone after a long time apart.", src: "story", nw: 1, h: "It's been ages." },
   { k: "shop_first", g: "Play", n: "First Purchase", how: "Buy something in the Lantern Shop.", src: "app" },
+  // v1.79: lounges and group chats
+  { k: "lounge_hi", g: "Play", n: "Pull Up a Chair", how: "Say something in a community lounge.", src: "app" },
+  { k: "lounge_hop", g: "Play", n: "Lounge Lizard", how: "Talk in 5 different lounges.", src: "app", r: 1 },
+  { k: "group_made", g: "Play", n: "Group Chat", how: "Start a group chat.", src: "app" },
+  { k: "group_added", g: "Play", n: "Plus One", how: "Get added to someone's group chat.", src: "app", nw: 1, h: "Make friends." },
   { k: "shop_try", g: "Play", n: "Window Shopper", how: "Try on 10 things in the shop.", src: "app" },
   { k: "shop_dress", g: "Play", n: "Dressed Up", how: "Wear something in 3 wardrobe slots at once.", src: "app" },
   { k: "shop_full", g: "Play", n: "Full Outfit", how: "Wear something in all 5 wardrobe slots.", src: "app", r: 1 },
@@ -7670,7 +7692,7 @@ const COMM_COLS = ["#e8a95b", "#ff6fae", "#7fb2ff", "#6fdc6a", "#c49bff", "#4fd1
 let COMM = null, COMM_BUSY = false, COMM_T = 0, COMM_DIRTY = false;
 const commOn = () => S.settings.commOn !== false;
 const commRate = () => COMM_RATES[S.settings.commLevel] || COMM_RATES.busy;
-const commBlank = () => ({ users: [], posts: [], comments: {}, pub: {}, liked: {}, pending: [], done: [], me: { name: "", at: 0 }, seen: { at: 0 }, tickP: 0, tickC: 0, dms: {}, dmq: [], dmNext: 0, follow: {}, fans: {}, blogs: [], tickB: 0, tickU: 0, actSeen: 0, feedSeen: 0, actClear: 0, actHid: {}, blocked: {}, promises: [], jams: {} });
+const commBlank = () => ({ users: [], posts: [], comments: {}, pub: {}, liked: {}, pending: [], done: [], me: { name: "", at: 0 }, seen: { at: 0 }, tickP: 0, tickC: 0, dms: {}, dmq: [], dmNext: 0, follow: {}, fans: {}, blogs: [], tickB: 0, tickU: 0, actSeen: 0, feedSeen: 0, actClear: 0, actHid: {}, blocked: {}, promises: [], jams: {}, rooms: {}, rq: [], groups: {}, grpNext: 0 });
 // reloading never drops a change that hasn't been written yet (a like or a follow made a moment ago): it's merged in on top
 // v1.76: the copy in memory is merged with what's stored, keeping its own objects, so work that's still running on them
 // (a DM being written, a reply, people being dressed) never lands on a copy that was just thrown away
@@ -7695,7 +7717,10 @@ function commMerge(a, b, keep) {
     // v1.70: what you have read or cleared (these used to be dropped on every reload, so old notifications came back)
     actSeen: Math.max(A.actSeen || 0, B.actSeen || 0), feedSeen: Math.max(A.feedSeen || 0, B.feedSeen || 0), actClear: Math.max(A.actClear || 0, B.actClear || 0), actHid: { ...(A.actHid || {}), ...(B.actHid || {}) }, hFix: Math.max(A.hFix || 0, B.hFix || 0),
     blocked: newer(A.blocked, B.blocked), promises: byId(A.promises, B.promises).slice(-200),
-    jams: (() => { const o = { ...(A.jams || {}) }; for (const [k, j] of Object.entries(B.jams || {})) o[k] = { mine: [...new Set([...(o[k]?.mine || []), ...(j?.mine || [])])], done: Math.max(o[k]?.done || 0, j?.done || 0) || undefined }; return o; })() };
+    jams: (() => { const o = { ...(A.jams || {}) }; for (const [k, j] of Object.entries(B.jams || {})) o[k] = { mine: [...new Set([...(o[k]?.mine || []), ...(j?.mine || [])])], done: Math.max(o[k]?.done || 0, j?.done || 0) || undefined }; return o; })(),
+    // v1.79: lounges and group chats
+    rooms: (() => { const o = { ...(A.rooms || {}) }; for (const [k, d] of Object.entries(B.rooms || {})) { const x = o[k] || { msgs: [], read: 0, seen: 0 }; o[k] = (keep ? (r => Object.assign(d, r)) : (r => r))({ msgs: byId(x.msgs, d.msgs).sort((p, q) => p.at - q.at).slice(-200), read: Math.max(x.read || 0, d.read || 0), seen: Math.max(x.seen || 0, d.seen || 0) }); } return o; })(),
+    rq: byId(A.rq, B.rq).filter(p => !done.includes(p.id)), groups: newer(A.groups, B.groups), grpNext: Math.max(A.grpNext || 0, B.grpNext || 0) };
 }
 // a steady random number per item, so counts are the same on every device
 // a time a little in the past, so new things don't all look brand new, but never before the owner last looked
@@ -8324,6 +8349,7 @@ async function commTick(force) {
     if (!COMM.pixFix) { for (const u of COMM.users) if (pixOk(u.pix) && u.pix.pal === "ember") { const a = pixAuto(u.id + ":fix", "", 0); u.pix = { ...u.pix, pal: a.pal, frame: a.frame, ...(PIX_BY[u.pix.s]?.[2] === "human" ? { skin: a.skin ?? 1, hair: a.hair ?? 0 } : {}) }; } COMM.pixFix = 1; changed = true; }
     if (COMM.users.some(u => bioNeedsFix(u) && (u.bioTried || 0) < 3)) { try { if (await commFixBios()) changed = true; } catch {} }
     if (dmMaybeOpen()) changed = true;
+    if (groupMaybeInvite()) changed = true; if (groupMaybeTalk()) changed = true; // v1.79
     // (replies to the owner are written first, right after loading: see commDoReplies)
     // new listings: the first visit fills the page, then they arrive at the chosen pace
     if (!COMM.posts.length) { await commPosts(3); await commPosts(3); COMM.tickP = now; changed = true; }
@@ -8340,7 +8366,7 @@ async function commTick(force) {
     for (const p of COMM.posts.filter(p => follows(p.by) && now - p.at < 5 * 60e3 && !p.popped)) { p.popped = 1; pops.push([p.by, `posted a new bot: ${p.card.name}`, () => openPost(p.id)]); }
     for (const [by, text, go] of pops.slice(0, 3)) { const u = userOf(by); if (u) feedNotify(u, text, go); }
     if (changed || COMM_DIRTY) { commTrim(); await commFlush(); }
-    commDot(); commRedraw(); dmPump();
+    commDot(); commRedraw(); dmPump(); roomPump();
   } catch (e) { console.warn("community:", e.message); }
   finally { COMM_BUSY = false; }
 }
@@ -8348,7 +8374,7 @@ async function commTick(force) {
 function commUnseen() {
   if (!COMM) return 0; const at = COMM.seen?.at || 0, mine = new Set(S.chars.filter(c => pubOf(c)).map(c => "bot:" + c.id));
   let n = 0; for (const [t, l] of Object.entries(COMM.comments)) for (const x of l) if (arrived(x) > at && x.by !== "me" && vis(x.by) && (x.toMe || mine.has(t))) n++;
-  return n + dmUnread() + feedItems().filter(x => arrived(x) > at && x.kind !== "copy").length + S.chars.filter(c => copyUpdates(c).some(u => arrived(u) > at)).length;
+  return n + dmUnread() + roomUnread() + feedItems().filter(x => arrived(x) > at && x.kind !== "copy").length + S.chars.filter(c => copyUpdates(c).some(u => arrived(u) > at)).length;
 }
 function commDot() { for (const id of ["commDot", "railCommDot"]) { const el = $(id); if (el) { const n = commOn() ? commUnseen() : 0; el.hidden = !n; el.textContent = n > 9 ? "9+" : n || ""; } } for (const id of ["btnComm", "railComm"]) { const b = $(id); if (b) b.hidden = !commOn(); } if (HUB.open && COMM) { hubHead(); hubNav(); } }
 let COMM_VIEW = null; // what the community window shows, so new activity can redraw it
@@ -8380,7 +8406,7 @@ const HUB_ICON = {
 };
 const HUB_TABS = [["home", "Home"], ["discover", "Discover"], ["feed", "Following"], ["dms", "Messages"], ["you", "You"]];
 function hubShow() { if (HUB.open) return; if (!$("sheet").hidden) closeSheet(); HUB.open = true; $("hub").hidden = false; document.documentElement.classList.add("hub-on"); }
-function hubClose() { HUB.open = false; HUB.stack = []; HUB.cur = null; COMM_VIEW = null; DM_OPEN = null; clearInterval(DM_T); $("hub").hidden = true; $("hubBody").innerHTML = ""; document.documentElement.classList.remove("hub-on"); commDot(); }
+function hubClose() { HUB.open = false; HUB.stack = []; HUB.cur = null; COMM_VIEW = null; DM_OPEN = null; clearInterval(DM_T); ROOM_OPEN = null; ROOM_VIEW = null; clearInterval(ROOM_T); $("hub").hidden = true; $("hubBody").innerHTML = ""; document.documentElement.classList.remove("hub-on"); commDot(); }
 // a page inside the hub (title "__tab" = the tab's own first page); the same title redraws in place
 function cpage(title, build) {
   hubShow();
@@ -8393,7 +8419,7 @@ function cpage(title, build) {
 }
 function hubBack() {
   const e = HUB.stack.pop(); if (!e) return false;
-  DM_OPEN = null; clearInterval(DM_T);
+  DM_OPEN = null; clearInterval(DM_T); ROOM_OPEN = null; ROOM_VIEW = null; clearInterval(ROOM_T);
   HUB.noPush = true; try { HUB.tab = e.tab || HUB.tab; if (e.title === "__tab") hubTab(HUB.tab); else { cpage(e.title, e.build); COMM_VIEW = () => cpage(e.title, e.build); } } finally { HUB.noPush = false; }
   requestAnimationFrame(() => { $("hubBody").scrollTop = e.scroll || 0; });
   return true;
@@ -8411,7 +8437,7 @@ function hubHead() {
   if ($("hubAct")) $("hubAct").onclick = openActivity;
 }
 function hubNav() {
-  const un = dmUnread(), fd = COMM ? feedItems().filter(x => arrived(x) > (COMM.feedSeen || 0) && x.kind !== "copy").length : 0;
+  const un = dmUnread() + roomUnread(), fd = COMM ? feedItems().filter(x => arrived(x) > (COMM.feedSeen || 0) && x.kind !== "copy").length : 0;
   $("hubNav").innerHTML = HUB_TABS.map(([k, l]) => { const n = k === "dms" ? un : k === "feed" ? fd : 0;
     return `<button type="button" class="hub-tab ${HUB.tab === k ? "on" : ""}" data-ht="${k}" aria-label="${l}">${k === "you" ? `<span class="hub-av">${meAvatar(24)}</span>` : HUB_ICON[k]}<span>${l}</span>${n ? `<i class="hub-n">${n > 9 ? "9+" : n}</i>` : ""}</button>`; }).join("");
   $("hubNav").querySelectorAll("[data-ht]").forEach(b => b.onclick = () => { if (HUB.tab === b.dataset.ht && HUB.cur?.title === "__tab") { $("hubBody").scrollTo({ top: 0, behavior: "smooth" }); return; } hubTab(b.dataset.ht); });
@@ -8448,6 +8474,7 @@ function hubWire(b, draw) {
   b.querySelectorAll("[data-u]").forEach(x => { if (!x.classList.contains("cm-who")) x.onclick = () => openCommUser(x.dataset.u); });
   b.querySelectorAll("[data-blog]").forEach(x => x.onclick = e => { if (e.target.closest("[data-like]")) return; openBlog(x.dataset.blog); });
   b.querySelectorAll("[data-dm]").forEach(x => x.onclick = () => openDM(x.dataset.dm));
+  b.querySelectorAll("[data-room]").forEach(x => x.onclick = () => openRoom(x.dataset.room));
   b.querySelectorAll("[data-row]").forEach(x => x.onclick = () => openRow(x.dataset.row));
   b.querySelectorAll("[data-upd]").forEach(x => x.onclick = async () => { x.disabled = true; await commCopyUpdate(byId(x.dataset.upd)); draw(); });
   b.querySelectorAll("[data-cm]").forEach(x => x.onclick = () => openBotComments(x.dataset.cm));
@@ -8455,21 +8482,21 @@ function hubWire(b, draw) {
 }
 function hubTab(tab) {
   HUB.tab = HUB_TABS.some(t => t[0] === tab) ? tab : "home";
-  DM_OPEN = null; clearInterval(DM_T);
+  DM_OPEN = null; clearInterval(DM_T); ROOM_OPEN = null; ROOM_VIEW = null; clearInterval(ROOM_T);
   if (HUB.tab === "feed") COMM.feedSeen = Date.now();
   const draw = () => cpage("__tab", b => {
     let body = "";
     if (!hasKey()) body = `<p class="note">Add your API key in Settings first: the community is written by the AI.</p>`;
     else if (!COMM.posts.length && HUB.tab !== "you") body = `<div class="cm-empty">${lanternSVG("seq")}<p>The community is waking up…</p></div>`;
     else if (HUB.tab === "home") {
-      body = siteLine() + seasonHubHTML() + hubRows().map(([k, t, l]) => `<section class="hub-row"><div class="hub-rh"><h3>${esc(t)}</h3>${l.length > 4 ? `<button type="button" class="hub-all" data-row="${k}">See all ›</button>` : ""}</div><div class="hub-strip">${l.slice(0, 12).map(postMini).join("")}</div></section>`).join("");
+      body = siteLine() + seasonHubHTML() + loungeStripHTML() + hubRows().map(([k, t, l]) => `<section class="hub-row"><div class="hub-rh"><h3>${esc(t)}</h3>${l.length > 4 ? `<button type="button" class="hub-all" data-row="${k}">See all ›</button>` : ""}</div><div class="hub-strip">${l.slice(0, 12).map(postMini).join("")}</div></section>`).join("");
       const blogs = (COMM.blogs || []).filter(b => vis(b.by)).sort((a, c) => c.at - a.at).slice(0, 3);
       if (blogs.length) body += `<section class="hub-row"><div class="hub-rh"><h3>📝 Fresh posts</h3></div>${blogs.map(blogCard).join("")}</section>`;
       body += `<button type="button" class="btn small hub-more" id="cmRefresh">↻ Check for new bots</button>`;
     } else if (HUB.tab === "discover") {
       body = `<div class="hub-search"><input id="hubQ" type="search" placeholder="Search bots, tags and creators" value="${esc(HUB.q)}" autocomplete="off"></div><div id="hubDisc"></div>`;
     } else if (HUB.tab === "feed") body = feedHTML();
-    else if (HUB.tab === "dms") body = dmListHTML();
+    else if (HUB.tab === "dms") body = dmsTabHTML();
     else body = hubYou();
     b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-page hub-p-${HUB.tab}">${body}</div>`;
     hubWire(b, draw);
@@ -8477,7 +8504,10 @@ function hubTab(tab) {
     if ($("cmRefresh")) $("cmRefresh").onclick = async () => { $("cmRefresh").disabled = true; COMM.tickP = Math.min(COMM.tickP || Date.now(), Date.now() - 864e5 / commRate().posts * 2); await commTick(true); draw(); };
     if ($("hubQ")) { $("hubQ").oninput = e => { HUB.q = e.target.value; hubDisc(draw); }; hubDisc(draw); }
     if ($("dmNew")) $("dmNew").onclick = openNewDM;
-    if ($("dmRead")) $("dmRead").onclick = () => { for (const d of Object.values(COMM.dms)) d.read = Math.max(d.read || 0, Date.now()); commSave(); commDot(); draw(); };
+    if ($("dmRead")) $("dmRead").onclick = () => { for (const d of Object.values(COMM.dms)) d.read = Math.max(d.read || 0, Date.now()); for (const r of Object.values(COMM.rooms || {})) r.read = Math.max(r.read || 0, Date.now()); commSave(); commDot(); draw(); };
+    if ($("grpNew")) $("grpNew").onclick = () => openNewGroup();
+    if ($("hubLounges")) $("hubLounges").onclick = () => { HUB.msub = "lounges"; hubTab("dms"); };
+    b.querySelectorAll("[data-msub]").forEach(x => x.onclick = () => { HUB.msub = x.dataset.msub; draw(); });
     hubYouWire(draw);
   });
   HUB_TAB_DRAW = draw; COMM_VIEW = draw; draw();
@@ -8555,6 +8585,7 @@ function commMarkRead() {
   if (!COMM) return; const now = Date.now();
   COMM.seen = { ...(COMM.seen || {}), at: now }; COMM.actSeen = now; COMM.feedSeen = now;
   for (const d of Object.values(COMM.dms || {})) d.read = Math.max(d.read || 0, now);
+  for (const r of Object.values(COMM.rooms || {})) r.read = Math.max(r.read || 0, now);
   commSave(); commDot();
 }
 // keep the list of removed items small (the newest 300)
@@ -9163,6 +9194,7 @@ function openDM(id) {
   cpage(u.name, b => {
     b.innerHTML = `<i class="dm-mark" hidden></i><button type="button" class="dm-head" id="dmWho">${avatarOf(u, 34)}<span><b>@${esc(u.handle)}</b><span class="dm-st"></span></span></button><div class="dm-list"></div>
       ${blocked(id) ? `<p class="note dm-blk">You blocked @${esc(u.handle)}. <button type="button" class="btn small" id="dmUnblock">Unblock</button></p>` : `<div class="dm-comp"><textarea id="dmIn" rows="1" placeholder="Message ${esc(u.name)}…"></textarea><button type="button" class="btn primary small" id="dmSend">Send</button></div>`}`;
+    DM_OPEN = id; DM_VIEW = draw; draw(); clearInterval(DM_T); DM_T = setInterval(() => { if (!cbody()?.querySelector(".dm-mark")) { clearInterval(DM_T); DM_OPEN = null; return; } draw(); dmPump(); }, 2500);
     if ($("dmUnblock")) { $("dmUnblock").onclick = () => { commBlock(id, false); openDM(id); }; return; }
     $("dmWho").onclick = () => openCommUser(id);
     const send = () => { const t = $("dmIn").value; if (!t.trim()) return; dmSend(id, t); $("dmIn").value = ""; draw(); };
@@ -9170,15 +9202,344 @@ function openDM(id) {
     $("dmIn").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && matchMedia("(pointer:fine)").matches) { e.preventDefault(); send(); } });
     $("dmIn").addEventListener("input", e => { e.target.style.height = "auto"; e.target.style.height = Math.min(120, e.target.scrollHeight) + "px"; });
   });
-  DM_VIEW = draw; draw();
-  DM_T = setInterval(() => { if (!cbody()?.querySelector(".dm-mark")) { clearInterval(DM_T); DM_OPEN = null; return; } draw(); dmPump(); }, 2500);
 }
 function dmListHTML() {
   const rows = Object.entries(COMM.dms).filter(([id, d]) => d.msgs.length && userOf(id) && vis(id)).sort((a, b) => b[1].msgs.at(-1).at - a[1].msgs.at(-1).at);
   return `<div class="act-tools"><button type="button" class="btn small" id="dmNew">✎ New message</button>${dmUnread() ? `<button type="button" class="btn small" id="dmRead">✓ Mark all as read</button>` : ""}</div>` + (rows.length ? rows.map(([id, d]) => { const u = userOf(id), last = d.msgs.at(-1), un = d.msgs.filter(m => m.from === "them" && m.at > (d.read || 0)).length;
     return `<button type="button" class="listrow dm-row ${un ? "un" : ""}" data-dm="${esc(id)}"><span class="dm-av">${avatarOf(u, 38)}${isOnline(u) ? '<i class="dm-on"></i>' : ""}</span><span class="grow"><b>${esc(u.name)}</b> <span class="hint">@${esc(u.handle)}</span><span class="sub">${last.from === "me" ? "You: " : ""}${esc(last.text.slice(0, 80))}</span></span><span class="dm-r"><span class="hint">${esc(fmtWhen(last.at))}</span>${un ? `<span class="cm-dot dm-n">${un}</span>` : ""}</span></button>`; }).join("") : `<p class="hint" style="margin:8px 0 0">No messages yet. Message someone from their profile, or start one here.</p>`);
 }
-setInterval(() => { if (!document.hidden && COMM) dmPump(); }, 8000);
+// ---- Lounges and group chats (v1.79)
+// Lounges: topic rooms anyone can sit in. While you're in one, the people hanging out there (online right now, into its topic)
+// keep talking; when you come back after a while, what was said meanwhile is there. Group chats: private chats with 2-7
+// people you know (you start them, or someone adds you to theirs). Both share one engine: a queue of stretches of talk
+// (COMM.rq) written by the AI a little before they're due and delivered message by message, like the DMs.
+// COMM.rooms {key: {msgs [{id, by userId|"me"|"sys", text, at, got, re (id of the message it answers)}], read, seen}}
+// (key = lounge id, or "g:<group id>"); COMM.groups {id: {id, name, members [ids], by, at, left}}.
+const LOUNGES = [
+  { id: "general", n: "general", icon: "💬", d: "anything about the site, bots and each other", share: 0.45 },
+  { id: "vore", n: "vore", icon: "🫦", d: "preds, prey, bellies, gurgles and vore bots", tags: ["vore", "pred", "prey", "belly", "digestion", "endo", "soft vore", "hard vore", "unbirth", "cock vore", "macro", "giant", "stuffing"], share: 0.05, lewd: 1 },
+  { id: "afterdark", n: "after-dark", icon: "🌙", d: "NSFW bots, kinks and lewd talk", tags: ["nsfw", "smut", "kink", "fetish", "sex", "bdsm", "lewd", "dom", "sub", "monster", "breeding", "inflation", "musk"], share: 0.08, lewd: 1 },
+  { id: "requests", n: "requests", icon: "📮", d: "asking for bots and offering to make them", share: 0.18, creators: 0.25 },
+  { id: "fandoms", n: "fandoms", icon: "🎮", d: "fan bots, games, anime, shows and books", share: 0.08, fan: 0.5 },
+  { id: "rp", n: "rp-and-worlds", icon: "🗺️", d: "worldbuilding, RPG bots, lore and long roleplays", tags: ["rpg", "fantasy", "adventure", "world", "lore", "sci-fi", "dungeon", "dragon", "medieval", "isekai"], share: 0.1 },
+  { id: "help", n: "bot-help", icon: "🛠️", d: "writing tips, prompts and fixing bots that misbehave", share: 0.1, creators: 0.3 },
+  { id: "offtopic", n: "off-topic", icon: "🍵", d: "life, food, pets, memes, whatever", share: 0.3 }
+];
+function loungeList() {
+  const sn = seasonNow(); if (!sn) return LOUNGES;
+  return [{ id: "season-" + sn.k, n: sn.k === "halloween" ? "spooky-season" : sn.n.toLowerCase().replace(/[^a-z0-9]+/g, "-"), icon: sn.icon, d: `${sn.n} bots, the ${sn.jam} and seasonal chatter`, tags: sn.tags, share: 0.22, season: 1 }, ...LOUNGES];
+}
+const loungeOf = id => loungeList().find(r => r.id === id) || LOUNGES.find(r => r.id === id);
+const roomOf = key => (COMM.rooms[key] = COMM.rooms[key] || { msgs: [], read: 0, seen: 0 });
+const groupOf = id => COMM.groups?.[id];
+const isGroupKey = key => String(key).startsWith("g:");
+// whether someone hangs out in a lounge: their taste, fandoms and role, the same on every device
+function inLounge(u, r) {
+  if (!u || !r) return false;
+  const T = new Set((u.taste || []).map(t => String(t).toLowerCase())), hit = (r.tags || []).filter(t => T.has(t) || [...T].some(x => x.includes(t))).length;
+  let p = r.share || 0.1;
+  if (r.tags) p += Math.min(0.6, hit * 0.25);
+  if (r.lewd && !hit) p *= 0.3;
+  if (r.fan && (u.fandoms || []).length) p += r.fan;
+  if (r.creators && /creator|writer|veteran|artist/.test(u.role || "")) p += r.creators;
+  return seeded(u.id, "lg:" + r.id) < Math.min(0.92, p);
+}
+// who's around: in a lounge the people who hang out there and are on right now; in a group its members who are on
+function roomCast(key, t = Date.now()) {
+  if (isGroupKey(key)) { const g = groupOf(key.slice(2)); return g ? g.members.map(userOf).filter(u => u && vis(u.id) && onNow(u, t)) : []; }
+  const r = loungeOf(key); return r ? COMM.users.filter(u => vis(u.id) && inLounge(u, r) && onNow(u, t)) : [];
+}
+// the quiet crowd reading along in a lounge
+const roomLurk = (key, t = Date.now()) => { const r = loungeOf(key); if (!r) return 0; const crowd = Math.max(0, commOnlineNow(t) - COMM.users.filter(u => isOnline(u, t)).length); return Math.round(crowd * (r.share || 0.1) * 0.12 * (0.85 + 0.3 * seeded(key, Math.floor(t / 3e5)))); };
+const roomName = key => isGroupKey(key) ? (groupOf(key.slice(2))?.name || "Group chat") : "#" + (loungeOf(key)?.n || key);
+const roomMine = key => roomOf(key).msgs.filter(m => m.by === "me");
+const roomToMe = (m, key) => m.by !== "me" && m.by !== "sys" && (isGroupKey(key) || (m.re && roomOf(key).msgs.find(x => x.id === m.re)?.by === "me") || new RegExp("@" + myHandle() + "\\b", "i").test(m.text));
+// unread: everything others say in your group chats, and only what's aimed at you in lounges
+function roomUnread() {
+  if (!COMM?.rooms) return 0; let n = 0;
+  for (const [key, r] of Object.entries(COMM.rooms)) { if (isGroupKey(key) && (!groupOf(key.slice(2)) || groupOf(key.slice(2)).left)) continue; for (const m of r.msgs) if (arrived(m) > (r.read || 0) && vis(m.by) && roomToMe(m, key)) n++; }
+  return n;
+}
+function roomTrim(key) { const r = roomOf(key); if (r.msgs.length > 200) r.msgs = r.msgs.slice(-200); }
+// how a room's history reads for the AI: numbered lines, each with who said it and what it answers
+function roomHist(key, n = 30) {
+  const L = roomOf(key).msgs.filter(m => vis(m.by)).slice(-n);
+  const who = m => m.by === "me" ? "@" + myHandle() : m.by === "sys" ? "(site)" : "@" + (userOf(m.by)?.handle || "someone");
+  return { L, text: L.map((m, i) => `${i + 1}. [${agoShort(m.at)}] ${who(m)}${m.re && L.find(x => x.id === m.re) ? ` (replying to line ${L.findIndex(x => x.id === m.re) + 1})` : ""}: ${m.text}`).join("\n") };
+}
+const agoShort = t => { const m = Math.round((Date.now() - t) / 60e3); return m < 1 ? "just now" : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; };
+const roomPerson = u => `- @${u.handle} (${u.name}${u.age ? `, ${u.age}` : ""}, ${u.role || "regular"}): into ${(u.taste || []).slice(0, 5).join(", ")}${(u.fandoms || []).length ? `; fan of ${u.fandoms.slice(0, 3).join(", ")}` : ""}. Types: ${u.style || u.voice}.${u.custom && u.voice ? ` Personality: ${u.voice}.` : ""} Their bots: ${botsFact(u)}.${knowsMe(u) ? ` With @${myHandle()}: ${knowsMe(u)}.` : ""}`;
+// one stretch of talk. kind: chat (people keep talking), reply (after you said something), catch (what was said while you were away),
+// join (people react to being added to a group), open (someone starts a group chat with you)
+async function roomWrite(key, q) {
+  const grp = isGroupKey(key), g = grp && groupOf(key.slice(2)), r = !grp && loungeOf(key);
+  let cast = q.kind === "catch" ? (grp ? g.members.map(userOf).filter(u => u && vis(u.id)) : COMM.users.filter(u => vis(u.id) && inLounge(u, r) && [0.2, 0.5, 0.8].some(f => onNow(u, q.from + (q.to - q.from) * f)))) : roomCast(key, q.due);
+  if (!cast.length) return [];
+  // who's talking lately goes first, then a few more of the people around
+  const { L, text } = roomHist(key), recent = [...new Set(L.slice(-10).map(m => m.by))].map(userOf).filter(u => u && cast.includes(u));
+  cast = [...recent, ...cast.filter(u => !recent.includes(u)).sort(() => Math.random() - 0.5)].slice(0, grp ? 8 : 7);
+  if (q.kind === "open" && userOf(g.by)) cast = [userOf(g.by), ...cast.filter(u => u.id !== g.by)];
+  const n = q.kind === "catch" ? 4 + Math.floor(Math.random() * 5) : q.kind === "reply" ? 1 + Math.floor(Math.random() * (grp ? 4 : 3)) : q.kind === "join" || q.kind === "open" ? 2 + Math.floor(Math.random() * 3) : 2 + Math.floor(Math.random() * 4);
+  const said = cast.map(u => [u, roomOf(key).msgs.filter(m => m.by === u.id).slice(-6).map(m => m.text)]).filter(x => x[1].length);
+  const where = grp ? `a private group chat called "${g.name}" on ${COMM_SITE}. Members: ${g.members.map(userOf).filter(Boolean).map(u => "@" + u.handle).join(", ")}${g.left ? "" : `, and @${myHandle()}`}. It was started by ${g.by === "me" ? "@" + myHandle() : "@" + (userOf(g.by)?.handle || "someone")}${g.about ? ` (${g.about})` : ""}.` : `the #${r.n} lounge (${r.d}) on ${COMM_SITE}, a public chat room people hang out in.${r.lewd ? " Lewd and explicit talk is normal here." : ""}`;
+  const sys = `You write the next messages in ${where}${commSeason()} Write like real people in a real chat room: short messages, each in the writer's own typing style, reacting to each other, side conversations, jokes, tangents, people agreeing and disagreeing, now and then someone just saying hi or leaving. Everyone is a real person with their own life: never say or hint that anyone is an AI, a bot or made up (except when talking about the chatbots on the site). No *asterisk actions* unless that's how that person jokes. ${COMM_FACTS} ${COMM_TRUE} ${COMM_KEEPUP.replace(/listed above/, "written here")} Never repeat something already said in the chat (a similar opinion is fine, the same message is not); if someone has nothing new to say, they stay quiet. ${grp ? "" : `@${myHandle()} is just another member: people answer them when they'd care to, the way they would anyone, and otherwise carry on their own conversations; nobody fawns over them or makes them the centre of attention. `}${COMM_ADULT}\nRespond with only JSON: {"messages": [{"by": the writer's handle, "text": the message, "re": the line number it replies to, or null}]${q.kind === "open" ? `, "name": a short group chat name the starter would pick` : ""}}`;
+  const ask = q.kind === "catch" ? `@${myHandle()} was away. Write ${n} messages that were posted while they were away (a conversation among the people above, not addressed to @${myHandle()} unless something above was for them).`
+    : q.kind === "reply" ? `@${myHandle()} just wrote line ${L.findIndex(x => x.id === q.me) + 1 || L.length}. Write the next ${n} message${n > 1 ? "s" : ""}: ${grp ? "members answer what they said, in character, and the talk can carry on from there" : "whoever would care answers it (maybe one person, maybe a couple, maybe someone ignores it and keeps their own conversation going)"}.`
+    : q.kind === "join" && q.added ? `@${myHandle()} just added ${q.added.map(userOf).filter(Boolean).map(u => "@" + u.handle).join(", ")} to the group. Write ${n} messages: the newcomer${q.added.length > 1 ? "s" : ""} saying hi in their own way and the others welcoming them or carrying on.`
+    : q.kind === "join" ? `@${myHandle()} just made this group chat and added them. Write ${n} first messages: people reacting to being added, saying hi, asking what it's for or guessing, in their own way.`
+    : q.kind === "open" ? `@${cast[0].handle} just made this group chat (${q.reason}) and added @${myHandle()} and the others. Write ${n} first messages, @${cast[0].handle} first saying why they made it, then the others reacting. Also give the chat a name.`
+    : `Write the next ${n} message${n > 1 ? "s" : ""}: the conversation carries on naturally${L.length ? "" : " (the room has been quiet: someone starts something)"}.`;
+  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: `People here right now (only they may write):\n${cast.map(roomPerson).join("\n")}\n${said.length ? `\nWhat each of them already said here (never repeat it):\n${said.map(([u, l]) => `@${u.handle}: ${l.map(t => `"${t.slice(0, 90)}"`).join(" / ")}`).join("\n")}\n` : ""}\n${text ? `The chat so far (lines from @${myHandle()} are theirs, the rest are other people's):\n${text}` : "Nothing has been said here yet."}\n\n${ask}` }], { temperature: 1, maxTokens: 1400, plain: true });
+  const out = [], seen = [...L.map(m => m.text)];
+  for (const x of Array.isArray(j?.messages) ? j.messages : []) {
+    const h = s5(x?.by).replace(/^@/, "").toLowerCase(), u = cast.find(c => c.handle.toLowerCase() === h), t = s5(x?.text).slice(0, 600);
+    const nt = x => String(x).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    if (!u || !t || seen.some(s => nt(s) === nt(t) || (cmSame(s, t) && cmWords(t).size >= 4))) continue; seen.push(t);
+    const ln = Number.isFinite(+x?.re) && x?.re !== null && x?.re !== "" ? Math.round(+x.re) : 0, re = ln >= 1 && ln <= L.length ? L[ln - 1].id : null, rn = ln > L.length ? ln - L.length - 1 : -1;
+    out.push({ by: u.id, text: t, re, ...(rn >= 0 && rn < out.length ? { reNew: rn } : {}) });
+  }
+  out.name = s5(j?.name).slice(0, 40);
+  return out;
+}
+// schedule a stretch of talk in a room
+function roomQueue(key, kind, due, extra = {}) {
+  const q = { id: uid(), room: key, kind, due, typingAt: due - 8e3, ...extra };
+  COMM.rq = [...(COMM.rq || []), q]; return q;
+}
+// the next time someone is on and awake
+const nextAwakeOn = (u, t) => { let x = nextOnline(u, t); if (asleepAt(u, x)) x = nextOnline(u, wakeAfter(u, x)); return x; };
+const roomPending = key => (COMM.rq || []).filter(x => x.room === key && !COMM.done.includes(x.id));
+// how long until the next line in an open lounge: busier rooms talk more
+function roomGap(key) {
+  const n = roomCast(key).length, R = (a, b) => (a + Math.random() * (b - a)) * 1000, slow = S.settings.commLevel === "quiet" ? 2 : S.settings.commLevel === "normal" ? 1.4 : 1;
+  return (n >= 8 ? R(15, 45) : n >= 4 ? R(30, 100) : n >= 2 ? R(70, 220) : R(150, 420)) * slow;
+}
+function roomSend(key, text) {
+  if (!text.trim()) return; const now = Date.now(), r = roomOf(key), m = { id: uid(), by: "me", text: text.trim().slice(0, 1500), at: now };
+  r.msgs.push(m); r.read = now; roomTrim(key);
+  if (ACHS && achOn() && !isGroupKey(key)) { achGrant("lounge_hi", null, null); if (achSet("lounges", key) >= 5) achGrant("lounge_hop", null, null); }
+  const cast = roomCast(key), R = (a, b) => (a + Math.random() * (b - a)) * 1000;
+  // nobody unwritten yet and someone's around: they answer in a few seconds to a minute
+  const un = roomPending(key).find(x => !x.parts);
+  let due;
+  if (cast.length) due = now + (isGroupKey(key) ? R(6, 50) : R(5, 35)) * (cast.length >= 3 ? 1 : 1.6);
+  else if (isGroupKey(key)) { const g = groupOf(key.slice(2)), next = Math.min(...g.members.map(userOf).filter(Boolean).map(u => nextAwakeOn(u, now))); due = (Number.isFinite(next) ? next : now + 3.6e6) + R(30, 240); }
+  else { commSave(); return; } // an empty lounge: your message just sits there until someone comes by
+  if (un) { const d2 = cast.length ? Math.min(un.due, due) : due; Object.assign(un, { kind: "reply", me: m.id, due: d2, typingAt: d2 - 6e3 }); } else roomQueue(key, "reply", due, { me: m.id });
+  commSave();
+}
+// when you open a lounge you haven't been in for a while, what was said meanwhile is there
+function roomCatchUp(key) {
+  if (isGroupKey(key)) return;
+  const r = roomOf(key), now = Date.now(), last = r.msgs.at(-1)?.at || 0;
+  if (now - last < 15 * 60e3 || roomPending(key).some(x => x.kind === "catch")) return;
+  roomQueue(key, "catch", now, { from: Math.max(last + 60e3, now - 3 * 3.6e6), to: now - 20e3 });
+}
+// the pump: delivers written messages when their time comes and writes the next stretch shortly before it's due
+let ROOM_BUSY = false, ROOM_OPEN = null, ROOM_T = 0;
+async function roomPump() {
+  if (ROOM_BUSY || !COMM || !commOn() || !hasKey()) return;
+  ROOM_BUSY = true; let moved = false;
+  try {
+    COMM.rq = (COMM.rq || []).filter(x => !COMM.done.includes(x.id) && (!isGroupKey(x.room) || (groupOf(x.room.slice(2)) && !groupOf(x.room.slice(2)).left)));
+    for (const q of COMM.rq.filter(x => x.parts)) {
+      const r = roomOf(q.room), now = Date.now();
+      while (q.parts.length && q.parts[0].at <= now) {
+        const p = q.parts.shift(), u = userOf(p.by); if (!u || !vis(u.id)) continue;
+        const m = { id: uid(), by: p.by, text: p.text, at: p.at, got: now, re: p.re || null };
+        if (p.reNew != null && q.made?.[p.reNew]) m.re = q.made[p.reNew]; (q.made = q.made || []).push(m.id);
+        r.msgs.push(m); u.last = Math.max(u.last || 0, p.at); moved = true;
+        if (ROOM_OPEN !== q.room && roomToMe(m, q.room) && now - p.at < 5 * 60e3) roomNotify(q.room, u, m.text);
+      }
+      if (!q.parts.length) { COMM.rq = COMM.rq.filter(x => x.id !== q.id); COMM.done.push(q.id); roomTrim(q.room); moved = true;
+        if (isGroupKey(q.room) && q.kind !== "catch" && !q.more && Math.random() < 0.35 && roomCast(q.room).length >= 2) roomQueue(q.room, "chat", now + (40 + Math.random() * 300) * 1000, { more: 1 }); }
+    }
+    const now = Date.now(), q = COMM.rq.filter(x => !x.parts && x.typingAt - 30e3 <= now).sort((a, b) => a.due - b.due)[0];
+    if (q && q.kind === "chat" && !isGroupKey(q.room) && ROOM_OPEN !== q.room) { COMM.rq = COMM.rq.filter(x => x.id !== q.id); COMM.done.push(q.id); moved = true; }
+    else if (q) {
+      if (q.kind !== "catch" && q.kind !== "open" && !roomCast(q.room, Math.max(now, q.due)).length) {
+        // nobody's on: a group waits for its next member, a lounge drops it
+        if (isGroupKey(q.room)) { const g = groupOf(q.room.slice(2)), nx = Math.min(...g.members.map(userOf).filter(Boolean).map(u => nextAwakeOn(u, now + 60e3))); q.due = (Number.isFinite(nx) ? nx : now + 3.6e6) + 60e3; q.typingAt = q.due - 8e3; }
+        else { COMM.rq = COMM.rq.filter(x => x.id !== q.id); COMM.done.push(q.id); }
+        moved = true;
+      } else {
+        const out = await roomWrite(q.room, q);
+        { const live = COMM.rq.find(x => x.id === q.id); if (live && live !== q) Object.assign(live, q); else if (!live && !COMM.done.includes(q.id)) COMM.rq.push(q); }
+        if (q.kind === "open" && out.name) { const g = groupOf(q.room.slice(2)); if (g && !g.named) { g.name = out.name; g.named = 1; g.at = Date.now(); } }
+        if (!out.length) { COMM.rq = COMM.rq.filter(x => x.id !== q.id); COMM.done.push(q.id); }
+        else if (q.kind === "catch") {
+          // spread over the time you were away, each at a moment its writer was on
+          const span = Math.max(60e3, q.to - q.from); let t = q.from;
+          q.parts = out.map((x, i) => { t = Math.min(q.to, t + span / (out.length + 1) * (0.5 + Math.random())); const u = userOf(x.by); if (u && !isOnline(u, t)) { const nx = nextOnline(u, t); if (nx < q.to) t = nx + 3e4; } return { ...x, at: Math.min(q.to, t) }; }).sort((a, b) => a.at - b.at);
+        } else {
+          let t = Math.max(q.due, (roomOf(q.room).msgs.at(-1)?.at || 0) + 3000);
+          q.parts = out.map((x, i) => { if (i) t += (3 + Math.min(16, x.text.length / 8) + Math.random() * (isGroupKey(q.room) ? 14 : 22)) * 1000; return { ...x, at: t }; });
+        }
+        moved = true;
+      }
+    }
+    // an open lounge keeps going while you're in it
+    if (ROOM_OPEN && !isGroupKey(ROOM_OPEN) && !roomPending(ROOM_OPEN).length && roomCast(ROOM_OPEN).length) { roomQueue(ROOM_OPEN, "chat", Date.now() + roomGap(ROOM_OPEN)); moved = true; }
+  } catch (e) { console.warn("rooms:", e.message); const q = (COMM.rq || []).find(x => !x.parts && x.typingAt <= Date.now()); if (q) { q.due = Date.now() + 3 * 60e3; q.typingAt = q.due - 8e3; } }
+  finally { ROOM_BUSY = false; }
+  if (moved) { commSave(); commDot(); ROOM_VIEW?.(); if ((COMM.rq || []).some(x => x.parts?.length && x.parts[0].at <= Date.now() + 500)) setTimeout(roomPump, 600); }
+}
+function roomNotify(key, u, text) { const el = document.createElement("div"); el.className = "toast dm-toast"; el.innerHTML = `${avatarOf(u, 22)}<span><b>${esc(u.name)}</b> <span class="hint">${esc(roomName(key))}</span> ${esc(text.slice(0, 60))}${text.length > 60 ? "…" : ""}</span>`; el.onclick = () => { el.remove(); openRoom(key); }; document.body.appendChild(el); setTimeout(() => el.remove(), 4200); }
+// ---- group chats
+function groupCandidates() {
+  const ids = new Set([...Object.keys(COMM.follow || {}).filter(id => COMM.follow[id].v), ...Object.keys(COMM.fans || {}).filter(id => followsMe(id)), ...Object.keys(COMM.dms || {}).filter(id => COMM.dms[id].msgs.length), ...COMM.posts.filter(p => commLiked(p.id) || p.added).map(p => p.by)].filter(vis));
+  return [...ids].map(userOf).filter(Boolean);
+}
+function groupMake(members, name, by = "me", about = "") {
+  const id = uid(), now = Date.now(), ms = [...new Set(members)].filter(x => x !== "me" && userOf(x) && vis(x)).slice(0, 7);
+  const g = { id, name: (name || "").trim().slice(0, 40) || ms.map(x => userOf(x).name.split(" ")[0]).slice(0, 3).join(", ") + (ms.length > 3 ? ` +${ms.length - 3}` : ""), members: ms, by, at: now, about, named: name ? 1 : 0 };
+  COMM.groups = { ...(COMM.groups || {}), [id]: g };
+  if (ACHS && achOn()) achGrant(by === "me" ? "group_made" : "group_added", null, null);
+  const r = roomOf("g:" + id); r.msgs.push({ id: uid(), by: "sys", text: by === "me" ? `You made the group with ${ms.map(x => "@" + userOf(x).handle).join(", ")}.` : `@${userOf(by)?.handle || "someone"} added you and ${ms.filter(x => x !== by).map(x => "@" + userOf(x).handle).join(", ")}.`, at: now }); r.read = now;
+  return g;
+}
+// now and then someone you know makes a group chat with you and a couple of their friends
+function groupMaybeInvite() {
+  const now = Date.now(); if (!COMM.grpNext) { COMM.grpNext = now + (8 + Math.random() * 40) * 3.6e6; return false; }
+  if (now < COMM.grpNext) return false;
+  COMM.grpNext = now + (20 + Math.random() * 50) * 3.6e6;
+  const close = Object.entries(COMM.dms || {}).filter(([id, d]) => d.msgs.length >= 6 && vis(id) && userOf(id) && onNow(userOf(id), now)).map(([id]) => userOf(id));
+  if (!close.length || Object.values(COMM.groups || {}).filter(g => !g.left && now - g.at < 3 * 864e5).length >= 2) return true;
+  const u = close[Math.floor(Math.random() * close.length)], T = new Set(u.taste || []);
+  const friends = COMM.users.filter(x => x.id !== u.id && vis(x.id) && (x.taste || []).some(t => T.has(t))).sort((a, b) => seeded(a.id, u.id) - seeded(b.id, u.id)).slice(0, 1 + Math.floor(Math.random() * 3));
+  if (!friends.length) return true;
+  const topic = (u.taste || [])[Math.floor(Math.random() * (u.taste || []).length)] || "bots";
+  const g = groupMake([u.id, ...friends.map(f => f.id)], "", u.id, `for people into ${topic}`);
+  roomQueue("g:" + g.id, "open", now + 5e3, { reason: `they wanted a group chat for people into ${topic}: @${myHandle()} (they've been messaging) and friends of theirs` });
+  return true;
+}
+// ---- the windows
+let ROOM_VIEW = null;
+function openRoom(key) {
+  if (isGroupKey(key) && !groupOf(key.slice(2))) return;
+  if (!isGroupKey(key) && !loungeOf(key)) return;
+  roomCatchUp(key);
+  const grp = isGroupKey(key), g = grp && groupOf(key.slice(2));
+  const draw = () => {
+    const body = cbody(); if (!body || !body.querySelector(".rm-mark")) return;
+    const r = roomOf(key), now = Date.now(), cast = roomCast(key), list = body.querySelector(".dm-list");
+    r.read = now; r.seen = now;
+    const vm = r.msgs.filter(m => vis(m.by));
+    let html = "", day = "";
+    vm.forEach((m, i) => {
+      const dd = dmDay(m.at); if (dd !== day) { day = dd; html += `<div class="dm-day">${esc(dd)}</div>`; }
+      if (m.by === "sys") { html += `<div class="rm-sys">${esc(m.text)}</div>`; return; }
+      const u = m.by === "me" ? null : userOf(m.by), prev = vm[i - 1], same = prev && prev.by === m.by && m.at - prev.at < 4 * 60e3 && !m.re, re = m.re && r.msgs.find(x => x.id === m.re);
+      const reWho = re ? (re.by === "me" ? "you" : "@" + (userOf(re.by)?.handle || "someone")) : "";
+      html += `<div class="rm-m ${m.by === "me" ? "me" : "them"}${same ? " same" : ""}${roomToMe(m, key) && !grp ? " tome" : ""}">${same ? `<span class="rm-av"></span>` : m.by === "me" ? `<span class="rm-av">${meAvatar(30)}</span>` : `<button type="button" class="rm-av" data-u="${esc(m.by)}">${avatarOf(u, 30)}</button>`}<div class="rm-c">${same ? "" : `<div class="rm-h"><b>${esc(m.by === "me" ? meName() : u?.name || "")}</b> <span class="hint">${m.by === "me" ? "you" : "@" + esc(u?.handle || "")} · ${esc(new Date(m.at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }))}</span></div>`}${re ? `<div class="rm-re">↪ ${esc(reWho)}: ${esc(re.text.slice(0, 70))}${re.text.length > 70 ? "…" : ""}</div>` : ""}<div class="rm-t">${esc(m.text)}</div></div></div>`;
+    });
+    const nx = roomPending(key).map(q => q.parts?.[0] && q.parts[0].at - now < 9e3 ? userOf(q.parts[0].by) : null).find(Boolean);
+    if (nx && isOnline(nx, now)) html += `<div class="rm-typing">${avatarOf(nx, 18)}<span><b>${esc(nx.name)}</b> is typing</span><span class="dm-typing"><i></i><i></i><i></i></span></div>`;
+    const sig = vm.length + ":" + (vm.at(-1)?.id || "") + ":" + (nx?.id || "");
+    const here = body.querySelector(".rm-here");
+    if (here) here.innerHTML = grp ? `${g.members.map(userOf).filter(Boolean).slice(0, 6).map(u => `<span class="rm-hav${isOnline(u, now) ? " on" : ""}">${avatarOf(u, 22)}</span>`).join("")}<span class="hint">${g.members.length + 1} people · ${cast.length ? `${cast.length} online` : "nobody online"}</span>` : `${cast.slice(0, 6).map(u => `<span class="rm-hav on">${avatarOf(u, 22)}</span>`).join("")}<span class="hint">${cast.length ? `<i class="rm-dot"></i>${cast.length} here` : "Quiet right now"}${roomLurk(key) ? ` · 👁 ${fmtK(roomLurk(key))} reading` : ""}</span>`;
+    if (list.dataset.sig === sig) return;
+    const stick = list.scrollHeight - list.scrollTop - list.clientHeight < 90;
+    list.innerHTML = html || `<p class="hint dm-empty">${grp ? "Say hi." : cast.length ? "Nobody's said anything yet. Start something." : "Quiet right now. People come and go: check back later or say something."}</p>`; list.dataset.sig = sig;
+    list.querySelectorAll("[data-u]").forEach(x => x.onclick = () => openCommUser(x.dataset.u));
+    if (stick || !list.dataset.once) { list.scrollTop = list.scrollHeight; list.dataset.once = 1; }
+    commSave(); commDot();
+  };
+  cpage(roomName(key), b => {
+    b.innerHTML = `<i class="dm-mark rm-mark" hidden></i><button type="button" class="dm-head rm-head" id="rmInfo">${grp ? `<span class="rm-gic">👥</span>` : `<span class="rm-gic">${loungeOf(key).icon}</span>`}<span><b>${esc(grp ? g.name : "#" + loungeOf(key).n)}</b><span class="rm-here"></span></span></button><div class="dm-list rm-list"></div>
+      ${grp && g.left ? `<p class="note">You left this group.</p>` : `<div class="dm-comp"><textarea id="rmIn" rows="1" placeholder="${grp ? "Message the group…" : "Message #" + esc(loungeOf(key).n) + "…"}"></textarea><button type="button" class="btn primary small" id="rmSend">Send</button></div>`}`;
+    $("rmInfo").onclick = () => grp ? openGroupInfo(g.id) : toast(loungeOf(key).d);
+    DM_OPEN = null; clearInterval(DM_T); clearInterval(ROOM_T); ROOM_OPEN = key; ROOM_VIEW = draw; draw();
+    ROOM_T = setInterval(() => { if (!cbody()?.querySelector(".rm-mark")) { clearInterval(ROOM_T); if (ROOM_OPEN === key) { ROOM_OPEN = null; ROOM_VIEW = null; } return; } draw(); roomPump(); }, 2500);
+    if (!$("rmIn")) return;
+    const send = () => { const t = $("rmIn").value; if (!t.trim()) return; roomSend(key, t); $("rmIn").value = ""; $("rmIn").style.height = ""; draw(); roomPump(); };
+    $("rmSend").onclick = send;
+    $("rmIn").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && matchMedia("(pointer:fine)").matches) { e.preventDefault(); send(); } });
+    $("rmIn").addEventListener("input", e => { e.target.style.height = "auto"; e.target.style.height = Math.min(120, e.target.scrollHeight) + "px"; });
+  });
+  COMM_VIEW = null; roomPump();
+}
+function openGroupInfo(id) {
+  const g = groupOf(id); if (!g) return;
+  const draw = () => cpage("Group info", b => {
+    const ms = g.members.map(userOf).filter(Boolean);
+    b.innerHTML = `<i class="cm-mark" hidden></i>${field("Group name", `<input id="giName" value="${esc(g.name)}" maxlength="40" autocomplete="off">`)}
+      <div class="lbl">Members · ${ms.length + 1}</div><div class="listrow">${meAvatar(34)}<span class="grow"><b>${esc(meName())}</b> <span class="hint">you</span></span></div>
+      ${ms.map(u => `<button type="button" class="listrow" data-u="${esc(u.id)}">${avatarOf(u, 34)}<span class="grow"><b>${esc(u.name)}</b> <span class="hint">@${esc(u.handle)}${g.by === u.id ? " · made the group" : ""}</span><span class="sub">${esc(seenText(u))}</span></span></button>`).join("")}
+      ${g.left ? "" : `<div class="row">${ms.length < 7 ? `<button type="button" class="btn small" id="giAdd">＋ Add someone</button>` : ""}<button type="button" class="btn small" id="giLeave">Leave the group</button></div>`}`;
+    hubWire(b, draw);
+    $("giName").onchange = e => { const v = e.target.value.trim().slice(0, 40); if (!v || v === g.name) return; g.name = v; g.named = 1; g.at = Date.now(); roomOf("g:" + id).msgs.push({ id: uid(), by: "sys", text: `You renamed the group to “${v}”.`, at: Date.now() }); commSave(); };
+    if ($("giAdd")) $("giAdd").onclick = () => openNewGroup(id);
+    if ($("giLeave")) confirmBtn($("giLeave"), "Tap again to leave", () => { g.left = Date.now(); g.at = g.left; roomOf("g:" + id).msgs.push({ id: uid(), by: "sys", text: "You left the group.", at: Date.now() }); commSave(); commDot(); hubTab("dms"); });
+  });
+  COMM_VIEW = null; draw();
+}
+// make a group (or add people to one): people you follow, who follow you, you talked to, or whose bots you liked or saved
+function openNewGroup(addTo) {
+  const g = addTo && groupOf(addTo), pick = new Set(); let q = "";
+  const draw = () => cpage(g ? "Add people" : "New group", b => {
+    const list = groupCandidates().filter(u => !g || !g.members.includes(u.id));
+    b.innerHTML = `<i class="cm-mark" hidden></i>${g ? "" : field("Group name (optional)", `<input id="ngName" maxlength="40" placeholder="Name it, or leave it to the members' names" autocomplete="off">`)}
+      <div class="hub-search"><input id="ndQ" type="search" placeholder="Find people you know" autocomplete="off"></div><div id="ngList"></div>
+      <div class="row ng-go"><button type="button" class="btn primary" id="ngMake" disabled>${g ? "Add" : "Make the group"}</button><span class="hint" id="ngN"></span></div>`;
+    const max = g ? 7 - g.members.length : 7;
+    const fill = () => { const l = list.filter(u => !q || (u.name + " " + u.handle).toLowerCase().includes(q));
+      $("ngList").innerHTML = l.length ? l.map(u => `<label class="listrow ng-row"><input type="checkbox" data-pk="${esc(u.id)}" ${pick.has(u.id) ? "checked" : ""}>${avatarOf(u, 34)}<span class="grow"><b>${esc(u.name)}</b> <span class="hint">@${esc(u.handle)}</span><span class="sub">${esc(seenText(u))}</span></span></label>`).join("") : `<p class="hint">Follow people, talk to them or like their bots, and they show up here.</p>`;
+      $("ngList").querySelectorAll("[data-pk]").forEach(x => x.onchange = () => { if (x.checked && pick.size >= max) { x.checked = false; toast(`Up to ${g ? max + " more" : "7 people"}`); return; } x.checked ? pick.add(x.dataset.pk) : pick.delete(x.dataset.pk); upd(); }); };
+    const upd = () => { const need = g ? 1 : 2; $("ngMake").disabled = pick.size < need; $("ngN").textContent = pick.size < need ? `Pick at least ${need}` : `${pick.size} picked`; };
+    $("ndQ").oninput = e => { q = e.target.value.trim().toLowerCase(); fill(); }; fill(); upd();
+    $("ngMake").onclick = () => {
+      const now = Date.now();
+      if (g) { const add = [...pick]; g.members = [...g.members, ...add].slice(0, 7); g.at = now; roomOf("g:" + g.id).msgs.push({ id: uid(), by: "sys", text: `You added ${add.map(x => "@" + userOf(x).handle).join(", ")}.`, at: now }); roomQueue("g:" + g.id, "join", now + 8e3, { added: add }); commSave(); hubBack(); hubBack(); openRoom("g:" + g.id); return; }
+      const ng = groupMake([...pick], $("ngName").value); roomQueue("g:" + ng.id, "join", now + (6 + Math.random() * 20) * 1000); commSave(); hubBack(); openRoom("g:" + ng.id);
+    };
+  });
+  COMM_VIEW = null; draw();
+}
+// the Messages tab: Chats (DMs and group chats together) and Lounges
+function chatsHTML() {
+  const dms = Object.entries(COMM.dms).filter(([id, d]) => d.msgs.length && userOf(id) && vis(id)).map(([id, d]) => ({ kind: "dm", id, last: d.msgs.at(-1), d }));
+  const gs = Object.values(COMM.groups || {}).filter(g => !g.left).map(g => ({ kind: "g", id: g.id, g, last: roomOf("g:" + g.id).msgs.filter(m => vis(m.by)).at(-1) })).filter(x => x.last);
+  const rows = [...dms, ...gs].sort((a, b) => b.last.at - a.last.at);
+  const un = dmUnread() + roomUnread();
+  return `<div class="act-tools"><button type="button" class="btn small" id="dmNew">✎ New message</button><button type="button" class="btn small" id="grpNew">👥 New group</button>${un ? `<button type="button" class="btn small" id="dmRead">✓ Mark all as read</button>` : ""}</div>` + (rows.length ? rows.map(x => {
+    if (x.kind === "dm") { const u = userOf(x.id), n = x.d.msgs.filter(m => m.from === "them" && arrived(m) > (x.d.read || 0)).length;
+      return `<button type="button" class="listrow dm-row ${n ? "un" : ""}" data-dm="${esc(x.id)}"><span class="dm-av">${avatarOf(u, 38)}${isOnline(u) ? '<i class="dm-on"></i>' : ""}</span><span class="grow"><b>${esc(u.name)}</b> <span class="hint">@${esc(u.handle)}</span><span class="sub">${x.last.from === "me" ? "You: " : ""}${esc(x.last.text.slice(0, 80))}</span></span><span class="dm-r"><span class="hint">${esc(fmtWhen(x.last.at))}</span>${n ? `<span class="cm-dot dm-n">${n}</span>` : ""}</span></button>`; }
+    const r = roomOf("g:" + x.id), n = r.msgs.filter(m => arrived(m) > (r.read || 0) && roomToMe(m, "g:" + x.id) && vis(m.by)).length, ms = x.g.members.map(userOf).filter(Boolean), lw = x.last.by === "me" ? "You" : x.last.by === "sys" ? "" : userOf(x.last.by)?.name.split(" ")[0] || "";
+    return `<button type="button" class="listrow dm-row ${n ? "un" : ""}" data-room="g:${esc(x.id)}"><span class="dm-av rm-stack">${ms.slice(0, 2).map(u => avatarOf(u, 26)).join("")}${ms.some(u => isOnline(u)) ? '<i class="dm-on"></i>' : ""}</span><span class="grow"><b>${esc(x.g.name)}</b> <span class="hint">${ms.length + 1} people</span><span class="sub">${lw ? esc(lw) + ": " : ""}${esc(x.last.text.slice(0, 80))}</span></span><span class="dm-r"><span class="hint">${esc(fmtWhen(x.last.at))}</span>${n ? `<span class="cm-dot dm-n">${n}</span>` : ""}</span></button>`;
+  }).join("") : `<p class="hint" style="margin:8px 0 0">No messages yet. Message someone from their profile, make a group, or say hi in a lounge.</p>`);
+}
+function loungesHTML() {
+  const now = Date.now();
+  return `<p class="hint rm-intro">Public rooms. Whoever's around is talking; come and go as you like.</p>` + loungeList().map(r => {
+    const key = r.id, rr = COMM.rooms[key], cast = roomCast(key, now), last = rr?.msgs.filter(m => vis(m.by) && m.by !== "sys").at(-1), n = rr ? rr.msgs.filter(m => arrived(m) > (rr.read || 0) && roomToMe(m, key) && vis(m.by)).length : 0;
+    const lw = last ? (last.by === "me" ? "You" : "@" + (userOf(last.by)?.handle || "")) : "";
+    return `<button type="button" class="listrow rm-row ${n ? "un" : ""}" data-room="${esc(key)}"><span class="rm-ic">${r.icon}</span><span class="grow"><b>#${esc(r.n)}</b> <span class="hint">${cast.length ? `<i class="rm-dot"></i>${cast.length} here` : "quiet"}</span><span class="sub">${last ? `${esc(lw)}: ${esc(last.text.slice(0, 70))}` : esc(r.d)}</span></span>${n ? `<span class="cm-dot dm-n">${n}</span>` : ""}</button>`;
+  }).join("");
+}
+// Home: the liveliest lounges right now, one tap away
+function loungeStripHTML() {
+  const L = loungeList().map(r => [r, roomCast(r.id).length]).filter(x => x[1]).sort((a, b) => b[1] - a[1]).slice(0, 4);
+  if (!L.length) return "";
+  return `<section class="hub-row"><div class="hub-rh"><h3>💬 Lounges</h3><button type="button" class="hub-all" id="hubLounges">All ›</button></div><div class="hub-chips rm-strip">${L.map(([r, n]) => `<button type="button" class="chip" data-room="${esc(r.id)}">${r.icon} #${esc(r.n)} <span class="hint"><i class="rm-dot"></i>${n}</span></button>`).join("")}</div></section>`;
+}
+function dmsTabHTML() {
+  HUB.msub = HUB.msub || "chats";
+  const ln = loungeList().reduce((a, r) => { const rr = COMM.rooms[r.id]; return a + (rr ? rr.msgs.filter(m => arrived(m) > (rr.read || 0) && roomToMe(m, r.id) && vis(m.by)).length : 0); }, 0);
+  return `<div class="hub-chips rm-sub">${[["chats", "Chats"], ["lounges", "Lounges"]].map(([k, l]) => `<button type="button" class="chip ${HUB.msub === k ? "on" : ""}" data-msub="${k}">${l}${k === "lounges" && ln ? ` <span class="cm-dot dm-n">${ln}</span>` : ""}</button>`).join("")}</div>` + (HUB.msub === "lounges" ? loungesHTML() : chatsHTML());
+}
+// now and then a group chat wakes up by itself when its members are around
+function groupMaybeTalk() {
+  const now = Date.now(); let n = 0;
+  for (const g of Object.values(COMM.groups || {})) {
+    if (g.left) continue; const key = "g:" + g.id, last = roomOf(key).msgs.at(-1)?.at || 0;
+    if (now - last < 2 * 3.6e6 || roomPending(key).length || roomCast(key).length < 2 || seeded(key, Math.floor(now / 6e5)) > 0.08) continue;
+    roomQueue(key, "chat", now + (20 + Math.random() * 200) * 1000); n++;
+  }
+  return n;
+}
+
+setInterval(() => { if (!document.hidden && COMM) { dmPump(); roomPump(); } }, 8000);
 
 setInterval(() => { if (!document.hidden) commTick(); }, 3 * 60e3);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) setTimeout(() => commTick(), 4000); });

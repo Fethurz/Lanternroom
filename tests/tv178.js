@@ -18,7 +18,7 @@ const open = require("./base.js");
   const chk = (m, v) => console.log((v ? "PASS " : "FAIL ") + m);
   const idle = () => pg.evaluate(async () => { while (COMM_BUSY || DM_BUSY) await new Promise(r => setTimeout(r, 50)); });
   await pg.evaluate(async () => { await commLoad(); }); await idle(); await pg.evaluate(async () => { await commTick(true); }); await idle();
-  chk("version 1.78", await pg.evaluate(() => VERSION.startsWith("1.78")));
+  chk("version 1.78 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 78));
 
   // ---------- the calendar
   const cal = await pg.evaluate(() => { const at = s => seasonNow(Date.parse(s))?.k || "none"; return { oct27: at("2026-10-27T12:00:00-05:00"), oct16: at("2026-10-16T12:00:00-05:00"), nov2: at("2026-11-02T20:00:00-06:00"), nov4: at("2026-11-04T12:00:00-06:00"), dec20: at("2026-12-20T12:00:00-06:00"), dec31: at("2026-12-31T12:00:00-06:00"), jan2: at("2027-01-02T12:00:00-06:00"), feb10: at("2027-02-10T12:00:00-06:00"), apr1: at("2027-04-01T12:00:00-05:00"), jul1: at("2027-07-01T12:00:00-05:00"), left: seasonNow(Date.parse("2026-10-27T12:00:00-05:00")).left, ny: seasonNow(Date.parse("2027-01-02T12:00:00-06:00")).year }; });
