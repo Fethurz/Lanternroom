@@ -8544,7 +8544,7 @@ function dmInvest(d, r) { const run = d.msgs.filter(m => m.at >= r.start), mine 
 function dmRunTouch(u, now) {
   const d = dmOf(u.id), r = dmRunOf(u, d, now); r.last = now;
   const inv = dmInvest(d, r), owl = owlOf(u), maxExt = 2 + Math.round(owl * 2);
-  if (r.until - now < 12 * 60e3 && inv >= 6 && r.ext < maxExt && Math.random() < 0.35 + 0.3 * owl + Math.min(0.25, inv / 60)) {
+  if (now < r.until && r.until - now < 12 * 60e3 && inv >= 6 && r.ext < maxExt && Math.random() < 0.35 + 0.3 * owl + Math.min(0.25, inv / 60)) {
     const lateOk = owl > 0.35 || inv >= 14, cap = lateOk ? r.bed + (30 + 150 * owl) * 60e3 : r.bed;
     const nu = Math.min(r.until + (20 + 40 * Math.random()) * 60e3, cap); if (nu > r.until + 5 * 60e3) { r.until = nu; r.ext++; }
   }
@@ -8558,7 +8558,9 @@ function dmLeave(u, d, at) {
 }
 function dmDelay(u, now) {
   const d = dmOf(u.id), lastThem = dmLastThem(d), r = dmRunTouch(u, now), left = d.leftAt && lastThem && d.leftAt >= lastThem.at - 1000;
-  const live = lastThem && now - lastThem.at < 12 * 60e3 && !left && now < r.until; // still in the conversation
+  const was = lastThem && now - lastThem.at < 12 * 60e3 && !left, live = was && now < r.until; // still in the conversation
+  // v1.72b: their time just ran out mid-conversation (too late, or their day needs them): one quick goodbye, then they're gone
+  if (was && !live && now < r.until + 20 * 60e3) { const R2 = (a, b) => (a + Math.random() * (b - a)) * 1000, seenAt = now + R2(3, 25); return { due: seenAt + R2(20, 90), seenAt, last: true }; }
   const R = (a, b) => (a + Math.random() * (b - a)) * 1000;
   const sp = u.speed || "medium";
   let ms = live ? (sp === "fast" ? R(12, 80) : sp === "medium" ? R(30, 240) : R(90, 900)) : (sp === "fast" ? R(40, 600) : sp === "medium" ? R(240, 3600) : R(1800, 14400));
@@ -8578,7 +8580,7 @@ function dmSend(uidv, text) {
   const d = dmOf(u.id), now = Date.now(), m = { id: uid(), from: "me", text: text.trim().slice(0, 2000), at: now };
   d.msgs.push(m); d.read = now;
   const q = COMM.dmq.find(x => x.user === u.id && x.kind === "reply");
-  if (!q) { const t = dmDelay(u, now); m.seenAt = t.seenAt; COMM.dmq.push({ id: uid(), user: u.id, kind: "reply", due: t.due, typingAt: t.due - (8 + Math.random() * 30) * 1000 }); }
+  if (!q) { const t = dmDelay(u, now); m.seenAt = t.seenAt; COMM.dmq.push({ id: uid(), user: u.id, kind: "reply", due: t.due, typingAt: t.due - (8 + Math.random() * 30) * 1000, ...(t.last ? { last: true } : {}) }); }
   else { dmRunTouch(u, now); if (!q.parts && q.due - now > 10 * 60e3 && dmLastThem(d) && now - dmLastThem(d).at < 6e5) { q.due = now + 60e3 + Math.random() * 120e3; q.typingAt = q.due - (8 + Math.random() * 20) * 1000; }
     // v1.71: seen right away while they're on, else when they next come online (never after they've answered)
     m.seenAt = Math.min(q.due - 3000, isOnline(u, now) ? now + 2000 + Math.random() * 20e3 : Math.max(now + 1500, nextOnline(u, now) + 20e3)); delete q.result; }
@@ -8623,6 +8625,7 @@ function dmTimeNote(u, d, q) {
   const r = d.run; if (!r) return "";
   const at = q.due || Date.now(), left = Math.round((r.until - at) / 60e3), late = at > r.bed - 20 * 60e3;
   let t = "";
+  if (q.last) return `You're out of time${at > r.bed ? ": it's way past when you'd normally be asleep and you really need to sleep now" : ": you have to go now"}. This is your goodbye: answer briefly if you want, then say you have to go, your own way (maybe when you'll be back). Set "leaving": true.`;
   if (at > r.bed) t += "It's past when you'd normally be asleep, but you're enjoying this conversation so you've stayed up; you can say so if you naturally would. ";
   if (left <= 10) t += `You have to log off in a few minutes (${late ? "it's late and you're getting tired" : "something in your own day needs you: pick what fits your life and the time"}). Wrap up now, your own way: say you have to go and maybe when you'll be back. `;
   else t += "You have time to keep chatting for now. ";
@@ -8654,7 +8657,7 @@ async function dmPump() {
           // a reply that came in while the app was closed keeps its own time, but never before the message it answers
           const lastAt = (dmOf(u.id).msgs.at(-1)?.at || 0) + 4000;
           let t = Math.max(q.due, lastAt); q.parts = parts.map((text, i) => { if (i) t += (2 + Math.min(14, text.length / 9) + Math.random() * 5) * 1000; return { text, at: t }; });
-          if (parts.leaving) dmLeave(u, dmOf(u.id), t); // they said bye: offline after the last text
+          if (parts.leaving || q.last) dmLeave(u, dmOf(u.id), t); // they said bye: offline after the last text
         }
         moved = true;
       }

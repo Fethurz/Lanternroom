@@ -48,14 +48,25 @@ const open = require("./base.js");
     const r1 = dmDelay(a, now + 3 * 60e3); out.dueSoon = (r1.due - now) / 60e3;
     // barely talking, not an owl
     const z = pick.at(-1), dz = setup(z, 2, false); for (let i = 0; i < 30; i++) dmRunTouch(z, now);
-    out.zPast = dz.run.until > dz.run.bed; const r2 = dmDelay(z, now + 8 * 60e3); out.zDue = (r2.due - now) / 3.6e6; out.zAwakeAtDue = !asleepAt(z, r2.due);
+    out.zPast = dz.run.until > dz.run.bed; const r2 = dmDelay(z, now + 8 * 60e3); out.zLast = !!r2.last; out.zDue = (r2.due - now) / 3.6e6; COMM.dmq = COMM.dmq.filter(x => x.user !== z.id); dmLeave(z, dz, now + 9 * 60e3); const r3 = dmDelay(z, now + 30 * 60e3); out.zNext = (r3.due - now) / 3.6e6; out.zAwakeAtDue = !asleepAt(z, r3.due);
     out.aId = a.id; return out; });
   chk(`an invested night owl stays up past bedtime (${Math.round(late.past)} min past, ${late.ext} extensions)`, late.past > 5 && late.ext >= 1);
   chk(`…and keeps answering in the moment (${late.dueSoon.toFixed(1)} min), not the next morning`, late.dueSoon < 30);
-  chk(`someone barely talking goes to bed on time and answers after waking (${late.zDue.toFixed(1)} h)`, !late.zPast && late.zDue > 5 && late.zAwakeAtDue);
+  chk(`someone barely talking goes to bed on time: a quick goodnight, then the next answer after waking (${late.zNext.toFixed(1)} h)`, !late.zPast && late.zLast && late.zDue < 0.2 && late.zNext > 5 && late.zAwakeAtDue);
   await pg.evaluate(async id => { const u = userOf(id), d = dmOf(id); await dmWrite(u, { kind: "reply", due: d.run.bed + 10 * 60e3 }); }, late.aId);
   chk("past bedtime the prompt says they stayed up because they're enjoying it", /past when you'd normally be asleep/.test(sysOf(lastDM())));
   chk("staying up shows them online while they chat", await pg.evaluate(id => { const u = userOf(id), d = dmOf(id); dmSend(id, "you still up?"); const q = COMM.dmq.find(x => x.user === id); return asleepAt(u, q.due) ? isOnline(u, q.due) : true; }, late.aId));
+  const cap = await pg.evaluate(id => { const u = userOf(id), d = dmOf(id), now = Date.now(); for (let i = 0; i < 200; i++) { d.run.ext = 0; dmRunTouch(u, d.run.until - 60e3); }
+    return { past: (d.run.until - d.run.bed) / 60e3, max: 30 + 150 * owlOf(u) }; }, late.aId);
+  chk(`even the most invested night owl stops by their limit (${Math.round(cap.past)} of at most ${Math.round(cap.max)} min past bedtime, never over 3 h)`, cap.past <= cap.max + 0.01 && cap.max <= 180);
+  // time ran out mid-conversation: one quick goodnight, even if the writer forgets to say it, then off till morning
+  const gn = await pg.evaluate(async id => { while (COMM_BUSY) await new Promise(z => setTimeout(z, 50)); COMM_BUSY = true; const u = userOf(id), d = dmOf(id), now = Date.now(), h = localHour(u, now); u.sleep = [(h + 22) % 24, (h + 6) % 24]; delete u.offFrom; delete u.offUntil; delete d.leftAt; COMM.dmq = COMM.dmq.filter(x => x.user !== id);
+    d.msgs.push({ id: uid(), from: "them", text: "lmao", at: now - 60e3 }); d.run = { start: now - 90 * 60e3, last: now - 60e3, until: now - 2 * 60e3, bed: now - 2 * 3.6e6, ext: 3 };
+    dmSend(id, "nooo one more story"); const q = COMM.dmq.find(x => x.user === id); const r = { last: !!q.last, soon: (q.due - now) / 60e3 };
+    q.due = Date.now() + 300; q.typingAt = Date.now() - 1000; for (let i = 0; i < 40 && COMM.dmq.some(x => x.user === id); i++) { await dmPump(); await new Promise(z => setTimeout(z, 300)); }
+    COMM_BUSY = false; const u2 = userOf(id), d2 = dmOf(id); r.left = !!d2.leftAt; r.offTill = (u2.offUntil - now) / 3.6e6; r.awakeThen = !asleepAt(u2, u2.offUntil); return r; }, late.aId);
+  chk(`out of time mid-chat: a quick goodnight (${gn.soon.toFixed(1)} min), not silence`, gn.last && gn.soon < 3 && /This is your goodbye/.test(sysOf(lastDM())) && /really need to sleep/.test(sysOf(lastDM())));
+  chk(`…then they're off until after they wake (${gn.offTill.toFixed(1)} h), even though the writer didn't say bye`, gn.left && gn.offTill > 3 && gn.awakeThen);
   chk("leaving at bedtime keeps them off until after they wake", await pg.evaluate(() => { const u = COMM.users[7], d = dmOf(u.id), now = Date.now(), h = localHour(u, now); u.sleep = [(h + 0.25) % 24, (h + 8) % 24]; dmLeave(u, d, now); return !asleepAt(u, u.offUntil) && u.offUntil - now > 7 * 3.6e6 && !isOnline(u, now + 60e3); }));
   chk("two devices keep the conversation's time and the goodbye", await pg.evaluate(() => { const m = commMerge({ dms: { a: { msgs: [], read: 1, run: { start: 1, last: 5, until: 9 }, leftAt: 3 } } }, { dms: { a: { msgs: [], read: 2, run: { start: 1, last: 2, until: 4 } } } }); return m.dms.a.run.until === 9 && m.dms.a.leftAt === 3; }));
   chk("no page errors (" + errs.length + ")", errs.length === 0); if (errs.length) console.log(errs.join("\n"));
