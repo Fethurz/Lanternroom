@@ -1516,7 +1516,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.73 · Oct 27";
+const VERSION = "1.74 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -7905,6 +7905,26 @@ async function commComments(n) {
   }
   return made;
 }
+// v1.74: write the replies to you that are due; one that fails is tried again a little later (3 tries), never silently dropped
+async function commDoReplies() {
+  let n = 0; const now = Date.now();
+  for (const p of COMM.pending.filter(p => p.due <= now).slice(0, 3)) {
+    let c = null; try { c = await commAnswer(p); } catch (e) { console.warn("community reply:", e.message); }
+    if (c) { n++; COMM.pending = COMM.pending.filter(x => x.id !== p.id); COMM.done.push(p.id); toast(`@${userOf(p.by)?.handle || "someone"} replied to you`); }
+    else { p.tries = (p.tries || 0) + 1; if (p.tries >= 3) { COMM.pending = COMM.pending.filter(x => x.id !== p.id); COMM.done.push(p.id); } else p.due = Date.now() + 90e3 * p.tries; }
+    commSave();
+  }
+  return n;
+}
+// …checked every 30 s, not only on the 3-minute heartbeat, so an answer lands soon after it's due
+async function commRepliesNow() {
+  if (COMM_BUSY || !COMM || !commOn() || !hasKey() || document.hidden || !COMM.pending.some(p => p.due <= Date.now())) return 0;
+  COMM_BUSY = true; let n = 0;
+  try { await commLoad(); n = await commDoReplies(); await commFlush(); } catch (e) { console.warn("community reply:", e.message); } finally { COMM_BUSY = false; }
+  if (n) { commDot(); commRedraw(); }
+  return n;
+}
+setInterval(() => { commRepliesNow(); }, 30e3);
 // someone answers the owner back, a few minutes after they wrote
 function commSchedule(t, mine) {
   const parent = mine.replyTo && (COMM.comments[t] || []).find(x => x.id === mine.replyTo), info = COMM.posts.find(p => p.id === t) || (t.startsWith("blog:") ? COMM.blogs.find(b => "blog:" + b.id === t) : null);
@@ -7952,18 +7972,19 @@ async function commTick(force) {
     await commLoad();
     const now = Date.now(), day = 864e5, r = commRate(); let changed = false, news = 0;
     // 36 regulars to start (three groups of 12, each a different mix), a few newcomers over time, up to 80
+    // v1.74: replies to you come first, so nothing below (new people, repairs) can ever hold them up
+    { const n = await commDoReplies(); if (n) { news += n; changed = true; } }
     if (!COMM.born) { COMM.born = (COMM.users.length ? Math.min(...COMM.users.map(u => u.at || now)) : now - 920 * 864e5) - 30 * 864e5; changed = true; } // the site is older than its oldest member
     if (!COMM.users.length) { for (let i = 0; i < 3; i++) { try { await commUsers(12); } catch (e) { if (!COMM.users.length) throw e; } } changed = true; }
-    else if (COMM.users.length < COMM_PEOPLE) { await commUsers(12); changed = true; } // v1.73: 144 active people, 12 more each check until then
-    else if (COMM.users.length < 200 && Math.random() < 0.05) { await commUsers(2); changed = true; }
+    else if (COMM.users.length < COMM_PEOPLE) { try { await commUsers(12); changed = true; } catch (e) { console.warn("community people:", e.message); } } // v1.73: 144 active people, 12 more each check until then
+    else if (COMM.users.length < 200 && Math.random() < 0.05) { try { await commUsers(2); changed = true; } catch {} }
     if (commFillSlots()) changed = true;
     if (!COMM.hFix && COMM.users.length) { try { if (await commHandleFix()) changed = true; } catch {} }
     // v1.66 repairs: pictures picked while every pick came out as the cat in Ember, and cut-off or typing-note bios
     if (!COMM.pixFix) { for (const u of COMM.users) if (pixOk(u.pix) && u.pix.pal === "ember") { const a = pixAuto(u.id + ":fix", "", 0); u.pix = { ...u.pix, pal: a.pal, frame: a.frame, ...(PIX_BY[u.pix.s]?.[2] === "human" ? { skin: a.skin ?? 1, hair: a.hair ?? 0 } : {}) }; } COMM.pixFix = 1; changed = true; }
     if (COMM.users.some(u => bioNeedsFix(u) && (u.bioTried || 0) < 3)) { try { if (await commFixBios()) changed = true; } catch {} }
     if (dmMaybeOpen()) changed = true;
-    // replies to the owner that are due
-    for (const p of COMM.pending.filter(p => p.due <= now).slice(0, 3)) { try { const c = await commAnswer(p); if (c) { news++; toast(`@${userOf(p.by)?.handle || "someone"} replied to you`); } } catch {} COMM.pending = COMM.pending.filter(x => x.id !== p.id); COMM.done.push(p.id); changed = true; }
+    // (replies to the owner are written first, right after loading: see commDoReplies)
     // new listings: the first visit fills the page, then they arrive at the chosen pace
     if (!COMM.posts.length) { await commPosts(3); await commPosts(3); COMM.tickP = now; changed = true; }
     else { const due = Math.min(6, (now - (COMM.tickP || now)) / day * r.posts); if (due >= 1) { const k = Math.min(3, Math.floor(due)); await commPosts(k); COMM.tickP = due > 4 ? now : (COMM.tickP || now) + k / r.posts * day; changed = true; } }
@@ -8348,8 +8369,7 @@ function commentsUI(t) {
   const kids = id => l.filter(x => x.replyTo === id);
   const one = (x, depth) => { const u = x.by === "me" ? null : userOf(x.by), liked = commLiked(x.id);
     return `<div class="cm-c ${x.by === "me" ? "me" : ""}" style="--d:${Math.min(depth, 3)}">${x.by === "me" ? meAvatar(26) : avatarOf(u, 26)}<div class="grow"><div class="cm-ch">${x.by === "me" ? `<button type="button" class="cm-who" data-me="1"><b>${esc(meName())}</b> <span class="badge">you</span></button>` : `<button type="button" class="cm-who" data-u="${esc(x.by)}"><b>${esc(u?.name || "Someone")}</b> <span class="hint">@${esc(u?.handle || "")}</span></button>`}<span class="hint">· ${esc(fmtWhen(x.at))}</span></div><div class="cm-tx">${esc(x.text)}</div><div class="cm-ca"><button type="button" class="cm-l ${liked ? "on" : ""}" data-cl="${esc(x.id)}">♥ ${cLikes(x) || ""}</button><button type="button" class="cm-r" data-rp="${esc(x.id)}">Reply</button></div></div></div>` + kids(x.id).map(k => one(k, depth + 1)).join(""); };
-  const waiting = COMM.pending.filter(p => p.target === t).map(p => userOf(p.by)).filter(Boolean);
-  return `<div class="cm-thread">${l.length ? top.map(x => one(x, 0)).join("") : '<p class="hint" style="margin:0">No comments yet.</p>'}${waiting.length ? `<p class="hint cm-wait">${waiting.map(u => "@" + esc(u.handle)).join(", ")} ${waiting.length > 1 ? "are" : "is"} writing a reply…</p>` : ""}</div>
+  return `<div class="cm-thread">${l.length ? top.map(x => one(x, 0)).join("") : '<p class="hint" style="margin:0">No comments yet.</p>'}</div>
     <div class="cm-new"><div class="hint" id="cmTo" hidden></div><textarea id="cmText" style="min-height:60px" placeholder="Write a comment as ${esc(meName())}…"></textarea><div class="row"><button type="button" class="btn small" id="cmCancel" hidden>Cancel reply</button><button type="button" class="btn small primary" id="cmSend">Post</button></div></div>`;
 }
 function wireComments(b, t, redraw) {
@@ -8363,7 +8383,7 @@ function wireComments(b, t, redraw) {
     const text = $("cmText").value.trim(); if (!text) return;
     const c = { id: uid(), by: "me", text: text.slice(0, 1000), at: Date.now(), replyTo: to };
     (COMM.comments[t] = COMM.comments[t] || []).push(c); commSchedule(t, c); commSave(); redraw();
-    toast(COMM.pending.some(p => p.replyTo === c.id) ? "Posted. Replies usually come within a few minutes." : "Posted");
+    toast("Posted");
   };
 }
 function openBotComments(id) {

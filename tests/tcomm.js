@@ -49,7 +49,7 @@ const open = require("./base.js");
   await pg.fill("#cmText", "love this dragon!!"); await pg.evaluate(() => { Math._r = Math.random; Math.random = () => 0.1; }); await pg.click("#cmSend"); await wait(200); await pg.evaluate(() => { Math.random = Math._r; });
   const pend = await pg.evaluate(id => ({ mine: (COMM.comments[id] || []).filter(x => x.by === "me").length, pending: COMM.pending.filter(p => p.target === id), author: COMM.posts.find(p => p.id === id).by }), pid);
   chk("your comment is posted and someone will answer after a while (their speed; later if they're asleep)", pend.mine === 1 && pend.pending.length >= 1 && pend.pending.every(p => p.due - Date.now() > 30e3));
-  chk("…shown as writing a reply", /writing a reply/.test(await pg.evaluate(() => cbody().textContent)));
+  chk("…without any \"writing a reply\" line (owner: no other site does that)", !/writing a reply/.test(await pg.evaluate(() => cbody().textContent)));
   // time passes: the reply lands
   await pg.evaluate(() => { COMM.pending.forEach(p => { p.due = Date.now() - 1; }); return Store.set("comm", COMM); });
   await pg.evaluate(() => commTick(true)); await wait(300);
