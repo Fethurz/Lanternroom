@@ -1515,7 +1515,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.71 · Oct 27";
+const VERSION = "1.72 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -7597,7 +7597,7 @@ function commMerge(a, b) {
   return { users: byId(A.users, B.users), posts: byId(A.posts, B.posts).sort((p, q) => q.at - p.at), comments, pub: newer(A.pub, B.pub), liked: newer(A.liked, B.liked),
     pending: byId(A.pending, B.pending).filter(p => !done.includes(p.id)), done, me: (B.me?.at || 0) >= (A.me?.at || 0) ? B.me : A.me, seen: (B.seen?.at || 0) >= (A.seen?.at || 0) ? B.seen : A.seen,
     tickP: Math.max(A.tickP || 0, B.tickP || 0), tickC: Math.max(A.tickC || 0, B.tickC || 0),
-    dms: (() => { const o = { ...(A.dms || {}) }; for (const [k, d] of Object.entries(B.dms || {})) { const x = o[k] || { msgs: [], read: 0 }; o[k] = { msgs: byId(x.msgs, d.msgs).sort((p, q) => p.at - q.at), read: Math.max(x.read || 0, d.read || 0) }; } return o; })(),
+    dms: (() => { const o = { ...(A.dms || {}) }; for (const [k, d] of Object.entries(B.dms || {})) { const x = o[k] || { msgs: [], read: 0 }; o[k] = { msgs: byId(x.msgs, d.msgs).sort((p, q) => p.at - q.at), read: Math.max(x.read || 0, d.read || 0), leftAt: Math.max(x.leftAt || 0, d.leftAt || 0) || undefined, run: (d.run?.last || 0) >= (x.run?.last || 0) ? d.run || x.run : x.run }; } return o; })(),
     dmq: byId(A.dmq, B.dmq).filter(p => !done.includes(p.id)), dmNext: Math.max(A.dmNext || 0, B.dmNext || 0),
     follow: newer(A.follow, B.follow), fans: { ...(A.fans || {}), ...(B.fans || {}) }, blogs: byId(A.blogs, B.blogs).sort((p, q) => q.at - p.at), tickB: Math.max(A.tickB || 0, B.tickB || 0), tickU: Math.max(A.tickU || 0, B.tickU || 0), tickF: Math.max(A.tickF || 0, B.tickF || 0), pixFix: Math.max(A.pixFix || 0, B.pixFix || 0),
     // v1.70: what you have read or cleared (these used to be dropped on every reload, so old notifications came back)
@@ -7804,9 +7804,10 @@ function sessOf(u, h) {
   for (let x = a + 60e3; x < e; x += 60e3) if (asleepAt(u, x)) { e = x - 60e3; break; } // they log off at bedtime
   return e - a >= 4 * 60e3 ? [a, e] : null;
 }
-function onBase(u, t) { if (u.last && t >= u.last && t - u.last < ACT_MS) return true; const H = Math.floor(t / SES_H); for (let h = H - 2; h <= H; h++) { const x = sessOf(u, h); if (x && t >= x[0] && t < x[1]) return true; } return false; }
+function onBase(u, t) { if (u.offUntil && t >= u.offFrom && t < u.offUntil) return false; if (u.last && t >= u.last && t - u.last < ACT_MS) return true; const H = Math.floor(t / SES_H); for (let h = H - 2; h <= H; h++) { const x = sessOf(u, h); if (x && t >= x[0] && t < x[1]) return true; } return false; }
 // windows around your DMs: when they see your message, and from when they start typing until a few minutes after the last text
-function dmWins(u) { const w = []; for (const m of COMM?.dms?.[u.id]?.msgs || []) if (m.from === "me" && m.seenAt) w.push([m.seenAt - 60e3, m.seenAt + 3 * 60e3]); for (const q of COMM?.dmq || []) if (q.user === u.id && q.typingAt) w.push([q.typingAt - 30e3, (q.parts?.length ? q.parts.at(-1).at : q.due) + 4 * 60e3]); return w; }
+function dmWins(u) { const w = [], cut = x => u.offFrom && x[0] < u.offFrom && x[1] > u.offFrom ? [x[0], u.offFrom] : u.offUntil && x[0] >= u.offFrom && x[0] < u.offUntil ? null : x; return dmWins0(u).map(cut).filter(Boolean); }
+function dmWins0(u) { const w = []; for (const m of COMM?.dms?.[u.id]?.msgs || []) if (m.from === "me" && m.seenAt) w.push([m.seenAt - 60e3, m.seenAt + 3 * 60e3]); for (const q of COMM?.dmq || []) if (q.user === u.id && q.typingAt) w.push([q.typingAt - 30e3, (q.parts?.length ? q.parts.at(-1).at : q.due) + 4 * 60e3]); return w; }
 function isOnline(u, t = Date.now()) { if (!u) return false; return onBase(u, t) || dmWins(u).some(([a, b]) => t >= a && t < b); }
 function lastSeen(u, t = Date.now()) {
   if (isOnline(u, t)) return t;
@@ -8526,18 +8527,48 @@ function openBlog(id) {
 const dmOf = id => (COMM.dms[id] = COMM.dms[id] || { msgs: [], read: 0 });
 const dmLastThem = d => d.msgs.filter(m => m.from === "them").at(-1);
 // how long until they answer: their speed, whether you're mid-conversation, now and then busy, asleep at night their time
+// v1.72: a conversation has a time budget. People stay while you keep talking until it runs out (or bedtime), are told when it's
+// nearly up so they can say bye their own way, and log off for a while after. Invested people stretch it, some past bedtime.
+const nextSleep = (u, t) => { for (let x = t, i = 0; i < 48 * 12; i++, x += 5 * 60e3) if (asleepAt(u, x)) return x; return t + 864e5; };
+const owlOf = u => seeded(u.id, "owl"); // how readily they stay up late
+function dmRunOf(u, d, now) {
+  let r = d.run;
+  if (!r || now > r.until + 5 * 60e3 || now - (r.last || r.start) > 25 * 60e3 || (d.leftAt && d.leftAt >= r.start)) {
+    const bed = nextSleep(u, now), base = (15 + 60 * Math.random()) * 60e3 * (0.6 + (u.active ?? 0.5));
+    r = d.run = { start: now, last: now, until: Math.min(now + base, bed), bed, ext: 0 };
+  }
+  return r;
+}
+// how into it they are: how much you two have said in this run, and how much you put into it
+function dmInvest(d, r) { const run = d.msgs.filter(m => m.at >= r.start), mine = run.filter(m => m.from === "me"); return run.length + (mine.length ? Math.min(6, mine.reduce((a, m) => a + m.text.length, 0) / mine.length / 30) : 0); }
+function dmRunTouch(u, now) {
+  const d = dmOf(u.id), r = dmRunOf(u, d, now); r.last = now;
+  const inv = dmInvest(d, r), owl = owlOf(u), maxExt = 2 + Math.round(owl * 2);
+  if (r.until - now < 12 * 60e3 && inv >= 6 && r.ext < maxExt && Math.random() < 0.35 + 0.3 * owl + Math.min(0.25, inv / 60)) {
+    const lateOk = owl > 0.35 || inv >= 14, cap = lateOk ? r.bed + (30 + 150 * owl) * 60e3 : r.bed;
+    const nu = Math.min(r.until + (20 + 40 * Math.random()) * 60e3, cap); if (nu > r.until + 5 * 60e3) { r.until = nu; r.ext++; }
+  }
+  return r;
+}
+// they said bye: offline for a while (until they wake up, if it's bedtime)
+function dmLeave(u, d, at) {
+  d.leftAt = at; if (d.run) d.run.until = Math.min(d.run.until, at);
+  const late = asleepAt(u, at + 30 * 60e3) || nextSleep(u, at) - at < 60 * 60e3;
+  u.offFrom = at + 20e3; u.offUntil = late ? wakeAfter(u, Math.max(at + 30 * 60e3, nextSleep(u, at))) + (10 + 60 * Math.random()) * 60e3 : at + (30 + 150 * Math.random()) * 60e3;
+}
 function dmDelay(u, now) {
-  const d = dmOf(u.id), lastThem = dmLastThem(d), live = lastThem && now - lastThem.at < 12 * 60e3;
+  const d = dmOf(u.id), lastThem = dmLastThem(d), r = dmRunTouch(u, now), left = d.leftAt && lastThem && d.leftAt >= lastThem.at - 1000;
+  const live = lastThem && now - lastThem.at < 12 * 60e3 && !left && now < r.until; // still in the conversation
   const R = (a, b) => (a + Math.random() * (b - a)) * 1000;
   const sp = u.speed || "medium";
   let ms = live ? (sp === "fast" ? R(12, 80) : sp === "medium" ? R(30, 240) : R(90, 900)) : (sp === "fast" ? R(40, 600) : sp === "medium" ? R(240, 3600) : R(1800, 14400));
   ms /= 0.6 + (u.active ?? 0.5) * 0.6;
   if (!live && Math.random() < 0.08) ms += R(3600, 5 * 3600); // got busy, comes back later
   let due = now + ms;
-  if (asleepAt(u, due) || asleepAt(u, now)) due = wakeAfter(u, Math.max(due, now)) + R(5 * 60, 100 * 60);
+  if (!live && (asleepAt(u, due) || asleepAt(u, now))) due = wakeAfter(u, Math.max(due, now)) + R(5 * 60, 100 * 60); // mid-conversation they stay up
   // v1.71: they only see and answer while they're online: mid-conversation they still are; otherwise when their next session starts
-  const here = live || onBase(u, now);
-  let seenAt = here ? now + (live ? R(3, 25) : R(5, 90)) : nextOnline(u, now) + R(10, 120);
+  const here = !left && (live || onBase(u, now)), from = left ? Math.max(now, u.offUntil || now) : now; // after a goodbye, nothing is read until they're back
+  let seenAt = here ? now + (live ? R(3, 25) : R(5, 90)) : nextOnline(u, from) + R(10, 120);
   if (!live) { const on = nextOnline(u, Math.max(due, seenAt + 5000)); if (on > due) due = on + R(20, 180); }
   if (due < seenAt + 15000) due = seenAt + R(15, live ? 60 : 200);
   return { due, seenAt: Math.max(now + 2000, seenAt) }; // they always see it before they answer
@@ -8548,7 +8579,7 @@ function dmSend(uidv, text) {
   d.msgs.push(m); d.read = now;
   const q = COMM.dmq.find(x => x.user === u.id && x.kind === "reply");
   if (!q) { const t = dmDelay(u, now); m.seenAt = t.seenAt; COMM.dmq.push({ id: uid(), user: u.id, kind: "reply", due: t.due, typingAt: t.due - (8 + Math.random() * 30) * 1000 }); }
-  else { if (!q.parts && q.due - now > 10 * 60e3 && dmLastThem(d) && now - dmLastThem(d).at < 6e5) { q.due = now + 60e3 + Math.random() * 120e3; q.typingAt = q.due - (8 + Math.random() * 20) * 1000; }
+  else { dmRunTouch(u, now); if (!q.parts && q.due - now > 10 * 60e3 && dmLastThem(d) && now - dmLastThem(d).at < 6e5) { q.due = now + 60e3 + Math.random() * 120e3; q.typingAt = q.due - (8 + Math.random() * 20) * 1000; }
     // v1.71: seen right away while they're on, else when they next come online (never after they've answered)
     m.seenAt = Math.min(q.due - 3000, isOnline(u, now) ? now + 2000 + Math.random() * 20e3 : Math.max(now + 1500, nextOnline(u, now) + 20e3)); delete q.result; }
   commSave();
@@ -8574,14 +8605,28 @@ function dmKnows(u) {
 }
 async function dmWrite(u, q) {
   const d = dmOf(u.id), now = Date.now();
+  if (q.kind === "open" || !d.run) dmRunOf(u, d, q.due || now);
   const hist = d.msgs.slice(-50).map(m => `[${localClock(u, m.at)} your time] ${m.from === "me" ? meName() : `${u.name} (you)`}: ${m.text}`).join("\n");
   const sys = `You are ${u.name} (@${u.handle}), a real person who uses ${COMM_SITE}. You're a ${u.age}-year-old ${u.gender || "person"} in ${u.place}; right now it's ${localClock(u, now)} where you are. About you: ${cleanBio(u.bio)} You love ${(u.taste || []).join(", ")}${u.focus ? `, especially ${u.focus}` : ""}. On the site you're a ${u.role || "regular"}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted. ${commTruth(u)}
 You're in private messages with ${meName()}. Write your next message or messages exactly as you'd really type them in a DM: in your own style (typos, slang, emoji or none, capitals or none, exactly like your typing style), usually short, often split into 1-4 separate texts the way people send several in a row. Respond to what they actually said, remember the conversation, ask things back when you'd want to know. You have your own life, mood and day, and the time of day shows (morning grogginess, at work, late-night chattiness), but don't announce the time. Be yourself, not a helpful assistant: you can be busy, distracted, blunt, awkward, uninterested, teasing or warm, and you can flirt or get lewd only if that fits who you are and they lead there. You are a real person: never say or hint that you are an AI, a bot, a character or made up, never mention a prompt or roleplay unless you're talking about chatbots on the site, and don't use *asterisk actions* unless that's genuinely how you joke. ${COMM_FACTS} ${COMM_ADULT}
-Respond with only JSON: {"messages": ["first text", "maybe a second"]}`;
+${dmTimeNote(u, d, q)}
+Respond with only JSON: {"messages": ["first text", "maybe a second"], "leaving": true only if these texts end the conversation for now (you said bye or that you have to go), else false}`;
   const ctx = dmKnows(u);
   const ask = q.kind === "open" ? `You're messaging ${meName()} first, out of the blue but naturally, because ${q.reason}.${d.msgs.length ? " You've talked before (above)." : " You've never messaged them before."}` : `Reply to ${meName()}'s latest message${d.msgs.filter(m => m.from === "me").length > 1 ? "s" : ""}.`;
   const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: `${ctx ? `Everything you know about ${meName()} (nothing else):\n${ctx}\n\n` : `You know nothing about ${meName()} yet beyond these DMs.\n\n`}${hist ? `Your DMs so far (lines marked (you) are yours, the others are ${meName()}'s):\n${hist}\n\n` : ""}${ask}` }], { temperature: 1, maxTokens: 700, plain: true });
-  return (Array.isArray(j?.messages) ? j.messages : [j?.text]).map(s5).filter(Boolean).slice(0, 5).map(t => t.slice(0, 1200));
+  const out = (Array.isArray(j?.messages) ? j.messages : [j?.text]).map(s5).filter(Boolean).slice(0, 5).map(t => t.slice(0, 1200));
+  out.leaving = j?.leaving === true || /^(true|yes)$/i.test(String(j?.leaving || ""));
+  return out;
+}
+// what they know about their own time: free to chat, nearly out of time, or up past bedtime because they're into it
+function dmTimeNote(u, d, q) {
+  const r = d.run; if (!r) return "";
+  const at = q.due || Date.now(), left = Math.round((r.until - at) / 60e3), late = at > r.bed - 20 * 60e3;
+  let t = "";
+  if (at > r.bed) t += "It's past when you'd normally be asleep, but you're enjoying this conversation so you've stayed up; you can say so if you naturally would. ";
+  if (left <= 10) t += `You have to log off in a few minutes (${late ? "it's late and you're getting tired" : "something in your own day needs you: pick what fits your life and the time"}). Wrap up now, your own way: say you have to go and maybe when you'll be back. `;
+  else t += "You have time to keep chatting for now. ";
+  return t + "Like a real person you can also end it whenever it fits: you're done, bored, uncomfortable, or need to go.";
 }
 // the pump: runs every few seconds while the app is open; writes a reply shortly before it's due, then lets the texts arrive
 let DM_BUSY = false;
@@ -8609,6 +8654,7 @@ async function dmPump() {
           // a reply that came in while the app was closed keeps its own time, but never before the message it answers
           const lastAt = (dmOf(u.id).msgs.at(-1)?.at || 0) + 4000;
           let t = Math.max(q.due, lastAt); q.parts = parts.map((text, i) => { if (i) t += (2 + Math.min(14, text.length / 9) + Math.random() * 5) * 1000; return { text, at: t }; });
+          if (parts.leaving) dmLeave(u, dmOf(u.id), t); // they said bye: offline after the last text
         }
         moved = true;
       }
@@ -8649,7 +8695,7 @@ function openDM(id) {
     const body = cbody(); if (!body || !body.querySelector(".dm-mark")) return;
     const d = dmOf(id), now = Date.now(), q = COMM.dmq.find(x => x.user === id);
     d.read = now;
-    const typing = q && now >= (q.typingAt || q.due) && !asleepAt(u, now) && (now < q.due + 90e3 || q.parts?.length);
+    const typing = q && now >= (q.typingAt || q.due) && isOnline(u, now) && (now < q.due + 90e3 || q.parts?.length);
     let html = "", day = "";
     d.msgs.forEach((m, i) => { const dd = dmDay(m.at); if (dd !== day) { day = dd; html += `<div class="dm-day">${esc(dd)}</div>`; } const next = d.msgs[i + 1], gap = !next || next.from !== m.from || next.at - m.at > 5 * 60e3;
       html += `<div class="dm-m ${m.from === "me" ? "me" : "them"}${gap ? " end" : ""}"><span class="dm-b">${esc(m.text)}</span>${gap ? `<span class="dm-t">${esc(new Date(m.at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }))}</span>` : ""}</div>`; });
