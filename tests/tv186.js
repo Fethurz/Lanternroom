@@ -45,7 +45,7 @@ const open = require("./base.js");
   chk(`reading it: the words, then the burp, then the rest only after the burp has finished (${seq.map(x => x.t.slice(0, 14)).join(" | ")})`, iT >= 0 && iB > iT && iE > iB && iD > iE && seq[iD].at - seq[iE].at >= 150);
   const html = await pg.evaluate(() => { const q = [...document.querySelectorAll("#msgs .msg.assistant .q")].find(x => /That was/.test(x.textContent)); return q ? { sfx: !!q.querySelector(".sfx-k"), txt: q.textContent } : null; });
   chk("in the chat the burp shows inside the speech as a sound word", html && html.sfx);
-  const tap = await pg.evaluate(async () => { __said = []; const q = [...document.querySelectorAll("#msgs .msg.assistant .q")].find(x => /That was/.test(x.textContent)); q.click(); await new Promise(r => setTimeout(r, 900)); return __said.map(x => x.t); });
+  const tap = await pg.evaluate(async () => { __said = []; const q = [...document.querySelectorAll("#msgs .msg.assistant .q")].find(x => /That was/.test(x.textContent)); q.click(); for (let i = 0; i < 80 && !__said.some(x => /delici/.test(x.t)); i++) await new Promise(r => setTimeout(r, 50)); return __said.map(x => x.t); });
   chk(`tapping that line plays it with the burp again (${tap.join(" | ")})`, tap[0] === "That was" && tap.includes("[sfx burp]") && /delici/.test(tap.at(-1)));
 
   // ---------- pitch and speed on Cartesia

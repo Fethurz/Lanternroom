@@ -1708,7 +1708,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.89 · Oct 27";
+const VERSION = "1.90 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -5907,15 +5907,49 @@ function voiceParts(m, mode) {
 }
 // ---- v1.85: the tone of each line. One small AI call per reply reads the scene and gives every line an emotion, a pace and a
 // loudness (whispered, shouted, sobbing, purring…); without it (or while it's slow) words around the quote decide.
-const TONE_EMO = ["neutral", "happy", "excited", "content", "sad", "angry", "scared", "curious", "flirtatious", "sarcastic", "tired", "calm", "anxious", "affectionate", "playful", "mysterious", "disappointed", "surprised", "confident", "apologetic", "determined", "embarrassed", "hurt", "lonely", "wistful", "mischievous", "frustrated", "disgusted", "proud", "nervous"];
+const TONE_EMO = ["neutral", "happy", "excited", "content", "sad", "angry", "scared", "curious", "flirtatious", "sarcastic", "tired", "calm", "anxious", "affectionate", "playful", "mysterious", "disappointed", "surprised", "confident", "apologetic", "determined", "embarrassed", "hurt", "lonely", "wistful", "mischievous", "frustrated", "disgusted", "proud", "nervous",
+  // v1.90: stronger and blunter feelings, so the director can commit to them
+  "furious", "outraged", "agitated", "contempt", "bitter", "stern", "menacing", "dejected", "melancholic", "heartbroken", "despairing", "resigned", "pleading", "panicked", "terrified", "alarmed", "hesitant", "insecure", "blunt", "cold", "deadpan", "bored", "skeptical", "confused", "seductive", "tender", "sympathetic", "smug", "elated", "enthusiastic", "triumphant"];
 // Cartesia's main emotions; other ones fall back to the nearest if the service doesn't take them
-const TONE_BASE = { happy: "excited", excited: "excited", content: "content", sad: "sad", angry: "angry", scared: "scared", neutral: "neutral", curious: "content", flirtatious: "content", sarcastic: "content", tired: "sad", calm: "content", anxious: "scared", affectionate: "content", playful: "excited", mysterious: "neutral", disappointed: "sad", surprised: "excited", confident: "content", apologetic: "sad", determined: "angry", embarrassed: "scared", hurt: "sad", lonely: "sad", wistful: "sad", mischievous: "excited", frustrated: "angry", disgusted: "angry", proud: "content", nervous: "scared" };
+const TONE_BASE = { happy: "excited", excited: "excited", content: "content", sad: "sad", angry: "angry", scared: "scared", neutral: "neutral", curious: "content", flirtatious: "content", sarcastic: "content", tired: "sad", calm: "content", anxious: "scared", affectionate: "content", playful: "excited", mysterious: "neutral", disappointed: "sad", surprised: "excited", confident: "content", apologetic: "sad", determined: "angry", embarrassed: "scared", hurt: "sad", lonely: "sad", wistful: "sad", mischievous: "excited", frustrated: "angry", disgusted: "angry", proud: "content", nervous: "scared",
+  furious: "angry", outraged: "angry", agitated: "angry", contempt: "angry", bitter: "angry", stern: "angry", menacing: "angry", dejected: "sad", melancholic: "sad", heartbroken: "sad", despairing: "sad", resigned: "sad", pleading: "scared", panicked: "scared", terrified: "scared", alarmed: "scared", hesitant: "scared", insecure: "scared", blunt: "neutral", cold: "neutral", deadpan: "neutral", bored: "neutral", skeptical: "neutral", confused: "neutral", seductive: "content", tender: "content", sympathetic: "content", smug: "content", elated: "excited", enthusiastic: "excited", triumphant: "excited" };
 // names Cartesia doesn't have, sent as its closest one
-const CART_EMO = { playful: "happy", lonely: "melancholic", mischievous: "happy", embarrassed: "insecure", nervous: "anxious" };
+const CART_EMO = { playful: "happy", lonely: "melancholic", mischievous: "happy", embarrassed: "insecure", nervous: "anxious", furious: "outraged", bitter: "contempt", stern: "determined", menacing: "contempt", heartbroken: "hurt", despairing: "dejected", pleading: "anxious", terrified: "panicked", blunt: "distant", cold: "distant", deadpan: "bored", seductive: "flirtatious", tender: "affectionate", smug: "proud" };
+// feelings that are said flat and clipped, or slow and low, or hot and loud, whatever the voice
+const TONE_FLAT = new Set(["blunt", "cold", "deadpan", "bored", "stern"]), TONE_LOW = new Set(["sad", "dejected", "melancholic", "heartbroken", "despairing", "resigned", "hurt", "lonely", "wistful", "tired"]), TONE_HOT = new Set(["angry", "furious", "outraged", "agitated", "frustrated", "menacing"]);
+// v1.90: speech quirks written for the eye, turned into something a voice says naturally:
+// stutters (C-Can → Ca— Can), cut-offs (gonna- → gonna—), stretched letters, shouted CAPS, piled-up punctuation, laughs
+const ACRO = /^(OK|TV|FBI|CIA|USA|UK|AI|ID|DNA|HP|XP|NPC|RPG|ASAP|LOL|OMG|WTF|BRB|DM|PC|VR|UFO|HQ|GPS|CEO|IQ|NSFW|ATM|SOS|MC|DJ|AM|PM)$/;
+function speakable(t, cart) {
+  let s = String(t || "").replace(/<3/g, " ").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}♪♫★☆]/gu, " ");
+  s = s.replace(/\b((?:[A-Za-z]{1,3}-){1,5})([A-Za-z][A-Za-z']*)/g, (all, reps, word) => {
+    const frags = reps.split("-").filter(Boolean), lw = word.toLowerCase();
+    if (!frags.every(f => lw.startsWith(f.toLowerCase())) || (frags[0].length > 1 && /^(re|pre|co|de|un|bi)$/i.test(frags[0]))) return all;
+    const syl = (word.match(/^[^aeiouy]*[aeiouy]/i) || [word])[0];
+    const say = f => /[aeiouy]/i.test(f) ? f : f[0] + syl.slice(1).toLowerCase();
+    return frags.map(say).join("— ") + "— " + word;
+  });
+  s = s.replace(/([A-Za-z])-(?=\s|$|[.,!?"”])/g, "$1—");
+  s = s.replace(/[!?]{2,}/g, m => m.includes("?") && m.includes("!") ? "?!" : m[0]).replace(/\.{4,}/g, "...");
+  s = s.replace(/\b[A-Z][A-Z']+\b/g, w => ACRO.test(w) ? w : w[0] + w.slice(1).toLowerCase());
+  s = s.replace(/([A-Za-z])\1{3,}/g, "$1$1$1");
+  if (cart) s = s.replace(/\b(?:a?(?:ha){2,}h?|(?:he){2,}h?|(?:hi){2,}|(?:ho){2,}|heh+|hah+|teehee|tehe)\b[!.]*/gi, "[laughter]");
+  return s.replace(/[_~*]+/g, " ").replace(/\s{2,}/g, " ").trim();
+}
 const TONE_CACHE = new Map(), TONE_BAD = new Set();
+// v1.90: make sure pace and loudness carry the feeling even when the director is timid about them
+function toneShape(p) {
+  const n = p.int || 3, e = p.emo; p.speed = p.speed || 1; p.vol = p.vol || 1;
+  if (TONE_LOW.has(e)) { p.speed = Math.min(p.speed, 1 - 0.04 * n); p.vol = Math.min(p.vol, 1.02 - 0.06 * n); }
+  else if (TONE_HOT.has(e) && n >= 3) { p.vol = Math.max(p.vol, 1 + 0.12 * (n - 1)); p.speed = Math.max(p.speed, 1 + 0.02 * n); }
+  else if (TONE_FLAT.has(e)) { p.speed = Math.max(p.speed, 1.05); p.vol = Math.min(Math.max(p.vol, 0.9), 1.1); }
+  p.speed = +Math.max(0.7, Math.min(1.35, p.speed)).toFixed(2); p.vol = +Math.max(0.4, Math.min(1.8, p.vol)).toFixed(2); return p;
+}
 function toneGuess(p) {
   const t = (p.ctx || "") + " " + p.text, x = { emo: "neutral", speed: 1, vol: 1 };
   const R = [[/\b(whisper|murmur|breath(ed|es)? out|hush|quietly|under (her|his|their) breath|softly)\w*/i, { emo: "calm", vol: 0.6, speed: 0.92 }], [/\b(shout|yell|scream|roar|bellow|snap(s|ped)?|bark(s|ed)?)\w*/i, { emo: "angry", vol: 1.5, speed: 1.08 }], [/\b(growl|snarl|hiss|spat|seeth|glare)\w*/i, { emo: "angry", vol: 1.15 }], [/\b(sob|cry|cries|tear|weep|sniffl|choke[sd]? up|voice (cracks|breaks))\w*/i, { emo: "sad", speed: 0.88, vol: 0.85 }], [/\b(giggl|laugh|chuckl|snicker|cackl)\w*/i, { emo: "happy", speed: 1.06, laugh: true }], [/\b(grin|beam|chirp|squeal|bounc)\w*/i, { emo: "happy", speed: 1.06 }], [/\b(purr|sultry|husk(y|ily)|teas|smirk|wink|sway)\w*/i, { emo: "flirtatious", speed: 0.95 }], [/\b(trembl|stammer|stutter|flinch|shak(e|ing|y)|afraid|terrified|panic)\w*/i, { emo: "scared", speed: 1.05, vol: 0.85 }], [/\b(sigh|wistful|lonely|longing|sadly|quietly)\w*/i, { emo: "wistful", speed: 0.92, vol: 0.85 }], [/\b(excited|eager|gasp|squeal|thrill)\w*/i, { emo: "excited", speed: 1.08 }], [/\b(nervous|anxious|fidget|hesitat)\w*/i, { emo: "nervous", speed: 1.02, vol: 0.85 }], [/\b(mischiev|sly|prank|smug)\w*/i, { emo: "mischievous" }], [/\b(yawn|sleepy|drows|exhausted|tired)\w*/i, { emo: "tired", speed: 0.85, vol: 0.85 }]];
+  // v1.90: blunt and cold lines are clipped and flat; tears and despair slow and low; rage loud
+  R.unshift([/\b(flatly|bluntly|coldly|curtly|deadpan|dryly|monotone|without (any )?emotion|matter-of-fact|tersely|icily)\w*/i, { emo: "blunt", speed: 1.08, vol: 1 }], [/\b(sob(s|bing|bed)?|tears (stream|roll|spill)|broken voice|heartbroken|choking back)\w*/i, { emo: "heartbroken", speed: 0.82, vol: 0.75 }], [/\b(roars?|screams?|bellows?|explodes?|seething|furious|enraged|livid)\b/i, { emo: "furious", vol: 1.65, speed: 1.1 }]);
   for (const [re, v] of R) if (re.test(p.ctx || "")) return { ...x, ...v };
   if (/!{1,}\s*$/.test(p.text) && /[A-Z]{4,}/.test(p.text)) return { ...x, emo: "angry", vol: 1.4, speed: 1.08 };
   if (/!\s*$/.test(p.text)) return { ...x, emo: "excited", vol: 1.15, speed: 1.05 };
@@ -5975,13 +6009,14 @@ async function toneParts(m, parts, opt = {}) {
       const msgs = S.chat?.messages || [], at = msgs.indexOf(m), before = (at > 0 ? msgs.slice(Math.max(0, at - 5), at) : []).filter(x => x.role !== "image").map(x => `${x.role === "user" ? uname() : "Story"}: ${stripColor(x.content || "").replace(/\[\[[\s\S]*?\]\]/g, "").slice(0, 700)}`).join("\n\n");
       const prevPresent = [...msgs.slice(0, Math.max(0, at))].reverse().find(x => Array.isArray(x.vpresent))?.vpresent;
       const whoRule = askWho ? ` Also say WHO speaks each line. Read the story before this reply and the reply itself: who is in the scene right now (someone who left doesn't speak until they come back), who is being answered or addressed, and the narration around each quote. Use a known character's exact name when it's them; for anyone else give the name the story uses (or a short description like "the bartender" when unnamed) and their gender. ${uname()} is the user's character. Narration lines are "Narrator".` : "";
-      const ask = dsJSON([{ role: "system", content: `You direct voice actors reading a roleplay reply aloud. For every numbered line, say how it should sound, judging by the whole scene: what is happening, the narration around the line (whispered, shouted, through tears, purring, trembling…), its punctuation and the speaker's mood and personality. Narration lines are read by a storyteller who matches the mood of what they describe.${whoRule} Respond with only JSON: {"lines": [{"i": line number, "emotion": one of ${TONE_EMO.join(", ")}, "speed": 0.75-1.3 (1 = normal), "volume": 0.5-1.6 (1 = normal; whispers about 0.6, shouts about 1.5), "laugh": true only if the line is laughed or giggled${askWho ? `, "speaker": who says it, "gender": "m", "f" or "n"` : ""}}]${askWho ? `, "present": [names of the characters in the scene at the end of this reply]` : ""}}` },
+      const ask = dsJSON([{ role: "system", content: `You direct voice actors reading a roleplay reply aloud. For every numbered line, say how it should sound, judging by the whole scene: what is happening, the narration around the line (whispered, shouted, through tears, purring, trembling…), its punctuation and the speaker's mood and personality. Narration lines are read by a storyteller who matches the mood of what they describe. Commit to the feeling: never fall back to neutral or content when a line carries any feeling, and pick the most specific emotion. Sadness: sad, melancholic, hurt, dejected, heartbroken (crying, voice breaking), despairing, resigned (quiet defeat). Anger by how hot it runs: frustrated, agitated, angry, furious, outraged; contempt, bitter, menacing, stern. Curt, flat, matter-of-fact, dismissive or rude lines are blunt, cold or deadpan, never neutral. Fear: hesitant, nervous, anxious, scared, terrified, panicked; pleading when begging. Give each line an intensity from 1 (barely) to 5 (overwhelming) and make speed and volume match it: sad and heartbroken lines slower and quieter (speed 0.75-0.9, volume 0.6-0.85), furious or shouted lines louder and a little faster (volume 1.4-1.8), blunt lines clipped (speed 1.05-1.15), whispers about volume 0.5.${whoRule} Respond with only JSON: {"lines": [{"i": line number, "emotion": one of ${TONE_EMO.join(", ")}, "intensity": 1-5, "speed": 0.7-1.35 (1 = normal), "volume": 0.4-1.8 (1 = normal), "laugh": true only if the line is laughed or giggled${askWho ? `, "speaker": who says it, "gender": "m", "f" or "n"` : ""}}]${askWho ? `, "present": [names of the characters in the scene at the end of this reply]` : ""}}` },
         { role: "user", content: `${askWho && known ? `Known characters:\n${known}\n\n` : ""}${askWho && prevPresent?.length ? `In the scene before this reply: ${prevPresent.join(", ")}\n\n` : ""}${askWho && before ? `The story just before this reply:\n${before.slice(-3000)}\n\n` : ""}The scene${askWho ? " (this reply)" : ""}:\n${stripColor(m.content).replace(/\[\[[\s\S]*?\]\]/g, "").slice(0, 3500)}\n\nLines to read:\n${parts.map((p, i) => `${i + 1}. ${askWho && p.who !== "narrator" ? "(guess: " + who(p) + ")" : who(p) + ":"} ${p.text.slice(0, 300)}`).join("\n")}` }], { temperature: 0.4, maxTokens: 1100, plain: true });
       const j = await Promise.race([ask, new Promise(r => setTimeout(() => r(null), opt.again ? 20000 : 9000))]);
       const spk = [];
       for (const x of Array.isArray(j?.lines) ? j.lines : []) { const i = (+x.i || 0) - 1, p = parts[i]; if (!p) continue;
         if (S.settings.voiceTone !== false) { const emo = String(x.emotion || "").toLowerCase().trim(); if (TONE_EMO.includes(emo)) p.emo = emo;
-          if (Number.isFinite(+x.speed)) p.speed = Math.max(0.75, Math.min(1.3, +x.speed)); if (Number.isFinite(+x.volume)) p.vol = Math.max(0.5, Math.min(1.6, +x.volume)); p.laugh = x.laugh === true; }
+          if (Number.isFinite(+x.speed)) p.speed = Math.max(0.7, Math.min(1.35, +x.speed)); if (Number.isFinite(+x.volume)) p.vol = Math.max(0.4, Math.min(1.8, +x.volume)); p.laugh = x.laugh === true;
+          if (Number.isFinite(+x.intensity)) p.int = Math.max(1, Math.min(5, Math.round(+x.intensity))); toneShape(p); }
         if (askWho && p.who !== "narrator" && x.speaker) spk[i] = { n: String(x.speaker).slice(0, 40), g: String(x.gender || "").slice(0, 1) }; }
       if (askWho && spk.length) {
         // new people become side characters only when "find new characters" is on; lines you set yourself stay yours
@@ -5990,7 +6025,7 @@ async function toneParts(m, parts, opt = {}) {
         setSpk(m, out); if (Array.isArray(j?.present)) m.vpresent = j.present.map(x => String(x).slice(0, 40)).slice(0, 12);
         if (S.chat?.messages.includes(m)) saveChat();
       }
-      TONE_CACHE.set(key, parts.map(p => ({ emo: p.emo, speed: p.speed, vol: p.vol, laugh: p.laugh }))); if (TONE_CACHE.size > 80) TONE_CACHE.delete(TONE_CACHE.keys().next().value);
+      TONE_CACHE.set(key, parts.map(p => ({ emo: p.emo, speed: p.speed, vol: p.vol, laugh: p.laugh, int: p.int }))); if (TONE_CACHE.size > 80) TONE_CACHE.delete(TONE_CACHE.keys().next().value);
     } catch (e) { console.warn("tone:", e.message); }
   }
   return parts;
@@ -6091,7 +6126,7 @@ async function voiceNext(g) {
       // Cartesia is asked for the opposite pace, so the pace you hear is the one you picked.
       const cp = Math.max(0.6, Math.min(1.5, v.cpitch || 1)), want = (p.speed || 1) * (v.rate || 1) * speed;
       const sent = +Math.max(0.6, Math.min(1.5, want / cp)).toFixed(2), play = cp * (want / (sent * cp));
-      const url = await cartAudio(sayNames(p.text), v.cart || (p.who === "narrator" ? S.settings.narrator.cart : S.settings.cartDefault), { ...p, speed: sent }); if (g !== VQ.gen) return;
+      const url = await cartAudio(sayNames(speakable(p.text, true)), v.cart || (p.who === "narrator" ? S.settings.narrator.cart : S.settings.cartDefault), { ...p, speed: sent }); if (g !== VQ.gen) return;
       if (v.fx.length) { const ok = await voiceFxPlay(url, v.fx, v.fxMix, Math.max(0.5, Math.min(2, play)), vol, g); if (ok) return voiceNext(g); if (g !== VQ.gen) return; }
       const a = new Audio(url); VQ.el = a; a.volume = vol; const shift = Math.abs(cp - 1) > 0.001; a.preservesPitch = a.mozPreservesPitch = a.webkitPreservesPitch = !shift; a.playbackRate = shift ? +play.toFixed(3) : Math.max(0.5, Math.min(2, play)); VQ.cp = { cp, sent, play: a.playbackRate, shift };
       a.onended = a.onerror = () => voiceNext(g); await a.play(); return;
@@ -6099,8 +6134,8 @@ async function voiceNext(g) {
   }
   try {
     // the phone's voices have no emotions: pitch, pace and loudness carry the tone instead
-    const base = TONE_BASE[p.emo] || "neutral", dp = { excited: 0.12, sad: -0.1, angry: -0.04, scared: 0.1, content: 0.03, neutral: 0 }[base] || 0;
-    const u = new SpeechSynthesisUtterance(sayNames(p.text)); if (v.phone) u.voice = v.phone; u.pitch = Math.max(0.1, Math.min(2, v.pitch + dp)); u.rate = Math.max(0.5, Math.min(2, v.rate * speed * (p.speed || 1))); u.volume = Math.max(0, Math.min(1, vol * Math.min(1, p.vol || 1)));
+    const base = TONE_BASE[p.emo] || "neutral", dp = ({ excited: 0.12, sad: -0.1, angry: -0.04, scared: 0.1, content: 0.03, neutral: 0 }[base] || 0) * (0.6 + 0.2 * (p.int || 2)) + (TONE_FLAT.has(p.emo) ? -0.06 : 0);
+    const u = new SpeechSynthesisUtterance(sayNames(speakable(p.text, false))); if (v.phone) u.voice = v.phone; u.pitch = Math.max(0.1, Math.min(2, v.pitch + dp)); u.rate = Math.max(0.5, Math.min(2, v.rate * speed * (p.speed || 1))); u.volume = Math.max(0, Math.min(1, vol * Math.min(1, p.vol || 1)));
     u.onend = u.onerror = () => voiceNext(g); speechSynthesis.speak(u);
   } catch { voiceNext(g); }
 }
@@ -6115,7 +6150,7 @@ async function cartAudio(text, voiceId, tone = {}) {
   const body = gc => ({ model_id: CART_MODEL, transcript: (tone.laugh ? "[laughter] " : "") + text, voice: { id: voiceId }, output_format: { container: "mp3", sample_rate: 44100, bit_rate: 128000 }, language: "en", ...(gc ? { generation_config: gc } : {}) });
   // v1.85: emotion, pace and loudness per line; an emotion the service refuses falls back to its main one, then to none (and is remembered)
   const gc = emo => { const o = {}; if (emo && emo !== "neutral") o.emotion = CART_EMO[emo] || emo; if (tone.speed && tone.speed !== 1) o.speed = +tone.speed.toFixed(2); if (tone.vol && tone.vol !== 1) o.volume = +tone.vol.toFixed(2); return Object.keys(o).length ? o : null; };
-  const tries = []; let e1 = tone.emo; if (e1 && TONE_BAD.has(e1)) e1 = TONE_BASE[e1]; if (e1 && TONE_BAD.has(e1)) e1 = null;
+  const tries = []; let e1 = tone.emo; if (e1 && (TONE_BAD.has(e1) || TONE_BAD.has(CART_EMO[e1]))) e1 = TONE_BASE[e1]; if (e1 && TONE_BAD.has(e1)) e1 = null;
   tries.push(gc(e1)); if (e1 && TONE_BASE[e1] && TONE_BASE[e1] !== e1) tries.push(gc(TONE_BASE[e1])); tries.push(null);
   let r, last;
   for (const [i, g] of tries.entries()) { try { r = await cartFetch("/tts/bytes", { method: "POST", json: body(g) }); break; } catch (e) { last = e; if (!/error 4(00|22)/.test(e.message) || i === tries.length - 1) throw e; if (g?.emotion) TONE_BAD.add(g.emotion); } }
@@ -6147,7 +6182,7 @@ async function cartVoices0(force) {
 }
 // what a voice is like, read from its name, description and gender: for the picker's groups and filters
 const VOICE_ACCENTS = [["American", /\bamerican|\bus\b|\bu\.s\.|new york|californi|midwest|texan/i], ["Southern US", /\bsouthern|\bcountry\b|drawl|texas/i], ["British", /\bbritish|\benglish accent|\blondon|\bposh|\bcockney|\buk\b|\bengland/i], ["Scottish", /\bscottish|\bscots?\b/i], ["Irish", /\birish/i], ["Australian", /\baustralian|\baussie/i], ["Canadian", /\bcanadian/i], ["Indian", /\bindian\b|\bhindi/i], ["African", /\bafrican|\bnigerian|\bkenyan/i], ["Latin", /\bspanish|\bmexican|\blatin|\bhispanic|\bargentin/i], ["French", /\bfrench/i], ["German", /\bgerman/i], ["Italian", /\bitalian/i], ["Russian", /\brussian|slavic/i], ["Asian", /\bjapanese|\bchinese|\bkorean|\bfilipin|\basian/i], ["Middle Eastern", /\barab|\bmiddle eastern|\bpersian|\bturkish/i]];
-const VOICE_TRAITS = [["Young", /\byoung|\byouthful|\bteen|\bgirlish|\bboyish|\bcollege|\bstudent/i], ["Older", /\bold(er)?\b|\belder|\bmature|\bgrand(ma|pa|mother|father)|\bseasoned|\baged\b|\bwise/i], ["Deep", /\bdeep|\bbass|\blow[- ]pitched|\bbaritone|\bbooming|\bresonant/i], ["High", /\bhigh[- ]pitched|\bsqueak|\bchirp|\bbright\b/i], ["Soft", /\bsoft|\bgentle|\bwhisper|\bquiet|\bbreathy|\bdelicate/i], ["Warm", /\bwarm|\bfriendly|\bkind|\bcaring|\bsoothing|\bcomforting/i], ["Raspy", /\braspy|\bgravel|\bhusky|\brough|\bgritty|\bsmok/i], ["Energetic", /\benerget|\bupbeat|\bexcit|\blively|\bbubbly|\bcheer|\benthusias|\bpeppy/i], ["Calm", /\bcalm|\bsteady|\bmeasured|\brelax|\bserene|\bcomposed/i], ["Sultry", /\bsultry|\bseduct|\bsexy|\bflirt|\bsensual|\bsmooth|\bvelvet/i], ["Confident", /\bconfident|\bauthorit|\bcommand|\bassertive|\bpowerful|\bstrong/i], ["Playful", /\bplayful|\bwhimsical|\bquirky|\bfun\b|\bmischiev|\bsilly|\bcartoon|\banimated/i], ["Dark", /\bdark|\bsinister|\bmenac|\bvillain|\bominous|\bcreepy|\bgrim/i], ["Narrator", /\bnarrat|\bstoryt|\baudiobook|\bdocumentar|\bannouncer|\bnews/i], ["Calm support", /\bcustomer|\bsupport|\breceptionist|\bagent\b|\bassistant/i]];
+const VOICE_TRAITS = [["Young", /\byoung|\byouthful|\bteen|\bgirlish|\bboyish|\bcollege|\bstudent/i], ["Older", /\bold(er)?\b|\belder|\bmature|\bgrand(ma|pa|mother|father)|\bseasoned|\baged\b|\bwise/i], ["Deep", /\bdeep|\bbass|\blow[- ]pitched|\bbaritone|\bbooming|\bresonant/i], ["High", /\bhigh[- ]pitched|\bsqueak|\bchirp|\bbright\b/i], ["Soft", /\bsoft|\bgentle|\bwhisper|\bquiet|\bbreathy|\bdelicate/i], ["Warm", /\bwarm|\bfriendly|\bkind|\bcaring|\bsoothing|\bcomforting/i], ["Raspy", /\braspy|\bgravel|\bhusky|\brough|\bgritty|\bsmok/i], ["Energetic", /\benerget|\bupbeat|\bexcit|\blively|\bbubbly|\bcheer|\benthusias|\bpeppy/i], ["Calm", /\bcalm|\bsteady|\bmeasured|\brelax|\bserene|\bcomposed/i], ["Sultry", /\bsultry|\bseduct|\bsexy|\bflirt|\bsensual|\bsmooth|\bvelvet/i], ["Confident", /\bconfident|\bauthorit|\bcommand|\bassertive|\bpowerful|\bstrong/i], ["Playful", /\bplayful|\bwhimsical|\bquirky|\bfun\b|\bmischiev|\bsilly|\bcartoon|\banimated/i], ["Dark", /\bdark|\bsinister|\bmenac|\bvillain|\bominous|\bcreepy|\bgrim/i], ["Emotive", /\bemotive|\bexpressive|\bemotional|\bdramatic/i], ["Narrator", /\bnarrat|\bstoryt|\baudiobook|\bdocumentar|\bannouncer|\bnews/i], ["Calm support", /\bcustomer|\bsupport|\breceptionist|\bagent\b|\bassistant/i]];
 function voiceInfo(v) {
   const t = `${v.name} ${v.d}`, gw = String(v.g || "").toLowerCase();
   const g = /fem|female|woman|^f$/.test(gw) ? "f" : /masc|^male|\bman\b|^m$/.test(gw) ? "m" : /neutral|non/.test(gw) ? "n" : (() => { const x = sexOf(v.d || ""); return x !== "n" ? x : FEM_V.test(v.name) ? "f" : MAS_V.test(v.name) ? "m" : "n"; })();
