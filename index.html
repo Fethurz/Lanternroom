@@ -680,6 +680,7 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .hub-youcard{display:flex;gap:14px;align-items:center}.hub-youcard .cm-pfn{margin:0 0 6px}
 .act-row.new{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
 .act-row .sub{white-space:normal}
+.hub-site{margin:0 0 10px;font-size:12.5px;color:var(--muted)}
 .act-tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
 .act-wrap{position:relative}.act-wrap .act-row{padding-right:44px}
 .act-x{position:absolute;top:6px;right:6px;width:34px;height:34px;border-radius:50%;background:transparent;border:0;color:var(--muted);font-size:14px}.act-x:hover{color:var(--text);background:color-mix(in srgb,var(--text) 8%,transparent)}
@@ -1515,7 +1516,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.72 · Oct 27";
+const VERSION = "1.73 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -4881,7 +4882,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       <button class="btn" id="sTrophies">🏆 Trophies</button>
       <label class="check"><input type="checkbox" id="sDaily" ${st.dailyOn !== false ? "checked" : ""}> Daily bot: once a day, invent a new bot from your favourite tags (uses your AI key once a day)</label>
       <label class="check"><input type="checkbox" id="sComm" ${st.commOn !== false ? "checked" : ""}> Community: a made-up bot site with its own users, posts, likes and comments (written by your AI key while the app is open)</label>
-      ${field("How busy the community is", `<select id="sCommLvl">${[["quiet", "Quiet: about 4 bots and 12 comments a day"], ["normal", "Normal: about 8 bots and 25 comments a day"], ["busy", "Busy: about 16 bots and 50 comments a day"]].map(([k, l]) => `<option value="${k}" ${(st.commLevel || "busy") === k ? "selected" : ""}>${l}</option>`).join("")}</select>`)}
+      ${field("How busy the community is", `<select id="sCommLvl">${[["quiet", "Quiet: about 16 bots and 50 comments a day"], ["normal", "Normal: about 32 bots and 100 comments a day"], ["busy", "Busy: about 64 bots and 200 comments a day"]].map(([k, l]) => `<option value="${k}" ${(st.commLevel || "busy") === k ? "selected" : ""}>${l}</option>`).join("")}</select>`)}
     </div>
     <div class="group"><h3>All chats</h3>
       ${field("Rules for every chat", `<textarea id="sGlobal" style="min-height:100px" placeholder="e.g. Write in third person. Keep replies under 4 paragraphs. Describe smells and sounds.">${esc(st.globalInstr || "")}</textarea>`, "Applied to every character, world and group. Colored text works with [color=red]text[/color].")}
@@ -7576,7 +7577,8 @@ async function pbOpening(tries = 0) {
    private messages timed like real texting (their speed, sleep at night their time, Seen, typing…, bursts, first messages).
    Likes and chat counts are worked out from each item's heat and age (commStats), so they grow on their own and
    need no syncing. */
-const COMM_RATES = { quiet: { posts: 4, comments: 12, blogs: 2, updates: 1, profiles: 2 }, normal: { posts: 8, comments: 25, blogs: 4, updates: 2, profiles: 4 }, busy: { posts: 16, comments: 50, blogs: 7, updates: 4, profiles: 7 } };
+// v1.73: four times the v1.62-v1.72 pace (owner: a bigger, livelier site)
+const COMM_RATES = { quiet: { posts: 16, comments: 48, blogs: 8, updates: 4, profiles: 8 }, normal: { posts: 32, comments: 100, blogs: 16, updates: 8, profiles: 16 }, busy: { posts: 64, comments: 200, blogs: 28, updates: 16, profiles: 28 } };
 const COMM_COLS = ["#e8a95b", "#ff6fae", "#7fb2ff", "#6fdc6a", "#c49bff", "#4fd1c5", "#e2766f", "#f1c56b", "#9fd3c7", "#ff9a5a"];
 let COMM = null, COMM_BUSY = false, COMM_T = 0, COMM_DIRTY = false;
 const commOn = () => S.settings.commOn !== false;
@@ -7599,7 +7601,7 @@ function commMerge(a, b) {
     tickP: Math.max(A.tickP || 0, B.tickP || 0), tickC: Math.max(A.tickC || 0, B.tickC || 0),
     dms: (() => { const o = { ...(A.dms || {}) }; for (const [k, d] of Object.entries(B.dms || {})) { const x = o[k] || { msgs: [], read: 0 }; o[k] = { msgs: byId(x.msgs, d.msgs).sort((p, q) => p.at - q.at), read: Math.max(x.read || 0, d.read || 0), leftAt: Math.max(x.leftAt || 0, d.leftAt || 0) || undefined, run: (d.run?.last || 0) >= (x.run?.last || 0) ? d.run || x.run : x.run }; } return o; })(),
     dmq: byId(A.dmq, B.dmq).filter(p => !done.includes(p.id)), dmNext: Math.max(A.dmNext || 0, B.dmNext || 0),
-    follow: newer(A.follow, B.follow), fans: { ...(A.fans || {}), ...(B.fans || {}) }, blogs: byId(A.blogs, B.blogs).sort((p, q) => q.at - p.at), tickB: Math.max(A.tickB || 0, B.tickB || 0), tickU: Math.max(A.tickU || 0, B.tickU || 0), tickF: Math.max(A.tickF || 0, B.tickF || 0), pixFix: Math.max(A.pixFix || 0, B.pixFix || 0),
+    follow: newer(A.follow, B.follow), fans: { ...(A.fans || {}), ...(B.fans || {}) }, blogs: byId(A.blogs, B.blogs).sort((p, q) => q.at - p.at), tickB: Math.max(A.tickB || 0, B.tickB || 0), tickU: Math.max(A.tickU || 0, B.tickU || 0), tickF: Math.max(A.tickF || 0, B.tickF || 0), pixFix: Math.max(A.pixFix || 0, B.pixFix || 0), born: Math.min(A.born || Infinity, B.born || Infinity) === Infinity ? 0 : Math.min(A.born || Infinity, B.born || Infinity),
     // v1.70: what you have read or cleared (these used to be dropped on every reload, so old notifications came back)
     actSeen: Math.max(A.actSeen || 0, B.actSeen || 0), feedSeen: Math.max(A.feedSeen || 0, B.feedSeen || 0), actClear: Math.max(A.actClear || 0, B.actClear || 0), actHid: { ...(A.actHid || {}), ...(B.actHid || {}) }, hFix: Math.max(A.hFix || 0, B.hFix || 0) };
 }
@@ -7675,11 +7677,23 @@ const CM_STYLES = [
   "uses lots of exclamation marks and is relentlessly upbeat!!",
   "shy and apologetic, hedges everything (sorry if this is weird but...)",
   "blunt critic, specific and honest, no sugarcoating",
-  "flirty and teasing by default, winks a lot ;)"
+  "flirty and teasing by default, winks a lot ;)",
+  "voice-to-text energy: run-on sentences, odd homophones, almost no punctuation",
+  "sarcastic but secretly sweet, lots of 'ugh' and 'fine'",
+  "says owo, uwu and xD completely unironically",
+  "drops into Spanish now and then (jaja, bro, que)",
+  "tidy grammar with the odd German word (ja, genau, naja)",
+  "texts like an older adult: full words, careful commas, '...' a lot",
+  "chaotic gremlin energy: random caps, lots of ??? and !!!",
+  "theatrical and dramatic: *gasps*, 'I am DECEASED', 'the AUDACITY'",
+  "sweet and brief: lots of 'ty!!', 'ofc', 'aw'",
+  "nerdy and precise, loves semicolons and (parentheses)",
+  "laid-back and slow: 'duuude', 'lowkey', 'idk man'",
+  "Aussie-British banter, swears casually and cheerfully"
 ];
-const CM_PLACES = [["Ohio, US", -4], ["Texas, US", -5], ["California, US", -7], ["Florida, US", -4], ["Seattle, US", -7], ["Chicago, US", -5], ["Toronto, Canada", -4], ["Vancouver, Canada", -7], ["Mexico City", -6], ["São Paulo, Brazil", -3], ["Buenos Aires", -3], ["London, UK", 0], ["Glasgow, Scotland", 0], ["Dublin, Ireland", 0], ["Berlin, Germany", 1], ["Warsaw, Poland", 1], ["Madrid, Spain", 1], ["Stockholm, Sweden", 1], ["Helsinki, Finland", 2], ["Johannesburg", 2], ["Istanbul", 3], ["Manila, Philippines", 8], ["Singapore", 8], ["Tokyo, Japan", 9], ["Seoul", 9], ["Sydney, Australia", 11], ["Melbourne, Australia", 11], ["Auckland, NZ", 13], ["Arizona, US", -7], ["Georgia, US", -4]];
-const CM_ROLES = ["prolific creator who posts often", "occasional creator", "commenter who rarely posts", "harsh but fair reviewer", "brand-new user still finding their feet", "site veteran who knows everyone", "artist who makes bots of their own OCs", "lurker who mostly just chats with bots", "writer of long, polished bots", "shitposter who makes joke bots", "kink-focused creator with a loyal following", "roleplayer who reviews every bot they try"];
-const CM_FOCUS = ["monster girls and monster boys", "horror and creepy stuff", "cozy slice of life", "sci-fi and space", "fantasy RPG adventures", "macro/micro and size", "slow-burn romance", "comedy and crack bots", "villains and dark characters", "yandere and obsessive types", "dragons", "furries and anthros", "office and modern romance", "post-apocalyptic survival", "dark fantasy", "mythology and gods", "supernatural (ghosts, vampires, demons)", "pirates and high seas", "fae and folklore", "mecha and cyberpunk"];
+const CM_PLACES = [["Portland, US", -7], ["Denver, US", -6], ["Boston, US", -4], ["New York, US", -4], ["Minnesota, US", -5], ["Montreal, Canada", -4], ["Bogotá, Colombia", -5], ["Santiago, Chile", -3], ["Lisbon, Portugal", 0], ["Paris, France", 1], ["Amsterdam, Netherlands", 1], ["Prague, Czechia", 1], ["Rome, Italy", 1], ["Athens, Greece", 2], ["Bucharest, Romania", 2], ["Cairo, Egypt", 2], ["Dubai", 4], ["Mumbai, India", 5.5], ["Bangkok, Thailand", 7], ["Jakarta, Indonesia", 7], ["Taipei, Taiwan", 8], ["Perth, Australia", 8], ["Brisbane, Australia", 10], ["Honolulu, US", -10], ["Anchorage, US", -8], ["Puerto Rico", -4], ["Ohio, US", -4], ["Texas, US", -5], ["California, US", -7], ["Florida, US", -4], ["Seattle, US", -7], ["Chicago, US", -5], ["Toronto, Canada", -4], ["Vancouver, Canada", -7], ["Mexico City", -6], ["São Paulo, Brazil", -3], ["Buenos Aires", -3], ["London, UK", 0], ["Glasgow, Scotland", 0], ["Dublin, Ireland", 0], ["Berlin, Germany", 1], ["Warsaw, Poland", 1], ["Madrid, Spain", 1], ["Stockholm, Sweden", 1], ["Helsinki, Finland", 2], ["Johannesburg", 2], ["Istanbul", 3], ["Manila, Philippines", 8], ["Singapore", 8], ["Tokyo, Japan", 9], ["Seoul", 9], ["Sydney, Australia", 11], ["Melbourne, Australia", 11], ["Auckland, NZ", 13], ["Arizona, US", -7], ["Georgia, US", -4]];
+const CM_ROLES = ["prolific creator who posts often", "occasional creator", "commenter who rarely posts", "harsh but fair reviewer", "brand-new user still finding their feet", "site veteran who knows everyone", "artist who makes bots of their own OCs", "lurker who mostly just chats with bots", "writer of long, polished bots", "shitposter who makes joke bots", "kink-focused creator with a loyal following", "roleplayer who reviews every bot they try", "helper who answers newcomers' questions", "drama-prone regular with opinions", "returning user after a long break", "co-writes bots with friends", "lorebook nerd who builds worlds for others", "artist who draws fanart of other people's bots"];
+const CM_FOCUS = ["monster girls and monster boys", "horror and creepy stuff", "cozy slice of life", "sci-fi and space", "fantasy RPG adventures", "macro/micro and size", "slow-burn romance", "comedy and crack bots", "villains and dark characters", "yandere and obsessive types", "dragons", "furries and anthros", "office and modern romance", "post-apocalyptic survival", "dark fantasy", "mythology and gods", "supernatural (ghosts, vampires, demons)", "pirates and high seas", "fae and folklore", "mecha and cyberpunk", "pirates and sea adventures", "cyberpunk", "superheroes and supervillains", "office and workplace romance", "mythology and gods", "post-apocalyptic survival", "robots and androids", "ghosts and the paranormal", "giants and size difference", "stuffing and inflation", "transformation", "hypnosis and mind games"];
 // v1.70: usernames and shown names vary like a real site (most are aliases; few are a real name)
 const CM_HANDLES = [
   ["one short plain word, no underscores or numbers (like moth, gravy, velvet)", 0],
@@ -7912,9 +7926,21 @@ async function commAnswer(p) {
   (COMM.comments[p.target] = COMM.comments[p.target] || []).push(c);
   return c;
 }
+const COMM_PEOPLE = 144;
+// v1.73: the site is much bigger than the people you meet: thousands of members who only lurk (like, chat, follow),
+// so a hit bot's thousands of likes are real. The count grows slowly; who's online follows the time of day.
+function commMembers(t = Date.now()) {
+  if (!COMM) return 0; const born = COMM.born || t, base = 9000 + 7000 * seeded("site:" + born, 1);
+  return Math.round(base * (1 + 0.003 * Math.max(0, t - born) / 864e5)) + COMM.users.length;
+}
+function commOnlineNow(t = Date.now()) {
+  const h = new Date(t).getUTCHours() + new Date(t).getUTCMinutes() / 60, f = 0.035 + 0.035 * (0.5 + 0.5 * Math.cos(2 * Math.PI * (h - 2) / 24)); // busiest in the American evening
+  return Math.round(commMembers(t) * f * (0.92 + 0.16 * seeded("on", Math.floor(t / 6e5)))) + COMM.users.filter(u => isOnline(u, t)).length;
+}
+const siteLine = () => `<p class="hub-site">${fmtK(commMembers())} members · ${fmtK(commOnlineNow())} online now</p>`;
 function commTrim() {
   const keep = new Set([...Object.keys(COMM.liked).filter(k => COMM.liked[k]?.v), ...COMM.posts.filter(p => p.added).map(p => p.id)]);
-  if (COMM.posts.length > 160) { const drop = COMM.posts.slice(160).filter(p => !keep.has(p.id)).map(p => p.id); COMM.posts = COMM.posts.filter(p => !drop.includes(p.id)); for (const id of drop) delete COMM.comments[id]; }
+  if (COMM.posts.length > 260) { const drop = COMM.posts.slice(260).filter(p => !keep.has(p.id)).map(p => p.id); COMM.posts = COMM.posts.filter(p => !drop.includes(p.id)); for (const id of drop) delete COMM.comments[id]; }
   for (const [t, l] of Object.entries(COMM.comments)) if (l.length > 80) COMM.comments[t] = l.slice(-80);
 }
 // the heartbeat: on open, on return to the app and every few minutes while it's visible
@@ -7926,9 +7952,10 @@ async function commTick(force) {
     await commLoad();
     const now = Date.now(), day = 864e5, r = commRate(); let changed = false, news = 0;
     // 36 regulars to start (three groups of 12, each a different mix), a few newcomers over time, up to 80
+    if (!COMM.born) { COMM.born = (COMM.users.length ? Math.min(...COMM.users.map(u => u.at || now)) : now - 920 * 864e5) - 30 * 864e5; changed = true; } // the site is older than its oldest member
     if (!COMM.users.length) { for (let i = 0; i < 3; i++) { try { await commUsers(12); } catch (e) { if (!COMM.users.length) throw e; } } changed = true; }
-    else if (COMM.users.length < 36) { await commUsers(12); changed = true; }
-    else if (COMM.users.length < 80 && Math.random() < 0.05) { await commUsers(2); changed = true; }
+    else if (COMM.users.length < COMM_PEOPLE) { await commUsers(12); changed = true; } // v1.73: 144 active people, 12 more each check until then
+    else if (COMM.users.length < 200 && Math.random() < 0.05) { await commUsers(2); changed = true; }
     if (commFillSlots()) changed = true;
     if (!COMM.hFix && COMM.users.length) { try { if (await commHandleFix()) changed = true; } catch {} }
     // v1.66 repairs: pictures picked while every pick came out as the cat in Ember, and cut-off or typing-note bios
@@ -8068,7 +8095,7 @@ function hubTab(tab) {
     if (!hasKey()) body = `<p class="note">Add your API key in Settings first: the community is written by the AI.</p>`;
     else if (!COMM.posts.length && HUB.tab !== "you") body = `<div class="cm-empty">${lanternSVG("seq")}<p>The community is waking up…</p></div>`;
     else if (HUB.tab === "home") {
-      body = hubRows().map(([k, t, l]) => `<section class="hub-row"><div class="hub-rh"><h3>${esc(t)}</h3>${l.length > 4 ? `<button type="button" class="hub-all" data-row="${k}">See all ›</button>` : ""}</div><div class="hub-strip">${l.slice(0, 12).map(postMini).join("")}</div></section>`).join("");
+      body = siteLine() + hubRows().map(([k, t, l]) => `<section class="hub-row"><div class="hub-rh"><h3>${esc(t)}</h3>${l.length > 4 ? `<button type="button" class="hub-all" data-row="${k}">See all ›</button>` : ""}</div><div class="hub-strip">${l.slice(0, 12).map(postMini).join("")}</div></section>`).join("");
       const blogs = [...(COMM.blogs || [])].sort((a, c) => c.at - a.at).slice(0, 3);
       if (blogs.length) body += `<section class="hub-row"><div class="hub-rh"><h3>📝 Fresh posts</h3></div>${blogs.map(blogCard).join("")}</section>`;
       body += `<button type="button" class="btn small hub-more" id="cmRefresh">↻ Check for new bots</button>`;
@@ -8678,7 +8705,7 @@ function dmMaybeOpen() {
   for (const ch of S.chars.filter(x => pubOf(x))) for (const u of pickUsers(3, tagsOf(ch))) c.push([u.id, `you found their public bot "${ch.name}" and it's very your thing`, 2]);
   for (const [id, d] of Object.entries(COMM.dms)) { const last = d.msgs.at(-1); if (last && now - last.at > 2 * 864e5 && d.msgs.length > 4) c.push([id, `you haven't talked in a few days and thought of them`, 1]); }
   const ok = c.filter(([id]) => userOf(id) && !asleepAt(userOf(id), now) && !COMM.dmq.some(x => x.user === id));
-  COMM.dmNext = now + (3 + Math.random() * 14) * 3.6e6; // about one or two a day
+  COMM.dmNext = now + (2 + Math.random() * 7) * 3.6e6; // v1.73: a few a day
   if (!ok.length) return true;
   const tot = ok.reduce((a, x) => a + x[2], 0); let r = Math.random() * tot, pick = ok[0]; for (const x of ok) { r -= x[2]; if (r <= 0) { pick = x; break; } }
   const due = nextOnline(userOf(pick[0]), now + (1 + Math.random() * 25) * 60e3) + 20e3 + Math.random() * 120e3; // they write when they're on
