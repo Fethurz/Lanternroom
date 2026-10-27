@@ -77,10 +77,10 @@ const open = require("./base.js");
 
   // ---------- the bot editor's Voice group
   const ed = await pg.evaluate(async () => {
-    const c = S.chars[0]; editChar(c, false); await new Promise(r => setTimeout(r, 120));
-    const box = !!$("cVoice") && !!$("cvPhone"); $("cvPhone").value = "Daniel"; $("cvPhone").dispatchEvent(new Event("change")); $("cvPitch").value = "0.7"; $("cvPitch").dispatchEvent(new Event("input"));
+    const c = S.chars[0]; openVoices(c); await new Promise(r => setTimeout(r, 120));
+    const box = !!$("voEd") && !!$("cvPhone"); $("cvPhone").value = "Daniel"; $("cvPhone").dispatchEvent(new Event("change")); $("cvPitch").value = "0.7"; $("cvPitch").dispatchEvent(new Event("input"));
     __said = []; $("cvTest").click(); await new Promise(r => setTimeout(r, 40)); const test = __said[0];
-    $("cSave").click(); await new Promise(r => setTimeout(r, 150));
+    await new Promise(r => setTimeout(r, 500));
     return { box, test, saved: S.chars[0].voice };
   });
   chk(`the editor's Voice group: pick a phone voice and pitch, Test, saved (${JSON.stringify(ed.saved)})`, ed.box && ed.test?.v === "Daniel" && Math.abs(ed.test.p - 0.7) < 0.01 && ed.saved?.phone === "Daniel" && ed.saved?.pitch === 0.7);
@@ -99,10 +99,10 @@ const open = require("./base.js");
   chk("a refused key falls back to the phone's voices and says why", fb.said.includes("Different line.") && fb.toast);
   cartStatus = 200;
   const cl = await pg.evaluate(async () => {
-    editChar(S.chars[0], false); await new Promise(r => setTimeout(r, 120));
+    openVoices(S.chars[0]); await new Promise(r => setTimeout(r, 120));
     $("cvList").click(); await new Promise(r => setTimeout(r, 200)); const list = document.querySelectorAll("#voPop .vp-card").length + 1; $("voPop")?._close();
-    const f = new File([new Uint8Array([1, 2, 3])], "me.webm", { type: "audio/webm" }), dt = new DataTransfer(); dt.items.add(f); $("cvFile").files = dt.files; $("cvFile").dispatchEvent(new Event("change")); await new Promise(r => setTimeout(r, 200));
-    const msg = $("cvMsg").textContent, id = $("cvCart").value; $("cSave").click(); await new Promise(r => setTimeout(r, 150)); return { list, msg, id, saved: S.chars[0].voice?.cart };
+    const f = new File([new Uint8Array([1, 2, 3])], "me.webm", { type: "audio/webm" }), dt = new DataTransfer(); dt.items.add(f); $("cvFile").files = dt.files; $("cvFile").dispatchEvent(new Event("change")); for (let i = 0; i < 80 && !/Done|failed/.test($("cvMsg")?.textContent || ""); i++) await new Promise(r => setTimeout(r, 50));
+    const msg = $("cvMsg").textContent, id = $("cvCart").value; await new Promise(r => setTimeout(r, 500)); return { list, msg, id, saved: S.chars[0].voice?.cart };
   });
   const creq = cart.find(x => /voices\/clone/.test(x.url));
   chk(`your Cartesia voices can be picked (${cl.list - 1})`, cl.list === 3);

@@ -34,14 +34,14 @@ const open = require("./base.js");
 
   // ---------- filters
   const fx = await pg.evaluate(async () => {
-    editChar(S.chars[0], false); await new Promise(r => setTimeout(r, 150));
-    const box = $("cVoice"), chips = [...box.querySelectorAll("[data-fx]")].map(x => x.dataset.fx);
+    openVoices(S.chars[0]); await new Promise(r => setTimeout(r, 150));
+    const box = $("voEd"), chips = [...box.querySelectorAll("[data-fx]")].map(x => x.dataset.fx);
     const say = box.querySelector("#cvSay").value;
     box.querySelector('[data-fx="robot"]').click(); box.querySelector('[data-fx="hall"]').click(); await new Promise(r => setTimeout(r, 30));
     const mix = !!box.querySelector("#cvFxMix"); box.querySelector("#cvFxMix").value = "0.8"; box.querySelector("#cvFxMix").dispatchEvent(new Event("input"));
     box.querySelector("#cvSay").value = "Eye-LYE-nah"; box.querySelector("#cvSay").dispatchEvent(new Event("input"));
     cartN = 0; VQ.fxLast = null; box.querySelector("#cvSayT").click(); await new Promise(r => setTimeout(r, 400));
-    $("cSave").click(); await new Promise(r => setTimeout(r, 200));
+    await new Promise(r => setTimeout(r, 500));
     return { chips, say, mix, saved: S.chars[0].voice };
   });
   chk(`the editor has the name box and ${fx.chips.length} filters (${fx.chips.join(", ")})`, fx.say === "Ay-LEE-nah" && fx.chips.length >= 10 && ["robot", "hall", "layers", "demon", "echo", "radio"].every(k => fx.chips.includes(k)));
@@ -62,12 +62,12 @@ const open = require("./base.js");
   chk(`every filter builds (${each.join("; ") || "all fine"})`, !each.length);
   const stop = await pg.evaluate(async () => { __said = []; voiceSay([{ text: "Long filtered line.", who: S.chars[0] }, { text: "Should not play.", who: { name: "x", voice: {} } }]); await new Promise(r => setTimeout(r, 150)); voiceStop(); await new Promise(r => setTimeout(r, 2500)); return __said.map(x => x.t); });
   chk("stopping cuts a filtered line and nothing after it plays", !stop.includes("Should not play."));
-  const ph = await pg.evaluate(async () => { S.settings.voiceEngine = "phone"; editChar(S.chars[0], false); await new Promise(r => setTimeout(r, 120)); const t = $("cVoice").textContent; closeSheet(); return /phone's own voices can't be filtered/.test(t); });
+  const ph = await pg.evaluate(async () => { S.settings.voiceEngine = "phone"; openVoices(S.chars[0]); await new Promise(r => setTimeout(r, 120)); const t = $("voEd").textContent; closeSheet(); return /phone's own voices can't be filtered/.test(t); });
   chk("with phone voices the editor says filters need Cartesia", ph);
   // persona and group members have the name box too
   const pe = await pg.evaluate(async () => { editPersona(S.personas[0], false); await new Promise(r => setTimeout(r, 120)); const v = $("peVoice")?.querySelector("#cvSay")?.value; closeSheet(); return v; });
   chk(`your persona's name pronunciation is in the persona editor (${pe})`, pe === "Shi-VAWN Kurr");
-  const wide = await pg.evaluate(async () => { editChar(S.chars[0], false); await new Promise(r => setTimeout(r, 120)); $("cVoice").scrollIntoView(); return document.documentElement.scrollWidth <= innerWidth + 1; });
+  const wide = await pg.evaluate(async () => { openVoices(S.chars[0]); await new Promise(r => setTimeout(r, 120)); $("voEd").scrollIntoView(); return document.documentElement.scrollWidth <= innerWidth + 1; });
   chk("no sideways scroll", wide);
   chk("no page errors", !errs.length); if (errs.length) console.log(errs.slice(0, 5).join("\n"));
   await b.close();

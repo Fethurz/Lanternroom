@@ -1705,7 +1705,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.87 · Oct 27";
+const VERSION = "1.88 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2709,7 +2709,7 @@ async function openProfile(id) {
       ${achShelf(c)}
       ${idx.length ? `<div class="stack"><div class="lbl">People in this story</div><div class="stack" id="pfPeople">${c.people?.found ? "" : '<p class="hint" style="margin:0">Side characters, places and groups you\'ve met can become bots of their own.</p>'}</div><button type="button" class="btn small" id="pfFind">${c.people?.found ? "↻ Look again" : "✦ Find people in this story"}</button></div>` : ""}
       <div class="stack"><div class="lbl">Chats · ${idx.length}</div><div class="stack" id="pfChats"></div></div>
-      <div class="row"><button type="button" class="btn small" id="pfEdit">Edit</button><button type="button" class="btn small" id="pfManage">Manage chats</button><button type="button" class="btn small" id="pfMore">More…</button></div>`;
+      <div class="row"><button type="button" class="btn small" id="pfEdit">Edit</button><button type="button" class="btn small" id="pfVoices">🎙 Voices</button><button type="button" class="btn small" id="pfManage">Manage chats</button><button type="button" class="btn small" id="pfMore">More…</button></div>`;
     setImg(b.querySelector(".pf-img"), thumbURL(c), c);
     const goLabel = () => { const pid = $("pfP").value, has = idx.some(e => e.personaId === pid); $("pfGo").textContent = has ? "Continue chat" : "Start chatting"; };
     goLabel();
@@ -2727,6 +2727,7 @@ async function openProfile(id) {
     }
     b.querySelectorAll(".pf-person").forEach(el => { const x = people[+el.dataset.i]; setImg(el.querySelector("img"), x.img || (x.who ? thumbURL(x.who) : ""), x.who || { name: x.name }); el.onclick = () => x.go(); });
     $("pfEdit").onclick = () => editChar(c, false);
+    $("pfVoices").onclick = () => openVoices(c);
     if ($("pfPub")) $("pfPub").onchange = async e => { await commPublish(c, e.target.checked); openProfile(c.id); };
     if ($("pfCm")) $("pfCm").onclick = () => openBotComments(c.id);
     if ($("pfUpd")) $("pfUpd").onclick = async () => { await commCopyUpdate(c); openProfile(c.id); };
@@ -5493,7 +5494,6 @@ function editChar(c, isNew, fromDraft) {
       <div class="group"><h3>Choices mode</h3><label class="check"><input type="checkbox" id="cChoices" ${work.choices ? "checked" : ""}> Play by picking choices: 3-4 after every reply (you can still write your own; risky ones roll a d20)</label></div>
       ${VORE_PIC ? `<div class="group"><h3>Vore picture</h3>${field("Usual weight", `<input type="range" id="cWeight" min="0" max="100" step="5" value="${+work.weight || 0}" aria-label="Usual weight">`, "How heavy this bot is in the vore picture before eating anyone, from slim to very fat. Weight from digested prey goes on top and can burn off again.")}</div>` : ""}
       <div class="group"><h3>Status gauges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Bars at the top of the chat (fullness, arousal, health…) that the AI moves as the story goes.</p><div id="cGauges" class="stack"></div></div>
-      <div class="group"><h3>Voice</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">How this ${K === "world" ? "world's narrator" : K === "group" ? "group" : "character"} sounds when replies are read aloud (Settings → Sounds → Voices).</p><div id="cVoice" class="stack"></div>${K === "group" || K === "world" ? `<div class="lbl" style="margin-top:6px">${K === "group" ? "Each member's voice" : "Each character's voice"}</div><p class="hint" style="margin:0;color:var(--muted);font-size:13px">${K === "group" ? "Give every member their own voice." : "Characters from the listings below. Others in the story get an automatic voice by their name."}</p><div class="tabs" id="cVoTabs"></div><div id="cVoOne" class="stack"></div>` : ""}</div>
       <div class="group"><h3>Badges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Achievements special to this bot. The story awards them when they happen.</p><div id="cBadges" class="stack"></div></div>
       <div class="group"><h3>Gold, inventory and quests</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">For adventures: a gold counter, a bag and a quest log under the chat header. The AI keeps them up to date and you can edit them.</p><div id="cRpg" class="stack"></div></div>
       <div id="cMsg" class="hint"></div>
@@ -5501,8 +5501,7 @@ function editChar(c, isNew, fromDraft) {
       ${isNew ? "" : `<button class="btn danger" id="cDel">Delete ${KINDS[K].label.toLowerCase()}</button>`}`;
 
     ruleTabs($("cInstr"));
-    gaugeEditor(work); rpgEditor(work); badgeEditor(work); creatorEditor(work); voiceEditor(work, $("cVoice"));
-    let drawVo = () => {}; // v1.86: set up below, once the member edits exist
+    gaugeEditor(work); rpgEditor(work); badgeEditor(work); creatorEditor(work);
 
     const greets = [work.firstMessage || "", ...(work.altGreetings || [])];
     let gi = 0;
@@ -5575,7 +5574,6 @@ function editChar(c, isNew, fromDraft) {
     if (K === "world") {
       const typeOf = x => WORLD_TYPES[x.type] ? x.type : "character";
       drawCast = () => {
-        drawVo();
         const counts = {}; work.cast.forEach(x => { counts[typeOf(x)] = (counts[typeOf(x)] || 0) + 1; });
         $("cCastCats").innerHTML = Object.keys(WORLD_TYPES).map(k => `<button type="button" class="tab ${k === castCat ? "on" : ""}" data-c="${k}">${CAT_LABEL[k]}${counts[k] ? ` · ${counts[k]}` : ""}</button>`).join("");
         $("cCastCats").querySelectorAll("[data-c]").forEach(x => x.onclick = () => { castCat = x.dataset.c; castSel = -1; drawCast(); });
@@ -5606,7 +5604,6 @@ function editChar(c, isNew, fromDraft) {
     let drawMembers = () => {};
     if (K === "group") {
       drawMembers = () => {
-        drawVo();
         const ms = work.members.map(id => memEdits[id] || byId(id)).filter(Boolean);
         if (memSel !== "add" && !work.members.includes(memSel)) memSel = work.members[0] || "add";
         $("cMemTabs").innerHTML = ms.map(m => `<button type="button" class="tab ${m.id === memSel ? "on" : ""}" data-m="${m.id}">${esc((m.name || "Unnamed").slice(0, 16))}</button>`).join("") + `<button type="button" class="tab ${memSel === "add" ? "on" : ""}" data-m="add">+ Add</button>`;
@@ -5638,16 +5635,6 @@ function editChar(c, isNew, fromDraft) {
       };
       drawMembers();
     }
-    // v1.86: a voice for each group member and each world character
-    let voSel = 0;
-    const voWho = () => K === "group" ? work.members.map(id => memEdits[id] || (byId(id) && (memEdits[id] = JSON.parse(JSON.stringify(byId(id)))))).filter(Boolean) : K === "world" ? work.cast.filter(x => (x.type || "character") === "character" && (x.name || "").trim()) : [];
-    drawVo = () => { const T = $("cVoTabs"); if (!T) return; const L = voWho();
-      if (!L.length) { T.innerHTML = ""; $("cVoOne").innerHTML = `<p class="hint" style="margin:0">${K === "group" ? "Add members first." : "Add characters to the world's listings first."}</p>`; return; }
-      voSel = Math.min(voSel, L.length - 1);
-      T.innerHTML = L.map((x, i) => `<button type="button" class="tab ${i === voSel ? "on" : ""}" data-vo="${i}">${x.voice?.cart || x.voice?.phone ? "🎙 " : ""}${esc((x.name || "Unnamed").slice(0, 16))}</button>`).join("");
-      T.querySelectorAll("[data-vo]").forEach(t => t.onclick = () => { voSel = +t.dataset.vo; drawVo(); });
-      voiceEditor(L[voSel], $("cVoOne"), { onChange: () => { const t = T.querySelector(`[data-vo="${voSel}"]`), x = L[voSel]; if (t) t.textContent = (x.voice?.cart || x.voice?.phone ? "🎙 " : "") + (x.name || "Unnamed").slice(0, 16); } }); };
-    drawVo();
 
     // Split into listings
     b.querySelectorAll("[data-split]").forEach(btn => {
@@ -5727,7 +5714,9 @@ function editChar(c, isNew, fromDraft) {
     $("cSave").onclick = async () => {
       grab();
       if (!work.name) { $("cName").focus(); $("cName").placeholder = "A name is required"; return; }
-      for (const [id, m] of Object.entries(memEdits)) { const c0 = byId(id); if (c0) { Object.assign(c0, { name: (m.name || "").trim() || c0.name, appearance: (m.appearance || "").trim(), description: (m.description || "").trim() }); if (m.voice && Object.keys(m.voice).length) c0.voice = m.voice; else delete c0.voice; } }
+      for (const [id, m] of Object.entries(memEdits)) { const c0 = byId(id); if (c0) Object.assign(c0, { name: (m.name || "").trim() || c0.name, appearance: (m.appearance || "").trim(), description: (m.description || "").trim() }); }
+      // v1.88: voices are set on the profile (openVoices); keep whatever is saved there now
+      { const cur = byId(work.id); if (cur) { if (cur.voice) work.voice = cur.voice; else delete work.voice; if (cur.sideVoices) work.sideVoices = cur.sideVoices; for (const x of work.cast || []) { const o = (cur.cast || []).find(y => y.name === x.name); if (o?.voice) x.voice = o.voice; } } }
       if (K === "group" && !work.members.length) { $("cMsg").textContent = "Add at least one member with the + Add tab, or split characters out of the description."; return; }
       work.lore = work.lore.filter(l => l.text.trim());
       work.cast = work.cast.filter(x => x.name.trim() || x.details.trim());
@@ -5926,20 +5915,67 @@ function toneGuess(p) {
   if (/\.\.\.|…/.test(p.text)) return { ...x, emo: "calm", speed: 0.92 };
   return x;
 }
+// ---- v1.88: who says each line. The same small AI call reads the story before the reply, who is in the scene (someone who
+// left doesn't speak until they're back), who is addressed and the narration around each quote, and names the speaker of
+// every line. Known characters keep their voices; anyone else is a side character with an automatic voice by name and
+// gender (and, with "find new characters" on, is added to the bot's side characters so you can pick their voice).
+const voiceDetectOn = () => !!(S.chat?.voiceDetect ?? S.settings.voiceDetect);
+const vNorm = t => String(t || "").toLowerCase().replace(/^(the|a|an)\s+/, "").replace(/[^\p{L}\p{N} ]+/gu, "").trim();
+// everyone with a voice on this bot: [{obj, kind main|member|cast|side}]
+function voicePeople(c) {
+  if (!c) return [];
+  const out = [{ obj: c, kind: "main" }];
+  if (c.kind === "group") members(c).forEach(m => out.push({ obj: m, kind: "member" }));
+  if (c.kind === "world") (c.cast || []).filter(x => (x.type || "character") === "character" && (x.name || "").trim()).forEach(x => out.push({ obj: x, kind: "cast" }));
+  (c.sideVoices || []).forEach(x => out.push({ obj: x, kind: "side" }));
+  return out;
+}
+function voiceWhoByName(c, name, g, opt = {}) {
+  const n = vNorm(name); if (!n || /^(narrator|narration|nobody|none|unknown)$/.test(n)) return null;
+  const u = vNorm(persona()?.name); if (u && (n === u || n.split(" ")[0] === u.split(" ")[0])) return { mine: true };
+  const L = voicePeople(c), first = x => vNorm(x).split(" ")[0];
+  const hit = L.find(x => vNorm(x.obj.name) === n) || L.find(x => first(x.obj.name).length > 2 && first(x.obj.name) === n.split(" ")[0]) || L.find(x => { const k = vNorm(x.obj.name); return k.length > 3 && (n.includes(k) || k.includes(n)); });
+  if (hit) { if (hit.kind === "main" && c.kind !== "character") return null; return hit.kind === "cast" ? { ...hit.obj, id: c.id + ":" + hit.obj.name } : hit.kind === "side" ? { ...hit.obj, id: c.id + ":side:" + vNorm(hit.obj.name) } : hit.obj; }
+  const gg = /^f/i.test(g || "") ? "f" : /^m/i.test(g || "") ? "m" : "n";
+  const side = { name: String(name).trim().slice(0, 40), g: gg, description: gg === "f" ? "she" : gg === "m" ? "he" : "" };
+  if (opt.detect && c && !(c.sideVoices || []).some(x => vNorm(x.name) === n)) { c.sideVoices = [...(c.sideVoices || []), { ...side, at: Date.now() }]; saveChars(); voiceNewNotify(c, side); }
+  return { ...side, id: c.id + ":side:" + n };
+}
+function voiceNewNotify(c, x) {
+  const el = document.createElement("div"); el.className = "toast dm-toast vo-new"; el.innerHTML = `<span>🗣 <b>${esc(x.name)}</b> is new here. Tap to choose their voice.</span>`;
+  el.onclick = () => { el.remove(); openVoices(c, x.name); }; document.body.appendChild(el); setTimeout(() => el.remove(), 6000);
+}
+function applySpeakers(c, parts, spk) {
+  parts.forEach((p, i) => { if (p.who === "narrator" || p.mine) return; const x = spk?.[i]; if (!x?.n) return; const w = voiceWhoByName(c, x.n, x.g); if (!w) return; p.who = w.mine ? myVoiceWho() : w; p.speaker = x.n; });
+}
 async function toneParts(m, parts) {
   if (!parts.length) return parts;
-  const key = (m.id || "") + ":" + (m.alt || 0) + ":" + parts.length, cached = TONE_CACHE.get(key);
-  if (cached) { parts.forEach((p, i) => Object.assign(p, cached[i] || {})); return parts; }
+  const c = char(), key = (m.id || "") + ":" + (m.alt || 0) + ":" + parts.length, cached = TONE_CACHE.get(key);
+  if (cached) { parts.forEach((p, i) => Object.assign(p, cached[i] || {})); applySpeakers(c, parts, m.vspk); return parts; }
   parts.forEach(p => Object.assign(p, toneGuess(p)));
-  if (S.settings.voiceTone !== false && hasKey()) {
+  if (m.vspk) applySpeakers(c, parts, m.vspk);
+  const detect = voiceDetectOn(), askWho = m.role === "assistant" && !m.vspk && parts.some(p => p.who !== "narrator") && !!c;
+  if ((S.settings.voiceTone !== false || (detect && askWho)) && hasKey()) {
     try {
       const who = p => p.who === "narrator" ? "Narrator" : p.who?.name || "Someone";
-      const ask = dsJSON([{ role: "system", content: `You direct voice actors reading a roleplay reply aloud. For every numbered line, say how it should sound, judging by the whole scene: what is happening, the narration around the line (whispered, shouted, through tears, purring, trembling…), its punctuation and the speaker's mood and personality. Narration lines are read by a storyteller who matches the mood of what they describe. Respond with only JSON: {"lines": [{"i": line number, "emotion": one of ${TONE_EMO.join(", ")}, "speed": 0.75-1.3 (1 = normal), "volume": 0.5-1.6 (1 = normal; whispers about 0.6, shouts about 1.5), "laugh": true only if the line is laughed or giggled}]}` },
-        { role: "user", content: `The scene:\n${stripColor(m.content).replace(/\[\[[\s\S]*?\]\]/g, "").slice(0, 3500)}\n\nLines to read:\n${parts.map((p, i) => `${i + 1}. ${who(p)}: ${p.text.slice(0, 300)}`).join("\n")}` }], { temperature: 0.4, maxTokens: 900, plain: true });
-      const j = await Promise.race([ask, new Promise(r => setTimeout(() => r(null), 8000))]);
-      for (const x of Array.isArray(j?.lines) ? j.lines : []) { const p = parts[(+x.i || 0) - 1]; if (!p) continue;
-        const emo = String(x.emotion || "").toLowerCase().trim(); if (TONE_EMO.includes(emo)) p.emo = emo;
-        if (Number.isFinite(+x.speed)) p.speed = Math.max(0.75, Math.min(1.3, +x.speed)); if (Number.isFinite(+x.volume)) p.vol = Math.max(0.5, Math.min(1.6, +x.volume)); p.laugh = x.laugh === true; }
+      const known = voicePeople(c).filter(x => x.kind !== "main" || c.kind === "character").map(x => `- ${x.obj.name}${x.kind === "side" ? " (side character)" : ""}: ${String(x.obj.details || x.obj.description || "").replace(/\s+/g, " ").slice(0, 120)}`).join("\n");
+      const msgs = S.chat?.messages || [], at = msgs.indexOf(m), before = (at > 0 ? msgs.slice(Math.max(0, at - 5), at) : []).filter(x => x.role !== "image").map(x => `${x.role === "user" ? uname() : "Story"}: ${stripColor(x.content || "").replace(/\[\[[\s\S]*?\]\]/g, "").slice(0, 700)}`).join("\n\n");
+      const prevPresent = [...msgs.slice(0, Math.max(0, at))].reverse().find(x => Array.isArray(x.vpresent))?.vpresent;
+      const whoRule = askWho ? ` Also say WHO speaks each line. Read the story before this reply and the reply itself: who is in the scene right now (someone who left doesn't speak until they come back), who is being answered or addressed, and the narration around each quote. Use a known character's exact name when it's them; for anyone else give the name the story uses (or a short description like "the bartender" when unnamed) and their gender. ${uname()} is the user's character. Narration lines are "Narrator".` : "";
+      const ask = dsJSON([{ role: "system", content: `You direct voice actors reading a roleplay reply aloud. For every numbered line, say how it should sound, judging by the whole scene: what is happening, the narration around the line (whispered, shouted, through tears, purring, trembling…), its punctuation and the speaker's mood and personality. Narration lines are read by a storyteller who matches the mood of what they describe.${whoRule} Respond with only JSON: {"lines": [{"i": line number, "emotion": one of ${TONE_EMO.join(", ")}, "speed": 0.75-1.3 (1 = normal), "volume": 0.5-1.6 (1 = normal; whispers about 0.6, shouts about 1.5), "laugh": true only if the line is laughed or giggled${askWho ? `, "speaker": who says it, "gender": "m", "f" or "n"` : ""}}]${askWho ? `, "present": [names of the characters in the scene at the end of this reply]` : ""}}` },
+        { role: "user", content: `${askWho && known ? `Known characters:\n${known}\n\n` : ""}${askWho && prevPresent?.length ? `In the scene before this reply: ${prevPresent.join(", ")}\n\n` : ""}${askWho && before ? `The story just before this reply:\n${before.slice(-3000)}\n\n` : ""}The scene${askWho ? " (this reply)" : ""}:\n${stripColor(m.content).replace(/\[\[[\s\S]*?\]\]/g, "").slice(0, 3500)}\n\nLines to read:\n${parts.map((p, i) => `${i + 1}. ${askWho && p.who !== "narrator" ? "(guess: " + who(p) + ")" : who(p) + ":"} ${p.text.slice(0, 300)}`).join("\n")}` }], { temperature: 0.4, maxTokens: 1100, plain: true });
+      const j = await Promise.race([ask, new Promise(r => setTimeout(() => r(null), 9000))]);
+      const spk = [];
+      for (const x of Array.isArray(j?.lines) ? j.lines : []) { const i = (+x.i || 0) - 1, p = parts[i]; if (!p) continue;
+        if (S.settings.voiceTone !== false) { const emo = String(x.emotion || "").toLowerCase().trim(); if (TONE_EMO.includes(emo)) p.emo = emo;
+          if (Number.isFinite(+x.speed)) p.speed = Math.max(0.75, Math.min(1.3, +x.speed)); if (Number.isFinite(+x.volume)) p.vol = Math.max(0.5, Math.min(1.6, +x.volume)); p.laugh = x.laugh === true; }
+        if (askWho && p.who !== "narrator" && x.speaker) spk[i] = { n: String(x.speaker).slice(0, 40), g: String(x.gender || "").slice(0, 1) }; }
+      if (askWho && spk.length) {
+        // new people become side characters only when "find new characters" is on
+        parts.forEach((p, i) => { const x = spk[i]; if (!x || p.who === "narrator") return; const w = voiceWhoByName(c, x.n, x.g, { detect }); if (w) { p.who = w.mine ? myVoiceWho() : w; p.speaker = x.n; } });
+        m.vspk = parts.map((p, i) => spk[i] || null); if (Array.isArray(j?.present)) m.vpresent = j.present.map(x => String(x).slice(0, 40)).slice(0, 12);
+        if (S.chat?.messages.includes(m)) saveChat();
+      }
       TONE_CACHE.set(key, parts.map(p => ({ emo: p.emo, speed: p.speed, vol: p.vol, laugh: p.laugh }))); if (TONE_CACHE.size > 80) TONE_CACHE.delete(TONE_CACHE.keys().next().value);
     } catch (e) { console.warn("tone:", e.message); }
   }
@@ -5950,7 +5986,7 @@ async function toneParts(m, parts) {
 function sayMap() {
   const out = [], add = x => { const n = (x?.name || "").trim(), sy = (x?.voice?.say || "").trim(); if (!n || !sy || sy.toLowerCase() === n.toLowerCase()) return; out.push([n, sy]); const nw = n.split(/\s+/), sw = sy.split(/\s+/); if (nw.length > 1 && nw.length === sw.length) nw.forEach((w, i) => w.length > 2 && out.push([w, sw[i]])); };
   for (const x of SAY_EXTRA) add(x); // a name being tried out in an editor wins over the saved one
-  const c = char(); if (c) { add(c); members(c).forEach(add); (c.cast || []).forEach(add); }
+  const c = char(); if (c) { add(c); members(c).forEach(add); (c.cast || []).forEach(add); (c.sideVoices || []).forEach(add); }
   const p = persona(); add(p); if (isGroupP(p)) groupMembersP(p).forEach(add); (S.personas || []).forEach(add);
   return out.sort((a, b) => b[0].length - a[0].length);
 }
@@ -6123,12 +6159,12 @@ function openVoicePicker(opt = {}) {
     const onKey = e => { if (e.key === "Escape") { e.stopPropagation(); e.preventDefault(); done(null); } };
     document.addEventListener("keydown", onKey, true); pop._close = () => done(null);
     const G = { f: "Female", m: "Male", n: "Neutral" };
-    const load = async force => { items = null; err = ""; draw(); try { items = (cart ? await cartVoices(force) : phoneVoiceItems()).map(voiceInfo); } catch (e) { err = e.message; items = []; } draw(); };
+    const load = async force => { items = null; err = ""; draw(); try { let L = cart ? await cartVoices(force) : phoneVoiceItems(); if (cart) { const mine = S.settings.myVoices || []; L = [...mine.filter(x => !L.some(y => y.id === x.id)).map(x => ({ id: x.id, name: x.name, d: x.for ? "Cloned for " + x.for : "Cloned in Lanternroom", g: x.g === "f" ? "feminine" : x.g === "m" ? "masculine" : "", mine: true })), ...L]; } items = L.map(voiceInfo).map(v => ({ ...v, cloned: cart && (v.mine || (S.settings.myVoices || []).some(x => x.id === v.id)) })); } catch (e) { err = e.message; items = []; } draw(); };
     const shown = () => {
       const F = favs(), w = q.toLowerCase().split(/\s+/).filter(Boolean);
-      return items.filter(v => (tab === "all" || (tab === "fav" ? F.has(v.id) : tab === "mine" ? v.mine : v.g === tab)) && (!acc || v.accent === acc) && [...trs].every(t => v.traits.includes(t)) && w.every(x => `${v.name} ${v.d} ${v.accent} ${v.traits.join(" ")} ${G[v.g]}`.toLowerCase().includes(x)));
+      return items.filter(v => (tab === "all" || (tab === "fav" ? F.has(v.id) : tab === "mine" ? v.cloned : v.g === tab)) && (!acc || v.accent === acc) && [...trs].every(t => v.traits.includes(t)) && w.every(x => `${v.name} ${v.d} ${v.accent} ${v.traits.join(" ")} ${G[v.g]}`.toLowerCase().includes(x)));
     };
-    const card = (v, F) => `<div class="vp-card ${v.id === opt.cur ? "on" : ""}" data-id="${esc(v.id)}"><div class="vp-main"><div class="vp-name"><b>${esc(v.name)}</b><span class="vp-g vp-${v.g}">${G[v.g]}</span>${v.mine ? `<span class="vp-g vp-mine">Yours</span>` : ""}</div>${v.traits.length || v.accent ? `<div class="vp-tr">${[v.accent, ...v.traits].filter(x => x && !/^Other/.test(x)).map(t => `<i>${esc(t)}</i>`).join("")}</div>` : ""}${v.d ? `<div class="vp-d">${esc(v.d)}</div>` : ""}</div>
+    const card = (v, F) => `<div class="vp-card ${v.id === opt.cur ? "on" : ""}" data-id="${esc(v.id)}"><div class="vp-main"><div class="vp-name"><b>${esc(v.name)}</b><span class="vp-g vp-${v.g}">${G[v.g]}</span>${v.cloned ? `<span class="vp-g vp-mine">Cloned</span>` : ""}</div>${v.traits.length || v.accent ? `<div class="vp-tr">${[v.accent, ...v.traits].filter(x => x && !/^Other/.test(x)).map(t => `<i>${esc(t)}</i>`).join("")}</div>` : ""}${v.d ? `<div class="vp-d">${esc(v.d)}</div>` : ""}</div>
       <div class="vp-btns"><button type="button" class="vp-play" data-play aria-label="Hear ${esc(v.name)}">▶</button><button type="button" class="vp-fav ${F.has(v.id) ? "on" : ""}" data-fav aria-label="Favourite">${F.has(v.id) ? "★" : "☆"}</button><button type="button" class="btn small ${v.id === opt.cur ? "" : "primary"}" data-use>${v.id === opt.cur ? "In use" : "Use"}</button></div></div>`;
     function draw() {
       const keepQ = pop.querySelector("#vpQ"), hadFocus = document.activeElement === keepQ, sc = pop.querySelector(".vp-list")?.scrollTop || 0;
@@ -6136,8 +6172,8 @@ function openVoicePicker(opt = {}) {
       if (!items) h += `<p class="hint">${cart ? "Loading your Cartesia voices…" : "Loading…"}</p>`;
       else if (err) h += `<p class="hint">Couldn't list voices: ${esc(err)}</p><button type="button" class="btn small" id="vpRe">Try again</button>`;
       else {
-        const F = favs(), cnt = k => items.filter(v => k === "fav" ? F.has(v.id) : k === "mine" ? v.mine : v.g === k).length;
-        const tabs = [["all", "All", items.length], ["f", "Female", cnt("f")], ["m", "Male", cnt("m")], ["n", "Neutral", cnt("n")], ["fav", "★ Favourites", cnt("fav")], ["mine", "Yours", cnt("mine")]].filter(t => t[0] === "all" || t[0] === "fav" || t[2]);
+        const F = favs(), cnt = k => items.filter(v => k === "fav" ? F.has(v.id) : k === "mine" ? v.cloned : v.g === k).length;
+        const tabs = [["all", "All", items.length], ["f", "Female", cnt("f")], ["m", "Male", cnt("m")], ["n", "Neutral", cnt("n")], ["fav", "★ Favourites", cnt("fav")], ["mine", "🎙 Cloned", cnt("mine")]].filter(t => t[0] === "all" || t[0] === "fav" || t[2]);
         const accs = [...new Set(items.map(v => v.accent))].sort((a, b) => /^Other/.test(a) - /^Other/.test(b) || a.localeCompare(b)), trAll = VOICE_TRAITS.map(t => t[0]).filter(t => items.some(v => v.traits.includes(t)));
         const L = shown(), cur = items.find(v => v.id === opt.cur);
         h += `<input id="vpQ" type="search" placeholder="Search ${items.length} voices (name, accent, deep, soft…)" value="${esc(q)}" autocomplete="off">
@@ -6146,7 +6182,8 @@ function openVoicePicker(opt = {}) {
           ${trAll.length ? `<div class="vp-chips"><span class="vp-lbl">Sounds</span>${trAll.map(t => `<button type="button" class="chip ${trs.has(t) ? "on" : ""}" data-tr="${esc(t)}">${esc(t)}</button>`).join("")}</div>` : ""}
           <div class="vp-list">${opt.auto !== false ? `<button type="button" class="vp-auto ${!opt.cur ? "on" : ""}" data-auto>${esc(opt.autoLabel || "Automatic")}</button>` : ""}
           ${cur && L.includes(cur) && !q && tab === "all" && !acc && !trs.size ? `<div class="vp-sec">In use</div>${card(cur, F)}` : ""}
-          ${L.length ? accs.filter(a => L.some(v => v.accent === a)).map(a => { const g = L.filter(v => v.accent === a).sort((x, y) => y.mine - x.mine || F.has(y.id) - F.has(x.id) || x.name.localeCompare(y.name)); return `<div class="vp-sec">${esc(a)} <small>${g.length}</small></div>${g.map(v => card(v, F)).join("")}`; }).join("") : `<p class="hint">No voices match.${trs.size || acc ? " Try fewer filters." : ""}</p>`}</div>
+          ${L.some(v => v.cloned) ? `<div class="vp-sec">🎙 Your cloned voices <small>${L.filter(v => v.cloned).length}</small></div>${L.filter(v => v.cloned).map(v => card(v, F)).join("")}` : ""}
+          ${L.some(v => !v.cloned) ? accs.filter(a => L.some(v => !v.cloned && v.accent === a)).map(a => { const g = L.filter(v => !v.cloned && v.accent === a).sort((x, y) => y.mine - x.mine || F.has(y.id) - F.has(x.id) || x.name.localeCompare(y.name)); return `<div class="vp-sec">${esc(a)} <small>${g.length}</small></div>${g.map(v => card(v, F)).join("")}`; }).join("") : L.length ? "" : `<p class="hint">No voices match.${trs.size || acc ? " Try fewer filters." : ""}</p>`}</div>
           ${cart ? `<button type="button" class="btn small" id="vpRe">↻ Refresh the list</button>` : ""}`;
       }
       pop.innerHTML = h + `</div>`;
@@ -6179,6 +6216,7 @@ document.addEventListener("click", e => {
   const cl = q.cloneNode(true); cl.querySelectorAll(".sfx-k").forEach(x => x.remove()); const t = plainQ(cl.textContent); if (!t) return;
   const all = voiceParts(m, !mine && voiceMode() === "all" ? "all" : "dialogue"), key = (m?.id || "") + ":" + (m?.alt || 0) + ":" + all.length, cached = TONE_CACHE.get(key);
   if (cached) all.forEach((p, i) => Object.assign(p, cached[i] || {})); else all.forEach(p => Object.assign(p, toneGuess(p)));
+  if (!mine) applySpeakers(char(), all, m?.vspk);
   const part = all.find(p => p.who !== "narrator" && plainQ(p.text) === t) || { text: untilde(cl.textContent.replace(/^["“]|["”]$/g, "")), who: mine ? myVoiceWho(m) : char(), ...toneGuess({ text: cl.textContent }) };
   q.classList.add("vo-on"); voiceSay([part]);
 });
@@ -6186,7 +6224,7 @@ document.addEventListener("click", e => {
 function voiceEditor(work, box, opt = {}) {
   if (!box) return; const Q = id => box.querySelector("#" + id);
   const me = opt.persona, sample = () => me ? `This is me, ${work.name || "you"}. Is this how I sound?` : `Hi, I'm ${work.name || "here"}. ${work.kind === "world" ? "Welcome to this world." : "Is this how I sound?"}`;
-  const cartName = id => (CART_LIST?.list || []).find(x => x.id === id)?.name;
+  const cartName = id => (S.settings.myVoices || []).find(x => x.id === id)?.name || (CART_LIST?.list || []).find(x => x.id === id)?.name;
   const draw = () => {
     const v = work.voice || {}, auto = voiceFor({ ...work, voice: {} }, work.id || work.name), cart = S.settings.voiceEngine === "cartesia";
     const phoneLbl = v.phone ? (phoneVoiceItems().find(x => x.full === v.phone)?.name || v.phone) : `Automatic${auto.phone ? ` (${phoneVoiceItems().find(x => x.full === auto.phone.name)?.name || auto.phone.name})` : ""}`;
@@ -6195,7 +6233,7 @@ function voiceEditor(work, box, opt = {}) {
         <div class="row"><button type="button" class="btn small" id="cvRec">🎙 Record 10 s to clone</button><label class="btn small">📁 Clone from a clip<input type="file" id="cvFile" accept="audio/*" hidden></label></div><p class="hint" id="cvMsg" style="margin:0"></p>` : ""}
       ${field(cart ? "Phone voice (when Cartesia isn't used)" : "Phone voice", `<button type="button" class="btn vp-open" id="cvPhoneB"><span>📱</span><b>${esc(phoneLbl)}</b><small>Change</small></button><input type="hidden" id="cvPhone" value="${esc(v.phone || "")}">`, loadPhoneVoices().length ? "Free voices from this phone or computer. They differ between devices." : "This browser didn't list any voices yet.")}
       ${field("Pitch", `<input type="range" id="cvPitch" min="0.5" max="1.8" step="0.05" value="${+v.pitch || (cart ? 1 : +auto.pitch.toFixed(2))}">`, cart ? "Works on Cartesia voices too: lower for a deeper voice, higher for a lighter one." : "")}${field("Speed", `<input type="range" id="cvRate" min="0.6" max="1.6" step="0.05" value="${+v.rate || 1}">`, cart ? "How fast they talk, on every engine." : "")}
-      ${field(me ? "How to say your name" : "How to say the name", `<div class="row" style="gap:6px"><input id="cvSay" value="${esc(v.say || "")}" placeholder="Spell it how it sounds, e.g. Ay-LEE-nah" autocomplete="off" style="flex:1"><button type="button" class="btn small" id="cvSayT" aria-label="Hear the name">▶</button></div>`, "Spell the name the way it sounds (dashes between parts, CAPITALS for the stressed part). Used everywhere it's read aloud.")}
+      ${field(me ? "How to say your name" : "How to say the name", `<div style="display:flex;gap:6px;align-items:center"><input id="cvSay" value="${esc(v.say || "")}" placeholder="Spell it how it sounds, e.g. Ay-LEE-nah" autocomplete="off" style="flex:1"><button type="button" class="btn small" id="cvSayT" aria-label="Hear the name" style="flex:none;width:44px">▶</button></div>`, "Spell the name the way it sounds (dashes between parts, CAPITALS for the stressed part). Used everywhere it's read aloud.")}
       <div class="field"><label>Filters</label><div class="vfx-chips" id="cvFx">${Object.entries(VOICE_FX).map(([k, x]) => `<button type="button" class="chip ${(v.fx || []).includes(k) ? "on" : ""}" data-fx="${k}" title="${esc(x.d)}">${esc(x.n)}</button>`).join("")}</div>
         ${(v.fx || []).length ? rangeRow("cvFxMix", "Filter strength", "", 0.1, 1, 0.05, v.fxMix ?? 0.6, x => Math.round(x * 100) + "%") : ""}
         <div class="hint">${cart ? "Stack as many as you like. They work on Cartesia voices (the phone's own voices can't be filtered)." : "Filters work on Cartesia voices only: the phone's own voices can't be filtered. They're kept for when you switch."}</div></div>
@@ -6211,13 +6249,46 @@ function voiceEditor(work, box, opt = {}) {
     if (Q("cvCart")) {
       Q("cvCart").onchange = e => { set("cart", e.target.value.trim()); draw(); };
       Q("cvList").onclick = async () => { const r = await openVoicePicker({ engine: "cart", cur: v.cart || "", title: me ? "Your voice" : work.name ? `${work.name}'s voice` : "Their voice", who: work, voice: work.voice, sample: sample(), autoLabel: "None (use the default or the phone's voice)" }); if (r === null) return; set("cart", r); draw(); };
-      const clone = async blob => { Q("cvMsg").textContent = "Cloning…"; try { const id = await cartClone(blob, work.name); set("cart", id); if (CART_LIST) CART_LIST.list.unshift({ id, name: (work.name || "Lanternroom voice") + " (cloned)", d: "Made in Lanternroom", g: "", mine: true }); draw(); Q("cvMsg").textContent = me ? "Done: you now speak in the cloned voice." : "Done: this bot now speaks in the cloned voice."; } catch (e) { Q("cvMsg").textContent = "Cloning failed: " + e.message; } };
+      const clone = async blob => { Q("cvMsg").textContent = "Cloning…"; try { const id = await cartClone(blob, work.name); set("cart", id); const nm = (work.name || "Lanternroom voice") + " (cloned)"; if (CART_LIST) CART_LIST.list.unshift({ id, name: nm, d: "Made in Lanternroom", g: "", mine: true });
+        S.settings.myVoices = [{ id, name: nm, for: work.name || "", g: sexOf(work), at: Date.now() }, ...(S.settings.myVoices || []).filter(x => x.id !== id)]; saveSettings(); draw(); Q("cvMsg").textContent = me ? "Done: you now speak in the cloned voice." : "Done: this bot now speaks in the cloned voice."; } catch (e) { Q("cvMsg").textContent = "Cloning failed: " + e.message; } };
       Q("cvFile").onchange = e => { const f = e.target.files[0]; if (f) clone(f); };
       Q("cvRec").onclick = async () => { try { const st = await navigator.mediaDevices.getUserMedia({ audio: true }), rec = new MediaRecorder(st), ch = []; rec.ondataavailable = e => ch.push(e.data); rec.onstop = () => { st.getTracks().forEach(t => t.stop()); clone(new Blob(ch, { type: rec.mimeType || "audio/webm" })); }; rec.start(); let n = 10; Q("cvRec").disabled = true; const t = setInterval(() => { n--; Q("cvMsg").textContent = `Recording… ${n} s (read anything in the voice you want)`; if (n <= 0) { clearInterval(t); rec.stop(); Q("cvRec").disabled = false; } }, 1000); Q("cvMsg").textContent = "Recording… 10 s (read anything in the voice you want)"; } catch (e) { Q("cvMsg").textContent = "No microphone: " + e.message; } };
       if (v.cart && !cartName(v.cart) && cartOn() && !voiceEditor.loading) { voiceEditor.loading = 1; cartVoices().then(() => { voiceEditor.loading = 0; if (box.isConnected && cartName(v.cart)) draw(); }).catch(() => { voiceEditor.loading = 0; }); }
     }
   };
   draw();
+}
+// ---- v1.88: the Voices window (from the bot's profile, the chat's ⋯ Options or a "new character" notice): one tab per voice:
+// the character (or a world's narrator / a group's shared voice), each group member or world character, and side characters
+// (found in chats or added by hand). Changes save as you make them.
+function openVoices(c, focus) {
+  if (!c) return; let sel = 0, adding = false, timer = null;
+  const save = () => { clearTimeout(timer); timer = setTimeout(() => saveChars(), 350); };
+  const list = () => voicePeople(c).map(x => ({ ...x, lab: x.kind === "main" ? (c.kind === "world" ? "Narrator" : c.kind === "group" ? "Whole group" : c.name) : x.obj.name || "Unnamed" }));
+  if (focus) { const i = list().findIndex(x => vNorm(x.obj.name) === vNorm(focus)); if (i >= 0) sel = i; }
+  const here = !!S.chat && S.charId === c.id && !$("chat").hidden;
+  openSheet("Voices · " + c.name, b => {
+    const draw = () => {
+      const L = list(); sel = Math.min(sel, L.length - 1); const x = L[sel], main = L.filter(y => y.kind !== "side"), side = L.filter(y => y.kind === "side");
+      const tab = y => { const i = L.indexOf(y); return `<button type="button" class="tab ${i === sel ? "on" : ""}" data-vt="${i}">${y.obj.voice?.cart || y.obj.voice?.phone || y.obj.voice?.fx?.length ? "🎙 " : ""}${esc(y.lab.slice(0, 18))}</button>`; };
+      b.innerHTML = `${voiceOn() ? "" : `<p class="note">Voices are off. Switch them on in Settings → Sounds → Voices to hear them in chats.</p>`}
+        <div class="tabs vo-tabs">${main.map(tab).join("")}</div>
+        <div class="lbl" style="margin-top:4px">Side characters</div>
+        <div class="tabs vo-tabs">${side.map(tab).join("")}<button type="button" class="tab" id="voAdd">＋ Add</button></div>
+        ${adding ? `<div class="row" style="gap:6px"><input id="voAddN" placeholder="Their name (e.g. the bartender, Mira)" autocomplete="off" style="flex:1"><button type="button" class="btn small primary" id="voAddGo">Add</button></div>` : ""}
+        ${here ? `<label class="check"><input type="checkbox" id="voFind" ${voiceDetectOn() ? "checked" : ""}> Find new characters in this chat and add them here, so you can pick their voices</label>` : `<p class="hint" style="margin:0;color:var(--muted);font-size:13px">Side characters can be found for you while you chat (⋯ Options in a chat, or Settings → Sounds → Voices).</p>`}
+        <div class="group"><h3>${esc(x.kind === "main" && c.kind !== "character" ? x.lab : x.obj.name || "Unnamed")}</h3>${x.kind === "main" && c.kind === "world" ? `<p class="hint" style="margin:0;color:var(--muted);font-size:13px">Reads narration in Everything mode and anyone in the world without a voice of their own.</p>` : x.kind === "main" && c.kind === "group" ? `<p class="hint" style="margin:0;color:var(--muted);font-size:13px">Used when a line can't be given to a member.</p>` : ""}<div id="voEd" class="stack"></div>
+        ${x.kind === "side" ? `<button type="button" class="btn small danger" id="voRm">Forget this side character</button>` : ""}</div>`;
+      b.querySelectorAll("[data-vt]").forEach(t => t.onclick = () => { sel = +t.dataset.vt; draw(); });
+      $("voAdd").onclick = () => { adding = !adding; draw(); $("voAddN")?.focus(); };
+      if ($("voAddGo")) { const go = () => { const n = $("voAddN").value.trim(); if (!n) return; if (!(c.sideVoices || []).some(y => vNorm(y.name) === vNorm(n))) { c.sideVoices = [...(c.sideVoices || []), { name: n.slice(0, 40), g: sexOf(n), at: Date.now() }]; save(); } adding = false; sel = list().findIndex(y => vNorm(y.obj.name) === vNorm(n)); draw(); }; $("voAddGo").onclick = go; $("voAddN").onkeydown = e => { if (e.key === "Enter") go(); }; }
+      if ($("voFind")) $("voFind").onchange = e => { S.chat.voiceDetect = e.target.checked; saveChat(); };
+      if ($("voRm")) confirmBtn($("voRm"), "Tap again to forget them", () => { c.sideVoices = (c.sideVoices || []).filter(y => y !== x.obj); save(); sel = 0; draw(); });
+      const obj = x.kind === "side" ? x.obj : x.obj; if (x.kind === "side" && !obj.description) obj.description = obj.g === "f" ? "she" : obj.g === "m" ? "he" : "";
+      voiceEditor(obj, $("voEd"), { onChange: () => { save(); const t = b.querySelector(`[data-vt="${sel}"]`); if (t) t.textContent = (obj.voice?.cart || obj.voice?.phone || obj.voice?.fx?.length ? "🎙 " : "") + x.lab.slice(0, 18); } });
+    };
+    draw();
+  });
 }
 // ---- Settings → Sounds → Voices (saved as you change them)
 function voiceSettingsGroup() {
@@ -6230,7 +6301,8 @@ function voiceSettingsGroup() {
       ${field("Read in new chats", `<select id="vMode">${VOICE_MODES.filter(m => m[0] !== "off").map(([k, l]) => `<option value="${k}" ${(st.voiceMode || "dialogue") === k ? "selected" : ""}>${l}</option>`).join("")}<option value="off" ${st.voiceMode === "off" ? "selected" : ""}>Only when I ask</option></select>`, "Each chat can change this in ⋯ Options.")}
       <label class="check"><input type="checkbox" id="vAuto" ${st.voiceAuto !== false ? "checked" : ""}> Read new replies as soon as they're written</label>
       <label class="check"><input type="checkbox" id="vTap" ${st.voiceTap !== false ? "checked" : ""}> Tap a line of speech to hear it again</label>
-      <label class="check"><input type="checkbox" id="vTone" ${st.voiceTone !== false ? "checked" : ""}> Read each line's tone (whispers, shouts, tears, flirting…): one small AI call per reply</label>
+      <label class="check"><input type="checkbox" id="vFind" ${st.voiceDetect ? "checked" : ""}> Find new characters in new chats and add them to the bot's voices (each chat can change this in ⋯ Options → Character voices)</label>
+      <label class="check"><input type="checkbox" id="vTone" ${st.voiceTone !== false ? "checked" : ""}> Read each line's tone and who says it (whispers, shouts, tears, flirting; who's in the scene): one small AI call per reply</label>
       ${rangeRow("vRate", "Speed", "How fast every voice reads.", 0.6, 1.6, 0.05, st.voiceRate || 1, v => Math.round(v * 100) + "%")}
       ${rangeRow("vVol", "Volume", "", 0, 1, 0.05, st.voiceVol ?? 1, v => Math.round(v * 100) + "%")}
       ${field("Narrator voice", `${st.voiceEngine === "cartesia" ? `<button type="button" class="btn vp-open" id="vNarC"><span>🎙</span><b>${n.cart ? esc((CART_LIST?.list || []).find(x => x.id === n.cart)?.name || "Voice " + n.cart.slice(0, 8)) : "No Cartesia voice"}</b><small>Choose</small></button>` : ""}<button type="button" class="btn vp-open" id="vNar" style="margin-top:6px"><span>📱</span><b>${n.phone ? esc(phoneVoiceItems().find(x => x.full === n.phone)?.name || n.phone) : "Automatic"}</b><small>Phone voice</small></button>`, "Reads the actions and narration in Everything mode.")}
@@ -6246,6 +6318,7 @@ function voiceSettingsGroup() {
     G("vAuto").onchange = e => { st.voiceAuto = e.target.checked; save(); };
     G("vTap").onchange = e => { st.voiceTap = e.target.checked; save(); };
     G("vTone").onchange = e => { st.voiceTone = e.target.checked; save(); };
+    G("vFind").onchange = e => { st.voiceDetect = e.target.checked; save(); };
     G("vRate").oninput = e => { st.voiceRate = +e.target.value; G("vRateV").textContent = Math.round(st.voiceRate * 100) + "%"; save(); };
     G("vVol").oninput = e => { st.voiceVol = +e.target.value; G("vVolV").textContent = Math.round(st.voiceVol * 100) + "%"; save(); };
     G("vNarP").oninput = e => { st.narrator = { ...(st.narrator || {}), pitch: +e.target.value }; G("vNarPV").textContent = Math.round(+e.target.value * 100) + "%"; save(); };
@@ -6346,6 +6419,7 @@ $("btnMore").onclick = () => openSheet("Options", b => {
     ${S.settings.gamesOn !== false ? `<button class="btn" id="oDuel">⚔ Start a dice duel (a small scuffle or contest)</button>` : ""}
     <button class="btn" id="oPacer">〰 Stroke pacer: ${pacerOn() ? "on" : "off"}</button>
     ${voiceOn() ? `<button class="btn" id="oVoice">🗣 Voices: ${VOICE_MODES.find(x => x[0] === voiceMode())[1]}</button>` : ""}
+    ${c.fromPersona ? "" : `<button class="btn" id="oVoices">🎙 Character voices${voiceDetectOn() ? " · finding new ones" : ""}</button>`}
     <button class="btn danger" id="oReset">Clear this chat</button></div>
     <p class="note">New chat keeps this one in your chat list. Clear this chat erases this conversation and its memory.</p>`;
   $("oIll").onclick = () => { closeSheet(); illustrate(); };
@@ -6359,6 +6433,7 @@ $("btnMore").onclick = () => openSheet("Options", b => {
   $("oChoices").onclick = async () => { S.chat.choices = !choicesOn(); await saveChat(); renderChoices(); $("oChoices").textContent = `☰ Choices mode: ${choicesOn() ? "on" : "off"}`; toast(choicesOn() ? "Choices on: they show after the next reply" : "Choices off for this chat"); };
   if ($("oDuel")) $("oDuel").onclick = () => openDuel(null, async () => {});
   $("oDice").onclick = async () => { S.chat.dice = !diceOn(); await saveChat(); syncPlay(); renderMsgs(true); $("oDice").textContent = `🎲 Dice rolls: ${diceOn() ? "on" : "off"}`; toast(diceOn() ? "Dice on: your actions get a d20 roll" : "Dice off for this chat"); };
+  if ($("oVoices")) $("oVoices").onclick = () => openVoices(char());
   if ($("oVoice")) $("oVoice").onclick = async () => { const i = VOICE_MODES.findIndex(x => x[0] === voiceMode()), nx = VOICE_MODES[(i + 1) % VOICE_MODES.length][0]; S.chat.voice = nx; if (nx === "off") voiceStop(); await saveChat(); $("oVoice").textContent = `🗣 Voices: ${VOICE_MODES.find(x => x[0] === nx)[1]}`; };
   $("oPacer").onclick = async () => { S.chat.pacer = !pacerOn(); await saveChat(); renderPacer(); $("oPacer").textContent = `〰 Stroke pacer: ${pacerOn() ? "on" : "off"}`; };
   confirmBtn($("oReset"), "Tap again to erase this chat", async () => { const keep = { id: S.chat.id, personaId: S.chat.personaId, created: S.chat.created }; S.chat = { ...newChat(char(), keep.personaId), ...keep }; await saveChat(); closeSheet(); S.seen = new Set(S.chat.messages.map(m => m.id)); updateStage(); renderMsgs(); });
