@@ -778,6 +778,7 @@ img.px-av{border-radius:50%}
 .nw-pill{font-size:11px;font-weight:700;border-radius:999px;padding:1px 8px;margin-left:auto;background:var(--surface-2);color:var(--fg);white-space:nowrap}.nw-staff{background:color-mix(in srgb,var(--accent) 22%,var(--surface-2))}.nw-drama{background:color-mix(in srgb,#ff6a3a 24%,var(--surface-2))}.nw-ban{background:color-mix(in srgb,#e2766f 22%,var(--surface-2))}
 .cm-blog .cm-by{flex-wrap:wrap}.cm-ban{margin:6px 0}
 .rm-sub{margin:0 0 10px}
+#msgs .q.vo-on{text-decoration:underline dotted color-mix(in srgb,var(--accent) 70%,transparent);text-underline-offset:3px}
 /* v1.81 stats and Your Year */
 .st-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:0 0 12px}
 .st-tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}.st-tile b{font:400 22px/1.15 "Young Serif",serif;color:var(--fg)}.st-tile span{font-size:12.5px;color:var(--muted)}.st-tile i{font-style:normal;font-size:12px;color:#6fdc6a}
@@ -1688,7 +1689,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.83 · Oct 27";
+const VERSION = "1.84 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -4457,6 +4458,7 @@ function renderMsgs(keepScroll) {
       const after = msgs.length - 1 - i;
       btns.push(["del", S.confirmDel === m.id ? (after ? `Tap again: delete this and ${after} after it` : "Tap again to delete") : (after ? `Delete (and ${after} after)` : "Delete")]);
       if (m.role === "assistant" && i === lastAsst) btns.push(["reroll", "New version"]);
+      if (m.role === "assistant" && voiceOn()) btns.push(["read", "🔊 Read aloud"]);
       if (m.role !== "image") btns.push(["branch", "⑂ Branch from here"]);
       if (m.role !== "image") btns.push(["spin", "✦ Make a bot from someone here"]);
       acts.innerHTML = btns.map(([a, l]) => `<button type="button" class="btn small ${a === "del" ? "danger" : ""}" data-act="${a}">${l}</button>`).join("");
@@ -4516,6 +4518,7 @@ $("msgs").addEventListener("click", async e => {
   }
   else if (act === "edit") editMessage(i);
   else if (act === "branch") branchFrom(i);
+  else if (act === "read") { S.openActs = null; renderMsgs(true); voiceRead(m, true); }
   else if (act === "spin") { S.openActs = null; renderMsgs(true); spinPick(i); }
   else if (act === "redraw") { m.url = imgURL(m.full || m.prompt, 768, 512, Math.floor(Math.random() * 1e6)); await saveChat(); renderMsgs(true); }
 });
@@ -5047,7 +5050,7 @@ function settingsTabs(b) {
   for (const id of ["sSfx", "sSfxRules", "sSfxReset", "sSound", "sVol", "sAmb", "sAmbVol", "sAct", "sActVol"]) { const el = id === "sSfxReset" ? $(id) : f(id); if (el) snd.appendChild(el); }
   const note = allChats && [...allChats.querySelectorAll("p.note")].find(p => /🔊/.test(p.textContent)); if (note) snd.appendChild(note);
   snd.appendChild($("sPack"));
-  put("sounds", snd);
+  put("sounds", snd); put("sounds", voiceSettingsGroup()); // v1.84
   if (allChats && !allChats.querySelector("input,textarea,select,button")) allChats.remove();
   put("look", $("sLook")); put("look", g("sPort"));
   put("backup", g("sExport")); put("backup", [...b.querySelectorAll("p.hint")].find(p => /Lanternroom version/.test(p.textContent)));
@@ -5224,7 +5227,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
     if (!$("chat").hidden) updateStage(); else renderHome();
   };
   $("sExport").onclick = async () => {
-    const data = { app: "lanternroom", v: 2, settings: { ...st, apiKey: "", customKey: "" }, chars: S.chars, personas: S.personas, books: S.books, chats: {} };
+    const data = { app: "lanternroom", v: 2, settings: { ...st, apiKey: "", customKey: "", cartKey: "" }, chars: S.chars, personas: S.personas, books: S.books, chats: {} };
     for (const k of await Store.keys()) if (/^(chat:|c2:|chats:)/.test(k)) data.chats[k] = await Store.get(k);
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
@@ -5467,6 +5470,7 @@ function editChar(c, isNew, fromDraft) {
       <div class="group"><h3>Choices mode</h3><label class="check"><input type="checkbox" id="cChoices" ${work.choices ? "checked" : ""}> Play by picking choices: 3-4 after every reply (you can still write your own; risky ones roll a d20)</label></div>
       ${VORE_PIC ? `<div class="group"><h3>Vore picture</h3>${field("Usual weight", `<input type="range" id="cWeight" min="0" max="100" step="5" value="${+work.weight || 0}" aria-label="Usual weight">`, "How heavy this bot is in the vore picture before eating anyone, from slim to very fat. Weight from digested prey goes on top and can burn off again.")}</div>` : ""}
       <div class="group"><h3>Status gauges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Bars at the top of the chat (fullness, arousal, health…) that the AI moves as the story goes.</p><div id="cGauges" class="stack"></div></div>
+      <div class="group"><h3>Voice</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">How this ${K === "world" ? "world's narrator" : K === "group" ? "group" : "character"} sounds when replies are read aloud (Settings → Sounds → Voices).${K === "group" ? " Each member's own voice is set in their editor." : ""}</p><div id="cVoice" class="stack"></div></div>
       <div class="group"><h3>Badges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Achievements special to this bot. The story awards them when they happen.</p><div id="cBadges" class="stack"></div></div>
       <div class="group"><h3>Gold, inventory and quests</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">For adventures: a gold counter, a bag and a quest log under the chat header. The AI keeps them up to date and you can edit them.</p><div id="cRpg" class="stack"></div></div>
       <div id="cMsg" class="hint"></div>
@@ -5474,7 +5478,7 @@ function editChar(c, isNew, fromDraft) {
       ${isNew ? "" : `<button class="btn danger" id="cDel">Delete ${KINDS[K].label.toLowerCase()}</button>`}`;
 
     ruleTabs($("cInstr"));
-    gaugeEditor(work); rpgEditor(work); badgeEditor(work); creatorEditor(work);
+    gaugeEditor(work); rpgEditor(work); badgeEditor(work); creatorEditor(work); voiceEditor(work, $("cVoice"));
     const greets = [work.firstMessage || "", ...(work.altGreetings || [])];
     let gi = 0;
     const grab = () => {
@@ -5779,6 +5783,159 @@ document.addEventListener("keydown", e => {
   if (!$("chat").hidden && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "")) leaveChat();
 });
 
+/* ---------- Voices (v1.84)
+   Replies read aloud. Two engines: the phone's own voices (free, offline, speechSynthesis) and Cartesia (the owner's own key,
+   natural voices and ~10-second voice cloning, like Character.AI's; its policy only forbids content about minors). Per chat:
+   off, dialogue only (each character's lines in their voice) or everything (narration in the narrator's voice). Every
+   character gets a voice: picked in the bot editor (a phone voice with pitch and speed, a Cartesia voice id, or one cloned
+   from a clip), otherwise an automatic one by their name and he/she words. New replies can be read automatically; tapping a
+   line of speech reads it again. Sound-effect words are never read (they play as sounds). */
+const VOICE_MODES = [["off", "Off"], ["dialogue", "Dialogue only"], ["all", "Everything (with a narrator)"]];
+const voiceOn = () => !!S.settings.voiceOn;
+const voiceMode = () => !voiceOn() ? "off" : (S.chat?.voice || S.settings.voiceMode || "dialogue");
+const cartOn = () => S.settings.voiceEngine === "cartesia" && !!S.settings.cartKey;
+const CART = "https://api.cartesia.ai", CART_VER = "2026-08-14", CART_MODEL = "sonic-3.6";
+let PHONE_VOICES = [];
+function loadPhoneVoices() { try { PHONE_VOICES = (speechSynthesis.getVoices() || []).filter(v => /^en/i.test(v.lang) || !PHONE_VOICES.length); } catch { PHONE_VOICES = []; } return PHONE_VOICES; }
+try { speechSynthesis.onvoiceschanged = loadPhoneVoices; loadPhoneVoices(); } catch {}
+// he/she words in what we know about someone
+function sexOf(x) {
+  const t = typeof x === "string" ? x : [x?.name, x?.appearance, x?.visual, x?.description, x?.details].join(" ");
+  const f = (t.match(/\b(she|her|hers|herself|woman|girl|female|lady|vixen|doe|mare|queen|mother|wife|goddess|witch)\b/gi) || []).length, m = (t.match(/\b(he|him|his|himself|man|guy|male|boy|stallion|king|father|husband|god|wizard)\b/gi) || []).length;
+  return f > m * 1.2 ? "f" : m > f * 1.2 ? "m" : "n";
+}
+const FEM_V = /female|woman|zira|samantha|karen|moira|tessa|fiona|victoria|susan|serena|allison|ava|kate|libby|sonia|aria|jenny|emma|amy|joanna|salli|kimberly|ivy|kendra|natasha|clara|hazel|catherine/i, MAS_V = /\bmale\b|\bman\b|david|mark|daniel|alex|fred|george|james|ryan|guy|brian|matthew|joey|justin|russell|oliver|thomas|arthur|aaron|eric|tom\b/i;
+// the voice for someone (a bot, a group member, the narrator): what was picked, else steady automatic choices
+function voiceFor(who, key) {
+  const v = who?.voice || {}, k = String(key || who?.id || who?.name || "x"), sx = who ? sexOf(who) : "n", h = (hash(k) % 1000) / 1000;
+  const vs = loadPhoneVoices(), pool = vs.filter(x => sx === "f" ? FEM_V.test(x.name) : sx === "m" ? MAS_V.test(x.name) : true), from = pool.length ? pool : vs;
+  const phone = vs.find(x => x.name === v.phone) || from[hash(k + ":v") % Math.max(1, from.length)] || null;
+  const autoPitch = sx === "f" ? 1.12 + h * 0.2 : sx === "m" ? 0.78 + h * 0.18 : 0.9 + h * 0.3;
+  return { phone, pitch: +v.pitch || (phone && v.phone ? 1 : autoPitch), rate: +v.rate || 1, cart: v.cart || "", name: who?.name || "" };
+}
+const narratorVoice = () => voiceFor({ name: "Narrator", voice: S.settings.narrator || {} }, "narrator");
+// a reply → what to read, in order: [{text, who}] (who = a character object or "narrator")
+function voiceParts(m, mode) {
+  if (!m || m.role !== "assistant") return [];
+  const c = char(); let text = String(m.content || "");
+  text = text.replace(/\[\[[\s\S]*?\]\]/g, "").replace(/\[sfx=[^\]]*\][\s\S]*?\[\/sfx\]/gi, "").replace(/\[\/?color[^\]]*\]/gi, "").replace(/\*\*\*[^*]+\*\*\*/g, "");
+  const out = []; let speaker = m.speaker || (c?.kind === "group" ? S.chat?.focus : null);
+  const whoOf = name => { if (!c) return null; if (c.kind === "group") return (name && memberByName(c, name)) || (S.chat?.focus && memberByName(c, S.chat.focus)) || c; if (c.kind === "world") { const x = name && (c.cast || []).find(y => y.name.toLowerCase() === String(name).toLowerCase()); return x ? { ...x, id: c.id + ":" + x.name } : { name: name || "Someone", id: c.id + ":" + (name || "someone") }; } return c; };
+  for (const line of text.split(/\n+/)) {
+    let l = line; const lab = l.match(/^\s*\*\*([^*:]{1,40}):\*\*\s*/); if (lab) { speaker = lab[1].trim(); l = l.slice(lab[0].length); }
+    // world narrators name who speaks in the line around the quote ("Mara says", "says the guard")
+    const named = c?.kind === "world" ? ((l.match(/\b([A-Z][a-z]+)\b(?=[^"“]{0,40}["“])/) || [])[1]) : null;
+    for (const seg of l.split(/("[^"]+"|“[^”]+”)/)) {
+      const t = seg.replace(/\*+/g, "").replace(/\s+/g, " ").trim(); if (!t || !/[a-z0-9]/i.test(t)) continue;
+      if (/^["“]/.test(seg)) out.push({ text: t.replace(/^["“]|["”]$/g, ""), who: whoOf(speaker || named) });
+      else if (mode === "all") out.push({ text: t, who: "narrator" });
+    }
+  }
+  return out;
+}
+// ---- playing: one queue, either engine, stoppable at any time
+const VQ = { list: [], busy: false, gen: 0, el: null, cache: new Map() };
+function voiceStop() { VQ.gen++; VQ.list = []; VQ.busy = false; try { speechSynthesis.cancel(); } catch {} if (VQ.el) { try { VQ.el.pause(); } catch {} VQ.el = null; } document.querySelectorAll(".vo-on").forEach(x => x.classList.remove("vo-on")); }
+function voiceSay(parts) { if (!parts.length) return; voiceStop(); VQ.list = parts.slice(); voiceNext(VQ.gen); }
+async function voiceNext(g) {
+  if (g !== VQ.gen) return; const p = VQ.list.shift(); if (!p) { VQ.busy = false; return; }
+  VQ.busy = true; const v = p.who === "narrator" ? narratorVoice() : voiceFor(p.who, p.who?.id);
+  const vol = Math.max(0, Math.min(1, S.settings.voiceVol ?? 1)), speed = S.settings.voiceRate || 1;
+  if (cartOn() && (v.cart || (p.who === "narrator" ? S.settings.narrator?.cart : S.settings.cartDefault))) {
+    try {
+      const url = await cartAudio(p.text, v.cart || (p.who === "narrator" ? S.settings.narrator.cart : S.settings.cartDefault)); if (g !== VQ.gen) return;
+      const a = new Audio(url); VQ.el = a; a.volume = vol; a.playbackRate = speed; a.onended = a.onerror = () => voiceNext(g); await a.play(); return;
+    } catch (e) { console.warn("voice:", e.message); if (!VQ.warned) { VQ.warned = 1; toast("Cartesia voice failed: " + e.message + ". Using the phone's voices."); } }
+  }
+  try {
+    const u = new SpeechSynthesisUtterance(p.text); if (v.phone) u.voice = v.phone; u.pitch = Math.max(0.1, Math.min(2, v.pitch)); u.rate = Math.max(0.5, Math.min(2, v.rate * speed)); u.volume = vol;
+    u.onend = u.onerror = () => voiceNext(g); speechSynthesis.speak(u);
+  } catch { voiceNext(g); }
+}
+// Cartesia: the key stays on this device; audio is kept for repeats (the last 60 lines)
+async function cartFetch(path, opt = {}) {
+  const r = await fetch(CART + path, { ...opt, headers: { Authorization: "Bearer " + S.settings.cartKey, "Cartesia-Version": CART_VER, ...(opt.json ? { "Content-Type": "application/json" } : {}), ...(opt.headers || {}) }, body: opt.json ? JSON.stringify(opt.json) : opt.body });
+  if (!r.ok) { let m = ""; try { m = (await r.text()).slice(0, 160); } catch {} throw new Error(r.status === 401 ? "the key was refused" : r.status === 402 ? "out of credit" : `error ${r.status}${m ? ": " + m : ""}`); }
+  return r;
+}
+async function cartAudio(text, voiceId) {
+  const k = voiceId + "|" + text; if (VQ.cache.has(k)) return VQ.cache.get(k);
+  const r = await cartFetch("/tts/bytes", { method: "POST", json: { model_id: CART_MODEL, transcript: text, voice: { id: voiceId }, output_format: { container: "mp3", sample_rate: 44100, bit_rate: 128000 }, language: "en" } });
+  const url = URL.createObjectURL(await r.blob()); VQ.cache.set(k, url);
+  if (VQ.cache.size > 60) { const [ok, ou] = VQ.cache.entries().next().value; URL.revokeObjectURL(ou); VQ.cache.delete(ok); }
+  return url;
+}
+async function cartClone(blob, name) {
+  const f = new FormData(); f.append("clip", blob, "clip." + ((blob.type.split("/")[1] || "webm").split(";")[0])); f.append("name", (name || "Lanternroom voice").slice(0, 60)); f.append("language", "en"); f.append("description", "Made in Lanternroom");
+  const r = await cartFetch("/voices/clone", { method: "POST", body: f }); const j = await r.json(); if (!j?.id) throw new Error("no voice came back"); return j.id;
+}
+async function cartVoices() { const r = await cartFetch("/voices?limit=100"); const j = await r.json(); const L = Array.isArray(j) ? j : j?.data || []; return L.map(v => ({ id: v.id, name: v.name, d: v.description || "", g: v.gender || "" })).filter(v => v.id); }
+// reading a reply (automatically after it's written, or from its ⋯ menu); tapping a quote reads that line
+function voiceRead(m, force) { const mode = force ? (voiceMode() === "off" ? "dialogue" : voiceMode()) : voiceMode(); if (mode === "off") return; voiceSay(voiceParts(m, mode)); }
+function voiceAfterReply(m) { if (voiceOn() && S.settings.voiceAuto !== false && voiceMode() !== "off") voiceRead(m); }
+document.addEventListener("click", e => {
+  const q = e.target.closest("#msgs .msg.assistant .q"); if (!q || !voiceOn() || S.settings.voiceTap === false) return;
+  const el = q.closest("[data-i]"), m = (el && S.chat?.messages[+el.dataset.i]) || [...(S.chat?.messages || [])].reverse().find(x => x.role === "assistant");
+  const t = q.textContent.replace(/^["“]|["”]$/g, "").trim(); if (!t) return;
+  const part = voiceParts(m, "dialogue").find(p => p.text.replace(/\s+/g, " ") === t.replace(/\s+/g, " ")) || { text: t, who: char() };
+  q.classList.add("vo-on"); voiceSay([part]);
+});
+// ---- the bot editor's Voice group: phone voice, pitch, speed, a Cartesia voice (list, id, or cloned from a clip), Test
+function voiceEditor(work, box) {
+  if (!box) return;
+  const draw = () => {
+    const v = work.voice || {}, vs = loadPhoneVoices(), auto = voiceFor({ ...work, voice: {} }, work.id || work.name);
+    box.innerHTML = `${field("Phone voice", `<select id="cvPhone"><option value="">Automatic${auto.phone ? ` (${esc(auto.phone.name)})` : ""}</option>${vs.map(x => `<option value="${esc(x.name)}" ${v.phone === x.name ? "selected" : ""}>${esc(x.name)}${x.localService ? "" : " · online"}</option>`).join("")}</select>`, vs.length ? "Free voices from this phone or computer. They differ between devices." : "This browser didn't list any voices yet.")}
+      ${field("Pitch", `<input type="range" id="cvPitch" min="0.5" max="1.8" step="0.05" value="${+v.pitch || auto.pitch.toFixed(2)}">`)}${field("Speed", `<input type="range" id="cvRate" min="0.6" max="1.6" step="0.05" value="${+v.rate || 1}">`)}
+      ${S.settings.voiceEngine === "cartesia" ? `${field("Cartesia voice", `<div class="row" style="gap:6px"><input id="cvCart" value="${esc(v.cart || "")}" placeholder="Voice id (or pick / clone below)" autocomplete="off" style="flex:1"><button type="button" class="btn small" id="cvList">Pick</button></div><div id="cvPick"></div>`, "Natural voices from your Cartesia account.")}
+        <div class="row"><button type="button" class="btn small" id="cvRec">🎙 Record 10 s to clone</button><label class="btn small">📁 Clone from a clip<input type="file" id="cvFile" accept="audio/*" hidden></label></div><p class="hint" id="cvMsg" style="margin:0"></p>` : ""}
+      <button type="button" class="btn small" id="cvTest">▶ Test this voice</button>`;
+    const set = (k, val) => { work.voice = { ...(work.voice || {}), [k]: val }; if (val === "" || val == null) delete work.voice[k]; };
+    $("cvPhone").onchange = e => set("phone", e.target.value); $("cvPitch").oninput = e => set("pitch", +e.target.value); $("cvRate").oninput = e => set("rate", +e.target.value);
+    $("cvTest").onclick = () => voiceSay([{ text: `Hi, I'm ${work.name || "here"}. ${work.kind === "world" ? "Welcome to this world." : "Is this how I sound?"}`, who: { ...work, id: work.id || work.name } }]);
+    if ($("cvCart")) {
+      $("cvCart").onchange = e => set("cart", e.target.value.trim());
+      $("cvList").onclick = async () => { $("cvPick").innerHTML = `<p class="hint">Loading…</p>`; try { const L = await cartVoices(); $("cvPick").innerHTML = `<select id="cvSel"><option value="">Choose a voice (${L.length})</option>${L.map(x => `<option value="${esc(x.id)}">${esc(x.name)}${x.d ? " · " + esc(x.d.slice(0, 50)) : ""}</option>`).join("")}</select>`; $("cvSel").onchange = e => { set("cart", e.target.value); $("cvCart").value = e.target.value; }; } catch (e) { $("cvPick").innerHTML = `<p class="hint">Couldn't list voices: ${esc(e.message)}</p>`; } };
+      const clone = async blob => { $("cvMsg").textContent = "Cloning…"; try { const id = await cartClone(blob, work.name); set("cart", id); $("cvCart").value = id; $("cvMsg").textContent = "Done: this bot now speaks in the cloned voice."; } catch (e) { $("cvMsg").textContent = "Cloning failed: " + e.message; } };
+      $("cvFile").onchange = e => { const f = e.target.files[0]; if (f) clone(f); };
+      $("cvRec").onclick = async () => { try { const st = await navigator.mediaDevices.getUserMedia({ audio: true }), rec = new MediaRecorder(st), ch = []; rec.ondataavailable = e => ch.push(e.data); rec.onstop = () => { st.getTracks().forEach(t => t.stop()); clone(new Blob(ch, { type: rec.mimeType || "audio/webm" })); }; rec.start(); let n = 10; $("cvRec").disabled = true; const t = setInterval(() => { n--; $("cvMsg").textContent = `Recording… ${n} s (read anything in the voice you want)`; if (n <= 0) { clearInterval(t); rec.stop(); $("cvRec").disabled = false; } }, 1000); $("cvMsg").textContent = "Recording… 10 s (read anything in the voice you want)"; } catch (e) { $("cvMsg").textContent = "No microphone: " + e.message; } };
+    }
+  };
+  draw();
+}
+// ---- Settings → Sounds → Voices (saved as you change them)
+function voiceSettingsGroup() {
+  const g = document.createElement("div"); g.className = "group"; g.id = "sVoices"; const G = id => g.querySelector("#" + id);
+  const draw = () => {
+    const st = S.settings, n = st.narrator || {}, vs = loadPhoneVoices();
+    g.innerHTML = `<h3>Voices</h3><label class="check"><input type="checkbox" id="vOn" ${st.voiceOn ? "checked" : ""}> Read replies aloud: each character in their own voice</label>
+      ${st.voiceOn ? `${field("Voices from", `<select id="vEng"><option value="phone" ${st.voiceEngine !== "cartesia" ? "selected" : ""}>This phone or computer (free)</option><option value="cartesia" ${st.voiceEngine === "cartesia" ? "selected" : ""}>Cartesia (natural voices and cloning, your own key)</option></select>`)}
+      ${st.voiceEngine === "cartesia" ? `${field("Cartesia API key", `<input id="vKey" type="password" value="${esc(st.cartKey || "")}" placeholder="sk_car_…" autocomplete="off">`, "Stays on this device. Cartesia charges per character read; its rules only forbid content about minors.")}${field("Voice for characters without one", `<input id="vDef" value="${esc(st.cartDefault || "")}" placeholder="A Cartesia voice id (optional)" autocomplete="off">`, "Without one, characters with no Cartesia voice use the phone's voices.")}` : ""}
+      ${field("Read in new chats", `<select id="vMode">${VOICE_MODES.filter(m => m[0] !== "off").map(([k, l]) => `<option value="${k}" ${(st.voiceMode || "dialogue") === k ? "selected" : ""}>${l}</option>`).join("")}<option value="off" ${st.voiceMode === "off" ? "selected" : ""}>Only when I ask</option></select>`, "Each chat can change this in ⋯ Options.")}
+      <label class="check"><input type="checkbox" id="vAuto" ${st.voiceAuto !== false ? "checked" : ""}> Read new replies as soon as they're written</label>
+      <label class="check"><input type="checkbox" id="vTap" ${st.voiceTap !== false ? "checked" : ""}> Tap a line of speech to hear it again</label>
+      ${rangeRow("vRate", "Speed", "How fast every voice reads.", 0.6, 1.6, 0.05, st.voiceRate || 1, v => Math.round(v * 100) + "%")}
+      ${rangeRow("vVol", "Volume", "", 0, 1, 0.05, st.voiceVol ?? 1, v => Math.round(v * 100) + "%")}
+      ${field("Narrator voice", `<select id="vNar"><option value="">Automatic</option>${vs.map(x => `<option value="${esc(x.name)}" ${n.phone === x.name ? "selected" : ""}>${esc(x.name)}</option>`).join("")}</select>${st.voiceEngine === "cartesia" ? `<input id="vNarC" value="${esc(n.cart || "")}" placeholder="Narrator's Cartesia voice id (optional)" autocomplete="off" style="margin-top:6px">` : ""}`, "Reads the actions and narration in Everything mode.")}
+      <button type="button" class="btn small" id="vTest">▶ Test</button><p class="hint" style="margin:0">Each character's voice is set in their editor (Voice).</p>` : ""}`;
+    const save = () => saveSettings();
+    G("vOn").onchange = e => { st.voiceOn = e.target.checked; if (!st.voiceOn) voiceStop(); save(); draw(); };
+    if (!st.voiceOn) return;
+    G("vEng").onchange = e => { st.voiceEngine = e.target.value; save(); draw(); };
+    if (G("vKey")) G("vKey").onchange = e => { st.cartKey = e.target.value.trim(); save(); };
+    if (G("vDef")) G("vDef").onchange = e => { st.cartDefault = e.target.value.trim(); save(); };
+    G("vMode").onchange = e => { st.voiceMode = e.target.value; save(); };
+    G("vAuto").onchange = e => { st.voiceAuto = e.target.checked; save(); };
+    G("vTap").onchange = e => { st.voiceTap = e.target.checked; save(); };
+    G("vRate").oninput = e => { st.voiceRate = +e.target.value; G("vRateV").textContent = Math.round(st.voiceRate * 100) + "%"; save(); };
+    G("vVol").oninput = e => { st.voiceVol = +e.target.value; G("vVolV").textContent = Math.round(st.voiceVol * 100) + "%"; save(); };
+    G("vNar").onchange = e => { st.narrator = { ...(st.narrator || {}), phone: e.target.value }; save(); };
+    if (G("vNarC")) G("vNarC").onchange = e => { st.narrator = { ...(st.narrator || {}), cart: e.target.value.trim() }; save(); };
+    G("vTest").onclick = () => voiceSay([{ text: "The lantern flickers as the door creaks open.", who: "narrator" }, { text: "Oh, it's you. Come in, come in.", who: { name: "Wren", description: "she" , id: "test-wren" } }]);
+  };
+  draw(); return g;
+}
+
 /* ---------- Memory sheet ---------- */
 $("btnMemory").onclick = () => openMemory();
 function openMemory() {
@@ -5866,6 +6023,7 @@ $("btnMore").onclick = () => openSheet("Options", b => {
     <button class="btn" id="oChoices">☰ Choices mode: ${choicesOn() ? "on" : "off"}</button>
     ${S.settings.gamesOn !== false ? `<button class="btn" id="oDuel">⚔ Start a dice duel (a small scuffle or contest)</button>` : ""}
     <button class="btn" id="oPacer">〰 Stroke pacer: ${pacerOn() ? "on" : "off"}</button>
+    ${voiceOn() ? `<button class="btn" id="oVoice">🗣 Voices: ${VOICE_MODES.find(x => x[0] === voiceMode())[1]}</button>` : ""}
     <button class="btn danger" id="oReset">Clear this chat</button></div>
     <p class="note">New chat keeps this one in your chat list. Clear this chat erases this conversation and its memory.</p>`;
   $("oIll").onclick = () => { closeSheet(); illustrate(); };
@@ -5879,6 +6037,7 @@ $("btnMore").onclick = () => openSheet("Options", b => {
   $("oChoices").onclick = async () => { S.chat.choices = !choicesOn(); await saveChat(); renderChoices(); $("oChoices").textContent = `☰ Choices mode: ${choicesOn() ? "on" : "off"}`; toast(choicesOn() ? "Choices on: they show after the next reply" : "Choices off for this chat"); };
   if ($("oDuel")) $("oDuel").onclick = () => openDuel(null, async () => {});
   $("oDice").onclick = async () => { S.chat.dice = !diceOn(); await saveChat(); syncPlay(); renderMsgs(true); $("oDice").textContent = `🎲 Dice rolls: ${diceOn() ? "on" : "off"}`; toast(diceOn() ? "Dice on: your actions get a d20 roll" : "Dice off for this chat"); };
+  if ($("oVoice")) $("oVoice").onclick = async () => { const i = VOICE_MODES.findIndex(x => x[0] === voiceMode()), nx = VOICE_MODES[(i + 1) % VOICE_MODES.length][0]; S.chat.voice = nx; if (nx === "off") voiceStop(); await saveChat(); $("oVoice").textContent = `🗣 Voices: ${VOICE_MODES.find(x => x[0] === nx)[1]}`; };
   $("oPacer").onclick = async () => { S.chat.pacer = !pacerOn(); await saveChat(); renderPacer(); $("oPacer").textContent = `〰 Stroke pacer: ${pacerOn() ? "on" : "off"}`; };
   confirmBtn($("oReset"), "Tap again to erase this chat", async () => { const keep = { id: S.chat.id, personaId: S.chat.personaId, created: S.chat.created }; S.chat = { ...newChat(char(), keep.personaId), ...keep }; await saveChat(); closeSheet(); S.seen = new Set(S.chat.messages.map(m => m.id)); updateStage(); renderMsgs(); });
 });
@@ -6980,6 +7139,7 @@ async function onReply(m, rpgBefore) {
   if (!m || !S.chat) return;
   const st = S.settings, c = char(), t = msgText(m), sc = sceneNow();
   try { achAfterReply(m, c, S.chat, rpgBefore); } catch (e) { console.warn(e); }
+  try { voiceAfterReply(m); } catch (e) { console.warn(e); } // v1.84
   // the vore picture belches when the reply describes a burp; digested prey adds weight, burning it off takes it away
   if (/\b(burp|belch|urp)\w*/i.test(t) && SIL.cur) setTimeout(voreBurp, 700);
   try { if (silWeightAfterReply(m)) saveChat(); } catch (e) { console.warn(e); }
@@ -11491,6 +11651,7 @@ const LIVE = new Set();
 const freeAudio = a => { try { a.removeAttribute("src"); a.load(); } catch {} };
 const trackAudio = a => { LIVE.add(a); a.addEventListener("ended", () => { LIVE.delete(a); if (!a.loop) freeAudio(a); }); a.addEventListener("pause", () => LIVE.delete(a)); return a; };
 function hushAll() {
+  try { voiceStop(); } catch {}
   for (const a of [...LIVE]) { try { a.pause(); a.src = ""; } catch {} } LIVE.clear();
   for (const h of [...SFX_LIVE]) h.stop(); SFX_LIVE.clear();
   if (AC && AC.state === "running") { const old = AC; AC = null; NOISE = null; old.close().catch(() => {}); }
@@ -12190,7 +12351,7 @@ function startActivity(kind, muffled, brutal, opt = {}) {
 // (one row per Store key) and their own sound files to the private `sounds` bucket.
 // API keys never leave the device: they are stripped before upload and kept from the local copy on download.
 const SB = { url: "https://kttzglvsaxvzcbzfwfju.supabase.co", key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0dHpnbHZzYXh2emNiemZ3Zmp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4NTI2MzQsImV4cCI6MjEwNzQyODYzNH0.liIa5B_3_QSZiqYzuv1h6KiIuZFBciXsYPkmG33bLd8" };
-const LOCAL_ONLY = ["apiKey", "customKey", "uiScale"]; // per-device: keys and display size
+const LOCAL_ONLY = ["apiKey", "customKey", "uiScale", "cartKey"]; // per-device: keys and display size
 // JSON with object keys sorted, so the same data compares equal however the server ordered it
 const stableJSON = v => JSON.stringify(v, (k, x) => x && typeof x === "object" && !Array.isArray(x) ? Object.fromEntries(Object.keys(x).sort().map(n => [n, x[n]])) : x);
 const stripLocal = v => { const o = { ...(v || {}) }; for (const k of LOCAL_ONLY) delete o[k]; return o; };
