@@ -47,7 +47,7 @@ const open = require("./base.js");
   await pg.fill("#dmIn", "the opening especially"); await pg.click("#dmSend"); await wait(200);
   chk("a second message doesn't queue a second reply", await pg.evaluate(id => COMM.dmq.filter(x => x.user === id).length === 1 && dmOf(id).msgs.length === 2, uid0));
   // time passes: typing… then the texts arrive one after another
-  await pg.evaluate(id => { const q = COMM.dmq.find(x => x.user === id); q.typingAt = Date.now() - 1000; q.due = Date.now() + 6000; dmOf(id).msgs.forEach(m => { m.seenAt = Date.now() - 500; }); }, uid0);
+  await pg.evaluate(id => { userOf(id).burst = 0.9; const q = COMM.dmq.find(x => x.user === id); q.typingAt = Date.now() - 1000; q.due = Date.now() + 6000; dmOf(id).msgs.forEach(m => { m.seenAt = Date.now() - 500; }); }, uid0);
   await pg.evaluate(() => DM_VIEW()); await wait(200);
   chk("they're shown typing, and your message as Seen", await pg.evaluate(() => !!document.querySelector(".dm-typing") && /Seen/.test(document.querySelector(".dm-list").textContent)));
   await pg.evaluate(() => dmPump()); await wait(400);
