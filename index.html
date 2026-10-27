@@ -696,6 +696,9 @@ img.px-av{border-radius:50%}
 .pix-pop{position:fixed;inset:0;z-index:400;background:rgba(8,6,12,.72);display:flex;align-items:flex-end;justify-content:center;padding:0 max(0px,env(safe-area-inset-right,0px)) 0 max(0px,env(safe-area-inset-left,0px));animation:fadeIn .16s ease}
 .pix-card{width:min(560px,100%);max-height:calc(100dvh / var(--z,1) - 24px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:20px 20px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px}
 @media (min-width:700px){.pix-pop{align-items:center}.pix-card{border-radius:20px}}
+.lo-q{margin:0;padding:10px 12px;border-left:3px solid var(--accent);background:var(--surface-2);border-radius:0 10px 10px 0;font-style:italic}.lo-now{margin:0;color:var(--muted);font-size:13px}
+.lo-list{display:flex;flex-direction:column;gap:6px}.lo-row{display:flex;align-items:center;gap:8px;min-height:44px;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);text-align:left}.lo-row b{flex:1;min-width:0}.lo-row small{color:var(--muted);font-size:12px}.lo-row.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}.lo-on{color:var(--accent);font-weight:700}.lo-new{color:var(--muted);border-style:dashed}
+.lo-add{display:flex;flex-direction:column;gap:6px}.lo-add input{width:100%}
 .vfx-chips{display:flex;flex-wrap:wrap;gap:6px}.vfx-chips .chip{min-height:34px}
 .vp-open{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px}.vp-open b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vp-open small{color:var(--muted);font-size:12px;flex:none}
 .vp-id summary{font-size:12px;color:var(--muted);cursor:pointer;margin-top:6px}.vp-id input{margin-top:6px;width:100%}
@@ -1705,7 +1708,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.88 · Oct 27";
+const VERSION = "1.89 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -4505,9 +4508,12 @@ $("msgs").addEventListener("pointerdown", e => {
   const d = e.target.closest("[data-i]"); if (!d || e.target.closest("button")) return;
   pressXY = [e.clientX, e.clientY];
   clearTimeout(pressT);
+  const lq = e.target.closest(".q"), touchy = e.pointerType !== "mouse";
+  if (e.button === 2) return; // right-click is handled by the context menu
   pressT = setTimeout(async () => {
     const m = S.chat.messages[+d.dataset.i]; if (!m) return;
     suppressClick = true;
+    if (lq && touchy && !e.target.closest(".sfx-k") && (m.role === "assistant" || m.role === "user")) { suppressClick = false; openLineOwner(lq); return; } // v1.89: who says this line
     const ok = await copyText(m.role === "image" ? (m.url || "") : stripColor(m.content));
     try { navigator.vibrate?.(12); } catch {}
     toast(ok ? (m.role === "image" ? "Image link copied" : "Message copied") : "Couldn't copy on this device");
@@ -4515,7 +4521,8 @@ $("msgs").addEventListener("pointerdown", e => {
 });
 for (const ev of ["pointerup", "pointercancel", "pointerleave"]) $("msgs").addEventListener(ev, () => clearTimeout(pressT));
 $("msgs").addEventListener("pointermove", e => { if (pressXY && Math.hypot(e.clientX - pressXY[0], e.clientY - pressXY[1]) > 10) clearTimeout(pressT); });
-$("msgs").addEventListener("contextmenu", e => { if (e.target.closest("[data-i]")) e.preventDefault(); });
+$("msgs").addEventListener("contextmenu", e => { if (!e.target.closest("[data-i]")) return; e.preventDefault(); const q = e.target.closest(".q");
+  if (q && !e.target.closest(".sfx-k") && Date.now() - (window.__lineMenuAt || 0) > 900 && (q.closest(".msg.assistant") || q.closest(".msg.user"))) openLineOwner(q); });
 $("msgs").addEventListener("click", async e => {
   if (suppressClick) { suppressClick = false; return; }
   const sf = e.target.closest(".sfx"); if (sf) { burst(sf); return; }
@@ -5945,16 +5952,22 @@ function voiceNewNotify(c, x) {
   const el = document.createElement("div"); el.className = "toast dm-toast vo-new"; el.innerHTML = `<span>🗣 <b>${esc(x.name)}</b> is new here. Tap to choose their voice.</span>`;
   el.onclick = () => { el.remove(); openVoices(c, x.name); }; document.body.appendChild(el); setTimeout(() => el.remove(), 6000);
 }
+// v1.89: who speaks each line is kept per version of the reply (swipes), by the line's place among the spoken lines only,
+// so it's the same whether narration is read or not; lines you set yourself (long-press) are marked `set`
+const spkKey = m => String(m?.alt || 0);
+function getSpk(m) { return m?.vspkBy?.[spkKey(m)] || null; }
+function setSpk(m, arr) { m.vspkBy = { ...(m.vspkBy || {}), [spkKey(m)]: arr }; }
 function applySpeakers(c, parts, spk) {
-  parts.forEach((p, i) => { if (p.who === "narrator" || p.mine) return; const x = spk?.[i]; if (!x?.n) return; const w = voiceWhoByName(c, x.n, x.g); if (!w) return; p.who = w.mine ? myVoiceWho() : w; p.speaker = x.n; });
+  let k = 0;
+  parts.forEach(p => { if (p.who === "narrator" || p.mine) return; const x = spk?.[k++]; p.line = k - 1; if (!x?.n) return; const w = voiceWhoByName(c, x.n, x.g); if (!w) return; p.who = w.mine ? myVoiceWho() : w; p.speaker = x.n; p.setBy = x.set ? "you" : "ai"; });
 }
-async function toneParts(m, parts) {
+async function toneParts(m, parts, opt = {}) {
   if (!parts.length) return parts;
   const c = char(), key = (m.id || "") + ":" + (m.alt || 0) + ":" + parts.length, cached = TONE_CACHE.get(key);
-  if (cached) { parts.forEach((p, i) => Object.assign(p, cached[i] || {})); applySpeakers(c, parts, m.vspk); return parts; }
+  if (cached && !opt.again) { parts.forEach((p, i) => Object.assign(p, cached[i] || {})); applySpeakers(c, parts, getSpk(m)); return parts; }
   parts.forEach(p => Object.assign(p, toneGuess(p)));
-  if (m.vspk) applySpeakers(c, parts, m.vspk);
-  const detect = voiceDetectOn(), askWho = m.role === "assistant" && !m.vspk && parts.some(p => p.who !== "narrator") && !!c;
+  applySpeakers(c, parts, getSpk(m));
+  const detect = voiceDetectOn() || !!opt.again, askWho = m.role === "assistant" && (!getSpk(m) || !!opt.again) && parts.some(p => p.who !== "narrator") && !!c;
   if ((S.settings.voiceTone !== false || (detect && askWho)) && hasKey()) {
     try {
       const who = p => p.who === "narrator" ? "Narrator" : p.who?.name || "Someone";
@@ -5964,16 +5977,17 @@ async function toneParts(m, parts) {
       const whoRule = askWho ? ` Also say WHO speaks each line. Read the story before this reply and the reply itself: who is in the scene right now (someone who left doesn't speak until they come back), who is being answered or addressed, and the narration around each quote. Use a known character's exact name when it's them; for anyone else give the name the story uses (or a short description like "the bartender" when unnamed) and their gender. ${uname()} is the user's character. Narration lines are "Narrator".` : "";
       const ask = dsJSON([{ role: "system", content: `You direct voice actors reading a roleplay reply aloud. For every numbered line, say how it should sound, judging by the whole scene: what is happening, the narration around the line (whispered, shouted, through tears, purring, trembling…), its punctuation and the speaker's mood and personality. Narration lines are read by a storyteller who matches the mood of what they describe.${whoRule} Respond with only JSON: {"lines": [{"i": line number, "emotion": one of ${TONE_EMO.join(", ")}, "speed": 0.75-1.3 (1 = normal), "volume": 0.5-1.6 (1 = normal; whispers about 0.6, shouts about 1.5), "laugh": true only if the line is laughed or giggled${askWho ? `, "speaker": who says it, "gender": "m", "f" or "n"` : ""}}]${askWho ? `, "present": [names of the characters in the scene at the end of this reply]` : ""}}` },
         { role: "user", content: `${askWho && known ? `Known characters:\n${known}\n\n` : ""}${askWho && prevPresent?.length ? `In the scene before this reply: ${prevPresent.join(", ")}\n\n` : ""}${askWho && before ? `The story just before this reply:\n${before.slice(-3000)}\n\n` : ""}The scene${askWho ? " (this reply)" : ""}:\n${stripColor(m.content).replace(/\[\[[\s\S]*?\]\]/g, "").slice(0, 3500)}\n\nLines to read:\n${parts.map((p, i) => `${i + 1}. ${askWho && p.who !== "narrator" ? "(guess: " + who(p) + ")" : who(p) + ":"} ${p.text.slice(0, 300)}`).join("\n")}` }], { temperature: 0.4, maxTokens: 1100, plain: true });
-      const j = await Promise.race([ask, new Promise(r => setTimeout(() => r(null), 9000))]);
+      const j = await Promise.race([ask, new Promise(r => setTimeout(() => r(null), opt.again ? 20000 : 9000))]);
       const spk = [];
       for (const x of Array.isArray(j?.lines) ? j.lines : []) { const i = (+x.i || 0) - 1, p = parts[i]; if (!p) continue;
         if (S.settings.voiceTone !== false) { const emo = String(x.emotion || "").toLowerCase().trim(); if (TONE_EMO.includes(emo)) p.emo = emo;
           if (Number.isFinite(+x.speed)) p.speed = Math.max(0.75, Math.min(1.3, +x.speed)); if (Number.isFinite(+x.volume)) p.vol = Math.max(0.5, Math.min(1.6, +x.volume)); p.laugh = x.laugh === true; }
         if (askWho && p.who !== "narrator" && x.speaker) spk[i] = { n: String(x.speaker).slice(0, 40), g: String(x.gender || "").slice(0, 1) }; }
       if (askWho && spk.length) {
-        // new people become side characters only when "find new characters" is on
-        parts.forEach((p, i) => { const x = spk[i]; if (!x || p.who === "narrator") return; const w = voiceWhoByName(c, x.n, x.g, { detect }); if (w) { p.who = w.mine ? myVoiceWho() : w; p.speaker = x.n; } });
-        m.vspk = parts.map((p, i) => spk[i] || null); if (Array.isArray(j?.present)) m.vpresent = j.present.map(x => String(x).slice(0, 40)).slice(0, 12);
+        // new people become side characters only when "find new characters" is on; lines you set yourself stay yours
+        const old = getSpk(m) || [], out = []; let k = 0;
+        parts.forEach((p, i) => { if (p.who === "narrator") return; const mine = old[k]?.set ? old[k] : null, x = mine || spk[i] || null; out[k++] = x; if (!x) return; const w = voiceWhoByName(c, x.n, x.g, { detect: detect && !mine }); if (w) { p.who = w.mine ? myVoiceWho() : w; p.speaker = x.n; p.setBy = mine ? "you" : "ai"; } });
+        setSpk(m, out); if (Array.isArray(j?.present)) m.vpresent = j.present.map(x => String(x).slice(0, 40)).slice(0, 12);
         if (S.chat?.messages.includes(m)) saveChat();
       }
       TONE_CACHE.set(key, parts.map(p => ({ emo: p.emo, speed: p.speed, vol: p.vol, laugh: p.laugh }))); if (TONE_CACHE.size > 80) TONE_CACHE.delete(TONE_CACHE.keys().next().value);
@@ -6208,18 +6222,74 @@ function openVoicePicker(opt = {}) {
 }
 // reading a reply (automatically after it's written, or from its ⋯ menu); tapping a quote reads that line
 async function voiceRead(m, force) { const mode = force ? (voiceMode() === "off" ? "dialogue" : voiceMode()) : voiceMode(); if (mode === "off") return; const g = ++VQ.gen; const parts = await toneParts(m, voiceParts(m, mode)); if (g === VQ.gen) voiceSay(parts); }
-function voiceAfterReply(m) { if (voiceOn() && S.settings.voiceAuto !== false && voiceMode() !== "off") voiceRead(m); }
-document.addEventListener("click", e => {
+function voiceAfterReply(m) {
+  if (!voiceOn()) return;
+  if (S.settings.voiceAuto !== false && voiceMode() !== "off") return voiceRead(m);
+  // v1.89: not read aloud now, but still work out who speaks (and find new characters) so taps and the long-press menu know
+  if (voiceDetectOn() && hasKey()) toneParts(m, voiceParts(m, "dialogue")).catch(() => {});
+}
+// the spoken lines of a message, with their tone and speakers, and the one a tapped quote belongs to
+async function voiceLineOf(q, opt = {}) {
+  const mine = !!q.closest(".msg.user"), el = q.closest("[data-i]"), m = (el && S.chat?.messages[+el.dataset.i]) || [...(S.chat?.messages || [])].reverse().find(x => x.role === (mine ? "user" : "assistant"));
+  if (!m) return null;
+  const cl = q.cloneNode(true); cl.querySelectorAll(".sfx-k").forEach(x => x.remove()); const t = plainQ(cl.textContent); if (!t) return null;
+  let all = voiceParts(m, !mine && voiceMode() === "all" ? "all" : "dialogue");
+  const key = (m.id || "") + ":" + (m.alt || 0) + ":" + all.length, cached = TONE_CACHE.get(key);
+  if (!mine && (opt.ask || (!getSpk(m) && voiceDetectOn() && !cached)) && hasKey()) { if (opt.wait) opt.wait(); all = await toneParts(m, all, { again: !!opt.ask }); }
+  else { if (cached) all.forEach((p, i) => Object.assign(p, cached[i] || {})); else all.forEach(p => Object.assign(p, toneGuess(p))); if (!mine) applySpeakers(char(), all, getSpk(m)); }
+  const part = all.find(p => p.who !== "narrator" && plainQ(p.text) === t) || { text: untilde(cl.textContent.replace(/^["“]|["”]$/g, "")), who: mine ? myVoiceWho(m) : char(), ...toneGuess({ text: cl.textContent }) };
+  return { m, mine, part, all };
+}
+document.addEventListener("click", async e => {
   const q = e.target.closest("#msgs .msg.assistant .q, #msgs .msg.user .q"); if (!q || !voiceOn() || S.settings.voiceTap === false) return;
   if (e.target.closest(".sfx-k, .sfx, .sfx-part")) return; // tapping a sound word plays the sound
-  const mine = !!q.closest(".msg.user"), el = q.closest("[data-i]"), m = (el && S.chat?.messages[+el.dataset.i]) || [...(S.chat?.messages || [])].reverse().find(x => x.role === (mine ? "user" : "assistant"));
-  const cl = q.cloneNode(true); cl.querySelectorAll(".sfx-k").forEach(x => x.remove()); const t = plainQ(cl.textContent); if (!t) return;
-  const all = voiceParts(m, !mine && voiceMode() === "all" ? "all" : "dialogue"), key = (m?.id || "") + ":" + (m?.alt || 0) + ":" + all.length, cached = TONE_CACHE.get(key);
-  if (cached) all.forEach((p, i) => Object.assign(p, cached[i] || {})); else all.forEach(p => Object.assign(p, toneGuess(p)));
-  if (!mine) applySpeakers(char(), all, m?.vspk);
-  const part = all.find(p => p.who !== "narrator" && plainQ(p.text) === t) || { text: untilde(cl.textContent.replace(/^["“]|["”]$/g, "")), who: mine ? myVoiceWho(m) : char(), ...toneGuess({ text: cl.textContent }) };
-  q.classList.add("vo-on"); voiceSay([part]);
+  if (!$("sheet").hidden || Date.now() - (window.__lineMenuAt || 0) < 400) return; // the long-press menu is open (or just opened)
+  q.classList.add("vo-on");
+  const r = await voiceLineOf(q, { wait: () => toast("Working out who says it…") }); if (!r) return;
+  voiceSay([r.part]); q.classList.add("vo-on");
 });
+// ---- v1.89: press and hold (or right-click) a line of speech: who says it, set it yourself, and their voice
+function openLineOwner(q) {
+  const c = char(); if (!c || !S.chat) return;
+  window.__lineMenuAt = Date.now(); try { navigator.vibrate?.(12); } catch {}
+  let r = null, busy = false, adding = false, msg = "";
+  openSheet("Who says this?", b => {
+    const draw = () => {
+      if (!r) { b.innerHTML = `<p class="hint">Reading the line…</p>`; return; }
+      const p = r.part, cur = p.who === "narrator" ? null : (r.mine ? "me" : vNorm(p.speaker || p.who?.name || "")), ppl = voicePeople(c).filter(x => x.kind !== "main" || c.kind === "character");
+      const me = myVoiceWho(r.m), voiced = o => o?.voice?.cart || o?.voice?.phone || o?.voice?.fx?.length;
+      const row = (k, name, sub, on, v) => `<button type="button" class="lo-row ${on ? "on" : ""}" data-who="${esc(k)}"><b>${esc(name)}</b>${sub ? `<small>${esc(sub)}</small>` : ""}${v ? `<span class="lo-v">🎙</span>` : ""}${on ? `<span class="lo-on">✓</span>` : ""}</button>`;
+      b.innerHTML = `<blockquote class="lo-q">“${esc(p.text.slice(0, 220))}${p.text.length > 220 ? "…" : ""}”</blockquote>
+        <p class="hint lo-now">${r.mine ? `Your line, read in your voice (${esc(me.name)}).` : p.speaker || p.who?.name ? `Said by <b>${esc(p.speaker || p.who.name)}</b> · ${p.setBy === "you" ? "you set this" : p.setBy === "ai" ? "the AI worked this out" : "a guess from the text"}` : "Nobody found yet."}</p>
+        ${r.mine ? "" : `<div class="lbl">It's said by</div><div class="lo-list">${ppl.map(x => row(x.obj.name, x.obj.name, x.kind === "side" ? "side character" : x.kind === "member" ? "member" : x.kind === "cast" ? "character" : "", cur === vNorm(x.obj.name), voiced(x.obj))).join("")}
+          ${p.speaker && !ppl.some(x => vNorm(x.obj.name) === vNorm(p.speaker)) ? row(p.speaker, p.speaker, "not saved yet", true, false) : ""}
+          ${row("::me", me.name, "you (your persona)", false, voiced(me))}
+          <button type="button" class="lo-row lo-new" id="loNew">＋ Someone new…</button></div>
+          ${adding ? `<div class="lo-add"><input id="loName" placeholder="Their name (e.g. the guard, Mira)" autocomplete="off"><div class="row" style="gap:6px">${[["f", "She"], ["m", "He"], ["n", "They"]].map(([g, l]) => `<button type="button" class="btn small" data-g="${g}">${l}</button>`).join("")}</div></div>` : ""}
+          <button type="button" class="btn small" id="loAsk" ${busy ? "disabled" : ""}>${busy ? "Asking the AI…" : "✦ Ask the AI again (reads the whole scene)"}</button>`}
+        ${msg ? `<p class="note" style="margin:0">${esc(msg)}</p>` : ""}
+        <div class="row" style="gap:6px"><button type="button" class="btn small primary" id="loHear">▶ Hear it</button>${r.mine ? `<button type="button" class="btn small" id="loMyV">🎙 My voice</button>` : p.speaker || (p.who && p.who !== "narrator") ? `<button type="button" class="btn small" id="loVoice">🎙 ${esc((p.speaker || p.who.name).slice(0, 20))}'s voice</button>` : ""}<button type="button" class="btn small" id="loCopy">Copy message</button></div>`;
+      const assign = (name, g) => {
+        let k = r.part.line; if (k == null) { msg = "Couldn't match this line. Try Ask the AI again."; draw(); return; }
+        const arr = [...(getSpk(r.m) || [])]; arr[k] = { n: name.slice(0, 40), g: g || (voicePeople(c).find(x => vNorm(x.obj.name) === vNorm(name))?.obj.g) || sexOf(name), set: 1 };
+        for (let i = 0; i < k; i++) if (arr[i] === undefined) arr[i] = null;
+        setSpk(r.m, arr); saveChat();
+        const w = voiceWhoByName(c, name, arr[k].g, { detect: true }); if (w) { r.part.who = w.mine ? myVoiceWho(r.m) : w; r.part.speaker = name; r.part.setBy = "you"; }
+        msg = `Got it: ${name} says this line.`; adding = false; draw();
+      };
+      b.querySelectorAll("[data-who]").forEach(x => x.onclick = () => { const k = x.dataset.who; if (k === "::me") assign(persona()?.name || uname(), sexOf(persona())); else assign(k); });
+      if ($("loNew")) $("loNew").onclick = () => { adding = !adding; draw(); $("loName")?.focus(); };
+      b.querySelectorAll("[data-g]").forEach(x => x.onclick = () => { const n = $("loName").value.trim(); if (!n) { $("loName").focus(); return; } assign(n, x.dataset.g); });
+      if ($("loAsk")) $("loAsk").onclick = async () => { if (!hasKey()) { msg = "That needs your AI key (Settings → AI model)."; draw(); return; } busy = true; draw(); const n = await voiceLineOf(q, { ask: true }); busy = false; if (n) { r = n; msg = r.part.speaker ? `The AI says: ${r.part.speaker}.` : "The AI couldn't tell. Pick them yourself."; } draw(); };
+      $("loHear").onclick = () => voiceSay([r.part]);
+      if ($("loVoice")) $("loVoice").onclick = () => openVoices(c, r.part.speaker || r.part.who.name);
+      if ($("loMyV")) $("loMyV").onclick = () => editPersona(persona(), false);
+      $("loCopy").onclick = async () => { const ok = await copyText(stripColor(r.m.content)); toast(ok ? "Message copied" : "Couldn't copy on this device"); };
+    };
+    draw();
+    voiceLineOf(q).then(x => { r = x; if ($("sheetBody") === b || b.isConnected) draw(); });
+  });
+}
 // ---- the bot editor's Voice group: phone voice, pitch, speed, a Cartesia voice (list, id, or cloned from a clip), Test
 function voiceEditor(work, box, opt = {}) {
   if (!box) return; const Q = id => box.querySelector("#" + id);

@@ -70,7 +70,7 @@ const open = require("./base.js");
     $("voFind").click(); await new Promise(r => setTimeout(r, 50)); const on = S.chat.voiceDetect; closeSheet();
     __said = []; $("input").value = "hello"; $("send").click(); for (let i = 0; i < 160 && (S.busy || __said.length < 3); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 150));
     const m = S.chat.messages.filter(x => x.role === "assistant").at(-1), toast = [...document.querySelectorAll(".vo-new")].map(x => x.textContent).join();
-    return { opt, on, said: __said.map(x => x.t + "@" + x.v), side: byId("ww1").sideVoices.map(x => x.name + ":" + x.g), vspk: m.vspk?.map(x => x?.n), present: m.vpresent, toast };
+    return { opt, on, said: __said.map(x => x.t + "@" + x.v), side: byId("ww1").sideVoices.map(x => x.name + ":" + x.g), vspk: getSpk(m)?.map(x => x?.n), present: m.vpresent, toast };
   });
   chk("⋯ Options has Character voices with the find-new-characters switch", r1.opt && r1.on === true);
   chk(`each line goes to who the AI says speaks it (${r1.said.join(" | ")})`, r1.said[0] === "Welcome.@Daniel" && r1.said[1] === "Leave us.@Samantha" && /^Fresh bread!@/.test(r1.said[2]));
@@ -100,7 +100,7 @@ const open = require("./base.js");
   chk(`with finding off, a newcomer isn't added but speaks as themself (${r3.who}, ${r3.said}); side characters: ${r3.side}`, !r3.side.includes("Cloaked stranger") && r3.who === "Cloaked stranger" && r3.said === r3.auto);
   // no AI at all: nothing is asked
   const n0 = dir.length;
-  await pg.evaluate(async () => { S.settings.voiceTone = false; S.chat.voiceDetect = false; const m = { ...S.chat.messages.filter(x => x.role === "assistant").at(-1), id: "z", vspk: undefined }; await toneParts(m, voiceParts(m, "dialogue")); });
+  await pg.evaluate(async () => { S.settings.voiceTone = false; S.chat.voiceDetect = false; const m = { ...S.chat.messages.filter(x => x.role === "assistant").at(-1), id: "z", vspkBy: undefined }; await toneParts(m, voiceParts(m, "dialogue")); });
   chk("with tone and finding both off, no AI call is made", dir.length === n0);
   const wide = await pg.evaluate(async () => { openVoices(byId("ww1")); await new Promise(r => setTimeout(r, 100)); return document.documentElement.scrollWidth <= innerWidth + 1; });
   chk("no sideways scroll", wide);
