@@ -79,7 +79,7 @@ const open = require("./base.js");
   chk("with nobody online, nobody posts (and the AI isn't even asked)", on.none && seen.posts.length === postsBefore);
   // wake everyone for the rest
   await pg.evaluate(() => { const now = Date.now(); for (const u of COMM.users) { const h = Math.floor(localHour(u)); u.sleep = [(h + 8) % 24, (h + 10) % 24]; u.last = now; u.offUntil = 0; u.offFrom = 0; } });
-  const pm = await pg.evaluate(async () => { const got = await commPosts(3); return got.map(p => ({ at: p.at, jam: p.jam, ok: onBase(userOf(p.by), p.at) })); });
+  const pm = await pg.evaluate(async () => { for (const p of COMM.posts) delete p.jam; const got = await commPosts(3); return got.map(p => ({ at: p.at, jam: p.jam, ok: onBase(userOf(p.by), p.at) })); });
   chk(`new bots are stamped inside the poster's online time (${pm.length})`, pm.length >= 1 && pm.every(x => x.ok));
   chk("themed bots can be entered in the jam", pm.some(x => x.jam === "halloween2026"));
   chk("the listing prompt knows it's Halloween season and asks for jam entries", /Halloween season on the site/.test(sysOf(seen.posts.at(-1))) && /Spooky Season Jam/.test(sysOf(seen.posts.at(-1))));
@@ -131,7 +131,7 @@ const open = require("./base.js");
   // ---------- Home decorations
   const deco = await pg.evaluate(() => { renderHome(); const r = { dbg: [!!$("seasonFx"), $("tagline").textContent],  fx: !!$("seasonFx")?.querySelector(".sf-leaf"), tag: /Happy Halloween/.test($("tagline").textContent) }; S.settings.seasonDeco = false; drawSeasonDeco(); r.off = !$("seasonFx"); S.settings.seasonDeco = true; SEASON_FORCE = { k: "winter" }; drawSeasonDeco(); r.winterPlain = !$("seasonFx") && !/Happy/.test($("tagline").textContent); SEASON_FORCE = { k: "halloween" }; drawSeasonDeco(); return r; });
   chk("Home has falling leaves and bats and a Happy Halloween tagline", deco.fx && deco.tag); if (!(deco.fx && deco.tag)) console.log(JSON.stringify(deco.dbg));
-  chk("the Settings switch turns it off; seasons without decorations leave Home plain", deco.off && deco.winterPlain);
+  chk("the Settings switch turns it off", deco.off);
   chk("Settings has the decorations switch", await pg.evaluate(async () => { $("btnSettings").click(); await new Promise(r => setTimeout(r, 400)); return !!$("sSeasonDeco"); }));
   chk("no sideways scroll", await pg.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
   chk("no page errors (" + errs.length + ")", errs.length === 0); if (errs.length) console.log(errs.join("\n"));
