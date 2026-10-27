@@ -1515,7 +1515,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.70 · Oct 27";
+const VERSION = "1.71 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -7793,8 +7793,31 @@ const asleepAt = (u, t = Date.now()) => { const [a, b] = u.sleep || [0, 8], h = 
 function wakeAfter(u, t) { let x = t; for (let i = 0; i < 48 && asleepAt(u, x); i++) x += 30 * 60e3; return x; }
 const localClock = (u, t = Date.now()) => { const d = new Date(t + (u.tz || 0) * 3.6e6); return `${["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][d.getUTCDay()]} ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`; };
 // online: awake and around now and then (more for active people), or just did something
-function isOnline(u, t = Date.now()) { if (!u) return false; if (u.last && t - u.last < 5 * 60e3) return true; if (asleepAt(u, t)) return false; return seeded(u.id, Math.floor(t / 9e5)) < 0.12 + 0.45 * (u.active ?? 0.5); }
-function lastSeen(u, t = Date.now()) { if (isOnline(u, t)) return t; for (let i = 1; i < 200; i++) { const x = t - i * 9e5; if (u.last && u.last > x) return u.last; if (!asleepAt(u, x) && seeded(u.id, Math.floor(x / 9e5)) < 0.12 + 0.45 * (u.active ?? 0.5)) return x + 9e5 * seeded(u.id, i); } return u.last || t - 3 * 864e5; }
+// v1.71: presence is one schedule per person. Each waking hour they may have one online session (when it starts and how long it
+// lasts are fixed per person and hour, the same on every device); they're also online for 5 minutes after doing anything, and while
+// reading or answering your DMs. "Active … ago" is the end of the last of these, so it only ever grows.
+const SES_H = 3.6e6, ACT_MS = 5 * 60e3;
+function sessOf(u, h) {
+  const a0 = u.active ?? 0.5; if (seeded(u.id, "s" + h) >= 0.15 + 0.5 * a0) return null;
+  const a = h * SES_H + seeded(u.id, "o" + h) * SES_H * 0.85; if (asleepAt(u, a)) return null;
+  let e = a + (4 + 40 * seeded(u.id, "l" + h)) * 60e3 * (0.6 + a0);
+  for (let x = a + 60e3; x < e; x += 60e3) if (asleepAt(u, x)) { e = x - 60e3; break; } // they log off at bedtime
+  return e - a >= 4 * 60e3 ? [a, e] : null;
+}
+function onBase(u, t) { if (u.last && t >= u.last && t - u.last < ACT_MS) return true; const H = Math.floor(t / SES_H); for (let h = H - 2; h <= H; h++) { const x = sessOf(u, h); if (x && t >= x[0] && t < x[1]) return true; } return false; }
+// windows around your DMs: when they see your message, and from when they start typing until a few minutes after the last text
+function dmWins(u) { const w = []; for (const m of COMM?.dms?.[u.id]?.msgs || []) if (m.from === "me" && m.seenAt) w.push([m.seenAt - 60e3, m.seenAt + 3 * 60e3]); for (const q of COMM?.dmq || []) if (q.user === u.id && q.typingAt) w.push([q.typingAt - 30e3, (q.parts?.length ? q.parts.at(-1).at : q.due) + 4 * 60e3]); return w; }
+function isOnline(u, t = Date.now()) { if (!u) return false; return onBase(u, t) || dmWins(u).some(([a, b]) => t >= a && t < b); }
+function lastSeen(u, t = Date.now()) {
+  if (isOnline(u, t)) return t;
+  let best = u.last && u.last <= t ? Math.min(t, u.last + ACT_MS) : 0;
+  for (const [, b] of dmWins(u)) if (b <= t && b > best) best = b;
+  const H = Math.floor(t / SES_H);
+  for (let h = H; h > H - 96; h--) { const x = sessOf(u, h); if (x && x[1] <= t && x[1] > best) best = x[1]; if (best && best > (h + 1) * SES_H) break; }
+  return best || u.at || t - 4 * 864e5;
+}
+// the first moment from t on that they're online (inside a session or just after doing something)
+function nextOnline(u, t) { if (onBase(u, t)) return t; const H = Math.floor(t / SES_H); for (let h = H - 2; h <= H + 48; h++) { const x = sessOf(u, h); if (x && x[1] > t) return Math.max(t, x[0]); } return wakeAfter(u, t); }
 function seenText(u) { const t = Date.now(); if (isOnline(u, t)) return "online"; const m = Math.round((t - lastSeen(u, t)) / 60e3); return m < 60 ? `active ${Math.max(1, m)}m ago` : m < 1440 ? `active ${Math.round(m / 60)}h ago` : `active ${Math.round(m / 1440)}d ago`; }
 function pickUsers(n, tags = []) {
   const T = new Set(tags.map(t => String(t).toLowerCase())), now = Date.now();
@@ -7875,7 +7898,7 @@ function commSchedule(t, mine) {
   if (!parent && info && info.by !== "me" && Math.random() < 0.8) who.add(info.by);
   if (info?.by === "me") { if (!parent) { const known = (COMM.comments[t] || []).filter(x => x.by !== "me").map(x => x.by); const o = known[Math.floor(Math.random() * known.length)] || myAudience()[0]?.id; if (o && Math.random() < 0.85) who.add(o); } }
   else if (Math.random() < (who.size ? 0.3 : 0.75)) { const o = pickUsers(1, targetInfo(t)?.tags || [])[0]; if (o) who.add(o.id); }
-  for (const by of who) { const u = userOf(by); let due = Date.now() + Math.round(60e3 + Math.random() * 3 * 60e3) * (u?.speed === "slow" ? 6 : u?.speed === "fast" ? 0.6 : 1.5); if (u && asleepAt(u, due)) due = wakeAfter(u, due) + Math.random() * 80 * 60e3; COMM.pending.push({ id: uid(), target: t, replyTo: mine.id, by, due }); }
+  for (const by of who) { const u = userOf(by); let due = Date.now() + Math.round(60e3 + Math.random() * 3 * 60e3) * (u?.speed === "slow" ? 6 : u?.speed === "fast" ? 0.6 : 1.5); if (u && asleepAt(u, due)) due = wakeAfter(u, due) + Math.random() * 80 * 60e3; if (u) { const on = nextOnline(u, due); if (on > due) due = on + 30e3 + Math.random() * 4 * 60e3; } COMM.pending.push({ id: uid(), target: t, replyTo: mine.id, by, due }); }
 }
 async function commAnswer(p) {
   const u = userOf(p.by), info = targetInfo(p.target), mine = (COMM.comments[p.target] || []).find(x => x.id === p.replyTo);
@@ -8512,8 +8535,12 @@ function dmDelay(u, now) {
   if (!live && Math.random() < 0.08) ms += R(3600, 5 * 3600); // got busy, comes back later
   let due = now + ms;
   if (asleepAt(u, due) || asleepAt(u, now)) due = wakeAfter(u, Math.max(due, now)) + R(5 * 60, 100 * 60);
-  const seenAt = asleepAt(u, now) ? wakeAfter(u, now) + R(60, 1200) : Math.min(due - 5000, now + (live ? R(3, 25) : ms * (0.2 + 0.6 * Math.random())));
-  return { due, seenAt: Math.max(now + 2000, Math.min(seenAt, due - 5000)) }; // they always see it before they answer
+  // v1.71: they only see and answer while they're online: mid-conversation they still are; otherwise when their next session starts
+  const here = live || onBase(u, now);
+  let seenAt = here ? now + (live ? R(3, 25) : R(5, 90)) : nextOnline(u, now) + R(10, 120);
+  if (!live) { const on = nextOnline(u, Math.max(due, seenAt + 5000)); if (on > due) due = on + R(20, 180); }
+  if (due < seenAt + 15000) due = seenAt + R(15, live ? 60 : 200);
+  return { due, seenAt: Math.max(now + 2000, seenAt) }; // they always see it before they answer
 }
 function dmSend(uidv, text) {
   const u = userOf(uidv); if (!u || !text.trim()) return;
@@ -8521,7 +8548,9 @@ function dmSend(uidv, text) {
   d.msgs.push(m); d.read = now;
   const q = COMM.dmq.find(x => x.user === u.id && x.kind === "reply");
   if (!q) { const t = dmDelay(u, now); m.seenAt = t.seenAt; COMM.dmq.push({ id: uid(), user: u.id, kind: "reply", due: t.due, typingAt: t.due - (8 + Math.random() * 30) * 1000 }); }
-  else { m.seenAt = Math.max(now + 1500, Math.min(q.due - 3000, now + (q.due - now) * 0.5)); if (!q.parts && q.due - now > 10 * 60e3 && dmLastThem(d) && now - dmLastThem(d).at < 6e5) q.due = now + 60e3 + Math.random() * 120e3; delete q.result; }
+  else { if (!q.parts && q.due - now > 10 * 60e3 && dmLastThem(d) && now - dmLastThem(d).at < 6e5) { q.due = now + 60e3 + Math.random() * 120e3; q.typingAt = q.due - (8 + Math.random() * 20) * 1000; }
+    // v1.71: seen right away while they're on, else when they next come online (never after they've answered)
+    m.seenAt = Math.min(q.due - 3000, isOnline(u, now) ? now + 2000 + Math.random() * 20e3 : Math.max(now + 1500, nextOnline(u, now) + 20e3)); delete q.result; }
   commSave();
 }
 // what they know about the owner: shared threads, likes on their bots, the owner's public bots
@@ -8603,7 +8632,7 @@ function dmMaybeOpen() {
   COMM.dmNext = now + (3 + Math.random() * 14) * 3.6e6; // about one or two a day
   if (!ok.length) return true;
   const tot = ok.reduce((a, x) => a + x[2], 0); let r = Math.random() * tot, pick = ok[0]; for (const x of ok) { r -= x[2]; if (r <= 0) { pick = x; break; } }
-  const due = now + (1 + Math.random() * 25) * 60e3;
+  const due = nextOnline(userOf(pick[0]), now + (1 + Math.random() * 25) * 60e3) + 20e3 + Math.random() * 120e3; // they write when they're on
   COMM.dmq.push({ id: uid(), user: pick[0], kind: "open", reason: pick[1], due, typingAt: due - 20e3 });
   return true;
 }
