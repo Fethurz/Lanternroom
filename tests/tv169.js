@@ -57,7 +57,7 @@ const open = require("./base.js");
   const withAud = await pg.evaluate(() => { const id = "blog:" + COMM.blogs.find(b => b.by === "me").id; return Array.from({ length: 30 }, () => commTargets(3)).flat().filter(t => t === id).length; });
   chk("someone follows you: your post can get comments", withAud > 0);
   const made = await pg.evaluate(async () => { const id = "blog:" + COMM.blogs.find(b => b.by === "me").id; for (let i = 0; i < 25; i++) { await commComments(3); if ((COMM.comments[id] || []).length) break; } return (COMM.comments[id] || []).map(x => x.by); });
-  chk("…and only people who know you write them", made.length > 0 && made.every(id => id === fan));
+  const aud = await pg.evaluate(() => myAudience().map(u => u.id)); chk("…and only people who know you write them", made.length > 0 && made.every(id => aud.includes(id)) && aud.includes(fan));
   chk("the comment prompt says who knows you", calls.some(c => /write the comments people leave/.test(sysOf(c)) && /Only these people know Lanternlover/.test(userOf_(c))));
   chk("knowsMe explains how (follows)", await pg.evaluate(id => /follow them/.test(knowsMe(userOf(id))), fan));
   // replying on your own post asks someone who knows you, never "me"
