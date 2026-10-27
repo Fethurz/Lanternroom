@@ -3,7 +3,7 @@ const { chromium } = require("playwright");
 const fs = require("fs"), path = require("path");
 // the repo folder (cloud workspace by default; LR_ROOT on the owner's PC) and an installed browser to use (LR_CHANNEL=msedge on the PC)
 const ROOT = process.env.LR_ROOT || "/home/claude/lanternroom";
-module.exports = async function open({ width = 390, json, stream } = {}) {
+module.exports = async function open({ width = 390, json, stream, realPresence, season } = {}) {
   const b = await chromium.launch({ args: ["--autoplay-policy=no-user-gesture-required"], ...(process.env.LR_CHANNEL ? { channel: process.env.LR_CHANNEL } : {}) });
   const pg = await b.newPage({ viewport: { width, height: 900 } });
   const errs = []; const calls = [];
@@ -27,5 +27,9 @@ module.exports = async function open({ width = 390, json, stream } = {}) {
   });
   await pg.goto("http://local/lr/index.html"); await pg.evaluate(() => BOOTED);
   await pg.evaluate(async () => { S.settings.apiKey = "sk-test"; await saveSettings(); });
+  // v1.78: people only post while online; most tests don't care when, so everyone counts as online unless a test asks for real presence
+  // v1.78: seasons follow the real date; tests run outside any season unless they ask for one
+  if (!season) await pg.evaluate(() => { SEASON_FORCE = { k: "off" }; });
+  if (!realPresence) await pg.evaluate(() => { window.onNow = (u, t = Date.now()) => !!u && !blocked(u.id) && !asleepAt(u, t); });
   return { b, pg, errs, calls };
 };

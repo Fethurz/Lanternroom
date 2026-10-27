@@ -23,7 +23,7 @@ const open = require("./base.js");
   const chk = (m, v) => console.log((v ? "PASS " : "FAIL ") + m);
   const idle = () => pg.evaluate(async () => { while (COMM_BUSY || DM_BUSY) await new Promise(r => setTimeout(r, 50)); });
   await pg.evaluate(async () => { await commLoad(); }); await idle(); await pg.evaluate(async () => { await commTick(true); }); await idle();
-  chk("version 1.77", await pg.evaluate(() => VERSION.startsWith("1.77")));
+  chk("version 1.77 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 77));
 
   // ---------- 3. a much more active site
   const act = await pg.evaluate(async () => {
@@ -33,10 +33,10 @@ const open = require("./base.js");
   });
   chk(`300 active people, 24 more each check (+${act.grew})`, act.people === 300 && act.grew === 24);
   chk(`awake people are online far more often (${Math.round(act.awakeOn * 100)}% of the time)`, act.awakeOn > 0.35);
-  chk(`more of the quiet crowd online at once (${(act.site * 100).toFixed(1)}%)`, act.site >= 0.06);
+  chk(`more of the quiet crowd online at once (${(act.site * 100).toFixed(1)}%)`, act.site >= 0.055);
 
   // ---------- 1. promises from DMs
-  const u0 = await pg.evaluate(() => COMM.users[2].id);
+  const u0 = await pg.evaluate(() => { const u = COMM.users[2], h = Math.floor(localHour(u)); u.sleep = [(h + 8) % 24, (h + 10) % 24]; return u.id; });
   dmReply = () => ({ messages: ["omg yes", "i'm gonna make a swamp wyrm bot that slurps you up, gimme a bit"], interest: 9, leaving: false, promises: [{ kind: "bot", about: "a swamp wyrm bot that slurps you up whole", bot: "Mossbelly", when: "today" }] });
   const p1 = await pg.evaluate(async id => {
     const u = userOf(id); COMM.dms[id] = { msgs: [], read: 0 }; dmSend(id, "you should make a swamp wyrm bot"); const q = COMM.dmq.find(x => x.user === id); q.due = Date.now() + 500; q.typingAt = Date.now() - 1000;

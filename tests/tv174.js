@@ -19,8 +19,8 @@ const open = require("./base.js");
   // post a comment on a listing, in the hub
   const pid = await pg.evaluate(() => COMM.posts[0].id);
   await pg.evaluate(async id => { await openCommunity("home"); openPost(id); }, pid); await pg.waitForTimeout(500);
-  await pg.fill("#cmText", "love this one!!"); await pg.click("#cmSend"); await pg.waitForTimeout(300);
-  const pend = await pg.evaluate(id => COMM.pending.filter(p => p.target === id).length, pid);
+  // v1.76+: sometimes nobody answers a comment (realistic), so post until someone will
+  let pend = 0; for (let i = 0; i < 6 && !pend; i++) { await pg.fill("#cmText", "love this one!! " + i); await pg.click("#cmSend"); await pg.waitForTimeout(300); pend = await pg.evaluate(id => COMM.pending.filter(p => p.target === id).length, pid); }
   chk(`your comment asks someone to answer (${pend})`, pend >= 1);
   chk("nothing says anyone is writing a reply", await pg.evaluate(() => !/writing a reply/i.test(cbody().textContent) && !/Replies usually come/i.test(document.body.textContent)));
   // the bug: adding the remaining people fails every time; the reply must still come

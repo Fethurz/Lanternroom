@@ -12,8 +12,8 @@ const fs = require("fs");
 
   // ---- the catalogue and the badge budget
   const cat = await pg.evaluate(() => {
-    const by = c => SHOP.filter(x => x.cat === c).length, shop = SHOP.reduce((a, x) => a + x.price, 0);
-    const pot = ACH.reduce((a, x) => a + rarPts(achRarity(x)), 0);
+    const base = SHOP.filter(x => !x.season), by = c => base.filter(x => x.cat === c).length, shop = base.reduce((a, x) => a + x.price, 0);
+    const pot = ACH.filter(x => !x.season).reduce((a, x) => a + rarPts(achRarity(x)), 0);
     return { f: by("flame"), l: by("lantern"), t: by("theme"), b: by("bubble"), fi: by("finish"), shop, pot, n: ACH.length, lad: ACH.filter(a => a.lv).length, dup: ACH.length - new Set(ACH.map(a => a.k)).size, rare: ACH.filter(a => achRarity(a) === "rare").length };
   });
   console.log("catalogue", JSON.stringify(cat));
@@ -52,7 +52,7 @@ const fs = require("fs");
   chk("ladder rows show progress", /3,000 \/ 3,000|\/ 8,000/.test(await pg.textContent("#sheetBody")));
   await shot("01-ladders");
   await pg.click('.ach-tabs [data-t="shop"]'); await wait(300);
-  chk("shop opens on flames with 17 items", await pg.$$eval(".ls-item", x => x.length) === 17 && !!await pg.$(".ls-item .lantern .lnf"));
+  chk("shop opens on flames with 17 items (plus any seasonal ones)", await pg.$$eval(".ls-item:not(.ls-season)", x => x.length) === 17 && !!await pg.$(".ls-item .lantern .lnf"));
   await shot("02-shop-flames");
   // buy a flame (two taps: the confirm)
   const fId = "flame:will-o-wisps";

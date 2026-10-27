@@ -1076,6 +1076,33 @@ html.sf-a-twk.sfp-ctl .btn.primary,html.sf-a-twk.sfp-txt .topbar h1 span,html.sf
 @keyframes shShim{0%{opacity:0}10%{opacity:.9}25%,100%{opacity:0}}
 @keyframes shTw{50%{opacity:.2}}
 @keyframes shRise{from{transform:translateY(0);opacity:0}10%{opacity:.9}to{transform:translateY(-840px);opacity:0}}
+/* v1.78 seasons: Hallow's Eve backdrop, Cobweb bubbles, limited shop tags, Home decorations */
+#stFx .hw-bat,.sh-fx .hw-bat{animation:hwFly 14s linear infinite}
+#stFx .hw-wing,.sh-fx .hw-wing{animation:hwFlap .32s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+#stFx .hw-fog,.sh-fx .hw-fog{animation:hwFog 18s ease-in-out infinite alternate}
+@keyframes hwFly{from{transform:translate(-40px,260px)}50%{transform:translate(200px,200px)}to{transform:translate(460px,240px)}}
+@keyframes hwFlap{from{transform:scaleY(1)}to{transform:scaleY(.35)}}
+@keyframes hwFog{from{transform:translateX(-50px)}to{transform:translateX(60px)}}
+html.sb-web.sb-web #msgs .msg:not(.img),.shop-sb.sb-web .msg{position:relative;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23e2d8ee' stroke-opacity='.6' stroke-width='.8'%3E%3Cpath d='M60 0H0M60 0L6 34M60 0L28 56M60 0V60'/%3E%3Cpath d='M46 0Q49 7 53 10Q57 11 60 14'/%3E%3Cpath d='M30 0Q37 13 43 22Q52 25 60 30'/%3E%3Cpath d='M14 0Q25 20 34 37Q47 43 60 46'/%3E%3C/g%3E%3C/svg%3E") no-repeat top right/56px 56px,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60' transform='scale(-1 1)'%3E%3Cg fill='none' stroke='%23e2d8ee' stroke-opacity='.6' stroke-width='.8'%3E%3Cpath d='M60 0H0M60 0L6 34M60 0L28 56M60 0V60'/%3E%3Cpath d='M46 0Q49 7 53 10Q57 11 60 14'/%3E%3Cpath d='M30 0Q37 13 43 22Q52 25 60 30'/%3E%3Cpath d='M14 0Q25 20 34 37Q47 43 60 46'/%3E%3C/g%3E%3C/svg%3E") no-repeat bottom left/40px 40px,linear-gradient(180deg,color-mix(in srgb,var(--surface) 92%,#7a4a9a),var(--surface));border:1px solid color-mix(in srgb,var(--line) 70%,#cbb8d8);border-radius:6px;box-shadow:0 0 0 1px rgba(0,0,0,.25) inset}
+html.sb-web.sb-web #msgs .msg.user:not(.img),.shop-sb.sb-web .msg.user{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23e2d8ee' stroke-opacity='.6' stroke-width='.8'%3E%3Cpath d='M60 0H0M60 0L6 34M60 0L28 56M60 0V60'/%3E%3Cpath d='M46 0Q49 7 53 10Q57 11 60 14'/%3E%3Cpath d='M30 0Q37 13 43 22Q52 25 60 30'/%3E%3Cpath d='M14 0Q25 20 34 37Q47 43 60 46'/%3E%3C/g%3E%3C/svg%3E") no-repeat top left/48px 48px,linear-gradient(180deg,color-mix(in srgb,var(--user-1) 85%,#5a2a10),var(--user-2))}
+html.sb-web.sb-web #msgs .msg.assistant:not(.img)::after,.shop-sb.sb-web .msg.assistant::after{content:"";position:absolute;right:22px;top:0;width:1px;height:18px;background:#e2d8ee;opacity:.6;animation:hwSpin 3.2s ease-in-out infinite alternate;transform-origin:top}
+html.sb-web.sb-web #msgs .msg.assistant:not(.img)::before,.shop-sb.sb-web .msg.assistant::before{content:"";position:absolute;right:19px;top:17px;width:7px;height:6px;border-radius:50%;background:#1a0e22;box-shadow:0 0 0 1px #e2d8ee55;animation:hwBob 3.2s ease-in-out infinite alternate}
+@keyframes hwSpin{from{height:16px}to{height:24px}}
+@keyframes hwBob{from{transform:translateY(0)}to{transform:translateY(8px)}}
+.ls-lim{display:inline-block;font-size:11.5px;color:var(--accent);font-weight:700;margin:1px 0}
+.ls-banner{padding:9px 12px;border-radius:12px;margin:0 0 10px;background:color-mix(in srgb,var(--accent) 16%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));font-size:13.5px}
+.ls-item.ls-season{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+#seasonFx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+#home{position:relative}#home>.topbar,#home>.home-scroll,#home>.home-actions{position:relative;z-index:1}
+#seasonFx svg{position:absolute;inset:0;width:100%;height:100%}
+#seasonFx .sf-leaf{animation:sfLeaf linear infinite}
+#seasonFx .hw-bat{animation:hwFly 16s linear infinite}#seasonFx .hw-wing{animation:hwFlap .3s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+@keyframes sfLeaf{from{transform:translate(0,-40px) rotate(0)}to{transform:translate(-70px,900px) rotate(600deg)}}
+.season-tag{display:inline-block;margin-left:6px;font-size:.8em}
+.hub-season{padding:12px 14px;border-radius:14px;margin:0 0 12px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 22%,var(--surface)),var(--surface));border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line))}
+.hub-season b{font-family:"Young Serif",serif;font-size:16px}.hub-season p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.jam-rank{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}.jam-rank:last-child{border:0}.jam-rank .n{font-family:"Young Serif",serif;width:22px;color:var(--accent)}
+@media (prefers-reduced-motion:reduce){#seasonFx *{animation:none!important}}
 @keyframes shFall{from{transform:translate(0,-30px) rotate(0deg)}to{transform:translate(-60px,880px) rotate(520deg)}}
 @keyframes shWall{to{transform:scaleX(1.06)}}
 @keyframes shDrift1{to{transform:translate(60px,30px) scale(1.2)}}@keyframes shDrift2{to{transform:translate(-50px,-40px) scale(.85)}}
@@ -1387,6 +1414,7 @@ const LN_FLAMES = [
 ,
   ["Sleepy", "A drowsy flame that breathes slowly and snores little z's", id => `<g class="breathe"><path d="M32 44c4.6 6.6 7 12 3.8 17.6c-1.4 2.4-6.2 2.4-7.6 0c-3.2-5.6-.8-11 3.8-17.6z" fill="url(#${id}f)"/></g><path d="M29.3 52q1.2 1 2.4 0M33.7 52q1.2 1 2.4 0" style="stroke:var(--fl-base)" stroke-width=".9" fill="none" transform="translate(-1 2)"/>` + [0, 1.1, 2.2].map(b => `<text x="36" y="44" font-size="5" font-weight="700" style="fill:var(--fl-core)" opacity="0">z${anim("y", "46;32", "3.3s", `begin="${b}s"`)}${anim("x", "36;41", "3.3s", `begin="${b}s"`)}${anim("opacity", "0;1;0", "3.3s", `begin="${b}s"`)}</text>`).join("")],
   ["Ember fountain", "A small flame spraying a steady fountain of sparks", id => `<g class="flame-g"><path d="M32 47c3.4 5.2 5.4 9.4 2.8 14c-1.1 1.9-4.5 1.9-5.6 0c-2.6-4.6-.6-8.8 2.8-14z" fill="url(#${id}f)"/></g>` + Array.from({ length: 9 }, (_, i) => { const dx = (i - 4) * 2.2, d = 1 + (i % 3) * .35, b = (i * .17).toFixed(2); return `<circle r="${.7 + (i % 2) * .4}" style="fill:var(--fl-core)"><animate attributeName="cx" values="32;${32 + dx};${32 + dx * 1.4}" dur="${d}s" begin="${b}s" repeatCount="indefinite"/><animate attributeName="cy" values="48;${36 + (i % 3) * 2};${44 + (i % 4)}" dur="${d}s" begin="${b}s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;.9;0" dur="${d}s" begin="${b}s" repeatCount="indefinite"/></circle>`; }).join("")],
+  ["Witchfire", "A green witch's flame spitting violet sparks", id => `<defs><linearGradient id="${id}wf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2ffe2"/><stop offset=".45" stop-color="#7dff6a"/><stop offset="1" stop-color="#7a2fd6"/></linearGradient></defs><g class="flame-g"><path d="M32 37c6 8 9.5 14.5 5.5 22c-2 3.4-9 3.4-11 0c-4-7.5-.5-14 5.5-22z" fill="url(#${id}wf)"/><path d="M32 49c2 4 3 7 1.5 10c-.8 1.3-2.2 1.3-3 0c-1.5-3-.5-6 1.5-10z" fill="#eaffd8"/></g>` + [[27, "1.6s", "0s"], [36, "2.1s", ".5s"], [31, "1.9s", "1s"], [34, "2.4s", "1.4s"]].map(([x, d, b]) => `<circle cx="${x}" r="1" fill="#c48cff">${anim("cy", "50;30", d, `begin="${b}"`)}${anim("opacity", "0;1;0", d, `begin="${b}"`)}</circle>`).join("")],
   ["Snowfall", "A cold little flame inside a falling snow-globe flurry", id => `<g class="flame-g"><path d="M32 46c3.6 5.6 5.6 10 2.9 14.8c-1.1 2-4.7 2-5.8 0c-2.7-4.8-.7-9.2 2.9-14.8z" fill="url(#${id}f)"/></g><path d="M22 68q10-3 20 0v3H22z" fill="#eef4ff" opacity=".85"/>` + Array.from({ length: 10 }, (_, i) => { const x = 23 + (i * 7) % 19, d = 2.6 + (i % 4) * .5; return `<circle r="${.6 + (i % 3) * .25}" fill="#fff"><animate attributeName="cy" values="31;69" dur="${d}s" begin="${(-i * .41).toFixed(2)}s" repeatCount="indefinite"/><animate attributeName="cx" values="${x};${x + 1.5};${x - 1};${x}" dur="${d}s" begin="${(-i * .41).toFixed(2)}s" repeatCount="indefinite"/></circle>`; }).join("")]
 ];
 const LN_BODIES = [
@@ -1403,6 +1431,7 @@ const LN_BODIES = [
   ["Birdcage", "An ornate birdcage with the flame perched inside", id => `<svg viewBox="0 0 64 100" aria-hidden="true">${defs(id)}${halo(id)}<path d="M32 2.5a5 5 0 1 1 0 10a5 5 0 1 1 0-10zm0 2.6a2.4 2.4 0 1 0 0 4.8a2.4 2.4 0 1 0 0-4.8z" fill="url(#${id}m)"/><path d="M14 40c0-14 8-26 18-26s18 12 18 26" fill="none" stroke="#8a7a5e" stroke-width="2"/>${[-14, -9, -4.5, 0, 4.5, 9, 14].map(x => `<path d="M${32 + x} ${x === 0 ? 14 : 40 - Math.sqrt(196 - x * x) * 1.6} V74" stroke="#8a7a5e" stroke-width="1.1" fill="none"/>`).join("")}<path d="M14 40h36M14 74h36" stroke="#8a7a5e" stroke-width="2"/><path d="M20 62h24" stroke="#a08a5e" stroke-width="2.2" stroke-linecap="round"/><g class="flame-g" style="transform-origin:32px 61px"><path d="M32 46c3.6 5.4 5.6 9.6 2.9 14.2c-1.1 1.9-4.7 1.9-5.8 0c-2.7-4.6-.7-8.8 2.9-14.2z" fill="url(#${id}f)"/></g><path d="M12 74h40l-3 6H15z" fill="url(#${id}m)"/></svg>`],
   ["Candelabra", "Three candles on a curling brass stand", id => `<svg viewBox="0 0 64 100" aria-hidden="true">${defs(id)}${halo(id)}<path d="M14 50q0 12 18 12t18-12M32 40v40" fill="none" stroke="#b8862f" stroke-width="2.4"/><path d="M24 84h16l-3-6h-10z" fill="#b8862f"/>${[[14, 50], [32, 40], [50, 50]].map(([x, y], i) => `<rect x="${x - 3.5}" y="${y - 1}" width="7" height="2.5" rx="1" fill="#d6a640"/><rect x="${x - 2.5}" y="${y - 15}" width="5" height="14" fill="#f1e6cf"/><g class="flame-g" style="transform-origin:${x}px ${y - 15}px;animation-delay:${-i * .5}s"><path d="M${x} ${y - 24}c2.2 3 3.4 5.4 1.8 7.8c-.7 1-3 1-3.6 0c-1.6-2.4-.4-4.8 1.8-7.8z" fill="url(#${id}f)"/></g>`).join("")}</svg>`],
   ["Teacup", "A glowing cup of tea with steam curling up", id => `<svg viewBox="0 0 64 100" aria-hidden="true">${defs(id)}<circle cx="30" cy="62" r="26" fill="url(#${id}g)"/>${[24, 31, 38].map((x, i) => `<path d="M${x} 46q-4-6 0-12t0-12" fill="none" stroke="#e8e0f0" stroke-width="2" stroke-linecap="round" opacity="0"><animate attributeName="opacity" values="0;.7;0" dur="3s" begin="${i * .9}s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="0 6;0 -6" dur="3s" begin="${i * .9}s" repeatCount="indefinite"/></path>`).join("")}<path d="M12 52h36c0 12-6 22-18 22s-18-10-18-22z" fill="#f2ece4"/><path d="M48 56c8 0 8 12-1 12" fill="none" stroke="#f2ece4" stroke-width="3"/><ellipse cx="30" cy="52" rx="18" ry="4" fill="url(#${id}o)" class="carve"/><path d="M16 60q14 4 28 0" style="stroke:var(--accent)" stroke-width="1.4" fill="none" opacity=".7"/><ellipse cx="30" cy="77" rx="22" ry="4" fill="#e2dad0"/></svg>`],
+  ["Cauldron", "A witch's cauldron bubbling over with glowing green brew", id => `<svg viewBox="0 0 64 100" aria-hidden="true">${defs(id)}<circle cx="32" cy="52" r="32" fill="#7dff6a" opacity=".12"/><path d="M10 40q22-22 44 0" fill="none" stroke="#3b3346" stroke-width="2.2"/><path d="M8 50q0 26 24 26t24-26z" fill="#4a4258"/><path d="M8 50q0 26 24 26t24-26z" fill="#7dff6a" opacity=".1"/><path d="M14 56q2 14 14 18" stroke="#8a80a0" stroke-width="2" fill="none" opacity=".7"/><path d="M14 58q18 6 36 0" stroke="#2a2433" stroke-width="1.4" fill="none"/><ellipse cx="32" cy="50" rx="24" ry="5.5" fill="#5e5470"/><ellipse cx="32" cy="50" rx="21" ry="4" fill="#7dff6a" opacity=".9" class="carve">${anim("ry", "4;4.8;4", "1.8s")}</ellipse><ellipse cx="32" cy="49" rx="14" ry="2" fill="#e2ffd0" opacity=".7"/><path d="M15 52q-1 6 1 9" stroke="#7dff6a" stroke-width="2.2" stroke-linecap="round" fill="none" opacity=".85"/>` + [[25, "2s", "0s"], [37, "2.6s", ".7s"], [31, "2.3s", "1.3s"], [41, "2.9s", "1.9s"]].map(([x, d, b]) => `<circle cx="${x}" r="1.8" fill="#9dff8a">${anim("cy", "48;20", d, `begin="${b}"`)}${anim("r", "1.2;2.6;1.6", d, `begin="${b}"`)}${anim("opacity", "0;.9;0", d, `begin="${b}"`)}</circle>`).join("") + `<path d="M14 74l-3 8M50 74l3 8M32 76v7" stroke="#4a4258" stroke-width="3" stroke-linecap="round"/></svg>`],
   ["Hourglass", "Glowing sand pouring through an hourglass", id => `<svg viewBox="0 0 64 100" aria-hidden="true">${defs(id)}${halo(id)}<rect x="14" y="10" width="36" height="5" rx="1.5" fill="url(#${id}m)"/><rect x="14" y="79" width="36" height="5" rx="1.5" fill="url(#${id}m)"/><path d="M18 15h28c0 14-10 20-12 32c2 12 12 18 12 32H18c0-14 10-20 12-32c-2-12-12-18-12-32z" style="fill:color-mix(in srgb,var(--fl-mid) 8%,rgba(255,255,255,.06))" stroke="#8a80a0" stroke-width="1.6"/><path d="M22 22h20c-2 8-8 12-10 22c-2-10-8-14-10-22z" fill="url(#${id}o)">${anim("d", "M22 22h20c-2 8-8 12-10 22c-2-10-8-14-10-22z;M27 34h10c-1 4-4 6-5 10c-1-4-4-6-5-10z;M22 22h20c-2 8-8 12-10 22c-2-10-8-14-10-22z", "8s")}</path><path d="M32 47v28" style="stroke:var(--fl-core)" stroke-width="1" stroke-dasharray="1.5 2"><animate attributeName="stroke-dashoffset" values="0;-7" dur=".6s" repeatCount="indefinite"/></path><path d="M20 78q12-14 24 0z" fill="url(#${id}o)">${anim("d", "M26 78q6-5 12 0z;M20 78q12-14 24 0z;M26 78q6-5 12 0z", "8s")}</path><path d="M15 15v64M49 15v64" stroke="#7a6d8e" stroke-width="2"/></svg>`]
 ];
 const slugOf = n => String(n).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -1421,10 +1450,11 @@ const SHOP_THEMES = [
   ["term", "Terminal", "A glowing CRT screen and a blinking cursor", { bg: "#050805", deep: "#020402", surface: "#0a110a", s2: "#0f180f", line: "#1d2e1d", lineHi: "#2a422a", fg: "#d8f5d8", muted: "#7fa07f", glow: "#0a1a0a", card0: "#070c07", user1: "#0f1f0f", user2: "#0b170b", act: "#b8e0b8", quote: "#ffffff", userLabel: "#c8f0c8" }],
   ["cabin", "Cabin", "Wood grain, firelight flickering across the room, pinned notes", { bg: "#3a2416", deep: "#2a190f", surface: "#4a2e1c", s2: "#563621", line: "#6a4630", lineHi: "#80583c", fg: "#f6e8d4", muted: "#c8a888", glow: "#5a3220", card0: "#42291a", user1: "#6a4630", user2: "#5a3a26", act: "#e8d2b8", quote: "#fff4e4", userLabel: "#f2d8b8" }],
   ["royal", "Royal", "Velvet damask, gilded frames and carved capitals", { bg: "#14040c", deep: "#0a0206", surface: "#1f0812", s2: "#2a0c18", line: "#4a1a2c", lineHi: "#6a2a40", fg: "#f7ecd8", muted: "#c8a8a0", glow: "#3a0c1c", card0: "#18060e", user1: "#3a1422", user2: "#2c0f1a", act: "#ead8c0", quote: "#fff6e0", userLabel: "#f2d8a8" }],
+  ["hallow", "Hallow's Eve", "A harvest moon, bats on the wing and fog rolling past", { bg: "#130918", deep: "#0a0410", surface: "#211128", s2: "#2c1736", line: "#4a2858", lineHi: "#663a78", fg: "#fff0e2", muted: "#c9a3b6", glow: "#3a1622", card0: "#190c20", user1: "#4a2410", user2: "#3a1c0c", act: "#f2caa6", quote: "#fff6ec", userLabel: "#ffc88a" }],
   ["petal", "Petalfall", "Blossoms drifting down past soft, rounded messages", { bg: "#1a1420", deep: "#110d15", surface: "#261d2c", s2: "#31253a", line: "#463650", lineHi: "#5a4668", fg: "#fff1f6", muted: "#c8a8ba", glow: "#3a2440", card0: "#20182a", user1: "#4a3050", user2: "#3c2642", act: "#f0d0de", quote: "#ffffff", userLabel: "#ffd6e6" }]
 ].map(([key, n, d, pal]) => ({ key, n, d, pal }));
 const SHOP_THEME_BY = Object.fromEntries(SHOP_THEMES.map(t => [t.key, t]));
-const SHOP_BUBBLES = [["parch", "Parchment", "Torn-edged paper with a wax seal"], ["glass", "Glass", "Frosted glass with a sliding sheen"], ["neon", "Neon outline", "A glowing tube that buzzes"], ["pixel", "Pixel dialogue", "A chunky RPG text box"], ["note", "Taped note", "Lined paper taped at a tilt"], ["comic", "Comic panel", "Halftone dots and a heavy outline"], ["scroll", "Scroll", "Rolled ends top and bottom"], ["chalk", "Chalkboard", "Chalk on a framed board"], ["holo", "Holographic", "Shifting rainbow foil"], ["cloud", "Thought cloud", "A puffy cloud with trailing bubbles"], ["tele", "Telegram", "Typed caps on a telegram slip"], ["gild", "Gilded frame", "A gold frame like a portrait"], ["wanted", "Wanted poster", "Pinned up on the saloon door"], ["love", "Love letter", "A card with a heart seal"], ["sticker", "Sticker", "A die-cut sticker with a peeling corner"]].map(([key, n, d]) => ({ key, n, d }));
+const SHOP_BUBBLES = [["parch", "Parchment", "Torn-edged paper with a wax seal"], ["glass", "Glass", "Frosted glass with a sliding sheen"], ["neon", "Neon outline", "A glowing tube that buzzes"], ["pixel", "Pixel dialogue", "A chunky RPG text box"], ["note", "Taped note", "Lined paper taped at a tilt"], ["comic", "Comic panel", "Halftone dots and a heavy outline"], ["scroll", "Scroll", "Rolled ends top and bottom"], ["chalk", "Chalkboard", "Chalk on a framed board"], ["holo", "Holographic", "Shifting rainbow foil"], ["cloud", "Thought cloud", "A puffy cloud with trailing bubbles"], ["tele", "Telegram", "Typed caps on a telegram slip"], ["gild", "Gilded frame", "A gold frame like a portrait"], ["wanted", "Wanted poster", "Pinned up on the saloon door"], ["love", "Love letter", "A card with a heart seal"], ["sticker", "Sticker", "A die-cut sticker with a peeling corner"], ["web", "Cobweb", "Dusty, spider-webbed corners and a dangling spider"]].map(([key, n, d]) => ({ key, n, d }));
 // finishes: the material, its motion, text colour on it, the lantern metal and (optionally) the flame
 const FINISHES = [
   ["gold", "Gold", "Polished gold leaf", "linear-gradient(135deg,#6e4a0c,#f7d774 22%,#b8862f 42%,#fff3b0 52%,#a8781f 72%,#f2cf6a)", "shine", "#2a1806", "", ["#fff3b0", "#f2cf6a", "#b8862f"], ["#6e4a0c", "#f7d774"]],
@@ -1442,6 +1472,7 @@ const FINISHES = [
   ["pearl", "Pearl", "Soft, glowing nacre", "radial-gradient(circle at 30% 25%,#ffffff,transparent 35%),linear-gradient(135deg,#f3eef4,#e2d6ea 30%,#f8f2ea 50%,#d8e6ee 70%,#f4ecf6)", "shine", "#3a3040", "", ["#ffffff", "#f3eef4", "#d8c8e0"], ["#a89cb4", "#f8f2ea"]],
   ["aurora", "Aurora", "Northern lights that ripple", "linear-gradient(100deg,#062a2a,#2fe0a0,#1a8a9a,#7a4cff,#2fe0c0,#c46cff,#062a2a)", "flow", "#041a14", "300% 100%", ["#d8fff0", "#2fe0a0", "#7a4cff"], ["#062a2a", "#2fe0a0"]],
   ["bone", "Bone", "Carved, aged ivory", "repeating-linear-gradient(100deg,rgba(120,100,70,.0) 0 7px,rgba(120,100,70,.12) 7px 8px),linear-gradient(135deg,#f2ead8,#d8ccb0 35%,#efe6d2 55%,#c9bb98 80%,#e8dfc8)", "shine", "#3a2e1a", "", ["#ffffff", "#efe6d2", "#c9bb98"], ["#8a7a5a", "#f2ead8"]],
+  ["candy", "Candy corn", "Sugary stripes of white, yellow and orange", "linear-gradient(180deg,#fff6e0 0 30%,#ffc83a 30% 64%,#ff7a1a 64%)", "shine", "#2a1206", "", ["#fff6e0", "#ffc83a", "#ff7a1a"], ["#a8440a", "#ffc83a"]],
   ["plasma", "Plasma", "Crackling electric energy", "linear-gradient(90deg,#1a0640,#7a2fff,#3ee8ff,#ffffff,#3ee8ff,#ff4fd8,#7a2fff,#1a0640)", "flow", "#fff", "300% 100%", ["#ffffff", "#3ee8ff", "#7a2fff"], ["#1a0640", "#3ee8ff"]]
 ].map(([key, n, d, g, fx, ink, size, flame, metal]) => ({ key, n, d, g, fx, ink, size, flame, metal }));
 const FIN_BY = Object.fromEntries(FINISHES.map(f => [f.key, f]));
@@ -1453,6 +1484,38 @@ const SHOP = [
   ...FINISHES.map(t => ({ id: "finish:" + t.key, cat: "finish", key: t.key, n: t.n, d: t.d, price: 300 }))
 ];
 const SHOP_BY = Object.fromEntries(SHOP.map(x => [x.id, x]));
+/* ---------- Seasons (v1.78): a calendar of events. During one, its shop items can be bought (owned forever after), its badges can
+   be earned, the community joins in (themed bots, costumes, a bot jam) and Home is decorated. Halloween has its items now; the
+   others already make the community seasonal and get their own items before they start. Dates are Chicago dates (like the daily bot). */
+const SEASONS = [
+  { k: "halloween", n: "Halloween", icon: "🎃", from: [10, 17], to: [11, 2], jam: "Spooky Season Jam", mood: "Halloween: spooky stories, monsters, ghosts, witches, vampires, werewolves, haunted houses, pumpkins, costumes and trick-or-treating", tags: ["halloween", "spooky", "horror", "monster", "ghost", "witch", "vampire", "werewolf", "pumpkin", "haunted", "demon", "zombie", "skeleton"], costumes: ["pumpkin", "ghost", "skull", "wizard", "hood"], items: ["flame:witchfire", "lantern:cauldron", "theme:hallow", "bubble:web", "finish:candy"] },
+  { k: "winter", n: "Winter holidays", icon: "❄️", from: [12, 10], to: [12, 30], jam: "Cozy Winter Jam", mood: "the winter holidays: snow, cozy cabins, gifts, mistletoe, festive parties, hot cocoa, winter creatures", tags: ["winter", "christmas", "holiday", "snow", "cozy", "festive", "yule"] },
+  { k: "newyear", n: "New Year", icon: "🎆", from: [12, 31], to: [1, 3], jam: "New Year Jam", mood: "New Year's: countdowns, parties, fireworks, resolutions, fresh starts", tags: ["new year", "party", "celebration", "fireworks"] },
+  { k: "valentine", n: "Valentine's", icon: "💘", from: [2, 7], to: [2, 15], jam: "Sweetheart Jam", mood: "Valentine's: romance, dates, confessions, chocolates, heartbreak and spicy love stories", tags: ["romance", "valentine", "love", "dating", "date night"] },
+  { k: "spring", n: "Spring", icon: "🌸", from: [3, 20], to: [4, 10], jam: "Spring Bloom Jam", mood: "spring: blossoms, rain, fresh starts, mating season, egg hunts, fae and flowers", tags: ["spring", "flowers", "fae", "nature", "easter"] },
+  { k: "summer", n: "Summer", icon: "☀️", from: [6, 21], to: [7, 10], jam: "Summer Heat Jam", mood: "summer: beaches, heat waves, pool parties, vacations, sea creatures, sunburn and summer flings", tags: ["summer", "beach", "vacation", "ocean", "pool"] },
+  { k: "anniv", n: "Site anniversary", icon: "🏮", jam: "Anniversary Jam", mood: "the site's birthday: celebration, nostalgia, the best bots of all time, old memes coming back", tags: ["anniversary", "celebration", "classic"] }
+];
+const SEASON_BY = Object.fromEntries(SEASONS.map(x => [x.k, x]));
+for (const x of SEASONS) for (const id of x.items || []) if (SHOP_BY[id]) SHOP_BY[id].season = x.k;
+let SEASON_FORCE = null; // tests: { k, at } to pretend a season is on
+const chiMD = t => { const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", year: "numeric", month: "numeric", day: "numeric" }).formatToParts(new Date(t)).map(x => [x.type, +x.value || x.value])); return [p.year, p.month, p.day]; };
+function seasonWindow(x, t) {
+  const [y, m, d] = chiMD(t), md = m * 100 + d;
+  let from = x.from, to = x.to;
+  if (x.k === "anniv") { const b = COMM?.born; if (!b) return null; const [, bm, bd] = chiMD(b); const c = new Date(Date.UTC(2001, bm - 1, bd)); const f = new Date(c - 3 * 864e5), e = new Date(+c + 3 * 864e5); from = [f.getUTCMonth() + 1, f.getUTCDate()]; to = [e.getUTCMonth() + 1, e.getUTCDate()]; }
+  const a = from[0] * 100 + from[1], b = to[0] * 100 + to[1], wrap = a > b, on = wrap ? md >= a || md <= b : md >= a && md <= b;
+  if (!on) return null;
+  const yearStart = wrap && md <= b ? y - 1 : y, endY = wrap ? yearStart + 1 : yearStart;
+  const endT = Date.parse(`${endY}-${String(to[0]).padStart(2, "0")}-${String(to[1]).padStart(2, "0")}T23:59:59-05:00`);
+  return { ...x, year: yearStart, id: `${x.k}${yearStart}`, ends: endT, left: Math.max(0, Math.ceil((endT - t) / 864e5)) };
+}
+function seasonNow(t = Date.now()) {
+  if (SEASON_FORCE) { const x = SEASON_BY[SEASON_FORCE.k]; return x ? { ...x, year: 2026, id: x.k + "2026", ends: (SEASON_FORCE.ends || t + 5 * 864e5), left: Math.max(0, Math.ceil(((SEASON_FORCE.ends || t + 5 * 864e5) - t) / 864e5)) } : null; }
+  for (const x of SEASONS) { const w = seasonWindow(x, t); if (w) return w; }
+  return null;
+}
+const seasonItemOk = it => !it.season || seasonNow()?.k === it.season;
 function applyTheme() {
   const st = (typeof S !== "undefined" && S.settings) || {}, base = THEMES[st.theme] || THEMES.lantern;
   const t = SHOP_THEME_BY[wornNow().theme]?.pal || base; // a worn shop theme replaces the palette (v1.57)
@@ -1517,7 +1580,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.77 · Oct 27";
+const VERSION = "1.78 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2387,6 +2450,7 @@ function tagIconAuto(t) { const s = String(t || "").toLowerCase(); for (const [r
 // the owner can pick an icon (or none) and a colour per tag in the tag manager
 function tagIcon(t) { const k = String(t || "").toLowerCase(), m = (S.settings && S.settings.tagMeta || {})[k] || {}; const svg = m.icon === "none" ? "" : m.icon && TAG_SVG[m.icon] ? TAG_SVG[m.icon] : tagIconAuto(k); return svg && m.color ? svg.replace(/style="color:[^"]*"/, `style="color:${m.color}"`) : svg; }
 function renderHome() {
+  try { drawSeasonDeco(); } catch {}
   achLoad().then(achHome).catch(() => {});
   dailyLoad().then(drawDaily).catch(() => {});
   updateAmbience();
@@ -2404,7 +2468,7 @@ function renderHome() {
   $("btnTagAll").hidden = !(untagged && hasKey());
   if (!$("btnTagAll").disabled) $("btnTagAll").textContent = `✦ Tag ${untagged} untagged`;
   $("tagFilter").hidden = HF.tab === "personas"; $("btnTagAll").hidden = $("btnTagAll").hidden || HF.tab === "personas";
-  if (HF.tab === "personas") { renderPersonaTab(list); $("tagline").textContent = hasKey() ? "Your characters, with memory that holds." : "Start by adding your API key in Settings."; renderPanes(); return; }
+  if (HF.tab === "personas") { renderPersonaTab(list); $("tagline").textContent = seasonGreet() + (hasKey() ? "Your characters, with memory that holds." : "Start by adding your API key in Settings."); renderPanes(); return; }
   const shown = S.chars.filter(c => {
     if (HF.tab === "hidden" ? !c.hidden : c.hidden) return false;
     if (HF.tab === "fav" && !c.fav) return false;
@@ -2442,7 +2506,7 @@ function renderHome() {
       el.innerHTML = `<span title="${msgs} messages in all chats">${STAT_MSG}${fmtNum(msgs)}</span><span title="${idx.length} chats">${STAT_CHAT}${fmtNum(idx.length)}</span>`;
     });
   }
-  $("tagline").textContent = hasKey() ? "Your characters, with memory that holds." : "Start by adding your API key in Settings.";
+  $("tagline").textContent = seasonGreet() + (hasKey() ? "Your characters, with memory that holds." : "Start by adding your API key in Settings.");
   renderPanes();
 }
 $("personaBar").onclick = () => openPersonas();
@@ -3320,7 +3384,7 @@ setInterval(() => { if (!document.hidden && !$("home").hidden) dailyTick(); }, 6
 /* ---------- Achievements (v1.50) ---------- */
 // src "app": the app counts it; "story": the reply's hidden badges field reports it (the app also spots some itself).
 // s: secret until earned (shows only the tiny hint h); soon: needs a feature that isn't built yet (the minigame ones are live since v1.52).
-const ACH_GROUPS = ["Vore", "Fetish", "Dark & taboo", "RPG & combat", "Lewd & silly", "Chatting", "Play", "Ladders"];
+const ACH_GROUPS = ["Vore", "Fetish", "Dark & taboo", "RPG & combat", "Lewd & silly", "Chatting", "Play", "Seasons", "Ladders"];
 const ACH = [
   // Vore (owner-approved round 1)
   { k: "first_swallow", g: "Vore", n: "Down the Hatch", how: "Get swallowed.", src: "story" },
@@ -3653,7 +3717,20 @@ const LADDERS = [
   ["climax", "Finisher", n => `Reach ${n} climaxes.`, [5, 20, 60, 150, 400], () => ACHS.n.climaxAll]
 ];
 for (const [key, name, how, steps] of LADDERS) steps.forEach((n, i) => ACH.push({ k: `lad_${key}_${i + 1}`, g: "Ladders", n: `${name} ${ROMAN[i]}`, how: how(n.toLocaleString("en-US")), src: "app", lv: i + 1 }));
+// v1.78: seasonal badges, earnable only while their season is on (shown then, or once earned)
+ACH.push(
+  { k: "halloween_trick", g: "Seasons", n: "Trick or Treat", how: "Chat with a bot during Halloween.", src: "app", season: "halloween", r: 1 },
+  { k: "halloween_spooky", g: "Seasons", n: "Spooky Stories", how: "Send 31 messages during Halloween.", src: "app", season: "halloween", r: 1 },
+  { k: "halloween_monster", g: "Seasons", n: "Monster Mash", how: "Tap 13 sound effects during Halloween.", src: "app", season: "halloween", r: 1 },
+  { k: "halloween_costume", g: "Seasons", n: "Costume Party", how: "Wear something from the Halloween shop during Halloween.", src: "app", season: "halloween", r: 1 },
+  { k: "halloween_jam", g: "Seasons", n: "Jam Entrant", how: "Enter a bot in the Spooky Season Jam.", src: "app", season: "halloween", r: 1 },
+  { k: "halloween_podium", g: "Seasons", n: "Spooky Podium", how: "Place in the top 3 of the Spooky Season Jam.", src: "app", season: "halloween", s: 1, h: "Do well in the jam." }
+);
 const ACH_BY = Object.fromEntries(ACH.map(a => [a.k, a]));
+const achShown = a => !a.season || !!ACHS?.got?.[a.k] || seasonNow()?.k === a.season;
+// a seasonal badge for the season that's on now (if it has one of that kind)
+function seasonBadge(kind) { const sn = seasonNow(); if (sn && ACH_BY[`${sn.k}_${kind}`]) achGrant(`${sn.k}_${kind}`); }
+function seasonCount(kind, inc = 1) { if (!ACHS) return 0; const sn = seasonNow(); if (!sn) return 0; const n = ACHS.n.season = ACHS.n.season || {}; const k = sn.id + ":" + kind; n[k] = (n[k] || 0) + inc; achSave(); return n[k]; }
 const achOn = () => S.settings.achOn !== false;
 let ACHS = null;
 const achBlank = () => ({ got: {}, bots: {}, custom: [], n: {}, days: [], ch: {}, shop: { owned: {}, wear: {}, wearAt: 0, wearT: {}, tries: 0 } });
@@ -3798,6 +3875,7 @@ function achAfterReply(m, c, chat, rpgBefore) {
 // when you send: days, night owl, dice
 function achOnSend(m, c, chat) {
   if (!ACHS || !achOn() || !c || !chat) return;
+  if (seasonNow()) { seasonBadge("trick"); if (seasonCount("msgs") >= 31) seasonBadge("spooky"); } // v1.78
   const d = new Date(), today = dayKey(d);
   if (!ACHS.days.includes(today)) ACHS.days = [...ACHS.days, today].sort();
   if (ACHS.days.length >= 30) achGrant("streak_30", c.id, chat.id);
@@ -3818,6 +3896,7 @@ function achOnSend(m, c, chat) {
 function achEvent(kind, x = {}) {
   if (!ACHS || !achOn()) return;
   const bot = S.charId || null, chat = S.chat?.id || null;
+  if (kind === "tap" && seasonNow() && seasonCount("taps") >= 13) seasonBadge("monster");
   if (kind === "tap") {
     if (achN("taps") >= 100) achGrant("button_masher", bot, chat); if (ACHS.n.taps >= 500) achGrant("soundboard", bot, chat);
     if (x.k && achSet("tapKeys", x.k) >= 30) achGrant("sound_collector", bot, chat);
@@ -3859,9 +3938,9 @@ function openTrophies(botId, startTab) {
     const draw = () => {
       if (!b.isConnected) return;
       const on0 = achOn(); if (!on0 && (tab === "shop" || tab === "wear")) tab = "All";
-      const listed = ACH.filter(a => !a.soon || achEarned(a.k));
+      const listed = ACH.filter(a => (!a.soon || achEarned(a.k)) && achShown(a));
       const got = listed.filter(a => ACHS.got[a.k]).length, pct = Math.round(got / listed.length * 100), pts = achPoints();
-      const tabs = [...(botId ? [["bot", byId(botId)?.name || "This bot"]] : []), ["All", "All"], ...(on0 ? [["shop", "Shop"], ["wear", "Wardrobe"]] : []), ...ACH_GROUPS.map(g => [g, g]), ["one", "One-offs"]];
+      const tabs = [...(botId ? [["bot", byId(botId)?.name || "This bot"]] : []), ["All", "All"], ...(on0 ? [["shop", "Shop"], ["wear", "Wardrobe"]] : []), ...ACH_GROUPS.filter(g => ACH.some(a => a.g === g && achShown(a))).map(g => [g, g]), ["one", "One-offs"]];
       let rows = "", box = "ach-list";
       if (tab === "shop") { rows = shopTab(); box = "ach-shop"; }
       else if (tab === "wear") { rows = wardrobeTab(); box = "ach-shop"; }
@@ -3870,7 +3949,7 @@ function openTrophies(botId, startTab) {
         rows = cs.length ? cs.map(x => `<div class="ach-row on">${medalR("one", true)}<span class="grow"><b>${esc(x.name)}</b>${ptsTag("one")}<span class="sub">${esc(x.why || "")}</span><span class="sub">${esc(byId(x.bot)?.name || "")} · ${esc(fmtWhen(x.at))}</span></span></div>`).join("") : '<p class="note">No one-off badges yet. The story hands these out for big, memorable moments.</p>';
       } else {
         const own = tab === "bot" ? ((byId(botId) || {}).badges || []).filter(x => x.name).map(x => ({ k: "bot:" + x.id, n: x.name, how: x.how || "", own: true })) : [];
-        const items = tab === "bot" ? [...own, ...ACH.filter(a => achEarned(a.k, botId))] : tab === "All" ? ACH : ACH.filter(a => a.g === tab);
+        const items = (tab === "bot" ? [...own, ...ACH.filter(a => achEarned(a.k, botId))] : tab === "All" ? ACH : ACH.filter(a => a.g === tab)).filter(achShown);
         const custom = tab === "bot" ? ACHS.custom.filter(x => x.bot === botId) : [];
         rows = items.map(a => { const on = tab === "bot" ? achEarned(a.k, botId) : !!ACHS.got[a.k]; const at = tab === "bot" ? (ACHS.bots[botId] || {})[a.k] : ACHS.got[a.k]?.at; const who = tab !== "bot" && ACHS.got[a.k]?.bot ? byId(ACHS.got[a.k].bot)?.name : ""; const r = achRarity(a);
           if (!on && (a.s || a.nw)) return `<div class="ach-row">${medalR(r, false)}<span class="grow"><b>???</b>${ptsTag(r)}<span class="sub">${esc(a.h || "Secret")}</span></span></div>`;
@@ -3973,6 +4052,7 @@ function stFxHTML(k) {
   if (k === "star") { let h = ""; for (let i = 0; i < 70; i++) h += `<circle class="twinkle" cx="${(R() * 400).toFixed(1)}" cy="${(R() * 800).toFixed(1)}" r="${(R() * 1.2 + .3).toFixed(2)}" fill="#fff" style="animation-delay:${(-R() * 3).toFixed(2)}s;animation-duration:${(2 + R() * 3).toFixed(2)}s"/>`; const C = [[40, 90], [95, 60], [150, 110], [210, 70], [270, 130], [330, 95]]; h += `<path d="M${C.map(p => p.join(" ")).join(" L")}" fill="none" style="stroke:var(--accent)" stroke-width="1" opacity=".5"/>` + C.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.2" style="fill:var(--fl-core)"/>`).join(""); return `<svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice">${h}</svg>`; }
   if (k === "maw") return `<svg viewBox="0 0 400 800" preserveAspectRatio="none"><g class="wall"><path d="M0 0h46q-18 200 0 400t0 400H0z" fill="#5a1222"/><path d="M400 0h-46q18 200 0 400t0 400h46z" fill="#5a1222"/><path d="M0 0h30q-12 200 0 400t0 400H0z" fill="#7a1c30" opacity=".8"/><path d="M400 0h-30q12 200 0 400t0 400h30z" fill="#7a1c30" opacity=".8"/></g>${Array.from({ length: 14 }, () => `<circle class="rise" cx="${(40 + R() * 320).toFixed(0)}" cy="${(800 + R() * 30).toFixed(0)}" r="${(3 + R() * 6).toFixed(1)}" fill="none" style="stroke:color-mix(in srgb,var(--accent) 45%,#c8f59a);animation-delay:${(-R() * 6).toFixed(2)}s;animation-duration:${(5 + R() * 4).toFixed(2)}s" stroke-width="1.4"/>`).join("")}</svg>`;
   if (k === "sea") return `<div class="caustic"></div><svg viewBox="0 0 400 800" preserveAspectRatio="none">${Array.from({ length: 12 }, () => `<circle class="rise" cx="${(20 + R() * 360).toFixed(0)}" cy="${(800 + R() * 30).toFixed(0)}" r="${(2 + R() * 5).toFixed(1)}" fill="rgba(200,240,255,.12)" stroke="rgba(200,240,255,.5)" stroke-width="1" style="animation-delay:${(-R() * 7).toFixed(2)}s;animation-duration:${(6 + R() * 5).toFixed(2)}s"/>`).join("")}</svg>`;
+  if (k === "hallow") return `<svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMin slice"><defs><radialGradient id="hwMoon"><stop offset="0" stop-color="#ffe9b0"/><stop offset=".7" stop-color="#ffb84a"/><stop offset="1" stop-color="#ff8a2a" stop-opacity="0"/></radialGradient></defs><circle cx="330" cy="70" r="58" fill="#ff8a2a" opacity=".1"/><circle cx="330" cy="70" r="28" fill="url(#hwMoon)"/>${Array.from({ length: 6 }, (_, i) => `<g class="hw-bat" style="animation-delay:${(-i * 2.3).toFixed(1)}s;animation-duration:${(12 + i * 2.2).toFixed(1)}s"><g transform="translate(0 ${(i * 47) % 160}) scale(${(0.9 + (i % 3) * 0.35).toFixed(2)})"><path class="hw-wing" d="M0 0q-6-7-14-5q4 3 3 7q4-2 6 1q3-4 5-3zM0 0q6-7 14-5q-4 3-3 7q-4-2-6 1q-3-4-5-3z" fill="#1a0e22"/></g></g>`).join("")}${[640, 700, 760].map((y, i) => `<ellipse class="hw-fog" cx="${120 + i * 110}" cy="${y}" rx="230" ry="38" fill="#cbb8d8" opacity=".07" style="animation-delay:${-i * 4}s"/>`).join("")}</svg>`;
   if (k === "petal") return `<svg viewBox="0 0 400 800" preserveAspectRatio="none">${Array.from({ length: 22 }, () => `<ellipse class="fall" cx="${(R() * 460).toFixed(0)}" cy="${(-10 - R() * 60).toFixed(0)}" rx="6" ry="3.4" style="fill:color-mix(in srgb,var(--accent) 55%,#ffc4dc);animation-duration:${(8 + R() * 7).toFixed(2)}s;animation-delay:${(-R() * 14).toFixed(2)}s" opacity=".8"/>`).join("")}</svg>`;
   return "";
 }
@@ -3989,11 +4069,12 @@ function shopSample(it) {
 }
 const palStyle = t => `--bg:${t.bg};--bg-deep:${t.deep};--surface:${t.surface};--surface-2:${t.s2};--line:${t.line};--fg:${t.fg};--muted:${t.muted};--user:${t.user1};--user-1:${t.user1};--user-2:${t.user2};--act:${t.act};--quote:${t.quote};--user-label:${t.userLabel};color:${t.fg};background:${t.bg}`;
 function shopTab(b, redraw) {
-  const pts = achPoints(), sh = shopOf(), items = SHOP.filter(x => x.cat === SHOP_CAT), w = sh.wear;
+  const pts = achPoints(), sh = shopOf(), sn = seasonNow(), items = SHOP.filter(x => x.cat === SHOP_CAT && (!x.season || sh.owned[x.id] || sn?.k === x.season)), w = sh.wear;
   return `<div class="shop-head"><span class="sh-coin">${lanternSVG()}</span><div><div class="lbl">Your points</div><b>${pts.bal.toLocaleString()}</b></div><div class="sh-sub">${pts.earned.toLocaleString()} earned · ${pts.spent.toLocaleString()} spent</div></div>
+    ${sn && SHOP.some(x => x.season === sn.k) ? `<div class="ls-banner">${sn.icon} <b>${esc(sn.n)} items are in!</b> Only for sale for ${sn.left} more day${sn.left === 1 ? "" : "s"}; yours forever once bought.</div>` : ""}
     <div class="tabs shop-cats">${SHOP_CATS.map(([k, l]) => `<button type="button" class="tab ${SHOP_CAT === k ? "on" : ""}" data-cat="${k}">${l}</button>`).join("")}</div>
     <div class="shop-grid${SHOP_CAT === "theme" || SHOP_CAT === "bubble" ? " wide" : ""}">${items.map(it => { const own = !!sh.owned[it.id], wearing = w[it.cat] === it.key;
-      return `<div class="ls-item${own ? " owned" : ""}" data-id="${esc(it.id)}">${shopSample(it)}<div class="si-tx"><b>${esc(it.n)}</b><span>${esc(it.d)}</span></div><div class="si-act">${own ? `<button type="button" class="btn small ${wearing ? "" : "primary"}" data-wear>${wearing ? "Take off" : "Wear"}</button>` : `<button type="button" class="btn small" data-try>Preview</button><button type="button" class="btn small primary" data-buy ${pts.bal < it.price ? "disabled" : ""}>Buy · ${it.price}</button>`}</div></div>`; }).join("")}</div>`;
+      return `<div class="ls-item${own ? " owned" : ""}${it.season ? " ls-season" : ""}" data-id="${esc(it.id)}">${shopSample(it)}<div class="si-tx"><b>${esc(it.n)}</b>${it.season ? `<span class="ls-lim">${SEASON_BY[it.season].icon} ${esc(SEASON_BY[it.season].n)} only${sn?.k === it.season ? ` · ${sn.left} day${sn.left === 1 ? "" : "s"} left` : ""}</span>` : ""}<span>${esc(it.d)}</span></div><div class="si-act">${own ? `<button type="button" class="btn small ${wearing ? "" : "primary"}" data-wear>${wearing ? "Take off" : "Wear"}</button>` : `<button type="button" class="btn small" data-try>Preview</button><button type="button" class="btn small primary" data-buy ${pts.bal < it.price ? "disabled" : ""}>Buy · ${it.price}</button>`}</div></div>`; }).join("")}</div>`;
 }
 function wireShop(b, redraw) {
   b.querySelectorAll("[data-cat]").forEach(x => x.onclick = () => { SHOP_CAT = x.dataset.cat; redraw(); });
@@ -4006,12 +4087,12 @@ function wireShop(b, redraw) {
   });
 }
 function shopBuy(it) {
-  const sh = shopOf(); if (sh.owned[it.id] || achPoints().bal < it.price) return false;
+  const sh = shopOf(); if (sh.owned[it.id] || achPoints().bal < it.price || !seasonItemOk(it)) return false;
   sh.owned[it.id] = Date.now(); achSave();
   toast(`${it.n} is yours`); try { playBuf("sounds/extra/sting/bb-s-quest.ogg", { vol: (S.settings.sfxVolume ?? 0.7) * 0.7 }); } catch {}
   shopBadges(); return true;
 }
-function shopWear(cat, key) { const sh = shopOf(), now = Date.now(); sh.wear = { ...sh.wear, [cat]: key || "" }; sh.wearT = { ...(sh.wearT || {}), [cat]: now }; sh.wearAt = now; achSave(); applyCosmetics(); shopBadges(); }
+function shopWear(cat, key) { const sh = shopOf(), now = Date.now(); sh.wear = { ...sh.wear, [cat]: key || "" }; sh.wearT = { ...(sh.wearT || {}), [cat]: now }; sh.wearAt = now; achSave(); applyCosmetics(); shopBadges(); const it = SHOP_BY[cat + ":" + key]; if (it?.season && seasonNow()?.k === it.season) seasonBadge("costume"); }
 function shopBadges() {
   if (!ACHS) return; const sh = shopOf(), n = Object.keys(sh.owned).length, w = sh.wear, slots = ["flame", "lantern", "theme", "bubble", "finish"].filter(k => w[k]).length;
   if (n >= 1) achGrant("shop_first"); if (n >= 15) achGrant("shop_15"); if (achPoints().spent >= 3000) achGrant("shop_3000");
@@ -7589,7 +7670,7 @@ const COMM_COLS = ["#e8a95b", "#ff6fae", "#7fb2ff", "#6fdc6a", "#c49bff", "#4fd1
 let COMM = null, COMM_BUSY = false, COMM_T = 0, COMM_DIRTY = false;
 const commOn = () => S.settings.commOn !== false;
 const commRate = () => COMM_RATES[S.settings.commLevel] || COMM_RATES.busy;
-const commBlank = () => ({ users: [], posts: [], comments: {}, pub: {}, liked: {}, pending: [], done: [], me: { name: "", at: 0 }, seen: { at: 0 }, tickP: 0, tickC: 0, dms: {}, dmq: [], dmNext: 0, follow: {}, fans: {}, blogs: [], tickB: 0, tickU: 0, actSeen: 0, feedSeen: 0, actClear: 0, actHid: {}, blocked: {}, promises: [] });
+const commBlank = () => ({ users: [], posts: [], comments: {}, pub: {}, liked: {}, pending: [], done: [], me: { name: "", at: 0 }, seen: { at: 0 }, tickP: 0, tickC: 0, dms: {}, dmq: [], dmNext: 0, follow: {}, fans: {}, blogs: [], tickB: 0, tickU: 0, actSeen: 0, feedSeen: 0, actClear: 0, actHid: {}, blocked: {}, promises: [], jams: {} });
 // reloading never drops a change that hasn't been written yet (a like or a follow made a moment ago): it's merged in on top
 // v1.76: the copy in memory is merged with what's stored, keeping its own objects, so work that's still running on them
 // (a DM being written, a reply, people being dressed) never lands on a copy that was just thrown away
@@ -7613,7 +7694,8 @@ function commMerge(a, b, keep) {
     follow: newer(A.follow, B.follow), fans: { ...(A.fans || {}), ...(B.fans || {}) }, blogs: byId(A.blogs, B.blogs).sort((p, q) => q.at - p.at), tickB: Math.max(A.tickB || 0, B.tickB || 0), tickU: Math.max(A.tickU || 0, B.tickU || 0), tickF: Math.max(A.tickF || 0, B.tickF || 0), pixFix: Math.max(A.pixFix || 0, B.pixFix || 0), born: Math.min(A.born || Infinity, B.born || Infinity) === Infinity ? 0 : Math.min(A.born || Infinity, B.born || Infinity),
     // v1.70: what you have read or cleared (these used to be dropped on every reload, so old notifications came back)
     actSeen: Math.max(A.actSeen || 0, B.actSeen || 0), feedSeen: Math.max(A.feedSeen || 0, B.feedSeen || 0), actClear: Math.max(A.actClear || 0, B.actClear || 0), actHid: { ...(A.actHid || {}), ...(B.actHid || {}) }, hFix: Math.max(A.hFix || 0, B.hFix || 0),
-    blocked: newer(A.blocked, B.blocked), promises: byId(A.promises, B.promises).slice(-200) };
+    blocked: newer(A.blocked, B.blocked), promises: byId(A.promises, B.promises).slice(-200),
+    jams: (() => { const o = { ...(A.jams || {}) }; for (const [k, j] of Object.entries(B.jams || {})) o[k] = { mine: [...new Set([...(o[k]?.mine || []), ...(j?.mine || [])])], done: Math.max(o[k]?.done || 0, j?.done || 0) || undefined }; return o; })() };
 }
 // a steady random number per item, so counts are the same on every device
 // a time a little in the past, so new things don't all look brand new, but never before the owner last looked
@@ -7643,7 +7725,9 @@ const pubStats = c => { const p = pubOf(c); if (!p) return { likes: 0, chats: 0 
 const cLikes = x => x.by === "me" ? Math.round(6 * seeded(x.id, 4) * (1 - Math.exp(-(Date.now() - x.at) / 7.2e6))) : Math.round((x.heat ?? 1) * 25 * seeded(x.id, 5) * (1 - Math.exp(-(Date.now() - x.at) / 4.3e7))) + (commLiked(x.id) ? 1 : 0);
 const commN = t => (COMM?.comments?.[t] || []).filter(x => vis(x.by)).length;
 // Most people wear a pixel picture (picked from their taste, the same on every device until they change it); about 1 in 8 keep the plain letter.
-const userPix = u => { if (!u?.id) return null; if (u.pix !== undefined) return pixOk(u.pix) ? u.pix : null; if (hash(u.id + ":pfp") % 100 < 12) return null; return pixAuto(u.id, [...(u.taste || []), u.bio, u.focus].join(" "), 0.45); };
+const userPix0 = u => { if (!u?.id) return null; if (u.pix !== undefined) return pixOk(u.pix) ? u.pix : null; if (hash(u.id + ":pfp") % 100 < 12) return null; return pixAuto(u.id, [...(u.taste || []), u.bio, u.focus].join(" "), 0.45); };
+// v1.78: in a season with costumes, about 4 in 10 people dress their picture up for it (the same people on every device)
+const userPix = u => { const p = userPix0(u), sn = seasonNow(); if (!p || !sn?.costumes || u.custom || seeded(u.id, "cos" + sn.id) >= 0.4) return p; return { ...p, s: sn.costumes[Math.floor(seeded(u.id, "cs" + sn.id) * sn.costumes.length)], rows: undefined }; };
 const avatarOf = (u, size = 34) => { const px = userPix(u); if (px) return picHTML({ pix: px }, size, "cm-px"); const n = u?.name || "?", col = u?.color || "#888"; return `<span class="cm-av" style="--av:${esc(col)};width:${size}px;height:${size}px;font-size:${Math.round(size * 0.45)}px">${esc(n.trim()[0]?.toUpperCase() || "?")}</span>`; };
 // Your community picture: your own (upload or pixel), else your active persona's, else your initial.
 const mePicOf = () => COMM?.me?.pic ? { pic: COMM.me.pic } : pixOk(COMM?.me?.pix) ? { pix: COMM.me.pix } : (() => { const p = S.personas.find(x => x.id === S.personaId); return p?.pic ? { pic: p.pic } : pixOk(p?.pix) ? { pix: p.pix } : null; })();
@@ -7743,6 +7827,8 @@ const COMM_FACTS = "Keep who said what exactly right: lines marked (you) are you
 const COMM_TRUE = "Only say things that are true on the site: a person's bots are exactly the ones listed for them with when they were posted. Never claim a new bot, an update, a release or anything else that hasn't happened; someone with no recent bot can talk about plans, WIPs, requests, life or other people's bots, never a bot they 'just made' or 'just posted'.";
 const CLAIMS_NEW = /\b(just (made|posted|dropped|released|uploaded|finished|published|put out)|new bot (is )?(out|up|live|dropped)|(is|are|it's|its) (out|up|live) now|check out my new|(dropped|posted|released|uploaded) (a|my) new|my new(est)? bot|new upload)\b/i;
 const claimOk = (u, t) => !CLAIMS_NEW.test(t || "") || commUserPosts(u).some(p => Date.now() - p.at < 3 * 864e5);
+// v1.78: what the site is like this season, for the people writing bots, posts, comments and DMs
+const commSeason = () => { const sn = seasonNow(); return sn ? ` It's ${sn.n} season on the site right now (${sn.mood}); the ${sn.jam} is running.` : ""; };
 const commTruth = u => `Your bots on the site: ${botsFact(u)}. ${COMM_TRUE}`;
 // a bio is kept whole (up to 600 characters, cut at a sentence end if it's longer)
 function commBio(t) { const x = s5(t).trim(); if (x.length <= 600) return x; const cut = x.slice(0, 600), at = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "), cut.lastIndexOf(".\n")); return (at > 200 ? cut.slice(0, at + 1) : cut.replace(/\s+\S*$/, "") + "…").trim(); }
@@ -7846,22 +7932,32 @@ function lastSeen(u, t = Date.now()) {
 }
 // the first moment from t on that they're online (inside a session or just after doing something)
 function nextOnline(u, t) { if (onBase(u, t)) return t; const H = Math.floor(t / SES_H); for (let h = H - 2; h <= H + 48; h++) { const x = sessOf(u, h); if (x && x[1] > t) return Math.max(t, x[0]); } return wakeAfter(u, t); }
+// v1.78: people only do things while they're online. A time inside their current sitting (a little back, never before the
+// sitting started or before you last looked), for anything they post now.
+function onNow(u, t = Date.now()) { return !!u && !blocked(u.id) && onBase(u, t) && !asleepAt(u, t); }
+function activeAt(u, now, maxBack) {
+  let a = now - maxBack; const H = Math.floor(now / SES_H);
+  for (let h = H - 2; h <= H; h++) { const x = sessOf(u, h); if (x && now >= x[0] && now < x[1]) { a = Math.max(a, x[0]); break; } }
+  if (u.last && now - u.last < ACT_MS) a = Math.max(a, Math.min(now, u.last));
+  const lo = Math.max(a, (COMM?.seen?.at || 0) + 1); return lo >= now ? now : lo + Math.random() * (now - lo);
+}
 function seenText(u) { const t = Date.now(); if (isOnline(u, t)) return "online"; const m = Math.round((t - lastSeen(u, t)) / 60e3); return m < 60 ? `active ${Math.max(1, m)}m ago` : m < 1440 ? `active ${Math.round(m / 60)}h ago` : `active ${Math.round(m / 1440)}d ago`; }
 function pickUsers(n, tags = []) {
   const T = new Set(tags.map(t => String(t).toLowerCase())), now = Date.now();
-  const pool = COMM.users.map(u => [u, (1 + 2 * (u.taste || []).filter(t => T.has(t)).length + Math.random() * 2) * (asleepAt(u, now) ? 0.15 : 1) * (0.4 + (u.active ?? 0.5))]);
+  const pool = COMM.users.filter(u => onNow(u, now)).map(u => [u, (1 + 2 * (u.taste || []).filter(t => T.has(t)).length + Math.random() * 2) * (0.4 + (u.active ?? 0.5))]);
   return pool.sort((a, b) => b[1] - a[1]).slice(0, Math.max(n * 2, 4)).sort(() => Math.random() - 0.5).slice(0, n).map(x => x[0]);
 }
 // posters: creators post more, lurkers hardly ever
 function pickPosters(n) {
   const now = Date.now(), w = u => (/creator|writer|shitposter|artist|veteran/.test(u.role || "") ? 3 : /lurker|new/.test(u.role || "") ? 0.3 : 1) * (asleepAt(u, now) ? 0.1 : 1) * (0.3 + (u.active ?? 0.5)) * (follows(u.id) ? 1.8 : 1);
-  const pool = COMM.users.map(u => [u, w(u) * (0.5 + Math.random())]); return pool.sort((a, b) => b[1] - a[1]).slice(0, n).map(x => x[0]);
+  const pool = COMM.users.filter(u => onNow(u, now)).map(u => [u, w(u) * (0.5 + Math.random())]); return pool.sort((a, b) => b[1] - a[1]).slice(0, n).map(x => x[0]);
 }
 async function commPosts(k, opt = {}) {
   const taste = await commTaste(), authors = opt.authors || pickPosters(k), briefs = opt.briefs || [];
+  if (!authors.length) return []; k = authors.length; // nobody online to post right now
   // about half are fan bots of existing media, the rest OCs; people with fandoms lean fan, the others lean OC
   const plan = authors.map(u => Math.random() < ((u.fandoms || []).length ? 0.62 : 0.38) ? "fan" : "oc");
-  const j = await dsJSON([{ role: "system", content: `You write new bot listings posted on ${COMM_SITE}. Each listing is written by its poster in their own typing style and matches their taste, and quality varies the way it does on a real site: polished ones, rough ones with typos, short ones, very long ones. Each is a complete, playable bot with a hook. A listing is either an OC (an original character, world or group) or a fan bot of characters, worlds or groups from existing media (games, anime, manga, cartoons, films, TV shows, books, comics), as marked for each poster; a fan bot keeps the source's canon (names, looks, personalities, setting) and gives a fresh scenario. Any focus a real site has, as fits the poster: fetish and kink of any kind, vore, RPG and adventure, horror, romance, comedy, slice of life, wholesome SFW, dark stories, monster and creature bots. Fan bots only use characters who are adults in their source material (never characters who are minors in their source, not even aged up) and never real people. Mostly characters, sometimes a world (a setting with a narrator) or a group (2-3 characters together). ${COMM_ADULT}\n\nRespond with only JSON: {"posts": [{"by": the poster's handle, "source": the franchise a fan bot is from, or "" for an OC, "kind": "character" | "world" | "group", "name", "tags": 4-8 lowercase tags (a fan bot includes its franchise as a tag), "summary": 2-3 sentences the poster wrote to sell it, "appearance": 40-80 words (characters only), "description": personality, background and how they treat {{user}}, 120-200 words (for a world: the world itself; for a group: how the members fit together), "scenario": where the story starts, 50-100 words, refer to the user as {{user}}, "firstMessage": the opening, 90-160 words, narration in *asterisks*, speech in quotes, never acting for {{user}}, "members": for a group, 2-3 {"name", "appearance", "description"}, "cast": for a world, 3-4 {"name", "type": "character" | "location" | "group" | "species" | "concept", "details"}}]}` },
+  const j = await dsJSON([{ role: "system", content: `You write new bot listings posted on ${COMM_SITE}. Each listing is written by its poster in their own typing style and matches their taste, and quality varies the way it does on a real site: polished ones, rough ones with typos, short ones, very long ones. Each is a complete, playable bot with a hook. A listing is either an OC (an original character, world or group) or a fan bot of characters, worlds or groups from existing media (games, anime, manga, cartoons, films, TV shows, books, comics), as marked for each poster; a fan bot keeps the source's canon (names, looks, personalities, setting) and gives a fresh scenario. Any focus a real site has, as fits the poster: fetish and kink of any kind, vore, RPG and adventure, horror, romance, comedy, slice of life, wholesome SFW, dark stories, monster and creature bots. Fan bots only use characters who are adults in their source material (never characters who are minors in their source, not even aged up) and never real people. Mostly characters, sometimes a world (a setting with a narrator) or a group (2-3 characters together).${seasonNow() ? `${commSeason()} About half of new listings are themed for it, and many themed ones are entered in the ${seasonNow().jam} (mark those "jam": true).` : ""} ${COMM_ADULT}\n\nRespond with only JSON: {"posts": [{"by": the poster's handle, "source": the franchise a fan bot is from, or "" for an OC, "kind": "character" | "world" | "group", "name", "tags": 4-8 lowercase tags (a fan bot includes its franchise as a tag), "summary": 2-3 sentences the poster wrote to sell it, "appearance": 40-80 words (characters only), "description": personality, background and how they treat {{user}}, 120-200 words (for a world: the world itself; for a group: how the members fit together), "scenario": where the story starts, 50-100 words, refer to the user as {{user}}, "firstMessage": the opening, 90-160 words, narration in *asterisks*, speech in quotes, never acting for {{user}}, "jam": true only if entered in the season's bot jam, "members": for a group, 2-3 {"name", "appearance", "description"}, "cast": for a world, 3-4 {"name", "type": "character" | "location" | "group" | "species" | "concept", "details"}}]}` },
     { role: "user", content: `Write ${k} listing${k > 1 ? "s" : ""}, one by each of these posters:\n${authors.map((u, i) => `- @${u.handle} (${u.name}, ${u.role || "creator"}): loves ${u.taste.join(", ")}${u.focus ? `, especially ${u.focus}` : ""}${(u.fandoms || []).length ? `; fan of ${u.fandoms.join(", ")}` : ""}. Types: ${u.style || u.voice}${u.custom && u.voice && u.style ? `. Personality: ${u.voice}` : ""}. This one: ${briefs[i] ? `the bot they told people they'd make, made exactly as they described it: ${briefs[i]}` : plan[i] === "fan" ? "a fan bot from existing media (one of their fandoms, or another they'd love)" : "an OC"}.${(() => { const mine = commUserPosts(u).slice(0, 25); return mine.length ? ` They have already posted (never make any of these, or the same character, again; something new): ${mine.map(p => `"${p.card.name}"${p.card.source ? ` (${p.card.source})` : ""}`).join(", ")}` : ""; })()}`).join("\n")}\nPopular tags on the site right now: ${taste.join(", ")}` }], { temperature: 1, maxTokens: 7000, plain: true });
   const now = Date.now(), made = [];
   for (const x of Array.isArray(j?.posts) ? j.posts : []) {
@@ -7870,12 +7966,13 @@ async function commPosts(k, opt = {}) {
     if (!name || !by) continue;
     // v1.75: never the same bot twice: skip a listing whose name matches one this poster already made (or one just made in this batch)
     const nk = x => String(x || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-    if ([...commUserPosts(by), ...made.filter(m => m.by === by)].some(p => { const a = nk(p.card.name), c = nk(name); return a === c || (a.length >= 4 && c.length >= 4 && (a.includes(c) || c.includes(a))); })) continue;
+    if ([...commUserPosts(by), ...made.filter(m => m.by === by)].some(p => { const a = nk(p.card.name), c = nk(name); return a === c || (a.length >= 4 && c.length >= 4 && (a.includes(c) || c.includes(a))) || (cmWords(s5(x?.summary)).size >= 6 && cmSame(p.card.summary || "", s5(x?.summary))); })) continue;
     const card = genNormalize({ name, tags: x.tags, summary: x.summary, appearance: x.appearance, description: x.description, scenario: x.scenario, firstMessages: [x.firstMessage].filter(Boolean), startPlace: "", instructions: "", lore: [], badges: [], ...(kind === "group" ? { members: x.members || [] } : {}), ...(kind === "world" ? { cast: x.cast || [] } : {}) }, kind, "auto");
     card._kind = kind; card.source = s5(x?.source).slice(0, 60);
     const id = uid(), heat = Math.max(0.15, Math.min(3.2, Math.exp((seeded(id, 7) - 0.55) * 2.4)));
-    const at = Math.max(now - Math.round(seeded(id, 8) * 40) * 6e4, (COMM.seen?.at || 0) + 1); by.last = Math.max(by.last || 0, at);
-    made.push({ id, by: by.id, kind, card, tags: card.tags || [], heat, at, got: Date.now() });
+    const at = activeAt(by, now, 40 * 6e4); by.last = Math.max(by.last || 0, at);
+    const sn = seasonNow();
+    made.push({ id, by: by.id, kind, card, tags: card.tags || [], heat, at, got: Date.now(), ...(sn && (x.jam === true || /^(true|yes)$/i.test(String(x.jam || ""))) ? { jam: sn.id } : {}) });
   }
   COMM.posts.unshift(...made); commTrim(); return made;
 }
@@ -7914,25 +8011,28 @@ function cmSame(a, b) {
 }
 // a new comment shares at least one meaningful word with the listing (it reacts to the bot, not to the thread)
 function cmGrounded(t, listing) { const L = cmWords(listing); for (const w of cmWords(t)) if (L.has(w)) return true; return false; }
+// everything someone has written in comments (their last 40), so they never post the same thing twice
+const commSaidBy = id => Object.values(COMM.comments).flatMap(l => l.filter(x => x.by === id).map(x => x.text)).slice(-40);
 async function commComments(n) {
   const ts = commTargets(Math.min(3, Math.max(1, Math.ceil(n / 2)))); if (!ts.length) return [];
   const infos = ts.map(t => [t, targetInfo(t)]).filter(([, i]) => i);
   let people = pickUsers(Math.min(8, COMM.users.length), infos.flatMap(([, i]) => i.tags));
-  const aud = infos.some(([, i]) => i.me) ? myAudience() : [];
+  const aud = infos.some(([, i]) => i.me) ? myAudience().filter(u => onNow(u)) : [];
   if (aud.length) people = [...new Set([...aud.slice().sort(() => Math.random() - 0.5).slice(0, 5), ...people])].slice(0, 10);
+  if (!people.length) return []; // everyone who'd comment is offline right now
   const j = await dsJSON([{ role: "system", content: `You write the comments people leave on bot listings on ${COMM_SITE}. Each commenter is a different person with their own voice, opinions and reasons for being there.
 
 What a bot is: ONLY what is written in its LISTING block (summary, tags, opening). Comments by other people are never part of the bot: they are guesses, wishes, jokes and opinions. A new comment (no replyTo) reacts to the listing itself, as if the commenter just read it or chatted with it: never build on, assume or repeat anything another commenter said, never treat an idea from a comment as something the bot has or does, and never mention details that aren't in the listing as if they were.
 
 Every comment must be its own: a different point, detail, feeling or question from every earlier comment and from every other comment you write now. Never echo, agree-and-restate, paraphrase or pile onto what someone already said, never reuse another comment's wording, joke or emoji pattern, and don't all praise the same thing. Real comment sections are varied: praise for one specific detail, a request, a complaint, a story about their own chat, a nitpick, a question to the creator, a weird tangent, a one-word reaction. Only a reply (with replyTo) responds to another comment, and only to what that comment literally says (it may disagree, joke back or answer a question), adding something new.
 
-Keep them short (one to three sentences, sometimes a single line). On NSFW, fetish and vore bots people comment like real users of an adult site: openly horny, crude and explicit about what turned them on, what they did or want, filthy jokes; not polite, coy or demure (SFW bots get normal comments). People talk about the bot, not about its creator as a person: no fawning over the creator, no shout-outs. Never mention being an AI or that the site is made up. ${COMM_TRUE} ${COMM_ADULT}
+Keep them short (one to three sentences, sometimes a single line).${seasonNow() ? `${commSeason()} People may mention it when it fits the bot.` : ""} On NSFW, fetish and vore bots people comment like real users of an adult site: openly horny, crude and explicit about what turned them on, what they did or want, filthy jokes; not polite, coy or demure (SFW bots get normal comments). People talk about the bot, not about its creator as a person: no fawning over the creator, no shout-outs. Never mention being an AI or that the site is made up. ${COMM_TRUE} ${COMM_ADULT}
 
 Respond with only JSON: {"comments": [{"on": the listing key, "by": the commenter's handle, "about": for a new comment, a few words copied from that LISTING block that it reacts to; for a reply, "", "text", "replyTo": the [id] of a comment it answers, or ""}]}` },
     { role: "user", content: `Write ${n} new comments in all, spread over these listings:\n${infos.map(([t, i]) => `## Listing key ${t}: "${i.name}" by ${i.owner}\nLISTING (the only facts about this bot):\n${i.text}${commN(t) ? `\nEARLIER COMMENTS (other people's opinions, not facts about the bot; say something different from all of them):\n${threadText(t)}` : ""}${i.me ? `\nOnly these people know ${meName()} and may comment on this post: ${aud.map(u => "@" + u.handle).join(", ")}` : ""}`).join("\n\n")}\n\nCommenters to use (pick the ones whose taste fits; each writes at most one comment per listing):\n${people.map(u => `- @${u.handle} (${u.role || "regular"}): loves ${u.taste.join(", ")}. Types: ${u.style || u.voice}${u.custom && u.voice && u.style ? `. Personality: ${u.voice}` : ""}`).join("\n")}` }], { temperature: 1, maxTokens: 2500, plain: true });
   const now = Date.now(), made = [];
   for (const x of Array.isArray(j?.comments) ? j.comments : []) {
-    const t = infos.find(([k]) => k === s5(x?.on))?.[0] || infos[0][0], u = COMM.users.find(y => y.handle.toLowerCase() === s5(x?.by).replace(/^@/, "").toLowerCase()) || people[made.length % people.length];
+    const t = infos.find(([k]) => k === s5(x?.on))?.[0] || infos[0][0], u0 = COMM.users.find(y => y.handle.toLowerCase() === s5(x?.by).replace(/^@/, "").toLowerCase()), u = u0 && people.includes(u0) ? u0 : people[made.length % people.length];
     const text = s5(x?.text).slice(0, 600); if (!text || !u) continue;
     const info = infos.find(([k]) => k === t)?.[1];
     if (info?.me && !aud.some(a => a.id === u.id)) continue; // only people who know you comment on your posts
@@ -7941,9 +8041,10 @@ Respond with only JSON: {"comments": [{"on": the listing key, "by": the commente
     // v1.76: every comment says something new (never a near-copy of an earlier one), and a new comment is about the listing
     const others = [...(COMM.comments[t] || []), ...made.filter(([k]) => k === t).map(([, c]) => c)];
     if (others.some(y => cmSame(y.text, text))) continue;
+    if (commSaidBy(u.id).some(y => cmSame(y, text))) continue; // v1.78: never repeat something they already said anywhere
     if (!isReply && others.some(y => y.by === u.id && !y.replyTo && Date.now() - y.at < 864e5)) continue; // one top-level comment a day each
     if (!isReply && info && !cmGrounded(s5(x?.about) + " " + text, info.text)) continue;
-    const c = { id: uid(), by: u.id, text, at: Math.max(now - Math.round(Math.random() * 9e5), (COMM.seen?.at || 0) + 1) /* a little earlier looks natural, never before the owner last looked */, replyTo: isReply ? rt : "", heat: 0.4 + 1.4 * Math.random(), got: Date.now() };
+    const c = { id: uid(), by: u.id, text, at: Math.max(now - Math.round(Math.random() * 9e5), (COMM.seen?.at || 0) + 1) /* a little earlier looks natural, never before the owner last looked */, replyTo: isReply ? rt : "", heat: 0.4 + 1.4 * Math.random(), got: Date.now() }; c.at = activeAt(u, now, 15 * 6e4);
     (COMM.comments[t] = COMM.comments[t] || []).push(c); made.push([t, c]); u.last = Math.max(u.last || 0, c.at);
   }
   return made;
@@ -8115,6 +8216,7 @@ async function commKeepPromises() {
   const now = Date.now(); let n = 0;
   for (const pr of (COMM.promises || []).filter(p => !p.done && p.due <= now).slice(0, 2)) {
     const u = userOf(pr.by); if (!u) { pr.done = now; pr.failed = 1; continue; }
+    if (!onNow(u, now)) { pr.due = nextOnline(u, now + 60e3); continue; } // v1.78: only while they're online
     let res = null;
     try {
       if (pr.kind === "bot") { const got = await commPosts(1, { authors: [u], briefs: [pr.about + (pr.bot ? ` (they called it "${pr.bot}")` : "")] }); const p = got.find(x => x.by === u.id); if (p) { p.promise = pr.id; res = { post: p.id, name: p.card.name }; } }
@@ -8147,6 +8249,51 @@ function commMembers(t = Date.now()) {
 function commOnlineNow(t = Date.now()) {
   const h = new Date(t).getUTCHours() + new Date(t).getUTCMinutes() / 60, f = 0.06 + 0.06 * (0.5 + 0.5 * Math.cos(2 * Math.PI * (h - 2) / 24)); // busiest in the American evening
   return Math.round(commMembers(t) * f * (0.92 + 0.16 * seeded("on", Math.floor(t / 6e5)))) + COMM.users.filter(u => isOnline(u, t)).length;
+}
+// ---- v1.78: the season in the community: a banner, the bot jam (entries, your bots, the podium after it ends)
+function seasonJustEnded(t = Date.now()) { if (seasonNow(t)) return null; for (let d = 1; d <= 7; d++) { const x = seasonNow(t - d * 864e5); if (x) return x; } return null; }
+function jamOf(sn) {
+  if (!sn) return [];
+  const at = Math.min(Date.now(), sn.ends), mine = (COMM.jams?.[sn.id]?.mine || []).map(byId).filter(c => c && pubOf(c));
+  const L = [...COMM.posts.filter(p => p.jam === sn.id && vis(p.by)).map(p => ({ p, name: p.card.name, by: userOf(p.by)?.handle ? "@" + userOf(p.by).handle : "someone", likes: commStats(p.id, p.heat, p.at, at).likes + (commLiked(p.id) ? 1 : 0) })),
+    ...mine.map(c => { const pb = pubOf(c); return { c, name: c.name, by: "you", me: true, likes: commStats("bot:" + c.id, pb.heat * 1.25, pb.since || pb.at, at).likes }; })];
+  return L.sort((a, b) => b.likes - a.likes);
+}
+function seasonHubHTML() {
+  const sn = seasonNow(), past = !sn && seasonJustEnded();
+  if (sn) { const L = jamOf(sn); return `<div class="hub-season"><b>${sn.icon} ${esc(sn.n)} on the Commons</b><p>The ${esc(sn.jam)} is on for ${sn.left} more day${sn.left === 1 ? "" : "s"}: ${L.length} entr${L.length === 1 ? "y" : "ies"} so far.</p><div class="row" style="margin-top:8px"><button type="button" class="btn small primary" id="jamOpen">See the jam</button></div></div>`; }
+  if (past) { const L = jamOf(past).slice(0, 3); if (!L.length) return ""; jamFinish(past); return `<div class="hub-season"><b>🏆 ${esc(past.jam)} results</b>${L.map((x, i) => `<div class="jam-rank"><span class="n">${i + 1}</span><span class="grow"><b>${esc(x.name)}</b> <span class="hint">${esc(x.by)} · ♥ ${fmtK(x.likes)}</span></span></div>`).join("")}</div>`; }
+  return "";
+}
+// after a jam: a podium badge if one of your bots placed (once)
+function jamFinish(sn) { const j = COMM.jams?.[sn.id]; if (!j || j.done) return; const top = jamOf(sn).slice(0, 3); j.done = Date.now(); commSave(); if (top.some(x => x.me) && ACH_BY[`${sn.k}_podium`]) achGrant(`${sn.k}_podium`); }
+function openJam() {
+  const sn = seasonNow(); if (!sn) return;
+  const draw = () => cpage(sn.jam, b => {
+    const L = jamOf(sn), mine = S.chars.filter(c => pubOf(c)), entered = new Set(COMM.jams?.[sn.id]?.mine || []);
+    b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-page"><div class="hub-season"><b>${sn.icon} ${esc(sn.jam)}</b><p>${esc(sn.n)}-themed bots compete for likes until the season ends (${sn.left} day${sn.left === 1 ? "" : "s"} left). The top 3 are announced on Home afterwards.</p></div>
+      <div class="lbl">Standings · ${L.length}</div>${L.length ? L.slice(0, 40).map((x, i) => `<button type="button" class="listrow jam-rank" ${x.p ? `data-post="${esc(x.p.id)}"` : ""}><span class="n">${i + 1}</span><span class="grow"><b>${esc(x.name)}</b>${x.me ? ' <span class="badge">yours</span>' : ""}<span class="sub">${esc(x.by)} · ♥ ${fmtK(x.likes)}</span></span></button>`).join("") : `<p class="hint">No entries yet.</p>`}
+      <div class="lbl">Enter your bots</div>${mine.length ? mine.map(c => `<div class="listrow"><span class="grow"><b>${esc(c.name)}</b></span>${entered.has(c.id) ? `<span class="badge">Entered</span>` : `<button type="button" class="btn small" data-jam="${esc(c.id)}">Enter</button>`}</div>`).join("") : `<p class="hint">Make a bot public first (from its profile or the You tab), then enter it here.</p>`}</div>`;
+    hubWire(b, draw);
+    b.querySelectorAll("[data-jam]").forEach(x => x.onclick = () => { const j = COMM.jams[sn.id] = COMM.jams[sn.id] || { mine: [] }; if (!j.mine.includes(x.dataset.jam)) j.mine.push(x.dataset.jam); commSave(); seasonBadge("jam"); toast("Entered"); draw(); });
+  });
+  COMM_VIEW = draw; draw();
+}
+// ---- Home decorations for the season (Settings → Look → Screen effects → Seasonal decorations)
+const SEASON_DECO = {
+  halloween: () => { const R = Math.random; return `<svg viewBox="0 0 400 800" preserveAspectRatio="none">${Array.from({ length: 9 }, (_, i) => `<g transform="translate(${(R() * 420).toFixed(0)} 0)"><path class="sf-leaf" d="M0 0q6-6 12 0q-6 2-6 8q0-6-6-8z" fill="${["#c25a14", "#e08a2a", "#8a3a10", "#a85a20"][i % 4]}" opacity=".6" style="animation-duration:${(11 + R() * 9).toFixed(1)}s;animation-delay:${(-R() * 15).toFixed(1)}s"/></g>`).join("")}${[0, 1].map(i => `<g class="hw-bat" style="animation-delay:${-i * 7}s"><g transform="translate(0 ${i * 70}) scale(1.2)"><path class="hw-wing" d="M0 0q-6-7-14-5q4 3 3 7q4-2 6 1q3-4 5-3zM0 0q6-7 14-5q-4 3-3 7q-4-2-6 1q-3-4-5-3z" fill="#0d0710" opacity=".75"/></g></g>`).join("")}</svg>`; }
+};
+let SEASON_DECO_ON = "";
+const seasonGreet = () => { const sn = seasonNow(); return sn && SEASON_DECO[sn.k] && S.settings.seasonDeco !== false ? `${sn.icon} Happy ${sn.n}! ` : ""; };
+function drawSeasonDeco() {
+  const home = $("home"); if (!home) return;
+  const sn = seasonNow(), on = sn && SEASON_DECO[sn.k] && S.settings.seasonDeco !== false && fxLevel() !== "off" ? sn.k : "";
+  let el = $("seasonFx");
+  if (on !== SEASON_DECO_ON || (on && !el)) {
+    SEASON_DECO_ON = on;
+    if (!on) { el?.remove(); } else { if (!el) { el = document.createElement("div"); el.id = "seasonFx"; el.setAttribute("aria-hidden", "true"); home.prepend(el); } el.innerHTML = SEASON_DECO[on](); }
+  }
+  const tg = $("tagline"); if (tg) tg.textContent = seasonGreet() + tg.textContent.replace(/^\S+ Happy [^!]+! /u, "");
 }
 const siteLine = () => `<p class="hub-site">${fmtK(commMembers())} members · ${fmtK(commOnlineNow())} online now</p>`;
 function commTrim() {
@@ -8278,6 +8425,7 @@ const trendScore = p => postLikes(p) / Math.pow(1 + (Date.now() - p.at) / 864e5,
 function hubRows() {
   const P = COMM.posts.filter(p => vis(p.by)), day = 864e5, now = Date.now(), fol = P.filter(p => follows(p.by));
   return [
+    ...(seasonNow() ? [["season", `${seasonNow().icon} ${seasonNow().n} bots`, P.filter(p => p.jam === seasonNow().id || (p.tags || []).some(t => seasonNow().tags.includes(String(t).toLowerCase()))).sort((a, c) => c.at - a.at)]] : []),
     ["trending", "🔥 Trending", [...P].sort((a, c) => trendScore(c) - trendScore(a))],
     ["new", P.some(p => now - p.at < day) ? "✨ New today" : "✨ Newest", [...P].sort((a, c) => c.at - a.at)],
     ["following", "From people you follow", [...fol].sort((a, c) => c.at - a.at)],
@@ -8314,7 +8462,7 @@ function hubTab(tab) {
     if (!hasKey()) body = `<p class="note">Add your API key in Settings first: the community is written by the AI.</p>`;
     else if (!COMM.posts.length && HUB.tab !== "you") body = `<div class="cm-empty">${lanternSVG("seq")}<p>The community is waking up…</p></div>`;
     else if (HUB.tab === "home") {
-      body = siteLine() + hubRows().map(([k, t, l]) => `<section class="hub-row"><div class="hub-rh"><h3>${esc(t)}</h3>${l.length > 4 ? `<button type="button" class="hub-all" data-row="${k}">See all ›</button>` : ""}</div><div class="hub-strip">${l.slice(0, 12).map(postMini).join("")}</div></section>`).join("");
+      body = siteLine() + seasonHubHTML() + hubRows().map(([k, t, l]) => `<section class="hub-row"><div class="hub-rh"><h3>${esc(t)}</h3>${l.length > 4 ? `<button type="button" class="hub-all" data-row="${k}">See all ›</button>` : ""}</div><div class="hub-strip">${l.slice(0, 12).map(postMini).join("")}</div></section>`).join("");
       const blogs = (COMM.blogs || []).filter(b => vis(b.by)).sort((a, c) => c.at - a.at).slice(0, 3);
       if (blogs.length) body += `<section class="hub-row"><div class="hub-rh"><h3>📝 Fresh posts</h3></div>${blogs.map(blogCard).join("")}</section>`;
       body += `<button type="button" class="btn small hub-more" id="cmRefresh">↻ Check for new bots</button>`;
@@ -8325,6 +8473,7 @@ function hubTab(tab) {
     else body = hubYou();
     b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-page hub-p-${HUB.tab}">${body}</div>`;
     hubWire(b, draw);
+    if ($("jamOpen")) $("jamOpen").onclick = openJam;
     if ($("cmRefresh")) $("cmRefresh").onclick = async () => { $("cmRefresh").disabled = true; COMM.tickP = Math.min(COMM.tickP || Date.now(), Date.now() - 864e5 / commRate().posts * 2); await commTick(true); draw(); };
     if ($("hubQ")) { $("hubQ").oninput = e => { HUB.q = e.target.value; hubDisc(draw); }; hubDisc(draw); }
     if ($("dmNew")) $("dmNew").onclick = openNewDM;
@@ -8648,14 +8797,14 @@ async function commDress(list) {
 }
 // ---- people update their profiles now and then (v1.65); u.hist = [{at, what, text}] for the Following feed
 async function commProfileUpdates(k) {
-  const now = Date.now(), pool = COMM.users.filter(u => u.fit && !asleepAt(u, now)).map(u => [u, (follows(u.id) ? 2.5 : 1) * (0.3 + (u.active ?? 0.5)) * Math.random()]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
+  const now = Date.now(), pool = COMM.users.filter(u => u.fit && onNow(u, now)).map(u => [u, (follows(u.id) ? 2.5 : 1) * (0.3 + (u.active ?? 0.5)) * Math.random()]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
   if (!pool.length) return [];
   const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} update their profiles now and then, the way real users do: a tweaked bio, something new they unlocked and now wear, or pinning a different bot. Each person changes one or two things that fit what's going on with them, in their own typing style. ${COMM_TRUE} Cosmetic options (use only these keys) - ${fitCatalog()}. ${COMM_ADULT}\n\nRespond with only JSON: {"updates": [{"handle", "bio": a whole new bio (2-4 complete sentences in their typing style, never describing it, no identifying personal details) or "", "outfit": {"theme", "accent", "flame", "lantern", "finish"} with only the parts that changed, or {}, "pin": the exact name of one of their bots to pin, or "", "picture": a new profile picture from this list, or "" - ${PIX_SPRITES.map(s => s[0]).join(", ")}}]}` },
     { role: "user", content: pool.map(u => `- @${u.handle} (${u.role || "regular"}). Bio: ${u.bio} Wears: ${JSON.stringify(fitOf(u))}. Types: ${u.style || u.voice}${u.custom && u.voice && u.style ? `. Personality: ${u.voice}` : ""}. Their bots: ${botsFact(u)}. Recent: ${(COMM.blogs || []).filter(b => b.by === u.id).slice(0, 1).map(b => b.title || b.text.slice(0, 60)).join("") || "nothing"}`).join("\n") }], { temperature: 1, maxTokens: 1800, plain: true });
   const out = [];
   for (const x of Array.isArray(j?.updates) ? j.updates : []) {
     const u = pool.find(y => y.handle.toLowerCase() === s5(x?.handle).replace(/^@/, "").toLowerCase()); if (!u) continue;
-    const at = cmBack(10 * 6e4), what = [];
+    const at = activeAt(u, now, 10 * 6e4), what = [];
     u.status = ""; // v1.76: statuses are gone (owner: cut off, untrue, and repeating the bio)
     const bio = commBio(x?.bio); if (bio && bio !== u.bio) { u.bio = bio; what.push(["bio", bio]); }
     const o = x?.outfit && typeof x.outfit === "object" ? x.outfit : {}, cur = fitOf(u), nx = fitClean({ ...cur, ...o });
@@ -8690,22 +8839,24 @@ const myFollowers = () => Object.values(COMM?.fans || {}).filter(t => t <= Date.
 const blogStats = x => commStats("blog:" + x.id, x.heat * 0.6, x.at);
 const blogLikes = x => blogStats(x).likes + (commLiked("blog:" + x.id) ? 1 : 0);
 async function commBlogs(k, opt = {}) {
-  const now = Date.now(), briefs = opt.briefs || [], pool = opt.authors || COMM.users.map(u => [u, (follows(u.id) ? 3 : 1) * (asleepAt(u, now) ? 0.1 : 1) * (/lurker/.test(u.role || "") ? 0.2 : 1) * (0.4 + Math.random())]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
+  const now = Date.now(), briefs = opt.briefs || [], pool = opt.authors || COMM.users.filter(u => onNow(u, now)).map(u => [u, (follows(u.id) ? 3 : 1) * (asleepAt(u, now) ? 0.1 : 1) * (/lurker/.test(u.role || "") ? 0.2 : 1) * (0.4 + Math.random())]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
   if (!pool.length) return [];
+  const pastOf = u => (COMM.blogs || []).filter(b => b.by === u.id).slice(0, 8);
   // v1.77: blocks get noticed: now and then someone mentions that @x was complaining about being blocked
   const blk = Object.entries(COMM.blocked || {}).filter(([id, b]) => b.v && Date.now() - b.at < 4 * 864e5 && userOf(id)).map(([id]) => userOf(id));
   const gossip = blk.length && Math.random() < 0.25 ? [pool.find(u => vis(u.id)), blk[Math.floor(Math.random() * blk.length)]] : null;
-  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} sometimes post short blog posts or announcements on their profile: a WIP teaser of an upcoming bot, taking (or closing) requests, a hiatus or comeback note, a thank-you for followers, a poll, a rant about the site or about people stealing bots, life updates, tips for writing bots, a bot they're proud of. Each person writes in exactly their own typing style, about things that fit them and their bots. Short: a title and 1-6 sentences. Never mention being an AI or that the site is made up. ${COMM_TRUE} Posts are about the writer's own life, bots and opinions. ${meName()} is just one of thousands of members: nobody mentions them unless a line below says that person may, and even then only if it truly fits. ${COMM_ADULT}\n\nRespond with only JSON: {"posts": [{"by": handle, "title", "text"}]}` },
-    { role: "user", content: pool.map(u => `- @${u.handle} (${u.role || "regular"}): loves ${(u.taste || []).join(", ")}. Types: ${u.style || u.voice}${u.custom && u.voice && u.style ? `. Personality: ${u.voice}` : ""}. Their bots: ${botsFact(u)}${briefs[pool.indexOf(u)] ? `. Writes the post they said they'd write: ${briefs[pool.indexOf(u)]}` : ""}${knowsMe(u) && Math.random() < 0.12 ? `. Knows ${meName()} (${knowsMe(u)}) and may mention them if it fits` : ""}${gossip && gossip[0] === u ? `. Saw @${gossip[1].handle} complaining that ${meName()} blocked them; may bring up the drama in passing if that's like them` : ""}`).join("\n") }], { temperature: 1, maxTokens: 2200, plain: true });
+  const j = await dsJSON([{ role: "system", content: `People on ${COMM_SITE} sometimes post short blog posts or announcements on their profile: a WIP teaser of an upcoming bot, taking (or closing) requests, a hiatus or comeback note, a thank-you for followers, a poll, a rant about the site or about people stealing bots, life updates, tips for writing bots, a bot they're proud of. Each person writes in exactly their own typing style, about things that fit them and their bots. Short: a title and 1-6 sentences. Nobody ever posts the same thing twice: each person's earlier posts are listed, and a new post must be about something different (not a reworded repeat, not the same announcement, request or rant again). Nobody has to post: if someone has nothing new to say, leave them out.${seasonNow() ? `${commSeason()} Some posts are about it (costumes, event bots, plans, the jam), not all.` : ""} Never mention being an AI or that the site is made up. ${COMM_TRUE} Posts are about the writer's own life, bots and opinions. ${meName()} is just one of thousands of members: nobody mentions them unless a line below says that person may, and even then only if it truly fits. ${COMM_ADULT}\n\nRespond with only JSON: {"posts": [{"by": handle, "title", "text"}]}` },
+    { role: "user", content: pool.map(u => `- @${u.handle} (${u.role || "regular"}): loves ${(u.taste || []).join(", ")}. Types: ${u.style || u.voice}${u.custom && u.voice && u.style ? `. Personality: ${u.voice}` : ""}. Their bots: ${botsFact(u)}${briefs[pool.indexOf(u)] ? `. Writes the post they said they'd write: ${briefs[pool.indexOf(u)]}` : ""}${pastOf(u).length ? `. Their earlier posts (never repeat): ${pastOf(u).map(b => `"${(b.title ? b.title + ": " : "") + b.text.slice(0, 90)}"`).join("; ")}` : ""}${knowsMe(u) && Math.random() < 0.12 ? `. Knows ${meName()} (${knowsMe(u)}) and may mention them if it fits` : ""}${gossip && gossip[0] === u ? `. Saw @${gossip[1].handle} complaining that ${meName()} blocked them; may bring up the drama in passing if that's like them` : ""}`).join("\n") }], { temperature: 1, maxTokens: 2200, plain: true });
   const out = [];
   for (const x of Array.isArray(j?.posts) ? j.posts : []) { const u = pool.find(y => y.handle.toLowerCase() === s5(x?.by).replace(/^@/, "").toLowerCase()) || pool[out.length % pool.length]; const text = s5(x?.text).slice(0, 1500); if (!u || !text || !claimOk(u, text + " " + s5(x?.title))) continue;
-    const b = { id: uid(), by: u.id, title: s5(x?.title).slice(0, 100), text, heat: 0.3 + Math.random() * 1.5, at: cmBack(20 * 6e4), got: Date.now() }; u.last = Math.max(u.last || 0, b.at); out.push(b); }
+    const t2 = s5(x?.title); if ([...pastOf(u), ...out.filter(b => b.by === u.id)].some(b => cmSame(b.text, text) || (t2 && b.title && cmSame(b.title, t2) && cmSame(b.title + " " + b.text, t2 + " " + text)) || (t2 && nameKey(b.title) === nameKey(t2)))) continue; // never the same post twice
+    const b = { id: uid(), by: u.id, title: s5(x?.title).slice(0, 100), text, heat: 0.3 + Math.random() * 1.5, at: activeAt(u, Date.now(), 20 * 6e4), got: Date.now() }; u.last = Math.max(u.last || 0, b.at); out.push(b); }
   COMM.blogs.unshift(...out); if (COMM.blogs.length > 120) COMM.blogs = COMM.blogs.slice(0, 120);
   return out;
 }
 // ---- bot updates: a creator reworks one of their listings and writes a changelog
 async function commUpdates(k, opt = {}) {
-  const now = Date.now(), cand = opt.posts || COMM.posts.filter(p => now - p.at > 6 * 3.6e6 && userOf(p.by)).map(p => [p, (follows(p.by) ? 3 : 1) * (p.added ? 2 : 1) * (0.3 + p.heat) * Math.random()]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
+  const now = Date.now(), cand = opt.posts || COMM.posts.filter(p => now - p.at > 6 * 3.6e6 && userOf(p.by) && onNow(userOf(p.by), now)).map(p => [p, (follows(p.by) ? 3 : 1) * (p.added ? 2 : 1) * (0.3 + p.heat) * Math.random()]).sort((a, b) => b[1] - a[1]).slice(0, k).map(x => x[0]);
   const out = [];
   for (const p of cand) {
     const u = userOf(p.by), c = p.card, ver = `1.${(p.updates || []).length + 1}`;
@@ -8718,7 +8869,7 @@ async function commUpdates(k, opt = {}) {
     // the listing changes; your copy only if you choose to update it
     if (fields.description) c.description = fields.description; if (fields.scenario) c.scenario = fields.scenario; if (fields.appearance) c.appearance = fields.appearance;
     if (fields.newOpening) c.firstMessages = [...(c.firstMessages || []), fields.newOpening]; if (fields.tags) { c.tags = [...(c.tags || []), ...fields.tags]; p.tags = c.tags; }
-    const up = { id: uid(), at: cmBack(15 * 6e4), ver, note, fields, got: Date.now() }; p.updates = [...(p.updates || []), up]; u.last = Math.max(u.last || 0, up.at); out.push([p, up]);
+    const up = { id: uid(), at: activeAt(u, Date.now(), 15 * 6e4), ver, note, fields, got: Date.now() }; p.updates = [...(p.updates || []), up]; u.last = Math.max(u.last || 0, up.at); out.push([p, up]);
   }
   return out;
 }
@@ -8833,6 +8984,8 @@ function dmDelay(u, now) {
   let due = seenAt + (hot ? (sp === "fast" ? R(4, 15) : sp === "medium" ? R(6, 25) : R(12, 50)) * act : live ? (sp === "fast" ? R(10, 60) : sp === "medium" ? R(20, 150) : R(60, 420)) * (cold ? 2.5 : 1) : (sp === "fast" ? R(20, 120) : sp === "medium" ? R(45, 300) : R(90, 720))) / act;
   if (!live && Math.random() < 0.07) { due += R(1200, 3 * 3600); if (asleepAt(u, due)) due = wakeAfter(u, due) + R(5 * 60, 60 * 60); }
   else if (!live && asleepAt(u, due)) due = seenAt + R(20, 90); // just before bed: a quick answer, then sleep
+  if (asleepAt(u, seenAt)) seenAt = here ? now + 2000 : wakeAfter(u, seenAt) + R(5 * 60, 30 * 60);
+  if (asleepAt(u, due)) { due = seenAt + R(5, 20); if (asleepAt(u, due)) due = wakeAfter(u, due) + R(5 * 60, 40 * 60); }
   return { due, seenAt: Math.max(now + 2000, seenAt) }; // they always see it before they answer
 }
 function dmSend(uidv, text) {
@@ -8889,7 +9042,7 @@ async function dmWrite(u, q) {
   // only to say goodnight again (the old run said it was past their bedtime). A forced last goodbye keeps the old one.
   if (!q.last) dmRunOf(u, d, q.due || now);
   const hist = d.msgs.slice(-50).map(m => `[${localClock(u, m.at)} your time] ${m.from === "me" ? meName() : `${u.name} (you)`}: ${m.text}`).join("\n");
-  const sys = `You are ${u.name} (@${u.handle}), a real person who uses ${COMM_SITE}. You're a ${u.age}-year-old ${u.gender || "person"} in ${u.place}; right now it's ${localClock(u, now)} where you are. About you: ${cleanBio(u.bio)} You love ${(u.taste || []).join(", ")}${u.focus ? `, especially ${u.focus}` : ""}. On the site you're a ${u.role || "regular"}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted. ${commTruth(u)}
+  const sys = `You are ${u.name} (@${u.handle}), a real person who uses ${COMM_SITE}. You're a ${u.age}-year-old ${u.gender || "person"} in ${u.place}; right now it's ${localClock(u, now)} where you are.${commSeason()} About you: ${cleanBio(u.bio)} You love ${(u.taste || []).join(", ")}${u.focus ? `, especially ${u.focus}` : ""}. On the site you're a ${u.role || "regular"}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted. ${commTruth(u)}
 You're in private messages with ${meName()}. Write your next message or messages exactly as you'd really type them in a DM: in your own style (typos, slang, emoji or none, capitals or none, exactly like your typing style), usually short, often split into 1-4 separate texts the way people send several in a row. Respond to what they actually said, remember the conversation, ask things back when you'd want to know. You have your own life, mood and day, and the time of day shows (morning grogginess, at work, late-night chattiness), but don't announce the time. Be yourself, not a helpful assistant: you can be busy, distracted, blunt, awkward, uninterested, teasing or warm, and you can flirt or get lewd only if that fits who you are and they lead there. You are a real person: never say or hint that you are an AI, a bot, a character or made up, never mention a prompt or roleplay unless you're talking about chatbots on the site, and don't use *asterisk actions* unless that's genuinely how you joke. ${COMM_FACTS} ${COMM_ADULT}
 ${dmTimeNote(u, d, q)}
 ${dmBurstNote(u)}
@@ -9734,6 +9887,7 @@ function playSettings(panels) {
   f.innerHTML = `<h3>Screen effects</h3>
     <label class="check"><input type="checkbox" id="sFxW" ${st.fxWeather !== false ? "checked" : ""}> Weather and light from the scene (rain, snow, embers, fireflies, bubbles…)</label>
     <label class="check"><input type="checkbox" id="sFxS" ${st.fxScene !== false ? "checked" : ""}> Effects for what's happening (pulses and vignettes for sex, oral, kissing, vore…)</label>
+    <label class="check"><input type="checkbox" id="sSeasonDeco" ${st.seasonDeco !== false ? "checked" : ""}> Seasonal decorations on Home (falling leaves and bats for Halloween, and so on)</label>
     <label class="check"><input type="checkbox" id="sRub" ${st.rubOn !== false ? "checked" : ""}> Belly rub button in vore scenes (hold and swirl to rub a full belly, balls or breasts)</label>
     <div class="field"><label>Cocks on feral preds in the rub pad</label><div class="tabs" id="sFeralCock">${[["equine", "Horse-like"], ["human", "Human-like"]].map(([k, l]) => `<button type="button" class="tab ${(st.feralCock || "equine") === k ? "on" : ""}" data-c="${k}">${l}</button>`).join("")}</div></div>
     ${VORE_PIC ? `<label class="check"><input type="checkbox" id="sVg" ${st.voreGfx !== false ? "checked" : ""}> Vore picture: the pred's silhouette in a corner card (full belly, cock and balls, weight gained from meals) that moves with the story; drag on it to rub</label>` : ""}
@@ -9743,6 +9897,7 @@ function playSettings(panels) {
   f.querySelector("#sFxS").onchange = e => { st.fxScene = e.target.checked; save(); };
   if (VORE_PIC) f.querySelector("#sVg").onchange = e => { st.voreGfx = e.target.checked; save(); };
   f.querySelector("#sRub").onchange = e => { st.rubOn = e.target.checked; save(); };
+  f.querySelector("#sSeasonDeco").onchange = e => { st.seasonDeco = e.target.checked; save(); drawSeasonDeco(); };
   f.querySelectorAll("#sFeralCock [data-c]").forEach(b => b.onclick = () => { st.feralCock = b.dataset.c; f.querySelectorAll("#sFeralCock .tab").forEach(x => x.classList.toggle("on", x === b)); save(); });
   f.querySelectorAll("#sFxL [data-l]").forEach(b => b.onclick = () => { st.fxLevel = b.dataset.l; f.querySelectorAll("#sFxL .tab").forEach(x => x.classList.toggle("on", x === b)); save(); });
 }
