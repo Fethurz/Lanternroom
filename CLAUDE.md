@@ -10,6 +10,7 @@ Lanternroom is a personal, phone-first AI character chat app (an alternative to 
 - The owner uses the app on an Android phone and talks to Claude from the Claude mobile app. Keep explanations short and non-technical; they are not a programmer.
 
 ## Owner's rules for Claude (always follow)
+- **Publishing (owner, 2026-10-27):** when a change is what the owner already asked for, publish it to `main` as soon as it's tested, without asking again. Ask first only for things they didn't ask for.
 - **Never read the owner's chats** (the `c2:` / `chats:` rows in Supabase, or chat contents anywhere) unless the owner has given explicit permission for a specific bot's chat, or Claude asked first and the owner said yes. A "no" is final. Test with made-up chats instead. Bot cards (`chars`), settings and sound lists are fine to read when needed.
 - **Content rules are the owner's to write.** The app sends no content restrictions of its own (no forced safe-for-work in images or prompts) except one: every character is an adult. Since v1.50 the text-model wording (owner's choice, so sentient objects and creatures read naturally) is "Every character is treated as a fully grown, mature being" (the hidden line in `GEN_SYS`, "Fully grown and mature" / "apparent age (fully grown and mature)" in the appearance-description prompt); image prompts keep the plain word "adult" (portrait/illustration prompts, the illustration writer's "Every character is an adult."). Quiz ages stay adult ranges / 18+. Keep that; add nothing else.
 
