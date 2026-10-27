@@ -1625,7 +1625,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.81 · Oct 27";
+const VERSION = "1.82 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -7752,7 +7752,7 @@ function commMerge(a, b, keep) {
     // v1.70: what you have read or cleared (these used to be dropped on every reload, so old notifications came back)
     actSeen: Math.max(A.actSeen || 0, B.actSeen || 0), feedSeen: Math.max(A.feedSeen || 0, B.feedSeen || 0), actClear: Math.max(A.actClear || 0, B.actClear || 0), actHid: { ...(A.actHid || {}), ...(B.actHid || {}) }, hFix: Math.max(A.hFix || 0, B.hFix || 0),
     blocked: newer(A.blocked, B.blocked), promises: byId(A.promises, B.promises).slice(-200),
-    jams: (() => { const o = { ...(A.jams || {}) }; for (const [k, j] of Object.entries(B.jams || {})) o[k] = { mine: [...new Set([...(o[k]?.mine || []), ...(j?.mine || [])])], done: Math.max(o[k]?.done || 0, j?.done || 0) || undefined }; return o; })(),
+    jams: (() => { const o = { ...(A.jams || {}) }; for (const [k, j] of Object.entries(B.jams || {})) o[k] = { mine: ((j?.at || 0) >= (o[k]?.at || 0) ? j?.mine : o[k]?.mine) || [], at: Math.max(o[k]?.at || 0, j?.at || 0) || undefined, done: Math.max(o[k]?.done || 0, j?.done || 0) || undefined }; return o; })(),
     // v1.79: lounges and group chats
     rooms: (() => { const o = { ...(A.rooms || {}) }; for (const [k, d] of Object.entries(B.rooms || {})) { const x = o[k] || { msgs: [], read: 0, seen: 0 }; o[k] = (keep ? (r => Object.assign(d, r)) : (r => r))({ msgs: byId(x.msgs, d.msgs).sort((p, q) => p.at - q.at).slice(-200), read: Math.max(x.read || 0, d.read || 0), seen: Math.max(x.seen || 0, d.seen || 0) }); } return o; })(),
     rq: byId(A.rq, B.rq).filter(p => !done.includes(p.id)), groups: newer(A.groups, B.groups), grpNext: Math.max(A.grpNext || 0, B.grpNext || 0),
@@ -7897,7 +7897,7 @@ const COMM_TRUE = "Only say things that are true on the site: a person's bots ar
 const CLAIMS_NEW = /\b(just (made|posted|dropped|released|uploaded|finished|published|put out)|new bot (is )?(out|up|live|dropped)|(is|are|it's|its) (out|up|live) now|check out my new|(dropped|posted|released|uploaded) (a|my) new|my new(est)? bot|new upload)\b/i;
 const claimOk = (u, t) => !CLAIMS_NEW.test(t || "") || commUserPosts(u).some(p => Date.now() - p.at < 3 * 864e5);
 // v1.78: what the site is like this season, for the people writing bots, posts, comments and DMs
-const commSeason = () => { const sn = seasonNow(); return sn ? ` It's ${sn.n} season on the site right now (${sn.mood}); the ${sn.jam} is running.` : ""; };
+const commSeason = () => { const sn = seasonNow(); return sn ? ` It's ${sn.n} season on the site right now (${sn.mood}); the ${sn.jam} is running. That's background: most of what people post and say is about other things, and only now and then does someone bring the season up.` : ""; };
 const commTruth = u => `Your bots on the site: ${botsFact(u)}. ${COMM_TRUE}`;
 // a bio is kept whole (up to 600 characters, cut at a sentence end if it's longer)
 function commBio(t) { const x = s5(t).trim(); if (x.length <= 600) return x; const cut = x.slice(0, 600), at = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "), cut.lastIndexOf(".\n")); return (at > 200 ? cut.slice(0, at + 1) : cut.replace(/\s+\S*$/, "") + "…").trim(); }
@@ -8026,7 +8026,7 @@ async function commPosts(k, opt = {}) {
   if (!authors.length) return []; k = authors.length; // nobody online to post right now
   // about half are fan bots of existing media, the rest OCs; people with fandoms lean fan, the others lean OC
   const plan = authors.map(u => Math.random() < ((u.fandoms || []).length ? 0.62 : 0.38) ? "fan" : "oc");
-  const j = await dsJSON([{ role: "system", content: `You write new bot listings posted on ${COMM_SITE}. Each listing is written by its poster in their own typing style and matches their taste, and quality varies the way it does on a real site: polished ones, rough ones with typos, short ones, very long ones. Each is a complete, playable bot with a hook. A listing is either an OC (an original character, world or group) or a fan bot of characters, worlds or groups from existing media (games, anime, manga, cartoons, films, TV shows, books, comics), as marked for each poster; a fan bot keeps the source's canon (names, looks, personalities, setting) and gives a fresh scenario. Any focus a real site has, as fits the poster: fetish and kink of any kind, vore, RPG and adventure, horror, romance, comedy, slice of life, wholesome SFW, dark stories, monster and creature bots. Fan bots only use characters who are adults in their source material (never characters who are minors in their source, not even aged up) and never real people. Mostly characters, sometimes a world (a setting with a narrator) or a group (2-3 characters together).${seasonNow() ? `${commSeason()} About half of new listings are themed for it, and many themed ones are entered in the ${seasonNow().jam} (mark those "jam": true).` : ""} ${COMM_ADULT}\n\nRespond with only JSON: {"posts": [{"by": the poster's handle, "source": the franchise a fan bot is from, or "" for an OC, "kind": "character" | "world" | "group", "name", "tags": 4-8 lowercase tags (a fan bot includes its franchise as a tag), "summary": 2-3 sentences the poster wrote to sell it, "appearance": 40-80 words (characters only), "description": personality, background and how they treat {{user}}, 120-200 words (for a world: the world itself; for a group: how the members fit together), "scenario": where the story starts, 50-100 words, refer to the user as {{user}}, "firstMessage": the opening, 90-160 words, narration in *asterisks*, speech in quotes, never acting for {{user}}, "jam": true only if entered in the season's bot jam, "members": for a group, 2-3 {"name", "appearance", "description"}, "cast": for a world, 3-4 {"name", "type": "character" | "location" | "group" | "species" | "concept", "details"}}]}` },
+  const j = await dsJSON([{ role: "system", content: `You write new bot listings posted on ${COMM_SITE}. Each listing is written by its poster in their own typing style and matches their taste, and quality varies the way it does on a real site: polished ones, rough ones with typos, short ones, very long ones. Each is a complete, playable bot with a hook. A listing is either an OC (an original character, world or group) or a fan bot of characters, worlds or groups from existing media (games, anime, manga, cartoons, films, TV shows, books, comics), as marked for each poster; a fan bot keeps the source's canon (names, looks, personalities, setting) and gives a fresh scenario. Any focus a real site has, as fits the poster: fetish and kink of any kind, vore, RPG and adventure, horror, romance, comedy, slice of life, wholesome SFW, dark stories, monster and creature bots. Fan bots only use characters who are adults in their source material (never characters who are minors in their source, not even aged up) and never real people. Mostly characters, sometimes a world (a setting with a narrator) or a group (2-3 characters together).${seasonNow() ? `${commSeason()} Now and then (about 1 in 5) a listing is themed for it, and some themed ones are entered in the ${seasonNow().jam} (mark those "jam": true; each person enters at most one bot).` : ""} ${COMM_ADULT}\n\nRespond with only JSON: {"posts": [{"by": the poster's handle, "source": the franchise a fan bot is from, or "" for an OC, "kind": "character" | "world" | "group", "name", "tags": 4-8 lowercase tags (a fan bot includes its franchise as a tag), "summary": 2-3 sentences the poster wrote to sell it, "appearance": 40-80 words (characters only), "description": personality, background and how they treat {{user}}, 120-200 words (for a world: the world itself; for a group: how the members fit together), "scenario": where the story starts, 50-100 words, refer to the user as {{user}}, "firstMessage": the opening, 90-160 words, narration in *asterisks*, speech in quotes, never acting for {{user}}, "jam": true only if entered in the season's bot jam, "members": for a group, 2-3 {"name", "appearance", "description"}, "cast": for a world, 3-4 {"name", "type": "character" | "location" | "group" | "species" | "concept", "details"}}]}` },
     { role: "user", content: `Write ${k} listing${k > 1 ? "s" : ""}, one by each of these posters:\n${authors.map((u, i) => `- @${u.handle} (${u.name}, ${u.role || "creator"}): loves ${u.taste.join(", ")}${u.focus ? `, especially ${u.focus}` : ""}${(u.fandoms || []).length ? `; fan of ${u.fandoms.join(", ")}` : ""}. Types: ${u.style || u.voice}${u.custom && u.voice && u.style ? `. Personality: ${u.voice}` : ""}. This one: ${briefs[i] ? `the bot they told people they'd make, made exactly as they described it: ${briefs[i]}` : plan[i] === "fan" ? "a fan bot from existing media (one of their fandoms, or another they'd love)" : "an OC"}.${(() => { const mine = commUserPosts(u).slice(0, 25); return mine.length ? ` They have already posted (never make any of these, or the same character, again; something new): ${mine.map(p => `"${p.card.name}"${p.card.source ? ` (${p.card.source})` : ""}`).join(", ")}` : ""; })()}`).join("\n")}\nPopular tags on the site right now: ${taste.join(", ")}` }], { temperature: 1, maxTokens: 7000, plain: true });
   const now = Date.now(), made = [];
   for (const x of Array.isArray(j?.posts) ? j.posts : []) {
@@ -8041,7 +8041,8 @@ async function commPosts(k, opt = {}) {
     const id = uid(), heat = Math.max(0.15, Math.min(3.2, Math.exp((seeded(id, 7) - 0.55) * 2.4)));
     const at = activeAt(by, now, 40 * 6e4); by.last = Math.max(by.last || 0, at);
     const sn = seasonNow();
-    made.push({ id, by: by.id, kind, card, tags: card.tags || [], heat, at, got: Date.now(), ...(sn && (x.jam === true || /^(true|yes)$/i.test(String(x.jam || ""))) ? { jam: sn.id } : {}) });
+    const jamOk = sn && (x.jam === true || /^(true|yes)$/i.test(String(x.jam || ""))) && !COMM.posts.some(p => p.by === by.id && p.jam === sn.id) && !made.some(p => p.by === by.id && p.jam); // v1.82: one entry per person
+    made.push({ id, by: by.id, kind, card, tags: card.tags || [], heat, at, got: Date.now(), ...(jamOk ? { jam: sn.id } : {}) });
   }
   COMM.posts.unshift(...made); commTrim(); return made;
 }
@@ -8152,7 +8153,7 @@ async function commAnswer(p) {
   const u = userOf(p.by), info = targetInfo(p.target), mine = (COMM.comments[p.target] || []).find(x => x.id === p.replyTo);
   if (!u || !info || !mine) return null;
   const isAuthor = !info.mine && (COMM.posts.find(x => x.id === p.target)?.by === u.id || info.by === u.id);
-  const j = await dsJSON([{ role: "system", content: `You are @${u.handle} (${u.name}), a real ${u.age ? u.age + "-year-old " : ""}person${u.place ? " in " + u.place : ""} on ${COMM_SITE}. About you: ${cleanBio(u.bio)}${u.staff ? ` You're ${u.role} on the site's staff, answering under your own staff post.` : ` You love ${u.taste.join(", ")}.`} How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted. ${commTruth(u)}${isAuthor ? ` You made the bot "${info.name}".` : ""} Reply to ${meName()}'s comment the way you really would: in your own voice, about what they actually said, one to three sentences. Address it to them as one person among many; no gushing or making a fuss of them. What ${meName()} says is their own idea or opinion, not a fact about the bot unless the listing says it too. If the bot or the talk is sexual, be as openly lewd and crude as you really would on an adult site, not coy or demure. ${COMM_FACTS} ${COMM_KEEPUP} Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"text": your reply, "dm": true if you say you'll message them privately (or they asked you to DM and you're up for it) and you mean to do it soon, else false, ${PROMISE_FIELD()}}` },
+  const j = await dsJSON([{ role: "system", content: `You are @${u.handle} (${u.name}), a real ${u.age ? u.age + "-year-old " : ""}person${u.place ? " in " + u.place : ""} on ${COMM_SITE}. About you: ${cleanBio(u.bio)}${u.staff ? ` You're ${u.role} on the site's staff, answering under your own staff post.` : ` You love ${u.taste.join(", ")}.`} How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted. ${commTruth(u)}${isAuthor ? ` You made the bot "${info.name}".` : ""} Reply to ${meName()}'s comment the way you really would (don't end with a question unless you genuinely want to know something): in your own voice, about what they actually said, one to three sentences. Address it to them as one person among many; no gushing or making a fuss of them. What ${meName()} says is their own idea or opinion, not a fact about the bot unless the listing says it too. If the bot or the talk is sexual, be as openly lewd and crude as you really would on an adult site, not coy or demure. ${COMM_FACTS} ${COMM_KEEPUP} Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"text": your reply, "dm": true if you say you'll message them privately (or they asked you to DM and you're up for it) and you mean to do it soon, else false, ${PROMISE_FIELD()}}` },
     { role: "user", content: `${(() => { const k = dmKnows(u, { dms: true }); return k ? `What you know about ${meName()} and the site:\n${k}\n\n` : ""; })()}The listing: "${info.name}" by ${info.owner}${isAuthor ? " (you)" : ""}\n${info.text}\n\nThe thread:\n${threadText(p.target, u.id)}\n\nReply to this comment by ${meName()} (they wrote it, not you): ${mine.text}` }], { temperature: 1, maxTokens: 500, plain: true });
   const text = s5(j?.text).slice(0, 600); if (!text) return null;
   const c = { id: uid(), by: u.id, text, at: Math.min(Date.now(), p.due + 60e3), replyTo: mine.id, heat: 0.6 + Math.random(), toMe: true, got: Date.now() }; u.last = Math.max(u.last || 0, c.at);
@@ -8323,8 +8324,8 @@ function commOnlineNow(t = Date.now()) {
 function seasonJustEnded(t = Date.now()) { if (seasonNow(t)) return null; for (let d = 1; d <= 7; d++) { const x = seasonNow(t - d * 864e5); if (x) return x; } return null; }
 function jamOf(sn) {
   if (!sn) return [];
-  const at = Math.min(Date.now(), sn.ends), mine = (COMM.jams?.[sn.id]?.mine || []).map(byId).filter(c => c && pubOf(c));
-  const L = [...COMM.posts.filter(p => p.jam === sn.id && vis(p.by)).map(p => ({ p, name: p.card.name, by: userOf(p.by)?.handle ? "@" + userOf(p.by).handle : "someone", likes: commStats(p.id, p.heat, p.at, at).likes + (commLiked(p.id) ? 1 : 0) })),
+  const at = Math.min(Date.now(), sn.ends), mine = (COMM.jams?.[sn.id]?.mine || []).slice(-1).map(byId).filter(c => c && pubOf(c)); // v1.82: your one entry (the latest pick)
+  const L = [...COMM.posts.filter(p => p.jam === sn.id && vis(p.by)).filter((p, i, a) => a.findIndex(q => q.by === p.by) === i).map(p => ({ p, name: p.card.name, by: userOf(p.by)?.handle ? "@" + userOf(p.by).handle : "someone", likes: commStats(p.id, p.heat, p.at, at).likes + (commLiked(p.id) ? 1 : 0) })),
     ...mine.map(c => { const pb = pubOf(c); return { c, name: c.name, by: "you", me: true, likes: commStats("bot:" + c.id, pb.heat * 1.25, pb.since || pb.at, at).likes }; })];
   return L.sort((a, b) => b.likes - a.likes);
 }
@@ -8339,12 +8340,12 @@ function jamFinish(sn) { const j = COMM.jams?.[sn.id]; if (!j || j.done) return;
 function openJam() {
   const sn = seasonNow(); if (!sn) return;
   const draw = () => cpage(sn.jam, b => {
-    const L = jamOf(sn), mine = S.chars.filter(c => pubOf(c)), entered = new Set(COMM.jams?.[sn.id]?.mine || []);
+    const L = jamOf(sn), mine = S.chars.filter(c => pubOf(c)), cur = (COMM.jams?.[sn.id]?.mine || []).slice(-1)[0] || "";
     b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-page"><div class="hub-season"><b>${sn.icon} ${esc(sn.jam)}</b><p>${esc(sn.n)}-themed bots compete for likes until the season ends (${sn.left} day${sn.left === 1 ? "" : "s"} left). The top 3 are announced on Home afterwards.</p></div>
       <div class="lbl">Standings · ${L.length}</div>${L.length ? L.slice(0, 40).map((x, i) => `<button type="button" class="listrow jam-rank" ${x.p ? `data-post="${esc(x.p.id)}"` : ""}><span class="n">${i + 1}</span><span class="grow"><b>${esc(x.name)}</b>${x.me ? ' <span class="badge">yours</span>' : ""}<span class="sub">${esc(x.by)} · ♥ ${fmtK(x.likes)}</span></span></button>`).join("") : `<p class="hint">No entries yet.</p>`}
-      <div class="lbl">Enter your bots</div>${mine.length ? mine.map(c => `<div class="listrow"><span class="grow"><b>${esc(c.name)}</b></span>${entered.has(c.id) ? `<span class="badge">Entered</span>` : `<button type="button" class="btn small" data-jam="${esc(c.id)}">Enter</button>`}</div>`).join("") : `<p class="hint">Make a bot public first (from its profile or the You tab), then enter it here.</p>`}</div>`;
+      <div class="lbl">Your entry (one bot per person)</div>${mine.length ? mine.map(c => `<div class="listrow"><span class="grow"><b>${esc(c.name)}</b></span>${cur === c.id ? `<span class="badge">Entered</span>` : `<button type="button" class="btn small" data-jam="${esc(c.id)}">${cur ? "Enter this one instead" : "Enter"}</button>`}</div>`).join("") : `<p class="hint">Make a bot public first (from its profile or the You tab), then enter it here.</p>`}</div>`;
     hubWire(b, draw);
-    b.querySelectorAll("[data-jam]").forEach(x => x.onclick = () => { const j = COMM.jams[sn.id] = COMM.jams[sn.id] || { mine: [] }; if (!j.mine.includes(x.dataset.jam)) j.mine.push(x.dataset.jam); commSave(); seasonBadge("jam"); toast("Entered"); draw(); });
+    b.querySelectorAll("[data-jam]").forEach(x => x.onclick = () => { const j = COMM.jams[sn.id] = COMM.jams[sn.id] || { mine: [] }; j.mine = [x.dataset.jam]; j.at = Date.now(); commSave(); seasonBadge("jam"); toast("Entered"); draw(); });
   });
   COMM_VIEW = draw; draw();
 }
@@ -9148,7 +9149,7 @@ async function newsTick() {
 // what people know is going on (for lounges and DMs)
 function newsFact() {
   const L = newsOf().filter(b => Date.now() - b.at < 3 * 864e5).slice(0, 4);
-  return L.length ? `Site news and drama lately (people may bring it up if they care): ${L.map(b => `${b.news === "drama" ? "@" + (userOf(b.by)?.handle || "someone") + " posted" : "staff posted"} "${b.title}" (${agoText(b.at)}): ${b.text.slice(0, 160)}`).join(" | ")}` : "";
+  return L.length ? `Site news and drama lately (background only: most talk is about other things; at most someone mentions it in passing now and then, never as the main topic unless the conversation is already about it): ${L.map(b => `${b.news === "drama" ? "@" + (userOf(b.by)?.handle || "someone") + " posted" : "staff posted"} "${b.title}" (${agoText(b.at)}): ${b.text.slice(0, 160)}`).join(" | ")}` : "";
 }
 const newsUnseen = () => newsOf().filter(b => b.news !== "drama" && arrived(b) > (COMM.newsSeen || 0)).length;
 function newsHTML() {
@@ -9371,8 +9372,14 @@ function dmSend(uidv, text) {
   const u = userOf(uidv); if (!u || !text.trim()) return;
   const d = dmOf(u.id), now = Date.now(), m = { id: uid(), from: "me", text: text.trim().slice(0, 2000), at: now };
   d.msgs.push(m); d.read = now;
-  const q = COMM.dmq.find(x => x.user === u.id && x.kind === "reply");
+  const q = COMM.dmq.find(x => x.user === u.id && x.kind === "reply" && !(x.parts && x.started)) || COMM.dmq.find(x => x.user === u.id && x.kind === "reply");
+  if (DM_WRITING === q?.id) q.stale = true; // being written right now: it'll be written again with this message in it
   if (!q) { const t = dmDelay(u, now); m.seenAt = t.seenAt; COMM.dmq.push({ id: uid(), user: u.id, kind: "reply", due: t.due, typingAt: Math.max(t.seenAt + 1000, t.due - (8 + Math.random() * 30) * 1000), ...(t.last ? { last: true } : {}) }); }
+  else if (q.parts) {
+    // v1.82: they were already typing (or just wrote) their answer when this came in
+    if (!q.started) { const R = (a, b) => (a + Math.random() * (b - a)) * 1000; delete q.parts; q.due = now + R(8, 35) * (u.speed === "slow" ? 2 : u.speed === "fast" ? 0.7 : 1); q.typingAt = now + R(2, 6); m.seenAt = now + 1500; } // they saw it and rewrite their answer
+    else { const last = q.parts.at(-1)?.at || now, due = last + (6 + Math.random() * 30) * 1000; m.seenAt = Math.max(now + 1500, Math.min(last, now + 20e3)); COMM.dmq.push({ id: uid(), user: u.id, kind: "reply", due, typingAt: last + 2000 }); } // mid-burst: they answer it right after
+  }
   else { dmRunTouch(u, now); if (!q.parts && q.due - now > 10 * 60e3 && dmLastThem(d) && now - dmLastThem(d).at < 6e5) { q.due = now + 60e3 + Math.random() * 120e3; q.typingAt = q.due - (8 + Math.random() * 20) * 1000; }
     // v1.71: seen right away while they're on, else when they next come online (never after they've answered)
     m.seenAt = Math.min(q.due - 3000, isOnline(u, now) ? now + 2000 + Math.random() * 20e3 : Math.max(now + 1500, nextOnline(u, now) + 20e3)); delete q.result; }
@@ -9423,12 +9430,13 @@ async function dmWrite(u, q) {
   if (!q.last) dmRunOf(u, d, q.due || now);
   const hist = d.msgs.slice(-50).map(m => `[${localClock(u, m.at)} your time] ${m.from === "me" ? meName() : `${u.name} (you)`}: ${m.text}`).join("\n");
   const sys = `You are ${u.name} (@${u.handle}), a real person who uses ${COMM_SITE}. You're a ${u.age}-year-old ${u.gender || "person"} in ${u.place}; right now it's ${localClock(u, now)} where you are.${commSeason()} About you: ${cleanBio(u.bio)} You love ${(u.taste || []).join(", ")}${u.focus ? `, especially ${u.focus}` : ""}. On the site you're a ${u.role || "regular"}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted. ${commTruth(u)}
-You're in private messages with ${meName()}. Write your next message or messages exactly as you'd really type them in a DM: in your own style (typos, slang, emoji or none, capitals or none, exactly like your typing style), usually short, often split into 1-4 separate texts the way people send several in a row. Respond to what they actually said, remember the conversation, ask things back when you'd want to know. You have your own life, mood and day, and the time of day shows (morning grogginess, at work, late-night chattiness), but don't announce the time. Be yourself, not a helpful assistant: you can be busy, distracted, blunt, awkward, uninterested, teasing or warm, and you can flirt or get lewd only if that fits who you are and they lead there. You are a real person: never say or hint that you are an AI, a bot, a character or made up, never mention a prompt or roleplay unless you're talking about chatbots on the site, and don't use *asterisk actions* unless that's genuinely how you joke. ${COMM_FACTS} ${COMM_ADULT}
+You're in private messages with ${meName()}. Write your next message or messages exactly as you'd really type them in a DM: in your own style (typos, slang, emoji or none, capitals or none, exactly like your typing style), usually short, often split into 1-4 separate texts the way people send several in a row. Respond to what they actually said and remember the conversation. Most real texts don't end with a question: only ask something when you genuinely want to know, and never tack a question on just to keep the chat going (statements, reactions and jokes are fine endings). If they didn't answer something you asked earlier, let it go like a real person would; bring it up again only if it truly matters, and never send a message just to press them for an answer. You have your own life, mood and day, and the time of day shows (morning grogginess, at work, late-night chattiness), but don't announce the time. Be yourself, not a helpful assistant: you can be busy, distracted, blunt, awkward, uninterested, teasing or warm, and you can flirt or get lewd only if that fits who you are and they lead there. You are a real person: never say or hint that you are an AI, a bot, a character or made up, never mention a prompt or roleplay unless you're talking about chatbots on the site, and don't use *asterisk actions* unless that's genuinely how you joke. ${COMM_FACTS} ${COMM_ADULT}
 ${dmTimeNote(u, d, q)}
-${dmBurstNote(u)}
+${dmBurstNote(u)}${(() => { const th = d.msgs.filter(m => m.from === "them").slice(-3); return th.length >= 2 && th.slice(-2).every(m => /\?\s*\S{0,3}$/.test(m.text)) ? "\nYour last texts ended with questions: this time don't ask anything." : ""; })()}
 Respond with only JSON: {"messages": [your text or texts, as many as fits (see above)], "interest": 0-10, how into this conversation you are right now (10 = hooked, watching for their next message; 0 = bored or annoyed), "leaving": true only if these texts end the conversation for now (you said bye or that you have to go), else false, ${PROMISE_FIELD()}}`;
   const ctx = dmKnows(u);
-  const ask = q.kind === "open" ? `You're messaging ${meName()} first, ${q.fromComment ? "" : "out of the blue but naturally, "}because ${q.reason}.${d.msgs.length ? " You've talked before (above)." : " You've never messaged them before."}` : `Reply to ${meName()}'s latest message${d.msgs.filter(m => m.from === "me").length > 1 ? "s" : ""}.`;
+  const unread = (() => { const i = d.msgs.map(m => m.from).lastIndexOf("them"); return d.msgs.slice(i + 1).filter(m => m.from === "me").length; })();
+  const ask = q.kind === "open" ? `You're messaging ${meName()} first, ${q.fromComment ? "" : "out of the blue but naturally, "}because ${q.reason}.${d.msgs.length ? " You've talked before (above): start something new, don't chase anything they left unanswered." : " You've never messaged them before."}` : `Reply to ${meName()}'s latest message${unread > 1 ? `s (all ${unread} of them since your last text: take every one into account)` : ""}.`;
   const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: `${ctx ? `Everything you know about ${meName()} and the site (nothing else):\n${ctx}\n${COMM_KEEPUP}\n\n` : `You know nothing about ${meName()} yet beyond these DMs.\n\n`}${hist ? `Your DMs so far (lines marked (you) are yours, the others are ${meName()}'s):\n${hist}\n\n` : ""}${ask}` }], { temperature: 1, maxTokens: 700, plain: true });
   const it = Math.max(0, Math.min(10, +j?.interest)), cap = burstOf(u) < 0.33 ? 2 : burstOf(u) < 0.66 ? 3 : 5;
   const out = (Array.isArray(j?.messages) ? j.messages : [j?.text]).map(s5).filter(Boolean).slice(0, Number.isFinite(it) && it <= 3 ? Math.min(cap, 2) : cap).map(t => t.slice(0, 1200));
@@ -9452,7 +9460,7 @@ function dmTimeNote(u, d, q) {
   return t + "Like a real person you can also end it whenever it fits: you're done, bored, uncomfortable, or need to go.";
 }
 // the pump: runs every few seconds while the app is open; writes a reply shortly before it's due, then lets the texts arrive
-let DM_BUSY = false;
+let DM_BUSY = false, DM_WRITING = null;
 async function dmPump() {
   if (DM_BUSY || !COMM || !commOn() || !hasKey()) return;
   DM_BUSY = true;
@@ -9463,20 +9471,22 @@ async function dmPump() {
     for (const q of COMM.dmq.filter(x => x.parts?.length)) {
       const u = userOf(q.user), d = u && dmOf(u.id), now = Date.now();
       if (!u) { q.parts = []; continue; }
-      while (q.parts.length && q.parts[0].at <= now) { const p = q.parts.shift(); d.msgs.push({ id: uid(), from: "them", text: p.text, at: p.at, got: now }); u.last = Math.max(u.last || 0, p.at); for (const m of d.msgs) if (m.from === "me" && m.at <= p.at && (!m.seenAt || m.seenAt > p.at)) m.seenAt = p.at; if (DM_OPEN !== u.id) dmNotify(u, p.text); moved = true; }
+      while (q.parts.length && q.parts[0].at <= now) { q.started = true; const p = q.parts.shift(); d.msgs.push({ id: uid(), from: "them", text: p.text, at: p.at, got: now }); u.last = Math.max(u.last || 0, p.at); for (const m of d.msgs) if (m.from === "me" && m.at <= p.at && (!m.seenAt || m.seenAt > p.at)) m.seenAt = p.at; if (DM_OPEN !== u.id) dmNotify(u, p.text); moved = true; }
       if (!q.parts.length) { COMM.dmq = COMM.dmq.filter(x => x.id !== q.id); COMM.done.push(q.id); moved = true; }
     }
     // 2. one reply to write, a little before it's due (so "typing…" shows while it's being written)
-    const now = Date.now(), q = COMM.dmq.filter(x => !x.parts && (x.typingAt || x.due) - 30e3 <= now && !COMM.done.includes(x.id)).sort((a, b) => a.due - b.due)[0];
+    const now = Date.now(), q = COMM.dmq.filter(x => !x.parts && (x.typingAt || x.due) - 30e3 <= now && !COMM.done.includes(x.id) && !COMM.dmq.some(y => y !== x && y.user === x.user && y.parts?.length)).sort((a, b) => a.due - b.due)[0];
     if (q) {
       const u = userOf(q.user);
       if (!u) COMM.dmq = COMM.dmq.filter(x => x.id !== q.id);
       else if (isBanned(u)) { if (u.ban.until) { q.due = u.ban.until + (1 + Math.random() * 20) * 3.6e6; q.typingAt = q.due - 15e3; } else COMM.dmq = COMM.dmq.filter(x => x.id !== q.id); moved = true; }
       else {
-        const parts = await dmWrite(u, q);
+        DM_WRITING = q.id; let parts; try { parts = await dmWrite(u, q); } finally { DM_WRITING = null; }
+        if (q.stale) { delete q.stale; q.due = Date.now() + (6 + Math.random() * 20) * 1000; q.typingAt = Date.now(); parts = []; parts.retry = true; } // a new message came in while writing: write it again
         // v1.76: the queue may have been reloaded while it was being written: put the texts on the live entry
         { const live = COMM.dmq.find(x => x.id === q.id); if (live && live !== q) Object.assign(live, q); else if (!live && !COMM.done.includes(q.id)) COMM.dmq.push(q); }
-        if (!parts.length) { q.due = Date.now() + 10 * 60e3; q.typingAt = q.due - 15e3; }
+        if (parts.retry) {}
+        else if (!parts.length) { q.due = Date.now() + 10 * 60e3; q.typingAt = q.due - 15e3; }
         else {
           // a reply that came in while the app was closed keeps its own time, but never before the message it answers
           const lastAt = (dmOf(u.id).msgs.at(-1)?.at || 0) + 4000;
@@ -9547,11 +9557,21 @@ function openDM(id) {
     DM_OPEN = id; DM_VIEW = draw; draw(); clearInterval(DM_T); DM_T = setInterval(() => { if (!cbody()?.querySelector(".dm-mark")) { clearInterval(DM_T); DM_OPEN = null; return; } draw(); dmPump(); }, 2500);
     if ($("dmUnblock")) { $("dmUnblock").onclick = () => { commBlock(id, false); openDM(id); }; return; }
     $("dmWho").onclick = () => openCommUser(id);
-    const send = () => { const t = $("dmIn").value; if (!t.trim()) return; dmSend(id, t); $("dmIn").value = ""; draw(); };
-    $("dmSend").onclick = send;
+    const send = () => { const t = $("dmIn").value; if (!t.trim()) return; const had = document.activeElement === $("dmIn"); dmSend(id, t); $("dmIn").value = ""; $("dmIn").style.height = ""; draw(); const l = body0().querySelector(".dm-list"); if (l) l.scrollTop = l.scrollHeight; if (had) $("dmIn").focus(); };
+    $("dmSend").onclick = send; keepTyping($("dmIn"), $("dmSend"), () => body0().querySelector(".dm-list"));
     $("dmIn").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && matchMedia("(pointer:fine)").matches) { e.preventDefault(); send(); } });
     $("dmIn").addEventListener("input", e => { e.target.style.height = "auto"; e.target.style.height = Math.min(120, e.target.scrollHeight) + "px"; });
   });
+}
+// v1.82: sending keeps the keyboard up, and while you type the chat stays at its newest message (their typing dots included)
+const body0 = () => cbody() || document.body;
+function keepTyping(input, btn, list) {
+  btn.addEventListener("pointerdown", e => { if (document.activeElement === input) e.preventDefault(); }); // the tap doesn't take the focus away
+  const down = () => { const l = list(); if (l) l.scrollTop = l.scrollHeight; };
+  input.addEventListener("focus", () => { down(); setTimeout(down, 250); setTimeout(down, 600); });
+  input.addEventListener("input", down);
+  const vv = window.visualViewport, onVV = () => { if (document.activeElement === input) down(); };
+  if (vv) { vv.addEventListener("resize", onVV); const stop = new MutationObserver(() => { if (!document.contains(input)) { vv.removeEventListener("resize", onVV); stop.disconnect(); } }); stop.observe(body0(), { childList: true }); }
 }
 function dmListHTML() {
   const rows = Object.entries(COMM.dms).filter(([id, d]) => d.msgs.length && userOf(id) && vis(id)).sort((a, b) => b[1].msgs.at(-1).at - a[1].msgs.at(-1).at);
@@ -9632,7 +9652,7 @@ async function roomWrite(key, q) {
   const n = q.kind === "catch" ? 4 + Math.floor(Math.random() * 5) : q.kind === "reply" ? 1 + Math.floor(Math.random() * (grp ? 4 : 3)) : q.kind === "join" || q.kind === "open" ? 2 + Math.floor(Math.random() * 3) : 2 + Math.floor(Math.random() * 4);
   const said = cast.map(u => [u, roomOf(key).msgs.filter(m => m.by === u.id).slice(-6).map(m => m.text)]).filter(x => x[1].length);
   const where = grp ? `a private group chat called "${g.name}" on ${COMM_SITE}. Members: ${g.members.map(userOf).filter(Boolean).map(u => "@" + u.handle).join(", ")}${g.left ? "" : `, and @${myHandle()}`}. It was started by ${g.by === "me" ? "@" + myHandle() : "@" + (userOf(g.by)?.handle || "someone")}${g.about ? ` (${g.about})` : ""}.` : `the #${r.n} lounge (${r.d}) on ${COMM_SITE}, a public chat room people hang out in.${r.lewd ? " Lewd and explicit talk is normal here." : ""}`;
-  const sys = `You write the next messages in ${where}${commSeason()} Write like real people in a real chat room: short messages, each in the writer's own typing style, reacting to each other, side conversations, jokes, tangents, people agreeing and disagreeing, now and then someone just saying hi or leaving. Everyone is a real person with their own life: never say or hint that anyone is an AI, a bot or made up (except when talking about the chatbots on the site). No *asterisk actions* unless that's how that person jokes. ${COMM_FACTS} ${COMM_TRUE} ${COMM_KEEPUP.replace(/listed above/, "written here")} Never repeat something already said in the chat (a similar opinion is fine, the same message is not); if someone has nothing new to say, they stay quiet. ${grp ? "" : `@${myHandle()} is just another member: people answer them when they'd care to, the way they would anyone, and otherwise carry on their own conversations; nobody fawns over them or makes them the centre of attention. `}${COMM_ADULT}\nRespond with only JSON: {"messages": [{"by": the writer's handle, "text": the message, "re": the line number it replies to, or null}]${q.kind === "open" ? `, "name": a short group chat name the starter would pick` : ""}}`;
+  const sys = `You write the next messages in ${where}${commSeason()} Write like real people in a real chat room: short messages, each in the writer's own typing style, reacting to each other, side conversations, jokes, tangents, people agreeing and disagreeing, now and then someone just saying hi or leaving. Most messages don't end with a question; nobody tacks one on just to keep things going, and nobody chases a question that went unanswered. Everyone is a real person with their own life: never say or hint that anyone is an AI, a bot or made up (except when talking about the chatbots on the site). No *asterisk actions* unless that's how that person jokes. ${COMM_FACTS} ${COMM_TRUE} ${COMM_KEEPUP.replace(/listed above/, "written here")} Never repeat something already said in the chat (a similar opinion is fine, the same message is not); if someone has nothing new to say, they stay quiet. ${grp ? "" : `@${myHandle()} is just another member: people answer them when they'd care to, the way they would anyone, and otherwise carry on their own conversations; nobody fawns over them or makes them the centre of attention. `}${COMM_ADULT}\nRespond with only JSON: {"messages": [{"by": the writer's handle, "text": the message, "re": the line number it replies to, or null}]${q.kind === "open" ? `, "name": a short group chat name the starter would pick` : ""}}`;
   const ask = q.kind === "catch" ? `@${myHandle()} was away. Write ${n} messages that were posted while they were away (a conversation among the people above, not addressed to @${myHandle()} unless something above was for them).`
     : q.kind === "reply" ? `@${myHandle()} just wrote line ${L.findIndex(x => x.id === q.me) + 1 || L.length}. Write the next ${n} message${n > 1 ? "s" : ""}: ${grp ? "members answer what they said, in character, and the talk can carry on from there" : "whoever would care answers it (maybe one person, maybe a couple, maybe someone ignores it and keeps their own conversation going)"}.`
     : q.kind === "join" && q.added ? `@${myHandle()} just added ${q.added.map(userOf).filter(Boolean).map(u => "@" + u.handle).join(", ")} to the group. Write ${n} messages: the newcomer${q.added.length > 1 ? "s" : ""} saying hi in their own way and the others welcoming them or carrying on.`
@@ -9802,8 +9822,8 @@ function openRoom(key) {
     DM_OPEN = null; clearInterval(DM_T); clearInterval(ROOM_T); ROOM_OPEN = key; ROOM_VIEW = draw; draw();
     ROOM_T = setInterval(() => { if (!cbody()?.querySelector(".rm-mark")) { clearInterval(ROOM_T); if (ROOM_OPEN === key) { ROOM_OPEN = null; ROOM_VIEW = null; } return; } draw(); roomPump(); }, 2500);
     if (!$("rmIn")) return;
-    const send = () => { const t = $("rmIn").value; if (!t.trim()) return; roomSend(key, t); $("rmIn").value = ""; $("rmIn").style.height = ""; draw(); roomPump(); };
-    $("rmSend").onclick = send;
+    const send = () => { const t = $("rmIn").value; if (!t.trim()) return; const had = document.activeElement === $("rmIn"); roomSend(key, t); $("rmIn").value = ""; $("rmIn").style.height = ""; draw(); const l = body0().querySelector(".dm-list"); if (l) l.scrollTop = l.scrollHeight; if (had) $("rmIn").focus(); roomPump(); };
+    $("rmSend").onclick = send; keepTyping($("rmIn"), $("rmSend"), () => body0().querySelector(".dm-list"));
     $("rmIn").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && matchMedia("(pointer:fine)").matches) { e.preventDefault(); send(); } });
     $("rmIn").addEventListener("input", e => { e.target.style.height = "auto"; e.target.style.height = Math.min(120, e.target.scrollHeight) + "px"; });
   });
