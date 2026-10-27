@@ -696,6 +696,7 @@ img.px-av{border-radius:50%}
 .pix-pop{position:fixed;inset:0;z-index:400;background:rgba(8,6,12,.72);display:flex;align-items:flex-end;justify-content:center;padding:0 max(0px,env(safe-area-inset-right,0px)) 0 max(0px,env(safe-area-inset-left,0px));animation:fadeIn .16s ease}
 .pix-card{width:min(560px,100%);max-height:calc(100dvh / var(--z,1) - 24px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:20px 20px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px}
 @media (min-width:700px){.pix-pop{align-items:center}.pix-card{border-radius:20px}}
+.vfx-chips{display:flex;flex-wrap:wrap;gap:6px}.vfx-chips .chip{min-height:34px}
 .vp-open{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px}.vp-open b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vp-open small{color:var(--muted);font-size:12px;flex:none}
 .vp-id summary{font-size:12px;color:var(--muted);cursor:pointer;margin-top:6px}.vp-id input{margin-top:6px;width:100%}
 .vp-card-w{gap:8px;width:min(620px,100%)}.vp-card-w>input{width:100%;border-radius:12px;padding:9px 12px}
@@ -1704,7 +1705,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.86 · Oct 27";
+const VERSION = "1.87 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -4823,7 +4824,7 @@ function openSheet(title, build) {
   sheetHead();
 }
 function sheetHead() { const n = S.sheetStack.length, all = $("sheetAll"); if (all) all.hidden = !n; $("sheetClose").setAttribute("aria-label", n ? "Back" : "Close"); }
-function closeSheet() { $("sheet").hidden = true; $("sheetBody").innerHTML = ""; S.sheetGuard = null; $("sheetConfirm")?.remove(); S.sheetAC?.abort(); S.sheetAC = null; S.sheetStack = []; S.sheetCur = null; sheetHead(); }
+function closeSheet() { if (typeof SAY_EXTRA !== "undefined") SAY_EXTRA.length = 0; $("sheet").hidden = true; $("sheetBody").innerHTML = ""; S.sheetGuard = null; $("sheetConfirm")?.remove(); S.sheetAC?.abort(); S.sheetAC = null; S.sheetStack = []; S.sheetCur = null; sheetHead(); }
 // step back to the window this one was opened from (false when there's none)
 function sheetBack() {
   const e = S.sheetStack.pop(); if (!e) return false;
@@ -5847,7 +5848,7 @@ function voiceFor(who, key) {
   const vs = loadPhoneVoices(), pool = vs.filter(x => sx === "f" ? FEM_V.test(x.name) : sx === "m" ? MAS_V.test(x.name) : true), from = pool.length ? pool : vs;
   const phone = vs.find(x => x.name === v.phone) || from[hash(k + ":v") % Math.max(1, from.length)] || null;
   const autoPitch = sx === "f" ? 1.12 + h * 0.2 : sx === "m" ? 0.78 + h * 0.18 : 0.9 + h * 0.3;
-  return { phone, pitch: +v.pitch || (phone && v.phone ? 1 : autoPitch), cpitch: +v.pitch || 1, rate: +v.rate || 1, cart: v.cart || "", name: who?.name || "" };
+  return { phone, pitch: +v.pitch || (phone && v.phone ? 1 : autoPitch), cpitch: +v.pitch || 1, rate: +v.rate || 1, cart: v.cart || "", name: who?.name || "", fx: Array.isArray(v.fx) ? v.fx.filter(k => VOICE_FX[k]) : [], fxMix: v.fxMix ?? 0.6 };
 }
 const narratorVoice = () => voiceFor({ name: "Narrator", voice: S.settings.narrator || {} }, "narrator");
 // ---- v1.86: a tilde stretches the word it ends ("hi~" → "hiii", "please~" → "pleeease") instead of being read as "tilde"
@@ -5944,8 +5945,79 @@ async function toneParts(m, parts) {
   }
   return parts;
 }
+// ---- v1.87: how names are said. Each voice can carry `say` (the name spelled the way it sounds); every line read in a chat
+// swaps those names (whole words, any case) for their spellings, for the bot, its members and cast, and your personas.
+function sayMap() {
+  const out = [], add = x => { const n = (x?.name || "").trim(), sy = (x?.voice?.say || "").trim(); if (!n || !sy || sy.toLowerCase() === n.toLowerCase()) return; out.push([n, sy]); const nw = n.split(/\s+/), sw = sy.split(/\s+/); if (nw.length > 1 && nw.length === sw.length) nw.forEach((w, i) => w.length > 2 && out.push([w, sw[i]])); };
+  for (const x of SAY_EXTRA) add(x); // a name being tried out in an editor wins over the saved one
+  const c = char(); if (c) { add(c); members(c).forEach(add); (c.cast || []).forEach(add); }
+  const p = persona(); add(p); if (isGroupP(p)) groupMembersP(p).forEach(add); (S.personas || []).forEach(add);
+  return out.sort((a, b) => b[0].length - a[0].length);
+}
+var SAY_EXTRA = [];
+function sayNames(t) {
+  let s = String(t || ""); const seen = new Set();
+  for (const [n, sy] of sayMap()) { const k = n.toLowerCase(); if (seen.has(k)) continue; seen.add(k); s = s.replace(new RegExp(`(^|[^\\p{L}\\p{N}])${n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=$|[^\\p{L}\\p{N}])`, "giu"), (_, pre) => pre + "\u0001" + seen.size + "\u0002"); VQ.say[seen.size] = sy; }
+  return s.replace(/\u0001(\d+)\u0002/g, (_, i) => VQ.say[i] || "");
+}
+// ---- v1.87: voice filters (Cartesia voices: their audio runs through Web Audio; the phone's own voices can't be filtered)
+const VOICE_FX = {
+  robot: { n: "Robotic", d: "metallic, buzzing" }, radio: { n: "Radio / phone", d: "thin, crackly" }, room: { n: "Small room", d: "close echo" },
+  hall: { n: "Hall reverb", d: "big, echoing" }, cave: { n: "Cave", d: "huge, long echo" }, echo: { n: "Echo", d: "repeats" },
+  layers: { n: "Layered voices", d: "several at once" }, demon: { n: "Demonic", d: "deep, gritty, layered" }, ghost: { n: "Ghostly", d: "airy, haunting" },
+  muffled: { n: "Muffled", d: "behind a wall / inside" }, giant: { n: "Giant", d: "huge chest, booming" }, fairy: { n: "Tiny / fairy", d: "small, shimmering" }
+};
+function fxImpulse(ac, sec, decay = 2.5, bright = 1) {
+  const n = Math.round(ac.sampleRate * sec), b = ac.createBuffer(2, n, ac.sampleRate);
+  for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); let lp = 0; for (let i = 0; i < n; i++) { const w = Math.random() * 2 - 1; lp = lp + bright * (w - lp); d[i] = lp * Math.pow(1 - i / n, decay); } }
+  return b;
+}
+function fxShaper(ac, k) { const sh = ac.createWaveShaper(), n = 1024, cv = new Float32Array(n); for (let i = 0; i < n; i++) { const x = i * 2 / n - 1; cv[i] = (1 + k) * x / (1 + k * Math.abs(x)); } sh.curve = cv; sh.oversample = "2x"; return sh; }
+// one effect: input node → output node, wet mixed with dry by m (0..1)
+function fxStage(ac, input, k, m, keep) {
+  const out = ac.createGain(), dry = ac.createGain(), wet = ac.createGain(); dry.gain.value = 1 - m * (["robot", "radio", "muffled", "demon", "giant", "fairy"].includes(k) ? 1 : 0.45); wet.gain.value = m;
+  input.connect(dry).connect(out); let w = input;
+  const filt = (type, f, q = 0.7) => { const x = ac.createBiquadFilter(); x.type = type; x.frequency.value = f; x.Q.value = q; return x; };
+  const osc = (f, type = "sine") => { const o = ac.createOscillator(); o.type = type; o.frequency.value = f; o.start(); keep.push(o); return o; };
+  const chorus = (src, dst, n, base, depth, gain) => { for (let i = 0; i < n; i++) { const d = ac.createDelay(0.2); d.delayTime.value = base + i * 0.007; const lg = ac.createGain(); lg.gain.value = depth; osc(0.25 + i * 0.21).connect(lg).connect(d.delayTime); const gg = ac.createGain(); gg.gain.value = gain; src.connect(d).connect(gg).connect(dst); } };
+  const reverb = (src, dst, sec, decay, gain, bright) => { const cv = ac.createConvolver(); cv.buffer = fxImpulse(ac, sec, decay, bright); const gg = ac.createGain(); gg.gain.value = gain; src.connect(cv).connect(gg).connect(dst); };
+  if (k === "robot") { const ring = ac.createGain(); ring.gain.value = 0; osc(62, "square").connect(ring.gain); const bp = filt("bandpass", 1400, 0.5); const boost = ac.createGain(); boost.gain.value = 2.6; input.connect(ring).connect(bp).connect(boost).connect(wet); const thin = ac.createGain(); thin.gain.value = 0.35; input.connect(filt("highpass", 500)).connect(thin).connect(wet); }
+  else if (k === "radio") { const sh = fxShaper(ac, 6); input.connect(filt("highpass", 380)).connect(filt("lowpass", 3200)).connect(sh).connect(filt("peaking", 1800, 1)).connect(wet); const ng = ac.createGain(); ng.gain.value = 0.6; wet.gain.value = m * 0.8; }
+  else if (k === "room") reverb(input, wet, 0.7, 3.5, 0.8, 0.6);
+  else if (k === "hall") reverb(input, wet, 2.6, 2.4, 0.9, 0.45);
+  else if (k === "cave") { reverb(input, wet, 4.5, 1.6, 0.9, 0.3); const d = ac.createDelay(1); d.delayTime.value = 0.18; const fb = ac.createGain(); fb.gain.value = 0.3; input.connect(d).connect(fb).connect(d); fb.connect(wet); }
+  else if (k === "echo") { const d = ac.createDelay(2); d.delayTime.value = 0.32; const fb = ac.createGain(); fb.gain.value = 0.38; const lp = filt("lowpass", 3000); input.connect(d).connect(lp).connect(fb).connect(d); lp.connect(wet); }
+  else if (k === "layers") { chorus(input, wet, 3, 0.012, 0.004, 0.55); }
+  else if (k === "demon") { const sh = fxShaper(ac, 12), lp = filt("lowpass", 2000), lo = filt("lowshelf", 160); lo.gain.value = 9; const ring = ac.createGain(); ring.gain.value = 0.55; osc(28).connect(ring.gain); const tame = ac.createGain(); tame.gain.value = 0.22; input.connect(sh).connect(tame).connect(lp).connect(lo).connect(ring).connect(wet); chorus(lp, wet, 2, 0.02, 0.006, 0.4); reverb(lp, wet, 1.8, 2.2, 0.3, 0.3); }
+  else if (k === "ghost") { const hp = filt("highpass", 520); input.connect(hp); chorus(hp, wet, 3, 0.015, 0.005, 0.45); reverb(hp, wet, 3.2, 2, 0.7, 0.5); }
+  else if (k === "muffled") input.connect(filt("lowpass", 850)).connect(filt("lowshelf", 150)).connect(wet);
+  else if (k === "giant") { const lo = filt("lowshelf", 180); lo.gain.value = 10; const pk = filt("peaking", 400, 0.8); pk.gain.value = 4; input.connect(lo).connect(pk).connect(filt("lowpass", 4500)).connect(wet); reverb(lo, wet, 1.6, 2.5, 0.35, 0.35); }
+  else if (k === "fairy") { const hp = filt("highpass", 700), hs = filt("highshelf", 4000); hs.gain.value = 6; const fb2 = ac.createGain(); fb2.gain.value = 1.6; input.connect(hp).connect(hs).connect(fb2).connect(wet); chorus(hs, wet, 2, 0.008, 0.003, 0.4); reverb(hs, wet, 1.4, 2.2, 0.4, 0.8); }
+  wet.connect(out); return out;
+}
+// plays a line's audio through its filters; resolves true when it finished (false if it couldn't play)
+async function voiceFxPlay(url, fx, mix, rate, vol, g) {
+  try {
+    const ac = acx(); if (!ac) return false;
+    let buf = VQ.buf.get(url); if (!buf) { buf = await ac.decodeAudioData(await (await fetch(url)).arrayBuffer()); VQ.buf.set(url, buf); if (VQ.buf.size > 30) VQ.buf.delete(VQ.buf.keys().next().value); }
+    if (g !== VQ.gen) return true;
+    const src = ac.createBufferSource(), keep = []; src.buffer = buf; src.playbackRate.value = rate;
+    let node = src; const m = Math.max(0.1, Math.min(1, +mix || 0.6));
+    for (const k of fx) node = fxStage(ac, node, k, m, keep);
+    const out = ac.createGain(), lim = ac.createDynamicsCompressor(); out.gain.value = vol; lim.threshold.value = -6; lim.ratio.value = 12; lim.attack.value = 0.003; lim.release.value = 0.2; node.connect(out).connect(lim).connect(ac.destination);
+    const tail = fx.some(k => ["cave", "hall", "ghost", "echo", "demon"].includes(k)) ? 1.6 : 0.3;
+    VQ.fxLast = fx.slice();
+    return await new Promise(res => {
+      let over = false; const end = ok => { if (over) return; over = true; clearTimeout(tm); setTimeout(() => { try { src.disconnect(); out.disconnect(); lim.disconnect(); keep.forEach(o => { try { o.stop(); } catch {} }); } catch {} }, tail * 1000); res(ok); };
+      VQ.el = { pause() { try { out.gain.setTargetAtTime(0.0001, ac.currentTime, 0.03); src.stop(ac.currentTime + 0.1); } catch {} end(true); } };
+      src.onended = () => setTimeout(() => end(true), tail * 700);
+      const tm = setTimeout(() => end(true), (buf.duration / rate + tail + 1.5) * 1000); // never stuck if the sound system is paused
+      src.start();
+    });
+  } catch (e) { console.warn("voice fx:", e.message); return false; }
+}
 // ---- playing: one queue, either engine, stoppable at any time
-const VQ = { list: [], busy: false, gen: 0, el: null, cache: new Map() };
+const VQ = { list: [], busy: false, gen: 0, el: null, cache: new Map(), buf: new Map(), say: {} };
 function voiceStop() { VQ.gen++; VQ.list = []; VQ.busy = false; if (VQ.sfx) { try { VQ.sfx.stop(); } catch {} VQ.sfx = null; } try { speechSynthesis.cancel(); } catch {} if (VQ.el) { try { VQ.el.pause(); } catch {} VQ.el = null; } document.querySelectorAll(".vo-on").forEach(x => x.classList.remove("vo-on")); }
 function voiceSay(parts) { if (!parts.length) return; voiceStop(); VQ.list = parts.slice(); voiceNext(VQ.gen); }
 async function voiceNext(g) {
@@ -5969,7 +6041,8 @@ async function voiceNext(g) {
       // Cartesia is asked for the opposite pace, so the pace you hear is the one you picked.
       const cp = Math.max(0.6, Math.min(1.5, v.cpitch || 1)), want = (p.speed || 1) * (v.rate || 1) * speed;
       const sent = +Math.max(0.6, Math.min(1.5, want / cp)).toFixed(2), play = cp * (want / (sent * cp));
-      const url = await cartAudio(p.text, v.cart || (p.who === "narrator" ? S.settings.narrator.cart : S.settings.cartDefault), { ...p, speed: sent }); if (g !== VQ.gen) return;
+      const url = await cartAudio(sayNames(p.text), v.cart || (p.who === "narrator" ? S.settings.narrator.cart : S.settings.cartDefault), { ...p, speed: sent }); if (g !== VQ.gen) return;
+      if (v.fx.length) { const ok = await voiceFxPlay(url, v.fx, v.fxMix, Math.max(0.5, Math.min(2, play)), vol, g); if (ok) return voiceNext(g); if (g !== VQ.gen) return; }
       const a = new Audio(url); VQ.el = a; a.volume = vol; const shift = Math.abs(cp - 1) > 0.001; a.preservesPitch = a.mozPreservesPitch = a.webkitPreservesPitch = !shift; a.playbackRate = shift ? +play.toFixed(3) : Math.max(0.5, Math.min(2, play)); VQ.cp = { cp, sent, play: a.playbackRate, shift };
       a.onended = a.onerror = () => voiceNext(g); await a.play(); return;
     } catch (e) { console.warn("voice:", e.message); if (!VQ.warned) { VQ.warned = 1; toast("Cartesia voice failed: " + e.message + ". Using the phone's voices."); } }
@@ -5977,7 +6050,7 @@ async function voiceNext(g) {
   try {
     // the phone's voices have no emotions: pitch, pace and loudness carry the tone instead
     const base = TONE_BASE[p.emo] || "neutral", dp = { excited: 0.12, sad: -0.1, angry: -0.04, scared: 0.1, content: 0.03, neutral: 0 }[base] || 0;
-    const u = new SpeechSynthesisUtterance(p.text); if (v.phone) u.voice = v.phone; u.pitch = Math.max(0.1, Math.min(2, v.pitch + dp)); u.rate = Math.max(0.5, Math.min(2, v.rate * speed * (p.speed || 1))); u.volume = Math.max(0, Math.min(1, vol * Math.min(1, p.vol || 1)));
+    const u = new SpeechSynthesisUtterance(sayNames(p.text)); if (v.phone) u.voice = v.phone; u.pitch = Math.max(0.1, Math.min(2, v.pitch + dp)); u.rate = Math.max(0.5, Math.min(2, v.rate * speed * (p.speed || 1))); u.volume = Math.max(0, Math.min(1, vol * Math.min(1, p.vol || 1)));
     u.onend = u.onerror = () => voiceNext(g); speechSynthesis.speak(u);
   } catch { voiceNext(g); }
 }
@@ -6007,7 +6080,9 @@ async function cartClone(blob, name) {
 }
 // v1.86: every page of the account's voices (yours and Cartesia's), kept on this device for a day
 let CART_LIST = null;
-async function cartVoices(force) {
+let CART_LOADING = null; // one load at a time: callers share it
+function cartVoices(force) { if (!CART_LOADING) CART_LOADING = cartVoices0(force).finally(() => { CART_LOADING = null; }); return CART_LOADING; }
+async function cartVoices0(force) {
   const ck = "lr_cartvoices";
   if (!force && CART_LIST && Date.now() - CART_LIST.at < 864e5) return CART_LIST.list;
   if (!force) { try { const c = JSON.parse(localStorage.getItem(ck) || "null"); if (c?.list?.length && Date.now() - c.at < 864e5) { CART_LIST = c; return c.list; } } catch {} }
@@ -6120,11 +6195,19 @@ function voiceEditor(work, box, opt = {}) {
         <div class="row"><button type="button" class="btn small" id="cvRec">🎙 Record 10 s to clone</button><label class="btn small">📁 Clone from a clip<input type="file" id="cvFile" accept="audio/*" hidden></label></div><p class="hint" id="cvMsg" style="margin:0"></p>` : ""}
       ${field(cart ? "Phone voice (when Cartesia isn't used)" : "Phone voice", `<button type="button" class="btn vp-open" id="cvPhoneB"><span>📱</span><b>${esc(phoneLbl)}</b><small>Change</small></button><input type="hidden" id="cvPhone" value="${esc(v.phone || "")}">`, loadPhoneVoices().length ? "Free voices from this phone or computer. They differ between devices." : "This browser didn't list any voices yet.")}
       ${field("Pitch", `<input type="range" id="cvPitch" min="0.5" max="1.8" step="0.05" value="${+v.pitch || (cart ? 1 : +auto.pitch.toFixed(2))}">`, cart ? "Works on Cartesia voices too: lower for a deeper voice, higher for a lighter one." : "")}${field("Speed", `<input type="range" id="cvRate" min="0.6" max="1.6" step="0.05" value="${+v.rate || 1}">`, cart ? "How fast they talk, on every engine." : "")}
+      ${field(me ? "How to say your name" : "How to say the name", `<div class="row" style="gap:6px"><input id="cvSay" value="${esc(v.say || "")}" placeholder="Spell it how it sounds, e.g. Ay-LEE-nah" autocomplete="off" style="flex:1"><button type="button" class="btn small" id="cvSayT" aria-label="Hear the name">▶</button></div>`, "Spell the name the way it sounds (dashes between parts, CAPITALS for the stressed part). Used everywhere it's read aloud.")}
+      <div class="field"><label>Filters</label><div class="vfx-chips" id="cvFx">${Object.entries(VOICE_FX).map(([k, x]) => `<button type="button" class="chip ${(v.fx || []).includes(k) ? "on" : ""}" data-fx="${k}" title="${esc(x.d)}">${esc(x.n)}</button>`).join("")}</div>
+        ${(v.fx || []).length ? rangeRow("cvFxMix", "Filter strength", "", 0.1, 1, 0.05, v.fxMix ?? 0.6, x => Math.round(x * 100) + "%") : ""}
+        <div class="hint">${cart ? "Stack as many as you like. They work on Cartesia voices (the phone's own voices can't be filtered)." : "Filters work on Cartesia voices only: the phone's own voices can't be filtered. They're kept for when you switch."}</div></div>
       <button type="button" class="btn small" id="cvTest">▶ Test this voice</button>`;
     const set = (k, val) => { work.voice = { ...(work.voice || {}), [k]: val }; if (val === "" || val == null) delete work.voice[k]; opt.onChange?.(); };
     Q("cvPhone").onchange = e => set("phone", e.target.value); Q("cvPitch").oninput = e => set("pitch", +e.target.value); Q("cvRate").oninput = e => set("rate", +e.target.value);
     Q("cvPhoneB").onclick = async () => { const r = await openVoicePicker({ engine: "phone", cur: v.phone || "", title: me ? "Your phone voice" : "Phone voice", who: work, voice: work.voice, sample: sample() }); if (r === null) return; set("phone", r); draw(); };
-    Q("cvTest").onclick = () => voiceSay([{ text: sample(), who: { ...work, id: work.id || work.name } }]);
+    Q("cvTest").onclick = () => { SAY_EXTRA.length = 0; SAY_EXTRA.push(work); voiceSay([{ text: sample(), who: { ...work, id: work.id || work.name } }]); };
+    Q("cvSay").oninput = e => set("say", e.target.value.trim());
+    Q("cvSayT").onclick = () => { SAY_EXTRA.length = 0; SAY_EXTRA.push(work); voiceSay([{ text: (work.name || "") + ".", who: { ...work, id: work.id || work.name } }]); };
+    box.querySelectorAll("[data-fx]").forEach(b => b.onclick = () => { const L = new Set(work.voice?.fx || []); L.has(b.dataset.fx) ? L.delete(b.dataset.fx) : L.add(b.dataset.fx); set("fx", L.size ? Object.keys(VOICE_FX).filter(k => L.has(k)) : ""); draw(); });
+    if (Q("cvFxMix")) Q("cvFxMix").oninput = e => { set("fxMix", +e.target.value); Q("cvFxMixV").textContent = Math.round(+e.target.value * 100) + "%"; };
     if (Q("cvCart")) {
       Q("cvCart").onchange = e => { set("cart", e.target.value.trim()); draw(); };
       Q("cvList").onclick = async () => { const r = await openVoicePicker({ engine: "cart", cur: v.cart || "", title: me ? "Your voice" : work.name ? `${work.name}'s voice` : "Their voice", who: work, voice: work.voice, sample: sample(), autoLabel: "None (use the default or the phone's voice)" }); if (r === null) return; set("cart", r); draw(); };
