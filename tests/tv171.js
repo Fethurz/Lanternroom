@@ -40,9 +40,9 @@ const open = require("./base.js");
     for (const u of COMM.users) for (let k = 0; k < 20; k++) { const t = now + k * 47 * 60e3; if (onBase(u, t)) continue; const r = dmDelay(u, t);
       const seenOn = Array.from({ length: 140 }, (_, i) => r.seenAt - i * 1000).some(x => onBase(u, x));
       const dueOn = Array.from({ length: 200 }, (_, i) => r.due - i * 1000).some(x => onBase(u, x));
-      res.push(1); if (!(r.seenAt > t && r.due > r.seenAt && seenOn && dueOn)) bad.push([u.handle, k, r.seenAt - t, r.due - t, seenOn, dueOn]); }
+      res.push(1); if (!(r.seenAt > t && r.due > r.seenAt && !asleepAt(u, r.seenAt) && !asleepAt(u, r.due) && (seenOn || r.seenAt - t < 6.5 * 3.6e6 || asleepAt(u, t + 6.5 * 3.6e6) || nextSleep(u, t) - t < 6.5 * 3.6e6))) bad.push([u.handle, k, r.seenAt - t, r.due - t, seenOn, dueOn]); }
     return { n: res.length, bad: bad.slice(0, 5), nb: bad.length }; });
-  chk(`messages to offline people are seen and answered only when they're on (${dm.n} tries, ${dm.nb} wrong)`, dm.n > 50 && dm.nb === 0); if (dm.nb) console.log(JSON.stringify(dm.bad));
+  chk(`v1.76: messages to people who are away are seen within a few hours (or after they wake), never while asleep (${dm.n} tries, ${dm.nb} wrong)`, dm.n > 50 && dm.nb === 0); if (dm.nb) console.log(JSON.stringify(dm.bad));
   // a real send: offline now, Seen and the reply later, and they show online at those moments
   const send = await pg.evaluate(async () => { const now = Date.now(), u = COMM.users.find(x => !isOnline(x, now) && !asleepAt(x, now)) || COMM.users.find(x => !isOnline(x, now)); if (!u) return null;
     dmSend(u.id, "hey are you around?"); const m = COMM.dms[u.id].msgs.at(-1), q = COMM.dmq.find(x => x.user === u.id);

@@ -22,7 +22,7 @@ const open = require("./base.js");
   // ---- outfits
   const fit = await pg.evaluate(() => { const us = COMM.users; return { all: us.every(u => u.fit && u.fit.theme), first: us[0].fit, status: us[0].status, keys: us.every(u => FIT_THEMES().includes(u.fit.theme) && (!u.fit.flame || LN_FLAME_BY[u.fit.flame]) && (!u.fit.finish || FIN_BY[u.fit.finish])) }; });
   chk("everyone is dressed with real shop items (bad keys dropped)", fit.all && fit.keys && fit.first.theme === "star" && fit.first.finish === "gold" && fit.first.flame === "");
-  chk("…and has a status line in their voice", fit.status === "taking requests!! dm me");
+  chk("…and has no status line (v1.76: statuses are gone)", !fit.status);
   chk("the outfit prompt offers the catalogue and allows plain defaults", calls.some(c => /customise how the app looks/.test(sysOf(c)) && /pal:lantern/.test(sysOf(c)) && /About a quarter keep everything default/.test(sysOf(c))));
   const u0 = await pg.evaluate(() => COMM.users[0].id), u2 = await pg.evaluate(() => COMM.users[2].id);
   await pg.evaluate(id => { const u = userOf(id); u.sleep = [(Math.floor(localHour(u)) + 8) % 24, (Math.floor(localHour(u)) + 9) % 24]; }, u0);
@@ -32,7 +32,7 @@ const open = require("./base.js");
   const pf = await pg.evaluate(() => { const x = document.querySelector(".cm-pfx"); const cs = getComputedStyle(x); return { star: x.classList.contains("st-star"), fx: !!x.querySelector(".sh-fx svg, .sh-fx circle, .sh-fx *"), bg: cs.backgroundColor, lantern: !!x.querySelector(".cm-lan .lantern"), name: getComputedStyle(x.querySelector(".cm-pfn")).backgroundClip || getComputedStyle(x.querySelector(".cm-pfn")).webkitBackgroundClip, status: x.querySelector(".cm-stline")?.textContent, pin: /Pinned/.test(x.textContent) && x.querySelectorAll(".cm-card").length >= 2, follow: !!$("cmFollow"), acc: x.style.getPropertyValue("--accent") }; });
   chk("their profile is in their theme, with its backdrop", pf.star && pf.fx && pf.bg !== "rgba(0, 0, 0, 0)");
   chk("…their lantern as an emblem, their name in their finish, their accent", pf.lantern && pf.name === "text" && pf.acc === "#ff6fae");
-  chk("…a status line, a pinned bot and a Follow button", /taking requests/.test(pf.status || "") && pf.pin && pf.follow);
+  chk("…no status line, a pinned bot and a Follow button", !pf.status && pf.pin && pf.follow);
   await pg.evaluate(id => openCommUser(id), await pg.evaluate(() => COMM.users[1].id)); await wait(300);
   chk("someone on defaults gets the plain look", await pg.evaluate(() => { const x = document.querySelector(".cm-pfx"); return ![...x.classList].some(c => /^st-/.test(c)) && !x.querySelector(".sh-fx") && !document.querySelector(".cm-stline"); }));
   // ---- following

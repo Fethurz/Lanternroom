@@ -11,7 +11,7 @@ const open = require("./base.js");
     if (/write new bot listings/.test(s)) { const hs = [...u.matchAll(/- @(\w+)/g)].map(m => m[1]); return { posts: hs.map((h, i) => ({ by: h, source: "", kind: "character", name: `Bot ${h} ${i}`, tags: ["vore"], summary: "s", appearance: "a", description: "d", scenario: "sc", firstMessage: "*Hi.*" })) }; }
     if (/customise how the app looks/.test(s)) { const hs = [...u.matchAll(/- @(\w+)/g)].map(m => m[1]); return { people: hs.map(h => ({ handle: h, theme: "pal:lantern", status: "just posted my new bot!! go check it" })) }; }
     if (/short blog posts or announcements/.test(s)) { const hs = [...u.matchAll(/- @(\w+)/g)].map(m => m[1]); return { posts: hs.map(h => blogMode === "claim" ? { by: h, title: "NEW BOT", text: "just dropped a new bot, go check it out!!" } : { by: h, title: "requests open", text: "taking a couple of requests this week" }) }; }
-    if (/write the comments people leave/.test(s)) { const hs = [...u.matchAll(/- @(\w+) \(/g)].map(m => m[1]), ks = [...u.matchAll(/Listing key (\S+):/g)].map(m => m[1]); const only = (u.match(/may comment on this post: @(\w+)/) || [])[1]; return { comments: ks.map((k, i) => ({ on: k, by: only && u.split("## Listing key " + k)[1]?.split("## Listing key")[0]?.includes("Only these people") ? only : hs[i % hs.length], text: "love this!" })) }; }
+    if (/write the comments people leave/.test(s)) { const lst = k => ((u.split("## Listing key " + k + ":")[1] || "").split("LISTING (the only facts about this bot):\n")[1] || "").split("\n")[0].split(" ").slice(0, 6).join(" "); const hs = [...u.matchAll(/- @(\w+) \(/g)].map(m => m[1]), ks = [...u.matchAll(/Listing key (\S+):/g)].map(m => m[1]); const only = (u.match(/may comment on this post: @(\w+)/) || [])[1]; return { comments: ks.map((k, i) => ({ on: k, by: only && u.split("## Listing key " + k)[1]?.split("## Listing key")[0]?.includes("Only these people") ? only : hs[i % hs.length], about: lst(k), text: "love this! " + lst(k) + " " + i })) }; }
     if (/^You are @(\w+)/.test(s)) return { text: "ty!!" };
     return { summary: "x", facts: [] };
   };
@@ -28,20 +28,19 @@ const open = require("./base.js");
   if (bl) chk("the blog prompt lists each person's real bots with dates and says only true things", /Their bots: ("|none yet \(they have never posted a bot\))/.test(userOf_(bl)) && /Never claim a new bot/.test(sysOf(bl)));
   else console.log("PASS (no blog round ran yet)");
   const st = await pg.evaluate(() => COMM.users.map(u => ({ s: u.status || "", has: commUserPosts(u).some(p => Date.now() - p.at < 3 * 864e5) })));
-  chk("a status claiming a new bot is cleared for people with no recent bot", st.every(x => !/just posted my new bot/.test(x.s) || x.has) && st.some(x => !x.has));
-  chk("…and people with a recent bot may say it", st.some(x => x.has && /just posted/.test(x.s)));
-  chk("the outfit/status prompt sees their bots and the truth rule", calls.some(c => /customise how the app looks/.test(sysOf(c)) && /Never claim a new bot/.test(sysOf(c)) && /Their bots:/.test(userOf_(c))));
+  chk("v1.76: nobody has a status any more", st.every(x => !x.s));
+  chk("the outfit prompt asks for no status", calls.some(c => /customise how the app looks/.test(sysOf(c)) && !/"status"/.test(sysOf(c))));
   chk("claimOk: true claims pass, false ones don't", await pg.evaluate(() => { const u = COMM.users.find(x => !commUserPosts(x).length); const v = COMM.posts[0] && userOf(COMM.posts[0].by); return !claimOk(u, "just made a new bot!") && claimOk(u, "working on a WIP, out soon") && (!v || claimOk(v, "just posted my new bot")); }));
 
   // ---- your profile
   await pg.evaluate(async () => { S.chars[0].pub = true; await commPublish(S.chars[0], true); openCommunity("you"); }); await wait(300);
   chk("You is your own profile page (name, @handle, stats, Edit, New post, Activity)", await pg.evaluate(() => !!document.querySelector("#hubBody .cm-pfx") && /@\w+ · you/.test(cbody().textContent) && !!$("meEdit") && !!$("mePost") && !!$("hubActB") && /followers/.test(cbody().textContent)));
   await pg.click("#meEdit"); await wait(200);
-  await pg.fill("#cmMe", "Lanternlover"); await pg.fill("#meStatus", "WIP: a big dragon bot"); await pg.fill("#meBio", "I make cozy vore bots and the odd dragon. Requests sometimes open.");
+  await pg.fill("#cmMe", "Lanternlover"); await pg.fill("#meBio", "I make cozy vore bots and the odd dragon. Requests sometimes open.");
   await pg.selectOption("#mePin", await pg.evaluate(() => S.chars[0].id)); await pg.click("#meSave"); await wait(300);
   const me = await pg.evaluate(() => ({ ...COMM.me, title: HUB.cur?.title, txt: cbody().textContent }));
-  chk("Edit profile saves name, status, bio and pinned bot and goes back", me.name === "Lanternlover" && me.status === "WIP: a big dragon bot" && /cozy vore bots/.test(me.bio) && me.pin && me.title === "__tab");
-  chk("…shown on your profile with the pin", /WIP: a big dragon bot/.test(me.txt) && /cozy vore bots/.test(me.txt) && /Pinned/.test(me.txt));
+  chk("Edit profile saves name, bio and pinned bot and goes back", me.name === "Lanternlover" && !me.status && !(await pg.$("#meStatus")) && /cozy vore bots/.test(me.bio) && me.pin && me.title === "__tab");
+  chk("…shown on your profile with the pin", /cozy vore bots/.test(me.txt) && /Pinned/.test(me.txt));
   await pg.evaluate(async () => { ACHS.shop.owned["theme:star"] = Date.now(); ACHS.shop.wear.theme = "star"; hubTab("you"); }); await wait(200);
   chk("your profile wears your Wardrobe theme", await pg.evaluate(() => document.querySelector("#hubBody .cm-pfx").classList.contains("st-star")));
   await pg.click("#mePost"); await wait(200);

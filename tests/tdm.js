@@ -29,11 +29,11 @@ const open = require("./base.js");
     COMM.dms = {}; const now = Date.now();
     const fast = { ...COMM.users[0], id: "f1", speed: "fast", active: 1, tz: 0, sleep: [new Date(now).getUTCHours() + 12 % 24, (new Date(now).getUTCHours() + 13) % 24] };
     fast.sleep = [(new Date(now).getUTCHours() + 10) % 24, (new Date(now).getUTCHours() + 12) % 24];
-    const slow = { ...fast, id: "s1", speed: "slow" }, sleeper = { ...fast, id: "z1", sleep: [(new Date(now).getUTCHours() + 23) % 24, (new Date(now).getUTCHours() + 3) % 24] };
+    const slow = { ...fast, speed: "slow" }, sleeper = { ...fast, id: "z1", sleep: [(new Date(now).getUTCHours() + 23) % 24, (new Date(now).getUTCHours() + 3) % 24] };
     const ds = n => Array.from({ length: n }, () => dmDelay(fast, now).due - now), dz = dmDelay(sleeper, now);
-    return { fastMax: Math.max(...ds(40)), fastMin: Math.min(...ds(40)), slowMed: Array.from({ length: 40 }, () => dmDelay(slow, now).due - now).sort((a, b) => a - b)[20], sleeperAfterWake: dz.due >= wakeAfter(sleeper, now), seenBefore: dz.seenAt <= dz.due };
+    return { fastMed: ds(41).sort((a, b) => a - b)[20], fastMax: Math.max(...ds(40)), fastMin: Math.min(...ds(40)), slowMed: Array.from({ length: 40 }, () => dmDelay(slow, now).due - now).sort((a, b) => a - b)[20], sleeperAfterWake: dz.due >= wakeAfter(sleeper, now), seenBefore: dz.seenAt <= dz.due };
   });
-  chk(`reply times follow the person: fast ${Math.round(del.fastMin / 1e3)}s+, slow ~${Math.round(del.slowMed / 6e4)} min`, del.fastMin >= 30e3 && del.slowMed > 20 * 60e3);
+  chk(`reply times follow the person: fast ~${Math.round(del.fastMed / 6e4)} min (from ${Math.round(del.fastMin / 1e3)}s), slow ~${Math.round(del.slowMed / 6e4)} min`, del.fastMin >= 20e3 && del.slowMed > del.fastMed);
   chk("someone asleep answers after they wake, and sees it first", del.sleeperAfterWake && del.seenBefore);
   // ---- a conversation
   const uid0 = await pg.evaluate(() => { const u = COMM.users.find(x => x.style); u.sleep = [(new Date().getUTCHours() + u.tz + 10 + 24) % 24, (new Date().getUTCHours() + u.tz + 11 + 24) % 24].map(h => Math.floor(h)); return u.id; });

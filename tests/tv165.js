@@ -58,12 +58,12 @@ const path = require("path");
   const u0 = await pg.evaluate(() => { const u = COMM.users.find(x => x.fit); u.sleep = [(Math.floor(localHour(u)) + 8) % 24, (Math.floor(localHour(u)) + 9) % 24]; COMM.follow[u.id] = { v: true, at: Date.now() - 864e5 }; COMM.users.filter(x => x !== u).forEach(x => { x.sleep = [(Math.floor(localHour(x)) + 1) % 24, (Math.floor(localHour(x)) + 23) % 24]; }); commSave(); return u.id; });
   // only u0 is awake, so they're the one who updates
   const pu = await pg.evaluate(async id => { COMM.users.forEach(x => { if (x.id !== id) { const h = Math.floor(localHour(x)); x.sleep = [h, (h + 2) % 24]; } }); const got = await commProfileUpdates(1); commSave(); return got.map(([u, w]) => ({ id: u.id, w: w.map(x => x[0]), st: u.status, pix: u.pix })); }, u0);
-  chk("a person updates their profile: new status and a new picture", pu.length === 1 && pu[0].id === u0 && pu[0].w.includes("status") && pu[0].w.includes("pic") && pu[0].st === "new status!!" && pu[0].pix?.s === "owl");
+  chk("a person updates their profile: a new picture, and no status (v1.76)", pu.length === 1 && pu[0].id === u0 && !pu[0].w.includes("status") && pu[0].w.includes("pic") && !pu[0].st && pu[0].pix?.s === "owl");
   chk("the profile prompt offers the picture list", calls.some(c => /update their profiles now and then/.test(sysOf(c)) && /"picture": a new profile picture from this list/.test(sysOf(c)) && /knight, wizard/.test(sysOf(c))));
   await pg.evaluate(id => openCommUser(id), u0); await wait(300);
   chk("…their profile shows the owl", await pg.evaluate(() => !!document.querySelector(".cm-emb .px-av svg")));
   await pg.evaluate(() => openCommunity("feed")); await wait(300);
-  chk("…and the Following feed says they changed their status and picture", /changed their status/.test(await pg.evaluate(() => cbody().textContent)) && /changed their profile picture/.test(await pg.evaluate(() => cbody().textContent)));
+  chk("…and the Following feed says they changed their picture (never a status)", !/changed their status/.test(await pg.evaluate(() => cbody().textContent)) && /changed their profile picture/.test(await pg.evaluate(() => cbody().textContent)));
 
   // ---- your picture: the picker
   await pg.evaluate(() => openCommunity("yours")); await wait(300);
