@@ -54,10 +54,12 @@ const open = require("./base.js");
   const auto = await pg.evaluate(async () => { __said = []; $("input").value = "hi"; $("send").click(); for (let i = 0; i < 100 && (S.busy || __said.length < 2); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 100)); return __said.map(x => x.t); });
   chk(`a new reply is read as soon as it's written (dialogue only by default: ${auto.join(" | ")})`, auto.length === 2 && auto[0] === "Hello there, traveller.");
   const opt = await pg.evaluate(async () => {
-    $("btnMore").click(); await new Promise(r => setTimeout(r, 60));
-    const has = !!$("oVoice"), t1 = $("oVoice")?.textContent; $("oVoice")?.click(); await new Promise(r => setTimeout(r, 30)); const t2 = $("oVoice")?.textContent; const m2 = S.chat.voice;
-    closeSheet(); __said = []; voiceAfterReply(S.chat.messages.filter(m => m.role === "assistant").at(-1)); await new Promise(r => setTimeout(r, 80)); const all = __said.length;
-    S.chat.voice = "off"; __said = []; voiceAfterReply(S.chat.messages.filter(m => m.role === "assistant").at(-1)); await new Promise(r => setTimeout(r, 60)); const off = __said.length;
+    const W8 = async (f, n = 60) => { for (let i = 0; i < n && !f(); i++) await new Promise(r => setTimeout(r, 50)); };
+    for (let i = 0; i < 60 && (S.busy || VQ.busy); i++) await new Promise(r => setTimeout(r, 50));
+    $("btnMore").click(); await W8(() => $("oVoice"));
+    const has = !!$("oVoice"), t1 = $("oVoice")?.textContent; $("oVoice")?.click(); await W8(() => $("oVoice") && $("oVoice").textContent !== t1); const t2 = $("oVoice")?.textContent; const m2 = S.chat.voice;
+    closeSheet(); voiceStop(); __said = []; voiceAfterReply(S.chat.messages.filter(m => m.role === "assistant").at(-1)); await W8(() => __said.length >= 4); await new Promise(r => setTimeout(r, 100)); const all = __said.length;
+    voiceStop(); S.chat.voice = "off"; __said = []; voiceAfterReply(S.chat.messages.filter(m => m.role === "assistant").at(-1)); await new Promise(r => setTimeout(r, 200)); const off = __said.length;
     return { has, t1, t2, m2, all, off };
   });
   chk(`⋯ Options switches this chat's voices (${opt.t1} → ${opt.t2})`, opt.has && /Dialogue only/.test(opt.t1) && /Everything/.test(opt.t2) && opt.m2 === "all");
@@ -98,7 +100,7 @@ const open = require("./base.js");
   cartStatus = 200;
   const cl = await pg.evaluate(async () => {
     editChar(S.chars[0], false); await new Promise(r => setTimeout(r, 120));
-    $("cvList").click(); await new Promise(r => setTimeout(r, 150)); const list = $("cvSel")?.options.length;
+    $("cvList").click(); await new Promise(r => setTimeout(r, 200)); const list = document.querySelectorAll("#voPop .vp-card").length + 1; $("voPop")?._close();
     const f = new File([new Uint8Array([1, 2, 3])], "me.webm", { type: "audio/webm" }), dt = new DataTransfer(); dt.items.add(f); $("cvFile").files = dt.files; $("cvFile").dispatchEvent(new Event("change")); await new Promise(r => setTimeout(r, 200));
     const msg = $("cvMsg").textContent, id = $("cvCart").value; $("cSave").click(); await new Promise(r => setTimeout(r, 150)); return { list, msg, id, saved: S.chars[0].voice?.cart };
   });

@@ -696,6 +696,21 @@ img.px-av{border-radius:50%}
 .pix-pop{position:fixed;inset:0;z-index:400;background:rgba(8,6,12,.72);display:flex;align-items:flex-end;justify-content:center;padding:0 max(0px,env(safe-area-inset-right,0px)) 0 max(0px,env(safe-area-inset-left,0px));animation:fadeIn .16s ease}
 .pix-card{width:min(560px,100%);max-height:calc(100dvh / var(--z,1) - 24px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:20px 20px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px}
 @media (min-width:700px){.pix-pop{align-items:center}.pix-card{border-radius:20px}}
+.vp-open{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px}.vp-open b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vp-open small{color:var(--muted);font-size:12px;flex:none}
+.vp-id summary{font-size:12px;color:var(--muted);cursor:pointer;margin-top:6px}.vp-id input{margin-top:6px;width:100%}
+.vp-card-w{gap:8px;width:min(620px,100%)}.vp-card-w>input{width:100%;border-radius:12px;padding:9px 12px}
+.vp-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.vp-tabs .tab{flex:none}.vp-tabs small{opacity:.65;font-size:11px}
+.vp-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;align-items:center;padding-bottom:2px}.vp-lbl{flex:none;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:2px}
+.vp-list{display:flex;flex-direction:column;gap:6px;max-height:min(56dvh,560px);overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.vp-sec{font-family:var(--f-display,Georgia,serif);font-size:15px;margin:8px 2px 0;color:var(--accent)}.vp-sec small{color:var(--muted);font-family:inherit;font-size:12px}
+.vp-card{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line)}.vp-card.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.vp-main{flex:1;min-width:0}.vp-name{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.vp-name b{font-size:15px}
+.vp-g{font-size:11px;padding:1px 7px;border-radius:999px;background:color-mix(in srgb,var(--muted) 18%,transparent);color:var(--muted)}.vp-g.vp-f{background:color-mix(in srgb,#ff8ab8 20%,transparent);color:#ffa8cb}.vp-g.vp-m{background:color-mix(in srgb,#7ab8ff 20%,transparent);color:#a2cdff}.vp-g.vp-mine{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+.vp-tr{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}.vp-tr i{font-style:normal;font-size:11px;padding:1px 7px;border-radius:6px;border:1px solid var(--line);color:var(--text)}
+.vp-d{font-size:12.5px;color:var(--muted);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vp-btns{display:flex;gap:6px;align-items:center;flex:none}.vp-play,.vp-fav{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:14px}.vp-fav.on{color:var(--accent)}
+.vp-auto{text-align:left;font-size:14px;padding:10px 12px;border-radius:14px;border:1px dashed var(--line);background:transparent;color:var(--muted)}.vp-auto.on{border-style:solid;border-color:var(--accent);color:var(--text)}
+@media (max-width:420px){.vp-card{flex-wrap:wrap}.vp-btns{width:100%;justify-content:flex-end}}
 .pix-top{display:flex;align-items:center;justify-content:space-between}.pix-top b{font-family:var(--f-display,Georgia,serif);font-size:18px;font-weight:400}
 .pix-x{width:36px;height:36px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);font-size:16px}
 .pix-prev{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.pix-big{width:112px;height:112px;display:inline-flex;line-height:0}.pix-big img{width:112px;height:112px;border-radius:50%;object-fit:cover}.pix-big svg{width:112px;height:112px}
@@ -1689,7 +1704,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.85 · Oct 27";
+const VERSION = "1.86 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2272,6 +2287,7 @@ function onoPrompt(c, chat, upto) {
   const recent = chat.messages.slice(Math.max(0, upto - 6), upto).filter(m => m.role !== "image").map(m => m.content || "").join("\n");
   const tags = [...tagsOf(c), ...(c.kind === "group" ? members(c).flatMap(tagsOf) : [])].join(" ");
   let out = `\n\n# Sound effects\nWrite every sound effect as an onomatopoeia invented for that exact moment, wrapped in a sound tag that names what is making the noise: [sfx=KEY]***Onomatopoeia***[/sfx], for example [sfx=belch]***${ONO.make("belch")}***[/sfx]. KEY must be one of the keys listed below; the app colors the word and plays a real recording of that sound, so pick the key that matches what is actually happening (a stomach gurgle is gurgle, full balls sloshing is cumslosh, a punch is punch). Build the word itself to sound like the real noise: stretch letters, mix lower and UPPER case to show it swelling and fading (capitals are louder), pile up consonants for wet, rumbling or gurgling textures, and break long sounds into parts with "..." between them. Never reuse an onomatopoeia within a chat and never fall back on plain words like "gurgle" or "burp". All bodily sounds on the list (burps and belches, stomachs and balls gurgling, sloshing, churning) MUST get their own tagged onomatopoeia. ONLY the sounds on this list exist: anything else (voices, moans, growls, roars, purrs, doors, cloth, footsteps, snoring, sniffing) is described in plain words, with no onomatopoeia and no sound tag. Never write a sound effect in a [color] tag. (Other coloured text, like a character's thoughts when the bot's rules ask for it, is fine: write it as [color=NAME]text[/color].)\nThe sounds:\n${sfxListPrompt()}`;
+  if (sfxAvail().some(x => x.k === "burp" || x.k === "belch")) out += `\nA burp or belch may break into someone's speech when the moment really calls for it (a full or gassy belly, right after eating, swallowing or a big drink, a belchy character): put the sound tag inside their quote where it cuts them off, like "That was [sfx=burp]***${ONO.make("shortBelch")}***[/sfx] delicious." The voice pauses for it. Never force it into ordinary talk.`;
   const vore = /vore|pred|prey|belly|stomach|digest/i.test(tags) || VORE.swallow.test(recent) || VORE.stomach.test(recent) || ["vore", "struggle", "swallow"].includes(chat.messages[upto - 1]?.act);
   // examples for whatever is going on: vore body sounds, plus sex, oral, kissing, toilet, fights, weather and so on
   const act = chat.messages[upto - 1]?.act || "", last = chat.messages.slice(Math.max(0, upto - 2), upto).map(m => m.content || "").join("\n");
@@ -5294,11 +5310,12 @@ function editPersona(p, isNew) {
       ${grp ? `<div class="group"><h3>Members</h3><div id="peMem" class="stack"></div><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Add a new member:</p><input id="peNewN" placeholder="Name"><textarea id="peNewD" style="min-height:60px" placeholder="Look and personality (optional)"></textarea><button type="button" class="btn small" id="peNewAdd">Add member</button></div>` : ""}
       ${field("Picture", `<div class="pp-pic"><span id="pePicV">${picHTML(personaPicOf(work), 64)}</span><button type="button" class="btn small" id="pePic">${work.pic || work.pix ? "Change picture" : "Choose a picture"}</button></div>`, work.pic || work.pix ? "" : "A pixel stand-in until you choose one. Upload your own or make one in pixels.")}
       ${field("Your colour", `<div class="pe-cols" id="peCols">${PERSONA_COLS.map(c => `<button type="button" data-c="${c}" style="background:${c}" class="${(work.color || PERSONA_COLS[0]) === c ? "on" : ""}" aria-label="Colour ${c}"></button>`).join("")}<input type="color" id="peCol" value="${esc(work.color || PERSONA_COLS[0])}" aria-label="Any colour"></div>`, "How you show up in pictures the app draws for you.")}
+      ${grp ? "" : `<div class="group"><h3>Your voice</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">How you sound when you tap your own lines in a chat${S.settings.voiceOn ? "" : " (turn voices on in Settings → Sounds → Voices)"}.</p><div id="peVoice" class="stack"></div></div>`}
       <button class="btn primary" id="peSave">${isNew ? "Create and use" : "Save"}</button>
       ${!isNew && S.personas.length > 1 ? '<button class="btn danger" id="peDel">Delete persona</button>' : ""}`;
     wireExpand(b, () => `Persona name: ${$("peName").value}`);
     const drawMem = () => { const box = $("peMem"); if (!box) return; const list = S.personas.filter(x => !isGroupP(x) && x.id !== work.id && !Array.isArray(x.members)); box.innerHTML = list.length ? list.map(x => `<label class="checkrow"><input type="checkbox" data-id="${esc(x.id)}" ${chosen.has(x.id) ? "checked" : ""}><span class="p-dot" style="background:${esc(personaColor(x))}"></span><span>${esc(x.name)}</span></label>`).join("") : '<p class="note">No personas to add yet. Add a new member below.</p>'; box.querySelectorAll("[data-id]").forEach(i => i.onchange = () => { i.checked ? chosen.add(i.dataset.id) : chosen.delete(i.dataset.id); }); };
-    drawMem();
+    drawMem(); if ($("peVoice")) voiceEditor(work, $("peVoice"), { persona: true });
     if ($("peNewAdd")) $("peNewAdd").onclick = () => { const n = $("peNewN").value.trim(); if (!n) { $("peNewN").focus(); return; } const np = { id: uid(), name: n, description: $("peNewD").value.trim(), color: PERSONA_COLS[(S.personas.length + 1) % PERSONA_COLS.length] }; S.personas.push(np); chosen.add(np.id); $("peNewN").value = ""; $("peNewD").value = ""; drawMem(); };
     $("pePic").onclick = async () => { const r = await openPix(work.pic ? { pic: work.pic } : work.pix ? { pix: work.pix } : {}, { title: "Persona picture", seed: work.id, text: $("peDesc")?.value || work.description, none: work.pic || work.pix ? "No picture" : "" }); if (!r) return; if (r.none) { delete work.pic; delete work.pix; } else if (r.pic) { work.pic = r.pic; delete work.pix; } else { work.pix = r.pix; delete work.pic; } $("pePicV").innerHTML = picHTML(personaPicOf(work), 64); $("pePic").textContent = work.pic || work.pix ? "Change picture" : "Choose a picture"; };
     const pick = c => { work.color = c; $("peCol").value = c; b.querySelectorAll("#peCols button").forEach(x => x.classList.toggle("on", x.dataset.c === c)); };
@@ -5475,7 +5492,7 @@ function editChar(c, isNew, fromDraft) {
       <div class="group"><h3>Choices mode</h3><label class="check"><input type="checkbox" id="cChoices" ${work.choices ? "checked" : ""}> Play by picking choices: 3-4 after every reply (you can still write your own; risky ones roll a d20)</label></div>
       ${VORE_PIC ? `<div class="group"><h3>Vore picture</h3>${field("Usual weight", `<input type="range" id="cWeight" min="0" max="100" step="5" value="${+work.weight || 0}" aria-label="Usual weight">`, "How heavy this bot is in the vore picture before eating anyone, from slim to very fat. Weight from digested prey goes on top and can burn off again.")}</div>` : ""}
       <div class="group"><h3>Status gauges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Bars at the top of the chat (fullness, arousal, health…) that the AI moves as the story goes.</p><div id="cGauges" class="stack"></div></div>
-      <div class="group"><h3>Voice</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">How this ${K === "world" ? "world's narrator" : K === "group" ? "group" : "character"} sounds when replies are read aloud (Settings → Sounds → Voices).${K === "group" ? " Each member's own voice is set in their editor." : ""}</p><div id="cVoice" class="stack"></div></div>
+      <div class="group"><h3>Voice</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">How this ${K === "world" ? "world's narrator" : K === "group" ? "group" : "character"} sounds when replies are read aloud (Settings → Sounds → Voices).</p><div id="cVoice" class="stack"></div>${K === "group" || K === "world" ? `<div class="lbl" style="margin-top:6px">${K === "group" ? "Each member's voice" : "Each character's voice"}</div><p class="hint" style="margin:0;color:var(--muted);font-size:13px">${K === "group" ? "Give every member their own voice." : "Characters from the listings below. Others in the story get an automatic voice by their name."}</p><div class="tabs" id="cVoTabs"></div><div id="cVoOne" class="stack"></div>` : ""}</div>
       <div class="group"><h3>Badges</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Achievements special to this bot. The story awards them when they happen.</p><div id="cBadges" class="stack"></div></div>
       <div class="group"><h3>Gold, inventory and quests</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">For adventures: a gold counter, a bag and a quest log under the chat header. The AI keeps them up to date and you can edit them.</p><div id="cRpg" class="stack"></div></div>
       <div id="cMsg" class="hint"></div>
@@ -5484,6 +5501,8 @@ function editChar(c, isNew, fromDraft) {
 
     ruleTabs($("cInstr"));
     gaugeEditor(work); rpgEditor(work); badgeEditor(work); creatorEditor(work); voiceEditor(work, $("cVoice"));
+    let drawVo = () => {}; // v1.86: set up below, once the member edits exist
+
     const greets = [work.firstMessage || "", ...(work.altGreetings || [])];
     let gi = 0;
     const grab = () => {
@@ -5555,6 +5574,7 @@ function editChar(c, isNew, fromDraft) {
     if (K === "world") {
       const typeOf = x => WORLD_TYPES[x.type] ? x.type : "character";
       drawCast = () => {
+        drawVo();
         const counts = {}; work.cast.forEach(x => { counts[typeOf(x)] = (counts[typeOf(x)] || 0) + 1; });
         $("cCastCats").innerHTML = Object.keys(WORLD_TYPES).map(k => `<button type="button" class="tab ${k === castCat ? "on" : ""}" data-c="${k}">${CAT_LABEL[k]}${counts[k] ? ` · ${counts[k]}` : ""}</button>`).join("");
         $("cCastCats").querySelectorAll("[data-c]").forEach(x => x.onclick = () => { castCat = x.dataset.c; castSel = -1; drawCast(); });
@@ -5585,6 +5605,7 @@ function editChar(c, isNew, fromDraft) {
     let drawMembers = () => {};
     if (K === "group") {
       drawMembers = () => {
+        drawVo();
         const ms = work.members.map(id => memEdits[id] || byId(id)).filter(Boolean);
         if (memSel !== "add" && !work.members.includes(memSel)) memSel = work.members[0] || "add";
         $("cMemTabs").innerHTML = ms.map(m => `<button type="button" class="tab ${m.id === memSel ? "on" : ""}" data-m="${m.id}">${esc((m.name || "Unnamed").slice(0, 16))}</button>`).join("") + `<button type="button" class="tab ${memSel === "add" ? "on" : ""}" data-m="add">+ Add</button>`;
@@ -5616,6 +5637,16 @@ function editChar(c, isNew, fromDraft) {
       };
       drawMembers();
     }
+    // v1.86: a voice for each group member and each world character
+    let voSel = 0;
+    const voWho = () => K === "group" ? work.members.map(id => memEdits[id] || (byId(id) && (memEdits[id] = JSON.parse(JSON.stringify(byId(id)))))).filter(Boolean) : K === "world" ? work.cast.filter(x => (x.type || "character") === "character" && (x.name || "").trim()) : [];
+    drawVo = () => { const T = $("cVoTabs"); if (!T) return; const L = voWho();
+      if (!L.length) { T.innerHTML = ""; $("cVoOne").innerHTML = `<p class="hint" style="margin:0">${K === "group" ? "Add members first." : "Add characters to the world's listings first."}</p>`; return; }
+      voSel = Math.min(voSel, L.length - 1);
+      T.innerHTML = L.map((x, i) => `<button type="button" class="tab ${i === voSel ? "on" : ""}" data-vo="${i}">${x.voice?.cart || x.voice?.phone ? "🎙 " : ""}${esc((x.name || "Unnamed").slice(0, 16))}</button>`).join("");
+      T.querySelectorAll("[data-vo]").forEach(t => t.onclick = () => { voSel = +t.dataset.vo; drawVo(); });
+      voiceEditor(L[voSel], $("cVoOne"), { onChange: () => { const t = T.querySelector(`[data-vo="${voSel}"]`), x = L[voSel]; if (t) t.textContent = (x.voice?.cart || x.voice?.phone ? "🎙 " : "") + (x.name || "Unnamed").slice(0, 16); } }); };
+    drawVo();
 
     // Split into listings
     b.querySelectorAll("[data-split]").forEach(btn => {
@@ -5695,7 +5726,7 @@ function editChar(c, isNew, fromDraft) {
     $("cSave").onclick = async () => {
       grab();
       if (!work.name) { $("cName").focus(); $("cName").placeholder = "A name is required"; return; }
-      for (const [id, m] of Object.entries(memEdits)) { const c0 = byId(id); if (c0) Object.assign(c0, { name: (m.name || "").trim() || c0.name, appearance: (m.appearance || "").trim(), description: (m.description || "").trim() }); }
+      for (const [id, m] of Object.entries(memEdits)) { const c0 = byId(id); if (c0) { Object.assign(c0, { name: (m.name || "").trim() || c0.name, appearance: (m.appearance || "").trim(), description: (m.description || "").trim() }); if (m.voice && Object.keys(m.voice).length) c0.voice = m.voice; else delete c0.voice; } }
       if (K === "group" && !work.members.length) { $("cMsg").textContent = "Add at least one member with the + Add tab, or split characters out of the description."; return; }
       work.lore = work.lore.filter(l => l.text.trim());
       work.cast = work.cast.filter(x => x.name.trim() || x.details.trim());
@@ -5784,7 +5815,7 @@ document.addEventListener("keydown", e => {
   if ($("yearPop")) { $("yearPop")._close(); return; }
   if (!$("ambPop").hidden) { $("ambPop").hidden = true; return; }
   if ($("sheet") && !$("sheet").hidden) { userClose(); return; }
-  if (HUB.open && !$("pixPop")) { if (!hubBack()) hubClose(); return; }
+  if (HUB.open && !$("pixPop") && !$("voPop")) { if (!hubBack()) hubClose(); return; }
   if (!$("chat").hidden && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "")) leaveChat();
 });
 
@@ -5816,24 +5847,63 @@ function voiceFor(who, key) {
   const vs = loadPhoneVoices(), pool = vs.filter(x => sx === "f" ? FEM_V.test(x.name) : sx === "m" ? MAS_V.test(x.name) : true), from = pool.length ? pool : vs;
   const phone = vs.find(x => x.name === v.phone) || from[hash(k + ":v") % Math.max(1, from.length)] || null;
   const autoPitch = sx === "f" ? 1.12 + h * 0.2 : sx === "m" ? 0.78 + h * 0.18 : 0.9 + h * 0.3;
-  return { phone, pitch: +v.pitch || (phone && v.phone ? 1 : autoPitch), rate: +v.rate || 1, cart: v.cart || "", name: who?.name || "" };
+  return { phone, pitch: +v.pitch || (phone && v.phone ? 1 : autoPitch), cpitch: +v.pitch || 1, rate: +v.rate || 1, cart: v.cart || "", name: who?.name || "" };
 }
 const narratorVoice = () => voiceFor({ name: "Narrator", voice: S.settings.narrator || {} }, "narrator");
-// a reply → what to read, in order: [{text, who}] (who = a character object or "narrator")
+// ---- v1.86: a tilde stretches the word it ends ("hi~" → "hiii", "please~" → "pleeease") instead of being read as "tilde"
+const VOWEL = /[aeiouyáéíóúàèìòùäëïöüâêîôû]/i;
+function stretchWord(w) {
+  let core = w, tail = "";
+  if (core.length > 3 && /[^aeiouy]e$/i.test(core)) { tail = core.slice(-1); core = core.slice(0, -1); } // a silent e: "please" stretches its "ea"
+  const ms = [...core.matchAll(/[aeiouyáéíóúàèìòùäëïöüâêîôû]+/gi)], last = ms.at(-1);
+  if (!last) return w + w.slice(-1).repeat(2); // "hmm~" → "hmmmm"
+  const end = last.index + last[0].length, ch = end === core.length ? last[0].slice(-1) : last[0][0];
+  const at = end === core.length ? end : last.index + 1;
+  return core.slice(0, at) + ch.repeat(2) + core.slice(at) + tail;
+}
+const untilde = t => String(t || "").replace(/([\p{L}']+)[~～〜]+/gu, (_, w) => stretchWord(w)).replace(/[~～〜♡♥❤]+/g, " ").replace(/\s{2,}/g, " ").trim();
+// speech text → pieces to say and burps to play in between: [{text} | {sfx: key}]
+const VOICE_SFX = new Set(["burp", "belch"]);
+function speechSegs(raw) {
+  const segs = []; let last = 0;
+  for (const mm of raw.matchAll(/\[sfx=([a-z_]+)\][\s\S]*?\[\/sfx\]/gi)) {
+    const before = raw.slice(last, mm.index); if (/[\p{L}\p{N}]/u.test(before)) segs.push({ text: before });
+    if (VOICE_SFX.has(mm[1].toLowerCase()) && SFX_BY[mm[1].toLowerCase()]) segs.push({ sfx: mm[1].toLowerCase() });
+    last = mm.index + mm[0].length;
+  }
+  const rest = raw.slice(last); if (/[\p{L}\p{N}]/u.test(rest)) segs.push({ text: rest });
+  return segs.map(s => s.sfx ? s : { text: untilde(s.text.replace(/\*\*\*[^*]+\*\*\*/g, "").replace(/\*+/g, "").replace(/\s+/g, " ").trim()) }).filter(s => s.sfx || /[\p{L}\p{N}]/u.test(s.text));
+}
+// a part's segs → one plain line (what the tone director and tap matching see)
+const segsText = segs => segs.filter(s => !s.sfx).map(s => s.text).join(" ").replace(/\s+/g, " ").trim();
+const plainQ = t => untilde(String(t || "").replace(/^["“]|["”]$/g, "")).replace(/[^\p{L}\p{N}]+/gu, " ").trim().toLowerCase();
+// whose voice a message of yours is in: the group member you spoke as, else your persona
+function myVoiceWho(m) { const p = (m?.as && S.personas.find(x => x.id === m.as)) || persona(); return p ? { ...p, id: p.id || "me" } : { name: uname(), id: "me" }; }
+// a reply → what to read, in order: [{text, who}] (who = a character object or "narrator"); your own messages → your lines
 function voiceParts(m, mode) {
-  if (!m || m.role !== "assistant") return [];
+  if (!m || (m.role !== "assistant" && m.role !== "user")) return [];
   const c = char(); let text = htmlColors(m.content);
-  text = text.replace(/\[\[[\s\S]*?\]\]/g, "").replace(/\[sfx=[^\]]*\][\s\S]*?\[\/sfx\]/gi, "").replace(/\[\/?color[^\]]*\]/gi, "").replace(/\*\*\*[^*]+\*\*\*/g, "");
+  // burps written into speech stay (they're played in between); other sound words are never read
+  text = text.replace(/\[\[[\s\S]*?\]\]/g, "").replace(/\[sfx=([^\]]*)\]([\s\S]*?)\[\/sfx\]/gi, (all, k) => VOICE_SFX.has(String(k).toLowerCase()) ? `[sfx=${String(k).toLowerCase()}]b[/sfx]` : "").replace(/\[\/?color[^\]]*\]/gi, "").replace(/\*\*\*[^*]+\*\*\*/g, "");
+  if (m.role === "user") {
+    const who = myVoiceWho(m), out = [];
+    for (const seg of text.split(/("[^"]+"|“[^”]+”)/)) { if (!/^["“]/.test(seg)) continue; const segs = speechSegs(seg.replace(/^["“]|["”]$/g, "")), t = segsText(segs); if (t) out.push({ text: t, segs: segs.some(s => s.sfx) ? segs : null, who, mine: true, ctx: text.replace(/("[^"]+"|“[^”]+”)/g, "…").replace(/\*+/g, "").slice(0, 300) }); }
+    return out;
+  }
   const out = []; let speaker = m.speaker || (c?.kind === "group" ? S.chat?.focus : null);
   const whoOf = name => { if (!c) return null; if (c.kind === "group") return (name && memberByName(c, name)) || (S.chat?.focus && memberByName(c, S.chat.focus)) || c; if (c.kind === "world") { const x = name && (c.cast || []).find(y => y.name.toLowerCase() === String(name).toLowerCase()); return x ? { ...x, id: c.id + ":" + x.name } : { name: name || "Someone", id: c.id + ":" + (name || "someone") }; } return c; };
   for (const line of text.split(/\n+/)) {
     let l = line; const lab = l.match(/^\s*\*\*([^*:]{1,40}):\*\*\s*/); if (lab) { speaker = lab[1].trim(); l = l.slice(lab[0].length); }
     // world narrators name who speaks in the line around the quote ("Mara says", "says the guard")
-    const named = c?.kind === "world" ? ((l.match(/\b([A-Z][a-z]+)\b(?=[^"“]{0,40}["“])/) || [])[1]) : null;
+    // v1.86: a listed cast member named in the line wins (the one named closest before the quote, else the first named)
+    let named = null;
+    if (c?.kind === "world") {
+      const q0 = l.search(/["“]/), hits = (c.cast || []).filter(x => (x.type || "character") === "character" && x.name).map(x => { const re = new RegExp("\\b" + x.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "gi"); let best = -1, first = -1; for (const mm of l.matchAll(re)) { if (first < 0) first = mm.index; if (q0 < 0 || mm.index < q0) best = mm.index; } return { n: x.name, best, first }; }).filter(h => h.first >= 0);
+      const before = hits.filter(h => h.best >= 0).sort((a, b) => b.best - a.best)[0]; named = (before || hits.sort((a, b) => a.first - b.first)[0])?.n || ((l.match(/\b([A-Z][a-z]+)\b(?=[^"“]{0,40}["“])/) || [])[1]);
+    }
     for (const seg of l.split(/("[^"]+"|“[^”]+”)/)) {
-      const t = seg.replace(/\*+/g, "").replace(/\s+/g, " ").trim(); if (!t || !/[a-z0-9]/i.test(t)) continue;
-      if (/^["“]/.test(seg)) out.push({ text: t.replace(/^["“]|["”]$/g, ""), who: whoOf(speaker || named), ctx: l.replace(/("[^"]+"|“[^”]+”)/g, "…").replace(/\*+/g, "").slice(0, 300) });
-      else if (mode === "all") out.push({ text: t, who: "narrator" });
+      if (/^["“]/.test(seg)) { const segs = speechSegs(seg.replace(/^["“]|["”]$/g, "")), t = segsText(segs); if (t) out.push({ text: t, segs: segs.some(s => s.sfx) ? segs : null, who: whoOf(speaker || named), ctx: l.replace(/("[^"]+"|“[^”]+”)/g, "…").replace(/\[sfx=[^\]]*\][\s\S]*?\[\/sfx\]/gi, "").replace(/\*+/g, "").slice(0, 300) }); }
+      else if (mode === "all") { const t = untilde(seg.replace(/\[sfx=[^\]]*\][\s\S]*?\[\/sfx\]/gi, "").replace(/\*+/g, "").replace(/\s+/g, " ").trim()); if (t && /[\p{L}\p{N}]/u.test(t)) out.push({ text: t, who: "narrator" }); }
     }
   }
   return out;
@@ -5876,16 +5946,32 @@ async function toneParts(m, parts) {
 }
 // ---- playing: one queue, either engine, stoppable at any time
 const VQ = { list: [], busy: false, gen: 0, el: null, cache: new Map() };
-function voiceStop() { VQ.gen++; VQ.list = []; VQ.busy = false; try { speechSynthesis.cancel(); } catch {} if (VQ.el) { try { VQ.el.pause(); } catch {} VQ.el = null; } document.querySelectorAll(".vo-on").forEach(x => x.classList.remove("vo-on")); }
+function voiceStop() { VQ.gen++; VQ.list = []; VQ.busy = false; if (VQ.sfx) { try { VQ.sfx.stop(); } catch {} VQ.sfx = null; } try { speechSynthesis.cancel(); } catch {} if (VQ.el) { try { VQ.el.pause(); } catch {} VQ.el = null; } document.querySelectorAll(".vo-on").forEach(x => x.classList.remove("vo-on")); }
 function voiceSay(parts) { if (!parts.length) return; voiceStop(); VQ.list = parts.slice(); voiceNext(VQ.gen); }
 async function voiceNext(g) {
   if (g !== VQ.gen) return; const p = VQ.list.shift(); if (!p) { VQ.busy = false; return; }
-  VQ.busy = true; const v = p.who === "narrator" ? narratorVoice() : voiceFor(p.who, p.who?.id);
+  VQ.busy = true;
+  // v1.86: a line with a burp in it: say the words before it, burp (the whole sound), then carry on in the same voice and tone
+  if (p.segs) { VQ.list.unshift(...p.segs.map(x => x.sfx ? { sfx: x.sfx, who: p.who } : { ...p, text: x.text, segs: null })); return voiceNext(g); }
+  if (p.sfx) {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    await wait(140); if (g !== VQ.gen) return;
+    let h = null; try { h = await playKey(p.sfx); } catch {}
+    if (g !== VQ.gen) { try { h?.stop(); } catch {} return; }
+    VQ.sfx = h; VQ.burps = (VQ.burps || 0) + 1;
+    await (h?.done ? Promise.race([h.done, wait(((h.dur || 1.5) + 0.6) * 1000)]) : wait(700)); VQ.sfx = null;
+    await wait(260); return voiceNext(g);
+  } const v = p.who === "narrator" ? narratorVoice() : voiceFor(p.who, p.who?.id);
   const vol = Math.max(0, Math.min(1, S.settings.voiceVol ?? 1)), speed = S.settings.voiceRate || 1;
   if (cartOn() && (v.cart || (p.who === "narrator" ? S.settings.narrator?.cart : S.settings.cartDefault))) {
     try {
-      const url = await cartAudio(p.text, v.cart || (p.who === "narrator" ? S.settings.narrator.cart : S.settings.cartDefault), p); if (g !== VQ.gen) return;
-      const a = new Audio(url); VQ.el = a; a.volume = vol; a.playbackRate = speed; a.onended = a.onerror = () => voiceNext(g); await a.play(); return;
+      // v1.86: pitch and speed for Cartesia voices too. Pitch = playing the audio faster/slower without keeping its pitch;
+      // Cartesia is asked for the opposite pace, so the pace you hear is the one you picked.
+      const cp = Math.max(0.6, Math.min(1.5, v.cpitch || 1)), want = (p.speed || 1) * (v.rate || 1) * speed;
+      const sent = +Math.max(0.6, Math.min(1.5, want / cp)).toFixed(2), play = cp * (want / (sent * cp));
+      const url = await cartAudio(p.text, v.cart || (p.who === "narrator" ? S.settings.narrator.cart : S.settings.cartDefault), { ...p, speed: sent }); if (g !== VQ.gen) return;
+      const a = new Audio(url); VQ.el = a; a.volume = vol; const shift = Math.abs(cp - 1) > 0.001; a.preservesPitch = a.mozPreservesPitch = a.webkitPreservesPitch = !shift; a.playbackRate = shift ? +play.toFixed(3) : Math.max(0.5, Math.min(2, play)); VQ.cp = { cp, sent, play: a.playbackRate, shift };
+      a.onended = a.onerror = () => voiceNext(g); await a.play(); return;
     } catch (e) { console.warn("voice:", e.message); if (!VQ.warned) { VQ.warned = 1; toast("Cartesia voice failed: " + e.message + ". Using the phone's voices."); } }
   }
   try {
@@ -5919,38 +6005,133 @@ async function cartClone(blob, name) {
   const f = new FormData(); f.append("clip", blob, "clip." + ((blob.type.split("/")[1] || "webm").split(";")[0])); f.append("name", (name || "Lanternroom voice").slice(0, 60)); f.append("language", "en"); f.append("description", "Made in Lanternroom");
   const r = await cartFetch("/voices/clone", { method: "POST", body: f }); const j = await r.json(); if (!j?.id) throw new Error("no voice came back"); return j.id;
 }
-async function cartVoices() { const r = await cartFetch("/voices?limit=100"); const j = await r.json(); const L = Array.isArray(j) ? j : j?.data || []; return L.map(v => ({ id: v.id, name: v.name, d: v.description || "", g: v.gender || "" })).filter(v => v.id); }
+// v1.86: every page of the account's voices (yours and Cartesia's), kept on this device for a day
+let CART_LIST = null;
+async function cartVoices(force) {
+  const ck = "lr_cartvoices";
+  if (!force && CART_LIST && Date.now() - CART_LIST.at < 864e5) return CART_LIST.list;
+  if (!force) { try { const c = JSON.parse(localStorage.getItem(ck) || "null"); if (c?.list?.length && Date.now() - c.at < 864e5) { CART_LIST = c; return c.list; } } catch {} }
+  const out = []; let after = "";
+  for (let i = 0; i < 12; i++) {
+    const r = await cartFetch("/voices?limit=100" + (after ? "&starting_after=" + encodeURIComponent(after) : "")); const j = await r.json(); const L = Array.isArray(j) ? j : j?.data || [];
+    for (const v of L) if (v?.id && !out.some(x => x.id === v.id)) out.push({ id: v.id, name: v.name || "Voice", d: v.description || "", g: v.gender || "", lang: v.language || "", mine: v.is_owner === true || (v.is_public === false), at: v.created_at || "" });
+    if (!j?.has_more || !L.length || Array.isArray(j)) break; after = L.at(-1).id;
+  }
+  CART_LIST = { at: Date.now(), list: out }; try { localStorage.setItem(ck, JSON.stringify(CART_LIST)); } catch {}
+  return out;
+}
+// what a voice is like, read from its name, description and gender: for the picker's groups and filters
+const VOICE_ACCENTS = [["American", /\bamerican|\bus\b|\bu\.s\.|new york|californi|midwest|texan/i], ["Southern US", /\bsouthern|\bcountry\b|drawl|texas/i], ["British", /\bbritish|\benglish accent|\blondon|\bposh|\bcockney|\buk\b|\bengland/i], ["Scottish", /\bscottish|\bscots?\b/i], ["Irish", /\birish/i], ["Australian", /\baustralian|\baussie/i], ["Canadian", /\bcanadian/i], ["Indian", /\bindian\b|\bhindi/i], ["African", /\bafrican|\bnigerian|\bkenyan/i], ["Latin", /\bspanish|\bmexican|\blatin|\bhispanic|\bargentin/i], ["French", /\bfrench/i], ["German", /\bgerman/i], ["Italian", /\bitalian/i], ["Russian", /\brussian|slavic/i], ["Asian", /\bjapanese|\bchinese|\bkorean|\bfilipin|\basian/i], ["Middle Eastern", /\barab|\bmiddle eastern|\bpersian|\bturkish/i]];
+const VOICE_TRAITS = [["Young", /\byoung|\byouthful|\bteen|\bgirlish|\bboyish|\bcollege|\bstudent/i], ["Older", /\bold(er)?\b|\belder|\bmature|\bgrand(ma|pa|mother|father)|\bseasoned|\baged\b|\bwise/i], ["Deep", /\bdeep|\bbass|\blow[- ]pitched|\bbaritone|\bbooming|\bresonant/i], ["High", /\bhigh[- ]pitched|\bsqueak|\bchirp|\bbright\b/i], ["Soft", /\bsoft|\bgentle|\bwhisper|\bquiet|\bbreathy|\bdelicate/i], ["Warm", /\bwarm|\bfriendly|\bkind|\bcaring|\bsoothing|\bcomforting/i], ["Raspy", /\braspy|\bgravel|\bhusky|\brough|\bgritty|\bsmok/i], ["Energetic", /\benerget|\bupbeat|\bexcit|\blively|\bbubbly|\bcheer|\benthusias|\bpeppy/i], ["Calm", /\bcalm|\bsteady|\bmeasured|\brelax|\bserene|\bcomposed/i], ["Sultry", /\bsultry|\bseduct|\bsexy|\bflirt|\bsensual|\bsmooth|\bvelvet/i], ["Confident", /\bconfident|\bauthorit|\bcommand|\bassertive|\bpowerful|\bstrong/i], ["Playful", /\bplayful|\bwhimsical|\bquirky|\bfun\b|\bmischiev|\bsilly|\bcartoon|\banimated/i], ["Dark", /\bdark|\bsinister|\bmenac|\bvillain|\bominous|\bcreepy|\bgrim/i], ["Narrator", /\bnarrat|\bstoryt|\baudiobook|\bdocumentar|\bannouncer|\bnews/i], ["Calm support", /\bcustomer|\bsupport|\breceptionist|\bagent\b|\bassistant/i]];
+function voiceInfo(v) {
+  const t = `${v.name} ${v.d}`, gw = String(v.g || "").toLowerCase();
+  const g = /fem|female|woman|^f$/.test(gw) ? "f" : /masc|^male|\bman\b|^m$/.test(gw) ? "m" : /neutral|non/.test(gw) ? "n" : (() => { const x = sexOf(v.d || ""); return x !== "n" ? x : FEM_V.test(v.name) ? "f" : MAS_V.test(v.name) ? "m" : "n"; })();
+  const lang = String(v.lang || "").toLowerCase(), accent = (VOICE_ACCENTS.find(([, re]) => re.test(t)) || [])[0] || ({ "en-us": "American", "en-gb": "British", "en-au": "Australian", "en-in": "Indian", "en-ie": "Irish", "en-ca": "Canadian", "en-za": "African", "en-nz": "Australian" })[lang] || (lang && !lang.startsWith("en") ? "Other languages" : "Other / not said");
+  const traits = VOICE_TRAITS.filter(([, re]) => re.test(t)).map(([n]) => n === "Calm support" ? "Calm" : n).filter((x, i, a) => a.indexOf(x) === i);
+  return { ...v, g, accent, traits };
+}
+// this phone's voices in the same shape
+function phoneVoiceItems() {
+  return loadPhoneVoices().map(x => ({ id: x.name, name: x.name.replace(/^(Microsoft|Google|Apple)\s+/i, "").replace(/\s*\(.*\)\s*$/, "").replace(/\s+Online.*$/i, ""), d: [x.lang, x.localService ? "on this device" : "online", (x.name.match(/\(([^)]+)\)/) || [])[1]].filter(Boolean).join(" · "), g: FEM_V.test(x.name) ? "female" : MAS_V.test(x.name) ? "male" : "", lang: x.lang, full: x.name }));
+}
+// ---- v1.86: the voice picker, a layer over whatever is open. Voices sorted into gender tabs, accent sections and
+// trait filters (deep, soft, raspy, narrator…), with search, ▶ to hear a line, ★ to keep favourites and your own clones
+// first. Resolves the picked id, "" for Automatic, or null when closed.
+function openVoicePicker(opt = {}) {
+  return new Promise(resolve => {
+    document.getElementById("voPop")?.remove();
+    const cart = opt.engine === "cart", pop = document.createElement("div"); pop.id = "voPop"; pop.className = "pix-pop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", opt.title || "Choose a voice");
+    document.body.appendChild(pop);
+    let items = null, err = "", tab = "all", acc = "", trs = new Set(), q = "";
+    const favs = () => new Set(S.settings.voiceFavs || []);
+    const done = v => { try { speechSynthesis.cancel(); } catch {} if (VQ.el) { try { VQ.el.pause(); } catch {} } pop.remove(); document.removeEventListener("keydown", onKey, true); resolve(v); };
+    const onKey = e => { if (e.key === "Escape") { e.stopPropagation(); e.preventDefault(); done(null); } };
+    document.addEventListener("keydown", onKey, true); pop._close = () => done(null);
+    const G = { f: "Female", m: "Male", n: "Neutral" };
+    const load = async force => { items = null; err = ""; draw(); try { items = (cart ? await cartVoices(force) : phoneVoiceItems()).map(voiceInfo); } catch (e) { err = e.message; items = []; } draw(); };
+    const shown = () => {
+      const F = favs(), w = q.toLowerCase().split(/\s+/).filter(Boolean);
+      return items.filter(v => (tab === "all" || (tab === "fav" ? F.has(v.id) : tab === "mine" ? v.mine : v.g === tab)) && (!acc || v.accent === acc) && [...trs].every(t => v.traits.includes(t)) && w.every(x => `${v.name} ${v.d} ${v.accent} ${v.traits.join(" ")} ${G[v.g]}`.toLowerCase().includes(x)));
+    };
+    const card = (v, F) => `<div class="vp-card ${v.id === opt.cur ? "on" : ""}" data-id="${esc(v.id)}"><div class="vp-main"><div class="vp-name"><b>${esc(v.name)}</b><span class="vp-g vp-${v.g}">${G[v.g]}</span>${v.mine ? `<span class="vp-g vp-mine">Yours</span>` : ""}</div>${v.traits.length || v.accent ? `<div class="vp-tr">${[v.accent, ...v.traits].filter(x => x && !/^Other/.test(x)).map(t => `<i>${esc(t)}</i>`).join("")}</div>` : ""}${v.d ? `<div class="vp-d">${esc(v.d)}</div>` : ""}</div>
+      <div class="vp-btns"><button type="button" class="vp-play" data-play aria-label="Hear ${esc(v.name)}">▶</button><button type="button" class="vp-fav ${F.has(v.id) ? "on" : ""}" data-fav aria-label="Favourite">${F.has(v.id) ? "★" : "☆"}</button><button type="button" class="btn small ${v.id === opt.cur ? "" : "primary"}" data-use>${v.id === opt.cur ? "In use" : "Use"}</button></div></div>`;
+    function draw() {
+      const keepQ = pop.querySelector("#vpQ"), hadFocus = document.activeElement === keepQ, sc = pop.querySelector(".vp-list")?.scrollTop || 0;
+      let h = `<div class="pix-card vp-card-w"><div class="pix-top"><b>${esc(opt.title || "Choose a voice")}</b><button type="button" class="pix-x" id="vpX" aria-label="Close">✕</button></div>`;
+      if (!items) h += `<p class="hint">${cart ? "Loading your Cartesia voices…" : "Loading…"}</p>`;
+      else if (err) h += `<p class="hint">Couldn't list voices: ${esc(err)}</p><button type="button" class="btn small" id="vpRe">Try again</button>`;
+      else {
+        const F = favs(), cnt = k => items.filter(v => k === "fav" ? F.has(v.id) : k === "mine" ? v.mine : v.g === k).length;
+        const tabs = [["all", "All", items.length], ["f", "Female", cnt("f")], ["m", "Male", cnt("m")], ["n", "Neutral", cnt("n")], ["fav", "★ Favourites", cnt("fav")], ["mine", "Yours", cnt("mine")]].filter(t => t[0] === "all" || t[0] === "fav" || t[2]);
+        const accs = [...new Set(items.map(v => v.accent))].sort((a, b) => /^Other/.test(a) - /^Other/.test(b) || a.localeCompare(b)), trAll = VOICE_TRAITS.map(t => t[0]).filter(t => items.some(v => v.traits.includes(t)));
+        const L = shown(), cur = items.find(v => v.id === opt.cur);
+        h += `<input id="vpQ" type="search" placeholder="Search ${items.length} voices (name, accent, deep, soft…)" value="${esc(q)}" autocomplete="off">
+          <div class="tabs vp-tabs">${tabs.map(([k, l, n]) => `<button type="button" class="tab ${tab === k ? "on" : ""}" data-tab="${k}">${l} <small>${n}</small></button>`).join("")}</div>
+          ${accs.length > 1 ? `<div class="vp-chips"><span class="vp-lbl">Accent</span><button type="button" class="chip ${!acc ? "on" : ""}" data-acc="">Any</button>${accs.map(a => `<button type="button" class="chip ${acc === a ? "on" : ""}" data-acc="${esc(a)}">${esc(a)}</button>`).join("")}</div>` : ""}
+          ${trAll.length ? `<div class="vp-chips"><span class="vp-lbl">Sounds</span>${trAll.map(t => `<button type="button" class="chip ${trs.has(t) ? "on" : ""}" data-tr="${esc(t)}">${esc(t)}</button>`).join("")}</div>` : ""}
+          <div class="vp-list">${opt.auto !== false ? `<button type="button" class="vp-auto ${!opt.cur ? "on" : ""}" data-auto>${esc(opt.autoLabel || "Automatic")}</button>` : ""}
+          ${cur && L.includes(cur) && !q && tab === "all" && !acc && !trs.size ? `<div class="vp-sec">In use</div>${card(cur, F)}` : ""}
+          ${L.length ? accs.filter(a => L.some(v => v.accent === a)).map(a => { const g = L.filter(v => v.accent === a).sort((x, y) => y.mine - x.mine || F.has(y.id) - F.has(x.id) || x.name.localeCompare(y.name)); return `<div class="vp-sec">${esc(a)} <small>${g.length}</small></div>${g.map(v => card(v, F)).join("")}`; }).join("") : `<p class="hint">No voices match.${trs.size || acc ? " Try fewer filters." : ""}</p>`}</div>
+          ${cart ? `<button type="button" class="btn small" id="vpRe">↻ Refresh the list</button>` : ""}`;
+      }
+      pop.innerHTML = h + `</div>`;
+      pop.querySelector("#vpX").onclick = () => done(null);
+      const re = pop.querySelector("#vpRe"); if (re) re.onclick = () => load(true);
+      if (!items || err) return;
+      const qi = pop.querySelector("#vpQ"); qi.oninput = () => { q = qi.value; draw(); }; if (hadFocus) { qi.focus(); qi.setSelectionRange(q.length, q.length); }
+      const list = pop.querySelector(".vp-list"); if (hadFocus || sc) list.scrollTop = sc;
+      pop.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => { tab = b.dataset.tab; draw(); pop.querySelector(".vp-list").scrollTop = 0; });
+      pop.querySelectorAll("[data-acc]").forEach(b => b.onclick = () => { acc = b.dataset.acc; draw(); pop.querySelector(".vp-list").scrollTop = 0; });
+      pop.querySelectorAll("[data-tr]").forEach(b => b.onclick = () => { trs.has(b.dataset.tr) ? trs.delete(b.dataset.tr) : trs.add(b.dataset.tr); draw(); });
+      const auto = pop.querySelector("[data-auto]"); if (auto) auto.onclick = () => done("");
+      pop.querySelectorAll(".vp-card").forEach(c => { const id = c.dataset.id, v = items.find(x => x.id === id);
+        c.querySelector("[data-use]").onclick = () => done(id);
+        c.querySelector("[data-fav]").onclick = () => { const F = favs(); F.has(id) ? F.delete(id) : F.add(id); S.settings.voiceFavs = [...F]; saveSettings(); draw(); };
+        c.querySelector("[data-play]").onclick = () => { const base = opt.voice || {}, who = { name: opt.who?.name || v.name, id: "vp:" + id, voice: { ...base, ...(cart ? { cart: id } : { phone: v.full || id }) } };
+          voiceSay([{ text: opt.sample || `Hi, I'm ${opt.who?.name || v.name}. Is this how I sound?`, who }]); };
+      });
+    }
+    load();
+  });
+}
 // reading a reply (automatically after it's written, or from its ⋯ menu); tapping a quote reads that line
 async function voiceRead(m, force) { const mode = force ? (voiceMode() === "off" ? "dialogue" : voiceMode()) : voiceMode(); if (mode === "off") return; const g = ++VQ.gen; const parts = await toneParts(m, voiceParts(m, mode)); if (g === VQ.gen) voiceSay(parts); }
 function voiceAfterReply(m) { if (voiceOn() && S.settings.voiceAuto !== false && voiceMode() !== "off") voiceRead(m); }
 document.addEventListener("click", e => {
-  const q = e.target.closest("#msgs .msg.assistant .q"); if (!q || !voiceOn() || S.settings.voiceTap === false) return;
-  const el = q.closest("[data-i]"), m = (el && S.chat?.messages[+el.dataset.i]) || [...(S.chat?.messages || [])].reverse().find(x => x.role === "assistant");
-  const t = q.textContent.replace(/^["“]|["”]$/g, "").trim(); if (!t) return;
-  const all = voiceParts(m, voiceMode() === "all" ? "all" : "dialogue"), key = (m?.id || "") + ":" + (m?.alt || 0) + ":" + all.length, cached = TONE_CACHE.get(key);
+  const q = e.target.closest("#msgs .msg.assistant .q, #msgs .msg.user .q"); if (!q || !voiceOn() || S.settings.voiceTap === false) return;
+  if (e.target.closest(".sfx-k, .sfx, .sfx-part")) return; // tapping a sound word plays the sound
+  const mine = !!q.closest(".msg.user"), el = q.closest("[data-i]"), m = (el && S.chat?.messages[+el.dataset.i]) || [...(S.chat?.messages || [])].reverse().find(x => x.role === (mine ? "user" : "assistant"));
+  const cl = q.cloneNode(true); cl.querySelectorAll(".sfx-k").forEach(x => x.remove()); const t = plainQ(cl.textContent); if (!t) return;
+  const all = voiceParts(m, !mine && voiceMode() === "all" ? "all" : "dialogue"), key = (m?.id || "") + ":" + (m?.alt || 0) + ":" + all.length, cached = TONE_CACHE.get(key);
   if (cached) all.forEach((p, i) => Object.assign(p, cached[i] || {})); else all.forEach(p => Object.assign(p, toneGuess(p)));
-  const part = all.find(p => p.who !== "narrator" && p.text.replace(/\s+/g, " ") === t.replace(/\s+/g, " ")) || { text: t, who: char(), ...toneGuess({ text: t }) };
+  const part = all.find(p => p.who !== "narrator" && plainQ(p.text) === t) || { text: untilde(cl.textContent.replace(/^["“]|["”]$/g, "")), who: mine ? myVoiceWho(m) : char(), ...toneGuess({ text: cl.textContent }) };
   q.classList.add("vo-on"); voiceSay([part]);
 });
 // ---- the bot editor's Voice group: phone voice, pitch, speed, a Cartesia voice (list, id, or cloned from a clip), Test
-function voiceEditor(work, box) {
-  if (!box) return;
+function voiceEditor(work, box, opt = {}) {
+  if (!box) return; const Q = id => box.querySelector("#" + id);
+  const me = opt.persona, sample = () => me ? `This is me, ${work.name || "you"}. Is this how I sound?` : `Hi, I'm ${work.name || "here"}. ${work.kind === "world" ? "Welcome to this world." : "Is this how I sound?"}`;
+  const cartName = id => (CART_LIST?.list || []).find(x => x.id === id)?.name;
   const draw = () => {
-    const v = work.voice || {}, vs = loadPhoneVoices(), auto = voiceFor({ ...work, voice: {} }, work.id || work.name);
-    box.innerHTML = `${field("Phone voice", `<select id="cvPhone"><option value="">Automatic${auto.phone ? ` (${esc(auto.phone.name)})` : ""}</option>${vs.map(x => `<option value="${esc(x.name)}" ${v.phone === x.name ? "selected" : ""}>${esc(x.name)}${x.localService ? "" : " · online"}</option>`).join("")}</select>`, vs.length ? "Free voices from this phone or computer. They differ between devices." : "This browser didn't list any voices yet.")}
-      ${field("Pitch", `<input type="range" id="cvPitch" min="0.5" max="1.8" step="0.05" value="${+v.pitch || auto.pitch.toFixed(2)}">`)}${field("Speed", `<input type="range" id="cvRate" min="0.6" max="1.6" step="0.05" value="${+v.rate || 1}">`)}
-      ${S.settings.voiceEngine === "cartesia" ? `${field("Cartesia voice", `<div class="row" style="gap:6px"><input id="cvCart" value="${esc(v.cart || "")}" placeholder="Voice id (or pick / clone below)" autocomplete="off" style="flex:1"><button type="button" class="btn small" id="cvList">Pick</button></div><div id="cvPick"></div>`, "Natural voices from your Cartesia account.")}
+    const v = work.voice || {}, auto = voiceFor({ ...work, voice: {} }, work.id || work.name), cart = S.settings.voiceEngine === "cartesia";
+    const phoneLbl = v.phone ? (phoneVoiceItems().find(x => x.full === v.phone)?.name || v.phone) : `Automatic${auto.phone ? ` (${phoneVoiceItems().find(x => x.full === auto.phone.name)?.name || auto.phone.name})` : ""}`;
+    box.innerHTML = `${cart ? `${field(me ? "Your Cartesia voice" : "Cartesia voice", `<button type="button" class="btn vp-open" id="cvList"><span>🎙</span><b>${v.cart ? esc(cartName(v.cart) || "Voice " + v.cart.slice(0, 8)) : "Choose a voice"}</b><small>${v.cart ? "Change" : "Browse by gender, accent and sound"}</small></button>
+        <details class="vp-id"><summary>Voice id</summary><input id="cvCart" value="${esc(v.cart || "")}" placeholder="Paste a Cartesia voice id" autocomplete="off"></details>`, me ? "Natural voices from your Cartesia account. Tap your own lines in a chat to hear them." : "Natural voices from your Cartesia account.")}
         <div class="row"><button type="button" class="btn small" id="cvRec">🎙 Record 10 s to clone</button><label class="btn small">📁 Clone from a clip<input type="file" id="cvFile" accept="audio/*" hidden></label></div><p class="hint" id="cvMsg" style="margin:0"></p>` : ""}
+      ${field(cart ? "Phone voice (when Cartesia isn't used)" : "Phone voice", `<button type="button" class="btn vp-open" id="cvPhoneB"><span>📱</span><b>${esc(phoneLbl)}</b><small>Change</small></button><input type="hidden" id="cvPhone" value="${esc(v.phone || "")}">`, loadPhoneVoices().length ? "Free voices from this phone or computer. They differ between devices." : "This browser didn't list any voices yet.")}
+      ${field("Pitch", `<input type="range" id="cvPitch" min="0.5" max="1.8" step="0.05" value="${+v.pitch || (cart ? 1 : +auto.pitch.toFixed(2))}">`, cart ? "Works on Cartesia voices too: lower for a deeper voice, higher for a lighter one." : "")}${field("Speed", `<input type="range" id="cvRate" min="0.6" max="1.6" step="0.05" value="${+v.rate || 1}">`, cart ? "How fast they talk, on every engine." : "")}
       <button type="button" class="btn small" id="cvTest">▶ Test this voice</button>`;
-    const set = (k, val) => { work.voice = { ...(work.voice || {}), [k]: val }; if (val === "" || val == null) delete work.voice[k]; };
-    $("cvPhone").onchange = e => set("phone", e.target.value); $("cvPitch").oninput = e => set("pitch", +e.target.value); $("cvRate").oninput = e => set("rate", +e.target.value);
-    $("cvTest").onclick = () => voiceSay([{ text: `Hi, I'm ${work.name || "here"}. ${work.kind === "world" ? "Welcome to this world." : "Is this how I sound?"}`, who: { ...work, id: work.id || work.name } }]);
-    if ($("cvCart")) {
-      $("cvCart").onchange = e => set("cart", e.target.value.trim());
-      $("cvList").onclick = async () => { $("cvPick").innerHTML = `<p class="hint">Loading…</p>`; try { const L = await cartVoices(); $("cvPick").innerHTML = `<select id="cvSel"><option value="">Choose a voice (${L.length})</option>${L.map(x => `<option value="${esc(x.id)}">${esc(x.name)}${x.d ? " · " + esc(x.d.slice(0, 50)) : ""}</option>`).join("")}</select>`; $("cvSel").onchange = e => { set("cart", e.target.value); $("cvCart").value = e.target.value; }; } catch (e) { $("cvPick").innerHTML = `<p class="hint">Couldn't list voices: ${esc(e.message)}</p>`; } };
-      const clone = async blob => { $("cvMsg").textContent = "Cloning…"; try { const id = await cartClone(blob, work.name); set("cart", id); $("cvCart").value = id; $("cvMsg").textContent = "Done: this bot now speaks in the cloned voice."; } catch (e) { $("cvMsg").textContent = "Cloning failed: " + e.message; } };
-      $("cvFile").onchange = e => { const f = e.target.files[0]; if (f) clone(f); };
-      $("cvRec").onclick = async () => { try { const st = await navigator.mediaDevices.getUserMedia({ audio: true }), rec = new MediaRecorder(st), ch = []; rec.ondataavailable = e => ch.push(e.data); rec.onstop = () => { st.getTracks().forEach(t => t.stop()); clone(new Blob(ch, { type: rec.mimeType || "audio/webm" })); }; rec.start(); let n = 10; $("cvRec").disabled = true; const t = setInterval(() => { n--; $("cvMsg").textContent = `Recording… ${n} s (read anything in the voice you want)`; if (n <= 0) { clearInterval(t); rec.stop(); $("cvRec").disabled = false; } }, 1000); $("cvMsg").textContent = "Recording… 10 s (read anything in the voice you want)"; } catch (e) { $("cvMsg").textContent = "No microphone: " + e.message; } };
+    const set = (k, val) => { work.voice = { ...(work.voice || {}), [k]: val }; if (val === "" || val == null) delete work.voice[k]; opt.onChange?.(); };
+    Q("cvPhone").onchange = e => set("phone", e.target.value); Q("cvPitch").oninput = e => set("pitch", +e.target.value); Q("cvRate").oninput = e => set("rate", +e.target.value);
+    Q("cvPhoneB").onclick = async () => { const r = await openVoicePicker({ engine: "phone", cur: v.phone || "", title: me ? "Your phone voice" : "Phone voice", who: work, voice: work.voice, sample: sample() }); if (r === null) return; set("phone", r); draw(); };
+    Q("cvTest").onclick = () => voiceSay([{ text: sample(), who: { ...work, id: work.id || work.name } }]);
+    if (Q("cvCart")) {
+      Q("cvCart").onchange = e => { set("cart", e.target.value.trim()); draw(); };
+      Q("cvList").onclick = async () => { const r = await openVoicePicker({ engine: "cart", cur: v.cart || "", title: me ? "Your voice" : work.name ? `${work.name}'s voice` : "Their voice", who: work, voice: work.voice, sample: sample(), autoLabel: "None (use the default or the phone's voice)" }); if (r === null) return; set("cart", r); draw(); };
+      const clone = async blob => { Q("cvMsg").textContent = "Cloning…"; try { const id = await cartClone(blob, work.name); set("cart", id); if (CART_LIST) CART_LIST.list.unshift({ id, name: (work.name || "Lanternroom voice") + " (cloned)", d: "Made in Lanternroom", g: "", mine: true }); draw(); Q("cvMsg").textContent = me ? "Done: you now speak in the cloned voice." : "Done: this bot now speaks in the cloned voice."; } catch (e) { Q("cvMsg").textContent = "Cloning failed: " + e.message; } };
+      Q("cvFile").onchange = e => { const f = e.target.files[0]; if (f) clone(f); };
+      Q("cvRec").onclick = async () => { try { const st = await navigator.mediaDevices.getUserMedia({ audio: true }), rec = new MediaRecorder(st), ch = []; rec.ondataavailable = e => ch.push(e.data); rec.onstop = () => { st.getTracks().forEach(t => t.stop()); clone(new Blob(ch, { type: rec.mimeType || "audio/webm" })); }; rec.start(); let n = 10; Q("cvRec").disabled = true; const t = setInterval(() => { n--; Q("cvMsg").textContent = `Recording… ${n} s (read anything in the voice you want)`; if (n <= 0) { clearInterval(t); rec.stop(); Q("cvRec").disabled = false; } }, 1000); Q("cvMsg").textContent = "Recording… 10 s (read anything in the voice you want)"; } catch (e) { Q("cvMsg").textContent = "No microphone: " + e.message; } };
+      if (v.cart && !cartName(v.cart) && cartOn() && !voiceEditor.loading) { voiceEditor.loading = 1; cartVoices().then(() => { voiceEditor.loading = 0; if (box.isConnected && cartName(v.cart)) draw(); }).catch(() => { voiceEditor.loading = 0; }); }
     }
   };
   draw();
@@ -5962,29 +6143,33 @@ function voiceSettingsGroup() {
     const st = S.settings, n = st.narrator || {}, vs = loadPhoneVoices();
     g.innerHTML = `<h3>Voices</h3><label class="check"><input type="checkbox" id="vOn" ${st.voiceOn ? "checked" : ""}> Read replies aloud: each character in their own voice</label>
       ${st.voiceOn ? `${field("Voices from", `<select id="vEng"><option value="phone" ${st.voiceEngine !== "cartesia" ? "selected" : ""}>This phone or computer (free)</option><option value="cartesia" ${st.voiceEngine === "cartesia" ? "selected" : ""}>Cartesia (natural voices and cloning, your own key)</option></select>`)}
-      ${st.voiceEngine === "cartesia" ? `${field("Cartesia API key", `<input id="vKey" type="password" value="${esc(st.cartKey || "")}" placeholder="sk_car_…" autocomplete="off">`, "Stays on this device. Cartesia charges per character read; its rules only forbid content about minors.")}${field("Voice for characters without one", `<input id="vDef" value="${esc(st.cartDefault || "")}" placeholder="A Cartesia voice id (optional)" autocomplete="off">`, "Without one, characters with no Cartesia voice use the phone's voices.")}` : ""}
+      ${st.voiceEngine === "cartesia" ? `${field("Cartesia API key", `<input id="vKey" type="password" value="${esc(st.cartKey || "")}" placeholder="sk_car_…" autocomplete="off">`, "Stays on this device. Cartesia charges per character read; its rules only forbid content about minors.")}${field("Voice for characters without one", `<button type="button" class="btn vp-open" id="vDef"><span>🎙</span><b>${st.cartDefault ? esc((CART_LIST?.list || []).find(x => x.id === st.cartDefault)?.name || "Voice " + st.cartDefault.slice(0, 8)) : "None"}</b><small>Choose</small></button>`, "Without one, characters with no Cartesia voice use the phone's voices.")}` : ""}
       ${field("Read in new chats", `<select id="vMode">${VOICE_MODES.filter(m => m[0] !== "off").map(([k, l]) => `<option value="${k}" ${(st.voiceMode || "dialogue") === k ? "selected" : ""}>${l}</option>`).join("")}<option value="off" ${st.voiceMode === "off" ? "selected" : ""}>Only when I ask</option></select>`, "Each chat can change this in ⋯ Options.")}
       <label class="check"><input type="checkbox" id="vAuto" ${st.voiceAuto !== false ? "checked" : ""}> Read new replies as soon as they're written</label>
       <label class="check"><input type="checkbox" id="vTap" ${st.voiceTap !== false ? "checked" : ""}> Tap a line of speech to hear it again</label>
       <label class="check"><input type="checkbox" id="vTone" ${st.voiceTone !== false ? "checked" : ""}> Read each line's tone (whispers, shouts, tears, flirting…): one small AI call per reply</label>
       ${rangeRow("vRate", "Speed", "How fast every voice reads.", 0.6, 1.6, 0.05, st.voiceRate || 1, v => Math.round(v * 100) + "%")}
       ${rangeRow("vVol", "Volume", "", 0, 1, 0.05, st.voiceVol ?? 1, v => Math.round(v * 100) + "%")}
-      ${field("Narrator voice", `<select id="vNar"><option value="">Automatic</option>${vs.map(x => `<option value="${esc(x.name)}" ${n.phone === x.name ? "selected" : ""}>${esc(x.name)}</option>`).join("")}</select>${st.voiceEngine === "cartesia" ? `<input id="vNarC" value="${esc(n.cart || "")}" placeholder="Narrator's Cartesia voice id (optional)" autocomplete="off" style="margin-top:6px">` : ""}`, "Reads the actions and narration in Everything mode.")}
+      ${field("Narrator voice", `${st.voiceEngine === "cartesia" ? `<button type="button" class="btn vp-open" id="vNarC"><span>🎙</span><b>${n.cart ? esc((CART_LIST?.list || []).find(x => x.id === n.cart)?.name || "Voice " + n.cart.slice(0, 8)) : "No Cartesia voice"}</b><small>Choose</small></button>` : ""}<button type="button" class="btn vp-open" id="vNar" style="margin-top:6px"><span>📱</span><b>${n.phone ? esc(phoneVoiceItems().find(x => x.full === n.phone)?.name || n.phone) : "Automatic"}</b><small>Phone voice</small></button>`, "Reads the actions and narration in Everything mode.")}
+      ${rangeRow("vNarP", "Narrator pitch", "", 0.5, 1.8, 0.05, n.pitch || 1, v => Math.round(v * 100) + "%")}${rangeRow("vNarR", "Narrator speed", "", 0.6, 1.6, 0.05, n.rate || 1, v => Math.round(v * 100) + "%")}
       <button type="button" class="btn small" id="vTest">▶ Test</button><p class="hint" style="margin:0">Each character's voice is set in their editor (Voice).</p>` : ""}`;
     const save = () => saveSettings();
     G("vOn").onchange = e => { st.voiceOn = e.target.checked; if (!st.voiceOn) voiceStop(); save(); draw(); };
     if (!st.voiceOn) return;
     G("vEng").onchange = e => { st.voiceEngine = e.target.value; save(); draw(); };
     if (G("vKey")) G("vKey").onchange = e => { st.cartKey = e.target.value.trim(); save(); };
-    if (G("vDef")) G("vDef").onchange = e => { st.cartDefault = e.target.value.trim(); save(); };
+    if (G("vDef")) G("vDef").onclick = async () => { const r = await openVoicePicker({ engine: "cart", cur: st.cartDefault || "", title: "Voice for characters without one", autoLabel: "None (they use the phone's voices)", sample: "Hi there. Is this how I sound?" }); if (r === null) return; st.cartDefault = r; save(); draw(); };
     G("vMode").onchange = e => { st.voiceMode = e.target.value; save(); };
     G("vAuto").onchange = e => { st.voiceAuto = e.target.checked; save(); };
     G("vTap").onchange = e => { st.voiceTap = e.target.checked; save(); };
     G("vTone").onchange = e => { st.voiceTone = e.target.checked; save(); };
     G("vRate").oninput = e => { st.voiceRate = +e.target.value; G("vRateV").textContent = Math.round(st.voiceRate * 100) + "%"; save(); };
     G("vVol").oninput = e => { st.voiceVol = +e.target.value; G("vVolV").textContent = Math.round(st.voiceVol * 100) + "%"; save(); };
-    G("vNar").onchange = e => { st.narrator = { ...(st.narrator || {}), phone: e.target.value }; save(); };
-    if (G("vNarC")) G("vNarC").onchange = e => { st.narrator = { ...(st.narrator || {}), cart: e.target.value.trim() }; save(); };
+    G("vNarP").oninput = e => { st.narrator = { ...(st.narrator || {}), pitch: +e.target.value }; G("vNarPV").textContent = Math.round(+e.target.value * 100) + "%"; save(); };
+    G("vNarR").oninput = e => { st.narrator = { ...(st.narrator || {}), rate: +e.target.value }; G("vNarRV").textContent = Math.round(+e.target.value * 100) + "%"; save(); };
+    const narSample = "The lantern flickers as the door creaks open.";
+    G("vNar").onclick = async () => { const r = await openVoicePicker({ engine: "phone", cur: n.phone || "", title: "Narrator's phone voice", who: { name: "Narrator" }, voice: n, sample: narSample }); if (r === null) return; st.narrator = { ...(st.narrator || {}), phone: r }; save(); draw(); };
+    if (G("vNarC")) G("vNarC").onclick = async () => { const r = await openVoicePicker({ engine: "cart", cur: n.cart || "", title: "Narrator's voice", who: { name: "Narrator" }, voice: n, sample: narSample, autoLabel: "None (use the phone's voice)" }); if (r === null) return; st.narrator = { ...(st.narrator || {}), cart: r }; save(); draw(); };
     G("vTest").onclick = () => voiceSay([{ text: "The lantern flickers as the door creaks open.", who: "narrator" }, { text: "Oh, it's you. Come in, come in.", who: { name: "Wren", description: "she" , id: "test-wren" } }]);
   };
   draw(); return g;
@@ -6125,6 +6310,7 @@ addEventListener("popstate", () => {
   // our own step back: re-check, since a window may have been swapped for the hub (or the other way) meanwhile
   if (POP_IGNORE) { POP_IGNORE--; WANT_GUARD = false; syncNav(); return; }
   if (document.getElementById("yearPop")) document.getElementById("yearPop")._close();
+  else if (document.getElementById("voPop")) document.getElementById("voPop")._close();
   else if (document.getElementById("pixPop")) document.getElementById("pixPop")._close();
   else if (!$("ambPop").hidden) $("ambPop").hidden = true;
   else if (!$("sheet").hidden) userClose();
@@ -11857,8 +12043,9 @@ async function playKey(k) {
     // a slice is a few seconds from somewhere inside a loop, faded in and out
     const len = pick.len || 0, at = x.slice && len > 4 ? Math.random() * (len - 3.5) : 0;
     const mf = muf && !pick.type.endsWith("_m") ? muf : false;
-    await playBuf(url, x.slice ? { vol, muf: mf, at, len: 2.8, fadeIn: 0.25 } : { vol, muf: mf, cap: pick.type === "thunder" ? 0 : 4 });
+    const h = await playBuf(url, x.slice ? { vol, muf: mf, at, len: 2.8, fadeIn: 0.25 } : { vol, muf: mf, cap: pick.type === "thunder" ? 0 : 4 });
     if (pick.type === "gas" || pick.type === "gas_m") voreBurp();
+    return h;
   } catch {}
 }
 // --- tiny synthesiser (Web Audio). Each sound is a few envelopes on tones and filtered noise.
@@ -12327,8 +12514,9 @@ async function playBuf(url, { vol, muf, at = 0, len = 0, fadeIn = 0, cap = 4 }) 
   g.gain.setValueAtTime(fadeIn ? 0.0001 : vol, t); if (fadeIn) g.gain.linearRampToValueAtTime(vol, t + fadeIn);
   if (dur < rest - 0.05) { const fo = Math.min(0.6, dur / 3); g.gain.setValueAtTime(vol, t + dur - fo); g.gain.linearRampToValueAtTime(0.0001, t + dur); } // cut short: fade, never click
   src.start(t, at, dur);
-  const h = { stop() { try { g.gain.cancelScheduledValues(ac.currentTime); g.gain.setTargetAtTime(0.0001, ac.currentTime, 0.03); src.stop(ac.currentTime + 0.15); } catch {} } };
-  SFX_LIVE.add(h); src.onended = () => { SFX_LIVE.delete(h); try { g.disconnect(); src.disconnect(); } catch {} };
+  let fin; const done = new Promise(r => fin = r);
+  const h = { dur, done, stop() { try { g.gain.cancelScheduledValues(ac.currentTime); g.gain.setTargetAtTime(0.0001, ac.currentTime, 0.03); src.stop(ac.currentTime + 0.15); } catch {} } };
+  SFX_LIVE.add(h); src.onended = () => { SFX_LIVE.delete(h); fin(); try { g.disconnect(); src.disconnect(); } catch {} };
   return h;
 }
 async function startLoop(url, vol, muffle, fade = 1.2) {
