@@ -54,8 +54,8 @@ const open = require("./base.js");
   await pg.evaluate(() => { COMM.pending.forEach(p => { p.due = Date.now() - 1; }); return Store.set("comm", COMM); });
   await pg.evaluate(() => commTick(true)); await wait(300);
   const rep = await pg.evaluate(id => { const l = COMM.comments[id], mine = l.find(x => x.by === "me"); return { replies: l.filter(x => x.replyTo === mine.id).map(x => ({ by: userOf(x.by)?.handle, text: x.text, toMe: x.toMe })), pending: COMM.pending.length }; }, pid);
-  chk(`the reply answers you in their own name (${rep.replies.map(r => r.by).join(",")})`, rep.replies.length >= 1 && rep.replies.every(r => r.toMe && /thanks!! from user_\d+/.test(r.text)) && rep.pending === 0);
-  chk("the reply's prompt is written as that user, about your comment", calls.some(c => /^You are @user_\d+/.test(sysOf(c)) && /love this dragon/.test(userOf_(c))));
+  chk(`the reply answers you in their own name (${rep.replies.map(r => r.by).join(",")})`, rep.replies.length >= 1 && rep.replies.every(r => r.toMe && /thanks!! from user_?\d+/.test(r.text)) && rep.pending === 0);
+  chk("the reply's prompt is written as that user, about your comment", calls.some(c => /^You are @user_?\d+/.test(sysOf(c)) && /love this dragon/.test(userOf_(c))));
   await pg.evaluate(id => openPost(id), pid); await wait(300);
   chk("the reply sits indented under your comment", await pg.evaluate(() => { const cs = [...document.querySelectorAll(".cm-c")]; const me = cs.findIndex(x => x.classList.contains("me")); return me >= 0 && cs[me + 1] && getComputedStyle(cs[me + 1]).marginLeft !== getComputedStyle(cs[me]).marginLeft; }));
   // replying to someone's comment asks them to answer
@@ -66,7 +66,7 @@ const open = require("./base.js");
   // add to my bots and chat
   await pg.click("#cmAdd"); await until(() => S.chars.some(c => c.fromComm)); await wait(400);
   const added = await pg.evaluate(id => { const c = S.chars.find(x => x.fromComm?.post === id); return c && { name: c.name, by: c.fromComm.by, open: greetingsOf(c).length, added: COMM.posts.find(p => p.id === id).added === c.id }; }, pid);
-  chk("Add to my bots makes a copy credited to its poster", added && /^@user_/.test(added.by) && added.open === 1 && added.added);
+  chk("Add to my bots makes a copy credited to its poster", added && /^@user_?\d/.test(added.by) && added.open === 1 && added.added);
   const chatsBefore = await pg.evaluate(id => postChats(COMM.posts.find(p => p.id === id)), pid);
   await pg.click("#cmChat"); await until(() => !$("chat").hidden); await wait(400);
   chk("Chat opens it and counts your chat", await pg.evaluate(([id, n]) => !$("chat").hidden && char()?.fromComm?.post === id && postChats(COMM.posts.find(p => p.id === id)) === n + 1, [pid, chatsBefore]));
