@@ -774,6 +774,9 @@ img.px-av{border-radius:50%}
 .dm-av{position:relative;flex:none;display:inline-flex}.dm-on{position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:#6fdc6a;box-shadow:0 0 0 2px var(--surface)}
 .dm-row.un b{color:var(--fg)}.dm-row.un .sub{color:var(--fg);font-weight:700}.dm-r{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}.dm-n{position:static;box-shadow:none}
 /* v1.79 lounges and group chats */
+.cm-staff{font-size:10.5px;font-weight:700;color:var(--accent-ink);background:var(--accent);border-radius:999px;padding:1px 7px;margin-left:4px}
+.nw-pill{font-size:11px;font-weight:700;border-radius:999px;padding:1px 8px;margin-left:auto;background:var(--surface-2);color:var(--fg);white-space:nowrap}.nw-staff{background:color-mix(in srgb,var(--accent) 22%,var(--surface-2))}.nw-drama{background:color-mix(in srgb,#ff6a3a 24%,var(--surface-2))}.nw-ban{background:color-mix(in srgb,#e2766f 22%,var(--surface-2))}
+.cm-blog .cm-by{flex-wrap:wrap}.cm-ban{margin:6px 0}
 .rm-sub{margin:0 0 10px}.rm-intro{margin:0 0 8px}
 .rm-row .rm-ic,.rm-gic{width:38px;height:38px;flex:none;display:grid;place-items:center;font-size:20px;border-radius:12px;background:var(--surface-2)}
 .rm-row.un .sub{color:var(--fg);font-weight:700}
@@ -1597,7 +1600,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.79 · Oct 27";
+const VERSION = "1.80 · Oct 27";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -3712,6 +3715,8 @@ const ACH = [
   { k: "lounge_hi", g: "Play", n: "Pull Up a Chair", how: "Say something in a community lounge.", src: "app" },
   { k: "lounge_hop", g: "Play", n: "Lounge Lizard", how: "Talk in 5 different lounges.", src: "app", r: 1 },
   { k: "group_made", g: "Play", n: "Group Chat", how: "Start a group chat.", src: "app" },
+  { k: "popcorn", g: "Play", n: "Grab the Popcorn", how: "Comment on a hot topic in the community.", src: "app", nw: 1, h: "Someone's always fighting." },
+  { k: "courtroom", g: "Play", n: "Armchair Judge", how: "Comment on a moderation notice.", src: "app", nw: 1, h: "Have an opinion on the rules." },
   { k: "group_added", g: "Play", n: "Plus One", how: "Get added to someone's group chat.", src: "app", nw: 1, h: "Make friends." },
   { k: "shop_try", g: "Play", n: "Window Shopper", how: "Try on 10 things in the shop.", src: "app" },
   { k: "shop_dress", g: "Play", n: "Dressed Up", how: "Wear something in 3 wardrobe slots at once.", src: "app" },
@@ -7692,7 +7697,7 @@ const COMM_COLS = ["#e8a95b", "#ff6fae", "#7fb2ff", "#6fdc6a", "#c49bff", "#4fd1
 let COMM = null, COMM_BUSY = false, COMM_T = 0, COMM_DIRTY = false;
 const commOn = () => S.settings.commOn !== false;
 const commRate = () => COMM_RATES[S.settings.commLevel] || COMM_RATES.busy;
-const commBlank = () => ({ users: [], posts: [], comments: {}, pub: {}, liked: {}, pending: [], done: [], me: { name: "", at: 0 }, seen: { at: 0 }, tickP: 0, tickC: 0, dms: {}, dmq: [], dmNext: 0, follow: {}, fans: {}, blogs: [], tickB: 0, tickU: 0, actSeen: 0, feedSeen: 0, actClear: 0, actHid: {}, blocked: {}, promises: [], jams: {}, rooms: {}, rq: [], groups: {}, grpNext: 0 });
+const commBlank = () => ({ users: [], posts: [], comments: {}, pub: {}, liked: {}, pending: [], done: [], me: { name: "", at: 0 }, seen: { at: 0 }, tickP: 0, tickC: 0, dms: {}, dmq: [], dmNext: 0, follow: {}, fans: {}, blogs: [], tickB: 0, tickU: 0, actSeen: 0, feedSeen: 0, actClear: 0, actHid: {}, blocked: {}, promises: [], jams: {}, rooms: {}, rq: [], groups: {}, grpNext: 0, arcs: [], newsNext: {}, newsSeen: 0 });
 // reloading never drops a change that hasn't been written yet (a like or a follow made a moment ago): it's merged in on top
 // v1.76: the copy in memory is merged with what's stored, keeping its own objects, so work that's still running on them
 // (a DM being written, a reply, people being dressed) never lands on a copy that was just thrown away
@@ -7720,13 +7725,22 @@ function commMerge(a, b, keep) {
     jams: (() => { const o = { ...(A.jams || {}) }; for (const [k, j] of Object.entries(B.jams || {})) o[k] = { mine: [...new Set([...(o[k]?.mine || []), ...(j?.mine || [])])], done: Math.max(o[k]?.done || 0, j?.done || 0) || undefined }; return o; })(),
     // v1.79: lounges and group chats
     rooms: (() => { const o = { ...(A.rooms || {}) }; for (const [k, d] of Object.entries(B.rooms || {})) { const x = o[k] || { msgs: [], read: 0, seen: 0 }; o[k] = (keep ? (r => Object.assign(d, r)) : (r => r))({ msgs: byId(x.msgs, d.msgs).sort((p, q) => p.at - q.at).slice(-200), read: Math.max(x.read || 0, d.read || 0), seen: Math.max(x.seen || 0, d.seen || 0) }); } return o; })(),
-    rq: byId(A.rq, B.rq).filter(p => !done.includes(p.id)), groups: newer(A.groups, B.groups), grpNext: Math.max(A.grpNext || 0, B.grpNext || 0) };
+    rq: byId(A.rq, B.rq).filter(p => !done.includes(p.id)), groups: newer(A.groups, B.groups), grpNext: Math.max(A.grpNext || 0, B.grpNext || 0),
+    // v1.80: site news and drama
+    arcs: byId(A.arcs, B.arcs).slice(-40), newsNext: (() => { const o = { ...(A.newsNext || {}) }; for (const [k, v] of Object.entries(B.newsNext || {})) o[k] = Math.max(o[k] || 0, v || 0); return o; })(), newsSeen: Math.max(A.newsSeen || 0, B.newsSeen || 0) };
 }
 // a steady random number per item, so counts are the same on every device
 // a time a little in the past, so new things don't all look brand new, but never before the owner last looked
 const cmBack = maxMs => Math.max(Date.now() - Math.round(Math.random() * maxMs), (COMM?.seen?.at || 0) + 1);
 const seeded = (s, k = 0) => { const h = hash(String(s) + ":" + k); return (h % 100000) / 100000; };
-const userOf = id => COMM?.users.find(u => u.id === id);
+const userOf = id => COMM?.users.find(u => u.id === id) || STAFF_BY[id];
+// v1.80: the site's staff (fixed accounts, not part of the crowd: they only post news and answer under their own posts)
+const STAFF = [
+  { id: "staff_wick", name: "Wick", handle: "wick", role: "site admin", staff: 1, style: "friendly and clear, proper grammar, signs off warmly, the odd 🕯️", voice: "warm, careful", bio: "I keep the lights on around here. Bugs, ideas and appeals go to the report button.", taste: [], pix: { s: "lantern", pal: "ember", frame: "round" }, tz: -6, sleep: [1, 8], active: 0.8, at: Date.parse("2023-06-01") },
+  { id: "staff_moth", name: "Moth", handle: "moth_mod", role: "moderator", staff: 1, style: "short, matter-of-fact, mostly lowercase, dry humour", voice: "dry, fair", bio: "mod. read the rules. report, don't dogpile.", taste: [], pix: { s: "owl", pal: "dusk", frame: "round" }, tz: 1, sleep: [0, 7], active: 0.7, at: Date.parse("2023-09-12") },
+  { id: "staff_juniper", name: "Juniper", handle: "juniper_mod", role: "community moderator", staff: 1, style: "upbeat, exclamation marks, a few emoji", voice: "cheerful, encouraging", bio: "Community mod! I run the spotlights and the jams. Come say hi in #general!", taste: [], pix: { s: "fox", pal: "moss", frame: "soft" }, tz: -5, sleep: [2, 9], active: 0.75, at: Date.parse("2024-02-20") }
+];
+const STAFF_BY = Object.fromEntries(STAFF.map(s => [s.id, s]));
 // v1.77: people you blocked: everything of theirs is hidden from you and they can't reach you (they can notice, though)
 const blocked = id => !!COMM?.blocked?.[id]?.v;
 const vis = id => !blocked(id);
@@ -7942,11 +7956,11 @@ function sessOf(u, h) {
   for (let x = a + 60e3; x < e; x += 60e3) if (asleepAt(u, x)) { e = x - 60e3; break; } // they log off at bedtime
   return e - a >= 4 * 60e3 ? [a, e] : null;
 }
-function onBase(u, t) { if (u.offUntil && t >= u.offFrom && t < u.offUntil) return false; if (u.last && t >= u.last && t - u.last < ACT_MS) return true; const H = Math.floor(t / SES_H); for (let h = H - 2; h <= H; h++) { const x = sessOf(u, h); if (x && t >= x[0] && t < x[1]) return true; } return false; }
+function onBase(u, t) { if (u.ban && isBanned(u, t)) return false; if (u.offUntil && t >= u.offFrom && t < u.offUntil) return false; if (u.last && t >= u.last && t - u.last < ACT_MS) return true; const H = Math.floor(t / SES_H); for (let h = H - 2; h <= H; h++) { const x = sessOf(u, h); if (x && t >= x[0] && t < x[1]) return true; } return false; }
 // windows around your DMs: when they see your message, and from when they start typing until a few minutes after the last text
 function dmWins(u) { const w = [], cut = x => u.offFrom && x[0] < u.offFrom && x[1] > u.offFrom ? [x[0], u.offFrom] : u.offUntil && x[0] >= u.offFrom && x[0] < u.offUntil ? null : x; return dmWins0(u).map(cut).filter(Boolean); }
 function dmWins0(u) { const w = []; for (const m of COMM?.dms?.[u.id]?.msgs || []) if (m.from === "me" && m.seenAt) w.push([m.seenAt - 60e3, m.seenAt + 3 * 60e3]); for (const q of COMM?.dmq || []) if (q.user === u.id && q.typingAt) w.push([q.typingAt - 30e3, (q.parts?.length ? q.parts.at(-1).at : q.due) + 4 * 60e3]); return w; }
-function isOnline(u, t = Date.now()) { if (!u) return false; return onBase(u, t) || dmWins(u).some(([a, b]) => t >= a && t < b); }
+function isOnline(u, t = Date.now()) { if (!u || isBanned(u, t)) return false; return onBase(u, t) || dmWins(u).some(([a, b]) => t >= a && t < b); }
 function lastSeen(u, t = Date.now()) {
   if (isOnline(u, t)) return t;
   let best = u.last && u.last <= t ? Math.min(t, u.last + ACT_MS) : 0;
@@ -8004,8 +8018,8 @@ async function commPosts(k, opt = {}) {
 // comments on listings and on the owner's public bots, from users whose taste fits
 function commTargets(n) {
   const now = Date.now(), list = [];
-  for (const p of COMM.posts.slice(0, 40)) list.push({ t: p.id, w: (0.4 + p.heat) * Math.exp(-(now - p.at) / 2.6e8) * (1 + (commLiked(p.id) ? 1 : 0)) });
-  for (const b of (COMM.blogs || []).filter(b => b.by !== "me").slice(0, 25)) list.push({ t: "blog:" + b.id, w: 0.5 * (0.4 + b.heat) * Math.exp(-(now - b.at) / 1.7e8) });
+  for (const p of COMM.posts.filter(postLive).slice(0, 40)) list.push({ t: p.id, w: (0.4 + p.heat) * Math.exp(-(now - p.at) / 2.6e8) * (1 + (commLiked(p.id) ? 1 : 0)) });
+  for (const b of (COMM.blogs || []).filter(b => b.by !== "me").slice(0, 25)) list.push({ t: "blog:" + b.id, w: (b.news ? 2.5 : 0.5) * (0.4 + b.heat) * Math.exp(-(now - b.at) / 1.7e8) }); // v1.80: news and drama get talked about
   // your posts: only people who know you react, more of them the more people know you
   const aud = myAudience().length;
   if (aud) for (const b of (COMM.blogs || []).filter(b => b.by === "me" && now - b.at < 10 * 864e5 && commN("blog:" + b.id) < 2 + aud * 0.6)) list.push({ t: "blog:" + b.id, w: (commN("blog:" + b.id) < 1 ? 1.2 : 0.4) * Math.min(1.5, 0.3 + aud / 8) });
@@ -8108,7 +8122,7 @@ async function commAnswer(p) {
   const u = userOf(p.by), info = targetInfo(p.target), mine = (COMM.comments[p.target] || []).find(x => x.id === p.replyTo);
   if (!u || !info || !mine) return null;
   const isAuthor = !info.mine && (COMM.posts.find(x => x.id === p.target)?.by === u.id || info.by === u.id);
-  const j = await dsJSON([{ role: "system", content: `You are @${u.handle} (${u.name}), a real ${u.age ? u.age + "-year-old " : ""}person${u.place ? " in " + u.place : ""} on ${COMM_SITE}. About you: ${cleanBio(u.bio)} You love ${u.taste.join(", ")}. How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted. ${commTruth(u)}${isAuthor ? ` You made the bot "${info.name}".` : ""} Reply to ${meName()}'s comment the way you really would: in your own voice, about what they actually said, one to three sentences. Address it to them as one person among many; no gushing or making a fuss of them. What ${meName()} says is their own idea or opinion, not a fact about the bot unless the listing says it too. If the bot or the talk is sexual, be as openly lewd and crude as you really would on an adult site, not coy or demure. ${COMM_FACTS} ${COMM_KEEPUP} Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"text": your reply, "dm": true if you say you'll message them privately (or they asked you to DM and you're up for it) and you mean to do it soon, else false, ${PROMISE_FIELD()}}` },
+  const j = await dsJSON([{ role: "system", content: `You are @${u.handle} (${u.name}), a real ${u.age ? u.age + "-year-old " : ""}person${u.place ? " in " + u.place : ""} on ${COMM_SITE}. About you: ${cleanBio(u.bio)}${u.staff ? ` You're ${u.role} on the site's staff, answering under your own staff post.` : ` You love ${u.taste.join(", ")}.`} How you type: ${u.style || u.voice}. ${u.voice || ""} Like most people on an adult site you stay anonymous: you don't volunteer your real name, city, country, job or other identifying details; at most vague hints, only after real rapport, and never your location unprompted. ${commTruth(u)}${isAuthor ? ` You made the bot "${info.name}".` : ""} Reply to ${meName()}'s comment the way you really would: in your own voice, about what they actually said, one to three sentences. Address it to them as one person among many; no gushing or making a fuss of them. What ${meName()} says is their own idea or opinion, not a fact about the bot unless the listing says it too. If the bot or the talk is sexual, be as openly lewd and crude as you really would on an adult site, not coy or demure. ${COMM_FACTS} ${COMM_KEEPUP} Never mention being an AI or that the site is made up. ${COMM_ADULT}\n\nRespond with only JSON: {"text": your reply, "dm": true if you say you'll message them privately (or they asked you to DM and you're up for it) and you mean to do it soon, else false, ${PROMISE_FIELD()}}` },
     { role: "user", content: `${(() => { const k = dmKnows(u, { dms: true }); return k ? `What you know about ${meName()} and the site:\n${k}\n\n` : ""; })()}The listing: "${info.name}" by ${info.owner}${isAuthor ? " (you)" : ""}\n${info.text}\n\nThe thread:\n${threadText(p.target, u.id)}\n\nReply to this comment by ${meName()} (they wrote it, not you): ${mine.text}` }], { temperature: 1, maxTokens: 500, plain: true });
   const text = s5(j?.text).slice(0, 600); if (!text) return null;
   const c = { id: uid(), by: u.id, text, at: Math.min(Date.now(), p.due + 60e3), replyTo: mine.id, heat: 0.6 + Math.random(), toMe: true, got: Date.now() }; u.last = Math.max(u.last || 0, c.at);
@@ -8338,6 +8352,7 @@ async function commTick(force) {
     // v1.74: replies to you come first, so nothing below (new people, repairs) can ever hold them up
     { const n = await commDoReplies(); if (n) { news += n; changed = true; } }
     { const n = await commKeepPromises(); if (n) changed = true; } // v1.77
+    try { if (await newsTick()) changed = true; } catch (e) { console.warn("news:", e.message); } // v1.80
     if (!COMM.born) { COMM.born = (COMM.users.length ? Math.min(...COMM.users.map(u => u.at || now)) : now - 920 * 864e5) - 30 * 864e5; changed = true; } // the site is older than its oldest member
     if (!COMM.users.length) { for (let i = 0; i < 3; i++) { try { await commUsers(12); } catch (e) { if (!COMM.users.length) throw e; } } changed = true; }
     else if (COMM.users.length < COMM_PEOPLE) { for (let i = 0; i < 2 && COMM.users.length < COMM_PEOPLE; i++) try { await commUsers(12); changed = true; } catch (e) { console.warn("community people:", e.message); break; } } // v1.77: 300 active people, 24 more each check until then
@@ -8438,7 +8453,7 @@ function hubHead() {
 }
 function hubNav() {
   const un = dmUnread() + roomUnread(), fd = COMM ? feedItems().filter(x => arrived(x) > (COMM.feedSeen || 0) && x.kind !== "copy").length : 0;
-  $("hubNav").innerHTML = HUB_TABS.map(([k, l]) => { const n = k === "dms" ? un : k === "feed" ? fd : 0;
+  $("hubNav").innerHTML = HUB_TABS.map(([k, l]) => { const n = k === "dms" ? un : k === "feed" ? fd : k === "home" && COMM ? newsUnseen() : 0;
     return `<button type="button" class="hub-tab ${HUB.tab === k ? "on" : ""}" data-ht="${k}" aria-label="${l}">${k === "you" ? `<span class="hub-av">${meAvatar(24)}</span>` : HUB_ICON[k]}<span>${l}</span>${n ? `<i class="hub-n">${n > 9 ? "9+" : n}</i>` : ""}</button>`; }).join("");
   $("hubNav").querySelectorAll("[data-ht]").forEach(b => b.onclick = () => { if (HUB.tab === b.dataset.ht && HUB.cur?.title === "__tab") { $("hubBody").scrollTo({ top: 0, behavior: "smooth" }); return; } hubTab(b.dataset.ht); });
 }
@@ -8449,7 +8464,7 @@ function postMini(p) {
 }
 const trendScore = p => postLikes(p) / Math.pow(1 + (Date.now() - p.at) / 864e5, 0.8);
 function hubRows() {
-  const P = COMM.posts.filter(p => vis(p.by)), day = 864e5, now = Date.now(), fol = P.filter(p => follows(p.by));
+  const P = COMM.posts.filter(p => vis(p.by) && postLive(p)), day = 864e5, now = Date.now(), fol = P.filter(p => follows(p.by));
   return [
     ...(seasonNow() ? [["season", `${seasonNow().icon} ${seasonNow().n} bots`, P.filter(p => p.jam === seasonNow().id || (p.tags || []).some(t => seasonNow().tags.includes(String(t).toLowerCase()))).sort((a, c) => c.at - a.at)]] : []),
     ["trending", "🔥 Trending", [...P].sort((a, c) => trendScore(c) - trendScore(a))],
@@ -8489,8 +8504,8 @@ function hubTab(tab) {
     if (!hasKey()) body = `<p class="note">Add your API key in Settings first: the community is written by the AI.</p>`;
     else if (!COMM.posts.length && HUB.tab !== "you") body = `<div class="cm-empty">${lanternSVG("seq")}<p>The community is waking up…</p></div>`;
     else if (HUB.tab === "home") {
-      body = siteLine() + seasonHubHTML() + loungeStripHTML() + hubRows().map(([k, t, l]) => `<section class="hub-row"><div class="hub-rh"><h3>${esc(t)}</h3>${l.length > 4 ? `<button type="button" class="hub-all" data-row="${k}">See all ›</button>` : ""}</div><div class="hub-strip">${l.slice(0, 12).map(postMini).join("")}</div></section>`).join("");
-      const blogs = (COMM.blogs || []).filter(b => vis(b.by)).sort((a, c) => c.at - a.at).slice(0, 3);
+      body = siteLine() + seasonHubHTML() + newsHTML() + loungeStripHTML() + hubRows().map(([k, t, l]) => `<section class="hub-row"><div class="hub-rh"><h3>${esc(t)}</h3>${l.length > 4 ? `<button type="button" class="hub-all" data-row="${k}">See all ›</button>` : ""}</div><div class="hub-strip">${l.slice(0, 12).map(postMini).join("")}</div></section>`).join("");
+      const blogs = (COMM.blogs || []).filter(b => vis(b.by) && !b.news).sort((a, c) => c.at - a.at).slice(0, 3);
       if (blogs.length) body += `<section class="hub-row"><div class="hub-rh"><h3>📝 Fresh posts</h3></div>${blogs.map(blogCard).join("")}</section>`;
       body += `<button type="button" class="btn small hub-more" id="cmRefresh">↻ Check for new bots</button>`;
     } else if (HUB.tab === "discover") {
@@ -8506,6 +8521,7 @@ function hubTab(tab) {
     if ($("dmNew")) $("dmNew").onclick = openNewDM;
     if ($("dmRead")) $("dmRead").onclick = () => { for (const d of Object.values(COMM.dms)) d.read = Math.max(d.read || 0, Date.now()); for (const r of Object.values(COMM.rooms || {})) r.read = Math.max(r.read || 0, Date.now()); commSave(); commDot(); draw(); };
     if ($("grpNew")) $("grpNew").onclick = () => openNewGroup();
+    if ($("newsAll")) $("newsAll").onclick = openNews;
     if ($("hubLounges")) $("hubLounges").onclick = () => { HUB.msub = "lounges"; hubTab("dms"); };
     b.querySelectorAll("[data-msub]").forEach(x => x.onclick = () => { HUB.msub = x.dataset.msub; draw(); });
     hubYouWire(draw);
@@ -8522,7 +8538,7 @@ function hubDisc(draw) {
   const hit = p => (!q || [p.card.name, p.card.summary, p.card.source, ...(p.tags || []), userOf(p.by)?.handle].join(" ").toLowerCase().includes(q))
     && (HUB.kind === "all" || (HUB.kind === "fan" ? !!p.card.source : HUB.kind === "oc" ? p.card.source === "" : (p.kind || "character") === HUB.kind))
     && (!HUB.tag || (p.tags || []).includes(HUB.tag));
-  const list = COMM.posts.filter(p => vis(p.by)).filter(hit).sort((a, c) => HUB.sort === "new" ? c.at - a.at : postLikes(c) - postLikes(a));
+  const list = COMM.posts.filter(p => vis(p.by) && postLive(p)).filter(hit).sort((a, c) => HUB.sort === "new" ? c.at - a.at : postLikes(c) - postLikes(a));
   const people = q.length >= 2 ? COMM.users.filter(u => vis(u.id) && [u.name, u.handle, ...(u.taste || [])].join(" ").toLowerCase().includes(q)).slice(0, 10) : [];
   box.innerHTML = `<div class="hub-chips">${kinds.map(([k, l]) => `<button type="button" class="chip ${HUB.kind === k ? "on" : ""}" data-hk="${k}">${l}</button>`).join("")}<span class="hub-sep"></span>${[["popular", "Popular"], ["new", "New"]].map(([k, l]) => `<button type="button" class="chip ${HUB.sort === k ? "on" : ""}" data-hs="${k}">${l}</button>`).join("")}</div>
     <div class="hub-chips hub-tags">${tags.map(t => `<button type="button" class="chip ${HUB.tag === t ? "on" : ""}" data-htag="${esc(t)}"${tagStyle(t)}>${tagIcon(t) ? `<span class="ti">${tagIcon(t)}</span>` : ""}${esc(t)}</button>`).join("")}</div>
@@ -8668,7 +8684,7 @@ async function openCommunity(tab) {
   hubTab(map[tab] || tab || (HUB.open ? HUB.tab : "home"));
   if (hasKey() && !COMM.posts.length) commTick(true).then(() => commRedraw());
 }
-const commUserPosts = u => COMM.posts.filter(p => p.by === u.id);
+const commUserPosts = u => COMM.posts.filter(p => p.by === u.id && postLive(p));
 function postCard(p) {
   const u = userOf(p.by), liked = commLiked(p.id), k = p.kind || "character";
   return `<div class="cm-card k-${k}" data-post="${esc(p.id)}" role="button" tabindex="0"><div class="cm-top"><span class="kind-pill">${k === "world" ? "World" : k === "group" ? "Group" : "Char"}</span><b class="cm-name">${esc(p.card.name)}</b></div>${p.card.source ? `<span class="cm-src">From ${esc(p.card.source)}</span>` : p.card.source === "" ? `<span class="cm-src oc">OC</span>` : ""}
@@ -8714,6 +8730,7 @@ async function commAdd(p) {
 function openCommUser(id) {
   const u = userOf(id); if (!u) return;
   const draw = () => cpage("@" + u.handle, b => {
+    if (u.staff) { const ps = (COMM.blogs || []).filter(x => x.by === u.id); b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-page"><div class="cm-prof">${avatarOf(u, 64)}<div class="grow"><h3 class="cm-pfn">${esc(u.name)}</h3><div class="hint">@${esc(u.handle)} · <span class="cm-staff">✦ Staff</span> ${esc(u.role)}</div></div></div><p class="cm-bio">${esc(u.bio)}</p><div class="lbl">Posts · ${ps.length}</div>${ps.length ? ps.slice(0, 20).map(blogCard).join("") : `<p class="hint">No posts yet.</p>`}</div>`; hubWire(b, draw); return; }
     const posts = commUserPosts(u), blogs = (COMM.blogs || []).filter(x => x.by === u.id), said = Object.entries(COMM.comments).flatMap(([t, l]) => l.filter(x => x.by === u.id).map(x => [t, x])).sort((a, c) => c[1].at - a[1].at).slice(0, 6);
     if (blocked(u.id)) { b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-page"><div class="cm-prof">${avatarOf(u, 64)}<div class="grow"><h3 class="cm-pfn">${esc(u.name)}</h3><div class="hint">@${esc(u.handle)}</div></div></div><p class="note">You blocked this person. You don't see their bots, posts, comments or messages, and they can't message you or reply to you.</p><button type="button" class="btn" id="cmUnblock">Unblock</button></div>`; $("cmUnblock").onclick = () => { commBlock(u.id, false); draw(); }; return; }
     const likes = posts.reduce((a, p) => a + postLikes(p), 0), fw = follows(u.id), fs = fitStyle(u);
@@ -8722,6 +8739,7 @@ function openCommUser(id) {
     b.innerHTML = `<i class="cm-mark" hidden></i><div class="cm-pfx${fs.shop ? " st-" + fs.shop : ""}" style="${fs.st}">${fs.shop ? `<div class="sh-fx">${stFxHTML(fs.shop)}</div>` : ""}<div class="cm-pfx-in">
       <div class="cm-prof"><div class="cm-emb">${avatarOf(u, 64)}<span class="cm-lan">${fitLantern(u)}</span></div><div class="grow">${name}<div class="hint">@${esc(u.handle)} · joined ${esc(new Date(u.at).toLocaleDateString([], { month: "short", year: "numeric" }))}${followsMe(u.id) ? ' <span class="badge cm-fy">Follows you</span>' : ""}</div><div class="hint cm-status"><span class="dm-dot ${isOnline(u) ? "on" : ""}"></span>${esc(seenText(u))}</div></div></div>
       <div class="cm-pstats"><span><b>${fmtK(followerCount(u))}</b> followers</span><span><b>${posts.length}</b> bot${posts.length === 1 ? "" : "s"}</span><span><b>♥ ${fmtK(likes)}</b></span></div>
+      ${isBanned(u) ? `<p class="note cm-ban">🔨 ${u.ban.until ? `This account is suspended until ${esc(new Date(u.ban.until).toLocaleDateString([], { month: "short", day: "numeric" }))}` : "This account has been banned"} for ${esc(u.ban.why)}.</p>` : ""}
       <div class="row"><button type="button" class="btn ${fw ? "" : "primary"} small" id="cmFollow">${fw ? "✓ Following" : "＋ Follow"}</button><button type="button" class="btn small" id="cmDM">💬 Message</button><button type="button" class="btn small" id="cmBlock">🚫 Block</button></div>
       <p class="cm-bio">${esc(cleanBio(u.bio))}</p>${u.taste.length ? `<div class="btags">${u.taste.map(t => `<span class="btag"${tagStyle(t)}>${esc(t)}</span>`).join("")}</div>` : ""}
       ${pin ? `<div class="lbl">📌 Pinned</div><div class="cm-grid">${postCard(pin)}</div>` : ""}
@@ -8759,6 +8777,7 @@ function wireComments(b, t, redraw) {
   $("cmSend").onclick = () => {
     const text = $("cmText").value.trim(); if (!text) return;
     const c = { id: uid(), by: "me", text: text.slice(0, 1000), at: Date.now(), replyTo: to };
+    if (t.startsWith("blog:") && ACHS && achOn()) { const nb = COMM.blogs.find(x => "blog:" + x.id === t); if (nb?.news === "drama") achGrant("popcorn", null, null); else if (nb?.news === "ban") achGrant("courtroom", null, null); }
     (COMM.comments[t] = COMM.comments[t] || []).push(c); commSchedule(t, c); commSave(); redraw();
     toast("Posted");
   };
@@ -8918,7 +8937,7 @@ async function commCopyUpdate(c) {
 function feedItems() {
   if (!COMM) return [];
   const out = [], since = id => COMM.follow[id]?.at || 0;
-  for (const p of COMM.posts) { if (follows(p.by) && p.at > since(p.by)) out.push({ kind: "post", at: p.at, got: p.got, by: p.by, p }); for (const up of p.updates || []) if (follows(p.by) && up.at > since(p.by)) out.push({ kind: "update", at: up.at, got: up.got, by: p.by, p, up }); }
+  for (const p of COMM.posts) { if (!postLive(p)) continue; if (follows(p.by) && p.at > since(p.by)) out.push({ kind: "post", at: p.at, got: p.got, by: p.by, p }); for (const up of p.updates || []) if (follows(p.by) && up.at > since(p.by)) out.push({ kind: "update", at: up.at, got: up.got, by: p.by, p, up }); }
   for (const b of COMM.blogs) if (follows(b.by) && b.at > since(b.by)) out.push({ kind: "blog", at: b.at, got: b.got, by: b.by, b });
   for (const [id, t] of Object.entries(COMM.fans)) if (t <= Date.now() && userOf(id)) out.push({ kind: "fan", at: t, by: id });
   for (const u of COMM.users) if (follows(u.id)) for (const h of u.hist || []) if (h.at > since(u.id) && h.what !== "status") out.push({ kind: "prof", at: h.at, got: h.got, by: u.id, h });
@@ -8939,15 +8958,15 @@ function feedHTML() {
 }
 function blogCard(b) {
   const u = b.by === "me" ? { name: meName(), handle: myHandle(), id: "me" } : userOf(b.by), liked = commLiked("blog:" + b.id);
-  return `<div class="cm-blog" data-blog="${esc(b.id)}" role="button" tabindex="0"><div class="cm-by">${b.by === "me" ? meAvatar(20) : avatarOf(u, 20)}<span>@${esc(u?.handle || "")}</span><span class="hint">· ${esc(fmtWhen(b.at))}</span></div>${b.title ? `<b>${esc(b.title)}</b>` : ""}<p>${esc(b.text)}</p><div class="cm-stats"><button type="button" class="cm-like ${liked ? "on" : ""}" data-like="blog:${esc(b.id)}">♥ ${fmtK(blogLikes(b))}</button><span>🗨 ${commN("blog:" + b.id)}</span></div></div>`;
+  return `<div class="cm-blog" data-blog="${esc(b.id)}" role="button" tabindex="0"><div class="cm-by">${b.by === "me" ? meAvatar(20) : avatarOf(u, 20)}<span>@${esc(u?.handle || "")}</span>${u?.staff ? `<span class="cm-staff">✦ Staff</span>` : ""}<span class="hint">· ${esc(fmtWhen(b.at))}</span>${b.news ? `<span class="nw-pill nw-${b.news}">${NEWS_KIND[b.news]}</span>` : ""}</div>${b.title ? `<b>${esc(b.title)}</b>` : ""}<p>${esc(b.text)}</p><div class="cm-stats"><button type="button" class="cm-like ${liked ? "on" : ""}" data-like="blog:${esc(b.id)}">♥ ${fmtK(blogLikes(b))}</button><span>🗨 ${commN("blog:" + b.id)}</span></div></div>`;
 }
 function openBlog(id) {
   const x = COMM.blogs.find(y => y.id === id); if (!x) return;
   const t = "blog:" + id;
   const draw = () => cpage(x.title || "Post", b => {
     const mine = x.by === "me", u = mine ? { name: meName(), handle: myHandle() } : userOf(x.by), liked = commLiked(t);
-    b.innerHTML = `<i class="cm-mark" hidden></i><button type="button" class="cm-by cm-by-big" data-u="${esc(x.by)}">${mine ? meAvatar(30) : avatarOf(u, 30)}<span><b>${esc(u?.name || "")}</b> <span class="hint">@${esc(u?.handle || "")} · ${esc(fmtWhen(x.at))}</span></span></button>
-      <div class="cm-post-tx">${esc(x.text)}</div>
+    b.innerHTML = `<i class="cm-mark" hidden></i><button type="button" class="cm-by cm-by-big" data-u="${esc(x.by)}">${mine ? meAvatar(30) : avatarOf(u, 30)}<span><b>${esc(u?.name || "")}</b>${u?.staff ? ` <span class="cm-staff">✦ Staff</span>` : ""} <span class="hint">@${esc(u?.handle || "")} · ${esc(fmtWhen(x.at))}</span></span></button>
+      ${x.news ? `<span class="nw-pill nw-${x.news}">${NEWS_KIND[x.news]}</span>` : ""}<div class="cm-post-tx">${esc(x.text)}</div>
       <div class="cm-stats cm-stats-big"><button type="button" class="cm-like ${liked ? "on" : ""}" id="cmLike">♥ ${fmtK(blogLikes(x))}</button><span>🗨 ${commN(t)} comments</span></div>
       <div class="lbl">Comments · ${commN(t)}</div>${commentsUI(t)}`;
     b.querySelector("[data-u]").onclick = () => mine ? hubTab("you") : openCommUser(x.by);
@@ -8956,6 +8975,163 @@ function openBlog(id) {
     wireComments(b, t, draw);
   });
   COMM_VIEW = draw; draw();
+}
+
+// ---- Site news and drama (v1.80)
+// The site has a small staff team who post announcements (new features, rule changes, scheduled maintenance, spotlights,
+// milestones, feedback threads) and moderation notices (suspensions and bans). Creators have drama: a callout over a
+// reposted bot, a feud, a rude-comments callout, a dramatic exit; each is a story told over a few days in posts by the
+// people involved (and sometimes ended by the staff). Everything is a blog post ({news: "staff"|"ban"|"drama", arc}), so it
+// gets likes and comments and people argue about it. COMM.arcs [{id, kind, a, b, c, bot, step, next, end, why}],
+// COMM.newsNext {staff, drama, ban}, COMM.newsSeen, u.ban {at, until (0 = for good), why, hide}.
+const newsOf = () => (COMM?.blogs || []).filter(b => b.news && vis(b.by));
+const isBanned = (u, t = Date.now()) => !!u?.ban && t >= u.ban.at && (!u.ban.until || t < u.ban.until);
+// a suspended creator's bots are hidden while the suspension lasts when it was about their bots
+const postLive = p => { const u = userOf(p.by); return !(u && isBanned(u) && u.ban.hide); };
+const NEWS_KIND = { staff: "📣 Announcement", ban: "🔨 Moderation", drama: "🔥 Hot topic" };
+const STAFF_TOPICS = [
+  ["feature", 3, "a small new site feature that is live now (something a bot site would really add: tag filters, folders for saved bots, a new sort, profile banners, draft listings, better search, chat export, a report button, creator stats); invent one that isn't announced yet, say what it does and how to find it"],
+  ["rules", 2, "a rules update or clarification (always credit the original creator when you make a bot based on someone else's, no reposting other people's bots, tag NSFW and fetish bots properly, keep comments civil, no spam or self-promo in other people's comments, no ban evasion); one rule, why, and what happens if it's broken"],
+  ["maintenance", 1, "scheduled maintenance later this week: a specific day and time (site time), how long, what's being improved; short"],
+  ["spotlight", 2, "a creator spotlight: a few great recent bots (use only the real ones given), why staff liked them"],
+  ["milestone", 1, "a member milestone (use the real member count given) and a thank-you"],
+  ["feedback", 1, "a feedback thread: asking members what they want next, or a small poll"]
+];
+async function newsWrite(who, task, ctx = "") {
+  const u = who === "me" ? null : userOf(who), staff = !!u?.staff;
+  if (!u) return null;
+  const sys = `You write site news on ${COMM_SITE}.${commSeason()} ${staff ? `You are @${u.handle} (${u.name}), ${u.role} on the site's staff. You write as the staff: friendly but firm when it's about rules, clear, in your own voice (${u.style}).` : `You are @${u.handle} (${u.name}), a ${u.role || "regular"} on the site, posting on your profile in exactly your own typing style (${u.style || u.voice}). Their bots: ${botsFact(u)}.`} Real site drama is petty, emotional, one-sided and messy; people exaggerate, get defensive, apologise half-heartedly or for real; staff are calm and specific. Everyone is a real person: never say or hint that anyone is an AI or made up (except when talking about the chatbots on the site). Never name real people or real companies. ${COMM_FACTS} ${COMM_ADULT}\nRespond with only JSON: {"title": a short title, "text": the post, 1-6 short paragraphs}`;
+  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: `${ctx ? ctx + "\n\n" : ""}${task}` }], { temperature: 1, maxTokens: 900, plain: true });
+  const title = s5(j?.title).slice(0, 100), text = s5(j?.text).slice(0, 2400);
+  return text ? { title, text } : null;
+}
+function newsPost(by, w, kind, extra = {}) {
+  const u = userOf(by), now = Date.now();
+  const b = { id: uid(), by, title: w.title, text: w.text, heat: kind === "drama" ? 1.2 + Math.random() : 1.5 + Math.random(), at: u && !u.staff ? activeAt(u, now, 10 * 6e4) : now - Math.round(Math.random() * 5 * 60e3), got: now, news: kind, ...extra };
+  if (u) u.last = Math.max(u.last || 0, b.at);
+  COMM.blogs.unshift(b); if (COMM.blogs.length > 140) COMM.blogs = COMM.blogs.slice(0, 140); commSave();
+  if (kind !== "drama" || follows(by)) feedNotify(u, kind === "drama" ? `posted: ${w.title || w.text.slice(0, 40)}` : w.title || "posted an announcement", () => openBlog(b.id));
+  return b;
+}
+const pickStaff = role => { const L = STAFF.filter(s => role === "admin" ? /admin/.test(s.role) : !/admin/.test(s.role)); return L[Math.floor(Math.random() * L.length)] || STAFF[0]; };
+const recentNews = (kind, days) => newsOf().filter(b => b.news === kind && Date.now() - b.at < days * 864e5);
+async function newsStaffPost() {
+  const done = recentNews("staff", 20).map(b => b.topic), pool = STAFF_TOPICS.filter(t => !done.slice(0, 3).includes(t[0]) && !(t[0] === "maintenance" && done.includes("maintenance")));
+  let r = Math.random() * pool.reduce((a, t) => a + t[1], 0), topic = pool[0]; for (const t of pool) { r -= t[1]; if (r <= 0) { topic = t; break; } }
+  const staff = pickStaff(["feature", "rules", "maintenance", "milestone"].includes(topic[0]) ? "admin" : "mod");
+  const top = COMM.posts.filter(p => vis(p.by) && postLive(p) && Date.now() - p.at < 7 * 864e5).sort((a, c) => trendScore(c) - trendScore(a)).slice(0, 3);
+  const ctx = [`Members: ${fmtK(commMembers())}.`, top.length ? `Popular recent bots: ${top.map(p => `"${p.card.name}" by @${userOf(p.by)?.handle} (${p.card.summary.slice(0, 120)})`).join("; ")}.` : "",
+    `Earlier staff posts (never repeat them): ${recentNews("staff", 30).slice(0, 6).map(b => `"${b.title}"`).join(", ") || "none"}.`].filter(Boolean).join("\n");
+  const w = await newsWrite(staff.id, `Write a staff post: ${topic[2]}.`, ctx);
+  if (!w || recentNews("staff", 60).some(b => cmSame(b.text, w.text) || nameKey(b.title) === nameKey(w.title))) return null;
+  return newsPost(staff.id, w, "staff", { topic: topic[0] });
+}
+// ---- drama arcs: who's involved, what happens at each step
+const ARC_KINDS = {
+  steal: { w: 3, steps: ["a", "b", "end"] },
+  callout: { w: 2, steps: ["a", "b", "c", "end"] },
+  feud: { w: 2, steps: ["a", "b", "a2", "end"] },
+  quit: { w: 1, steps: ["a", "back"] }
+};
+const creatorsOf = () => COMM.users.filter(u => vis(u.id) && !u.staff && !isBanned(u) && commUserPosts(u).length);
+function arcStart() {
+  const now = Date.now(), C = creatorsOf().filter(u => !(COMM.arcs || []).some(x => !x.done && [x.a, x.b, x.c].includes(u.id)));
+  if (C.length < 3) return null;
+  let r = Math.random() * Object.values(ARC_KINDS).reduce((a, k) => a + k.w, 0), kind = "steal"; for (const [k, v] of Object.entries(ARC_KINDS)) { r -= v.w; if (r <= 0) { kind = k; break; } }
+  const a = C.filter(u => onNow(u, now)).sort(() => Math.random() - 0.5)[0]; if (!a) return null;
+  const T = new Set(a.taste || []), b = C.filter(u => u !== a).map(u => [u, (u.taste || []).filter(t => T.has(t)).length + Math.random() * 1.5]).sort((x, y) => y[1] - x[1])[0]?.[0];
+  const c = C.filter(u => u !== a && u !== b).sort(() => Math.random() - 0.5)[0];
+  const bot = commUserPosts(a).sort((x, y) => postLikes(y) - postLikes(x))[0];
+  const arc = { id: uid(), kind, a: a.id, b: kind === "quit" ? null : b?.id, c: c?.id, bot: bot?.id, step: 0, next: now, at: now };
+  arc.end = kind === "steal" ? (Math.random() < 0.45 ? "ban" : Math.random() < 0.6 ? "apology" : "fizzle") : kind === "callout" ? (Math.random() < 0.35 ? "warn" : Math.random() < 0.5 ? "break" : "fizzle") : kind === "feud" ? (Math.random() < 0.4 ? "warn" : "fizzle") : Math.random() < 0.55 ? "back" : "gone";
+  COMM.arcs = [...(COMM.arcs || []), arc].slice(-40);
+  return arc;
+}
+function arcCtx(arc) {
+  const who = id => id && userOf(id) ? `@${userOf(id).handle}` : "someone", bot = COMM.posts.find(p => p.id === arc.bot);
+  const posts = (COMM.blogs || []).filter(b => b.arc === arc.id).sort((x, y) => x.at - y.at);
+  const cm = posts.flatMap(b => (COMM.comments["blog:" + b.id] || []).slice(-5).map(x => `  ${x.by === "me" ? meName() : who(x.by)} commented on ${who(b.by)}'s post: "${x.text.slice(0, 140)}"`));
+  return `What has happened so far (oldest first):\n${posts.map(b => `- ${who(b.by)} posted "${b.title}": ${b.text.slice(0, 600)}`).join("\n") || "- nothing yet"}${cm.length ? `\nSome comments people left:\n${cm.join("\n")}` : ""}${bot ? `\nThe bot at the centre of it: "${bot.card.name}" by ${who(bot.by)} (${bot.card.summary.slice(0, 160)})` : ""}`;
+}
+// write the arc's next step (when the person whose turn it is is on)
+async function arcStep(arc) {
+  const now = Date.now(), K = ARC_KINDS[arc.kind], st = K.steps[arc.step], H = id => "@" + (userOf(id)?.handle || "someone"), bot = COMM.posts.find(p => p.id === arc.bot);
+  if (!st) { arc.done = now; return null; }
+  const later = (a, b) => { arc.step++; arc.next = now + (a + Math.random() * (b - a)) * 3.6e6; if (!K.steps[arc.step]) arc.done = now; };
+  if (arc.kind === "quit" && st === "back" && arc.end === "gone") { arc.done = now; return null; }
+  if ((st === "b" && !userOf(arc.b)) || (st === "c" && !userOf(arc.c))) { later(0, 0); return null; } // nobody to answer: the story skips that step
+  const actor = st === "a" || st === "a2" || st === "back" ? arc.a : st === "b" ? arc.b : st === "c" ? arc.c : null;
+  if (actor && (!userOf(actor) || !onNow(userOf(actor), now))) { arc.next = now + (20 + Math.random() * 90) * 60e3; return null; } // waits for them to come on
+  let task, by = actor, kind = "drama";
+  if (st === "a") task = arc.kind === "steal" ? `Call out ${H(arc.b)} publicly: you believe they reposted your bot${bot ? ` "${bot.card.name}"` : ""} as their own (same description and opening with names changed) without credit. Be upset, give your evidence as you see it, maybe tell people to report it.`
+    : arc.kind === "callout" ? `Call out ${H(arc.b)} for leaving rude, nasty comments on your bots and other people's. Hurt and angry, maybe a little dramatic.`
+    : arc.kind === "feud" ? `Vague-post about "some people" copying the idea for your kind of bots and acting like they invented it; everyone can tell you mean ${H(arc.b)}. Passive-aggressive.`
+    : `Announce you're quitting the site (burnt out, tired of drama, people stealing ideas, not enough likes, life stuff: pick what fits you). Dramatic or sad, your own way.`;
+  else if (st === "b") task = arc.kind === "steal" ? (arc.end === "apology" ? `Respond to ${H(arc.a)}'s callout. At first a bit defensive, but you admit you based your bot on theirs and should have credited them.` : `Respond to ${H(arc.a)}'s callout. You deny copying: similar ideas happen, you've never even played their bot, people are dogpiling you.`)
+    : arc.kind === "callout" ? `Respond to ${H(arc.a)}'s callout about your comments: ${arc.end === "break" ? "you're upset, half-apologise, and say you're taking a break from the site" : "you think they're overreacting and it was just honest criticism"}.`
+    : `Clap back at ${H(arc.a)}'s vague post: you know it's about you, and you were doing this kind of bot first (or nobody owns an idea).`;
+  else if (st === "c") task = `You've been following the drama between ${H(arc.a)} and ${H(arc.b)}. Post your take: pick a side or tell everyone to calm down, in your own way.`;
+  else if (st === "a2") task = `Reply to ${H(arc.b)}'s clap-back on your own profile: double down or, if it fits you, say you're done with it.`;
+  else if (st === "back") task = `You quit the site ${Math.round((now - arc.at) / 864e5)} days ago. You're back: a comeback post, a bit sheepish or triumphant, your own way. Mention you missed people or the bots.`;
+  else if (st === "end") {
+    if (arc.end === "fizzle") { later(0, 0); arc.done = now; return null; }
+    if (arc.end === "apology") { by = arc.b; if (!onNow(userOf(by), now)) { arc.next = now + 30 * 60e3; return null; } task = `Post a proper apology to ${H(arc.a)}: you've taken down your bot that copied theirs${bot ? ` ("${bot.card.name}")` : ""} and will credit people from now on.`; }
+    else { by = pickStaff("mod").id; kind = arc.end === "ban" ? "ban" : "staff";
+      task = arc.end === "ban" ? `A moderation notice: after looking into the reports, ${H(arc.b)} is suspended for ${arc.days || (arc.days = 3 + Math.floor(Math.random() * 12))} days for reposting another creator's bot without credit; the copied bot is removed. Remind everyone to report instead of dogpiling.`
+        : `A short staff note: the team has seen the back-and-forth between ${H(arc.a)} and ${H(arc.b)} (name them or not, as staff would). Remind everyone of the civility rule, that warnings were given, and that it ends here.`; }
+  }
+  const w = await newsWrite(by, task, arcCtx(arc)); if (!w) { arc.next = now + 20 * 60e3; return null; }
+  const b = newsPost(by, w, kind, { arc: arc.id });
+  if (kind === "ban") { const u = userOf(arc.b); if (u) u.ban = { at: b.at, until: b.at + (arc.days || 7) * 864e5, why: "reposting another creator's bot", hide: true, post: b.id }; }
+  if (arc.kind === "quit" && st === "a") { const u = userOf(arc.a); if (u) { u.offFrom = b.at + 60e3; u.offUntil = arc.end === "back" ? b.at + (2 + Math.random() * 4) * 864e5 : b.at + 60 * 864e5; } }
+  if (arc.kind === "callout" && st === "b" && arc.end === "break") { const u = userOf(arc.b); if (u) { u.offFrom = b.at + 60e3; u.offUntil = b.at + (1 + Math.random() * 4) * 864e5; } }
+  const gaps = { steal: [[3, 14], [6, 30], [0, 0]], callout: [[3, 16], [4, 20], [6, 30], [0, 0]], feud: [[2, 12], [3, 16], [8, 40], [0, 0]], quit: [[48, 140], [0, 0]] }[arc.kind][arc.step] || [4, 20];
+  if (arc.kind === "quit" && st === "a" && arc.end === "back") { const u = userOf(arc.a); later(0, 0); arc.next = (u?.offUntil || now) + 3.6e6; }
+  else later(...gaps);
+  return b;
+}
+// now and then the staff suspend someone outside any drama (they argue about it in the comments)
+const BAN_WHY = ["spamming their bot links in other people's comments", "repeatedly tagging fetish bots as SFW", "harassing people in DMs after being warned", "ban evasion with a second account", "reposting bots from another site without permission", "posting a bot that broke the content rules"];
+async function newsBan() {
+  const now = Date.now(), pool = COMM.users.filter(u => vis(u.id) && !u.staff && !isBanned(u)).filter(u => !follows(u.id) && !COMM.dms[u.id]?.msgs.length && !(COMM.arcs || []).some(x => !x.done && [x.a, x.b, x.c].includes(u.id)));
+  const u = pool.sort(() => Math.random() - 0.5)[0]; if (!u) return null;
+  const reasons = commUserPosts(u).length ? BAN_WHY : BAN_WHY.filter(w => !/repost|tagging|posting a bot/.test(w)), why = reasons[Math.floor(Math.random() * reasons.length)], days = Math.random() < 0.2 ? 0 : 3 + Math.floor(Math.random() * 28);
+  const sid = pickStaff("mod").id;
+  const w = await newsWrite(sid, `A moderation notice: @${u.handle} is ${days ? `suspended for ${days} days` : "banned for good"} for ${why}. Be specific about the rule, short, and remind people how to report.`, `Earlier moderation notices (never repeat them): ${recentNews("ban", 60).slice(0, 5).map(b => `"${b.title}"`).join(", ") || "none"}.`);
+  if (!w) return null;
+  const b = newsPost(sid, w, "ban"); u.ban = { at: b.at, until: days ? b.at + days * 864e5 : 0, why, hide: /repost|content rules/.test(why), post: b.id };
+  return b;
+}
+// the heartbeat's share: one thing at a time, at a site's pace
+async function newsTick() {
+  const now = Date.now(), slow = S.settings.commLevel === "quiet" ? 2.5 : S.settings.commLevel === "normal" ? 1.5 : 1, N = COMM.newsNext = COMM.newsNext || {};
+  if (!N.staff) { N.staff = now + 10 * 60e3; N.drama = now + (6 + Math.random() * 18) * 3.6e6; N.ban = now + (2 + Math.random() * 3) * 864e5; return true; }
+  let changed = false;
+  for (const arc of (COMM.arcs || []).filter(x => !x.done && x.next <= now)) { try { await arcStep(arc); } catch (e) { arc.next = now + 30 * 60e3; } changed = true; break; }
+  if (now >= N.staff) { try { await newsStaffPost(); } catch {} N.staff = now + (1.5 + Math.random() * 2.5) * 864e5 * slow; changed = true; }
+  else if (now >= N.drama) { if ((COMM.arcs || []).filter(x => !x.done).length < 2) arcStart(); N.drama = now + (2 + Math.random() * 3) * 864e5 * slow; changed = true; }
+  else if (now >= N.ban) { try { await newsBan(); } catch {} N.ban = now + (5 + Math.random() * 5) * 864e5 * slow; changed = true; }
+  return changed;
+}
+// what people know is going on (for lounges and DMs)
+function newsFact() {
+  const L = newsOf().filter(b => Date.now() - b.at < 3 * 864e5).slice(0, 4);
+  return L.length ? `Site news and drama lately (people may bring it up if they care): ${L.map(b => `${b.news === "drama" ? "@" + (userOf(b.by)?.handle || "someone") + " posted" : "staff posted"} "${b.title}" (${agoText(b.at)}): ${b.text.slice(0, 160)}`).join(" | ")}` : "";
+}
+const newsUnseen = () => newsOf().filter(b => b.news !== "drama" && arrived(b) > (COMM.newsSeen || 0)).length;
+function newsHTML() {
+  const now = Date.now(), L = newsOf().filter(b => b.news === "drama" ? now - b.at < 3 * 864e5 : now - b.at < 5 * 864e5).slice(0, 3);
+  if (!L.length) return "";
+  return `<section class="hub-row"><div class="hub-rh"><h3>📣 Site news</h3><button type="button" class="hub-all" id="newsAll">All ›</button></div>${L.map(blogCard).join("")}</section>`;
+}
+function openNews() {
+  let f = "all";
+  const draw = () => cpage("Site news", b => {
+    const L = newsOf().filter(x => f === "all" || x.news === f);
+    b.innerHTML = `<i class="cm-mark" hidden></i><div class="hub-chips">${[["all", "All"], ["staff", "📣 Announcements"], ["drama", "🔥 Hot topics"], ["ban", "🔨 Moderation"]].map(([k, l]) => `<button type="button" class="chip ${f === k ? "on" : ""}" data-nf="${k}">${l}</button>`).join("")}</div>${L.length ? L.map(blogCard).join("") : `<p class="hint">Nothing here yet.</p>`}`;
+    hubWire(b, draw); b.querySelectorAll("[data-nf]").forEach(x => x.onclick = () => { f = x.dataset.nf; draw(); });
+  });
+  COMM.newsSeen = Date.now(); commSave(); hubNav(); COMM_VIEW = draw; draw();
 }
 
 // ---- DMs (v1.63): private chats with the people, timed like real texting
@@ -9059,7 +9235,8 @@ function dmKnows(u, opt = {}) {
   // what's going on lately (you keep up with the site)
   const now = Date.now(), recent = COMM.posts.filter(p => now - p.at < 2 * 864e5).sort((a, b) => trendScore(b) - trendScore(a)).slice(0, 5);
   if (recent.length) out.push(`On the site lately: ${recent.map(p => `"${p.card.name}" by ${p.by === u.id ? "you" : "@" + (userOf(p.by)?.handle || "someone")} (${ago(p.at)}, ♥ ${fmtK(postLikes(p))})`).join("; ")}.`);
-  const blogs = (COMM.blogs || []).filter(b => b.by !== "me" && now - b.at < 2 * 864e5).slice(0, 3);
+  const blogs = (COMM.blogs || []).filter(b => b.by !== "me" && !b.news && now - b.at < 2 * 864e5).slice(0, 3);
+  { const nf = newsFact(); if (nf) out.push(nf); }
   if (blogs.length) out.push(`Recent profile posts: ${blogs.map(b => `${b.by === u.id ? "you" : "@" + (userOf(b.by)?.handle || "someone")}: ${q(b.title || b.text, 70)} (${ago(b.at)})`).join("; ")}.`);
   return out.join("\n");
 }
@@ -9122,6 +9299,7 @@ async function dmPump() {
     if (q) {
       const u = userOf(q.user);
       if (!u) COMM.dmq = COMM.dmq.filter(x => x.id !== q.id);
+      else if (isBanned(u)) { if (u.ban.until) { q.due = u.ban.until + (1 + Math.random() * 20) * 3.6e6; q.typingAt = q.due - 15e3; } else COMM.dmq = COMM.dmq.filter(x => x.id !== q.id); moved = true; }
       else {
         const parts = await dmWrite(u, q);
         // v1.76: the queue may have been reloaded while it was being written: put the texts on the live entry
@@ -9289,7 +9467,7 @@ async function roomWrite(key, q) {
     : q.kind === "join" ? `@${myHandle()} just made this group chat and added them. Write ${n} first messages: people reacting to being added, saying hi, asking what it's for or guessing, in their own way.`
     : q.kind === "open" ? `@${cast[0].handle} just made this group chat (${q.reason}) and added @${myHandle()} and the others. Write ${n} first messages, @${cast[0].handle} first saying why they made it, then the others reacting. Also give the chat a name.`
     : `Write the next ${n} message${n > 1 ? "s" : ""}: the conversation carries on naturally${L.length ? "" : " (the room has been quiet: someone starts something)"}.`;
-  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: `People here right now (only they may write):\n${cast.map(roomPerson).join("\n")}\n${said.length ? `\nWhat each of them already said here (never repeat it):\n${said.map(([u, l]) => `@${u.handle}: ${l.map(t => `"${t.slice(0, 90)}"`).join(" / ")}`).join("\n")}\n` : ""}\n${text ? `The chat so far (lines from @${myHandle()} are theirs, the rest are other people's):\n${text}` : "Nothing has been said here yet."}\n\n${ask}` }], { temperature: 1, maxTokens: 1400, plain: true });
+  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: `People here right now (only they may write):\n${cast.map(roomPerson).join("\n")}\n${said.length ? `\nWhat each of them already said here (never repeat it):\n${said.map(([u, l]) => `@${u.handle}: ${l.map(t => `"${t.slice(0, 90)}"`).join(" / ")}`).join("\n")}\n` : ""}${newsFact() ? "\n" + newsFact() + "\n" : ""}\n${text ? `The chat so far (lines from @${myHandle()} are theirs, the rest are other people's):\n${text}` : "Nothing has been said here yet."}\n\n${ask}` }], { temperature: 1, maxTokens: 1400, plain: true });
   const out = [], seen = [...L.map(m => m.text)];
   for (const x of Array.isArray(j?.messages) ? j.messages : []) {
     const h = s5(x?.by).replace(/^@/, "").toLowerCase(), u = cast.find(c => c.handle.toLowerCase() === h), t = s5(x?.text).slice(0, 600);
