@@ -1712,7 +1712,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.92 · Oct 28";
+const VERSION = "1.93 · Oct 28";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -6134,12 +6134,14 @@ async function voiceFxPlay(url, fx, mix, rate, vol, g, opt = {}) {
     for (const k of fx) node = fxStage(ac, node, k, m, keep);
     const out = ac.createGain(), lim = ac.createDynamicsCompressor(); out.gain.value = vol; lim.threshold.value = -6; lim.ratio.value = 12; lim.attack.value = 0.003; lim.release.value = 0.2; node.connect(out).connect(lim).connect(ac.destination);
     const tail = fx.some(k => ["cave", "hall", "ghost", "echo", "demon"].includes(k)) ? 1.6 : fx.length ? 0.3 : 0;
-    let [from, to] = audioSpan(buf); if (opt.cutAt > 0) to = Math.min(to, opt.cutAt + 0.01);
+    let [from, to] = audioSpan(buf); if (opt.cutAt > 0) to = Math.min(to, opt.cutAt + 0.05);
     const len = Math.max(0.05, to - from), wall = len / rate;
-    if (opt.cutAt > 0) { const t0 = ac.currentTime; out.gain.setValueAtTime(vol, t0 + Math.max(0, wall - 0.025)); out.gain.linearRampToValueAtTime(0.0001, t0 + wall); }
+    // v1.93: a cut-off fades out over ~80 ms like a catch of breath (not a hard stop), then a short hitch before the next line
+    if (opt.cutAt > 0) { const t0 = ac.currentTime, fs = t0 + Math.max(0, (opt.cutAt - 0.035 - from) / rate); out.gain.setValueAtTime(vol, fs); out.gain.setTargetAtTime(0.0001, fs, 0.022 / rate); }
+    const hitch = opt.cutAt > 0 ? 160 : 0;
     VQ.fxLast = fx.slice(); VQ.span = { from, to, cut: !!opt.cutAt };
     return await new Promise(res => {
-      let over = false; const end = ok => { if (over) return; over = true; clearTimeout(tm); setTimeout(() => { try { src.disconnect(); out.disconnect(); lim.disconnect(); keep.forEach(o => { try { o.stop(); } catch {} }); } catch {} }, tail * 1000 + 50); res(ok); };
+      let over = false; const end0 = ok => { if (over) return; over = true; clearTimeout(tm); setTimeout(() => { try { src.disconnect(); out.disconnect(); lim.disconnect(); keep.forEach(o => { try { o.stop(); } catch {} }); } catch {} }, tail * 1000 + 50); setTimeout(() => res(ok), hitch); }; const end = end0;
       VQ.el = { pause() { try { out.gain.setTargetAtTime(0.0001, ac.currentTime, 0.03); src.stop(ac.currentTime + 0.1); } catch {} end(true); } };
       src.onended = () => tail ? setTimeout(() => end(true), tail * 700) : end(true);
       const tm = setTimeout(() => end(true), (wall + tail + 1.5) * 1000); // never stuck if the sound system is paused
@@ -6341,9 +6343,14 @@ async function cartCut(text, voiceId, tone, cont) {
     for (let i = 0; i < f.length; i++) wav.setInt16(44 + i * 2, Math.max(-1, Math.min(1, f[i])) * 32767, true);
     // v1.92: the timings are rough, so the cut goes at the quietest moment between the last real word and the added one
     // (never later than a little before the added word starts)
-    const sr = 44100, fr = Math.round(sr * 0.01), a0 = Math.max(0, +W.end[k] - 0.08), b0 = Math.min(f.length / sr, W.start[k + 1] != null ? +W.start[k + 1] + 0.02 : +W.end[k] + 0.08);
-    let best = Math.min(+W.end[k], W.start[k + 1] != null ? +W.start[k + 1] - 0.04 : 1e9), lo = Infinity;
-    for (let t = a0; t + 0.01 <= b0; t += 0.01) { let e = 0; const i0 = Math.round(t * sr); for (let i = i0; i < i0 + fr && i < f.length; i++) e += f[i] * f[i]; if (e < lo * 0.9) { lo = e; best = t; } }
+    // v1.93: the voice often draws the cut word out (it knows more is coming), so the word is also capped at about the
+    // length it normally takes to say; with no clear quiet moment the cut goes there
+    const sr = 44100, fr = Math.round(sr * 0.01), en = (a, b) => { let e = 0, n = 0; for (let i = Math.round(a * sr); i < Math.round(b * sr) && i < f.length; i++) { e += f[i] * f[i]; n++; } return n ? e / n : 0; };
+    const ws = +W.start[k], letters = last.length || 3, natural = ws + Math.max(0.2, 0.065 * letters + 0.1);
+    const hi = Math.min(+W.end[k], W.start[k + 1] != null ? +W.start[k + 1] - 0.04 : 1e9, natural), a0 = Math.max(ws + 0.08, hi - 0.08), b0 = Math.min(f.length / sr, hi + 0.04, W.start[k + 1] != null ? +W.start[k + 1] : 1e9);
+    const word = en(ws, hi) || 1e-9; let best = hi, lo = Infinity;
+    for (let t = a0; t + 0.01 <= b0; t += 0.01) { const e = en(t, t + 0.01); if (e < lo * 0.9) { lo = e; best = t; } }
+    if (lo > word * 0.25) best = hi; // no real gap: stop at the word's natural end
     return { url: URL.createObjectURL(new Blob([wav], { type: "audio/wav" })), end: best };
   });
 }

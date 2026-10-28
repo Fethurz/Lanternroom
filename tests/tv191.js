@@ -95,7 +95,7 @@ const open = require("./base.js");
   const s1 = cart.find(x => /tts\/sse/.test(x.u))?.body;
   chk(`Cartesia gets the cut line with what would come next and word timings (${s1?.transcript})`, s1?.add_timestamps === true && s1?.transcript === "I'm sorry, I didn't mean to hurt you" && s1?.voice?.id === "v1" && s1?.output_format?.container === "raw");
   const wEnd = 1.5 / 8 * 5; // "mean" is the 5th of 8 words
-  chk(`…and it stops in the quiet right after "mean", before the added word (${cu.span?.to?.toFixed(3)} s of the 1.6 s clip, gap 0.89-0.95, timed word end ${wEnd.toFixed(3)})`, cu.span?.cut && cu.span.to >= 0.895 && cu.span.to <= 0.95);
+  chk(`…and it stops in the quiet right after "mean", before the added word (${cu.span?.to?.toFixed(3)} s of the 1.6 s clip, gap 0.89-0.95, timed word end ${wEnd.toFixed(3)})`, cu.span?.cut && cu.span.to >= 0.935 && cu.span.to <= 0.995);
   // prefetch: the next lines are asked for before the first one finishes
   const pre = cart.filter(x => /tts\/bytes/.test(x.u));
   chk(`the next lines are fetched ahead, so there's no wait between them (${pre.length} fetched)`, pre.length >= 2 && pre[1].at - pre[0].at < 400);
