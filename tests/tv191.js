@@ -11,7 +11,7 @@ const open = require("./base.js");
   const { b, pg, errs, calls } = await open({ width: W, json, stream: () => reply });
   const cart = []; let sse = "ok";
   // a real little PCM clip for the SSE (timed) endpoint: 1.6 s, the cut word ends at 0.9 s
-  const pcm = Buffer.alloc(44100 * 1.6 * 4); for (let i = 0; i < 44100 * 1.6; i++) pcm.writeFloatLE(Math.sin(i / 8) * 0.4, i * 4);
+  const pcm = Buffer.alloc(44100 * 1.6 * 4); for (let i = 0; i < 44100 * 1.6; i++) pcm.writeFloatLE(i > 44100 * 0.89 && i < 44100 * 0.95 ? 0 : Math.sin(i / 8) * 0.4, i * 4); // a little gap after "mean"
   await pg.route("https://api.cartesia.ai/**", async r => { const u = r.request().url(), body = JSON.parse(r.request().postData() || "{}"); cart.push({ u, body, at: Date.now() });
     if (/tts\/sse/.test(u)) { if (sse !== "ok") return r.fulfill({ status: 404, body: "no" });
       const words = body.transcript.split(/\s+/), step = 1.5 / words.length, ts = { words, start: words.map((_, i) => i * step), end: words.map((_, i) => (i + 1) * step) };
@@ -85,7 +85,7 @@ const open = require("./base.js");
   });
   const said1 = cart.filter(x => /tts\/bytes/.test(x.u)).at(-1)?.body;
   chk(`long-press shows what the AI hears (${lo.before}) and lets you set the feeling and intensity (${lo.after})`, /The AI hears: nervous/.test(lo.before) && /You set: furious · 5 of 5/.test(lo.after) && JSON.stringify(lo.stored || {}).includes('"emo":"furious","int":5'));
-  chk(`Hear it uses your choice (${said1?.generation_config?.emotion}, volume ${said1?.generation_config?.volume})`, said1?.generation_config?.emotion === "outraged" && said1?.generation_config?.volume >= 1.4);
+  chk(`Hear it uses your choice (${said1?.generation_config?.emotion}, volume ${said1?.generation_config?.volume})`, said1?.generation_config?.emotion === "angry" && said1?.generation_config?.volume >= 1.7);
   const rd = await pg.evaluate(async () => { const m = S.chat.messages.filter(x => x.role === "assistant").at(-1); const p = await toneParts(m, voiceParts(m, "dialogue")); return p.map(x => x.emo + (x.ovr ? "*" : "")); });
   chk(`reading the reply keeps your choice for that line (${rd})`, rd[1] === "furious*" && rd[0] !== "furious*");
   // Cartesia: the cut line is asked for with what comes next and word timings, and stopped at the cut word
@@ -95,7 +95,7 @@ const open = require("./base.js");
   const s1 = cart.find(x => /tts\/sse/.test(x.u))?.body;
   chk(`Cartesia gets the cut line with what would come next and word timings (${s1?.transcript})`, s1?.add_timestamps === true && s1?.transcript === "I'm sorry, I didn't mean to hurt you" && s1?.voice?.id === "v1" && s1?.output_format?.container === "raw");
   const wEnd = 1.5 / 8 * 5; // "mean" is the 5th of 8 words
-  chk(`…and it stops right after "mean" (${cu.span?.to?.toFixed(3)} s of the 1.6 s clip, word ends at ${wEnd.toFixed(3)})`, cu.span?.cut && Math.abs(cu.span.to - (wEnd + 0.03)) < 0.01);
+  chk(`…and it stops in the quiet right after "mean", before the added word (${cu.span?.to?.toFixed(3)} s of the 1.6 s clip, gap 0.89-0.95, timed word end ${wEnd.toFixed(3)})`, cu.span?.cut && cu.span.to >= 0.895 && cu.span.to <= 0.95);
   // prefetch: the next lines are asked for before the first one finishes
   const pre = cart.filter(x => /tts\/bytes/.test(x.u));
   chk(`the next lines are fetched ahead, so there's no wait between them (${pre.length} fetched)`, pre.length >= 2 && pre[1].at - pre[0].at < 400);
