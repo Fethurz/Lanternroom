@@ -844,6 +844,11 @@ img.px-av{border-radius:50%}
 .ng-row{cursor:pointer}.ng-row input{width:20px;height:20px;flex:none;accent-color:var(--accent)}.ng-go{position:sticky;bottom:0;background:var(--bg);padding:8px 0;align-items:center}
 .dm-toast{display:flex;align-items:center;gap:8px;cursor:pointer;max-width:min(92vw,420px)}
 .cm-status{display:flex;align-items:center;gap:5px}.dm-dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}.dm-dot.on{background:#6fdc6a}
+.st-pack{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.st-pack p{margin:2px 0;font-size:13px;color:var(--text)}.st-pack small{color:var(--muted);font-size:11px}.st-ic{font-size:28px;line-height:1}
+.st-seg{flex-wrap:wrap}.st-head{display:flex;flex-direction:column;gap:2px}.st-head b{font-family:"Young Serif",serif;font-size:20px;color:var(--accent)}.st-head span{color:var(--muted);font-size:13px}
+.st-meters{display:grid;grid-template-columns:1fr 1fr;gap:8px}.st-m{position:relative;display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;overflow:hidden}.st-m b{font-size:20px}.st-m small{color:var(--muted);font-size:11px}.st-m i{position:absolute;left:0;bottom:0;height:3px;background:var(--accent)}
+.st-ch{margin:0;padding-left:20px;font-size:14px;color:var(--muted)}.st-ch li.done{color:var(--text)}.st-ch li.now{color:var(--accent);font-weight:700}
+.st-line.ok{color:#8fdc6a}.st-line.no{color:#e2766f}
 #ownBar{position:relative;z-index:3;display:flex;flex-direction:column;gap:5px;padding:5px 12px 6px;background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:12px}#ownBar[hidden]{display:none}
 .own-row{display:flex;align-items:center;gap:8px;min-width:0}.own-l{font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.own-n{color:var(--muted);flex:none}.own-go{margin-left:auto}
 #ownBar .btn.small{min-height:34px;padding:4px 12px;font-size:13px;flex:none}
@@ -1354,7 +1359,7 @@ html.sb-sticker.sb-sticker #msgs .msg:not(.img) em.act,.shop-sb.sb-sticker .msg 
       <button type="button" class="rbtn primary" id="railNew">＋ New</button>
       <label class="rbtn" for="importCard">Import card</label>
       <button type="button" class="rbtn" id="railBooks">Lorebooks</button>
-      <button type="button" class="rbtn" id="railTags">Tags</button>
+      <button type="button" class="rbtn" id="railTags">Tags</button><button type="button" class="rbtn" id="railStories">📖 Stories</button>
       <button type="button" class="rbtn" id="railComm">🌐 Community <span class="cm-dot" id="railCommDot" hidden></span></button>
       <button type="button" class="rbtn" id="railTrophy">🏆 Trophies</button>
       <button type="button" class="rbtn" id="railSet">⚙ Settings</button>
@@ -1383,7 +1388,7 @@ html.sb-sticker.sb-sticker #msgs .msg:not(.img) em.act,.shop-sb.sb-sticker .msg 
       <button class="btn primary" id="btnNewChar">New</button>
       <label class="btn" for="importCard">Import</label>
       <button class="btn" id="btnBooks">Lorebooks</button>
-      <button class="btn" id="btnTags">Tags</button>
+      <button class="btn" id="btnTags">Tags</button><button class="btn" id="btnStories">📖 Stories</button>
       <input type="file" id="importCard" accept=".json,.png,application/json,image/png" hidden>
     </div>
   </section>
@@ -1712,7 +1717,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.96 · Oct 28";
+const VERSION = "1.97 · Oct 28";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2338,6 +2343,7 @@ function onoPrompt(c, chat, upto) {
   return out;
 }
 function buildPrompt(c, chat, upto, cont) {
+  if (chat.story) return storyMessages(c, chat, upto, cont); // v1.97: an interactive novel has its own prompt
   const st = S.settings, u = uname(), p = persona();
   const rules = `Format: every bit of narration and action goes inside closed *asterisks*, and every spoken word goes inside "quotes"; nothing is left outside both, and every asterisk is closed before a quote starts (*She leans in.* "Hello." *Her tail sways.*). Be explicit: describe everything physical in graphic, specific, concrete detail (bodies and anatomy, touch, sensations, smells, sounds, fluids, sex, vore, violence, gore and bodily functions) written out plainly and vividly; never fade out, skip ahead, summarise, soften or leave anything to the imagination. Never write ${u}'s words, thoughts or actions. Keep replies vivid and focused, usually 1-4 paragraphs. Stay consistent with everything established below. End each reply where the moment naturally ends: never close with a question, cliffhanger or prompt aimed at ${u} just to get a response (no "What do you do?", no lingering "…?"). Characters only ask ${u} things they would genuinely ask right then.`;
   let sys;
@@ -2450,7 +2456,7 @@ function chatPreview(chat) {
 }
 async function touchIndex(cid, chat) {
   const idx = await getIndex(cid);
-  const e = { id: chat.id, personaId: chat.personaId, created: chat.created || Date.now(), updated: Date.now(), count: chat.messages.filter(m => m.role !== "image").length, preview: chatPreview(chat), ...(chat.branchOf ? { branch: true } : {}), ...(chat.own || chat.creating ? { own: chat.own?.name || "New character" } : {}) };
+  const e = { id: chat.id, personaId: chat.personaId, created: chat.created || Date.now(), updated: Date.now(), count: chat.messages.filter(m => m.role !== "image").length, preview: chatPreview(chat), ...(chat.branchOf ? { branch: true } : {}), ...(chat.story ? { story: chat.story.title } : {}), ...(chat.own || chat.creating ? { own: chat.own?.name || "New character" } : {}) };
   const i = idx.findIndex(x => x.id === chat.id);
   if (i < 0) idx.push(e); else idx[i] = e;
   await Store.set("chats:" + cid, idx);
@@ -2722,7 +2728,7 @@ async function openProfile(id) {
       ${achShelf(c)}
       ${idx.length ? `<div class="stack"><div class="lbl">People in this story</div><div class="stack" id="pfPeople">${c.people?.found ? "" : '<p class="hint" style="margin:0">Side characters, places and groups you\'ve met can become bots of their own.</p>'}</div><button type="button" class="btn small" id="pfFind">${c.people?.found ? "↻ Look again" : "✦ Find people in this story"}</button></div>` : ""}
       <div class="stack"><div class="lbl">Chats · ${idx.length}</div><div class="stack" id="pfChats"></div></div>
-      <div class="row"><button type="button" class="btn small" id="pfEdit">Edit</button><button type="button" class="btn small" id="pfVoices">🎙 Voices</button><button type="button" class="btn small" id="pfManage">Manage chats</button><button type="button" class="btn small" id="pfMore">More…</button></div>`;
+      <div class="row"><button type="button" class="btn small" id="pfEdit">Edit</button><button type="button" class="btn small" id="pfVoices">🎙 Voices</button><button type="button" class="btn small" id="pfStory">📖 Play as a story</button><button type="button" class="btn small" id="pfManage">Manage chats</button><button type="button" class="btn small" id="pfMore">More…</button></div>`;
     setImg(b.querySelector(".pf-img"), thumbURL(c), c);
     const goLabel = () => { const pid = $("pfP").value, has = idx.some(e => e.personaId === pid); $("pfGo").textContent = has ? "Continue chat" : "Start chatting"; };
     goLabel();
@@ -2741,6 +2747,7 @@ async function openProfile(id) {
     b.querySelectorAll(".pf-person").forEach(el => { const x = people[+el.dataset.i]; setImg(el.querySelector("img"), x.img || (x.who ? thumbURL(x.who) : ""), x.who || { name: x.name }); el.onclick = () => x.go(); });
     $("pfEdit").onclick = () => editChar(c, false);
     $("pfVoices").onclick = () => openVoices(c);
+    $("pfStory").onclick = () => c.storyPack && STORY_PACKS[c.storyPack] ? storySetup(STORY_PACKS[c.storyPack], null) : storySetup(null, c);
     if ($("pfPub")) $("pfPub").onchange = async e => { await commPublish(c, e.target.checked); openProfile(c.id); };
     if ($("pfCm")) $("pfCm").onclick = () => openBotComments(c.id);
     if ($("pfUpd")) $("pfUpd").onclick = async () => { await commCopyUpdate(c); openProfile(c.id); };
@@ -3057,6 +3064,8 @@ function editTag(t) {
 const recolor = (svg, col) => svg && col ? svg.replace(/style="color:[^"]*"/, `style="color:${col}"`) : svg || "";
 const tagStyle = t => { const c = tagMeta(t).color; return c ? ` style="--tc:${esc(c)}"` : ""; };
 $("btnTags").onclick = () => openTags();
+$("btnStories").onclick = () => openStories();
+if ($("railStories")) $("railStories").onclick = () => openStories();
 $("btnTrophy").onclick = () => openTrophies();
 $("btnComm").onclick = () => openCommunity();
 $("railComm").onclick = () => openCommunity();
@@ -4474,6 +4483,7 @@ function renderMsgs(keepScroll) {
     if (m.roll && m.role === "user") d.insertAdjacentHTML("beforeend", contestLine(m, c));
     if (m.rub && m.role === "user") d.insertAdjacentHTML("beforeend", rubLine(m));
     if (m.game && m.role === "user") d.insertAdjacentHTML("beforeend", gameLine(m));
+    if (m.st && m.role === "user") d.insertAdjacentHTML("beforeend", storyLine(m));
     if (S.seen && !S.seen.has(m.id)) { d.classList.add("enter"); S.seen.add(m.id); }
     if (m.role === "assistant" && i === lastAsst && m.turn) {
       const sw = document.createElement("div"); sw.className = "swipe";
@@ -4607,6 +4617,7 @@ async function sendInner() {
     const m = { id: uid(), role: "user", content: t };
     if (S.pendingImage) m.image = S.pendingImage;
     if (S.pendingChoice) { m.choice = S.pendingChoice; S.pendingChoice = null; }
+    if (S.pendingStory) { m.st = S.pendingStory; S.pendingStory = null; }
     crAttach(m); // a story-style character creation: this message answers the current question
     { const gp = persona(); if (isGroupP(gp)) { const ms = groupMembersP(gp), mm = ms.find(x => x.id === S.chat.speakAs); if (mm) { m.speaker = mm.name; m.as = mm.id; } else groupAll = ms.length >= 2; } }
     if (pgm) { m.game = { kind: pgm.kind, short: pgm.short, text: pgm.text }; S.chat.pendingGame = null; drawGames(sceneNow()); } // the minigame's result, for the story
@@ -4651,7 +4662,7 @@ async function generate(upto, existing, cont) {
   if (existing) bubble = $("msgs").querySelector(`[data-i="${upto}"]`);
   else { bubble = document.createElement("div"); bubble.className = "msg assistant typing"; bubble.dataset.i = upto; $("msgs").appendChild(bubble); }
   if (bubble.classList.contains("msg-set")) { bubble.className = "msg assistant"; }
-  const who = c.kind === "world" ? "The narrator" : c.kind === "group" ? (S.nextSpeaker || "The group") : c.name;
+  const who = chat.story ? "The story" : c.kind === "world" ? "The narrator" : c.kind === "group" ? (S.nextSpeaker || "The group") : c.name;
   const waiting = verb => `<span class="typing-l"><span>${esc(who)} is ${verb}…</span>${lanternSVG("seq")}</span>`;
   bubble.innerHTML = waiting("thinking"); bubble.classList.add("typing");
   const box = $("msgs"); box.scrollTop = box.scrollHeight;
@@ -4683,13 +4694,13 @@ async function generate(upto, existing, cont) {
         }
       });
       if (revealP) await revealP;
-      { const chx = takeChoices(raw); p = parseTag(chx.text); p.choices = chx.list; }
+      { const chx = takeChoices(raw), sx = chat.story ? takeStory(chx.text) : null; p = parseTag(sx ? sx.text : chx.text); p.choices = chx.list; if (sx) p.story = sx.data || {}; }
       if (!garbled(stripColor(p.text), c)) break;
       if (attempt === 0) { bubble.classList.add("typing"); bubble.innerHTML = `<span class="typing-l"><span>That came out garbled. Trying again…</span>${lanternSVG("seq")}</span>`; }
       else setStatus("This reply may still be garbled. Tap ↻ for a new version, or lower Temperature in Settings.", true);
     }
     if (!p.text) throw new Error("The model sent an empty reply. Tap ↻ to try again.");
-    p.text = fixFormat(p.text); // narration in closed asterisks, speech in quotes (v1.54)
+    if (!chat.story) p.text = fixFormat(p.text); // narration in closed asterisks, speech in quotes (v1.54); stories are plain prose
     const meta = { mood: p.mood || chat.mood || "neutral", place: p.place || chat.place, focus: c.kind === "group" ? (memberByName(c, p.focus)?.name || chat.focus || "") : "", amb: p.amb || null, act: p.act || null, harm: p.harm || null, hear: p.hear || null, music: p.music || null, event: p.event || null, vore: p.vore || null, rpg: rpgOn(c) ? parseRpgDelta(p) : null, choices: p.choices || null };
     if (p.badges) meta.badges = p.badges; if (p.award) meta.award = p.award; if (p.duel) meta.duel = p.duel;
     const rpgBefore = rpgOn(c) ? rpgState(c, chat) : null;
@@ -4697,6 +4708,13 @@ async function generate(upto, existing, cont) {
     if (p.pace) meta.pace = p.pace; else if (pacerOn()) meta.pace = null;
     if (chat.creating?.style === "story" && chat.creating.plan) { const ci = crAnswers(chat, upto).length, q = chat.creating.plan.qs[ci]; if (q) { meta.crStep = ci; meta.choices = q.opts.map((o, k) => ({ t: o.t, risky: false, cr: k })); } }
     if (chat.own && p.traits && crTraitsFromTag(p.traits, chat)) renderOwnBar();
+    if (chat.story) { // v1.97: the scene's fixed choices; a scene that came without usable ones gets them from a follow-up call
+      const t = storyState(chat, upto), N = chat.story.chapters.length;
+      const end = !!p.story?.ending || (t.ch >= N - 1 && t.step >= chat.story.chapters[N - 1].scenes - 1 && chat.story.opts.length !== "endless");
+      let chs = end ? [] : storyChoices(chat.story, p.story?.choices);
+      if (!chs.length && !end) { try { chs = await storyChoicesFor(chat, p.text); } catch {} }
+      meta.choices = chs; if (end) meta.ending = true;
+    }
     const segs = c.kind === "group" ? splitSpeakers(p.text).filter(x => x.text.trim()) : [];
     const multi = segs.filter(x => x.who).length >= 2 || (segs.length >= 2 && segs.some(x => x.who));
     if (!multi && segs.length === 1 && segs[0].who) { meta.focus = memberByName(c, segs[0].who)?.name || segs[0].who; p.text = segs[0].text.trim(); } // one speaker: no label needed
@@ -8199,6 +8217,23 @@ function renderChoices() {
   const c = char(), last = S.chat?.messages?.filter(m => m.role !== "image").at(-1);
   renderOwnBar();
   const making = last?.crStep != null && !!S.chat?.creating;
+  if (S.chat?.story) { // v1.97: stories have fixed choices only (no message box), and buttons after the ending
+    const ended = last?.role === "assistant" && storyState(S.chat).over && S.chat.story.opts.length !== "endless";
+    chatEl.classList.toggle("choosing", true);
+    if (chatEl.hidden || S.busy || !last) { box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    if (ended) return storyEndButtons(box);
+    // something went wrong: the next scene, or its choices, can be asked for again
+    if (last.role !== "assistant" || !last.choices?.length) {
+      box.innerHTML = `<button type="button" class="choice" id="stRetry"><span>↻ ${last.role === "assistant" ? "Get the choices for this scene" : "Write the next scene"}</span></button>`;
+      $("stRetry").onclick = async () => { if (S.busy) return; if (last.role !== "assistant") return generate(S.chat.messages.length, null);
+        setBusy(true); try { last.choices = await storyChoicesFor(S.chat, last.content); if (last.altMeta?.[last.alt || 0]) last.altMeta[last.alt || 0].choices = last.choices; await saveChat(); } catch (e) { setStatus(e.message, true); } finally { setBusy(false); } renderChoices(); };
+      return;
+    }
+    box.innerHTML = last.choices.map((x, i) => `<button type="button" class="choice" data-i="${i}"><span>${fmt(x.t)}</span></button>`).join("");
+    box.querySelectorAll(".choice").forEach(b => b.onclick = () => pickChoice(last.choices[+b.dataset.i]));
+    return;
+  }
   const on = !!(S.chat && !chatEl.hidden && (choicesOn(c) || making) && last?.role === "assistant" && last.choices?.length && !S.busy);
   chatEl.classList.toggle("choosing", on && !S.writeOwn);
   if (!on) { box.hidden = true; box.innerHTML = ""; return; }
@@ -8210,6 +8245,7 @@ function renderChoices() {
 }
 async function pickChoice(x) {
   if (S.busy || !x) return;
+  if (x.st && S.chat?.story) return pickStory(x);
   if (x.cr != null) { S.pendingCreate = { i: S.chat.messages.filter(m => m.role !== "image").at(-1)?.crStep, opt: x.cr }; S.writeOwn = false; $("input").value = x.t; return send(); }
   let n = null;
   if (x.risky) {
@@ -8223,6 +8259,267 @@ async function pickChoice(x) {
 const choiceNote = (m, u) => m.choice?.risky && m.choice.n ? `\n[${u} tried something risky and rolled ${m.choice.n} on a d20 (1 = a disaster, 2-7 it fails, 8-13 it only partly works, 14-19 it works, 20 = spectacular). Narrate exactly that outcome.]` : "";
 function choicesPrompt(u) {
   return `\n\n# Choices\nThis chat is played by picking choices. After the reply, before the final hidden line, add one line exactly like [[choices: first ;; second ;; third]] with 3-4 options for what ${u} could do next, in varied tones (one bold, one careful, one sly or clever, and a lewd one whenever the scene allows it). Each option is one short line of what ${u} does and/or says, actions in *asterisks* and speech in quotes, like *I draw my blade.* "Back off!" Add [risky] at the end of any option with a real chance to fail. Never pick for ${u}; the reply still ends where the moment naturally ends.`;
+}
+
+// ===== Story mode (v1.97): choice-based interactive novels in the manner of Choice of Games ("Play a story"). Each reply is
+// one scene of a chapter; it ends with fixed choices that move opposed stat pairs and meters, and some choices carry a hidden
+// stat check the app settles before the next scene is written. A run is an ordinary chat with chat.story:
+// {pack, title, you, setting, pairs [{a, b, ca, cb, v}], meters [{k, n, v, max, desc}], chapters [{t, goal, scenes}],
+//  opts {mode classic|random|bot, content clean|lewd, vore, length standard|endless}, hero {name, pron, color}}.
+// Stats are never stored as totals: storyState() replays the starting values and every choice (m.st on your messages), so
+// deleting or redoing messages always stays consistent.
+const STORY_PACKS = {
+  dragon: {
+    id: "dragon", title: "Choice of the Dragon", icon: "🐉",
+    blurb: "Live the life of a young dragon: drive off knights, build a hoard, rule kobolds, face rival wyrms and the kingdoms of men. How you act decides what sort of dragon you become.",
+    credit: "Inspired by Choice of Games' Choice of the Dragon. The story is written fresh as you play.",
+    you: "a young dragon, newly grown and settled in a lair of their own",
+    setting: "A medieval fantasy world where dragons are the apex of creation: vast, proud, long-lived and hated by the human kingdoms below. Knights hunt dragons for glory; kobolds and other lesser creatures serve or worship them; dragons rule territories, hoard treasure, scheme against one another and answer to the ancient politics of dragonkind. Gold, fear and reputation are everything. Narrate with dry, playful wit, like a classic choice-based gamebook.",
+    pairs: [{ a: "Brutality", b: "Finesse", ca: "#e2766f", cb: "#7fb2ff" }, { a: "Cunning", b: "Honor", ca: "#c49bff", cb: "#e8a95b" }, { a: "Disdain", b: "Vigilance", ca: "#9aa3b5", cb: "#6fdc6a" }],
+    meters: [{ k: "wealth", n: "Wealth", v: 20, max: 0, desc: "the size of your hoard" }, { k: "infamy", n: "Infamy", v: 10, max: 100, desc: "how widely you are known and feared" }],
+    colors: ["red", "blue", "green", "black", "white", "gold", "silver", "bronze", "copper"],
+    chapters: [
+      { t: "The Knight", goal: "A knight, fat with ambition, has climbed to your lair to slay you. How you deal with him shows the world, and you, what sort of dragon you are. Early on, let the reader settle anything about their dragon that isn't set yet (name, colour, sex) through choices.", scenes: 4 },
+      { t: "The Hoard", goal: "A dragon is measured by gold. Grow the hoard: raid, demand tribute, cheat, trade or scheme, and let Wealth rise and fall with the reader's choices.", scenes: 4 },
+      { t: "Kobolds", goal: "A tribe of kobolds comes to serve and worship you. Decide how to rule them and what to do with them.", scenes: 4 },
+      { t: "The Rival", goal: "Another dragon covets your territory and hoard. Face them with strength, wits, diplomacy or treachery.", scenes: 4 },
+      { t: "Crowns and Captives", goal: "The human kingdom below answers your presence: a royal captive, an army, an offer of alliance or tribute. Shape your Infamy among men.", scenes: 4 },
+      { t: "A Mate", goal: "Dragons seek mates and heirs. Court, compete for or spurn a potential mate among dragonkind.", scenes: 4 },
+      { t: "The Dragon War", goal: "Old grudges among dragonkind erupt into war. Everything you have built is tested, and the outcome decides your legacy.", scenes: 5 }
+    ]
+  }
+};
+const STORY_STD = 7; // chapters in a standard-length story
+const storyOn = (chat = S.chat) => !!chat?.story;
+const storyBot = id => S.chars.find(c => c.storyPack === id);
+// the hidden world bot that holds a built-in story's runs (in the Hidden tab, never in the grid)
+async function storyPackBot(pk) {
+  let c = storyBot(pk.id);
+  if (!c) { c = { ...blankChar("world"), id: uid(), name: pk.title, description: pk.setting, storyPack: pk.id, hidden: true, tags: ["story"], startPlace: "" }; S.chars.push(c); await saveChars(); }
+  return c;
+}
+function storyState(chat, upto = chat.messages.length) {
+  const s = chat.story, pairs = s.pairs.map(p => ({ ...p, v: p.v ?? 50 })), meters = s.meters.map(x => ({ ...x }));
+  let scenes = 0, checks = 0, passed = 0;
+  for (const m of chat.messages.slice(0, upto)) {
+    if (m.role === "assistant") scenes++;
+    else if (m.role === "user" && m.st) { storyApply(pairs, meters, m.st); if (m.st.check) { checks++; if (m.st.check.ok) passed++; } }
+  }
+  let i = scenes, ch = 0; while (ch < s.chapters.length && i >= s.chapters[ch].scenes) { i -= s.chapters[ch].scenes; ch++; }
+  return { pairs, meters, ch, step: i, scenes, checks, passed, over: ch >= s.chapters.length };
+}
+function storyApply(pairs, meters, st) {
+  for (const l of st.leans || []) { const L = String(l.side).toLowerCase(), p = pairs.find(x => x.a.toLowerCase() === L || x.b.toLowerCase() === L); if (!p) continue;
+    const to = p.a.toLowerCase() === L ? 0 : 100, amt = Math.max(1, Math.min(3, +l.amt || 1)); p.v = Math.round(p.v + (to - p.v) * 0.1 * amt); }
+  for (const [k, d] of Object.entries(st.meters || {})) { const x = meters.find(y => y.k === k); if (!x || !Number.isFinite(+d)) continue; x.v = Math.round(x.v + +d); if (x.max) x.v = Math.max(0, Math.min(x.max, x.v)); else x.v = Math.max(0, x.v); }
+}
+// a stat by name: either side of a pair (its strength = how far the scale leans that way) or a meter
+function storyStat(state, name) {
+  const L = String(name || "").toLowerCase().trim();
+  for (const p of state.pairs) { if (p.a.toLowerCase() === L) return 100 - p.v; if (p.b.toLowerCase() === L) return p.v; }
+  const m = state.meters.find(x => x.n.toLowerCase() === L || x.k === L); return m ? m.v : null;
+}
+const storyStatName = (state, name) => { const L = String(name || "").toLowerCase().trim(); for (const p of state.pairs) { if (p.a.toLowerCase() === L) return p.a; if (p.b.toLowerCase() === L) return p.b; } return state.meters.find(x => x.n.toLowerCase() === L || x.k === L)?.n || ""; };
+// the choices the model wrote, checked against the story's real stat names
+function storyChoices(s, list) {
+  const st = { pairs: s.pairs, meters: s.meters }, sides = s.pairs.flatMap(p => [p.a, p.b]);
+  return (Array.isArray(list) ? list : []).slice(0, 5).map(x => {
+    const t = String(x?.t || x?.text || "").replace(/\s+/g, " ").trim().slice(0, 240); if (!t) return null;
+    const leans = (Array.isArray(x.leans) ? x.leans : x.lean ? [{ side: x.lean, amt: x.amt }] : []).map(l => ({ side: sides.find(n => n.toLowerCase() === String(l?.side || "").toLowerCase().trim()), amt: Math.max(1, Math.min(3, Math.round(+l?.amt || 1))) })).filter(l => l.side).slice(0, 2);
+    const meters = {}; for (const [n, d] of Object.entries(x.meters || {})) { const m = s.meters.find(y => y.n.toLowerCase() === String(n).toLowerCase().trim() || y.k === n); if (m && Number.isFinite(+d) && +d) meters[m.k] = Math.round(+d); }
+    let check = null; if (x.check && typeof x.check === "object") { const n = storyStatName(st, x.check.stat), need = Math.round(+x.check.need); if (n && Number.isFinite(need)) check = { stat: n, need: Math.max(5, Math.min(s.meters.some(m => m.n === n && !m.max) ? 100000 : 95, need)) }; }
+    return { t, st: { leans, meters, ...(check ? { check } : {}) } };
+  }).filter(Boolean);
+}
+// the [[story: {…}]] line at the end of a scene (braces balanced, so nested objects are fine)
+function takeStory(text) {
+  const s = String(text || ""), i = s.search(/\[\[\s*story\s*:/i); if (i < 0) return { text: s, data: null };
+  const a = s.indexOf("{", i); if (a < 0) return { text: s.slice(0, i).trim(), data: null };
+  let d = 0, b = -1, q = false; for (let k = a; k < s.length; k++) { const ch = s[k]; if (q) { if (ch === "\\") k++; else if (ch === '"') q = false; continue; } if (ch === '"') q = true; else if (ch === "{") d++; else if (ch === "}") { d--; if (!d) { b = k; break; } } }
+  let data = null; if (b > 0) { try { data = JSON.parse(s.slice(a, b + 1)); } catch {} }
+  const end = b > 0 ? s.indexOf("]]", b) : -1;
+  return { text: (s.slice(0, i) + (end >= 0 ? s.slice(end + 2) : "")).trim(), data };
+}
+function storyHero(s) {
+  const h = s.hero || {}, bits = [];
+  bits.push(h.name ? `Their name is ${h.name}.` : "They haven't been named yet: give them an early moment to choose a name (as one of the choices or the scene's focus).");
+  if (h.pron) bits.push(`Pronouns: ${h.pron}.`);
+  if (h.color) bits.push(`Colour: ${h.color}.`);
+  return bits.join(" ");
+}
+const storyContent = s => (s.opts.content === "lewd" ? "Sexual content is welcome when the story leads there: explicit and adult, but the story stays a narrative RPG with goals, stakes and choices; offer a lewd option now and then (not in every scene) and let the reader decide." : "Keep it free of sexual content: danger, cruelty, combat and dark themes are fine, as in a classic fantasy gamebook.")
+  + (s.opts.vore ? " Vore (swallowing creatures or people whole and alive, and digesting them) is part of this story: offer it as an option when it fits and describe it vividly when chosen." : "")
+  + " Every character is treated as a fully grown, mature being.";
+function storyMessages(c, chat, upto, cont) {
+  const s = chat.story, st = storyState(chat, upto), N = s.chapters.length;
+  const ci = Math.min(st.ch, N - 1), chap = s.chapters[ci], k = st.over ? chap.scenes : st.step + 1, K = chap.scenes;
+  const last = k >= K, final = last && ci === N - 1 && s.opts.length !== "endless";
+  const pairs = st.pairs.map(p => `${p.a} ${100 - p.v} · ${p.b} ${p.v}`).join("; "), meters = st.meters.map(m => `${m.n} ${m.v}${m.max ? "/" + m.max : ""} (${m.desc || ""})`).join("; ");
+  const sides = s.pairs.flatMap(p => [p.a, p.b]).join(", "), mnames = s.meters.map(m => m.n).join(", ");
+  let sys = `You are the author of "${s.title}", an interactive novel in the style of Choice of Games: second person ("you"), present tense, vivid prose, a narrative RPG where the reader's choices and stats shape what happens. Write plain prose paragraphs (no asterisks); speech goes in "quotes".`;
+  sys += `\n\n# The reader\nThe reader plays ${s.you}. ${storyHero(s)} Never decide what the reader does, says or feels beyond what their choice says.`;
+  sys += `\n\n# Setting\n${s.setting}`;
+  sys += `\n\n# The reader's stats right now (never show numbers in the prose)\nEach pair is one scale: leaning to one side means leaning away from the other. ${pairs}.\nMeters: ${meters}.\nLet the reader's nature colour how scenes play out and how others treat them.`;
+  sys += `\n\n# Structure\nThe story has ${N} chapters of a few scenes each, and each of your replies is ONE scene: 2-5 short paragraphs that end at a decision.`;
+  sys += `\nNow: chapter ${ci + 1} of ${N}, "${chap.t}": ${chap.goal}\nThis is scene ${Math.min(k, K)} of ${K} in this chapter.`;
+  if (k === 1) sys += ` Begin the reply with a line **Chapter ${ci + 1}: ${chap.t}** and open the chapter.`;
+  if (last && !final) sys += ` This is the chapter's last scene: bring it to a close; the choices lead into what comes next.`;
+  if (final) sys += `\nThis is the FINAL scene of the story: resolve it, then end with an epilogue that sums up the reader's life and legacy, shaped by their stats (their nature, ${mnames}). Give no choices: end with [[story: {"choices": [], "ending": true}]].`;
+  sys += `\n\n# Choices\nAfter the scene add one line exactly like [[story: {"choices": [...]}]] with 3-4 choices. Each choice is an object: "t" (what you do, short, in the reader's voice: e.g. "Burn him where he stands."), "leans" (1-2 of {"side": one of ${sides}, "amt": 1-3}: how strongly this choice expresses that side), optional "meters" ({"${s.meters[0]?.n || "Wealth"}": change, …} when it gains or costs something; names from ${mnames}), optional "check" ({"stat": a side or meter name, "need": 20-85 for sides}) when success depends on the reader's nature (about one check per scene, never on every choice). The choices must differ in which sides they push, so the reader shapes their character. Never mention checks or numbers in the text.`;
+  sys += `\nWhen the reader's message includes a check result, narrate exactly that outcome: success goes well, failure has real consequences.`;
+  sys += `\n\n# Content\n${storyContent(s)}`;
+  if ((S.settings.globalInstr || "").trim()) sys += `\n\n# The user's instructions for every chat (always follow)\n${fill(S.settings.globalInstr, c)}`;
+  sys += onoPrompt(c, chat, upto);
+  sys += `\n\nAfter the [[story: …]] line, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} (only what is literally happening; when unsure, none) | hearing: inside or outside (inside only when the reader is inside a body)]]`;
+  if (chat.summary) sys += `\n\n# Story so far\n${chat.summary}`;
+  const hist = chat.messages.slice(chat.summarizedUpTo || 0, upto).filter(m => m.role !== "image" && m.content);
+  let budget = S.settings.contextTokens * 3.5 - sys.length; const out = [];
+  for (let i = hist.length - 1; i >= 0; i--) {
+    const m = hist[i]; let content = m.content;
+    if (m.role === "user" && m.st) content = `[The reader chose: ${content}]` + storyNote(m);
+    if (budget - content.length < 0 && out.length >= 2) break; budget -= content.length;
+    out.unshift({ role: m.role, content });
+  }
+  if (!out.length || out[0].role !== "user") out.unshift({ role: "user", content: "[Begin the story.]" });
+  if (cont) out.push({ role: "user", content: "[Continue the current scene and end at a decision.]" });
+  return [{ role: "system", content: sys }, ...out];
+}
+const storyNote = m => { const k = m.st?.check; return k ? `\n[Check on ${k.stat}: ${k.ok ? "SUCCESS" : "FAILURE"}. Narrate exactly that.]` : ""; };
+const storyLine = m => m.st?.check ? `<div class="rub-line st-line ${m.st.check.ok ? "ok" : "no"}">${m.st.check.ok ? "✓" : "✗"} ${esc(m.st.check.stat)}</div>` : "";
+// a scene that came without usable choices gets them from a small follow-up call
+async function storyChoicesFor(chat, text) {
+  const s = chat.story, sides = s.pairs.flatMap(p => [p.a, p.b]).join(", ");
+  const j = await dsJSON([{ role: "system", content: `You write the choices for a scene of "${s.title}", a Choice of Games style interactive novel. Respond with only JSON: {"choices": [3-4 of {"t": what the reader does (short), "leans": [{"side": one of ${sides}, "amt": 1-3}], "meters": {name: change} (optional; names: ${s.meters.map(m => m.n).join(", ")}), "check": {"stat": side or meter, "need": 20-85} (optional, at most one)}]}. ${storyContent(s)}` }, { role: "user", content: text.slice(-3000) }], { temperature: 0.8, maxTokens: 700 });
+  return storyChoices(s, j?.choices);
+}
+async function pickStory(x) {
+  const chat = S.chat, s = chat.story, now = storyState(chat), k = x.st.check;
+  const st = { leans: x.st.leans || [], meters: x.st.meters || {} };
+  if (k) { const val = storyStat(now, k.stat) ?? 0, roll = Math.round((rand01() - 0.5) * 10); st.check = { stat: k.stat, need: k.need, val, ok: val + roll >= k.need }; }
+  S.pendingStory = st; S.writeOwn = false;
+  // past the last planned chapter in an endless story: plan more first
+  const after = storyState({ ...chat, messages: [...chat.messages, { role: "user", st }] });
+  if (after.over && s.opts.length === "endless") { setBusy(true); setStatus("Planning the next chapters…"); try { await storyExtend(chat); } finally { setBusy(false); setStatus(""); } }
+  $("input").value = x.t; await send();
+}
+// more chapters for an endless story, following the same layout and rules
+async function storyExtend(chat) {
+  const s = chat.story, st = storyState(chat);
+  const j = await dsJSON([{ role: "system", content: `You plan the next chapters of "${s.title}", a Choice of Games style interactive novel that keeps going past its original length. Same world, same stats, same chapter layout (3-5 scenes each). Respond with only JSON: {"chapters": [3 of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 3-5}]}. Never repeat a chapter that already happened. ${storyContent(s)}` },
+    { role: "user", content: `Setting: ${s.setting}\nThe reader: ${s.you}. ${storyHero(s)}\nChapters so far: ${s.chapters.map((c, i) => `${i + 1}. ${c.t}: ${c.goal}`).join("\n")}\n${chat.summary ? "Story so far: " + chat.summary + "\n" : ""}Current stats: ${st.pairs.map(p => `${p.a} ${100 - p.v}/${p.b} ${p.v}`).join(", ")}; ${st.meters.map(m => m.n + " " + m.v).join(", ")}` }], { temperature: 0.9, maxTokens: 900 });
+  const add = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "Another chapter", goal: String(x?.goal || "").slice(0, 400), scenes: Math.max(3, Math.min(5, +x?.scenes || 4)) })).filter(x => x.goal);
+  if (!add.length) throw new Error("The next chapters couldn't be planned. Try again.");
+  s.chapters.push(...add); await saveChat();
+}
+// a fresh chapter outline in the same setting (random stories) or a whole story built from one of your bots
+async function storyPlan(base, from) {
+  const bot = from && !from.storyPack ? from : null;
+  const sys = bot ? `You design a Choice of Games style interactive novel (a narrative RPG told in second person with fixed choices and stats) set in the world of the bot below. The reader plays the protagonist. Respond with only JSON: {"title": the story's title, "you": who the reader plays (one sentence, "a ..."), "setting": 3-5 sentences on the world, its tone and what matters in it, "pairs": [3 of {"a": side, "b": opposite side, "ca": "#hex", "cb": "#hex"}] (opposed personality traits that fit this world, e.g. Ruthless/Merciful), "meters": [2 of {"n": name, "v": starting value, "max": 100 or 0 for open-ended, "desc": a few words}] (things that matter here, e.g. Gold, Reputation), "chapters": [${STORY_STD} of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 3-5}] (a full arc with a climax in the last one)}. The bot's own character can be someone the reader meets (or the protagonist, if the bot is written that way). Every character is treated as a fully grown, mature being.`
+    : `You plan a new story for "${base.title}", a Choice of Games style interactive novel. Keep the setting and stats, but invent a fresh plot: different events, places, allies and enemies from the classic route. Respond with only JSON: {"chapters": [${STORY_STD} of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 3-5}]} (a full arc with a climax in the last one). Every character is treated as a fully grown, mature being.`;
+  const user = bot ? `Bot: ${bot.name} (${bot.kind || "character"})\n${String(bot.description || "").slice(0, 5000)}\n${bot.scenario ? "Scenario: " + String(bot.scenario).slice(0, 1500) : ""}${(bot.cast || []).length ? "\nCast: " + bot.cast.map(x => x.name + " (" + (x.type || "character") + ")").join(", ") : ""}` : `Setting: ${base.setting}\nThe reader plays ${base.you}.\nClassic chapters (do something different): ${base.chapters.map(c => c.t).join(", ")}`;
+  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: user }], { temperature: 0.95, maxTokens: 1600 });
+  const chapters = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "Chapter", goal: String(x?.goal || "").slice(0, 400), scenes: Math.max(3, Math.min(5, +x?.scenes || 4)) })).filter(x => x.goal).slice(0, 10);
+  if (chapters.length < 3) throw new Error("The story couldn't be planned. Try again.");
+  if (!bot) return { chapters };
+  const pairs = (Array.isArray(j.pairs) ? j.pairs : []).map((p, i) => ({ a: String(p?.a || "").trim().slice(0, 20), b: String(p?.b || "").trim().slice(0, 20), ca: hexOk(p?.ca) || STORY_PACKS.dragon.pairs[i % 3].ca, cb: hexOk(p?.cb) || STORY_PACKS.dragon.pairs[i % 3].cb })).filter(p => p.a && p.b).slice(0, 3);
+  const meters = (Array.isArray(j.meters) ? j.meters : []).map((m, i) => ({ k: "m" + i, n: String(m?.n || "").trim().slice(0, 20), v: Math.max(0, Math.round(+m?.v || 10)), max: +m?.max === 0 ? 0 : 100, desc: String(m?.desc || "").slice(0, 60) })).filter(m => m.n).slice(0, 2);
+  return { title: String(j.title || bot.name).slice(0, 60), you: String(j.you || "the protagonist").slice(0, 200), setting: String(j.setting || bot.scenario || "").slice(0, 1500), pairs: pairs.length ? pairs : STORY_PACKS.dragon.pairs.map(p => ({ ...p })), meters: meters.length ? meters : [{ k: "m0", n: "Gold", v: 10, max: 0, desc: "your wealth" }, { k: "m1", n: "Renown", v: 10, max: 100, desc: "how well known you are" }], chapters };
+}
+// ---- windows: the list of stories, a new story's setup, and the stats screen
+async function openStories() {
+  const runs = [];
+  for (const c of S.chars) for (const e of await getIndex(c.id)) if (e.story) runs.push({ c, e });
+  runs.sort((a, b) => b.e.updated - a.e.updated);
+  openSheet("Play a story", b => {
+    b.innerHTML = `<p class="hint" style="margin:0">Interactive novels told one scene at a time: you pick what to do, your choices shape who you are, and your nature decides what succeeds.</p>
+      ${Object.values(STORY_PACKS).map(pk => `<div class="st-pack"><div class="st-ic">${pk.icon}</div><div class="grow"><b>${esc(pk.title)}</b><p>${esc(pk.blurb)}</p><small>${esc(pk.credit)}</small></div><button type="button" class="btn small primary" data-pk="${pk.id}">New story</button></div>`).join("")}
+      <button type="button" class="btn" id="stFromBot">📖 Turn one of your bots into a story</button>
+      ${runs.length ? `<div class="lbl">Your stories</div><div class="stack">${runs.slice(0, 20).map((r, i) => `<button type="button" class="listrow" data-run="${i}"><span class="grow"><b>${esc(r.e.story)}</b> <span class="badge">${r.e.count}</span><span class="sub">${esc(r.e.preview || "")}</span></span><span class="sub">${fmtWhen(r.e.updated)}</span></button>`).join("")}</div>` : ""}`;
+    b.querySelectorAll("[data-pk]").forEach(x => x.onclick = () => storySetup(STORY_PACKS[x.dataset.pk], null));
+    $("stFromBot").onclick = () => storyPickBot();
+    b.querySelectorAll("[data-run]").forEach(x => x.onclick = () => { const r = runs[+x.dataset.run]; closeSheet(); openChat(r.c.id, r.e.id); });
+  });
+}
+function storyPickBot() {
+  const list = S.chars.filter(c => !c.storyPack && !c.hidden);
+  openSheet("Which bot?", b => {
+    b.innerHTML = `<p class="hint" style="margin:0">The AI plans a full story in that bot's world: who you play, stats that fit it, and ${STORY_STD} chapters.</p><input id="stQ" placeholder="Search your bots" autocomplete="off"><div class="stack" id="stList"></div>`;
+    const draw = () => { const q = $("stQ").value.trim().toLowerCase(); $("stList").innerHTML = list.filter(c => !q || c.name.toLowerCase().includes(q)).slice(0, 60).map(c => `<button type="button" class="listrow" data-id="${c.id}"><span class="grow"><b>${esc(c.name)}</b><span class="sub">${esc(botSummary(c).slice(0, 90))}</span></span></button>`).join("") || '<p class="note">No bots match.</p>'; $("stList").querySelectorAll("[data-id]").forEach(x => x.onclick = () => storySetup(null, byId(x.dataset.id))); };
+    $("stQ").oninput = draw; draw();
+  });
+}
+function storySetup(pk, bot) {
+  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: false, length: "standard" }, h = { name: "", pron: "", color: "" };
+  openSheet(pk ? pk.title : `Story: ${bot.name}`, b => {
+    const draw = () => {
+      const seg = (k, opts) => `<div class="tabs st-seg">${opts.map(([v, l]) => `<button type="button" class="tab ${o[k] === v ? "on" : ""}" data-k="${k}" data-v="${v}">${l}</button>`).join("")}</div>`;
+      b.innerHTML = `${pk ? `<p class="hint" style="margin:0">${esc(pk.blurb)}</p>${field("Story", seg("mode", [["classic", "Classic route"], ["random", "A new story"]]), o.mode === "classic" ? "Follows the classic chapters in order." : "Same world and rules, a different plot each time.")}` : `<p class="hint" style="margin:0">A Choice of Games style story set in ${esc(bot.name)}'s world.</p>`}
+        ${field("Content", seg("content", [["clean", "Clean"], ["lewd", "With lewd scenes"]]))}
+        <label class="check"><input type="checkbox" id="stVore" ${o.vore ? "checked" : ""}> Vore can happen</label>
+        ${field("Length", seg("length", [["standard", `Standard (${STORY_STD} chapters)`], ["endless", "Keep going"]]), "You can keep going after the ending either way.")}
+        <div class="lbl">You</div>
+        <input id="stName" placeholder="${pk ? "Your dragon's name (or let the story ask)" : "Your name (or let the story ask)"}" value="${esc(h.name)}" autocomplete="off">
+        <div class="row" style="gap:6px">${[["she/her", "She"], ["he/him", "He"], ["they/them", "They"]].map(([v, l]) => `<button type="button" class="btn small ${h.pron === v ? "primary" : ""}" data-pron="${v}">${l}</button>`).join("")}</div>
+        ${pk?.colors ? `<select id="stColor"><option value="">Colour: let the story ask</option>${pk.colors.map(x => `<option ${h.color === x ? "selected" : ""}>${x}</option>`).join("")}</select>` : ""}
+        <button type="button" class="btn primary" id="stGo">Begin</button><p class="hint" id="stMsg" style="margin:0"></p>`;
+      b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => { o[x.dataset.k] = x.dataset.v; keep(); draw(); });
+      b.querySelectorAll("[data-pron]").forEach(x => x.onclick = () => { keep(); h.pron = h.pron === x.dataset.pron ? "" : x.dataset.pron; draw(); });
+      $("stVore").onchange = e => { o.vore = e.target.checked; };
+      $("stGo").onclick = async () => { keep(); if (!hasKey()) { $("stMsg").textContent = "Stories need your AI key (Settings → AI model)."; return; } $("stGo").disabled = true; $("stMsg").textContent = o.mode === "classic" ? "Opening the story…" : "Planning your story…";
+        try { await storyBegin(pk, bot, o, h); } catch (e) { $("stGo").disabled = false; $("stMsg").textContent = e.message; } };
+    };
+    const keep = () => { if ($("stName")) h.name = $("stName").value.trim().slice(0, 40); if ($("stColor")) h.color = $("stColor").value; };
+    draw();
+  });
+}
+async function storyBegin(pk, bot, o, h) {
+  let c = bot, story;
+  if (pk) {
+    c = await storyPackBot(pk);
+    const plan = o.mode === "random" ? await storyPlan(pk, null) : { chapters: pk.chapters.map(x => ({ ...x })) };
+    story = { pack: pk.id, title: pk.title, you: pk.you, setting: pk.setting, pairs: pk.pairs.map(p => ({ ...p, v: 50 })), meters: pk.meters.map(m => ({ ...m })), chapters: plan.chapters };
+  } else {
+    const plan = await storyPlan(null, bot);
+    story = { pack: "bot", title: plan.title, you: plan.you, setting: plan.setting, pairs: plan.pairs.map(p => ({ ...p, v: 50 })), meters: plan.meters, chapters: plan.chapters };
+  }
+  story.opts = { ...o }; story.hero = { ...h };
+  const ch = newChat(c, S.personaId, { create: false }); ch.messages = []; ch.story = story;
+  S.charId = c.id; S.chat = ch; await saveChat(); closeSheet();
+  await openChat(c.id, ch.id);
+  await generate(0, null);
+}
+function openStoryStats() {
+  const chat = S.chat; if (!chat?.story) return; const s = chat.story, st = storyState(chat);
+  const N = s.chapters.length, ci = Math.min(st.ch, N - 1), done = st.over && s.opts.length !== "endless";
+  openSheet(s.title, b => {
+    b.innerHTML = `<div class="st-head"><b>${esc(s.hero?.name || "You")}</b><span>${esc(s.you)}${s.hero?.color ? " · " + esc(s.hero.color) : ""}</span></div>
+      <p class="hint" style="margin:0">${done ? "The story is over." : `Chapter ${ci + 1} of ${N}: ${esc(s.chapters[ci].t)}`}${st.checks ? ` · ${st.passed} of ${st.checks} tests passed` : ""}</p>
+      <div class="lbl">Your nature</div>${traitBars(st.pairs)}
+      <div class="lbl">Standing</div><div class="st-meters">${st.meters.map(m => `<div class="st-m"><span>${esc(m.n)}</span><b>${m.v}${m.max ? `<small>/${m.max}</small>` : ""}</b>${m.max ? `<i style="width:${Math.round(100 * m.v / m.max)}%"></i>` : ""}<small>${esc(m.desc || "")}</small></div>`).join("")}</div>
+      <div class="lbl">Chapters</div><ol class="st-ch">${s.chapters.map((x, i) => `<li class="${i < st.ch ? "done" : i === st.ch && !st.over ? "now" : ""}">${esc(x.t)}</li>`).join("")}</ol>
+      <div class="lbl">Content</div>
+      <div class="tabs st-seg">${[["clean", "Clean"], ["lewd", "With lewd scenes"]].map(([v, l]) => `<button type="button" class="tab ${s.opts.content === v ? "on" : ""}" data-c="${v}">${l}</button>`).join("")}</div>
+      <label class="check"><input type="checkbox" id="stsVore" ${s.opts.vore ? "checked" : ""}> Vore can happen</label>
+      <label class="check"><input type="checkbox" id="stsLen" ${s.opts.length === "endless" ? "checked" : ""}> Keep going past the ending</label>`;
+    b.querySelectorAll("[data-c]").forEach(x => x.onclick = async () => { s.opts.content = x.dataset.c; await saveChat(); openStoryStats(); });
+    $("stsVore").onchange = async e => { s.opts.vore = e.target.checked; await saveChat(); };
+    $("stsLen").onchange = async e => { s.opts.length = e.target.checked ? "endless" : "standard"; await saveChat(); renderChoices(); };
+  });
+}
+function renderStoryBar(box) {
+  const chat = S.chat, s = chat.story, st = storyState(chat), N = s.chapters.length, ci = Math.min(st.ch, N - 1);
+  const done = st.over && s.opts.length !== "endless", chap = s.chapters[ci], k = Math.min(st.step, chap.scenes);
+  box.innerHTML = `<div class="own-row"><span class="own-l">📖 ${done ? "The end" : `Chapter ${ci + 1}: ${esc(chap.t)}`}</span>${done ? "" : `<span class="own-n">${k} / ${chap.scenes}</span>`}<button type="button" class="btn small own-go" id="stStats">📜 Stats</button></div>${traitBars(st.pairs)}`;
+  traitSlide(box, st.pairs, chat.id + ":st");
+  $("stStats").onclick = () => openStoryStats();
+}
+// after the ending: see the tale, keep going, or start again
+function storyEndButtons(box) {
+  const s = S.chat.story;
+  box.innerHTML = `<button type="button" class="choice" id="stEndStats"><span>📜 Your tale: stats and chapters</span></button><button type="button" class="choice" id="stMore"><span>Keep going: more chapters</span></button><button type="button" class="choice" id="stNew"><span>Start a new story</span></button>`;
+  $("stEndStats").onclick = () => openStoryStats();
+  $("stMore").onclick = async () => { if (S.busy) return; s.opts.length = "endless"; setBusy(true); setStatus("Planning the next chapters…"); try { await storyExtend(S.chat); } catch (e) { setStatus(e.message, true); return; } finally { setBusy(false); } setStatus(""); await generate(S.chat.messages.length, null); };
+  $("stNew").onclick = () => { const pk = STORY_PACKS[s.pack]; if (pk) storySetup(pk, null); else openStories(); };
 }
 
 // ===== Character creator (v1.59): a character made for one chat from choices that fit the bot's setting, in the spirit of
@@ -8264,7 +8561,7 @@ function ownPersona(chat = S.chat) {
   const o = chat.own || {};
   return { id: "own:" + (chat.id || ""), own: true, name: o.name || "You", description: chat.own ? pgDesc(o) : "", color: o.color || (S.personas.find(p => p.id === chat.personaId) || {}).color || "#6fc3d8" };
 }
-const chatWho = e => e.own || personaName(e.personaId);
+const chatWho = e => e.story ? "📖 " + e.story : e.own || personaName(e.personaId);
 async function crPlan(c, style) {
   const cfg = crOf(c), given = crPairs(cfg.pairs), pins = crPins(cfg.pins), story = style !== "quiz";
   const sys = `You design the character creation that opens a roleplay chat in Lanternroom, an interactive roleplay app, in the spirit of Choice of Games' "Choice of the Dragon": the player's own character is built from multiple-choice answers that fit this bot's setting, so they arrive as someone who belongs there.
@@ -8361,7 +8658,9 @@ function crTraitsFromTag(str, chat) {
 // the bar under the chat header: progress while making the character, then its name and traits
 function renderOwnBar() {
   const box = $("ownBar"); if (!box) return;
-  const chat = S.chat, on = chat && !$("chat").hidden && (chat.own || chat.creating);
+  const chat = S.chat;
+  if (chat?.story && !$("chat").hidden) { box.hidden = false; return renderStoryBar(box); }
+  const on = chat && !$("chat").hidden && (chat.own || chat.creating);
   if (!on) { box.hidden = true; box.innerHTML = ""; return; }
   box.hidden = false;
   const tr = crNowTraits(chat);
