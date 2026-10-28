@@ -66,8 +66,8 @@ const open = require("./base.js");
   chk(`everything reads 4 parts; off reads nothing (${opt.all}, ${opt.off})`, opt.all === 4 && opt.off === 0);
   const menu = await pg.evaluate(async () => {
     const i = S.chat.messages.map(m => m.role).lastIndexOf("assistant"); S.openActs = S.chat.messages[i].id; renderMsgs(true); await new Promise(r => setTimeout(r, 30));
-    const btn = document.querySelector('#msgs [data-act="read"]'); __said = []; btn?.click(); await new Promise(r => setTimeout(r, 80)); const read = __said.length;
-    __said = []; const q = [...document.querySelectorAll("#msgs .msg.assistant .q")].find(x => /Come closer/.test(x.textContent)); q?.click(); await new Promise(r => setTimeout(r, 40));
+    const btn = document.querySelector('#msgs [data-act="read"]'); __said = []; btn?.click(); for (let i = 0; i < 80 && __said.length < 2; i++) await new Promise(r => setTimeout(r, 50)); const read = __said.length; voiceStop();
+    __said = []; const q = [...document.querySelectorAll("#msgs .msg.assistant .q")].find(x => /Come closer/.test(x.textContent)); q?.click(); for (let i = 0; i < 40 && !__said.length; i++) await new Promise(r => setTimeout(r, 25));
     return { btn: !!btn, read, tap: __said.map(x => x.t).join("|") };
   });
   chk("⋯ on a reply has Read aloud (works even with this chat's voices off)", menu.btn && menu.read === 2);
