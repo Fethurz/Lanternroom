@@ -7,7 +7,7 @@ const open = require("./base.js");
   const sysOf = b => String(b.messages?.[0]?.content || "");
   const reply = `*She steps back.* "I'm sorry, I didn't mean-" *Her belly lets out a [sfx=gurgle]***Grrrbl...***[/sfx] and she covers it.* "A-and you are?" *A [sfx=burp]***BRAAP***[/sfx] slips out.* "S-sorry."\n[[mood: sad | place: Hall | ambience: indoors | activity: none | harm: none | hearing: outside]]`;
   let dirN = 0;
-  const json = body => { if (/You direct voice actors/.test(sysOf(body))) { dirN++; return { lines: [{ i: 1, emotion: "sad", intensity: 3, speed: 1, volume: 1, cont: "to hurt you" }, { i: 2, emotion: "nervous", intensity: 2, cont: "to hurt you" }, { i: 3, emotion: "neutral" }] }; } return { summary: "x", facts: [] }; };
+  const json = body => { if (/You direct voice actors/.test(sysOf(body))) { dirN++; return { lines: [{ i: 1, emotion: "sad", intensity: 3, speed: 1, volume: 1, }, { i: 2, emotion: "nervous", intensity: 2, }, { i: 3, emotion: "neutral" }] }; } return { summary: "x", facts: [] }; };
   const { b, pg, errs, calls } = await open({ width: W, json, stream: () => reply });
   const cart = []; let sse = "ok";
   // a real little PCM clip for the SSE (timed) endpoint: 1.6 s, the cut word ends at 0.9 s
@@ -34,21 +34,21 @@ const open = require("./base.js");
   // stutters
   const st = await pg.evaluate(() => ["A-and you are?", "S-sorry.", "D-don't go", "C-Can you?", "I-I'm fine", "W-w-wait", "Ex-excuse me", "no-no", "T-shirt"].map(t => speakable(t, false)));
   chk(`stutters start the real word's sound and break off (${st.join(" | ")})`, st[0] === "And— and you are?" && st[1] === "Sor— sorry." && st[2] === "Don't— don't go" && st[3] === "Can— can you?" && st[4] === "I— I'm fine" && st[5] === "Wait— wait— wait" && st[6] === "Ex— excuse me" && st[7] === "no no" && st[8] === "T-shirt");
-  // cut-offs split into pieces
-  const ex = await pg.evaluate(() => [voiceExpand({ text: "I'm sorry, I didn't mean-", who: "narrator" }), voiceExpand({ text: "I was going— no, never mind.", who: "narrator", cont: "x" }), voiceExpand({ text: "A well-known T-shirt — nice.", who: "narrator" })].map(L => L.map(x => x.text + (x.cut ? "|cut" : "")).join(" / ")));
-  chk(`a line that's cut off is said only up to the word, marked cut (${ex.join(" ; ")})`, ex[0] === "I'm sorry, I didn't mean|cut" && ex[1] === "I was going|cut / no, never mind." && ex[2] === "A well-known T-shirt — nice.");
+  // v1.94: cut-offs stay whole, with an em dash at the break
+  const ex = await pg.evaluate(() => [voiceExpand({ text: "I'm sorry, I didn't mean-", who: "narrator" }).length, speakable("I'm sorry, I didn't mean-", true), speakable("I was going- no, never mind.", true), speakable("Wait –", true)]);
+  chk(`a line that's cut off is said whole, breaking off at an em dash (${ex.slice(1).join(" ; ")})`, ex[0] === 1 && ex[1] === "I'm sorry, I didn't mean—" && ex[2] === "I was going— no, never mind." && ex[3] === "Wait—");
   // phone: Everything mode, sounds in the narration play in place; the cut line stops right after "mean"
   await pg.evaluate(async () => { Object.assign(S.settings, { voiceOn: true, voiceAuto: false, voiceMode: "all" }); await saveSettings(); await openChat(S.chars[0].id); });
   await pg.waitForTimeout(300);
   const ph = await pg.evaluate(async () => {
     $("input").value = "hi"; $("send").click(); for (let i = 0; i < 200 && (S.busy || !S.chat.messages.some(x => /didn't mean/.test(x.content || ""))); i++) await new Promise(r => setTimeout(r, 50));
-    const m = S.chat.messages.filter(x => x.role === "assistant").at(-1); __said = []; __keys = []; VQ.bound = 1; VQ.cutN = 0;
+    const m = S.chat.messages.filter(x => x.role === "assistant").at(-1); __said = []; __keys = []; 
     await voiceRead(m, true); for (let i = 0; i < 120 && (VQ.busy || !__said.length); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 100));
-    return { said: __said.map(x => x.t + (x.cut ? "{" + x.cut + "}" : "")), keys: __keys.slice(), cutN: VQ.cutN };
+    return { said: __said.map(x => x.t + (x.cut ? "{" + x.cut + "}" : "")), keys: __keys.slice() };
   });
   chk(`Everything mode plays every sound where it's written (${ph.keys})`, ph.keys.join() === "gurgle,burp" && ph.said.indexOf("[sfx gurgle]") > ph.said.findIndex(x => /didn't mean/.test(x)) && ph.said.indexOf("[sfx burp]") < ph.said.findIndex(x => /^Sor/.test(x)));
   const cutLine = ph.said.find(x => /didn't mean/.test(x)) || "";
-  chk(`the phone says the cut word with what would come next and stops the moment the next word starts (${cutLine})`, /didn't mean to hurt you/.test(cutLine) && /\{to\}$/.test(cutLine) && ph.cutN === 1);
+  chk(`the phone says the cut line with an em dash (${cutLine})`, cutLine === "I'm sorry, I didn't mean—");
   chk(`then the next line comes at once (${ph.said.slice(0, 6).join(" · ")})`, ph.said.some(x => /^And— and you are\?/.test(x)));
   // dialogue mode: the burp in the narration plays between the lines, the gurgle doesn't
   const dl = await pg.evaluate(async () => { S.chat.voice = "dialogue"; const m = S.chat.messages.filter(x => x.role === "assistant").at(-1); __said = []; __keys = []; await voiceRead(m); for (let i = 0; i < 120 && (VQ.busy || !__said.length); i++) await new Promise(r => setTimeout(r, 50)); return { keys: __keys.slice(), said: __said.map(x => x.t) }; });
@@ -88,22 +88,12 @@ const open = require("./base.js");
   chk(`Hear it uses your choice (${said1?.generation_config?.emotion}, volume ${said1?.generation_config?.volume})`, said1?.generation_config?.emotion === "angry" && said1?.generation_config?.volume >= 1.7);
   const rd = await pg.evaluate(async () => { const m = S.chat.messages.filter(x => x.role === "assistant").at(-1); const p = await toneParts(m, voiceParts(m, "dialogue")); return p.map(x => x.emo + (x.ovr ? "*" : "")); });
   chk(`reading the reply keeps your choice for that line (${rd})`, rd[1] === "furious*" && rd[0] !== "furious*");
-  // Cartesia: the cut line is asked for with what comes next and word timings, and stopped at the cut word
+  // Cartesia: the cut line goes to the normal endpoint with an em dash, so the voice takes its own breath; no timings needed
   cart.length = 0;
-  const cu = await pg.evaluate(async () => { const m = S.chat.messages.filter(x => x.role === "assistant").at(-1); VQ.span = null; VQ.cache.clear(); __said = []; const t0 = Date.now(); await voiceRead(m, true);
-    for (let i = 0; i < 80 && !VQ.span; i++) await new Promise(r => setTimeout(r, 25)); const span = VQ.span; for (let i = 0; i < 160 && VQ.busy; i++) await new Promise(r => setTimeout(r, 25)); return { span, said: __said.map(x => x.t) }; });
-  const s1 = cart.find(x => /tts\/sse/.test(x.u))?.body;
-  chk(`Cartesia gets the cut line with what would come next and word timings (${s1?.transcript})`, s1?.add_timestamps === true && s1?.transcript === "I'm sorry, I didn't mean to hurt you" && s1?.voice?.id === "v1" && s1?.output_format?.container === "raw");
-  const wEnd = 1.5 / 8 * 5; // "mean" is the 5th of 8 words
-  chk(`…and it stops in the quiet right after "mean", before the added word (${cu.span?.to?.toFixed(3)} s of the 1.6 s clip, gap 0.89-0.95, timed word end ${wEnd.toFixed(3)})`, cu.span?.cut && cu.span.to >= 0.935 && cu.span.to <= 0.995);
-  // prefetch: the next lines are asked for before the first one finishes
-  const pre = cart.filter(x => /tts\/bytes/.test(x.u));
-  chk(`the next lines are fetched ahead, so there's no wait between them (${pre.length} fetched)`, pre.length >= 2 && pre[1].at - pre[0].at < 400);
-  // without timings, the cut line falls back to a dash
-  sse = "off"; cart.length = 0;
-  await pg.evaluate(async () => { VQ.cache.clear(); VQ.noSSE = 0; const m = S.chat.messages.filter(x => x.role === "assistant").at(-1); await voiceRead(m, true); for (let i = 0; i < 160 && VQ.busy; i++) await new Promise(r => setTimeout(r, 25)); });
-  const fb = cart.filter(x => /tts\/bytes/.test(x.u)).map(x => x.body.transcript);
-  chk(`without word timings the cut line ends on a dash (${fb[0]})`, fb[0] === "I'm sorry, I didn't mean—");
+  await pg.evaluate(async () => { const m = S.chat.messages.filter(x => x.role === "assistant").at(-1); VQ.cache.clear(); await voiceRead(m, true); for (let i = 0; i < 160 && VQ.busy; i++) await new Promise(r => setTimeout(r, 25)); });
+  const fb = cart.filter(x => /tts\/bytes/.test(x.u));
+  chk(`Cartesia gets the cut line ending on an em dash (${fb[0]?.body?.transcript}), nothing else`, fb[0]?.body?.transcript === "I'm sorry, I didn't mean—" && !cart.some(x => /tts\/sse/.test(x.u)));
+  chk(`the next lines are fetched ahead, so there's no wait between them (${fb.length} fetched)`, fb.length >= 2 && fb[1].at - fb[0].at < 400);
   // the prompt: asked-for burps go inside the speech
   const pr = await pg.evaluate(() => { const c = S.chars[0]; S.chat.messages.push({ id: "u-b", role: "user", content: "Make her burp mid-sentence please" }); const p = buildPrompt(c, S.chat); S.chat.messages.pop(); return { sys: p[0].content, last: p.at(-1).content }; });
   chk("the prompt says to put asked-for burps inside the quotes, and a reminder rides on your message", /whenever .* asks for burps or belches/.test(pr.sys) && /wants burps or belches here: write them inside the characters' quotes/.test(pr.last));

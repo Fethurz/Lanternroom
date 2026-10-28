@@ -1712,7 +1712,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.93 · Oct 28";
+const VERSION = "1.94 · Oct 28";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -5957,7 +5957,7 @@ function stutterSay(all, frags, word) {
 function speakable(t, cart) {
   let s = String(t || "").replace(/<3/g, " ").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}♪♫★☆]/gu, " ");
   s = s.replace(/\b((?:[A-Za-z]{1,3}-){1,5})([A-Za-z][A-Za-z'’]*)/g, (all, reps, word) => stutterSay(all, reps.split("-").filter(Boolean), word));
-  s = s.replace(/([A-Za-z])-(?=\s|$|[.,!?"”])/g, "$1—");
+  s = s.replace(/([A-Za-z'’])\s?(?:-|–)(?=\s|$|[.,!?"”])/g, "$1—").replace(/—[.,]+/g, "—");
   s = s.replace(/[!?]{2,}/g, m => m.includes("?") && m.includes("!") ? "?!" : m[0]).replace(/\.{4,}/g, "...");
   s = s.replace(/\b[A-Z][A-Z']+\b/g, w => ACRO.test(w) ? w : w[0] + w.slice(1).toLowerCase());
   s = s.replace(/([A-Za-z])\1{3,}/g, "$1$1$1");
@@ -6037,13 +6037,13 @@ async function toneParts(m, parts, opt = {}) {
       const msgs = S.chat?.messages || [], at = msgs.indexOf(m), before = (at > 0 ? msgs.slice(Math.max(0, at - 5), at) : []).filter(x => x.role !== "image").map(x => `${x.role === "user" ? uname() : "Story"}: ${stripColor(x.content || "").replace(/\[\[[\s\S]*?\]\]/g, "").slice(0, 700)}`).join("\n\n");
       const prevPresent = [...msgs.slice(0, Math.max(0, at))].reverse().find(x => Array.isArray(x.vpresent))?.vpresent;
       const whoRule = askWho ? ` Also say WHO speaks each line. Read the story before this reply and the reply itself: who is in the scene right now (someone who left doesn't speak until they come back), who is being answered or addressed, and the narration around each quote. Use a known character's exact name when it's them; for anyone else give the name the story uses (or a short description like "the bartender" when unnamed) and their gender. ${uname()} is the user's character. Narration lines are "Narrator".` : "";
-      const ask = dsJSON([{ role: "system", content: `You direct voice actors reading a roleplay reply aloud. For every numbered line, say how it should sound, judging by the whole scene: what is happening, the narration around the line (whispered, shouted, through tears, purring, trembling…), its punctuation and the speaker's mood and personality. Narration lines are read by a storyteller who matches the mood of what they describe. Commit to the feeling: never fall back to neutral or content when a line carries any feeling, and pick the most specific emotion. Sadness: sad, melancholic, hurt, dejected, heartbroken (crying, voice breaking), despairing, resigned (quiet defeat). Anger by how hot it runs: frustrated, agitated, angry, furious, outraged; contempt, bitter, menacing, stern. Curt, flat, matter-of-fact, dismissive or rude lines are blunt, cold or deadpan, never neutral. Fear: hesitant, nervous, anxious, scared, terrified, panicked; pleading when begging. Give each line an intensity from 1 (barely) to 5 (overwhelming) and make speed and volume match it: sad and heartbroken lines slower and quieter (speed 0.75-0.9, volume 0.6-0.85), furious or shouted lines louder and a little faster (volume 1.4-1.8), blunt lines clipped (speed 1.05-1.15), whispers about volume 0.5.${whoRule} Respond with only JSON: {"lines": [{"i": line number, "emotion": one of ${TONE_EMO.join(", ")}, "intensity": 1-5, "speed": 0.7-1.35 (1 = normal), "volume": 0.4-1.8 (1 = normal), "laugh": true only if the line is laughed or giggled, "cont": only when the line is cut off mid-sentence (ends with a dash): the 1-4 words that would have come next${askWho ? `, "speaker": who says it, "gender": "m", "f" or "n"` : ""}}]${askWho ? `, "present": [names of the characters in the scene at the end of this reply]` : ""}}` },
+      const ask = dsJSON([{ role: "system", content: `You direct voice actors reading a roleplay reply aloud. For every numbered line, say how it should sound, judging by the whole scene: what is happening, the narration around the line (whispered, shouted, through tears, purring, trembling…), its punctuation and the speaker's mood and personality. Narration lines are read by a storyteller who matches the mood of what they describe. Commit to the feeling: never fall back to neutral or content when a line carries any feeling, and pick the most specific emotion. Sadness: sad, melancholic, hurt, dejected, heartbroken (crying, voice breaking), despairing, resigned (quiet defeat). Anger by how hot it runs: frustrated, agitated, angry, furious, outraged; contempt, bitter, menacing, stern. Curt, flat, matter-of-fact, dismissive or rude lines are blunt, cold or deadpan, never neutral. Fear: hesitant, nervous, anxious, scared, terrified, panicked; pleading when begging. Give each line an intensity from 1 (barely) to 5 (overwhelming) and make speed and volume match it: sad and heartbroken lines slower and quieter (speed 0.75-0.9, volume 0.6-0.85), furious or shouted lines louder and a little faster (volume 1.4-1.8), blunt lines clipped (speed 1.05-1.15), whispers about volume 0.5.${whoRule} Respond with only JSON: {"lines": [{"i": line number, "emotion": one of ${TONE_EMO.join(", ")}, "intensity": 1-5, "speed": 0.7-1.35 (1 = normal), "volume": 0.4-1.8 (1 = normal), "laugh": true only if the line is laughed or giggled${askWho ? `, "speaker": who says it, "gender": "m", "f" or "n"` : ""}}]${askWho ? `, "present": [names of the characters in the scene at the end of this reply]` : ""}}` },
         { role: "user", content: `${askWho && known ? `Known characters:\n${known}\n\n` : ""}${askWho && prevPresent?.length ? `In the scene before this reply: ${prevPresent.join(", ")}\n\n` : ""}${askWho && before ? `The story just before this reply:\n${before.slice(-3000)}\n\n` : ""}The scene${askWho ? " (this reply)" : ""}:\n${stripColor(m.content).replace(/\[\[[\s\S]*?\]\]/g, "").slice(0, 3500)}\n\nLines to read:\n${parts.map((p, i) => `${i + 1}. ${askWho && p.who !== "narrator" ? "(guess: " + who(p) + ")" : who(p) + ":"} ${p.text.slice(0, 300)}`).join("\n")}` }], { temperature: 0.4, maxTokens: 1100, plain: true });
       const j = await Promise.race([ask, new Promise(r => setTimeout(() => r(null), opt.again ? 20000 : 9000))]);
       const spk = [];
       for (const x of Array.isArray(j?.lines) ? j.lines : []) { const i = (+x.i || 0) - 1, p = parts[i]; if (!p) continue;
         if (S.settings.voiceTone !== false) { const emo = String(x.emotion || "").toLowerCase().trim(); if (TONE_EMO.includes(emo)) p.emo = emo;
-          if (Number.isFinite(+x.speed)) p.speed = Math.max(0.7, Math.min(1.35, +x.speed)); if (Number.isFinite(+x.volume)) p.vol = Math.max(0.4, Math.min(1.8, +x.volume)); p.laugh = x.laugh === true; if (x.cont && /[-–—]\s*$/.test(p.text)) p.cont = String(x.cont).slice(0, 40);
+          if (Number.isFinite(+x.speed)) p.speed = Math.max(0.7, Math.min(1.35, +x.speed)); if (Number.isFinite(+x.volume)) p.vol = Math.max(0.4, Math.min(1.8, +x.volume)); p.laugh = x.laugh === true;
           if (Number.isFinite(+x.intensity)) p.int = Math.max(1, Math.min(5, Math.round(+x.intensity))); toneShape(p); }
         if (askWho && p.who !== "narrator" && x.speaker) spk[i] = { n: String(x.speaker).slice(0, 40), g: String(x.gender || "").slice(0, 1) }; }
       if (askWho && spk.length) {
@@ -6053,7 +6053,7 @@ async function toneParts(m, parts, opt = {}) {
         setSpk(m, out); if (Array.isArray(j?.present)) m.vpresent = j.present.map(x => String(x).slice(0, 40)).slice(0, 12);
         if (S.chat?.messages.includes(m)) saveChat();
       }
-      TONE_CACHE.set(key, parts.map(p => ({ emo: p.emo, speed: p.speed, vol: p.vol, laugh: p.laugh, int: p.int, ...(p.cont ? { cont: p.cont } : {}) }))); if (TONE_CACHE.size > 80) TONE_CACHE.delete(TONE_CACHE.keys().next().value);
+      TONE_CACHE.set(key, parts.map(p => ({ emo: p.emo, speed: p.speed, vol: p.vol, laugh: p.laugh, int: p.int }))); if (TONE_CACHE.size > 80) TONE_CACHE.delete(TONE_CACHE.keys().next().value);
     } catch (e) { console.warn("tone:", e.message); }
   }
   return lineTone(m, parts);
@@ -6134,12 +6134,11 @@ async function voiceFxPlay(url, fx, mix, rate, vol, g, opt = {}) {
     for (const k of fx) node = fxStage(ac, node, k, m, keep);
     const out = ac.createGain(), lim = ac.createDynamicsCompressor(); out.gain.value = vol; lim.threshold.value = -6; lim.ratio.value = 12; lim.attack.value = 0.003; lim.release.value = 0.2; node.connect(out).connect(lim).connect(ac.destination);
     const tail = fx.some(k => ["cave", "hall", "ghost", "echo", "demon"].includes(k)) ? 1.6 : fx.length ? 0.3 : 0;
-    let [from, to] = audioSpan(buf); if (opt.cutAt > 0) to = Math.min(to, opt.cutAt + 0.05);
+    // v1.94: a line broken off with a dash keeps the voice's own breath-pause at its end
+    let [from, to] = audioSpan(buf); if (opt.keepEnd) to = buf.duration;
     const len = Math.max(0.05, to - from), wall = len / rate;
-    // v1.93: a cut-off fades out over ~80 ms like a catch of breath (not a hard stop), then a short hitch before the next line
-    if (opt.cutAt > 0) { const t0 = ac.currentTime, fs = t0 + Math.max(0, (opt.cutAt - 0.035 - from) / rate); out.gain.setValueAtTime(vol, fs); out.gain.setTargetAtTime(0.0001, fs, 0.022 / rate); }
-    const hitch = opt.cutAt > 0 ? 160 : 0;
-    VQ.fxLast = fx.slice(); VQ.span = { from, to, cut: !!opt.cutAt };
+    const hitch = 0;
+    VQ.fxLast = fx.slice(); VQ.span = { from, to, keep: !!opt.keepEnd };
     return await new Promise(res => {
       let over = false; const end0 = ok => { if (over) return; over = true; clearTimeout(tm); setTimeout(() => { try { src.disconnect(); out.disconnect(); lim.disconnect(); keep.forEach(o => { try { o.stop(); } catch {} }); } catch {} }, tail * 1000 + 50); setTimeout(() => res(ok), hitch); }; const end = end0;
       VQ.el = { pause() { try { out.gain.setTargetAtTime(0.0001, ac.currentTime, 0.03); src.stop(ac.currentTime + 0.1); } catch {} end(true); } };
@@ -6152,16 +6151,12 @@ async function voiceFxPlay(url, fx, mix, rate, vol, g, opt = {}) {
 // ---- playing: one queue, either engine, stoppable at any time
 const VQ = { list: [], busy: false, gen: 0, el: null, cache: new Map(), fly: new Map(), buf: new Map(), say: {}, fx: [] };
 function voiceStop() { VQ.gen++; VQ.list = []; VQ.busy = false; if (VQ.sfx) { try { VQ.sfx.stop(); } catch {} VQ.sfx = null; } VQ.fx.forEach(h => { try { h.stop(); } catch {} }); VQ.fx = []; try { speechSynthesis.cancel(); } catch {} if (VQ.el) { try { VQ.el.pause(); } catch {} VQ.el = null; } document.querySelectorAll(".vo-on").forEach(x => x.classList.remove("vo-on")); voNow(null); }
-// v1.91: a line → what's actually played, in order: words, sounds, and the pieces of a line that's cut off
-// ("I didn't mean- no, forget it" = "I didn't mean" cut short, then "no, forget it")
-const CUT_RE = /(?<=[\p{L}'’])(?:-|–|—)(?=\s|$|["”.,!?…])/u;
+// a line → what's actually played, in order: words and sounds. v1.94: a line cut off with a dash ("I didn't mean-") is
+// sent whole with an em dash at the break, so the voice breaks off and takes its own natural breath
 function voiceExpand(p) {
   if (p.sfx) return [p];
   if (p.segs) return p.segs.flatMap(x => x.sfx ? [{ sfx: x.sfx, who: p.who }] : voiceExpand({ ...p, text: x.text, segs: null }));
-  if (!CUT_RE.test(p.text || "")) return [p];
-  const bits = p.text.split(new RegExp(CUT_RE.source, "gu")), out = [];
-  bits.forEach((b, i) => { const t = b.replace(/^[\s,]+/, "").trim(); if (!/[\p{L}\p{N}]/u.test(t)) return; out.push({ ...p, text: t, cut: i < bits.length - 1, cont: i < bits.length - 1 ? (i === bits.length - 2 && p.cont) || "" : "" }); });
-  return out.length ? out : [p];
+  return [p];
 }
 // v1.92: each read works on fresh copies, so the audio fetched for one read (and its tone) is never reused for the next
 function voiceSay(parts) { if (!parts.length) return; voiceStop(); VQ.list = parts.map(p => ({ ...p, prep: null })).flatMap(voiceExpand); voiceNext(VQ.gen); }
@@ -6236,7 +6231,7 @@ function voicePrep(p) {
   const cp = Math.max(0.6, Math.min(1.5, v.cpitch || 1)), want = (t.speed || 1) * (v.rate || 1) * speed;
   const sent = +Math.max(0.6, Math.min(1.5, want / cp)).toFixed(2), play = cp * (want / (sent * cp));
   const text = toneText(sayNames(speakable(p.text, true)), t), tone = { ...t, speed: sent };
-  p.prep = (p.cut ? cartCut(text, id, tone, p.cont).catch(e => (console.warn("voice cut:", e.message), cartAudio(text + "—", id, tone).then(url => ({ url })))) : cartAudio(text, id, tone).then(url => ({ url })))
+  p.prep = cartAudio(text, id, tone).then(url => ({ url, dash: /[—–-]["”']?\s*$/.test(text) }))
     .then(r => ({ ...r, v, t, cp, sent, play, shift: Math.abs(cp - 1) > 0.001 }));
   p.prep.catch(() => {});
   return p.prep;
@@ -6267,7 +6262,7 @@ async function voiceNext(g) {
       const r = await prep; if (g !== VQ.gen) return;
       voNow(p, r.t); voicePrefetch(g);
       // Web Audio plays it trimmed (and filtered, and cut short); the plain player is the fallback
-      if (r.shift || Math.abs(r.play - 1) < 0.01 || r.v.fx.length || r.end) { const ok = await voiceFxPlay(r.url, r.v.fx, r.v.fxMix, Math.max(0.5, Math.min(2, r.play)), vol, g, { cutAt: r.end }); if (ok) return voiceNext(g); if (g !== VQ.gen) return; }
+      if (r.shift || Math.abs(r.play - 1) < 0.01 || r.v.fx.length) { const ok = await voiceFxPlay(r.url, r.v.fx, r.v.fxMix, Math.max(0.5, Math.min(2, r.play)), vol, g, { keepEnd: r.dash }); if (ok) return voiceNext(g); if (g !== VQ.gen) return; }
       const a = new Audio(r.url); VQ.el = a; a.volume = vol; a.preservesPitch = a.mozPreservesPitch = a.webkitPreservesPitch = !r.shift; a.playbackRate = r.shift ? +r.play.toFixed(3) : Math.max(0.5, Math.min(2, r.play)); VQ.cp = { cp: r.cp, sent: r.sent, play: a.playbackRate, shift: r.shift };
       a.onended = a.onerror = () => voiceNext(g); await a.play(); return;
     } catch (e) { console.warn("voice:", e.message); if (!VQ.warned) { VQ.warned = 1; toast("Cartesia voice failed: " + e.message + ". Using the phone's voices."); } }
@@ -6278,10 +6273,9 @@ async function voiceNext(g) {
     const base = TONE_BASE[t.emo] || "neutral", dp = ({ excited: 0.12, sad: -0.1, angry: -0.04, scared: 0.1, content: 0.03, neutral: 0 }[base] || 0) * (0.6 + 0.2 * (t.int || 2)) + (TONE_FLAT.has(t.emo) ? -0.06 : 0);
     // a cut-off line: say it with what would have come next and stop the moment that starts (when this device reports words),
     // else end it on a dash
-    const said = sayNames(speakable(p.text, false)), cutLen = said.length, withCont = p.cut && VQ.bound;
-    const u = new SpeechSynthesisUtterance(p.cut ? (withCont ? said + " " + (p.cont || "and then") : said + "—") : said); if (v.phone) u.voice = v.phone; u.pitch = Math.max(0.1, Math.min(2, v.pitch + dp)); u.rate = Math.max(0.5, Math.min(2, v.rate * speed * (t.speed || 1))); u.volume = Math.max(0, Math.min(1, vol * Math.min(1, t.vol || 1)));
+    const said = sayNames(speakable(p.text, false));
+    const u = new SpeechSynthesisUtterance(said); if (v.phone) u.voice = v.phone; u.pitch = Math.max(0.1, Math.min(2, v.pitch + dp)); u.rate = Math.max(0.5, Math.min(2, v.rate * speed * (t.speed || 1))); u.volume = Math.max(0, Math.min(1, vol * Math.min(1, t.vol || 1)));
     let fin = false; const next = () => { if (fin) return; fin = true; voiceNext(g); };
-    u.onboundary = e => { VQ.bound = 1; if (withCont && !fin && e.charIndex > cutLen) { VQ.cutN = (VQ.cutN || 0) + 1; try { speechSynthesis.cancel(); } catch {} next(); } };
     u.onend = u.onerror = next; speechSynthesis.speak(u);
   } catch { voiceNext(g); }
 }
@@ -6313,45 +6307,6 @@ function cartAudio(text, voiceId, tone = {}) {
     const body = gc => ({ model_id: CART_MODEL, transcript: (tone.laugh ? "[laughter] " : "") + text, voice: { id: voiceId }, output_format: { container: "mp3", sample_rate: 44100, bit_rate: 128000 }, language: "en", ...(gc ? { generation_config: gc } : {}) });
     const r = await cartPost("/tts/bytes", body, tone);
     return URL.createObjectURL(await r.blob());
-  });
-}
-// v1.91: a line that's cut off is read with what would have come next ("…didn't mean to say"), so its last word doesn't
-// sound like the end of a sentence; word timings say where to stop it. → {url, end (seconds)}
-async function cartCut(text, voiceId, tone, cont) {
-  if (VQ.noSSE) throw new Error("timings not available");
-  const more = String(cont || "").replace(/[^\p{L}\p{N}' ]+/gu, " ").trim() || "and then I", full = text.replace(/[\s,;:—–-]+$/, "") + " " + more;
-  return cartOnce(cartKeyOf(full, voiceId, tone, "cut"), async () => {
-    const body = gc => ({ model_id: CART_MODEL, transcript: (tone.laugh ? "[laughter] " : "") + full, voice: { mode: "id", id: voiceId }, output_format: { container: "raw", encoding: "pcm_f32le", sample_rate: 44100 }, language: "en", add_timestamps: true, ...(gc ? { generation_config: gc } : {}) });
-    let r; try { r = await cartPost("/tts/sse", body, tone); } catch (e) { if (/error 40[45]/.test(e.message)) VQ.noSSE = 1; throw e; }
-    const raw = await r.text(), pcm = [], W = { words: [], start: [], end: [] };
-    for (const block of raw.split(/\r?\n\r?\n/)) {
-      const data = block.split(/\r?\n/).filter(l => l.startsWith("data:")).map(l => l.slice(5).trim()).join("");
-      if (!data || data === "[DONE]") continue; let j; try { j = JSON.parse(data); } catch { continue; }
-      if (j.type === "error" || j.error) throw new Error(String(j.error || j.message || "error"));
-      if (typeof j.data === "string" && j.data && j.type !== "timestamps") pcm.push(j.data);
-      const ts = j.word_timestamps; if (ts?.words) { W.words.push(...ts.words); W.start.push(...ts.start); W.end.push(...ts.end); }
-    }
-    if (!pcm.length || !W.words.length) { VQ.noSSE = 1; throw new Error("no timings came back"); }
-    // where the real words end: the last timed word of the line itself (the added words come after it)
-    const norm = w => String(w).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ""), mine = text.split(/\s+/).filter(w => norm(w)), nMore = more.split(/\s+/).length;
-    let k = W.words.length - nMore - 1; const last = norm(mine.at(-1));
-    for (let i = Math.min(W.words.length - 1, k + 1); i >= Math.max(0, k - 2); i--) if (norm(W.words[i]) === last) { k = i; break; }
-    if (k < 0) throw new Error("couldn't find the cut");
-    const bytes = pcm.map(b => Uint8Array.from(atob(b), c => c.charCodeAt(0))), total = bytes.reduce((s, b) => s + b.length, 0), all = new Uint8Array(total); let o = 0; for (const b of bytes) { all.set(b, o); o += b.length; }
-    const f = new Float32Array(all.buffer, 0, Math.floor(total / 4)), wav = new DataView(new ArrayBuffer(44 + f.length * 2)), wr = (p, s) => [...s].forEach((c, i) => wav.setUint8(p + i, c.charCodeAt(0)));
-    wr(0, "RIFF"); wav.setUint32(4, 36 + f.length * 2, true); wr(8, "WAVEfmt "); wav.setUint32(16, 16, true); wav.setUint16(20, 1, true); wav.setUint16(22, 1, true); wav.setUint32(24, 44100, true); wav.setUint32(28, 88200, true); wav.setUint16(32, 2, true); wav.setUint16(34, 16, true); wr(36, "data"); wav.setUint32(40, f.length * 2, true);
-    for (let i = 0; i < f.length; i++) wav.setInt16(44 + i * 2, Math.max(-1, Math.min(1, f[i])) * 32767, true);
-    // v1.92: the timings are rough, so the cut goes at the quietest moment between the last real word and the added one
-    // (never later than a little before the added word starts)
-    // v1.93: the voice often draws the cut word out (it knows more is coming), so the word is also capped at about the
-    // length it normally takes to say; with no clear quiet moment the cut goes there
-    const sr = 44100, fr = Math.round(sr * 0.01), en = (a, b) => { let e = 0, n = 0; for (let i = Math.round(a * sr); i < Math.round(b * sr) && i < f.length; i++) { e += f[i] * f[i]; n++; } return n ? e / n : 0; };
-    const ws = +W.start[k], letters = last.length || 3, natural = ws + Math.max(0.2, 0.065 * letters + 0.1);
-    const hi = Math.min(+W.end[k], W.start[k + 1] != null ? +W.start[k + 1] - 0.04 : 1e9, natural), a0 = Math.max(ws + 0.08, hi - 0.08), b0 = Math.min(f.length / sr, hi + 0.04, W.start[k + 1] != null ? +W.start[k + 1] : 1e9);
-    const word = en(ws, hi) || 1e-9; let best = hi, lo = Infinity;
-    for (let t = a0; t + 0.01 <= b0; t += 0.01) { const e = en(t, t + 0.01); if (e < lo * 0.9) { lo = e; best = t; } }
-    if (lo > word * 0.25) best = hi; // no real gap: stop at the word's natural end
-    return { url: URL.createObjectURL(new Blob([wav], { type: "audio/wav" })), end: best };
   });
 }
 async function cartClone(blob, name) {
