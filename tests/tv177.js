@@ -120,7 +120,7 @@ const open = require("./base.js");
   chk("their DM page has no box, just Unblock", bl.dmPage);
   chk("people can notice (someone may mention the drama)", bl.gossip);
   const ub = await pg.evaluate(id => { commBlock(id, false); const k = dmKnows(userOf(id)); hubTab("home"); return { back: hubRows().some(x => x[2].some(p => p.by === id)), knows: /blocked you .* and unblocked you/.test(k) }; }, bu);
-  chk("unblocking brings everything back, and they know they were blocked", ub.back && ub.knows);
+  chk("unblocking brings everything back, and nobody brings the block up (v1.98)", ub.back && !ub.knows);
 
   // ---------- 4. adding your own person (hidden in Settings)
   await pg.evaluate(() => hubClose());

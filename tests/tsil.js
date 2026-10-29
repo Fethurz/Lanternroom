@@ -28,7 +28,7 @@ const open = require("./base.js");
   await pg.waitForTimeout(600);
 
   // 1) before: the empty body, a fox uses the wolf figure, she has breasts
-  await send({ text: "Wren licks her lips and eyes you hungrily.", vore: "type=oral; stage=before; digest=0; pred=anthro fox, female, large; prey=you, human, male, small" });
+  await send({ text: "Wren opens her jaws wide over you, ready to swallow you whole.", vore: "type=oral; stage=before; digest=0; pred=anthro fox, female, large; prey=you, human, male, small" });
   let c = await cur(); chk(`before: ${JSON.stringify(c)}`, c && c.mode === "empty" && c.species === "wolf" && c.female);
   await pg.waitForTimeout(800);
   let p = await paint(); chk(`drawn in the accent colour (${p.a}/${p.n} of ${p.total})`, p.n > p.total * 0.05 && p.a > p.n * 0.9);
@@ -49,7 +49,7 @@ const open = require("./base.js");
   chk(`belch: head ${burp.a.toFixed(3)}, ${burp.puffs} puffs`, burp.a > 0.02 && burp.puffs > 0);
 
   // 4) struggling prey kicks
-  await send({ text: "You thrash and kick inside her.", act: "struggle", vore: "type=oral; stage=digesting; digest=35; pred=anthro fox, female, large; prey=you, human, male, small" });
+  await send({ text: "The rabbit thrashes and kicks inside her.", act: "struggle", vore: "type=oral; stage=digesting; digest=35; pred=anthro fox, female, large; prey=feral rabbit, female, small" });
   chk("struggle on", (await cur())?.struggle === true);
 
   // 5) rubbing straight on the picture: sounds and the "You rubbed" chip; a tap still shrinks the card
