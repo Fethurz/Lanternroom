@@ -870,6 +870,8 @@ img.px-av{border-radius:50%}
 #choiceBar{position:relative;z-index:1;display:flex;flex-direction:column;gap:6px;padding:8px 10px;max-height:45vh;overflow-y:auto}#choiceBar[hidden]{display:none}
 #choiceBar .choice{display:flex;align-items:flex-start;gap:8px;text-align:left;min-height:40px;padding:9px 12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));background:color-mix(in srgb,var(--accent) 10%,var(--surface,var(--bg)));color:var(--text,inherit);font:inherit;font-size:14px;line-height:1.4;cursor:pointer}
 #choiceBar .choice:hover{background:color-mix(in srgb,var(--accent) 20%,var(--surface,var(--bg)))}#choiceBar .choice.risky{border-style:dashed}
+#choiceBar .choice>span:not(.ch-die){min-width:0;flex:1 1 auto;overflow-wrap:anywhere;white-space:normal}
+#choiceBar .ch-risk{flex:none;align-self:center;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 50%,var(--line));border-radius:999px;padding:2px 7px}
 #choiceBar .ch-die{flex:none;width:20px;height:20px;color:var(--accent);margin-top:1px}#choiceBar .ch-die svg{width:20px;height:20px}
 #choiceBar .ch-own{align-self:flex-end;background:none;border:0;color:var(--muted);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;min-height:34px}
 #chat.choosing #composer{display:none}
@@ -884,6 +886,7 @@ img.px-av{border-radius:50%}
 /* v1.98: pop-ups stay one slim row, and on phones they tuck away while you type */
 #gameNow,#rubNow{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;white-space:nowrap}#gameNow::-webkit-scrollbar,#rubNow::-webkit-scrollbar{display:none}
 #gameNow>*,#rubNow>*{flex:0 0 auto}
+.hdrag{cursor:grabbing!important;user-select:none;scroll-behavior:auto!important;scroll-snap-type:none!important}.hdrag *{cursor:grabbing!important}
 @media (pointer:coarse){#chat.typing-now #gameNow,#chat.typing-now #rubNow,#chat.typing-now #rollNow,#chat.typing-now #choiceBar{display:none!important}}
 .game-offer{font:inherit;font-size:13px;display:inline-flex;align-items:center;gap:6px;color:var(--fg);background:color-mix(in srgb,var(--accent) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:999px;padding:5px 12px;min-height:34px;cursor:pointer}
 .game-offer svg,.game-res svg{width:18px;height:18px;flex:none;color:var(--accent)}
@@ -1721,7 +1724,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.98 · Oct 29";
+const VERSION = "1.99 · Oct 29";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2735,7 +2738,7 @@ async function openProfile(id) {
       ${achShelf(c)}
       ${idx.length ? `<div class="stack"><div class="lbl">People in this story</div><div class="stack" id="pfPeople">${c.people?.found ? "" : '<p class="hint" style="margin:0">Side characters, places and groups you\'ve met can become bots of their own.</p>'}</div><button type="button" class="btn small" id="pfFind">${c.people?.found ? "↻ Look again" : "✦ Find people in this story"}</button></div>` : ""}
       <div class="stack"><div class="lbl">Chats · ${idx.length}</div><div class="stack" id="pfChats"></div></div>
-      <div class="row"><button type="button" class="btn small" id="pfEdit">Edit</button><button type="button" class="btn small" id="pfVoices">🎙 Voices</button><button type="button" class="btn small" id="pfStory">📖 Play as a story</button><button type="button" class="btn small" id="pfManage">Manage chats</button><button type="button" class="btn small" id="pfMore">More…</button></div>`;
+      <div class="row"><button type="button" class="btn small" id="pfEdit">Edit</button><button type="button" class="btn small" id="pfVoices">🎙 Voices</button><button type="button" class="btn small" id="pfStory">📖 Play as a story</button>${!c.storyPack ? `<button type="button" class="btn small" id="pfStoryDef">📚 ${c.storyDef ? "Edit its full story" : "Make it a full story"}</button>` : ""}<button type="button" class="btn small" id="pfManage">Manage chats</button><button type="button" class="btn small" id="pfMore">More…</button></div>`;
     setImg(b.querySelector(".pf-img"), thumbURL(c), c);
     const goLabel = () => { const pid = $("pfP").value, has = idx.some(e => e.personaId === pid); $("pfGo").textContent = has ? "Continue chat" : "Start chatting"; };
     goLabel();
@@ -2754,7 +2757,8 @@ async function openProfile(id) {
     b.querySelectorAll(".pf-person").forEach(el => { const x = people[+el.dataset.i]; setImg(el.querySelector("img"), x.img || (x.who ? thumbURL(x.who) : ""), x.who || { name: x.name }); el.onclick = () => x.go(); });
     $("pfEdit").onclick = () => editChar(c, false);
     $("pfVoices").onclick = () => openVoices(c);
-    $("pfStory").onclick = () => c.storyPack && STORY_PACKS[c.storyPack] ? storySetup(STORY_PACKS[c.storyPack], null) : storySetup(null, c);
+    $("pfStory").onclick = () => c.storyPack && STORY_PACKS[c.storyPack] ? storySetup(STORY_PACKS[c.storyPack], null) : c.storyDef?.chapters?.length ? storySetup(packOf("bot:" + c.id), null) : storySetup(null, c);
+    if ($("pfStoryDef")) $("pfStoryDef").onclick = () => c.storyDef ? storyDefEdit(c) : storyDefMake(c);
     if ($("pfPub")) $("pfPub").onchange = async e => { await commPublish(c, e.target.checked); openProfile(c.id); };
     if ($("pfCm")) $("pfCm").onclick = () => openBotComments(c.id);
     if ($("pfUpd")) $("pfUpd").onclick = async () => { await commCopyUpdate(c); openProfile(c.id); };
@@ -8213,11 +8217,12 @@ async function bookRun(prompt, label, useWith) {
 
 // ===== Choices mode: replies end with 3-4 choices to tap; risky ones roll a d20
 const choicesOn = (c = char(), chat = S.chat) => !!chat && (chat.choices ?? !!c?.choices);
-const CHOICE_RE = /\[\[\s*choices?\s*:([\s\S]*?)\]\]/i;
+const CHOICE_RE = /\[\[\s*choices?\s*:([\s\S]*?)\]\](?!\])/i; // v1.99: "… [risky]]]" keeps its last bracket
+const RISKY_RE = /\s*(\[\s*risky\s*\]?|\(\s*risky\s*\)|\{\s*risky\s*\}|\*\s*risky\s*\*|\brisky\s*:|[-–—]\s*risky\s*$)/ig;
 function takeChoices(text) {
   const m = String(text || "").match(CHOICE_RE); if (!m) return { text, list: null };
   const list = m[1].split(/\s*;;\s*|\n+/).map(s => s.replace(/^\s*(\d+[.)]|[-•])\s*/, "").trim()).filter(Boolean).slice(0, 6)
-    .map(s => ({ t: s.replace(/\[\s*risky\s*\]/ig, "").replace(/\s+/g, " ").trim(), risky: /\[\s*risky\s*\]/i.test(s) })).filter(x => x.t);
+    .map(s => { RISKY_RE.lastIndex = 0; const risky = RISKY_RE.test(s); return { t: s.replace(RISKY_RE, "").replace(/\s+/g, " ").trim(), risky }; }).filter(x => x.t);
   return { text: (text.slice(0, m.index) + text.slice(m.index + m[0].length)).trim(), list: list.length ? list : null };
 }
 const DIE_MINI = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8 17.5 6v8L10 18.2 2.5 14V6z" fill="currentColor" opacity=".25"/><path d="M10 1.8 17.5 6v8L10 18.2 2.5 14V6zM10 1.8v6.4M2.5 6l7.5 2.2L17.5 6M10 8.2 6 15M10 8.2 14 15M6 15h8" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
@@ -8253,8 +8258,9 @@ function renderChoices() {
   }
   chatEl.classList.toggle("choosing", on && !S.writeOwn);
   if (!on) { box.hidden = true; box.innerHTML = ""; return; }
+  for (const x of last.choices) { RISKY_RE.lastIndex = 0; if (x.t && RISKY_RE.test(x.t)) { x.t = x.t.replace(RISKY_RE, "").trim(); x.risky = true; } } // older replies saved with a stray "[risky"
   box.hidden = false;
-  box.innerHTML = last.choices.map((x, i) => `<button type="button" class="choice${x.risky ? " risky" : ""}" data-i="${i}">${x.risky ? `<span class="ch-die" title="Risky: rolls a d20">${DIE_MINI}</span>` : ""}<span>${fmt(x.t)}</span></button>`).join("")
+  box.innerHTML = last.choices.map((x, i) => `<button type="button" class="choice${x.risky ? " risky" : ""}" data-i="${i}">${x.risky ? `<span class="ch-die" title="Risky: rolls a d20">${DIE_MINI}</span>` : ""}<span>${fmt(x.t)}</span>${x.risky ? `<span class="ch-risk">Risky</span>` : ""}</button>`).join("")
     + `<button type="button" class="ch-own" id="chOwn">${S.writeOwn ? "Hide the message box" : "✎ Write my own"}</button>`;
   box.querySelectorAll(".choice").forEach(b => b.onclick = () => pickChoice(last.choices[+b.dataset.i]));
   $("chOwn").onclick = () => { S.writeOwn = !S.writeOwn; renderChoices(); if (S.writeOwn) $("input").focus(); };
@@ -8309,7 +8315,8 @@ const STORY_PACKS = {
     setting: "A medieval fantasy world where dragons are the apex of creation: vast, proud, long-lived and hated by the human kingdoms below. Knights hunt dragons for glory; kobolds and other lesser creatures serve or worship them; dragons rule territories, hoard treasure, scheme against one another and answer to the ancient politics of dragonkind. Gold, fear and reputation are everything. Narrate with dry, playful wit, like a classic choice-based gamebook.",
     pairs: [{ a: "Brutality", b: "Finesse", ca: "#e2766f", cb: "#7fb2ff" }, { a: "Cunning", b: "Honor", ca: "#c49bff", cb: "#e8a95b" }, { a: "Disdain", b: "Vigilance", ca: "#9aa3b5", cb: "#6fdc6a" }],
     meters: [{ k: "wealth", n: "Wealth", v: 20, max: 0, desc: "the size of your hoard" }, { k: "infamy", n: "Infamy", v: 10, max: 100, desc: "how widely you are known and feared" }],
-    colors: ["red", "blue", "green", "black", "white", "gold", "silver", "bronze", "copper"],
+    colors: ["red", "blue", "green", "black", "white", "gold", "silver", "bronze", "copper"], namePh: "Your dragon's name (or let the story ask)",
+    roles: ["a young dragon, newly grown and settled in a lair of their own"],
     chapters: [
       { t: "The Knight", goal: "A knight, fat with ambition, has climbed to your lair to slay you. How you deal with him shows the world, and you, what sort of dragon you are. Early on, let the reader settle anything about their dragon that isn't set yet (name, colour, sex) through choices.", scenes: 4 },
       { t: "The Hoard", goal: "A dragon is measured by gold. Grow the hoard: raid, demand tribute, cheat, trade or scheme, and let Wealth rise and fall with the reader's choices.", scenes: 4 },
@@ -8319,8 +8326,50 @@ const STORY_PACKS = {
       { t: "A Mate", goal: "Dragons seek mates and heirs. Court, compete for or spurn a potential mate among dragonkind.", scenes: 4 },
       { t: "The Dragon War", goal: "Old grudges among dragonkind erupt into war. Everything you have built is tested, and the outcome decides your legacy.", scenes: 5 }
     ]
+  },
+  // v1.99: two more built-in stories (outlines written for Lanternroom; never the original games' text)
+  magics: {
+    id: "magics", title: "Choice of Magics", icon: "🔮", namePh: "Your mage's name (or let the story ask)",
+    blurb: "Rise from a gifted apprentice to one of the most powerful magicians of a war-torn age, in a world where every great spell wears reality a little thinner. Will you save the world, rule it, or burn it for knowledge?",
+    credit: "Inspired by Choice of Games' Choice of Magics. The story is written fresh as you play.",
+    you: "a young magician with a rare talent, just beginning their training",
+    roles: ["a young magician with a rare talent, just beginning their training", "a self-taught hedge mage from the slums, untrained and dangerous", "the heir of a noble house of battle-mages, expected to serve the crown", "a scholar who came to magic late, through forbidden books"],
+    setting: "A low-fantasy age of quarrelling kingdoms, guilds and academies, where magic is the deciding weapon of every war. Magicians study complex arcane disciplines (elemental force, illusion and the mind, transmutation and alchemy, summoning things from beyond, and darker arts the guilds forbid), and power comes from talent, study, rare reagents and dangerous bargains. But magic has a cost no one talks about: every great working frays the fabric of the world a little more, and the frayings are spreading (dead zones where nothing grows, storms of raw magic, things slipping through from elsewhere). Kings want war-mages, guilds want secrets kept, scholars want the truth, and the world may not survive any of them. Narrate like a thoughtful, slightly wry fantasy gamebook: magic feels technical and costly, politics is sharp, and big choices have big consequences.",
+    pairs: [{ a: "Caution", b: "Daring", ca: "#7fb2ff", cb: "#e2766f" }, { a: "Mercy", b: "Ruthlessness", ca: "#6fdc6a", cb: "#9a6fd8" }, { a: "Tradition", b: "Discovery", ca: "#e8a95b", cb: "#5fd3c8" }],
+    meters: [{ k: "power", n: "Power", v: 15, max: 100, desc: "your mastery of magic" }, { k: "renown", n: "Renown", v: 5, max: 100, desc: "how known and respected you are" }, { k: "fray", n: "Fraying", v: 10, max: 100, desc: "how badly the world's fabric is torn" }],
+    chapters: [
+      { t: "The Apprentice", goal: "The reader's talent is discovered and they begin training under a demanding master or at an academy. Let them settle their name, background and favoured discipline through early choices, and show that great magic always costs something.", scenes: 4 },
+      { t: "Rivals and Mentors", goal: "Fellow students, a rival prodigy and a mentor with secrets. A test, a duel or a forbidden experiment shows what kind of magician the reader is becoming.", scenes: 4 },
+      { t: "The War-Mage", goal: "War breaks out and the crown calls on magicians. The reader's first battle: spells that win fights, cost lives and fray the world. Power and Renown rise and fall with their choices.", scenes: 4 },
+      { t: "The Fraying", goal: "The reader uncovers what magic is doing to the world: spreading dead zones, raw magical storms, things coming through. Guilds and kings are hiding it. Decide what to do with the truth.", scenes: 4 },
+      { t: "Secrets and Bargains", goal: "A forbidden source of power, an offer from something beyond, or a secret society that wants the reader. Great power for a great price, or a harder honest road.", scenes: 4 },
+      { t: "The Council of Magicians", goal: "The great magicians, the crown and the guilds meet as the world worsens. Alliances, betrayals and a bid for power; the reader's reputation and nature decide who stands with them.", scenes: 4 },
+      { t: "The Last Working", goal: "The world's fabric is about to tear for good. One final, enormous working decides whether it is mended, ruled, sacrificed or broken, and what becomes of the reader.", scenes: 5 }
+    ]
+  },
+  mecha: {
+    id: "mecha", title: "Mecha Ace", icon: "🤖", namePh: "Your callsign or name (or let the story ask)",
+    blurb: "Pilot a giant combat mecha in an interstellar war. Earn your ace, duel enemy legends, survive the politics of the fleet and decide what you're really fighting for.",
+    credit: "Inspired by Choice of Games' Mecha Ace. The story is written fresh as you play.",
+    you: "a gifted young mecha pilot just assigned to a frontline carrier",
+    roles: ["a gifted young mecha pilot just assigned to a frontline carrier", "a disgraced veteran pilot given one last chance", "a test pilot for an experimental prototype frame", "a pilot from the enemy side who defected"],
+    setting: "A far-future interstellar war between two great powers (an old, aristocratic star nation and a younger, fiercer republic of colonies), fought by fleets of carriers and squadrons of humanoid combat mecha. Pilots are celebrities and propaganda; aces are legends with their own painted machines and callsigns. Battles happen in deep space, in asteroid fields, in orbit and on colony worlds; machines have thrusters, beam rifles, swords, shields and limited ammunition and fuel, and pilots live and die by reflexes, nerve and tactics. Aboard ship there are commanding officers, rival pilots, mechanics, political officers and ambitious nobles. Narrate like a tense military space-opera anime turned gamebook: fast cockpit action, readable tactics, and the human cost of war.",
+    pairs: [{ a: "Recklessness", b: "Discipline", ca: "#e2766f", cb: "#7fb2ff" }, { a: "Idealism", b: "Pragmatism", ca: "#e8a95b", cb: "#9aa3b5" }, { a: "Lone wolf", b: "Wingmate", ca: "#9a6fd8", cb: "#6fdc6a" }],
+    meters: [{ k: "kills", n: "Kills", v: 0, max: 0, desc: "enemy machines you've shot down" }, { k: "rep", n: "Reputation", v: 10, max: 100, desc: "your name in the fleet and on the news" }, { k: "frame", n: "Machine condition", v: 100, max: 100, desc: "how intact your mecha is" }],
+    chapters: [
+      { t: "First Sortie", goal: "The reader joins the carrier and its squadron, meets their wingmates and commander, and is thrown into a sudden enemy attack. Settle their callsign and style through choices; the first kills (or near-death) start their legend.", scenes: 4 },
+      { t: "The Squadron", goal: "Life aboard: rivalries, a mechanic who keeps the machine alive, a commander with doubts about the reader, and a mission that tests whether they fly for glory or for their team.", scenes: 4 },
+      { t: "The Enemy Ace", goal: "A legendary enemy ace in a distinctive machine starts hunting the squadron. A first clash the reader barely survives, and a growing personal duel.", scenes: 4 },
+      { t: "Politics of War", goal: "Fame brings attention: propaganda tours, a noble patron, a political officer, an order the reader may not like. Reputation opens doors and makes enemies.", scenes: 4 },
+      { t: "Betrayal", goal: "Something is rotten in the fleet: a leak, a sabotaged machine, a massacre covered up. The reader must decide who to trust as a battle goes wrong.", scenes: 4 },
+      { t: "The Prototype", goal: "A new experimental machine, a desperate mission behind enemy lines, and a rematch with the enemy ace with everything on the line.", scenes: 4 },
+      { t: "The Final Battle", goal: "The decisive fleet battle of the war. The reader's skill, choices and allies decide how the war ends, who lives, and what kind of ace they are remembered as.", scenes: 5 }
+    ]
   }
 };
+// v1.99: every story you can start: the built-in ones plus your bots turned into full stories (c.storyDef)
+const allPacks = () => [...Object.values(STORY_PACKS), ...S.chars.filter(c => c.storyDef?.chapters?.length).map(c => ({ ...c.storyDef, id: "bot:" + c.id, bot: c.id }))];
+const packOf = id => allPacks().find(p => p.id === id);
 const STORY_STD = 7; // chapters in a standard-length story
 const storyOn = (chat = S.chat) => !!chat?.story;
 const storyBot = id => S.chars.find(c => c.storyPack === id);
@@ -8453,9 +8502,73 @@ async function storyPlan(base, from) {
   const chapters = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "Chapter", goal: String(x?.goal || "").slice(0, 400), scenes: Math.max(3, Math.min(5, +x?.scenes || 4)) })).filter(x => x.goal).slice(0, 10);
   if (chapters.length < 3) throw new Error("The story couldn't be planned. Try again.");
   if (!bot) return { chapters };
+  return storyPlanClean(j, bot);
+}
+function storyPlanClean(j, bot) {
+  const chapters = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "A chapter", goal: String(x?.goal || "").slice(0, 600), scenes: Math.max(3, Math.min(5, +x?.scenes || 4)) })).filter(x => x.goal);
+  if (chapters.length < 3) throw new Error("The story couldn't be planned. Try again.");
   const pairs = (Array.isArray(j.pairs) ? j.pairs : []).map((p, i) => ({ a: String(p?.a || "").trim().slice(0, 20), b: String(p?.b || "").trim().slice(0, 20), ca: hexOk(p?.ca) || STORY_PACKS.dragon.pairs[i % 3].ca, cb: hexOk(p?.cb) || STORY_PACKS.dragon.pairs[i % 3].cb })).filter(p => p.a && p.b).slice(0, 3);
   const meters = (Array.isArray(j.meters) ? j.meters : []).map((m, i) => ({ k: "m" + i, n: String(m?.n || "").trim().slice(0, 20), v: Math.max(0, Math.round(+m?.v || 10)), max: +m?.max === 0 ? 0 : 100, desc: String(m?.desc || "").slice(0, 60) })).filter(m => m.n).slice(0, 2);
   return { title: String(j.title || bot.name).slice(0, 60), you: String(j.you || "the protagonist").slice(0, 200), setting: String(j.setting || bot.scenario || "").slice(0, 1500), pairs: pairs.length ? pairs : STORY_PACKS.dragon.pairs.map(p => ({ ...p })), meters: meters.length ? meters : [{ k: "m0", n: "Gold", v: 10, max: 0, desc: "your wealth" }, { k: "m1", n: "Renown", v: 10, max: 100, desc: "how well known you are" }], chapters };
+}
+// ---- v1.99: a bot turned into a full story of its own. The AI reads the whole bot (card, greetings, rules, lore, attached
+// lorebooks, cast, members) and writes a pack like the built-in ones, faithful to it (and to its canon when the bot is
+// from existing media). Kept on the bot as c.storyDef, so it syncs with the bot; runs are the bot's own chats.
+function botSource(c) {
+  const L = [], add = (k, v) => { v = String(v || "").trim(); if (v) L.push(`${k}:\n${v}`); };
+  add("Name", c.name); add("Kind", c.kind); add("Tags", (c.tags || []).join(", ")); add("Description", c.description); add("Appearance", c.appearance); add("Scenario", c.scenario);
+  add("First message", c.firstMessage); (c.altGreetings || []).slice(0, 3).forEach((g, i) => add(`Other opening ${i + 1}`, g)); add("Rules for the AI", c.instructions);
+  (c.members || []).forEach(m => add(`Group member ${m.name}`, [m.appearance, m.description].filter(Boolean).join("\n")));
+  (c.cast || []).forEach(x => add(`World listing (${x.type || "character"}) ${x.name}`, x.details));
+  (c.lore || []).forEach(l => add(`Lore${l.keys?.length ? " (" + [].concat(l.keys).join(", ") + ")" : ""}`, l.text || l.content));
+  for (const bk of (S.books || []).filter(b => (c.bookIds || []).includes(b.id))) (bk.entries || []).forEach(l => add(`Lorebook "${bk.name}"${l.keys?.length ? " (" + [].concat(l.keys).join(", ") + ")" : ""}`, l.text || l.content));
+  return L.join("\n\n").slice(0, 26000);
+}
+async function storyDefFor(c, note = "") {
+  const sys = `You turn a roleplay bot into a full interactive novel in the style of Choice of Games (a narrative RPG told in second person, one scene at a time, with fixed choices, opposed personality stats and meters). Stay as faithful as possible to the source: every name, place, faction, power, rule, relationship and piece of history in the bot and its lore must be kept exactly as written, never contradicted or renamed. If the bot is from an existing game, show, book or other media, also stay true to that canon (real places, factions, characters, lore, tone), using the bot's own details where it adds to or changes canon. The reader's character walks their own path through this world: the story is original, but the world is the real one. Respond with only JSON: {"title": the story's title, "icon": one emoji, "blurb": 2 sentences that sell it, "setting": 8-14 sentences: the world, its rules, factions, key characters, current situation and tone (faithful; this is all the story writer will know, so pack in the important facts), "you": the default role the reader plays (one phrase, "a ..."), "roles": [3-5 different roles the reader could play here, each one phrase, "a ...", the first the most natural one for this bot], "pairs": [3 of {"a": side, "b": opposite side, "ca": "#hex", "cb": "#hex"}] (opposed traits that matter in this world), "meters": [2-3 of {"n": name, "v": starting value, "max": 100 or 0 for open-ended, "desc": a few words}] (things that matter here), "chapters": [${STORY_STD} of {"t": short title, "goal": two or three sentences on what happens and what's at stake, using the real characters, places and conflicts, "scenes": 3-5}] (a full arc with a climax in the last one)}. Every character is treated as a fully grown, mature being.`;
+  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: botSource(c) + (note ? `\n\nThe owner's notes for this story (follow them): ${note}` : "") }], { temperature: 0.8, maxTokens: 3600 });
+  const base = await storyPlanClean(j, c);
+  const roles = (Array.isArray(j?.roles) ? j.roles : []).map(r => String(r || "").trim().slice(0, 200)).filter(Boolean).slice(0, 5);
+  return { title: base.title, icon: [...String(j?.icon || "📖")].slice(0, 2).join("") || "📖", blurb: String(j?.blurb || "").slice(0, 400), credit: `Made from your bot ${c.name}. The story is written fresh as you play.`, you: base.you, roles: roles.length ? roles : [base.you], setting: String(j?.setting || base.setting).slice(0, 4000), pairs: base.pairs, meters: base.meters, chapters: base.chapters, at: Date.now() };
+}
+async function storyDefMake(c, note = "") {
+  if (!c) return; if (!hasKey()) { toast("Stories need your AI key (Settings → AI model)."); return; }
+  waitSheet("Story", `Reading ${c.name} and writing its story…`);
+  try { const d = await storyDefFor(c, note); storyDefEdit(c, d); } catch (e) { closeSheet(); toast("Couldn't write the story: " + e.message); }
+}
+function storyDefEdit(c, fresh) {
+  if (!c) return; const d = JSON.parse(JSON.stringify(fresh || c.storyDef || {})); if (!d.chapters) return storyDefMake(c);
+  d.meters = d.meters || []; d.pairs = d.pairs || []; d.roles = d.roles || [d.you];
+  S.sheetGuard = true;
+  openSheet(`Story: ${c.name}`, b => {
+    const grab = () => {
+      d.title = $("sdT").value.trim() || d.title; d.icon = $("sdI").value.trim() || "📖"; d.blurb = $("sdB").value.trim(); d.setting = $("sdS").value.trim();
+      d.roles = $("sdR").value.split("\n").map(x => x.trim()).filter(Boolean).slice(0, 6); d.you = d.roles[0] || d.you;
+      b.querySelectorAll("[data-pa]").forEach(x => { const p = d.pairs[+x.dataset.pa]; p[x.dataset.f] = x.value.trim(); });
+      b.querySelectorAll("[data-me]").forEach(x => { const m = d.meters[+x.dataset.me]; const f = x.dataset.f; m[f] = f === "v" || f === "max" ? Math.max(0, Math.round(+x.value || 0)) : x.value.trim(); });
+      b.querySelectorAll("[data-ch]").forEach(x => { const ch = d.chapters[+x.dataset.ch]; const f = x.dataset.f; ch[f] = f === "scenes" ? Math.max(2, Math.min(6, Math.round(+x.value || 4))) : x.value.trim(); });
+    };
+    const draw = () => {
+      b.innerHTML = `<p class="hint" style="margin:0">Check it's true to your bot, change anything, then save. It goes on the Stories shelf as its own story; runs are this bot's chats.</p>
+        ${field("Title", `<div class="row" style="gap:6px"><input id="sdI" value="${esc(d.icon || "📖")}" style="width:56px;text-align:center"><input id="sdT" class="grow" value="${esc(d.title)}"></div>`)}
+        ${field("Blurb", `<textarea id="sdB" rows="2">${esc(d.blurb || "")}</textarea>`)}
+        ${field("Setting (all the story writer knows: keep the important facts here)", `<textarea id="sdS" rows="9">${esc(d.setting)}</textarea>`)}
+        ${field("Roles you can play (one per line, the first is the default)", `<textarea id="sdR" rows="4">${esc(d.roles.join("\n"))}</textarea>`)}
+        <div class="lbl">Nature (opposed pairs)</div>${d.pairs.map((p, i) => `<div class="row" style="gap:6px"><input data-pa="${i}" data-f="a" value="${esc(p.a)}" class="grow"><span>↔</span><input data-pa="${i}" data-f="b" value="${esc(p.b)}" class="grow"></div>`).join("")}
+        <div class="lbl">Meters</div>${d.meters.map((m, i) => `<div class="row" style="gap:6px;flex-wrap:wrap"><input data-me="${i}" data-f="n" value="${esc(m.n)}" style="flex:1 1 120px" placeholder="Name"><input data-me="${i}" data-f="v" value="${m.v}" type="number" style="width:70px" title="Starts at"><input data-me="${i}" data-f="max" value="${m.max}" type="number" style="width:70px" title="Max (0 = no limit)"><input data-me="${i}" data-f="desc" value="${esc(m.desc || "")}" style="flex:1 1 100%" placeholder="What it is"></div>`).join("")}
+        <div class="lbl">Chapters</div>${d.chapters.map((ch, i) => `<div class="pg-one"><div class="row" style="gap:6px"><b>${i + 1}.</b><input data-ch="${i}" data-f="t" value="${esc(ch.t)}" class="grow"><input data-ch="${i}" data-f="scenes" type="number" min="2" max="6" value="${ch.scenes}" style="width:60px" title="Scenes"><button type="button" class="icon" data-chx="${i}" aria-label="Remove chapter">✕</button></div><textarea data-ch="${i}" data-f="goal" rows="3">${esc(ch.goal)}</textarea></div>`).join("")}
+        <button type="button" class="btn small" id="sdAdd">＋ Add a chapter</button>
+        ${field("Want it different?", `<textarea id="sdNote" rows="2" placeholder="e.g. start before the war, put Thrall in it, more politics"></textarea>`)}
+        <div class="row" style="gap:8px;flex-wrap:wrap"><button type="button" class="btn" id="sdAgain">↻ Write it again</button>${c.storyDef ? `<button type="button" class="btn danger" id="sdDel">Remove this story</button>` : ""}<button type="button" class="btn primary grow" id="sdSave">Save</button></div><p class="hint" id="sdMsg" style="margin:0"></p>`;
+      $("sdAdd").onclick = () => { grab(); d.chapters.push({ t: "Another chapter", goal: "", scenes: 4 }); draw(); };
+      b.querySelectorAll("[data-chx]").forEach(x => x.onclick = () => { grab(); if (d.chapters.length > 3) { d.chapters.splice(+x.dataset.chx, 1); draw(); } else $("sdMsg").textContent = "A story needs at least 3 chapters."; });
+      $("sdAgain").onclick = () => { const note = $("sdNote").value.trim(); S.sheetGuard = false; storyDefMake(c, note); };
+      if ($("sdDel")) confirmBtn($("sdDel"), "Tap again to remove it (its runs stay in the bot's chats)", async () => { delete c.storyDef; await saveChars(); S.sheetGuard = false; closeSheet(); toast("Story removed"); });
+      $("sdSave").onclick = async () => { grab(); d.chapters = d.chapters.filter(x => x.goal || x.t); if (d.chapters.length < 3) { $("sdMsg").textContent = "A story needs at least 3 chapters."; return; }
+        c.storyDef = { ...d, at: Date.now() }; await saveChars(); S.sheetGuard = false; closeSheet(); toast(`"${d.title}" is on your Stories shelf`); openStories(); };
+    };
+    draw();
+  });
 }
 // ---- windows: the list of stories, a new story's setup, and the stats screen
 async function openStories() {
@@ -8464,24 +8577,28 @@ async function openStories() {
   runs.sort((a, b) => b.e.updated - a.e.updated);
   openSheet("Play a story", b => {
     b.innerHTML = `<p class="hint" style="margin:0">Interactive novels told one scene at a time: you pick what to do, your choices shape who you are, and your nature decides what succeeds.</p>
-      ${Object.values(STORY_PACKS).map(pk => `<div class="st-pack"><div class="st-ic">${pk.icon}</div><div class="grow"><b>${esc(pk.title)}</b><p>${esc(pk.blurb)}</p><small>${esc(pk.credit)}</small></div><button type="button" class="btn small primary" data-pk="${pk.id}">New story</button></div>`).join("")}
-      <button type="button" class="btn" id="stFromBot">📖 Turn one of your bots into a story</button>
+      ${allPacks().map(pk => `<div class="st-pack"><div class="st-ic">${esc(pk.icon || "📖")}</div><div class="grow"><b>${esc(pk.title)}</b><p>${esc(pk.blurb || "")}</p><small>${esc(pk.credit || "")}</small></div><div class="col" style="gap:6px"><button type="button" class="btn small primary" data-pk="${esc(pk.id)}">New story</button>${pk.bot ? `<button type="button" class="btn small" data-pke="${esc(pk.bot)}">Edit</button>` : ""}</div></div>`).join("")}
+      <button type="button" class="btn" id="stMakeFull">📚 Make one of your bots a full story</button>
+      <button type="button" class="btn" id="stFromBot">📖 A quick one-off story from a bot</button>
       ${runs.length ? `<div class="lbl">Your stories</div><div class="stack">${runs.slice(0, 20).map((r, i) => `<button type="button" class="listrow" data-run="${i}"><span class="grow"><b>${esc(r.e.story)}</b> <span class="badge">${r.e.count}</span><span class="sub">${esc(r.e.preview || "")}</span></span><span class="sub">${fmtWhen(r.e.updated)}</span></button>`).join("")}</div>` : ""}`;
-    b.querySelectorAll("[data-pk]").forEach(x => x.onclick = () => storySetup(STORY_PACKS[x.dataset.pk], null));
+    b.querySelectorAll("[data-pk]").forEach(x => x.onclick = () => storySetup(packOf(x.dataset.pk), null));
+    b.querySelectorAll("[data-pke]").forEach(x => x.onclick = () => storyDefEdit(byId(x.dataset.pke)));
     $("stFromBot").onclick = () => storyPickBot();
+    $("stMakeFull").onclick = () => storyPickBot(true);
     b.querySelectorAll("[data-run]").forEach(x => x.onclick = () => { const r = runs[+x.dataset.run]; closeSheet(); openChat(r.c.id, r.e.id); });
   });
 }
-function storyPickBot() {
+function storyPickBot(full) {
   const list = S.chars.filter(c => !c.storyPack && !c.hidden);
   openSheet("Which bot?", b => {
-    b.innerHTML = `<p class="hint" style="margin:0">The AI plans a full story in that bot's world: who you play, stats that fit it, and ${STORY_STD} chapters.</p><input id="stQ" placeholder="Search your bots" autocomplete="off"><div class="stack" id="stList"></div>`;
-    const draw = () => { const q = $("stQ").value.trim().toLowerCase(); $("stList").innerHTML = list.filter(c => !q || c.name.toLowerCase().includes(q)).slice(0, 60).map(c => `<button type="button" class="listrow" data-id="${c.id}"><span class="grow"><b>${esc(c.name)}</b><span class="sub">${esc(botSummary(c).slice(0, 90))}</span></span></button>`).join("") || '<p class="note">No bots match.</p>'; $("stList").querySelectorAll("[data-id]").forEach(x => x.onclick = () => storySetup(null, byId(x.dataset.id))); };
+    b.innerHTML = `<p class="hint" style="margin:0">${full ? "The AI reads the whole bot (card, lorebooks, cast) and writes a full story that stays true to it, with roles to play, stats and chapters. You can check and edit it before it goes on the shelf." : `The AI plans a one-off story in that bot's world: who you play, stats that fit it, and ${STORY_STD} chapters.`}</p><input id="stQ" placeholder="Search your bots" autocomplete="off"><div class="stack" id="stList"></div>`;
+    const draw = () => { const q = $("stQ").value.trim().toLowerCase(); $("stList").innerHTML = list.filter(c => !q || c.name.toLowerCase().includes(q)).slice(0, 60).map(c => `<button type="button" class="listrow" data-id="${c.id}"><span class="grow"><b>${esc(c.name)}</b><span class="sub">${esc(botSummary(c).slice(0, 90))}</span></span></button>`).join("") || '<p class="note">No bots match.</p>'; $("stList").querySelectorAll("[data-id]").forEach(x => x.onclick = () => full ? storyDefMake(byId(x.dataset.id)) : storySetup(null, byId(x.dataset.id))); };
     $("stQ").oninput = draw; draw();
   });
 }
 function storySetup(pk, bot) {
-  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: false, length: "standard" }, h = { name: "", pron: "", color: "" };
+  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: false, length: "standard", role: "" }, h = { name: "", pron: "", color: "" };
+  const roles = pk?.roles?.length ? pk.roles : pk ? [pk.you] : []; if (roles.length) o.role = roles[0];
   openSheet(pk ? pk.title : `Story: ${bot.name}`, b => {
     const draw = () => {
       const seg = (k, opts) => `<div class="tabs st-seg">${opts.map(([v, l]) => `<button type="button" class="tab ${o[k] === v ? "on" : ""}" data-k="${k}" data-v="${v}">${l}</button>`).join("")}</div>`;
@@ -8490,31 +8607,34 @@ function storySetup(pk, bot) {
         <label class="check"><input type="checkbox" id="stVore" ${o.vore ? "checked" : ""}> Vore can happen</label>
         ${field("Length", seg("length", [["standard", `Standard (${STORY_STD} chapters)`], ["endless", "Keep going"]]), "You can keep going after the ending either way.")}
         <div class="lbl">You</div>
-        <input id="stName" placeholder="${pk ? "Your dragon's name (or let the story ask)" : "Your name (or let the story ask)"}" value="${esc(h.name)}" autocomplete="off">
+        ${roles.length ? `<div class="stack st-roles">${roles.map((r, i) => `<button type="button" class="listrow ${o.role === r ? "on" : ""}" data-role="${i}"><span class="grow">${o.role === r ? "● " : "○ "}${esc(capFirst(r))}</span></button>`).join("")}<button type="button" class="listrow ${o.role && !roles.includes(o.role) ? "on" : ""}" data-role="own"><span class="grow">${o.role && !roles.includes(o.role) ? "● " : "○ "}Someone of my own…</span></button></div>
+          ${o.role && !roles.includes(o.role) || o.ownRole ? `<input id="stRole" placeholder="Who you play, e.g. a mercenary with a grudge" value="${esc(roles.includes(o.role) ? "" : o.role)}" autocomplete="off">` : ""}` : ""}
+        <input id="stName" placeholder="${esc(pk?.namePh || "Your name (or let the story ask)")}" value="${esc(h.name)}" autocomplete="off">
         <div class="row" style="gap:6px">${[["she/her", "She"], ["he/him", "He"], ["they/them", "They"]].map(([v, l]) => `<button type="button" class="btn small ${h.pron === v ? "primary" : ""}" data-pron="${v}">${l}</button>`).join("")}</div>
         ${pk?.colors ? `<select id="stColor"><option value="">Colour: let the story ask</option>${pk.colors.map(x => `<option ${h.color === x ? "selected" : ""}>${x}</option>`).join("")}</select>` : ""}
         <button type="button" class="btn primary" id="stGo">Begin</button><p class="hint" id="stMsg" style="margin:0"></p>`;
       b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => { o[x.dataset.k] = x.dataset.v; keep(); draw(); });
       b.querySelectorAll("[data-pron]").forEach(x => x.onclick = () => { keep(); h.pron = h.pron === x.dataset.pron ? "" : x.dataset.pron; draw(); });
       $("stVore").onchange = e => { o.vore = e.target.checked; };
+      b.querySelectorAll("[data-role]").forEach(x => x.onclick = () => { keep(); if (x.dataset.role === "own") { o.ownRole = true; if (roles.includes(o.role)) o.role = ""; } else { o.ownRole = false; o.role = roles[+x.dataset.role]; } draw(); if ($("stRole")) $("stRole").focus(); });
       $("stGo").onclick = async () => { keep(); if (!hasKey()) { $("stMsg").textContent = "Stories need your AI key (Settings → AI model)."; return; } $("stGo").disabled = true; $("stMsg").textContent = o.mode === "classic" ? "Opening the story…" : "Planning your story…";
         try { await storyBegin(pk, bot, o, h); } catch (e) { $("stGo").disabled = false; $("stMsg").textContent = e.message; } };
     };
-    const keep = () => { if ($("stName")) h.name = $("stName").value.trim().slice(0, 40); if ($("stColor")) h.color = $("stColor").value; };
+    const keep = () => { if ($("stName")) h.name = $("stName").value.trim().slice(0, 40); if ($("stColor")) h.color = $("stColor").value; if ($("stRole")) o.role = $("stRole").value.trim().slice(0, 200); };
     draw();
   });
 }
 async function storyBegin(pk, bot, o, h) {
   let c = bot, story;
   if (pk) {
-    c = await storyPackBot(pk);
+    c = pk.bot ? byId(pk.bot) : await storyPackBot(pk);
     const plan = o.mode === "random" ? await storyPlan(pk, null) : { chapters: pk.chapters.map(x => ({ ...x })) };
-    story = { pack: pk.id, title: pk.title, you: pk.you, setting: pk.setting, pairs: pk.pairs.map(p => ({ ...p, v: 50 })), meters: pk.meters.map(m => ({ ...m })), chapters: plan.chapters };
+    story = { pack: pk.id, title: pk.title, you: o.role || pk.you, setting: pk.setting, pairs: pk.pairs.map(p => ({ ...p, v: 50 })), meters: pk.meters.map(m => ({ ...m })), chapters: plan.chapters };
   } else {
     const plan = await storyPlan(null, bot);
     story = { pack: "bot", title: plan.title, you: plan.you, setting: plan.setting, pairs: plan.pairs.map(p => ({ ...p, v: 50 })), meters: plan.meters, chapters: plan.chapters };
   }
-  story.opts = { ...o }; story.hero = { ...h };
+  { const { role, ownRole, ...rest } = o; story.opts = rest; } story.hero = { ...h };
   const ch = newChat(c, S.personaId, { create: false }); ch.messages = []; ch.story = story;
   S.charId = c.id; S.chat = ch; await saveChat(); closeSheet();
   await openChat(c.id, ch.id);
@@ -13793,6 +13913,35 @@ function drawAccount(box) {
   $("acIn").onclick = () => go(false); $("acNew").onclick = () => go(true);
 }
 
+/* ---------- v1.99: sideways rows scroll with a mouse: click-drag them, or use the wheel ---------- */
+// any element that scrolls sideways (tabs, chip rows, hub rows, pop-up rows…) can be dragged with the mouse; a drag never
+// counts as a click. Wheel over a row that can only scroll sideways moves it sideways.
+const hScroller = el => { for (let e = el; e && e !== document.body && e.nodeType === 1; e = e.parentElement) { if (e.scrollWidth > e.clientWidth + 2) { const ox = getComputedStyle(e).overflowX; if (ox === "auto" || ox === "scroll") return e; } } return null; };
+const DRAG = { el: null, x: 0, left: 0, moved: false, id: 0 };
+document.addEventListener("pointerdown", e => {
+  if (e.pointerType !== "mouse" || e.button !== 0) return;
+  if (e.target.closest("input,textarea,select,[contenteditable],canvas,.sil-cv,#rubPad,input[type=range]")) return;
+  const el = hScroller(e.target); if (!el) return;
+  Object.assign(DRAG, { el, x: e.clientX, left: el.scrollLeft, moved: false, id: e.pointerId });
+}, true);
+window.addEventListener("pointermove", e => {
+  if (!DRAG.el || e.pointerId !== DRAG.id) return;
+  const dx = e.clientX - DRAG.x;
+  if (!DRAG.moved && Math.abs(dx) < 6) return;
+  if (!DRAG.moved) { DRAG.moved = true; DRAG.el.classList.add("hdrag"); }
+  DRAG.el.scrollLeft = DRAG.left - dx / (typeof UIZ === "number" && UIZ ? UIZ : 1);
+  e.preventDefault();
+}, { passive: false });
+const dragEnd = () => { if (!DRAG.el) return; const el = DRAG.el, moved = DRAG.moved; DRAG.el = null; el.classList.remove("hdrag");
+  if (moved) { const stop = ev => { ev.preventDefault(); ev.stopPropagation(); }; window.addEventListener("click", stop, { capture: true, once: true }); setTimeout(() => window.removeEventListener("click", stop, { capture: true }), 60); } };
+window.addEventListener("pointerup", dragEnd); window.addEventListener("pointercancel", dragEnd);
+document.addEventListener("wheel", e => {
+  if (e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+  const el = hScroller(e.target); if (!el) return;
+  const oy = getComputedStyle(el).overflowY; if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight + 2) return; // it scrolls up and down itself
+  const max = el.scrollWidth - el.clientWidth; if ((e.deltaY < 0 && el.scrollLeft <= 0) || (e.deltaY > 0 && el.scrollLeft >= max - 1)) return; // at the end: let the page scroll
+  el.scrollLeft += e.deltaY; e.preventDefault();
+}, { passive: false });
 /* ---------- Boot & migrations ---------- */
 async function migrateChats() {
   for (const k of await Store.keys()) {
