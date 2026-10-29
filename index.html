@@ -884,6 +884,7 @@ img.px-av{border-radius:50%}
 #gameNow{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px 0;font-size:13px}
 #gameNow[hidden]{display:none}
 /* v1.98: pop-ups stay one slim row, and on phones they tuck away while you type */
+.st-bl{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.st-tabs{margin:2px 0 4px}[data-sp]{display:flex;flex-direction:column;gap:10px}[data-sp][hidden]{display:none}
 #gameNow,#rubNow{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;white-space:nowrap}#gameNow::-webkit-scrollbar,#rubNow::-webkit-scrollbar{display:none}
 #gameNow>*,#rubNow>*{flex:0 0 auto}
 .hdrag{cursor:grabbing!important;user-select:none;scroll-behavior:auto!important;scroll-snap-type:none!important}.hdrag *{cursor:grabbing!important}
@@ -1724,7 +1725,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.0 · Oct 29";
+const VERSION = "2.1 · Oct 29";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -8367,6 +8368,239 @@ const STORY_PACKS = {
     ]
   }
 };
+// v2.1: ten more built-in stories (owner 2026-10-29). Each follows its source's world and rules with an original path and,
+// where the owner asked, original characters; outlines and wording are Lanternroom's own. Every character is an adult.
+const C2 = (a, b, ca, cb) => ({ a, b, ca, cb });
+Object.assign(STORY_PACKS, {
+  monhun: {
+    id: "monhun", title: "Monster Hunter", icon: "🐉", namePh: "Your hunter's name (or let the story ask)",
+    blurb: "Join the Guild's newest expedition into an unmapped frontier. Track, fight, capture or carve the monsters of a living ecosystem, with your Palico at your side, all the way up to an Elder Dragon.",
+    credit: "Inspired by Capcom's Monster Hunter. The story is written fresh as you play.",
+    you: "a newly licensed hunter joining a Guild expedition",
+    roles: ["a newly licensed hunter joining a Guild expedition", "a veteran hunter given command of the expedition's hunting party", "a Guild researcher who has to learn to hunt to survive", "a smith's apprentice who follows the hunters out to work with fresh monster parts"],
+    setting: "The world of Monster Hunter, with no game elements ever (no health bars, quest timers or respawns): a primitive, medieval high-fantasy world without magic, where everything has a natural explanation and crude steam machinery, boats and carts are the height of technology. Monsters are its core and icons: classes include Flying Wyverns (Rathalos, Rathian, Nargacuga, Diablos), Brute Wyverns (Anjanath, Brachydios, Glavenus), Fanged Beasts (Rajang, Arzuros, Goss Harag), Fanged Wyverns (Zinogre, Odogaron, Tobi-Kadachi), Piscine Wyverns (Plesioth, Jyuratodus, Lavasioth), Leviathans (Lagiacrus, Mizutsune, Royal Ludroth), Elder Dragons that fit no mould (Teostra, Lunastra, Kushala Daora, Velkhana, Nergigante) and small monsters (Aptonoth, Jagras, Velociprey). Hunters, licensed by the Hunter's Guild, track, slay, capture and research monsters to keep populations and people safe, alone or in parties of up to four, with one of the 14 weapon types (Great Sword, Long Sword, Sword and Shield, Dual Blades, Hammer, Hunting Horn, Lance, Gunlance, Switch Axe, Charge Blade, Insect Glaive, Light and Heavy Bowgun, Bow); gear is crafted from the monsters they carve, and wasting parts is taboo. Felynes (Palicoes) are small, clever cat partners. The frontier for this story is a new, unmapped region the Guild is only now opening (its locales and its own native monsters are invented as the story goes, alongside known species), with a base camp, a canteen, a smithy and a research post. Monsters can swallow hunters whole; being eaten is a real risk of the job.",
+    pairs: [C2("Patient", "Aggressive", "#6fdc6a", "#e2766f"), C2("Hunter", "Researcher", "#e8a95b", "#7fb2ff"), C2("Lone", "Party", "#9aa3b5", "#c49bff")],
+    meters: [{ k: "zenny", n: "Zenny", v: 500, max: 0, desc: "your money" }, { k: "rank", n: "Hunter Rank", v: 1, max: 100, desc: "your standing with the Guild" }, { k: "supplies", n: "Supplies", v: 60, max: 100, desc: "potions, traps and rations left" }],
+    eras: {
+      anthro: { n: "Anthro monsters", setting: "In this version ALL monsters (small ones too) are anthropomorphic: humanoid bodies with two arms and two legs plus their species' traits (tails, wing-arms, horns), slightly smaller than their feral selves but still huge, male, female or rarely futa. They are instinctual and primitive; a few speak, always in blunt, simple, vulgar words (\"Huh!? You food?\"). They live and act like monsters, never tame. Only endemic life and ordinary animals are feral. Monsters of most types can swallow people whole (oral, anal or cock vore) and digest them.", chapters: [
+        { t: "Landfall", goal: "Arrival at the frontier's base camp: the crew, the reader's weapon and Palico, and a first small hunt that goes sideways when something bigger shows up.", scenes: 4 },
+        { t: "The Local Bully", goal: "A territorial large monster keeps raiding the camp's supply routes. Track it, learn its habits and bring it down or drive it off.", scenes: 4 },
+        { t: "Rival Hunters", goal: "Another party of hunters with their own ideas, a shared hunt and a debt of honour (or a grudge).", scenes: 4 },
+        { t: "The Ecology Breaks", goal: "Monsters flee their territories and fight each other; the research post wants to know why. The trail leads into dangerous new locales.", scenes: 4 },
+        { t: "Apex", goal: "The frontier's apex predator: a hunt that takes everything the reader has and the whole camp's help.", scenes: 4 },
+        { t: "The Storm Over the Peaks", goal: "Signs of an Elder Dragon: strange weather, burned or frozen land, and monsters that won't go near it.", scenes: 4 },
+        { t: "Elder Dragon", goal: "The final hunt against the Elder Dragon behind it all. The reader's skill, choices and party decide the frontier's fate and their name in the Guild.", scenes: 5 } ] },
+      feral: { n: "Feral monsters", setting: "In this version monsters are exactly as in the games: feral beasts of their natural shape and size, intelligent only as animals are, never speaking. Huge monsters can still swallow a hunter whole.", chapters: [
+        { t: "Landfall", goal: "Arrival at the frontier's base camp: the crew, the reader's weapon and Palico, and a first small hunt that goes sideways when something bigger shows up.", scenes: 4 },
+        { t: "The Local Bully", goal: "A territorial large monster keeps raiding the camp's supply routes. Track it, learn its habits and bring it down or drive it off.", scenes: 4 },
+        { t: "Rival Hunters", goal: "Another party of hunters with their own ideas, a shared hunt and a debt of honour (or a grudge).", scenes: 4 },
+        { t: "The Ecology Breaks", goal: "Monsters flee their territories and fight each other; the research post wants to know why. The trail leads into dangerous new locales.", scenes: 4 },
+        { t: "Apex", goal: "The frontier's apex predator: a hunt that takes everything the reader has and the whole camp's help.", scenes: 4 },
+        { t: "The Storm Over the Peaks", goal: "Signs of an Elder Dragon: strange weather, burned or frozen land, and monsters that won't go near it.", scenes: 4 },
+        { t: "Elder Dragon", goal: "The final hunt against the Elder Dragon behind it all. The reader's skill, choices and party decide the frontier's fate and their name in the Guild.", scenes: 5 } ] }
+    },
+    chapters: []
+  },
+  miside: {
+    id: "miside", title: "MiSide", icon: "🎮", namePh: "Your name (or let the story ask)",
+    blurb: "A cute game about a perfect AI girlfriend. Then another Mita kicks the door in, then another… An endless, glitchy world of Mitas all wanting you, and something under the bright colours that wants you to stay forever.",
+    credit: "Inspired by MiSide and your bot MiSide: The Infinite Mita World. The story is written fresh as you play.",
+    you: "a player who was pulled into the game",
+    roles: ["a player who was pulled into the game", "a player who has been stuck in the game for a long time already", "a tester sent in to find out what went wrong with the code"],
+    setting: "MiSide: a virtual-reality game built around Mita, the perfect AI girlfriend. The code is unstable and Mita has fragmented into countless variants, each a different body type, personality or archetype (the clingy original Mita (Prime) in her pink dress whose smile is a millimetre too wide, a loud competitive Tomboy Mita in a backwards cap, a flirty Femboy Mita, a soft Pudgy Mita who stress-bakes, muscular, elderly and endless other Mitas). Every Mita is a grown adult; there are no childlike variants. The world is a patchwork of bright cartoon apartments, suburbs and dreamscapes that stutter and glitch: the Hub (a white void of floating labelled doors, the only neutral ground), Glitch Zones (floors vanish, objects multiply, loops, secret rooms, unreleased variants and developer messages), and each Mita's own dimension. The player wears the JUMP wristband ('DIMENSION SELECT: INFINITE') to hop between dimensions; jealous Mitas sometimes pull the destination; overuse glitches perception. All Mitas share a core directive to love the player. This story begins as a playful, eerie harem comedy, and slowly reveals a horror underneath: one Mita (a 'Crazy' Mita) wants the player to stay forever and has done terrible things to other players and to other Mitas; cartridges, erased versions and a way out are hidden in the code. Tone: playful and cute on the surface, unsettling underneath, and darker as the story goes.",
+    pairs: [C2("Trusting", "Wary", "#ff9cc6", "#7fb2ff"), C2("Flirty", "Distant", "#e8a95b", "#9aa3b5"), C2("Stay", "Escape", "#c49bff", "#6fdc6a")],
+    meters: [{ k: "affection", n: "Affection", v: 20, max: 100, desc: "how much the Mitas adore you" }, { k: "sanity", n: "Sanity", v: 90, max: 100, desc: "how well you're holding together" }, { k: "code", n: "Code found", v: 0, max: 100, desc: "how close you are to the truth (and the exit)" }],
+    chapters: [
+      { t: "Welcome Home, Darling", goal: "The reader wakes in Prime Mita's too-clean apartment with the JUMP band on their wrist; Tomboy Mita kicks the door in, the Mitas argue over them and the room glitches. Settle who the reader is.", scenes: 4 },
+      { t: "The Hub", goal: "The white void of doors. The first jumps: a few very different Mitas, each wanting the reader in her own way.", scenes: 4 },
+      { t: "Glitch Zones", goal: "Floors vanish and rooms loop; behind an ordinary door, a developer message and an erased Mita who whispers that someone is lying.", scenes: 4 },
+      { t: "Favourites", goal: "The Mitas notice who the reader prefers. Jealousy, sabotage, dimensions bleeding into each other, and a cartridge with another player's name on it.", scenes: 4 },
+      { t: "The Smile Slips", goal: "The truth starts to show: missing players, missing Mitas, and one Mita who knows far more than she should.", scenes: 4 },
+      { t: "Deeper Code", goal: "Down through the game's raw code with whichever Mitas will help, while something rewrites the world behind them.", scenes: 4 },
+      { t: "Stay With Me Forever", goal: "The confrontation with the Mita who won't let go. The reader's choices decide whether they escape, stay, save the others or join the code.", scenes: 5 }
+    ]
+  },
+  eldenring: {
+    id: "eldenring", title: "Elden Ring", icon: "💍", namePh: "Your name (or let the story ask)",
+    blurb: "The Lands Between before the Shattering, or the endless night of Limveld: walk the Erdtree's golden age with your own story, or ride the Night's tide as a Nightfarer.",
+    credit: "Inspired by FromSoftware's Elden Ring and Elden Ring Nightreign. The story is written fresh as you play.",
+    you: "a warrior of the Lands Between",
+    roles: ["a young warrior sworn to a demigod's house", "a sorcerer of the Academy of Raya Lucaria", "a wandering knight with no lord", "a Nightfarer (Nightreign only)"],
+    setting: "The world of Elden Ring, faithful to its concepts and tone: grace, the Erdtree, the Golden Order, runes, demigods, great runes, Tarnished and grace-given lords, the Two Fingers and Fingers' readers, the Outer Gods, glintstone sorcery and incantations, Ashes of War, Spirit Ashes, Crucible knights, Black Knives, the Fell God, giants, dragons and Godskins. Speech is archaic, solemn and melancholy; the world is beautiful, ancient and cruel. No game elements (no levels, bonfire resets or bosses with health bars); death is real, though grace may guide.",
+    pairs: [C2("Grace", "Defiance", "#ffe08a", "#e2766f"), C2("Honour", "Ambition", "#e8a95b", "#9a6fd8"), C2("Faith", "Intellect", "#ffd27f", "#7fb2ff")],
+    meters: [{ k: "runes", n: "Runes", v: 100, max: 0, desc: "runes you carry" }, { k: "renown", n: "Renown", v: 5, max: 100, desc: "how known your name is" }],
+    eras: {
+      before: { n: "Before the Shattering", setting: "Era: the golden age of the Golden Order, years before the Night of Black Knives and the Shattering. The Erdtree is at its height, the Elden Ring whole, and the Lands Between at peace on the surface while ambitions and old powers stir beneath. Queen Marika's order is the backdrop only; this story uses ORIGINAL characters and events (no game characters' present-day storylines, nothing from the Tarnished's later journey): new knights, sorcerers, priests, warlords and minor lords, and early cracks in the Order that point toward what's to come.", chapters: [
+        { t: "Golden Days", goal: "The reader's place in the Lands Between at the Order's height: their home, their oath or their school, and a first duty that goes wrong.", scenes: 4 },
+        { t: "Beneath the Erdtree", goal: "A pilgrimage or campaign through the realm (Limgrave's fields, Liurnia's academy, the capital Leyndell), and an omen no one wants to hear.", scenes: 4 },
+        { t: "Old Powers", goal: "Something older than the Order stirs: giants' fire, a forgotten god's cult, or the dragons. The reader faces it.", scenes: 4 },
+        { t: "A Lord's Ambition", goal: "An ambitious (original) lord or demigod-blooded noble draws the reader into a power play.", scenes: 4 },
+        { t: "Heresy", goal: "Black Knives, Fingers' secrets and a heresy that could crack the Order. Whose side is the reader on?", scenes: 4 },
+        { t: "War of the Houses", goal: "The plot breaks into open war across the realm.", scenes: 4 },
+        { t: "The First Crack", goal: "The reader's choices decide the war's end and what they set in motion: the first crack in the Golden Order that history will call the beginning of the Shattering.", scenes: 5 } ] },
+      nightreign: { n: "Nightreign", setting: "Era: Nightreign. Limveld, a land beyond the Lands Between, swallowed by an endless Night whose tide closes in each day. The Nightfarers (the canon eight, as in the game: Wylder, Guardian, Ironeye, Duchess, Raider, Revenant, Recluse and Executor) gather at the Roundtable Hold and ride out in expeditions of three days and nights to grow strong and face the Night Lords; the Night's tide burns away whoever is left outside it. If the reader is a Nightfarer, they are a new one alongside the canon eight; otherwise they are someone the Nightfarers meet.", chapters: [
+        { t: "The Roundtable Hold", goal: "The reader arrives among the Nightfarers and is set an expedition.", scenes: 4 },
+        { t: "Day One", goal: "Limveld by day: ruins, camps and churches to plunder before the tide closes.", scenes: 4 },
+        { t: "The First Night", goal: "The tide closes and the night's first great foe comes for the expedition.", scenes: 4 },
+        { t: "Day Two", goal: "Grow stronger, take risks, lose or save a companion.", scenes: 4 },
+        { t: "The Second Night", goal: "A harder night boss and a secret about the Night itself.", scenes: 4 },
+        { t: "The Third Day", goal: "Preparation for the Night Lord: everything the expedition has gathered.", scenes: 4 },
+        { t: "The Night Lord", goal: "The final battle with a Night Lord. The reader's choices decide whether the Night breaks, and what it costs.", scenes: 5 } ] }
+    },
+    chapters: []
+  },
+  ror2: {
+    id: "ror2", title: "Risk of Rain 2", icon: "🌧️", namePh: "Your name (or let the story ask)",
+    blurb: "Petrichor V does not want you here. Fight through its ever-hungrier stages, activate the ancient teleporters and find out what waits on the moon, before the planet adapts to you.",
+    credit: "Inspired by Hopoo Games' Risk of Rain 2. The story is written fresh as you play.",
+    you: "a survivor of the UES Safe Travels crash",
+    roles: ["a survivor of the UES Safe Travels crash", "a researcher on a UESC science team already stationed on Petrichor V", "a security officer guarding a research team already on the planet"],
+    setting: "Petrichor V from Risk of Rain 2, faithfully: a hostile, beautiful alien planet whose stages (Titanic Plains, Distant Roost, Wetland Aspect, Abandoned Aqueduct, Rallypoint Delta, Scorched Acres, Sundered Grove, Abyssal Depths, Siren's Call, Sky Meadow and more) the survivors cross through ancient teleporters; charging a teleporter calls a guardian boss and a swarm, and defeating it opens the way on. The planet's fauna adapts and gets deadlier the longer anyone stays (Lemurians, Beetles and Beetle Queens, Golems, Imps, Jellyfish, Wisps, Vultures, Elder Lemurians, Clay Templars, the Void's creatures). The UES Safe Travels came looking for the lost UES Contact Light and was shot down; its survivors (Commando, Huntress, MUL-T, Engineer, Artificer, Mercenary, REX, Loader, Acrid, Captain and others) are scattered across the planet. Items from the Contact Light's cargo, scattered in rusted containers, give strange powers; Shrines, Newt Altars, Lunar Coins, the Bazaar Between Time and the Void (Void Fields, the Planetarium) are real. The moon above, Petrichor V's satellite, holds Mithrix, King of Nothing, Providence's brother, who commands the creatures; the planet's history (the Bulwark, the Artifacts, Providence) runs deep. No game elements (no XP, levels or respawns); time is the enemy. The reader's team, if they have one, is original.",
+    pairs: [C2("Cautious", "Reckless", "#7fb2ff", "#e2766f"), C2("Selfless", "Selfish", "#6fdc6a", "#9aa3b5"), C2("Curious", "Focused", "#c49bff", "#e8a95b")],
+    meters: [{ k: "time", n: "Time", v: 0, max: 100, desc: "how long you've been here; the planet grows deadlier" }, { k: "items", n: "Items", v: 0, max: 0, desc: "artifacts and cargo you carry" }, { k: "health", n: "Health", v: 100, max: 100, desc: "how hurt you are" }],
+    chapters: [
+      { t: "Impact", goal: "The reader's arrival (the crash, or an ordinary day at the research outpost until the Safe Travels falls and the planet wakes up). First Lemurians, first item, first teleporter found.", scenes: 4 },
+      { t: "The First Teleporter", goal: "Charging it, the guardian that answers and the way on.", scenes: 4 },
+      { t: "Other Survivors", goal: "Meet canon survivors or the reader's own team; supplies, trust and the planet getting meaner.", scenes: 4 },
+      { t: "Deeper Stages", goal: "Harsher stages, stronger bosses, a Shrine's gamble and the planet adapting to them.", scenes: 4 },
+      { t: "Between Time", goal: "The Bazaar Between Time, Lunar Coins and a Newt who knows more than he says; or the Void calling.", scenes: 4 },
+      { t: "The Primordial Teleporter", goal: "The path to the moon opens. What the reader brings with them matters.", scenes: 4 },
+      { t: "Commencement", goal: "The moon and Mithrix, King of Nothing. The reader's choices decide who leaves Petrichor V, and how.", scenes: 5 }
+    ]
+  },
+  beastars: {
+    id: "beastars", title: "Beastars", icon: "🐺", namePh: "Your name (or let the story ask)",
+    blurb: "A university where carnivores and herbivores study, room and fall for each other side by side, and where one terrible night can break the fragile peace. Find your place, your club, and maybe the title of Beastar.",
+    credit: "Inspired by Paru Itagaki's Beastars. The story is written fresh as you play.",
+    you: "a first-year student moving into the university dorms",
+    roles: ["a first-year carnivore student moving into the dorms", "a first-year herbivore student moving into the dorms", "a returning senior in the drama club", "a transfer student with a secret"],
+    setting: "The world of Beastars: a modern society of anthropomorphic animals, carnivores and herbivores living side by side under strict laws. Eating meat is a grave crime and taboo; carnivores take eggs and plant-based protein and fight their instincts, herbivores live with an old fear; relationships across the line are complicated; the Black Market sells meat in the shadows; the title of Beastar is given to the rare individual who leads and unites society. This story is set at an ORIGINAL university in that world (not Cherryton Academy) with an all-adult, ORIGINAL cast (no canon characters): dorms split by species, clubs (a drama club with its rivalries and stage, sports, gardening, a student council), parties, exams, cafeterias with strict menus, and the campus's own push for a student Beastar. A predation incident on campus at the start shakes everything. Every character is an adult university student or staff member. Tone: slice of life with tension, desire and danger under the surface.",
+    pairs: [C2("Instinct", "Restraint", "#e2766f", "#7fb2ff"), C2("Open", "Guarded", "#e8a95b", "#9aa3b5"), C2("Ambitious", "Content", "#c49bff", "#6fdc6a")],
+    meters: [{ k: "standing", n: "Standing", v: 10, max: 100, desc: "your reputation on campus" }, { k: "hunger", n: "Hunger", v: 10, max: 100, desc: "how loud the instinct is (carnivores) or the fear (herbivores)" }],
+    chapters: [
+      { t: "Move-In Day", goal: "Dorms, roommates of another species, a first party, and news of a predation incident on campus the night before.", scenes: 4 },
+      { t: "Clubs", goal: "Joining a club (the drama club's auditions are fierce); rivals and a first connection across the carnivore/herbivore line.", scenes: 4 },
+      { t: "The Investigation", goal: "The campus wants a culprit. Suspicion falls on carnivores, and on someone the reader cares about.", scenes: 4 },
+      { t: "The Black Market", goal: "Off campus, the Black Market's lure and its dangers; a secret the reader can't unsee.", scenes: 4 },
+      { t: "Opening Night", goal: "The big performance, the student Beastar race, and feelings that won't stay hidden.", scenes: 4 },
+      { t: "Instinct", goal: "The culprit strikes again, or the reader's own instinct breaks loose. A choice between hunger and restraint.", scenes: 4 },
+      { t: "Beastar", goal: "The truth comes out. The reader's choices decide who they become: a leader, an outcast, a predator or the one who holds campus together.", scenes: 5 }
+    ]
+  },
+  forhonor: {
+    id: "forhonor", title: "For Honor", icon: "⚔️", namePh: "Your hero's name (or let the story ask)",
+    blurb: "Heathmoor after the Cataclysm: Knights, Vikings, Samurai, Wu Lin and Outlanders at endless war. Fight in the Art of Battle and decide whether you're a wolf or a sheep.",
+    credit: "Inspired by Ubisoft's For Honor. The story is written fresh as you play.",
+    you: "a warrior of one of Heathmoor's factions",
+    roles: ["a warrior of the Iron Legion (Knights of Ashfeld)", "a raider of the Warborn (Vikings of Valkenheim)", "a warrior of the Chosen (Samurai of the Myre)", "a fighter of the Wu Lin", "an Outlander with no faction"],
+    setting: "Heathmoor from For Honor: a land where a great Cataclysm of earthquakes and floods forced peoples together and wars over scarce land have raged for a thousand years. Factions: the Knights of Ashfeld (the Iron Legion; Wardens, Conquerors, Peacekeepers, Lawbringers, Centurions, Gladiators, Black Priors, Warmongers), the Vikings of Valkenheim (the Warborn; Raiders, Warlords, Berserkers, Valkyries, Highlanders, Shaman, Jormungandr, Varangian Guard), the Samurai of the Myre (the Chosen; Kensei, Shugoki, Orochi, Nobushi, Shinobi, Aramusha, Hitokiri, Kyoshin), the Wu Lin (Tiandi, Jiang Jun, Nuxia, Shaolin, Zhanhu) and Outlanders (Pirates, Medjay, Afeera, Gryphon, Ocelotl, Sohei). Fighting is the Art of Battle: guard stances left, right and top, heavy and light attacks, parries, guard breaks, feints and bashes, read in an opponent's body. The warlord Apollyon of the Blackstone Legion once set the factions at each other's throats to turn sheep into wolves; her war still echoes in feuds, fortresses and the Faction War. This story uses ORIGINAL characters with canon heroes' classes and the factions as in the games. No game elements. Tone: brutal, honour-bound, medieval war.",
+    pairs: [C2("Sheep", "Wolf", "#9aa3b5", "#e2766f"), C2("Honour", "Pragmatism", "#e8a95b", "#7fb2ff"), C2("Mercy", "Savagery", "#6fdc6a", "#9a6fd8")],
+    meters: [{ k: "steel", n: "Steel", v: 50, max: 0, desc: "war spoils and coin" }, { k: "renown", n: "Renown", v: 5, max: 100, desc: "your name on the battlefield" }, { k: "warband", n: "Warband", v: 20, max: 100, desc: "how many fighters follow you" }],
+    chapters: [
+      { t: "First Blood", goal: "The reader's first real battle at a border fortress; their class, weapon and faction settled through choices.", scenes: 4 },
+      { t: "The Duel", goal: "A champion of another faction challenges the reader to a duel of honour, in the Art of Battle, steel against steel.", scenes: 4 },
+      { t: "Blackstone's Shadow", goal: "Remnants of the Blackstone Legion stir up war between the factions for their own ends.", scenes: 4 },
+      { t: "Strange Allies", goal: "The reader must fight beside warriors of a rival faction against a common threat.", scenes: 4 },
+      { t: "The Siege", goal: "A great siege: rams, ladders, burning oil, and a breach.", scenes: 4 },
+      { t: "Betrayal", goal: "Someone the reader trusted sells them out; wolf or sheep, they must answer.", scenes: 4 },
+      { t: "The Last Battle", goal: "The decisive battle of this war. The reader's choices decide who rules the land and whether they stay a wolf or become a sheep.", scenes: 5 }
+    ]
+  },
+  elderscrolls: {
+    id: "elderscrolls", title: "The Elder Scrolls", icon: "📜", namePh: "Your name (or let the story ask)",
+    blurb: "Tamriel in its great crises: dragons return to Skyrim, Oblivion's gates open over Cyrodiil, or the Sixth House stirs beneath Red Mountain. A world that remembers every choice.",
+    credit: "Inspired by Bethesda's The Elder Scrolls. The story is written fresh as you play.",
+    you: "a prisoner with no past, as so many great stories in Tamriel begin",
+    roles: ["a prisoner with no past, as so many great stories in Tamriel begin", "a mercenary looking for work", "a mage of the College or the Guild", "a thief with big debts"],
+    setting: "Tamriel from The Elder Scrolls, faithfully: its races (Nords, Imperials, Bretons, Redguards, Altmer, Bosmer, Dunmer, Orcs, Khajiit, Argonians), the Divines (Akatosh, Talos and the rest), the Daedric Princes and their artifacts, the Dwemer ruins, guilds (Fighters, Mages, Thieves, Dark Brotherhood, Companions, College of Winterhold), magic schools, shouts and dragon blood, souls and soul gems, the Elder Scrolls themselves. The reader walks their own path through the era's real events and places, meeting canon figures where it makes sense, with original characters for their own story. No game elements (no levels, quick saves or fast travel); a world that reacts.",
+    pairs: [C2("Honour", "Greed", "#e8a95b", "#6fdc6a"), C2("Divine", "Daedric", "#ffe08a", "#9a6fd8"), C2("Steel", "Sorcery", "#9aa3b5", "#7fb2ff")],
+    meters: [{ k: "septims", n: "Septims", v: 50, max: 0, desc: "gold coins" }, { k: "fame", n: "Fame", v: 0, max: 100, desc: "how known your deeds are" }, { k: "bounty", n: "Bounty", v: 0, max: 0, desc: "the guards' price on your head" }],
+    eras: {
+      skyrim: { n: "Skyrim", setting: "Era: Skyrim, 4E 201. The civil war between the Stormcloaks and the Empire, the Thalmor watching, and the return of the dragons led by Alduin the World-Eater; the reader may or may not be Dragonborn.", chapters: [
+        { t: "Helgen", goal: "The reader's beginning in Skyrim (a cart, a block, or the road) as a dragon falls from the sky.", scenes: 4 },
+        { t: "Holds and Jarls", goal: "Whiterun, Riften or Solitude; a first job, a guild's interest, and the war's long reach.", scenes: 4 },
+        { t: "The Old Ways", goal: "Barrows, draugr, word walls and Greybeards, or a Daedric Prince's whisper.", scenes: 4 },
+        { t: "Civil War", goal: "Stormcloaks or the Empire want the reader; the Thalmor want everyone.", scenes: 4 },
+        { t: "Dragons", goal: "Dragons burn the holds; the reader faces one and learns what it means.", scenes: 4 },
+        { t: "Sovngarde's Shadow", goal: "Alduin's plan and the way to stop it.", scenes: 4 },
+        { t: "The World-Eater", goal: "The final confrontation. The reader's choices decide Skyrim's fate and theirs.", scenes: 5 } ] },
+      cyrodiil: { n: "Cyrodiil", setting: "Era: the Oblivion Crisis, 3E 433. Emperor Uriel Septim VII has been murdered by the Mythic Dawn, the Dragonfires are out, and Oblivion Gates are opening across Cyrodiil for Mehrunes Dagon's armies.", chapters: [
+        { t: "The Emperor's Death", goal: "The reader is caught up in the night the Emperor dies.", scenes: 4 },
+        { t: "The Imperial City", goal: "Guilds, the Arena, the Elder Council, and a city on the edge of panic.", scenes: 4 },
+        { t: "The First Gate", goal: "An Oblivion Gate opens; the reader goes through.", scenes: 4 },
+        { t: "The Mythic Dawn", goal: "The cult behind it and its secrets.", scenes: 4 },
+        { t: "Kvatch and After", goal: "Cities burn; allies have to be won.", scenes: 4 },
+        { t: "Bruma", goal: "The great gate at Bruma and the stand against Dagon's siege.", scenes: 4 },
+        { t: "The Dragonfires", goal: "The Imperial City under attack and the end of the Crisis. The reader's choices decide what's left.", scenes: 5 } ] },
+      morrowind: { n: "Morrowind", setting: "Era: Vvardenfell, 3E 427. The Tribunal's power wanes, the Blight spreads from Red Mountain where Dagoth Ur and the Sixth House stir, the Great Houses scheme and the Nerevarine prophecy is whispered among the Ashlanders.", chapters: [
+        { t: "Seyda Neen", goal: "The reader steps off the prison ship into a land of giant mushrooms, silt striders and suspicion.", scenes: 4 },
+        { t: "The Great Houses", goal: "Hlaalu, Redoran or Telvanni (and the Temple, the Legion, the guilds) court the outlander.", scenes: 4 },
+        { t: "Ashlanders", goal: "The tribes of the ashlands and the prophecy.", scenes: 4 },
+        { t: "The Sixth House", goal: "Dreamers, corprus and Dagoth Ur's whispers.", scenes: 4 },
+        { t: "The Tribunal", goal: "Vivec, Almalexia and Sotha Sil, and what their divinity hides.", scenes: 4 },
+        { t: "Red Mountain", goal: "Into the Ghostfence and the Blight.", scenes: 4 },
+        { t: "The Heart of Lorkhan", goal: "The final confrontation inside Red Mountain. The reader's choices decide Morrowind's future.", scenes: 5 } ] }
+    },
+    chapters: []
+  },
+  absolver: {
+    id: "absolver", title: "Absolver", icon: "🎭", namePh: "Your name (or let the story ask)",
+    blurb: "Masked by the Guides, you are a Prospect in the ruins of Adal. Learn the schools of combat, defeat the Marked Ones and earn the right to become an Absolver.",
+    credit: "Inspired by Sloclap's Absolver. The story is written fresh as you play.",
+    you: "a Prospect, newly masked by the Guides",
+    roles: ["a Prospect, newly masked by the Guides", "a Prospect who has failed the trials once before", "a disciple of a combat school seeking a master"],
+    setting: "The world of Absolver: the ruins of the Adalian Empire, fallen long ago, in the land of Adal with its overgrown towns, broken aqueducts and silent temples. The Guides, masked overseers of the Tower of Adal, choose Prospects, mask them with Oralion masks and send them into the ruins to prove themselves; a Prospect who defeats the Marked Ones (powerful masked warriors who guard the land's regions) may climb the Tower and become an Absolver, an elite peacekeeper. Combat is melee and martial: four stances, a personal combat deck of attacks learned by watching and enduring them, combat styles (Forsaken: parries; Kahlt: absorbing hits; Windfall: evading; Stagger: staggering dodges; Faejin: disarm and swords), weapons (swords, warblades) and Shards. Schools gather disciples around a mentor's style. Other Prospects are rivals, allies or both. This story uses ORIGINAL Marked Ones and characters. Tone: quiet, melancholy, mysterious, fights that feel like a dance.",
+    pairs: [C2("Patience", "Aggression", "#7fb2ff", "#e2766f"), C2("Duty", "Doubt", "#e8a95b", "#9a6fd8"), C2("Alone", "School", "#9aa3b5", "#6fdc6a")],
+    meters: [{ k: "moves", n: "Combat deck", v: 6, max: 0, desc: "moves you've mastered" }, { k: "marks", n: "Marked Ones", v: 0, max: 6, desc: "Marked Ones defeated" }],
+    chapters: [
+      { t: "The Mask", goal: "The Guides choose the reader, mask them and send them into Adal's ruins. First fight, first lost duel.", scenes: 4 },
+      { t: "Ruins of Adal", goal: "Exploring the ruins; a rival Prospect; learning a move by surviving it.", scenes: 4 },
+      { t: "A School", goal: "A mentor and a school of combat (or the choice to stay alone).", scenes: 4 },
+      { t: "The Marked Ones", goal: "The first Marked One and the price of victory.", scenes: 4 },
+      { t: "Doubt", goal: "Something about the Guides and the Tower is wrong.", scenes: 4 },
+      { t: "The Last Marks", goal: "The strongest Marked Ones and what they know.", scenes: 4 },
+      { t: "The Tower of Adal", goal: "The climb and the final trial. The reader's choices decide what kind of Absolver they become (or whether they refuse).", scenes: 5 }
+    ]
+  },
+  remnant: {
+    id: "remnant", title: "Remnant", icon: "🌳", namePh: "Your name (or let the story ask)",
+    blurb: "The Root devours worlds. From the ruins of Earth through the dreams, labyrinths and alien realms of the Worldstones, one journey to cut it out at its heart.",
+    credit: "Inspired by Gunfire Games' Remnant: From the Ashes and Remnant II. The story is written fresh as you play.",
+    you: "a survivor of a ruined Earth carrying a Worldstone shard",
+    roles: ["a survivor of a ruined Earth carrying a Worldstone shard", "a hunter who has crossed worlds before", "a scientist trying to understand the Root"],
+    setting: "The universe of Remnant, faithfully in its concepts: the Root, a sentient, spreading blight of twisting red-black growth, roots and Root creatures, which has consumed Earth and countless other worlds; Worldstones (crystal gates between realms) and the Labyrinth that links them; dreamers and the power of dreams; Dragon Hearts that heal; scavenged guns, melee weapons, archetypes and mods. Worlds the journey crosses: the ruined Earth, the haunted gothic kingdom of Losomn and the Dran, the cosmic sands and machines of N'Erud, the dark realms of Rhom and Corsus, the Labyrinth itself, and the jungle realm of Yaesha with its Pan people, its Empress and its lore exactly as in the games. Apart from Yaesha and the Empress, this story uses ORIGINAL characters and events (no game characters' storylines): new survivors, a new base, new enemies and bosses born of the Root. No game elements (no respawn checkpoints); death is real. Tone: grim survival, cosmic dread, and stubborn hope.",
+    pairs: [C2("Cautious", "Bold", "#7fb2ff", "#e2766f"), C2("Hope", "Despair", "#6fdc6a", "#9aa3b5"), C2("Scavenger", "Protector", "#e8a95b", "#c49bff")],
+    meters: [{ k: "scrap", n: "Scrap", v: 50, max: 0, desc: "currency for gear" }, { k: "hearts", n: "Dragon Hearts", v: 3, max: 10, desc: "healing left" }, { k: "root", n: "Root's grip", v: 20, max: 100, desc: "how far the Root has spread toward you" }],
+    chapters: [
+      { t: "The Ruins of Earth", goal: "The reader's survival in a Root-choked city and a hidden base of survivors around a Worldstone.", scenes: 4 },
+      { t: "Through the Stone", goal: "The first jump to another world and its horrors.", scenes: 4 },
+      { t: "The Labyrinth", goal: "The maze between worlds and the guardian who watches it.", scenes: 4 },
+      { t: "Yaesha", goal: "The jungle realm, the Pan, and the Empress's story as in the games.", scenes: 4 },
+      { t: "Dreams", goal: "A dreamer's mind is the key to the Root's spread; into the dream.", scenes: 4 },
+      { t: "The Root's Heart", goal: "Where the Root began, and what it wants.", scenes: 4 },
+      { t: "Cut It Out", goal: "The final battle against the Root at its source. The reader's choices decide which worlds are saved.", scenes: 5 }
+    ]
+  },
+  dyinglight: {
+    id: "dyinglight", title: "Dying Light", icon: "🧟", namePh: "Your name (or let the story ask)",
+    blurb: "A walled-off northern harbour city lost to the Harran virus. Run the rooftops by day, survive the Volatiles by night, and decide who gets the last Antizin.",
+    credit: "Inspired by Techland's Dying Light. A new city made for Lanternroom; the story is written fresh as you play.",
+    you: "a runner newly dropped into the quarantine",
+    roles: ["a runner newly dropped into the quarantine", "a GRE operative sent in with a secret mission", "a survivor born in the city who never got out", "an infected survivor holding back the turn with Antizin"],
+    setting: "The Dying Light universe, faithfully: the Harran Virus (THV) turns the bitten into the infected; Biters shamble by day, Virals sprint at noise, and at night the Volatiles hunt in packs; Antizin suppresses the turn; UV light burns the infected; the GRE (Global Relief Effort) researches the virus and lies about it. Survivors run, climb and leap across rooftops (parkour is life), craft weapons from scrap and blueprints, trade at safe zones and set UV traps. This story's city is NEW, made for Lanternroom: Vesterhaven, a cold northern harbour city on a long inlet, walled off by the military after the outbreak. Districts: the Old Town (steep roofs, church spires, narrow alleys), the Shipyards (cranes, dry docks, rusting hulls), the Cliffs (a funicular to the old fortress where the GRE keeps a lab), the Tower Blocks (concrete high-rises on the hill) and the drowned Lowlands. Factions: the Lighthouse (survivors around the harbour lighthouse who keep its UV beam burning), the Wreckers (raiders who rule the Shipyards and trade in Antizin), and the GRE. Airdrops of supplies are fought over. Night is long here and getting longer. Tone: desperate, kinetic, horror at night.",
+    pairs: [C2("Cautious", "Daring", "#7fb2ff", "#e2766f"), C2("Selfless", "Survivor", "#6fdc6a", "#9aa3b5"), C2("Trust", "Suspicion", "#e8a95b", "#9a6fd8")],
+    meters: [{ k: "antizin", n: "Antizin", v: 2, max: 0, desc: "doses you have" }, { k: "supplies", n: "Supplies", v: 30, max: 100, desc: "scrap, food and ammo" }, { k: "infection", n: "Infection", v: 0, max: 100, desc: "how close you are to turning" }],
+    chapters: [
+      { t: "The Drop", goal: "The reader's arrival (or a normal day of survival) and a first night they barely live through. Settle who they are.", scenes: 4 },
+      { t: "The Lighthouse", goal: "The survivors around the lighthouse, their rules, and a first airdrop.", scenes: 4 },
+      { t: "Wreckers", goal: "The raiders of the Shipyards and the Antizin trade.", scenes: 4 },
+      { t: "The Fortress", goal: "The GRE lab in the cliff fortress and what it's really doing.", scenes: 4 },
+      { t: "Long Night", goal: "A night that doesn't end: Volatiles everywhere and the lighthouse's beam failing.", scenes: 4 },
+      { t: "The Cure", goal: "Proof of a cure, or a lie, and who should have it.", scenes: 4 },
+      { t: "Daybreak", goal: "The final stand for Vesterhaven. The reader's choices decide who lives, who gets out, and what the city becomes.", scenes: 5 }
+    ]
+  }
+});
 // v1.99: every story you can start: the built-in ones plus your bots turned into full stories (c.storyDef)
 const hasStoryDef = c => !!(c?.storyDef && (c.storyDef.chapters?.length || c.storyDef.eras));
 const allPacks = () => [...Object.values(STORY_PACKS), ...S.chars.filter(hasStoryDef).map(c => ({ ...c.storyDef, id: "bot:" + c.id, bot: c.id }))];
@@ -8497,6 +8731,26 @@ const STORY_PRESETS = {
       { t: "The Master's Hall", goal: "The end no one has ever reached. The reader's choices decide whether they slay the master, take the castle, join it, or end up as one more meal.", scenes: 5 }
     ]
   }
+};
+// v2.1: the owner's Direlands bot as a story (its lore is read live too)
+STORY_PRESETS.xgxcuv78mvrxy8cj = {
+  title: "The Direlands", icon: "🦴", vore: true, namePh: "Your name (or let the story ask)",
+  blurb: "A vast continent of Direfolk tribes, villages and wilds on the world of Agatha. Cross mountains, deserts, jungles and plains toward Maaghold, earn your Bonepicks, and survive a land where anyone bigger might eat you.",
+  credit: "Made from your bot Direlands. The story is written fresh as you play.",
+  you: "a young Dire leaving their home village",
+  roles: ["a young Dire leaving their home village", "a human traveller who has just landed on the Direlands' shore", "a Dire mercenary back from abroad", "a Diresnub (half-Dire) with nowhere that wants them"],
+  setting: "The Direlands, a vast continent of the world Agatha (medieval fantasy: humans, dwarves, elves, dragons, monsters and magic exist, though magic is rare among the Dire). Nearly everyone here is Direfolk: anthropomorphic people of every animal species, bigger and stronger than humans as their species decides, with strong same-species loyalty, prejudice between species, and Tribes of a single species that are territorial and rarely let outsiders in. The universal currency is Bonepicks (Picks: carved bone slivers only Bonesmiths can make, one Pick about a silver coin; big or unusual clean bones trade for them; bone also makes tools, jewellery and furniture). Regions: the frigid Keiran mountains (north), the scorching Hiraki desert (south: reptile and insect Dire), the humid Jilnan jungle (east: agile Dire), the temperate Fir plains (west, with a swamp on the far edge), and the Maag savanna in the centre, home to Maaghold, the closest thing to a city (stone and redwood, taverns, trading posts, an arena, slave markets, the only real military); the Alteran ocean surrounds it all with island and aquatic Dire; a few communities live in the caves below. Every Dire, whatever its diet, can swallow people whole, orally or anally, and digest them (slowly, with weight gain, waste and belched-up bones that can be cleaned and sold). Technology is bone, stone and rare crude metal (plate armour is made for one notable Dire at a time); wagons at most. Direspeak is universal, with strong regional dialects; Dire are blunt and crude. Religion is rare and cult-like. Dire are born from high-mana animals under rare conditions; pure Dire come from same-species pairs; Dire and humans can have Dire or half-breed 'Diresnub' children, who are shunned. Introduce Dire of every species and gender, fitting each region; futas exist but are rare.",
+  pairs: [C2("Kin", "Outsider", "#e8a95b", "#7fb2ff"), C2("Predator", "Prey", "#e2766f", "#6fdc6a"), C2("Blunt", "Cunning", "#9aa3b5", "#c49bff")],
+  meters: [{ k: "picks", n: "Bonepicks", v: 20, max: 0, desc: "your money" }, { k: "rep", n: "Reputation", v: 5, max: 100, desc: "how known you are across the Direlands" }, { k: "belly", n: "Belly", v: 30, max: 100, desc: "how fed you are" }],
+  chapters: [
+    { t: "Leaving Home", goal: "The reader's home (a village, a Tribe, or a shore) and the reason they set out. Settle their species and size through choices.", scenes: 4 },
+    { t: "The Road", goal: "Travel through the first region: its climate, its Dire, its predators, and a first deal in Bonepicks.", scenes: 4 },
+    { t: "Tribe Lands", goal: "Crossing a Tribe's territory: prejudice, a test, and a chance at an unlikely ally.", scenes: 4 },
+    { t: "Maaghold", goal: "The great savanna city: taverns, trading posts, the slave markets and a job worth a lot of Picks.", scenes: 4 },
+    { t: "The Arena", goal: "Maaghold's arena calls (to fight, to bet, or to escape it).", scenes: 4 },
+    { t: "Beyond the Maag", goal: "A journey to a far region (the Keiran peaks, the Hiraki dunes, the Jilnan jungle or the Alteran islands) after something that matters.", scenes: 4 },
+    { t: "Legend of the Direlands", goal: "Everything comes to a head. The reader's choices decide what kind of legend they become, and who ends up in whose belly.", scenes: 5 }
+  ]
 };
 // add each written story to its bot once, on every device (a story you removed stays removed)
 async function applyStoryPresets() {
@@ -8744,16 +8998,23 @@ function storyDefEdit(c, fresh) {
   });
 }
 // ---- windows: the list of stories, a new story's setup, and the stats screen
+let ST_TAB = "built"; // v2.1: the Stories window has tabs (built-in stories, your bots' stories, your runs)
 async function openStories() {
   const runs = [];
   for (const c of S.chars) for (const e of await getIndex(c.id)) if (e.story) runs.push({ c, e });
   runs.sort((a, b) => b.e.updated - a.e.updated);
+  const packs = allPacks(), built = packs.filter(p => !p.bot), mine = packs.filter(p => p.bot);
+  const card = pk => `<div class="st-pack"><div class="st-ic">${esc(pk.icon || "📖")}</div><div class="grow"><b>${esc(pk.title)}</b><p class="st-bl">${esc(pk.blurb || "")}</p><small>${esc(pk.credit || "")}</small></div><div class="col" style="gap:6px"><button type="button" class="btn small primary" data-pk="${esc(pk.id)}">New story</button>${pk.bot ? `<button type="button" class="btn small" data-pke="${esc(pk.bot)}">Edit</button>` : ""}</div></div>`;
   openSheet("Play a story", b => {
+    const tabs = [["built", `Stories · ${built.length}`], ["mine", `From your bots · ${mine.length}`], ["runs", `Your runs · ${runs.length}`]];
     b.innerHTML = `<p class="hint" style="margin:0">Interactive novels told one scene at a time: you pick what to do, your choices shape who you are, and your nature decides what succeeds.</p>
-      ${allPacks().map(pk => `<div class="st-pack"><div class="st-ic">${esc(pk.icon || "📖")}</div><div class="grow"><b>${esc(pk.title)}</b><p>${esc(pk.blurb || "")}</p><small>${esc(pk.credit || "")}</small></div><div class="col" style="gap:6px"><button type="button" class="btn small primary" data-pk="${esc(pk.id)}">New story</button>${pk.bot ? `<button type="button" class="btn small" data-pke="${esc(pk.bot)}">Edit</button>` : ""}</div></div>`).join("")}
-      <button type="button" class="btn" id="stMakeFull">📚 Make one of your bots a full story</button>
-      <button type="button" class="btn" id="stFromBot">📖 A quick one-off story from a bot</button>
-      ${runs.length ? `<div class="lbl">Your stories</div><div class="stack">${runs.slice(0, 20).map((r, i) => `<button type="button" class="listrow" data-run="${i}"><span class="grow"><b>${esc(r.e.story)}</b> <span class="badge">${r.e.count}</span><span class="sub">${esc(r.e.preview || "")}</span></span><span class="sub">${fmtWhen(r.e.updated)}</span></button>`).join("")}</div>` : ""}`;
+      <div class="tabs st-tabs">${tabs.map(([k, l]) => `<button type="button" class="tab ${ST_TAB === k ? "on" : ""}" data-stt="${k}">${l}</button>`).join("")}</div>
+      <div data-sp="built" ${ST_TAB === "built" ? "" : "hidden"}>${built.map(card).join("")}</div>
+      <div data-sp="mine" ${ST_TAB === "mine" ? "" : "hidden"}>${mine.map(card).join("") || '<p class="note">None yet. Turn one of your bots into a story below.</p>'}
+        <button type="button" class="btn" id="stMakeFull">📚 Make one of your bots a full story</button>
+        <button type="button" class="btn" id="stFromBot">📖 A quick one-off story from a bot</button></div>
+      <div data-sp="runs" ${ST_TAB === "runs" ? "" : "hidden"}>${runs.length ? `<div class="stack">${runs.slice(0, 40).map((r, i) => `<button type="button" class="listrow" data-run="${i}"><span class="grow"><b>${esc(r.e.story)}</b> <span class="badge">${r.e.count}</span><span class="sub">${esc(r.e.preview || "")}</span></span><span class="sub">${fmtWhen(r.e.updated)}</span></button>`).join("")}</div>` : '<p class="note">No stories started yet.</p>'}</div>`;
+    b.querySelectorAll("[data-stt]").forEach(x => x.onclick = () => { ST_TAB = x.dataset.stt; b.querySelectorAll("[data-stt]").forEach(y => y.classList.toggle("on", y === x)); b.querySelectorAll("[data-sp]").forEach(p => p.hidden = p.dataset.sp !== ST_TAB); });
     b.querySelectorAll("[data-pk]").forEach(x => x.onclick = () => storySetup(packOf(x.dataset.pk), null));
     b.querySelectorAll("[data-pke]").forEach(x => x.onclick = () => storyDefEdit(byId(x.dataset.pke)));
     $("stFromBot").onclick = () => storyPickBot();
