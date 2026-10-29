@@ -849,6 +849,9 @@ img.px-av{border-radius:50%}
 .st-meters{display:grid;grid-template-columns:1fr 1fr;gap:8px}.st-m{position:relative;display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;overflow:hidden}.st-m b{font-size:20px}.st-m small{color:var(--muted);font-size:11px}.st-m i{position:absolute;left:0;bottom:0;height:3px;background:var(--accent)}
 .st-ch{margin:0;padding-left:20px;font-size:14px;color:var(--muted)}.st-ch li.done{color:var(--text)}.st-ch li.now{color:var(--accent);font-weight:700}
 .st-line.ok{color:#8fdc6a}.st-line.no{color:#e2766f}
+.st-dead{align-self:center;font-family:"Young Serif",serif;font-size:16px;color:#e2766f;padding:2px 0 4px;text-align:center}
+.st-obit{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border:1px solid color-mix(in srgb,var(--muted) 45%,var(--line));border-radius:12px;background:color-mix(in srgb,var(--bg) 70%,#000);text-align:center}.st-obit .st-ob-h{font-family:"Young Serif",serif;font-size:18px;color:var(--text)}.st-obit i{color:var(--accent);font-size:14px}.st-obit p{margin:4px 0;font-size:14px;line-height:1.45;color:var(--text);text-align:left}.st-obit small{color:var(--muted);font-size:12px}
+.st-races{flex-wrap:wrap;gap:6px}
 #ownBar{position:relative;z-index:3;display:flex;flex-direction:column;gap:5px;padding:5px 12px 6px;background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:12px}#ownBar[hidden]{display:none}
 .own-row{display:flex;align-items:center;gap:8px;min-width:0}.own-l{font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.own-n{color:var(--muted);flex:none}.own-go{margin-left:auto}
 #ownBar .btn.small{min-height:34px;padding:4px 12px;font-size:13px;flex:none}
@@ -1725,7 +1728,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.3 · Oct 29";
+const VERSION = "2.4 · Oct 29";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2467,7 +2470,7 @@ function chatPreview(chat) {
 }
 async function touchIndex(cid, chat) {
   const idx = await getIndex(cid);
-  const e = { id: chat.id, personaId: chat.personaId, created: chat.created || Date.now(), updated: Date.now(), count: chat.messages.filter(m => m.role !== "image").length, preview: chatPreview(chat), ...(chat.branchOf ? { branch: true } : {}), ...(chat.story ? { story: chat.story.title } : {}), ...(chat.own || chat.creating ? { own: chat.own?.name || "New character" } : {}) };
+  const e = { id: chat.id, personaId: chat.personaId, created: chat.created || Date.now(), updated: Date.now(), count: chat.messages.filter(m => m.role !== "image").length, preview: chatPreview(chat), ...(chat.branchOf ? { branch: true } : {}), ...(chat.story ? { story: chat.story.title, ...(chat.story.obit ? { obit: 1 } : {}) } : {}), ...(chat.own || chat.creating ? { own: chat.own?.name || "New character" } : {}) };
   const i = idx.findIndex(x => x.id === chat.id);
   if (i < 0) idx.push(e); else idx[i] = e;
   await Store.set("chats:" + cid, idx);
@@ -4722,10 +4725,13 @@ async function generate(upto, existing, cont) {
     if (chat.own && p.traits && crTraitsFromTag(p.traits, chat)) renderOwnBar();
     if (chat.story) { // v1.97: the scene's fixed choices; a scene that came without usable ones gets them from a follow-up call
       const t = storyState(chat, upto), N = chat.story.chapters.length;
-      const end = !!p.story?.ending || (t.ch >= N - 1 && t.step >= chat.story.chapters[N - 1].scenes - 1 && chat.story.opts.length !== "endless");
-      let chs = end ? [] : storyChoices(chat.story, p.story?.choices);
-      if (!chs.length && !end) { try { chs = await storyChoicesFor(chat, p.text); } catch {} }
-      meta.choices = chs; if (end) meta.ending = true;
+      // v2.4: the reader can die (never in story mode); a health-type meter at 0 is a death even if the scene forgot to say so
+      const dg = dangerOf(chat.story), out0 = dg !== "story" ? t.meters.filter(healthMeter).find(m => m.v <= 0) : null;
+      const dead = dg !== "story" && (p.story?.dead === true || !!out0) ? { cause: String(p.story?.cause || (out0 ? `${out0.n} ran out` : "") || "Died").replace(/\s+/g, " ").trim().slice(0, 120), at: Date.now() } : null;
+      const end = !dead && (!!p.story?.ending || (t.ch >= N - 1 && t.step >= chat.story.chapters[N - 1].scenes - 1 && chat.story.opts.length !== "endless"));
+      let chs = end || dead ? [] : storyChoices(chat.story, p.story?.choices);
+      if (!chs.length && !end && !dead) { try { chs = await storyChoicesFor(chat, p.text); } catch {} }
+      meta.choices = chs; meta.ending = end || null; meta.dead = dead;
     }
     // v1.98: choices mode, but the model left out the choices line: ask for them in a small follow-up call
     if (!chat.story && meta.crStep == null && choicesOn(c, chat) && !meta.choices?.length) { try { meta.choices = await choicesFor(chat, p.text); } catch {} }
@@ -8237,6 +8243,8 @@ function renderChoices() {
     chatEl.classList.toggle("choosing", true);
     if (chatEl.hidden || S.busy || !last) { box.hidden = true; box.innerHTML = ""; return; }
     box.hidden = false;
+    if (S.chat.story.obit) return storyObitCard(box); // v2.4: the run was ended after a death
+    if (last.role === "assistant" && last.dead) return storyDeathButtons(box, last);
     if (ended) return storyEndButtons(box);
     // something went wrong: the next scene, or its choices, can be asked for again
     if (last.role !== "assistant" || !last.choices?.length) {
@@ -8872,8 +8880,110 @@ function storyHero(s) {
   return bits.join(" ");
 }
 const storyContent = s => (s.opts.content === "lewd" ? "Sexual content is welcome when the story leads there: explicit and adult, but the story stays a narrative RPG with goals, stakes and choices; offer a lewd option now and then (not in every scene) and let the reader decide." : "Keep it free of sexual content: danger, cruelty, combat and dark themes are fine, as in a classic fantasy gamebook.")
-  + (s.opts.vore ? " Vore (swallowing creatures or people whole and alive, and digesting them) is part of this story: offer it as an option when it fits and describe it vividly when chosen." : "")
+  + (s.opts.vore ? " Vore (swallowing creatures or people whole and alive, and digesting them) is part of this story: offer it as an option when it fits and describe it vividly when chosen." + voreWhoRule(s) : "")
   + " Every character is treated as a fully grown, mature being.";
+// ---- v2.4: danger and who may eat you. opts.danger story|real|brutal (missing = real, the owner's default); a scene can
+// end the reader's life ([[story: {"choices": [], "dead": true, "cause": …}]] → m.dead {cause, at}); only health-type
+// meters at 0 kill by themselves. After a death: rewind that choice, restart the chapter, or end the run (chat.story.obit).
+const STORY_DANGER = {
+  story: ["Story mode", "You can't die or lose for good: failures cost you, but the story goes on."],
+  real: ["Real risk", "Bad choices and failed checks can hurt, capture or kill you, or end the story early."],
+  brutal: ["Brutal", "An unforgiving world: one bad call can be fatal."]
+};
+const dangerOf = s => STORY_DANGER[s?.opts?.danger] ? s.opts.danger : "real";
+const HEALTH_RE = /\b(health|hp|hit points|life|vitality|blood|condition)\b/i;
+const healthMeter = m => HEALTH_RE.test(`${m.n || ""} ${m.k || ""}`);
+// who may eat the reader: by sex for every story, plus each story's own idea (owner's list)
+const VORE_WHO = [["all", "Anyone"], ["male", "Males only"], ["female", "Females & futas only"]];
+const METRO_RACES = ["Humans", "Vipers", "Elgaden", "Drill", "Synths", "Wyms", "Loan Leeches", "Starborne", "Pyre", "Detridomes", "Bards", "Aionians", "Feril", "Gel'n", "Emperors", "Fiefs", "Behemi"];
+const VORE_KINDS = {
+  monhun: { label: "Who's hungry", opts: [["monsters", "Monsters only", "Only monsters may eat the reader; hunters and other people never do."], ["hunters", "Hunters too", "Monsters may eat the reader, and so may hunters and other people."]] },
+  churn: { label: "Who's hungry", opts: [["agents", "Agents only", "Only contract agents may eat the reader; guards and staff never do."], ["guards", "Guards too", "Agents may eat the reader, and so may guards."]] },
+  "bot:cjozp2phmvrxz0w1": { label: "Who's hungry", opts: [["syndicate", "Syndicate only", "Only Syndicate members may eat the reader; Renegades and civilians never do."], ["anyone", "Anyone", "Anyone with the appetite may eat the reader, Syndicate, Renegade or otherwise."]] },
+  "bot:p28i6soumvrxw4pe": { label: "Races that may eat you (none picked = any race)", multi: METRO_RACES, rule: l => `Only these races may eat the reader: ${l.join(", ")}; no other race ever does.` },
+  "bot:00dvpan7mv5j9o0f": { label: "Who's hungry", opts: [["minions", "Minions only", "Only the castle's minions may eat the reader."], ["anyone", "Anyone", "Anyone in the castle may eat the reader."]] },
+  "bot:xgxcuv78mvrxy8cj": { label: "Who's hungry", opts: [["predators", "Predator species only", "Only predator species may eat the reader; prey species never do."], ["anyone", "Anyone", "Any species may eat the reader."]] }
+};
+function voreWhoRule(s) {
+  const o = s.opts || {}, bits = [], K = VORE_KINDS[s.pack];
+  if (o.voreWho === "male") bits.push("Only male characters may ever eat the reader; females and futas never do.");
+  else if (o.voreWho === "female") bits.push("Only female and futa characters may ever eat the reader; males never do.");
+  if (K?.multi) { const l = (Array.isArray(o.voreKind) ? o.voreKind : []).filter(x => K.multi.includes(x)); if (l.length) bits.push(K.rule(l)); }
+  else if (K) bits.push((K.opts.find(x => x[0] === o.voreKind) || K.opts[0])[2]);
+  return bits.length ? " Who may eat the reader: " + bits.join(" ") + " (Others may still be eaten by anyone.)" : "";
+}
+// the rows for setup and the Stats sheet: who may eat you (sex) and the story's own choice
+function voreWhoHTML(o, pid) {
+  const K = VORE_KINDS[pid], seg = (k, list) => `<div class="tabs st-seg">${list.map(([v, l]) => `<button type="button" class="tab ${(o[k] || list[0][0]) === v ? "on" : ""}" data-vw="${k}" data-v="${v}">${esc(l)}</button>`).join("")}</div>`;
+  let h = field("Who may eat you", seg("voreWho", VORE_WHO));
+  if (K?.multi) { const on = Array.isArray(o.voreKind) ? o.voreKind : []; h += field(K.label, `<div class="row st-races">${K.multi.map(r => `<button type="button" class="chip ${on.includes(r) ? "on" : ""}" data-vr="${esc(r)}">${esc(r)}</button>`).join("")}</div>`); }
+  else if (K) h += field(K.label, seg("voreKind", K.opts));
+  return h;
+}
+function voreWhoWire(b, o, redraw) {
+  b.querySelectorAll("[data-vw]").forEach(x => x.onclick = () => { o[x.dataset.vw] = x.dataset.v; redraw(); });
+  b.querySelectorAll("[data-vr]").forEach(x => x.onclick = () => { const l = Array.isArray(o.voreKind) ? o.voreKind : []; const r = x.dataset.vr; o.voreKind = l.includes(r) ? l.filter(y => y !== r) : [...l, r]; redraw(); });
+}
+// the danger rules for this scene; a health-type meter at 0 makes this scene the reader's death (never in story mode)
+function storyDangerText(s, st) {
+  const d = dangerOf(s), hm = st.meters.filter(healthMeter), out0 = hm.find(m => m.v <= 0);
+  let t = `\n\n# Danger: ${STORY_DANGER[d][0]}\n`;
+  t += d === "story" ? "The reader can't die or lose for good. Failed checks and bad choices still cost something real (wounds, capture, lost allies, humiliation, lost ground), but the story always goes on; never write the reader's death."
+    : d === "brutal" ? "The world is unforgiving: one bad call can be fatal. Telegraph danger in the scene so an attentive reader can see it coming, give risky choices a check, and when the reader walks into deadly danger or fails a deadly check, let them die."
+    : "Danger is real. Telegraph it in the scene so a careful reader can see it coming, and give risky choices a check. Bad choices and failed checks can injure, capture or kill the reader or end the story early: most failures cost something, but walking into an obvious deadly risk or failing a deadly check can be fatal.";
+  if (d !== "story") t += ` When the reader dies (or their story ends for good), write the death and a short bad ending in this scene, give no choices and end with [[story: {"choices": [], "dead": true, "cause": "how they died, in a few words"}]].`;
+  t += hm.length ? ` Only ${hm.map(m => m.n).join(" or ")} reaching 0 kills by itself; other meters running out are setbacks, never death.` : " No meter kills by itself; meters running out are setbacks.";
+  if (s.opts.vore) t += ` Being swallowed is not death by itself: while inside, the reader can still struggle, be freed, spat out or escape; the reader is dead only once fully digested${d === "story" ? ", and in this mode they always get out before that" : ""}.`;
+  if (out0) t += d === "story" ? `\nThe reader's ${out0.n} has run out: they are beaten, knocked out or captured in this scene, never killed, and the story goes on.` : `\nThe reader's ${out0.n} has run out: this scene is their death. Write it and end with the "dead" line.`;
+  return t;
+}
+// after a death: drop the death scene and the choice that led to it
+async function storyRewind() {
+  const chat = S.chat, ms = chat.messages; let i = ms.length - 1; while (i >= 0 && ms[i].role !== "assistant") i--; if (i < 0) return;
+  let j = i - 1; while (j >= 0 && ms[j].role === "image") j--;
+  storyCut(chat, j >= 0 && ms[j].role === "user" ? j : i);
+  await saveChat(); renderMsgs(true); renderChoices();
+  if (!ms.some(m => m.role === "assistant")) await generate(ms.length, null); // died in the very first scene: write it again
+}
+// back to the first scene of the chapter the reader died in; stats rebuild from the messages left
+async function storyRestartChapter() {
+  const chat = S.chat, ms = chat.messages; let di = ms.length - 1; while (di >= 0 && ms[di].role !== "assistant") di--; if (di < 0) return;
+  const st0 = storyState(chat, di), first = st0.scenes - st0.step + 1;
+  let n = 0, idx = -1; for (let i = 0; i < ms.length; i++) if (ms[i].role === "assistant" && ++n === first) { idx = i; break; }
+  const again = idx < 0 || idx >= di; // died in the chapter's first scene: write that scene again
+  storyCut(chat, again ? di : idx + 1);
+  await saveChat(); renderMsgs(true); renderChoices();
+  if (again) await generate(ms.length, null);
+}
+function storyCut(chat, at) {
+  chat.messages.splice(at);
+  if ((chat.summarizedUpTo || 0) > at) { chat.summary = ""; chat.summarizedUpTo = 0; } // the summary told of what's gone
+}
+// end the run: an obituary for it, shown as a card; Your runs marks it 🪦
+async function storyEndRun() {
+  const chat = S.chat, s = chat.story, st = storyState(chat), N = s.chapters.length, last = chat.messages.filter(m => m.role === "assistant").at(-1);
+  const cause = last?.dead?.cause || "Died", nature = st.pairs.map(p => p.v <= 40 ? p.a : p.v >= 60 ? p.b : `between ${p.a} and ${p.b}`);
+  setBusy(true); setStatus("Writing the obituary…");
+  let j = null;
+  try { j = await dsJSON([{ role: "system", content: `You write the obituary for the reader's character at the end of a run of "${s.title}", a Choice of Games style interactive novel. Respond with only JSON: {"epitaph": one short line for their grave, "text": 3-5 sentences in the story's voice: who they were, what they did and became, their nature, and how they died}. ${storyContent(s)}` },
+    { role: "user", content: `The reader played ${s.you}. ${storyHero(s)}\nSetting: ${s.setting.slice(0, 1500)}\nReached chapter ${Math.min(st.ch, N - 1) + 1} of ${N}: ${s.chapters.slice(0, st.ch + 1).map(c => c.t).join(", ")}.\nNature: ${nature.join(", ")}. ${st.meters.map(m => `${m.n} ${m.v}`).join(", ")}. Tests passed: ${st.passed} of ${st.checks}.\nCause of death: ${cause}\n${chat.summary ? "Story so far: " + chat.summary.slice(0, 2500) + "\n" : ""}The death scene:\n${String(last?.content || "").slice(-2500)}` }], { temperature: 0.8, maxTokens: 500 }); } catch {}
+  finally { setBusy(false); setStatus(""); }
+  s.obit = { at: Date.now(), cause, name: s.hero?.name || "", epitaph: String(j?.epitaph || "").slice(0, 160), text: String(j?.text || "").slice(0, 1200) || `${s.hero?.name || "You"} fell in chapter ${Math.min(st.ch, N - 1) + 1}: ${cause}.`, chapter: Math.min(st.ch, N - 1) + 1, chapters: N, nature, meters: st.meters.map(m => ({ n: m.n, v: m.v, max: m.max })), passed: st.passed, checks: st.checks };
+  await saveChat(); renderChoices(); try { renderStoryBar($("ownBar")); } catch {}
+}
+const obitHTML = o => `<div class="st-obit"><div class="st-ob-h">🪦 ${esc(o.name || "You")}</div>${o.epitaph ? `<i>${esc(o.epitaph)}</i>` : ""}<p>${esc(o.text)}</p><small>${esc(o.cause)} · chapter ${o.chapter} of ${o.chapters}</small></div>`;
+function storyDeathButtons(box, last) {
+  box.innerHTML = `<div class="st-dead">🪦 ${esc(last.dead.cause || "You died")}</div><button type="button" class="choice" id="stRewind"><span>⏪ Rewind that choice</span></button><button type="button" class="choice" id="stRestart"><span>↺ Restart the chapter</span></button><button type="button" class="choice" id="stEndRun"><span>🪦 End the run</span></button>`;
+  $("stRewind").onclick = () => { if (!S.busy) storyRewind(); };
+  $("stRestart").onclick = () => { if (!S.busy) storyRestartChapter(); };
+  $("stEndRun").onclick = () => { if (!S.busy) storyEndRun(); };
+}
+function storyObitCard(box) {
+  const s = S.chat.story;
+  box.innerHTML = obitHTML(s.obit) + `<button type="button" class="choice" id="stEndStats"><span>📜 Your tale: stats and chapters</span></button><button type="button" class="choice" id="stNew"><span>Start a new story</span></button>`;
+  $("stEndStats").onclick = () => openStoryStats();
+  $("stNew").onclick = () => { const pk = packOf(s.pack) || STORY_PACKS[s.pack]; if (pk) storySetup(pk, null); else openStories(); };
+}
 function storyMessages(c, chat, upto, cont) {
   const s = chat.story, st = storyState(chat, upto), N = s.chapters.length;
   const ci = Math.min(st.ch, N - 1), chap = s.chapters[ci], k = st.over ? chap.scenes : st.step + 1, K = chap.scenes;
@@ -8892,6 +9002,7 @@ function storyMessages(c, chat, upto, cont) {
   if (final) sys += `\nThis is the FINAL scene of the story: resolve it, then end with an epilogue that sums up the reader's life and legacy, shaped by their stats (their nature, ${mnames}). Give no choices: end with [[story: {"choices": [], "ending": true}]].`;
   sys += `\n\n# Choices\nAfter the scene add one line exactly like [[story: {"choices": [...]}]] with 3-4 choices. Each choice is an object: "t" (what you do, short, in the reader's voice: e.g. "Burn him where he stands."), "leans" (1-2 of {"side": one of ${sides}, "amt": 1-3}: how strongly this choice expresses that side), optional "meters" ({"${s.meters[0]?.n || "Wealth"}": change, …} when it gains or costs something; names from ${mnames}), optional "check" ({"stat": a side or meter name, "need": 20-85 for sides}) when success depends on the reader's nature (about one check per scene, never on every choice). The choices must differ in which sides they push, so the reader shapes their character. Never mention checks or numbers in the text.`;
   sys += `\nWhen the reader's message includes a check result, narrate exactly that outcome: success goes well, failure has real consequences.`;
+  sys += storyDangerText(s, st);
   sys += `\n\n# Content\n${storyContent(s)}`;
   if ((S.settings.globalInstr || "").trim()) sys += `\n\n# The user's instructions for every chat (always follow)\n${fill(S.settings.globalInstr, c)}`;
   sys += onoPrompt(c, chat, upto);
@@ -9032,7 +9143,7 @@ async function openStories() {
       <div data-sp="mine" ${ST_TAB === "mine" ? "" : "hidden"}>${mine.map(card).join("") || '<p class="note">None yet. Turn one of your bots into a story below.</p>'}
         <button type="button" class="btn" id="stMakeFull">📚 Make one of your bots a full story</button>
         <button type="button" class="btn" id="stFromBot">📖 A quick one-off story from a bot</button></div>
-      <div data-sp="runs" ${ST_TAB === "runs" ? "" : "hidden"}>${runs.length ? `<div class="stack">${runs.slice(0, 40).map((r, i) => `<button type="button" class="listrow" data-run="${i}"><span class="grow"><b>${esc(r.e.story)}</b> <span class="badge">${r.e.count}</span><span class="sub">${esc(r.e.preview || "")}</span></span><span class="sub">${fmtWhen(r.e.updated)}</span></button>`).join("")}</div>` : '<p class="note">No stories started yet.</p>'}</div>`;
+      <div data-sp="runs" ${ST_TAB === "runs" ? "" : "hidden"}>${runs.length ? `<div class="stack">${runs.slice(0, 40).map((r, i) => `<button type="button" class="listrow" data-run="${i}"><span class="grow"><b>${r.e.obit ? '<span title="Ended in death">🪦</span> ' : ""}${esc(r.e.story)}</b> <span class="badge">${r.e.count}</span><span class="sub">${esc(r.e.preview || "")}</span></span><span class="sub">${fmtWhen(r.e.updated)}</span></button>`).join("")}</div>` : '<p class="note">No stories started yet.</p>'}</div>`;
     b.querySelectorAll("[data-stt]").forEach(x => x.onclick = () => { ST_TAB = x.dataset.stt; b.querySelectorAll("[data-stt]").forEach(y => y.classList.toggle("on", y === x)); b.querySelectorAll("[data-sp]").forEach(p => p.hidden = p.dataset.sp !== ST_TAB); });
     b.querySelectorAll("[data-pk]").forEach(x => x.onclick = () => storySetup(packOf(x.dataset.pk), null));
     b.querySelectorAll("[data-pke]").forEach(x => x.onclick = () => storyDefEdit(byId(x.dataset.pke)));
@@ -9050,15 +9161,17 @@ function storyPickBot(full) {
   });
 }
 function storySetup(pk, bot) {
-  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: !!pk?.vore, length: "standard", role: "", era: pk?.eras ? Object.keys(pk.eras)[0] : "" }, h = { name: "", pron: "", color: "" };
+  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: !!pk?.vore, length: "standard", role: "", era: pk?.eras ? Object.keys(pk.eras)[0] : "", danger: "real", voreWho: "all", voreKind: VORE_KINDS[pk?.id]?.multi ? [] : VORE_KINDS[pk?.id]?.opts[0][0] || "" }, h = { name: "", pron: "", color: "" };
   const roles = pk?.roles?.length ? pk.roles : pk ? [pk.you] : []; if (roles.length) o.role = roles[0];
   openSheet(pk ? pk.title : `Story: ${bot.name}`, b => {
     const draw = () => {
       const seg = (k, opts) => `<div class="tabs st-seg">${opts.map(([v, l]) => `<button type="button" class="tab ${o[k] === v ? "on" : ""}" data-k="${k}" data-v="${v}">${l}</button>`).join("")}</div>`;
       b.innerHTML = `${pk ? `<p class="hint" style="margin:0">${esc(pk.blurb)}</p>${field("Story", seg("mode", [["classic", "Classic route"], ["random", "A new story"]]), o.mode === "classic" ? "Follows the classic chapters in order." : "Same world and rules, a different plot each time.")}` : `<p class="hint" style="margin:0">A Choice of Games style story set in ${esc(bot.name)}'s world.</p>`}
         ${pk?.eras ? field("Era", `<div class="tabs st-seg st-era">${Object.entries(pk.eras).map(([k, e]) => `<button type="button" class="tab ${o.era === k ? "on" : ""}" data-k="era" data-v="${k}">${esc(e.n)}</button>`).join("")}</div>`, "The chapters follow that era's real places and threats.") : ""}
+        ${field("Danger", seg("danger", Object.entries(STORY_DANGER).map(([k, v]) => [k, v[0]])), STORY_DANGER[o.danger][1])}
         ${field("Content", seg("content", [["clean", "Clean"], ["lewd", "With lewd scenes"]]))}
         <label class="check"><input type="checkbox" id="stVore" ${o.vore ? "checked" : ""}> Vore can happen</label>
+        ${o.vore ? voreWhoHTML(o, pk?.id) : ""}
         ${field("Length", seg("length", [["standard", `Standard (${STORY_STD} chapters)`], ["endless", "Keep going"]]), "You can keep going after the ending either way.")}
         <div class="lbl">You</div>
         ${roles.length ? `<div class="stack st-roles">${roles.map((r, i) => `<button type="button" class="listrow ${o.role === r ? "on" : ""}" data-role="${i}"><span class="grow">${o.role === r ? "● " : "○ "}${esc(capFirst(r))}</span></button>`).join("")}<button type="button" class="listrow ${o.role && !roles.includes(o.role) ? "on" : ""}" data-role="own"><span class="grow">${o.role && !roles.includes(o.role) ? "● " : "○ "}Someone of my own…</span></button></div>
@@ -9069,7 +9182,8 @@ function storySetup(pk, bot) {
         <button type="button" class="btn primary" id="stGo">Begin</button><p class="hint" id="stMsg" style="margin:0"></p>`;
       b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => { o[x.dataset.k] = x.dataset.v; keep(); draw(); });
       b.querySelectorAll("[data-pron]").forEach(x => x.onclick = () => { keep(); h.pron = h.pron === x.dataset.pron ? "" : x.dataset.pron; draw(); });
-      $("stVore").onchange = e => { o.vore = e.target.checked; };
+      $("stVore").onchange = e => { o.vore = e.target.checked; keep(); draw(); };
+      voreWhoWire(b, o, () => { keep(); draw(); });
       b.querySelectorAll("[data-role]").forEach(x => x.onclick = () => { keep(); if (x.dataset.role === "own") { o.ownRole = true; if (roles.includes(o.role)) o.role = ""; } else { o.ownRole = false; o.role = roles[+x.dataset.role]; } draw(); if ($("stRole")) $("stRole").focus(); });
       $("stGo").onclick = async () => { keep(); if (!hasKey()) { $("stMsg").textContent = "Stories need your AI key (Settings → AI model)."; return; } $("stGo").disabled = true; $("stMsg").textContent = o.mode === "classic" ? "Opening the story…" : "Planning your story…";
         try { await storyBegin(pk, bot, o, h); } catch (e) { $("stGo").disabled = false; $("stMsg").textContent = e.message; } };
@@ -9100,23 +9214,29 @@ function openStoryStats() {
   const N = s.chapters.length, ci = Math.min(st.ch, N - 1), done = st.over && s.opts.length !== "endless";
   openSheet(s.title, b => {
     b.innerHTML = `<div class="st-head"><b>${esc(s.hero?.name || "You")}</b><span>${esc(s.you)}${s.hero?.color ? " · " + esc(s.hero.color) : ""}</span></div>
-      <p class="hint" style="margin:0">${done ? "The story is over." : `Chapter ${ci + 1} of ${N}: ${esc(s.chapters[ci].t)}`}${st.checks ? ` · ${st.passed} of ${st.checks} tests passed` : ""}</p>
+      <p class="hint" style="margin:0">${s.obit ? `This run ended in chapter ${s.obit.chapter}.` : done ? "The story is over." : `Chapter ${ci + 1} of ${N}: ${esc(s.chapters[ci].t)}`}${st.checks ? ` · ${st.passed} of ${st.checks} tests passed` : ""}</p>
+      ${s.obit ? obitHTML(s.obit) : ""}
       <div class="lbl">Your nature</div>${traitBars(st.pairs)}
       <div class="lbl">Standing</div><div class="st-meters">${st.meters.map(m => `<div class="st-m"><span>${esc(m.n)}</span><b>${m.v}${m.max ? `<small>/${m.max}</small>` : ""}</b>${m.max ? `<i style="width:${Math.round(100 * m.v / m.max)}%"></i>` : ""}<small>${esc(m.desc || "")}</small></div>`).join("")}</div>
       <div class="lbl">Chapters</div><ol class="st-ch">${s.chapters.map((x, i) => `<li class="${i < st.ch ? "done" : i === st.ch && !st.over ? "now" : ""}">${esc(x.t)}</li>`).join("")}</ol>
       <div class="lbl">Content</div>
       <div class="tabs st-seg">${[["clean", "Clean"], ["lewd", "With lewd scenes"]].map(([v, l]) => `<button type="button" class="tab ${s.opts.content === v ? "on" : ""}" data-c="${v}">${l}</button>`).join("")}</div>
       <label class="check"><input type="checkbox" id="stsVore" ${s.opts.vore ? "checked" : ""}> Vore can happen</label>
-      <label class="check"><input type="checkbox" id="stsLen" ${s.opts.length === "endless" ? "checked" : ""}> Keep going past the ending</label>`;
+      ${s.opts.vore ? voreWhoHTML(s.opts, s.pack) : ""}
+      <label class="check"><input type="checkbox" id="stsLen" ${s.opts.length === "endless" ? "checked" : ""}> Keep going past the ending</label>
+      ${s.obit ? "" : `<div class="lbl">Danger</div><div class="tabs st-seg">${Object.entries(STORY_DANGER).map(([k, v]) => `<button type="button" class="tab ${dangerOf(s) === k ? "on" : ""}" data-dg="${k}">${v[0]}</button>`).join("")}</div><p class="hint" style="margin:0">${STORY_DANGER[dangerOf(s)][1]}</p>`}`;
     b.querySelectorAll("[data-c]").forEach(x => x.onclick = async () => { s.opts.content = x.dataset.c; await saveChat(); openStoryStats(); });
-    $("stsVore").onchange = async e => { s.opts.vore = e.target.checked; await saveChat(); };
+    b.querySelectorAll("[data-dg]").forEach(x => x.onclick = async () => { s.opts.danger = x.dataset.dg; await saveChat(); openStoryStats(); });
+    voreWhoWire(b, s.opts, async () => { await saveChat(); openStoryStats(); });
+    $("stsVore").onchange = async e => { s.opts.vore = e.target.checked; await saveChat(); openStoryStats(); };
     $("stsLen").onchange = async e => { s.opts.length = e.target.checked ? "endless" : "standard"; await saveChat(); renderChoices(); };
   });
 }
 function renderStoryBar(box) {
   const chat = S.chat, s = chat.story, st = storyState(chat), N = s.chapters.length, ci = Math.min(st.ch, N - 1);
   const done = st.over && s.opts.length !== "endless", chap = s.chapters[ci], k = Math.min(st.step, chap.scenes);
-  box.innerHTML = `<div class="own-row"><span class="own-l">📖 ${done ? "The end" : `Chapter ${ci + 1}: ${esc(chap.t)}`}</span>${done ? "" : `<span class="own-n">${k} / ${chap.scenes}</span>`}<button type="button" class="btn small own-go" id="stStats">📜 Stats</button></div>${traitBars(st.pairs)}`;
+  const died = s.obit ? "🪦 Run ended" : chat.messages.filter(m => m.role !== "image").at(-1)?.dead ? "🪦 You died" : "";
+  box.innerHTML = `<div class="own-row"><span class="own-l">${died || `📖 ${done ? "The end" : `Chapter ${ci + 1}: ${esc(chap.t)}`}`}</span>${done || died ? "" : `<span class="own-n">${k} / ${chap.scenes}</span>`}<button type="button" class="btn small own-go" id="stStats">📜 Stats</button></div>${traitBars(st.pairs)}`;
   traitSlide(box, st.pairs, chat.id + ":st");
   $("stStats").onclick = () => openStoryStats();
 }
@@ -9168,7 +9288,7 @@ function ownPersona(chat = S.chat) {
   const o = chat.own || {};
   return { id: "own:" + (chat.id || ""), own: true, name: o.name || "You", description: chat.own ? pgDesc(o) : "", color: o.color || (S.personas.find(p => p.id === chat.personaId) || {}).color || "#6fc3d8" };
 }
-const chatWho = e => e.story ? "📖 " + e.story : e.own || personaName(e.personaId);
+const chatWho = e => e.story ? (e.obit ? "🪦 " : "📖 ") + e.story : e.own || personaName(e.personaId);
 async function crPlan(c, style) {
   const cfg = crOf(c), given = crPairs(cfg.pairs), pins = crPins(cfg.pins), story = style !== "quiz";
   const sys = `You design the character creation that opens a roleplay chat in Lanternroom, an interactive roleplay app, in the spirit of Choice of Games' "Choice of the Dragon": the player's own character is built from multiple-choice answers that fit this bot's setting, so they arrive as someone who belongs there.
