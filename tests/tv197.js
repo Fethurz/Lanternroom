@@ -20,7 +20,7 @@ const open = require("./base.js");
     return { summary: "x", facts: [] }; };
   const { b, pg, errs } = await open({ width: W, json, stream });
   const chk = (m, v) => console.log((v ? "PASS " : "FAIL ") + m);
-  chk("version 1.97 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 97));
+  chk("version 1.97 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1097));
   // the list of stories
   const list = await pg.evaluate(async () => { $(innerWidth >= 780 ? "railStories" : "btnStories").click(); await new Promise(r => setTimeout(r, 300)); return { title: document.querySelector("#sheet .sheet-title, #sheetTitle")?.textContent, packs: [...document.querySelectorAll(".st-pack b")].map(x => x.textContent), bot: !!$("stFromBot") }; });
   chk(`Home → Stories lists Choice of the Dragon and making one from a bot (${list.title})`, /Play a story/.test(list.title || "") && list.packs.includes("Choice of the Dragon") && list.bot);

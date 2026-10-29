@@ -16,7 +16,7 @@ const open = require("./base.js");
     Object.defineProperty(window, "speechSynthesis", { value: { getVoices: () => V, speak: u => { __said.push({ t: u.text, v: u.voice?.name }); setTimeout(() => u.onend && u.onend(), 10); }, cancel: () => {} }, configurable: true });
     window.copyText = async t => { window.__copied = t; return true; };
   });
-  chk("version 1.89 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 89));
+  chk("version 1.89 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1089));
   const press = async (sel, find, type = "touch") => pg.evaluate(async ([sel, find, type]) => {
     const q = [...document.querySelectorAll(sel)].find(x => find ? new RegExp(find).test(x.textContent) : true); if (!q) return "none";
     const r = q.getBoundingClientRect(), o = { bubbles: true, clientX: r.left + 3, clientY: r.top + 3, pointerType: type, button: 0 };

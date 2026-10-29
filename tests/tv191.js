@@ -30,7 +30,7 @@ const open = require("./base.js");
     window.Audio = function (src) { const a = this; this.play = async () => { __said.push({ t: "[audio]", at: Date.now() }); setTimeout(() => a.onended && a.onended(), 250); }; this.pause = () => {}; this.addEventListener = () => {}; };
     window.playKey = async k => { __keys.push(k); __said.push({ t: "[sfx " + k + "]" }); return { dur: 0.05, done: new Promise(r => setTimeout(r, 30)), stop() {} }; };
   });
-  chk("version 1.91 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 91));
+  chk("version 1.91 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1091));
   // stutters
   const st = await pg.evaluate(() => ["A-and you are?", "S-sorry.", "D-don't go", "C-Can you?", "I-I'm fine", "W-w-wait", "Ex-excuse me", "no-no", "T-shirt"].map(t => speakable(t, false)));
   chk(`stutters start the real word's sound and break off (${st.join(" | ")})`, st[0] === "And— and you are?" && st[1] === "Sor— sorry." && st[2] === "Don't— don't go" && st[3] === "Can— can you?" && st[4] === "I— I'm fine" && st[5] === "Wait— wait— wait" && st[6] === "Ex— excuse me" && st[7] === "no no" && st[8] === "T-shirt");

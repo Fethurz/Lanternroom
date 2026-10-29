@@ -19,7 +19,7 @@ const open = require("./base.js");
   const idle = () => pg.evaluate(async () => { while (COMM_BUSY || DM_BUSY || ROOM_BUSY) await new Promise(r => setTimeout(r, 50)); });
   await pg.evaluate(async () => { await commLoad(); }); await idle(); await pg.evaluate(async () => { await commTick(true); }); await idle();
   await pg.evaluate(() => { window.commTick = async () => {}; });
-  chk("version 1.81 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 81));
+  chk("version 1.81 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1081));
 
   // made-up history: bots with chats this year and last year, badges, counters, a public bot with fans and comments, DMs
   const setup = await pg.evaluate(async () => {

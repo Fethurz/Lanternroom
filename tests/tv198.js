@@ -22,7 +22,7 @@ const open = require("./base.js");
   const { b, pg, errs, calls } = await open({ width: W, json, stream: () => { const x = Q.shift() || {}; return (x.text || "*The scene goes on.*") + tag(x); } });
   const chk = (m, v) => console.log((v ? "PASS " : "FAIL ") + m);
   const send = async (x, text = "go on") => { Q.push(x); const n = await pg.evaluate(() => S.chat.messages.length); await pg.fill("#input", text); await pg.evaluate(() => send()); await pg.waitForFunction(k => S.chat.messages.length >= k + 2 && !S.busy, n, { timeout: 15000 }).catch(() => {}); await pg.waitForTimeout(400); };
-  chk("version 1.98 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 98));
+  chk("version 1.98 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1098));
 
   // ---------- 1. choices
   await pg.evaluate(async () => { S.chars[0].choices = true; await openChat(S.chars[0].id); });

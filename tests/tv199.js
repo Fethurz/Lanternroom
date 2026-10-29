@@ -16,7 +16,7 @@ const open = require("./base.js");
     return { summary: "x", facts: [] }; };
   const { b, pg, errs } = await open({ width: W, json, stream });
   const chk = (m, v) => console.log((v ? "PASS " : "FAIL ") + m);
-  chk("version 1.99 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 99));
+  chk("version 1.99 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1099));
 
   // ---------- risky choices
   const tk = await pg.evaluate(() => [takeChoices("x\n[[choices: a ;; b [risky] ;; c [risky]]]").list, takeChoices("[[choices: a (risky) ;; b ;; c - risky]]").list, takeChoices("y [[choices: a ;; b [risky]]] z").text]);

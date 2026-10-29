@@ -25,7 +25,7 @@ const open = require("./base.js");
     // burps: a recording that takes 400 ms
     window.playKey = async k => { const at = performance.now(); let fin; const done = new Promise(r => fin = r); __said.push({ t: "[sfx " + k + "]", at }); setTimeout(() => { __said.push({ t: "[sfx end]", at: performance.now() }); fin(); }, 400); return { dur: 0.4, done, stop() {} }; };
   });
-  chk("version 1.86 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 86));
+  chk("version 1.86 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1086));
 
   // ---------- tildes
   const tl = await pg.evaluate(() => ({ hi: untilde("hi~"), pl: untilde("please~"), so: untilde("so~~"), hm: untilde("Hmm~"), you: untilde("love you~♡"), lone: untilde("okay ~ fine"), dar: untilde("darling~") }));

@@ -9,7 +9,7 @@ const open = require("./base.js");
   const cart = [];
   await pg.route("https://api.cartesia.ai/**", r => { cart.push(JSON.parse(r.request().postData() || "{}")); return r.fulfill({ status: 200, body: wav, headers: { "content-type": "audio/wav" } }); });
   const chk = (m, v) => console.log((v ? "PASS " : "FAIL ") + m);
-  chk("version 1.96 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 96));
+  chk("version 1.96 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1096));
   const r = await pg.evaluate(async () => {
     Object.assign(S.settings, { voiceOn: true, voiceEngine: "cartesia", cartKey: "k" }); await openChat(S.chars[0].id); S.chars[0].voice = { cart: "v1" };
     const run = async text => { VQ.span = null; VQ.cache.clear(); voiceSay([{ text, who: S.chars[0] }]); for (let i = 0; i < 200 && !VQ.span; i++) await new Promise(r => setTimeout(r, 10)); const s = VQ.span; voiceStop(); return s; };

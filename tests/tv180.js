@@ -22,7 +22,7 @@ const open = require("./base.js");
   await pg.evaluate(async () => { await commTick(true); }); await idle();
   // bans and quitting take people offline; the test's stand-in for "online" has to know that too
   await pg.evaluate(() => { window.commTick = async () => {}; window.onNow = (u, t = Date.now()) => !!u && !blocked(u.id) && !asleepAt(u, t) && !isBanned(u, t) && !(u.offUntil && t >= u.offFrom && t < u.offUntil); for (const u of COMM.users) { const h = Math.floor(localHour(u)); u.sleep = [(h + 8) % 24, (h + 10) % 24]; } });
-  chk("version 1.80 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 80));
+  chk("version 1.80 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1080));
 
   // ---------- the staff
   const st = await pg.evaluate(() => ({ n: STAFF.length, found: !!userOf("staff_wick"), inCrowd: COMM.users.some(u => u.staff), pick: pickUsers(50).some(u => u.staff), lounges: loungeList().some(r => roomCast(r.id).some(u => u.staff)) }));

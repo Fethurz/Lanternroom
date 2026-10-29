@@ -20,7 +20,7 @@ const open = require("./base.js");
     Object.defineProperty(window, "speechSynthesis", { value: { getVoices: () => V, speak: u => { __said.push({ t: u.text, v: u.voice?.name, p: u.pitch, r: u.rate }); setTimeout(() => u.onend && u.onend(), 5); }, cancel: () => { __cancel++; } }, configurable: true });
     window.Audio = function (src) { this.src = src; this.play = async () => { __said.push({ t: "[audio]", src }); setTimeout(() => this.onended && this.onended(), 5); }; this.pause = () => {}; this.addEventListener = () => {}; this.removeEventListener = () => {}; };
   });
-  chk("version 1.84 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 84));
+  chk("version 1.84 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1084));
   chk("voices are off until switched on; the Cartesia key never leaves the device", await pg.evaluate(() => !voiceOn() && LOCAL_ONLY.includes("cartKey") && !("cartKey" in stripLocal({ cartKey: "x", a: 1 }))));
 
   // ---------- Settings → Sounds → Voices

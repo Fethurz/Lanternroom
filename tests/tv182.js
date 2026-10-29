@@ -21,7 +21,7 @@ const open = require("./base.js");
   const idle = () => pg.evaluate(async () => { while (COMM_BUSY || DM_BUSY || ROOM_BUSY) await new Promise(r => setTimeout(r, 50)); });
   await pg.evaluate(async () => { await commLoad(); }); await idle(); await pg.evaluate(async () => { await commTick(true); }); await idle();
   await pg.evaluate(() => { window.commTick = async () => {}; for (const u of COMM.users) { const h = Math.floor(localHour(u)); u.sleep = [(h + 8) % 24, (h + 10) % 24]; } });
-  chk("version 1.82 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 82));
+  chk("version 1.82 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1082));
   const pump = () => pg.evaluate(async () => { while (DM_BUSY) await new Promise(r => setTimeout(r, 30)); await dmPump(); while (DM_BUSY) await new Promise(r => setTimeout(r, 30)); });
   const U = await pg.evaluate(() => COMM.users[3].id);
 

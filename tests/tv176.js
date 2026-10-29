@@ -20,7 +20,7 @@ const open = require("./base.js");
   const chk = (m, v) => console.log((v ? "PASS " : "FAIL ") + m);
   const idle = () => pg.evaluate(async () => { while (COMM_BUSY || DM_BUSY) await new Promise(r => setTimeout(r, 50)); });
   await pg.evaluate(async () => { await commLoad(); }); await idle(); await pg.evaluate(async () => { await commTick(true); }); await idle();
-  chk("version 1.76 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 76));
+  chk("version 1.76 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1076));
 
   // ---------- 1. DMs answer
   const t1 = await pg.evaluate(() => {

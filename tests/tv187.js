@@ -18,7 +18,7 @@ const open = require("./base.js");
     Object.defineProperty(window, "speechSynthesis", { value: { getVoices: () => V, speak: u => { __said.push({ t: u.text }); setTimeout(() => u.onend && u.onend(), 10); }, cancel: () => {} }, configurable: true });
     const A = window.Audio; window.Audio = function (src) { const a = this; this.play = async () => { __said.push({ t: "[audio]" }); setTimeout(() => a.onended && a.onended(), 10); }; this.pause = () => {}; this.addEventListener = () => {}; };
   });
-  chk("version 1.87 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 87));
+  chk("version 1.87 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1087));
 
   // ---------- names
   const nm = await pg.evaluate(async () => {

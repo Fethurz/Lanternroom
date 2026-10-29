@@ -14,7 +14,7 @@ const open = require("./base.js");
     window.speechSynthesis && Object.defineProperty(window, "speechSynthesis", { value: { getVoices: () => [], speak: u => setTimeout(() => u.onend && u.onend(), 5), cancel: () => {} }, configurable: true });
     window.Audio = function () { const a = this; this.play = async () => { setTimeout(() => a.onended && a.onended(), 60); }; this.pause = () => {}; this.addEventListener = () => {}; };
   });
-  chk("version 1.92 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 92));
+  chk("version 1.92 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1092));
   await pg.evaluate(async () => { Object.assign(S.settings, { voiceOn: true, voiceAuto: false, voiceEngine: "cartesia", cartKey: "k" }); S.chars[0].voice = { cart: "v1" }; await saveSettings(); await openChat(S.chars[0].id); });
   await pg.waitForTimeout(300);
   await pg.evaluate(async () => { $("input").value = "hi"; $("send").click(); for (let i = 0; i < 200 && (S.busy || !S.chat.messages.some(x => /Get out/.test(x.content || ""))); i++) await new Promise(r => setTimeout(r, 50)); });

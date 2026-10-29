@@ -22,7 +22,7 @@ const open = require("./base.js");
   const pump = () => pg.evaluate(async () => { while (ROOM_BUSY) await new Promise(r => setTimeout(r, 30)); await roomPump(); while (ROOM_BUSY) await new Promise(r => setTimeout(r, 30)); });
   await pg.evaluate(async () => { await commLoad(); }); await idle(); await pg.evaluate(async () => { await commTick(true); }); await idle();
   await pg.evaluate(async () => { await commTick(true); }); await idle();
-  chk("version 1.79 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 79));
+  chk("version 1.79 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1079));
   // keep the 3-minute heartbeat out of the way
   await pg.evaluate(() => { window.commTick = async () => {}; });
 

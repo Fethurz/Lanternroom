@@ -19,7 +19,7 @@ const open = require("./base.js");
     Object.defineProperty(window, "speechSynthesis", { value: { getVoices: () => V, speak: u => { __said.push({ t: u.text, p: u.pitch, r: u.rate, v: u.volume }); setTimeout(() => u.onend && u.onend(), 5); }, cancel: () => {} }, configurable: true });
     window.Audio = function (src) { this.play = async () => { __said.push({ t: "[audio]" }); setTimeout(() => this.onended && this.onended(), 5); }; this.pause = () => {}; this.addEventListener = () => {}; };
   });
-  chk("version 1.85 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 85));
+  chk("version 1.85 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1085));
 
   // ---------- coloured thoughts
   const col = await pg.evaluate(() => {

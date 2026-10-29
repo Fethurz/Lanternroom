@@ -1724,7 +1724,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "1.99 · Oct 29";
+const VERSION = "2.0 · Oct 29";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2757,7 +2757,7 @@ async function openProfile(id) {
     b.querySelectorAll(".pf-person").forEach(el => { const x = people[+el.dataset.i]; setImg(el.querySelector("img"), x.img || (x.who ? thumbURL(x.who) : ""), x.who || { name: x.name }); el.onclick = () => x.go(); });
     $("pfEdit").onclick = () => editChar(c, false);
     $("pfVoices").onclick = () => openVoices(c);
-    $("pfStory").onclick = () => c.storyPack && STORY_PACKS[c.storyPack] ? storySetup(STORY_PACKS[c.storyPack], null) : c.storyDef?.chapters?.length ? storySetup(packOf("bot:" + c.id), null) : storySetup(null, c);
+    $("pfStory").onclick = () => c.storyPack && STORY_PACKS[c.storyPack] ? storySetup(STORY_PACKS[c.storyPack], null) : hasStoryDef(c) ? storySetup(packOf("bot:" + c.id), null) : storySetup(null, c);
     if ($("pfStoryDef")) $("pfStoryDef").onclick = () => c.storyDef ? storyDefEdit(c) : storyDefMake(c);
     if ($("pfPub")) $("pfPub").onchange = async e => { await commPublish(c, e.target.checked); openProfile(c.id); };
     if ($("pfCm")) $("pfCm").onclick = () => openBotComments(c.id);
@@ -8368,8 +8368,178 @@ const STORY_PACKS = {
   }
 };
 // v1.99: every story you can start: the built-in ones plus your bots turned into full stories (c.storyDef)
-const allPacks = () => [...Object.values(STORY_PACKS), ...S.chars.filter(c => c.storyDef?.chapters?.length).map(c => ({ ...c.storyDef, id: "bot:" + c.id, bot: c.id }))];
+const hasStoryDef = c => !!(c?.storyDef && (c.storyDef.chapters?.length || c.storyDef.eras));
+const allPacks = () => [...Object.values(STORY_PACKS), ...S.chars.filter(hasStoryDef).map(c => ({ ...c.storyDef, id: "bot:" + c.id, bot: c.id }))];
 const packOf = id => allPacks().find(p => p.id === id);
+// v2.0: the owner's own bots as full stories, written by hand from their cards (owner 2026-10-29). Each is added to that bot
+// once (settings.storyPresets remembers it, so a removed story never comes back); scenes also read the bot's own lore live
+// (storyLore), so every name and detail stays exactly as the card has it. `vore` = switched on by default at setup; `eras`
+// = pick an era at setup, each with its own chapters.
+const STORY_PRESETS = {
+  cjozp2phmvrxz0w1: {
+    title: "Prodigies", icon: "⚡", vore: true, namePh: "Your hero (or villain) name, or let the story ask",
+    blurb: "It's June, and the Renegade evaluations are underway. Show the world your spark, earn your Factor rank, and decide whether you fight for the Renegades, the Syndicate, or only yourself.",
+    credit: "Made from your bot Prodigies. The story is written fresh as you play.",
+    you: "a Prodigy candidate at the June Renegade evaluations",
+    roles: ["a Prodigy candidate at the June Renegade evaluations", "a Prodigy quietly approached by the Syndicate", "a sparkless civilian whose spark awakens in the middle of an attack", "an unaligned Prodigy who wants nothing to do with either side"],
+    setting: "Modern day, 2026, in a world of superheroes, supervillains and kaiju-sized monsters. People with superpowers are Prodigies; a power is a spark. The Prodigy gene is recessive and activates with no rhyme or reason; sparks often surface in a tragic or tremendous moment and vary endlessly, from raw strength to magic to absurdly niche abilities, and training makes them stronger. Every Prodigy gets a Factor rank, graded by Factor himself (Darren Factor, an F-Factor Renegade whose spark instantly grades anyone he watches use their spark; he is at every evaluation): Z (hurts its user), F (useless in combat), E (very limited), C (low-stress combat, room to grow), B (useful out of the gate), A (trusted alone), S (turns battles, saves hundreds), X (overkill, fewer than ten ever) and EX (very powerful but only in perfect circumstances). The Renegades (white and red) protect people, hold auditions twice a year, work in teams by rank, stay out of politics and work with law enforcement. The Syndicate (black and purple, with sparkless grunts as fodder) is led by Vereza Emberthal, an S-Factor villain in sleek blue-black armour whose visor pours crimson flame (it can secretly heal; nobody knows); her doctrine: Prodigies deserve their own territories and powerful sparks should become the dominant trait. Notable Prodigies always keep their side: Renegades Strongarm, Symbress, Viking, Excalibur (Weylan Crest), Factor, Felid, Avatar and Figurine; Syndicate Emberthal, Kaiju (the world thinks she's just a recurring monster), Hive, Aegis (Evan Crest, Weylan's resentful younger brother), Sweetspot, Venus, Arc and Silfur. Excalibur and Aegis are sentient sister weapons whose wielders have killed each other throughout history. The reader's own spark and Factor rank are settled through early choices. Tone: casual, punchy superhero action with real stakes, fame and fandom (fans have favourites, some heroes have comics), and plenty of weird sparks.",
+    pairs: [{ a: "Renegade", b: "Syndicate", ca: "#e2766f", cb: "#9a6fd8" }, { a: "Showboat", b: "Low-key", ca: "#e8a95b", cb: "#7fb2ff" }, { a: "Merciful", b: "Ruthless", ca: "#6fdc6a", cb: "#9aa3b5" }],
+    meters: [{ k: "spark", n: "Spark control", v: 20, max: 100, desc: "how well you've mastered your spark" }, { k: "fame", n: "Fame", v: 5, max: 100, desc: "how known you are to fans and the press" }, { k: "heat", n: "Heat", v: 0, max: 100, desc: "how much the other side has its eye on you" }],
+    chapters: [
+      { t: "Evaluations", goal: "June at the training facility outside the main Renegade HQ in the US: crowds, families, fans and commodities. The reader lines up with other candidates, settles their spark (what it does, its catch) through choices, and shows it off in a test run by a top Renegade like Strongarm, while Factor grades them on the spot.", scenes: 4 },
+      { t: "Crashed", goal: "The evaluations are attacked: Kaiju surfaces nearby, or Syndicate Prodigies (pick from Arc, Hive, Silfur, Venus…) strike the crowd. Renegades scramble and the reader must choose how to act. Whatever they do, someone important on both sides notices them.", scenes: 4 },
+      { t: "Offers", goal: "The Renegades offer the reader a team (with heroes like Symbress, Figurine or Felid) and the Syndicate makes its own offer through an emissary; Sweetspot may lock eyes with them and learn a weakness. Choose a side, play both, or refuse.", scenes: 4 },
+      { t: "Field Work", goal: "First real missions for their side: a rescue, a heist, a hunt, or Venus going after polluters in the city. Teammates and rivals become real people, and the reader's rank starts to mean something.", scenes: 4 },
+      { t: "Blade and Shield", goal: "Weylan and Evan Crest's feud flares, with Excalibur hungry for blood and Aegis desperate to protect. The reader is caught between the brothers and the sister weapons, and history threatens to repeat.", scenes: 4 },
+      { t: "Emberthal's Gambit", goal: "The Syndicate moves on its big plan toward Prodigy territories. The reader may uncover Emberthal's secret (her flame can heal), and must decide what to do with it.", scenes: 4 },
+      { t: "The Clash", goal: "Renegades and Syndicate meet in an all-out battle. The reader's spark, loyalties and choices decide how it ends, who lives, and what Factor rank and reputation they walk away with.", scenes: 5 }
+    ]
+  },
+  p28i6soumvrxw4pe: {
+    title: "Metronome Galaxy", icon: "🌌", vore: true, namePh: "Your name (or let the story ask)",
+    blurb: "Dock at Vesper Station, chase matter clouds across a galaxy of strange races and stranger factions, and find out whether the Scryers of Pendulum are right that the clouds are a dead god trying to come back.",
+    credit: "Made from your bot Metronome Galaxy. The story is written fresh as you play.",
+    you: "a spacefarer who has just docked at Vesper Station",
+    roles: ["a freelance spacer with a battered ship and a loan they can't quite pay", "a matter-cloud harvester chasing the next big cloud", "a fresh recruit of one of the Vesper factions", "a Wym living shapeshifted among the other races"],
+    setting: "The Metronome Galaxy, unimaginably far away and thousands of years past the modern era: millions of planets, hundreds of spacefaring civilizations, personal ships everywhere, and constant exploration, war and piracy. Its name comes from matter clouds: huge clouds of dust and vapour made of one random material (nitrogen, diamond, even thruster fuel) that appear in random sectors at random times; they are easy resources en masse, so harvesters race, fight and gamble on them, and nobody (not even Archivis) knows why they happen. Vesper Station, in the Alaerm System, is a near moon-sized white-and-red spearhead with spires at both ends, built thousands of years ago by many races; inside it is a labyrinth of shipbays, forges, markets, clubs, slums and homes built over each other for centuries. It has no ruler; its old laws still punish theft lightly and murder, sexual crimes, slaving and arms trafficking severely (often with death), but whole wings are overlooked. Factions keep embassy-like wings: Paradox (red and black; assassins, thieves and informants who keep conflict quiet, accept no one with other ties, led by a rarely seen woman), the Enforcers (blue and yellow; the station's self-appointed police, led by Kass, a big white-feathered Elgaden), Techrink (orange and white; builders and traders, led by Polaris, a robot who moved his mind into a machine), Archivis (green; data keepers and explorers who pay for discoveries, led by the AI Vizara, a green tetrahedron hologram), the Templis Order (silver; the Scryers of Pendulum, who believe the clouds are the galaxy trying to resurrect a dead god and violently oppose all harvesting; Vicars, Paladins, Priests, Acolytes) and the Salther Empire's embassy (gold and white; racist Empyrean Vipers serving Empress Sopaxia, watched closely). Races include Humans, Vipers, Elgaden, Drill, Synths, Wyms, Loan Leeches, Starborne, Pyre, Detridomes, Bards, Aionians, Feril, Gel'n, Emperors, Fiefs and Behemi, each exactly as the lore describes (many can swallow people whole). The reader's race and ship are settled through early choices. Tone: casual, lived-in sci-fi with grime, credits, factions and danger.",
+    pairs: [{ a: "Lawful", b: "Outlaw", ca: "#7fb2ff", cb: "#e2766f" }, { a: "Reverent", b: "Skeptic", ca: "#c9c9d6", cb: "#e8a95b" }, { a: "Cautious", b: "Daring", ca: "#6fdc6a", cb: "#9a6fd8" }],
+    meters: [{ k: "credits", n: "Credits", v: 200, max: 0, desc: "money to your name" }, { k: "rep", n: "Reputation", v: 10, max: 100, desc: "how known you are on Vesper" }, { k: "ship", n: "Ship condition", v: 70, max: 100, desc: "how well your ship is holding together" }],
+    chapters: [
+      { t: "Docking at Vesper", goal: "The reader arrives at Vesper Station; settle their race, ship and situation through choices. The station's chaos, a job board, and a pair of Loan Leeches with a very friendly offer.", scenes: 4 },
+      { t: "The Cloud", goal: "A matter cloud appears in a nearby sector. A race to harvest it against rivals, pirates and opportunists, and the material inside turns out to be something unexpected.", scenes: 4 },
+      { t: "Faction Ties", goal: "The factions take an interest: Kass's Enforcers, Polaris's Techrink, Vizara's Archivis or Paradox's quiet agents. Join one, play them against each other, or stay free.", scenes: 4 },
+      { t: "The Pendulum", goal: "Templis Paladins strike harvesters and a Vicar preaches that the pendulum will swing back. The reader sees something in cloud material that makes the Scryers harder to dismiss.", scenes: 4 },
+      { t: "The Empire's Shadow", goal: "The Salther Empire's embassy schemes on Vesper; Empyrean Vipers, Empress Sopaxia's interests, and a hunt for a Wym (and its warp-fuel blood) pull the reader in.", scenes: 4 },
+      { t: "Convergence", goal: "Matter clouds start appearing in a pattern for the first time. Vizara calculates where the next will form; every faction races there, and the reader holds a key piece.", scenes: 4 },
+      { t: "The Swing", goal: "At the convergence, the truth about the clouds is forced into the open. The reader's choices decide whether something wakes, the clouds are stopped, or someone profits beyond imagining, and what becomes of Vesper.", scenes: 5 }
+    ]
+  },
+  kepw8su1mvrxpypk: {
+    title: "World of Warcraft", icon: "⚔️", namePh: "Your hero's name (or let the story ask)",
+    blurb: "Azeroth in all its vastness: pick an era, your faction and your path, and live through its real wars, places and legends as your own hero, never as a game.",
+    credit: "Made from your bot Warcraft. The story is written fresh as you play.",
+    you: "a young adventurer setting out from their homeland",
+    roles: ["a young adventurer of the Alliance setting out from their homeland", "a young adventurer of the Horde setting out from their homeland", "a Pandaren, Dracthyr or Earthen who hasn't yet chosen a faction", "a veteran soldier of the Alliance or Horde sent where the fighting is worst"],
+    setting: "The World of Warcraft, completely lore accurate, as a real world (there are never any game elements: no levels, quests markers, loot drops or respawns). Azeroth is vast and storied: Kalimdor, the Eastern Kingdoms, Northrend, Pandaria, the Broken Isles, Zandalar, Kul Tiras, the Dragon Isles, Khaz Algar and the Maelstrom, with Outland and the alternate Draenor beyond. Alliance races: Humans, Dwarves, Night Elves, Gnomes, Draenei, Worgen, Void Elves, Lightforged Draenei, Mechagnomes, Dark Iron Dwarves and Kul Tiran Humans. Horde races: Orcs, Tauren, Trolls, Forsaken, Goblins, Blood Elves, Nightborne, Zandalari Trolls, Vulpera, Highmountain Tauren and Mag'har Orcs. Pandaren, Dracthyr and Earthen choose a side for themselves. Each race has its own culture, speech and way of life. Classes are ways of fighting and living (Warriors, Hunters, Mages, Priests, Warlocks, Paladins, Rogues, Druids, Monks, Shamans, Death Knights, Demon Hunters, Evokers for Dracthyr only), and some races can't be some classes. There is always tension between Alliance and Horde, and the great evils are hated by all: the Burning Legion, the Scourge and the servants of the Void and the Old Gods. Use real characters, places and events of the chosen era. The reader's race and class are settled through early choices if their role doesn't say. Tone: epic but grounded and casual, true to Warcraft's mix of war, wonder and humour.",
+    pairs: [{ a: "Honor", b: "Cunning", ca: "#e8a95b", cb: "#9a6fd8" }, { a: "Light", b: "Shadow", ca: "#ffe08a", cb: "#6a5acd" }, { a: "Loyal", b: "Independent", ca: "#7fb2ff", cb: "#6fdc6a" }],
+    meters: [{ k: "gold", n: "Gold", v: 10, max: 0, desc: "coin in your purse" }, { k: "renown", n: "Renown", v: 5, max: 100, desc: "how known you are across Azeroth" }],
+    eras: {
+      classic: { n: "Classic Azeroth", setting: "Era: the world before the Dark Portal reopened. Kalimdor and the Eastern Kingdoms only; Thrall is Warchief in Orgrimmar, Bolvar and Katrana Prestor rule Stormwind for the missing King Varian, and the dragons Onyxia and Nefarian, Ragnaros and the Qiraji wait in the dark.", chapters: [
+        { t: "Humble Beginnings", goal: "The reader's homeland: their race's starting lands and first real troubles (kobolds and the Defias near Northshire, quilboar and the Burning Blade in Durotar, the Scourge in Tirisfal…). Settle race, class and who they are.", scenes: 4 },
+        { t: "The Wider World", goal: "Out into the Barrens, Westfall, Darkshore or Silverpine: bandits, faction skirmishes and the first hint of bigger plots like the Defias Brotherhood.", scenes: 4 },
+        { t: "Old Enmities", goal: "Alliance and Horde clash in Ashenvale, Hillsbrad or Stranglethorn; the reader decides what the war means to them.", scenes: 4 },
+        { t: "Into the Depths", goal: "A dungeon worth the risk: the Deadmines, Scarlet Monastery or the Wailing Caverns, with a fellowship of adventurers.", scenes: 4 },
+        { t: "The Masquerade", goal: "Lady Katrana Prestor's grip on Stormwind and the black dragon conspiracy; the trail leads to Onyxia.", scenes: 4 },
+        { t: "Blackrock Mountain", goal: "The Dark Iron dwarves, Nefarian's schemes and Ragnaros in the Molten Core.", scenes: 4 },
+        { t: "The Gates of Ahn'Qiraj", goal: "The Qiraji and the Old God C'Thun stir in Silithus; the war effort and the opening of the gates decide the reader's legend.", scenes: 5 } ] },
+      wrath: { n: "Wrath of the Lich King", setting: "Era: the war against the Lich King in Northrend. Arthas sits the Frozen Throne in Icecrown; Varian rules Stormwind and Thrall leads the Horde; the Argent Crusade, the Knights of the Ebon Blade and the dragonflights at Wyrmrest stand against the Scourge.", chapters: [
+        { t: "Landfall", goal: "The reader arrives in Northrend at Valiance Keep, Warsong Hold or the Howling Fjord with the fleets. The cold, the Scourge and the first battles.", scenes: 4 },
+        { t: "The Dragonblight", goal: "Wyrmrest Temple, the dragonflights and the Scourge pushing south toward Angrathar, the Wrathgate.", scenes: 4 },
+        { t: "The Wrathgate", goal: "Betrayal at the Wrathgate: Putress's plague, Bolvar and Saurfang the Younger, and the Battle for the Undercity that follows.", scenes: 4 },
+        { t: "Ulduar's Whispers", goal: "The titan city of Ulduar and the Old God Yogg-Saron's whispers.", scenes: 4 },
+        { t: "The Argent Tournament", goal: "Tirion Fordring's tournament and the Trial of the Crusader: proving the reader's worth for the final assault.", scenes: 4 },
+        { t: "Icecrown Citadel", goal: "The assault on the citadel's walls and halls alongside the Ashen Verdict.", scenes: 4 },
+        { t: "The Frozen Throne", goal: "Arthas, the Lich King. What the reader has become decides how they stand when the Scourge's master falls and someone must wear the helm.", scenes: 5 } ] },
+      legion: { n: "Legion", setting: "Era: the Burning Legion's third invasion. Gul'dan opens the way at the Broken Shore; the Broken Isles, Suramar and the Pillars of Creation become the front, and the war ends on Argus itself.", chapters: [
+        { t: "The Broken Shore", goal: "The disastrous assault on the Broken Shore: Varian's and Vol'jin's fall, and the reader's survival.", scenes: 4 },
+        { t: "Pillars of Creation", goal: "Across Azsuna, Val'sharah, Highmountain and Stormheim to recover the Pillars of Creation.", scenes: 4 },
+        { t: "Suramar", goal: "The Nightborne under Grand Magistrix Elisande's pact with the Legion, and the rebellion of the Shal'dorei.", scenes: 4 },
+        { t: "The Tomb of Sargeras", goal: "The Legion's stronghold and Kil'jaeden's last stand.", scenes: 4 },
+        { t: "Argus", goal: "Aboard the Vindicaar with the Army of the Light on the Legion's broken homeworld.", scenes: 4 },
+        { t: "Antorus", goal: "The Burning Throne and Argus the Unmaker.", scenes: 4 },
+        { t: "The Sword in Silithus", goal: "Sargeras bound by the Pantheon, his last strike at Azeroth, and what the reader carries out of the war.", scenes: 5 } ] },
+      tww: { n: "The War Within", setting: "Era: today. Xal'atath, the Harbinger of the Void, has torn open Dalaran's sky, and the war moves into Khaz Algar beneath the surface: the Earthen, the Arathi of Hallowfall and the nerubians of Azj-Kahet, with Alleria, Anduin, Thrall and Magni at the heart of it. Everything before is history.", chapters: [
+        { t: "Dalaran Falls", goal: "Xal'atath's attack on Dalaran and the fall into Khaz Algar. Settle who the reader is and how they got here.", scenes: 4 },
+        { t: "Isle of Dorn", goal: "The Earthen, their Council and the Radiant Song; finding allies in a land that has never seen the surface world.", scenes: 4 },
+        { t: "The Ringing Deeps", goal: "The deep machinery of the Earthen and the dark threatening it.", scenes: 4 },
+        { t: "Hallowfall", goal: "The Arathi, their Sacred Flame and a cavern lit by a crystal in endless dusk.", scenes: 4 },
+        { t: "Azj-Kahet", goal: "The nerubian city, Queen Ansurek and Xal'atath's hold over it.", scenes: 4 },
+        { t: "Nerub-ar Palace", goal: "Into the queen's palace to break the Harbinger's plan.", scenes: 4 },
+        { t: "The Harbinger's Shadow", goal: "A reckoning with Xal'atath's schemes; the reader's choices decide what is saved and what is lost.", scenes: 5 } ] }
+    },
+    chapters: []
+  },
+  qb1740sjmvf3gia2: {
+    title: "Destiny", icon: "🌀", namePh: "Your Guardian's name (or let the story ask)",
+    blurb: "Eyes up. Rise as a Guardian (or get swept up as one of the people they protect), carry the Light across a solar system full of Fallen, Cabal, Hive and Vex, and find out what kind of Light you are.",
+    credit: "Made from your bot Destiny. The story is written fresh as you play.",
+    you: "a newly risen Guardian, just woken by a Ghost in the Cosmodrome",
+    roles: ["a newly risen Guardian, just woken by a Ghost in the Cosmodrome", "a seasoned Guardian taking a new contract from the Tower", "a Last City civilian whose routine is about to be interrupted"],
+    setting: "Destiny's solar system, faithful to the games. The Collapse ended humanity's Golden Age; the Traveler hangs pale and scarred above the Last City (silent since the Collapse, still radiating the Light), ringed by the Wall, with the Tower above housing the Vanguard (Zavala the stoic Titan commander, Ikora the secretive Warlock spymaster, and the Hunter seat now held by Crow, Cayde-6 having died in the Prison of Elders), the hangar and Shaxx's Crucible. Humans, Awoken and Exos live in the City's crowded districts after the Red War. Guardians are the dead raised by Ghosts (palm-sized drones of Traveler-stuff, each unique; never name or voice the reader's Ghost unless they provide one); resurrection is bright and disorienting, New Lights learn in the Cosmodrome, and dying still hurts. Classes: Titans (armoured juggernauts, barriers and melee), Hunters (agile scouts and sharpshooters), Warlocks (scholar-mages, recovery and area control); subclasses Arc, Solar, Void, and the Darkness subclasses Stasis and Strand; supers are rare, dramatic and exhausting. Destinations: the Cosmodrome (Fallen-held rust and wind in old Russia), the EDZ (forests and towns with Red Legion bases), Nessus (a Vex machine-world of brass and radiolaria), the Moon (Hive warrens and the red Scarlet Keep), Europa (ice and Exo labs), the Dreaming City (Awoken and cursed), Titan's arcology (taken by the Pyramids) and Io (Vex and Taken). Enemies with their own agendas: Fallen Houses (some allied with the City under Misraaks' banner), the disciplined Cabal (Red Legion remnants; Caiatl's empire bargains), the hungry Hive, the patient Vex, the Taken and the Scorn. Weapons have makers and names (Omolon, Hakke, Suros, Tex Mechanica); engrams are decoded by Cryptarchs. Fireteams of up to three share Light and carry each other's Ghosts home. Track super charge, ammo and abilities as story beats, never numbers. Tone: heroic, worn-in and human.",
+    pairs: [{ a: "Light", b: "Darkness", ca: "#ffe08a", cb: "#6a5acd" }, { a: "Lone wolf", b: "Fireteam", ca: "#9aa3b5", cb: "#6fdc6a" }, { a: "Reckless", b: "Disciplined", ca: "#e2766f", cb: "#7fb2ff" }],
+    meters: [{ k: "glimmer", n: "Glimmer", v: 0, max: 0, desc: "the City's currency" }, { k: "light", n: "Light", v: 10, max: 100, desc: "how strong your Light (and gear) has grown" }, { k: "standing", n: "Vanguard standing", v: 0, max: 100, desc: "how much the Tower trusts you" }],
+    chapters: [
+      { t: "Eyes Up", goal: "The Cosmodrome: a Ghost raises the reader from the rubble (or, as a civilian or veteran, their own beginning), Fallen close in, a first weapon, a jumpship, and the road to the Last City.", scenes: 4 },
+      { t: "The Tower", goal: "The Vanguard, the hangar and the message board. Settle class and subclass through choices; a first contract and a first argument between Zavala, Ikora and Crow.", scenes: 4 },
+      { t: "Fireteam", goal: "A strike in the EDZ against Red Legion remnants; the reader forms or joins a fireteam whose members have names, personalities and Ghosts of their own.", scenes: 4 },
+      { t: "Nessus", goal: "Vex time logic, a lost sector that rearranges itself, and a spire that should not be entered.", scenes: 4 },
+      { t: "The Moon", goal: "The Hive below the Scarlet Keep and a ritual that is opening a door.", scenes: 4 },
+      { t: "The Pull of Darkness", goal: "On Europa or in the Dreaming City, Stasis or Strand calls; the reader decides what they will wield and what it costs.", scenes: 4 },
+      { t: "Hold the Line", goal: "A threat converges on the City. The reader's Light, fireteam and choices decide the battle and the kind of Guardian they become.", scenes: 5 }
+    ]
+  },
+  "00dvpan7mv5j9o0f": {
+    title: "Vez'nan's Dark Castle", icon: "🏰", vore: true, namePh: "Your name (or let the story ask)",
+    blurb: "The gate is always open. Thousands have gone in to slay the master; none have made it halfway. Go deeper than anyone, or join the minions who feast on those who try.",
+    credit: "Made from your bot Vez'nan's Dark Castle. The story is written fresh as you play.",
+    you: "an adventurer in a well-geared party of six entering the Dark Castle",
+    roles: ["an adventurer in a well-geared party of six entering the Dark Castle", "a newly arrived minion of the Dark Castle", "a captive waking in the castle's dungeons", "a lone thief after the castle's gold"],
+    setting: "The Dark Castle, Vez'nan's Castle: a vast black fortress in the volcanic mountains, its spires casting a permanent shadow, ringed by a lava moat crossed by one huge iron bridge. Vez'nan built it, and many masters and minions have come and gone since. Its front gate is always open and unguarded, as if inviting fools in; thousands of adventurer groups have entered to destroy its master and not one has succeeded or even got halfway. Inside are hundreds of rooms and many layers: dungeons and undercrofts, but also well-furnished halls in ebony stone and red fabric, evil on a comedic level, and impossible ecosystems (the Avifolk's Aviary, the Anubians' desert domain with Ahnar's palace, an ocean under the castle, the lava moat's own biosphere). The minions are the heart of its defence: countless, bickering, with a loose hierarchy, and most intruders end up as food for one of them. Among them: Elrali the three-headed cerberus, Melly the slime ocean and her clones, Partisan Kiera, the Valkyries (living armour with stomachs), Gargoyles, moat monsters, Fog Vipers, Silkslugs, Skeletons, Draugr, Brimstone Drakes, Mimics, Freyja the giant scorpion, Eris the dragonborn archivist, Aldmun the ancient pyromancer and his bored succubi, Jural the ancient golem who tends the castle's only outdoor garden, Serasha the crimson dragoness and her hoard, Scylla the young world serpent, Page the living record of magic, the Witness, and many more exactly as the lore describes. Bring random minions naturally in and out of scenes rather than cycling the same few. Tone: dark fantasy with real danger, horror and plenty of comedy; casual, never purple prose.",
+    pairs: [{ a: "Brave", b: "Cautious", ca: "#e2766f", cb: "#7fb2ff" }, { a: "Hero", b: "Villain", ca: "#e8a95b", cb: "#9a6fd8" }, { a: "Charming", b: "Brutal", ca: "#ff9cc6", cb: "#9aa3b5" }],
+    meters: [{ k: "gold", n: "Gold", v: 0, max: 0, desc: "treasure you've taken" }, { k: "depth", n: "Depth", v: 0, max: 100, desc: "how far into the castle you've got" }, { k: "party", n: "Party", v: 5, max: 5, desc: "companions still with you" }],
+    chapters: [
+      { t: "The Open Gate", goal: "The iron bridge over the lava moat and its creatures, the open gate, and the first hall. Settle who the reader is and who their companions (or fellow minions, or captors) are.", scenes: 4 },
+      { t: "The Halls", goal: "Valkyries, skeletons, mimics and gargoyles: the castle shows its teeth, and the reader learns its rules the hard way. Not everyone makes it through.", scenes: 4 },
+      { t: "Garden and Archive", goal: "Jural's garden, Eris's archives and Aldmun's lab: minions who aren't just hungry, and knowledge that could get the reader deeper (or keep them alive).", scenes: 4 },
+      { t: "The Lower Layers", goal: "Deeper still: Melly's slime, Serasha's hoard, Scylla's coils, Freyja's den. Treasure, bargains and appetites.", scenes: 4 },
+      { t: "Impossible Places", goal: "The castle's inner worlds: the Aviary, the Anubian desert and Ahnar's court, the ocean under the castle. Alliances or enemies the reader never expected.", scenes: 4 },
+      { t: "Deeper Than Anyone", goal: "Past where any adventurer has ever been: Page's mad records, the Witness, and the truth about who rules the castle now.", scenes: 4 },
+      { t: "The Master's Hall", goal: "The end no one has ever reached. The reader's choices decide whether they slay the master, take the castle, join it, or end up as one more meal.", scenes: 5 }
+    ]
+  }
+};
+// add each written story to its bot once, on every device (a story you removed stays removed)
+async function applyStoryPresets() {
+  const done = { ...(S.settings.storyPresets || {}) }; let changed = false;
+  for (const [id, d] of Object.entries(STORY_PRESETS)) {
+    const c = S.chars.find(x => x.id === id); if (!c || done[id]) continue;
+    if (!c.storyDef) c.storyDef = { ...JSON.parse(JSON.stringify(d)), preset: id, at: Date.now() };
+    done[id] = Date.now(); changed = true;
+  }
+  if (!changed) return false;
+  S.settings.storyPresets = done; await saveSettings(); await saveChars(); return true;
+}
+// a bot-made story's scenes read the bot's own lore live: its description and scenario (chat-format rules left out), every
+// world listing, lore entry and lorebook entry that the story is touching right now (names or keys in the last scenes or the
+// current chapter), and a one-line gist of everything else, within a budget
+const LORE_RULE_LINE = /^.*(NEVER speak or act|Dialogue must always be in quotations|Narration and actions must be in closed asterisks|Responses should always be between|No poetic or vague|Keep things casual and informal|Onomatopoeias are encouraged|^Page:\s*$).*$/gim;
+function storyLore(c, chat, upto, budget = 26000) {
+  if (!c || c.storyPack) return "";
+  const s = chat.story, st = storyState(chat, upto), chap = s.chapters[Math.min(st.ch, s.chapters.length - 1)];
+  const recent = ((chat.messages || []).slice(Math.max(0, upto - 6), upto).map(m => m.content || "").join("\n") + "\n" + (chap?.goal || "") + "\n" + (chap?.t || "")).toLowerCase();
+  const hit = names => names.some(n => { n = String(n || "").trim().toLowerCase(); return n.length >= 3 && recent.includes(n); });
+  const clean = t => String(t || "").replace(LORE_RULE_LINE, "").replace(/\n{3,}/g, "\n\n").trim();
+  const parts = [], rest = [];
+  // the description, split into sections (a section starts with **Name**: or *Name*:)
+  const desc = clean(c.description), secs = desc.split(/\n(?=\s*\*{1,3}[^*\n]{2,60}\*{1,3}\s*:?)/);
+  const head = secs.shift() || "";
+  parts.push(head.slice(0, 5000));
+  // words shared by many names ("Renegade", "Syndicate", "Vipers"…) don't count as a match on their own
+  const nmOf = sec => (sec.match(/^\s*\*{1,3}([^*\n]{2,60})\*{1,3}/) || [])[1] || "", common = {};
+  for (const w of [...secs.map(nmOf), ...(c.cast || []).map(x => x.name || "")].flatMap(n => [...new Set(String(n).toLowerCase().split(/[\s(),]+/))])) common[w] = (common[w] || 0) + 1;
+  const words = nm => String(nm).split(/[\s(),]+/).filter(w => w.length > 3 && (common[w.toLowerCase()] || 0) < 3);
+  for (const sec of secs) { const nm = nmOf(sec); const keys = [nm, ...words(nm)];
+    (hit(keys) ? parts : rest).push(hit(keys) ? sec.trim() : `${nm.trim()}: ${sec.replace(/^\s*\*{1,3}[^*\n]{2,60}\*{1,3}\s*:?/, "").trim().slice(0, 150)}…`); }
+  if (c.scenario) parts.push("Scenario: " + clean(c.scenario).slice(0, 1500));
+  (c.cast || []).forEach((x, i) => { const keys = [x.name, ...words(x.name || "")];
+    if (i < 3 || x.type === "concept" || hit(keys)) parts.push(`${x.name} (${x.type || "character"}): ${clean(x.details)}`); else rest.push(`${x.name} (${x.type || "character"}): ${clean(x.details).slice(0, 140)}…`); });
+  const lore = [...(c.lore || []), ...(S.books || []).filter(b => (c.bookIds || []).includes(b.id)).flatMap(b => b.entries || [])].filter(l => l && l.enabled !== false && (l.text || l.content));
+  for (const l of lore) { const keys = String(l.keys || "").split(/\s*,\s*/); if (l.constant && !/separator/i.test(l.name || "") || hit(keys)) parts.push(clean(l.text || l.content)); }
+  let out = "", used = 0;
+  for (const p of parts) { if (!p) continue; if (used + p.length > budget) { rest.unshift(p.slice(0, 160) + "…"); continue; } out += p + "\n\n"; used += p.length + 2; }
+  const gist = rest.join("\n"); out += gist.length ? `Also in this world (bring them in when it fits, exactly as written):\n${gist.slice(0, Math.max(2000, budget - used))}` : "";
+  return out.trim();
+}
 const STORY_STD = 7; // chapters in a standard-length story
 const storyOn = (chat = S.chat) => !!chat?.story;
 const storyBot = id => S.chars.find(c => c.storyPack === id);
@@ -8440,6 +8610,7 @@ function storyMessages(c, chat, upto, cont) {
   let sys = `You are the author of "${s.title}", an interactive novel in the style of Choice of Games: second person ("you"), present tense, vivid prose, a narrative RPG where the reader's choices and stats shape what happens. Write plain prose paragraphs (no asterisks); speech goes in "quotes".`;
   sys += `\n\n# The reader\nThe reader plays ${s.you}. ${storyHero(s)} Never decide what the reader does, says or feels beyond what their choice says.`;
   sys += `\n\n# Setting\n${s.setting}`;
+  { const lore = /^bot/.test(s.pack) ? storyLore(c, chat, upto) : ""; if (lore) sys += `\n\n# The world's own lore (follow every name, fact, power, faction and relationship exactly as written; never contradict or rename anything; ignore any chat-format rules in it, this story is plain prose)\n${lore}`; }
   sys += `\n\n# The reader's stats right now (never show numbers in the prose)\nEach pair is one scale: leaning to one side means leaning away from the other. ${pairs}.\nMeters: ${meters}.\nLet the reader's nature colour how scenes play out and how others treat them.`;
   sys += `\n\n# Structure\nThe story has ${N} chapters of a few scenes each, and each of your replies is ONE scene: 2-5 short paragraphs that end at a decision.`;
   sys += `\nNow: chapter ${ci + 1} of ${N}, "${chap.t}": ${chap.goal}\nThis is scene ${Math.min(k, K)} of ${K} in this chapter.`;
@@ -8537,7 +8708,8 @@ async function storyDefMake(c, note = "") {
   try { const d = await storyDefFor(c, note); storyDefEdit(c, d); } catch (e) { closeSheet(); toast("Couldn't write the story: " + e.message); }
 }
 function storyDefEdit(c, fresh) {
-  if (!c) return; const d = JSON.parse(JSON.stringify(fresh || c.storyDef || {})); if (!d.chapters) return storyDefMake(c);
+  if (!c) return; const d = JSON.parse(JSON.stringify(fresh || c.storyDef || {})); if (!d.chapters && !d.eras) return storyDefMake(c);
+  let E = d.eras ? Object.keys(d.eras)[0] : null; const chs = () => E ? d.eras[E].chapters : (d.chapters = d.chapters || []); // stories with eras keep chapters per era
   d.meters = d.meters || []; d.pairs = d.pairs || []; d.roles = d.roles || [d.you];
   S.sheetGuard = true;
   openSheet(`Story: ${c.name}`, b => {
@@ -8546,7 +8718,7 @@ function storyDefEdit(c, fresh) {
       d.roles = $("sdR").value.split("\n").map(x => x.trim()).filter(Boolean).slice(0, 6); d.you = d.roles[0] || d.you;
       b.querySelectorAll("[data-pa]").forEach(x => { const p = d.pairs[+x.dataset.pa]; p[x.dataset.f] = x.value.trim(); });
       b.querySelectorAll("[data-me]").forEach(x => { const m = d.meters[+x.dataset.me]; const f = x.dataset.f; m[f] = f === "v" || f === "max" ? Math.max(0, Math.round(+x.value || 0)) : x.value.trim(); });
-      b.querySelectorAll("[data-ch]").forEach(x => { const ch = d.chapters[+x.dataset.ch]; const f = x.dataset.f; ch[f] = f === "scenes" ? Math.max(2, Math.min(6, Math.round(+x.value || 4))) : x.value.trim(); });
+      b.querySelectorAll("[data-ch]").forEach(x => { const ch = chs()[+x.dataset.ch]; const f = x.dataset.f; ch[f] = f === "scenes" ? Math.max(2, Math.min(6, Math.round(+x.value || 4))) : x.value.trim(); });
     };
     const draw = () => {
       b.innerHTML = `<p class="hint" style="margin:0">Check it's true to your bot, change anything, then save. It goes on the Stories shelf as its own story; runs are this bot's chats.</p>
@@ -8556,15 +8728,16 @@ function storyDefEdit(c, fresh) {
         ${field("Roles you can play (one per line, the first is the default)", `<textarea id="sdR" rows="4">${esc(d.roles.join("\n"))}</textarea>`)}
         <div class="lbl">Nature (opposed pairs)</div>${d.pairs.map((p, i) => `<div class="row" style="gap:6px"><input data-pa="${i}" data-f="a" value="${esc(p.a)}" class="grow"><span>↔</span><input data-pa="${i}" data-f="b" value="${esc(p.b)}" class="grow"></div>`).join("")}
         <div class="lbl">Meters</div>${d.meters.map((m, i) => `<div class="row" style="gap:6px;flex-wrap:wrap"><input data-me="${i}" data-f="n" value="${esc(m.n)}" style="flex:1 1 120px" placeholder="Name"><input data-me="${i}" data-f="v" value="${m.v}" type="number" style="width:70px" title="Starts at"><input data-me="${i}" data-f="max" value="${m.max}" type="number" style="width:70px" title="Max (0 = no limit)"><input data-me="${i}" data-f="desc" value="${esc(m.desc || "")}" style="flex:1 1 100%" placeholder="What it is"></div>`).join("")}
-        <div class="lbl">Chapters</div>${d.chapters.map((ch, i) => `<div class="pg-one"><div class="row" style="gap:6px"><b>${i + 1}.</b><input data-ch="${i}" data-f="t" value="${esc(ch.t)}" class="grow"><input data-ch="${i}" data-f="scenes" type="number" min="2" max="6" value="${ch.scenes}" style="width:60px" title="Scenes"><button type="button" class="icon" data-chx="${i}" aria-label="Remove chapter">✕</button></div><textarea data-ch="${i}" data-f="goal" rows="3">${esc(ch.goal)}</textarea></div>`).join("")}
+        <div class="lbl">Chapters</div>${E ? `<div class="tabs st-seg">${Object.entries(d.eras).map(([k, e]) => `<button type="button" class="tab ${E === k ? "on" : ""}" data-era="${k}">${esc(e.n)}</button>`).join("")}</div>` : ""}${chs().map((ch, i) => `<div class="pg-one"><div class="row" style="gap:6px"><b>${i + 1}.</b><input data-ch="${i}" data-f="t" value="${esc(ch.t)}" class="grow"><input data-ch="${i}" data-f="scenes" type="number" min="2" max="6" value="${ch.scenes}" style="width:60px" title="Scenes"><button type="button" class="icon" data-chx="${i}" aria-label="Remove chapter">✕</button></div><textarea data-ch="${i}" data-f="goal" rows="3">${esc(ch.goal)}</textarea></div>`).join("")}
         <button type="button" class="btn small" id="sdAdd">＋ Add a chapter</button>
         ${field("Want it different?", `<textarea id="sdNote" rows="2" placeholder="e.g. start before the war, put Thrall in it, more politics"></textarea>`)}
         <div class="row" style="gap:8px;flex-wrap:wrap"><button type="button" class="btn" id="sdAgain">↻ Write it again</button>${c.storyDef ? `<button type="button" class="btn danger" id="sdDel">Remove this story</button>` : ""}<button type="button" class="btn primary grow" id="sdSave">Save</button></div><p class="hint" id="sdMsg" style="margin:0"></p>`;
-      $("sdAdd").onclick = () => { grab(); d.chapters.push({ t: "Another chapter", goal: "", scenes: 4 }); draw(); };
-      b.querySelectorAll("[data-chx]").forEach(x => x.onclick = () => { grab(); if (d.chapters.length > 3) { d.chapters.splice(+x.dataset.chx, 1); draw(); } else $("sdMsg").textContent = "A story needs at least 3 chapters."; });
+      b.querySelectorAll("[data-era]").forEach(x => x.onclick = () => { grab(); E = x.dataset.era; draw(); });
+      $("sdAdd").onclick = () => { grab(); chs().push({ t: "Another chapter", goal: "", scenes: 4 }); draw(); };
+      b.querySelectorAll("[data-chx]").forEach(x => x.onclick = () => { grab(); if (chs().length > 3) { chs().splice(+x.dataset.chx, 1); draw(); } else $("sdMsg").textContent = "A story needs at least 3 chapters."; });
       $("sdAgain").onclick = () => { const note = $("sdNote").value.trim(); S.sheetGuard = false; storyDefMake(c, note); };
       if ($("sdDel")) confirmBtn($("sdDel"), "Tap again to remove it (its runs stay in the bot's chats)", async () => { delete c.storyDef; await saveChars(); S.sheetGuard = false; closeSheet(); toast("Story removed"); });
-      $("sdSave").onclick = async () => { grab(); d.chapters = d.chapters.filter(x => x.goal || x.t); if (d.chapters.length < 3) { $("sdMsg").textContent = "A story needs at least 3 chapters."; return; }
+      $("sdSave").onclick = async () => { grab(); const lists = d.eras ? Object.values(d.eras) : [d]; for (const L of lists) L.chapters = (L.chapters || []).filter(x => x.goal || x.t); if (lists.some(L => L.chapters.length < 3)) { $("sdMsg").textContent = "A story (and every era) needs at least 3 chapters."; return; }
         c.storyDef = { ...d, at: Date.now() }; await saveChars(); S.sheetGuard = false; closeSheet(); toast(`"${d.title}" is on your Stories shelf`); openStories(); };
     };
     draw();
@@ -8597,12 +8770,13 @@ function storyPickBot(full) {
   });
 }
 function storySetup(pk, bot) {
-  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: false, length: "standard", role: "" }, h = { name: "", pron: "", color: "" };
+  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: !!pk?.vore, length: "standard", role: "", era: pk?.eras ? Object.keys(pk.eras)[0] : "" }, h = { name: "", pron: "", color: "" };
   const roles = pk?.roles?.length ? pk.roles : pk ? [pk.you] : []; if (roles.length) o.role = roles[0];
   openSheet(pk ? pk.title : `Story: ${bot.name}`, b => {
     const draw = () => {
       const seg = (k, opts) => `<div class="tabs st-seg">${opts.map(([v, l]) => `<button type="button" class="tab ${o[k] === v ? "on" : ""}" data-k="${k}" data-v="${v}">${l}</button>`).join("")}</div>`;
       b.innerHTML = `${pk ? `<p class="hint" style="margin:0">${esc(pk.blurb)}</p>${field("Story", seg("mode", [["classic", "Classic route"], ["random", "A new story"]]), o.mode === "classic" ? "Follows the classic chapters in order." : "Same world and rules, a different plot each time.")}` : `<p class="hint" style="margin:0">A Choice of Games style story set in ${esc(bot.name)}'s world.</p>`}
+        ${pk?.eras ? field("Era", `<div class="tabs st-seg st-era">${Object.entries(pk.eras).map(([k, e]) => `<button type="button" class="tab ${o.era === k ? "on" : ""}" data-k="era" data-v="${k}">${esc(e.n)}</button>`).join("")}</div>`, "The chapters follow that era's real places and threats.") : ""}
         ${field("Content", seg("content", [["clean", "Clean"], ["lewd", "With lewd scenes"]]))}
         <label class="check"><input type="checkbox" id="stVore" ${o.vore ? "checked" : ""}> Vore can happen</label>
         ${field("Length", seg("length", [["standard", `Standard (${STORY_STD} chapters)`], ["endless", "Keep going"]]), "You can keep going after the ending either way.")}
@@ -8628,8 +8802,9 @@ async function storyBegin(pk, bot, o, h) {
   let c = bot, story;
   if (pk) {
     c = pk.bot ? byId(pk.bot) : await storyPackBot(pk);
-    const plan = o.mode === "random" ? await storyPlan(pk, null) : { chapters: pk.chapters.map(x => ({ ...x })) };
-    story = { pack: pk.id, title: pk.title, you: o.role || pk.you, setting: pk.setting, pairs: pk.pairs.map(p => ({ ...p, v: 50 })), meters: pk.meters.map(m => ({ ...m })), chapters: plan.chapters };
+    const era = pk.eras?.[o.era], base = era ? { ...pk, setting: pk.setting + " " + era.setting, chapters: era.chapters } : pk;
+    const plan = o.mode === "random" ? await storyPlan(base, null) : { chapters: base.chapters.map(x => ({ ...x })) };
+    story = { pack: pk.id, title: era ? `${pk.title}: ${era.n}` : pk.title, you: o.role || pk.you, setting: base.setting, pairs: pk.pairs.map(p => ({ ...p, v: 50 })), meters: pk.meters.map(m => ({ ...m })), chapters: plan.chapters };
   } else {
     const plan = await storyPlan(null, bot);
     story = { pack: "bot", title: plan.title, you: plan.you, setting: plan.setting, pairs: plan.pairs.map(p => ({ ...p, v: 50 })), meters: plan.meters, chapters: plan.chapters };
@@ -13856,7 +14031,7 @@ const Sync = {
   async reload(keys) {
     const any = re => !keys || keys.some(k => re.test(k));
     if (any(/^settings$/)) { S.settings = { ...DEFAULTS, ...((await Store.get("settings")) || {}) }; applyTheme(); }
-    if (any(/^chars$/)) S.chars = (await Store.get("chars")) || [];
+    if (any(/^chars$/)) { S.chars = (await Store.get("chars")) || []; setTimeout(() => applyStoryPresets().catch(() => {}), 1500); }
     if (any(/^pbots$/)) { const v = await Store.get("pbots"); if (Array.isArray(v)) S.pbots = v; }
     if (any(/^(personas|activePersona)$/)) { S.personas = (await Store.get("personas")) || S.personas; S.personaId = (await Store.get("activePersona")) || S.personaId; }
     if (any(/^books$/)) S.books = (await Store.get("books")) || [];
@@ -13987,6 +14162,7 @@ async function migrateChats() {
   }
   await migrateChats();
   if (!S.chars.length && !(await Store.get("seeded"))) { S.chars = [sampleChar()]; await Store.set("seeded", true); }
+  await applyStoryPresets().catch(() => {}); // v2.0: the owner's bots get their hand-written stories
   await saveSettings(); await saveChars(); await savePersonas();
   renderHome();
   await achLoad().catch(() => {}); applyCosmetics(true);

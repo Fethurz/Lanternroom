@@ -4,7 +4,7 @@ const open = require("./base.js");
   const W = +(process.env.W || 390);
   const { b, pg, errs } = await open({ width: W, season: true });
   const chk = (m, v) => console.log((v ? "PASS " : "FAIL ") + m);
-  chk("version 1.83 or later", await pg.evaluate(() => +VERSION.split(" ")[0].split(".")[1] >= 83));
+  chk("version 1.83 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 1083));
   const cat = await pg.evaluate(() => SEASONS.map(x => ({ k: x.k, items: (x.items || []).length, ok: (x.items || []).every(id => SHOP_BY[id]?.season === x.k), cats: [...new Set((x.items || []).map(id => id.split(":")[0]))].length, badges: ACH.filter(a => a.season === x.k).length })));
   chk(`every season has 5 items, one of each kind (${cat.map(c => c.k + ":" + c.items).join(" ")})`, cat.every(c => c.items === 5 && c.ok && c.cats === 5));
   chk(`every season has its 6 badges (${cat.map(c => c.badges).join(",")})`, cat.every(c => c.badges === 6));
