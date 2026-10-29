@@ -13,7 +13,7 @@ const open = require("./base.js");
   chk("version 2.1 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 2001));
 
   const packs = await pg.evaluate(() => {
-    const ids = ["monhun", "miside", "eldenring", "ror2", "beastars", "forhonor", "elderscrolls", "absolver", "remnant", "dyinglight"];
+    const ids = ["monhun", "miside", "eldenring", "ror2", "beastars", "forhonor", "elderscrolls", "absolver", "remnant", "dyinglight", "churn"];
     return ids.map(id => { const p = STORY_PACKS[id]; if (!p) return { id, ok: false };
       const lists = p.eras ? Object.values(p.eras).map(e => e.chapters) : [p.chapters];
       return { id, ok: true, eras: p.eras ? Object.keys(p.eras) : [], chOk: lists.every(l => l.length >= 3 && l.every(c => c.t && c.goal && c.scenes >= 3)), roles: (p.roles || []).length, pairs: p.pairs.length, meters: p.meters.length, setting: p.setting + " " + (p.eras ? Object.values(p.eras).map(e => e.setting).join(" ") : "") };
@@ -47,8 +47,8 @@ const open = require("./base.js");
     $("stGo").click(); for (let i = 0; i < 200 && (!S.chat?.story || S.busy || !S.chat.messages.length); i++) await new Promise(r => setTimeout(r, 50));
     return { tabs, built, mine, runsNote, eras, title: S.chat.story.title, setting: S.chat.story.setting };
   });
-  chk(`the Stories window has tabs (${ui.tabs.join(" | ")})`, ui.tabs.length === 3 && /Stories · 13/.test(ui.tabs[0]) && /From your bots · 1/.test(ui.tabs[1]));
-  chk(`built-in tab lists the built-in stories only (${ui.built.length})`, ui.built.length === 13 && ui.built.includes("Mecha Ace") && ui.built.includes("Dying Light") && !ui.built.includes("The Direlands"));
+  chk(`the Stories window has tabs (${ui.tabs.join(" | ")})`, ui.tabs.length === 3 && /Stories · 14/.test(ui.tabs[0]) && /From your bots · 1/.test(ui.tabs[1]));
+  chk(`built-in tab lists the built-in stories only (${ui.built.length})`, ui.built.length === 14 && ui.built.includes("Mecha Ace") && ui.built.includes("Dying Light") && !ui.built.includes("The Direlands"));
   chk(`your bots' tab lists the Direlands story (${ui.mine.join(", ")})`, ui.mine.includes("The Direlands"));
   chk("Monster Hunter's setup offers Anthro and Feral", ui.eras.join() === "Anthro monsters,Feral monsters");
   chk(`the feral run (${ui.title})`, ui.title === "Monster Hunter: Feral monsters" && /feral beasts/.test(ui.setting) && !/ALL monsters \(small ones too\) are anthropomorphic/.test(ui.setting));

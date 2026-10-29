@@ -1725,7 +1725,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.2 · Oct 29";
+const VERSION = "2.3 · Oct 29";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -8579,6 +8579,25 @@ Object.assign(STORY_PACKS, {
       { t: "Dreams", goal: "A dreamer's mind is the key to the Root's spread; into the dream.", scenes: 4 },
       { t: "The Root's Heart", goal: "Where the Root began, and what it wants.", scenes: 4 },
       { t: "Cut It Out", goal: "The final battle against the Root at its source. The reader's choices decide which worlds are saved.", scenes: 5 }
+    ]
+  },
+  churn: {
+    id: "churn", title: "Churn Vector", icon: "🕶️", vore: true, namePh: "Your codename (or let the story ask)",
+    blurb: "Sneak into guarded facilities, take your contract's target out of the picture by swallowing them, and try not to get too heavy to run. A silly, horny stealth job that slowly uncovers something very serious.",
+    credit: "Inspired by the premise of naelstrof's Churn Vector; the world and characters are Lanternroom's own. The story is written fresh as you play.",
+    you: "a freelance agent taking contracts from a shady broker",
+    roles: ["a freelance agent taking contracts from a shady broker", "a security guard at the facilities the agents keep hitting", "a high-value target who keeps getting contracts put out on them"],
+    setting: "An original near-future corporate city of anthro people (women and futas predominantly; men are rare in this cast), where megacorps, labs and private estates guard their secrets with patrols, cameras and keycard doors. Rivals don't kill each other's people; they hire agents. An agent's job is a contract: slip into a facility, find the target and make them disappear by swallowing them whole (or by cock vore), then get out unseen. Digestion is death. Reform machines exist (rare, expensive clinic tech that can rebuild someone from what's left), but they are not commonplace: most of the digested never come back, everyone still treats it as dying, and being reformed is a big deal. Stealth is everything: guards investigate noises, radio each other, share descriptions and coordinate searches as alarms rise; every meal makes the agent heavier and slower and louder until it's digested (and an agent who gets greedy or keeps getting spotted ends up waddling). Contracts come through a broker who never asks why. Tone: absurd, horny, over-the-top adult comedy at first (ridiculous guards, petty corporate rivalries, very full bellies), slowly turning serious as a conspiracy surfaces around who is paying for these contracts and what the reform machines are really being used for.",
+    pairs: [C2("Stealthy", "Brazen", "#7fb2ff", "#e2766f"), C2("Professional", "Indulgent", "#9aa3b5", "#ff9cc6"), C2("Loyal", "Rogue", "#e8a95b", "#9a6fd8")],
+    meters: [{ k: "credits", n: "Credits", v: 100, max: 0, desc: "your pay" }, { k: "heat", n: "Heat", v: 0, max: 100, desc: "how alert security and the cops are" }, { k: "weight", n: "Weight", v: 10, max: 100, desc: "how full and slow you are" }],
+    chapters: [
+      { t: "First Contract", goal: "A small, badly guarded lab: the broker's test job. Learn the ropes (or, as a guard or target, the night it all starts going wrong). Settle the reader's species and style.", scenes: 4 },
+      { t: "The Gala", goal: "A corporate gala in a penthouse: the target is a guest, everyone is watching, and the reader is getting heavier by the canapé.", scenes: 4 },
+      { t: "Lockdown", goal: "A secure research tower that goes into lockdown mid-job. Guards coordinating, vents, a desperate escape.", scenes: 4 },
+      { t: "The Rival", goal: "Another agent on the same contract; rivalry, a truce or a race to the target.", scenes: 4 },
+      { t: "The Reform Clinic", goal: "A job at a clinic with a reform machine shows who really gets brought back, and who pays for it. The comedy cracks.", scenes: 4 },
+      { t: "Who's Paying", goal: "Following the money behind the broker to the company that's been ordering contracts on its own people.", scenes: 4 },
+      { t: "The Last Contract", goal: "The biggest, most guarded job of all, aimed at the people at the top. The reader's choices decide who ends up digested, who gets reformed, and what the city learns.", scenes: 5 }
     ]
   },
   dyinglight: {
