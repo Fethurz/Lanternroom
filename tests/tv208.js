@@ -13,7 +13,7 @@ const open = require("./base.js");
     pairs: [{ a: "Bold", b: "Careful", ca: "#ff0000", cb: "nope" }], meters: [{ n: "Health", v: 100, max: 100, desc: "your health" }, { n: "Hunger", v: 20, max: 100, desc: "its hunger" }],
     chapters: [1, 2, 3, 4, 5].map(i => ({ t: "Chapter " + i, goal: "Things happen " + i + ".", scenes: 4 })), danger: "real", vore: true };
   const remix = { title: "", changes: ["Rhoswen is now a hyena called Rhosa.", "A friendly kobold, Pib, helps the reader."], rename: [{ from: "Rhoswen", to: "Rhosa" }],
-    edits: [{ field: "description", find: "Rhoswen is a sly “red” fox who steals.", replace: "Rhoswen is a cackling spotted hyena who steals." }, { field: "cast:Rhoswen", find: "A fox thief.", replace: "A hyena thief." }, { field: "description", find: "This sentence is not in the bot at all.", replace: "x" }],
+    edits: [{ field: "description", find: "Rhoswen is a sly “red” fox who steals.", replace: "Rhoswen is a cackling spotted hyena who steals." }, { field: "cast:Rhoswen", find: "A fox thief.", replace: "A hyena thief." }, { field: "description", find: "This sentence is not in the bot at all.", replace: "x" }, { field: "story.chapters.1", find: "G2", replace: "G2 with Pib's help" }],
     castAdd: [{ name: "Pib", type: "character", details: "A friendly kobold who helps the reader." }], loreAdd: [{ name: "Pib", keys: "pib, kobold", text: "Pib knows the tunnels." }], openings: ["*Pib waves from the tunnel.*"],
     story: { roles: ["a thief", "Pib's friend"] } };
   const { b, pg, errs } = await open({
@@ -113,12 +113,13 @@ const open = require("./base.js");
     const n = S.chars.length; $("rmSave").click();
     for (let i = 0; i < 200 && S.chars.length === n; i++) await new Promise(r => setTimeout(r, 50));
     const w = S.chars[0], o = byId("trx");
-    return { ...out, w: { name: w.name, desc: w.description, cast: w.cast.map(x => x.name + ": " + x.details), lore: w.lore.map(l => l.name + ": " + l.text), alts: w.altGreetings, first: w.firstMessage, title: w.storyDef.title, roles: w.storyDef.roles, setting: w.storyDef.setting, remixOf: w.remixOf, sdRemix: w.storyDef.remixOf, id: w.id },
+    return { ...out, w: { goal2: w.storyDef.chapters[1].goal, name: w.name, desc: w.description, cast: w.cast.map(x => x.name + ": " + x.details), lore: w.lore.map(l => l.name + ": " + l.text), alts: w.altGreetings, first: w.firstMessage, title: w.storyDef.title, roles: w.storyDef.roles, setting: w.storyDef.setting, remixOf: w.remixOf, sdRemix: w.storyDef.remixOf, id: w.id },
       o: { desc: o.description, cast: o.cast.length, setting: o.storyDef.setting, title: o.storyDef.title } };
   });
   chk(`every story has a Remix button (${rx.remixBtns}/${rx.packs})`, rx.remixBtns === rx.packs && rx.packs > 10);
   chk(`chips start the request (${JSON.stringify(rx.chip)})`, rx.chip === "Swap ");
-  chk(`the review lists what changed (${rx.applied} placed, ${rx.missed} left out)`, /Rhosa/.test(rx.text) && rx.applied === 2 && rx.missed === 1 && /couldn't be placed/.test(rx.text));
+  chk(`the review lists what changed (${rx.applied} placed, ${rx.missed} left out)`, /Rhosa/.test(rx.text) && rx.applied === 3 && rx.missed === 1 && /couldn't be placed/.test(rx.text));
+  chk(`a single chapter's goal can be edited (${rx.w.goal2})`, rx.w.goal2 === "G2 with Pib's help");
   chk(`an edit is placed despite curly quotes, keeping the asterisks (${rx.w.desc})`, /^\*Rhosa is a cackling spotted hyena who steals\.\*/.test(rx.w.desc));
   chk("renames are whole-word only", /Rhoswenna's crew/.test(rx.w.desc) && rx.w.first === "*Rhosa grins.*");
   chk(`listing, lore and openings follow (${rx.w.cast.join(" | ")})`, rx.w.cast.includes("Rhosa: A hyena thief.") && rx.w.cast.some(c => /^Pib:/.test(c)) && rx.w.lore.some(l => /^Pib: Pib knows/.test(l)) && rx.w.lore.some(l => /Rhosa sleeps/.test(l)) && rx.w.alts.includes("*Pib waves from the tunnel.*"));
