@@ -171,6 +171,7 @@ section.screen{height:100%;display:flex;flex-direction:column;position:relative}
 .gen-sum p{margin:0 0 8px}
 .gen-tags{display:flex;flex-wrap:wrap;gap:4px}
 details.gen-sec{border-bottom:1px solid var(--line)}
+.sq-ch,.rm-ch{margin:0;padding-left:20px}.sq-ch li,.rm-ch li{margin:0 0 6px}.rm-was{opacity:.6}
 details.gen-sec summary{cursor:pointer;font-weight:700;padding:11px 0;list-style:none;min-height:34px}
 details.gen-sec summary::-webkit-details-marker{display:none}
 details.gen-sec summary::after{content:"›";float:right;color:var(--muted);transition:transform .2s}
@@ -1728,7 +1729,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.7 · Oct 30";
+const VERSION = "2.8 · Oct 30";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2802,17 +2803,18 @@ async function openChats(cid) {
 }
 $("btnBooks").onclick = () => openBooks();
 $("btnNewChar").onclick = () => openSheet("Create", b => {
-  const ds = Object.entries(DRAFTS || {}).filter(([id, d]) => d && (d.type === "gen" ? (d.prompt || "").trim() || d.card : d.type === "quiz" ? d.a && d.a.kind : d.type === "edit" && d.isNew)).sort((a, b) => b[1].at - a[1].at);
-  const dName = d => d.type === "quiz" ? `Quiz · ${KINDS[d.a.kind]?.label || "Bot"} (question ${(d.i || 0) + 1})` : d.type === "gen" ? `${d.card?.name || "Generator draft"} · ${KINDS[d.card?._kind || d.kind]?.label || "Bot"} (generator)` : `${d.work?.name || "Untitled " + (KINDS[d.kind]?.label || "bot").toLowerCase()}`;
-  b.innerHTML = `${ds.length ? `<div class="stack"><div class="lbl">Unfinished</div>${ds.map(([id, d]) => `<div class="listrow draft-row" data-id="${esc(id)}"><span class="grow"><b>${esc(dName(d))}</b><span class="sub">Saved ${esc(fmtWhen(d.at))}</span></span><button type="button" class="btn small primary" data-go>Continue</button><button type="button" class="btn small danger" data-rm>Discard</button></div>`).join("")}</div>` : ""}<div class="menu"><button class="btn kind-opt gen-opt" id="genOpen">✦ Character generator<small>Describe what you want and the AI builds the whole bot for you.</small></button><button class="btn kind-opt gen-opt" id="genSurprise">🎲 Surprise me<small>Pick a few tags and get a brand-new bot built around them.</small></button><button class="btn kind-opt gen-opt" id="genQuiz">📝 Character quiz<small>Answer quick questions (body, personality, species, setting, kinks…) and get a bot built from your answers.</small></button><button class="btn kind-opt gen-opt" id="genSearch">🔎 Search a character<small>Type a franchise or a name (like Mario) and pick who or what to make from it.</small></button>${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
+  const ds = Object.entries(DRAFTS || {}).filter(([id, d]) => d && (d.type === "gen" ? (d.prompt || "").trim() || d.card : d.type === "quiz" ? d.a && d.a.kind : d.type === "sq" ? d.card && d.def : d.type === "edit" && d.isNew)).sort((a, b) => b[1].at - a[1].at);
+  const dName = d => d.type === "quiz" ? `Quiz · ${qzKindLabel(d.a.kind)} (question ${(d.i || 0) + 1})` : d.type === "sq" ? `${d.def?.title || d.card?.name || "Story"} · Story (from the quiz)` : d.type === "gen" ? `${d.card?.name || "Generator draft"} · ${KINDS[d.card?._kind || d.kind]?.label || "Bot"} (generator)` : `${d.work?.name || "Untitled " + (KINDS[d.kind]?.label || "bot").toLowerCase()}`;
+  b.innerHTML = `${ds.length ? `<div class="stack"><div class="lbl">Unfinished</div>${ds.map(([id, d]) => `<div class="listrow draft-row" data-id="${esc(id)}"><span class="grow"><b>${esc(dName(d))}</b><span class="sub">Saved ${esc(fmtWhen(d.at))}</span></span><button type="button" class="btn small primary" data-go>Continue</button><button type="button" class="btn small danger" data-rm>Discard</button></div>`).join("")}</div>` : ""}<div class="menu"><button class="btn kind-opt gen-opt" id="genOpen">✦ Character generator<small>Describe what you want and the AI builds the whole bot for you.</small></button><button class="btn kind-opt gen-opt" id="genSurprise">🎲 Surprise me<small>Pick a few tags and get a brand-new bot built around them.</small></button><button class="btn kind-opt gen-opt" id="genQuiz">📝 Character quiz<small>Answer quick questions (body, personality, species, setting, kinks…) and get a bot built from your answers.</small></button><button class="btn kind-opt gen-opt" id="genStoryQuiz">📜 Story quiz<small>Answer questions about the plot, cast, kinks and danger, and get a whole story world: a world bot plus its story.</small></button><button class="btn kind-opt gen-opt" id="genSearch">🔎 Search a character<small>Type a franchise or a name (like Mario) and pick who or what to make from it.</small></button>${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${v.blurb}</small></button>`).join("")}</div>`;
   $("genOpen").onclick = async () => { await genRestore(); openGenerator(); };
   b.querySelectorAll(".draft-row").forEach(r => {
     const id = r.dataset.id, d = DRAFTS[id];
-    r.querySelector("[data-go]").onclick = async () => { if (d.type === "quiz") { QUIZ.a = JSON.parse(JSON.stringify(d.a)); QUIZ.i = d.i || 0; qzDraw(); } else if (d.type === "gen") { await genRestore(); openGenerator(); } else editChar(d.work, true, d); };
-    confirmBtn(r.querySelector("[data-rm]"), "Sure?", async () => { await dropDraft(id); if (id === "gen") { GEN.card = null; GEN.prompt = ""; } if (id === "quiz") QUIZ.a = null; r.remove(); });
+    r.querySelector("[data-go]").onclick = async () => { if (d.type === "quiz") { QUIZ.a = JSON.parse(JSON.stringify(d.a)); QUIZ.i = d.i || 0; qzDraw(); } else if (d.type === "sq") { sqRestore(d); sqReview(); } else if (d.type === "gen") { await genRestore(); openGenerator(); } else editChar(d.work, true, d); };
+    confirmBtn(r.querySelector("[data-rm]"), "Sure?", async () => { await dropDraft(id); if (id === "gen") { GEN.card = null; GEN.prompt = ""; } if (d.type === "quiz" && QUIZ.a?.kind === d.a?.kind) QUIZ.a = null; if (id === "sq") SQ.card = null; r.remove(); });
   });
   $("genSurprise").onclick = () => openSurprise();
-  $("genQuiz").onclick = () => openQuiz(QUIZ.a ? null : "new");
+  $("genQuiz").onclick = () => openQuiz(QUIZ.a && QUIZ.a.kind !== "story" ? null : "new");
+  $("genStoryQuiz").onclick = () => sqStart();
   $("genSearch").onclick = () => openSearchMake();
   b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => editChar(blankChar(x.dataset.k), true));
 });
@@ -3162,9 +3164,11 @@ const QZ_SEC = { you: "You", body: "Body", mind: "Personality", scene: "Story" }
 const QZ_MIND = new Set(["traits", "dom", "toyou", "speech", "likes", "back"]);
 const QUIZ = { a: null, i: 0 };
 const qzNew = kind => ({ kind, q: {}, m: [] });
-const qzKeep = now => { if (QUIZ.a) return saveDraft("quiz", { type: "quiz", a: QUIZ.a, i: QUIZ.i }, now); };
+const qzKey = a => a?.kind === "story" ? "squiz" : "quiz"; // v2.8: the story quiz's draft has its own slot
+const qzKeep = now => { if (QUIZ.a) return saveDraft(qzKey(QUIZ.a), { type: "quiz", a: QUIZ.a, i: QUIZ.i }, now); };
 // the questions in order for the current answers: [{q, mi}] (mi = group member index)
 function qzSteps(a) {
+  if (a.kind === "story") return QZ_STORY.filter(q => !q.when || q.when(a.q)).map(q => ({ q, mi: null }));
   if (a.kind === "persona") return QZ_BODY.filter(q => QZ_PERSONA.has(q.id) && (!q.when || q.when(a.q))).map(q => ({ q, mi: null }));
   const out = [];
   if (a.kind === "group") { for (const q of QZ_GROUP) out.push({ q, mi: null }); const n = +(a.q.count?.pick?.[0] || a.q.count?.other || 3) || 3;
@@ -3196,9 +3200,9 @@ function openQuiz(start) {
         pre = Array.isArray(pre) ? pre : [];
         b.innerHTML = `<p class="note">Answer a few quick questions and the generator builds the bot from them. Tap answers, pick several where it fits, type your own, or let it decide.</p>
           <div class="lbl">What are you making?</div>
-          <div class="menu">${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${k === "character" ? "One character: body, personality, story." : k === "group" ? "A few characters together; you answer for each member." : "A whole setting with its own people and dangers."}</small></button>`).join("")}</div>
+          <div class="menu">${Object.entries(KINDS).map(([k, v]) => `<button class="btn kind-opt" data-k="${k}">${v.label}<small>${k === "character" ? "One character: body, personality, story." : k === "group" ? "A few characters together; you answer for each member." : "A whole setting with its own people and dangers."}</small></button>`).join("")}<button class="btn kind-opt" data-k="story">📜 Story<small>A whole story world: a world bot plus its interactive story.</small></button></div>
           ${last && last.kind ? `<button type="button" class="btn" id="qzLast">↻ Another bot from my last answers<small style="display:block;color:var(--muted);font-weight:400">${esc(KINDS[last.kind].label)}${qzSay({}, last.q.name || last.q.gname || last.q.wname) ? ": " + esc(qzSay({}, last.q.name || last.q.gname || last.q.wname)) : ""}</small></button>` : ""}
-          ${pre.length ? `<div class="lbl">Saved answer sets</div>${pre.map(p => `<div class="listrow" data-id="${esc(p.id)}"><span class="grow"><b>${esc(p.name)}</b><span class="sub">${esc(KINDS[p.a.kind]?.label || "")} · ${esc(fmtWhen(p.at))}</span></span><button type="button" class="btn small primary" data-use>Use</button><button type="button" class="btn small" data-make>Make</button><button type="button" class="btn small danger" data-rm>✕</button></div>`).join("")}` : ""}`;
+          ${pre.length ? `<div class="lbl">Saved answer sets</div>${pre.map(p => `<div class="listrow" data-id="${esc(p.id)}"><span class="grow"><b>${esc(p.name)}</b><span class="sub">${esc(qzKindLabel(p.a.kind))} · ${esc(fmtWhen(p.at))}</span></span><button type="button" class="btn small primary" data-use>Use</button><button type="button" class="btn small" data-make>Make</button><button type="button" class="btn small danger" data-rm>✕</button></div>`).join("")}` : ""}`;
         b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => { QUIZ.a = qzNew(x.dataset.k); QUIZ.i = 0; qzKeep(); qzDraw(); });
         if ($("qzLast")) $("qzLast").onclick = () => qzMake(JSON.parse(JSON.stringify(last)));
         b.querySelectorAll(".listrow[data-id]").forEach(r => {
@@ -3219,14 +3223,14 @@ function qzDraw() {
   QUIZ.i = Math.max(0, QUIZ.i);
   const st = steps[QUIZ.i], q = st.q, bag = qzBag(a, st.mi);
   const x = bag[q.id] = bag[q.id] || { pick: [], other: "", decide: false, num: "" };
-  const sec = st.mi != null ? `Member ${st.mi + 1}${qzSay(st, (a.m[st.mi] || {}).name) && q.id !== "name" ? ": " + qzSay(st, a.m[st.mi].name) : ""}` : QZ_GROUP.includes(q) ? "The group" : QZ_WORLD.includes(q) ? "The world" : QZ_SCENE.includes(q) ? QZ_SEC.scene : QZ_MIND.has(q.id) ? QZ_SEC.mind : ["name", "gender", "pronouns", "form", "species", "age"].includes(q.id) ? "Who" : QZ_SEC.body;
+  const sec = q.sec ? q.sec : st.mi != null ? `Member ${st.mi + 1}${qzSay(st, (a.m[st.mi] || {}).name) && q.id !== "name" ? ": " + qzSay(st, a.m[st.mi].name) : ""}` : QZ_GROUP.includes(q) ? "The group" : QZ_WORLD.includes(q) ? "The world" : QZ_SCENE.includes(q) ? QZ_SEC.scene : QZ_MIND.has(q.id) ? QZ_SEC.mind : ["name", "gender", "pronouns", "form", "species", "age"].includes(q.id) ? "Who" : QZ_SEC.body;
   const opts = [...(q.o || []), ...qzTagOpts(q).filter(t => !(q.o || []).includes(t))];
   const notes = S.settings.tagNotes || {};
-  openSheet(a.kind === "persona" ? "Persona quiz" : "Character quiz", b => {
+  openSheet(a.kind === "persona" ? "Persona quiz" : a.kind === "story" ? "Story quiz" : "Character quiz", b => {
     S.sheetGuard = "quiz";
     b.innerHTML = `<div class="qz-top"><div class="qz-bar"><i style="width:${Math.round(QUIZ.i / steps.length * 100)}%"></i></div><div class="qz-step"><span>${esc(sec)}</span><span>${QUIZ.i + 1} / ${steps.length}</span></div></div>
       <h3 class="qz-q">${esc(q.q)}</h3>
-      ${q.t === "many" ? '<p class="hint" style="margin:0">Pick as many as you like.</p>' : ""}
+      ${q.hint ? `<p class="hint" style="margin:0">${esc(q.hint)}</p>` : ""}${q.t === "many" ? '<p class="hint" style="margin:0">Pick as many as you like.</p>' : ""}
       ${opts.length ? `<div class="qz-opts" id="qzOpts">${opts.map(o => `<button type="button" class="qz-o ${(x.pick || []).includes(o) ? "on" : ""}" data-o="${esc(o)}"${tagStyle(o)}>${tagIcon(o) ? `<span class="ti">${tagIcon(o)}</span>` : ""}${esc(o)}${notes[o] ? ' <span class="qz-n" title="Has a tag note">✎</span>' : ""}</button>`).join("")}</div>` : ""}
       ${q.t === "age" ? field("Or an exact age", `<input id="qzNum" type="number" inputmode="numeric" min="18" max="100000" placeholder="18 or older" value="${esc(x.num || "")}">`) : ""}
       ${field(q.t === "text" ? "Your answer" : "Other…", `<input id="qzOther" value="${esc(x.other || "")}" placeholder="${esc(q.ph || "Type your own")}" autocomplete="off">`)}
@@ -3249,7 +3253,7 @@ function qzDraw() {
     }
     $("qzNext").onclick = next;
     $("qzSkip").onclick = () => { if (!qzSay(st, x)) x.decide = true; next(); };
-    $("qzBack").onclick = () => { if (QUIZ.i === 0) { QUIZ.a = null; dropDraft("quiz"); openQuiz("new"); return; } QUIZ.i--; qzKeep(); qzDraw(); };
+    $("qzBack").onclick = () => { if (QUIZ.i === 0) { const k = qzKey(QUIZ.a); QUIZ.a = null; dropDraft(k); openQuiz("new"); return; } QUIZ.i--; qzKeep(); qzDraw(); };
   });
 }
 function qzReview() {
@@ -3271,7 +3275,7 @@ function qzReview() {
       $("qzPName").value = ""; toast("Answers saved");
     };
     $("qzMake").onclick = () => qzMake(a);
-    confirmBtn($("qzRestart"), "Tap again to clear these answers", () => { QUIZ.a = null; dropDraft("quiz"); openQuiz("new"); });
+    confirmBtn($("qzRestart"), "Tap again to clear these answers", () => { const k = qzKey(QUIZ.a); QUIZ.a = null; dropDraft(k); openQuiz("new"); });
   });
 }
 // answers → the generator's request (tag notes for any picked answer that is a tag with a note)
@@ -3286,6 +3290,7 @@ function qzPrompt(a) {
     for (const p of x.pick || []) used.add(p);
   }
   const notes = S.settings.tagNotes || {}, nl = [...used].filter(t => notes[t]).map(t => `- ${t}: ${notes[t]}`);
+  if (a.kind === "story") return `The user filled in a story quiz. These are their answers:\n${lines.join("\n")}` + (nl.length ? `\n\nWhat these mean to the user (follow these closely):\n${nl.join("\n")}` : "");
   return `The user filled in a character quiz. Build the ${a.kind === "persona" ? "player persona (the user's own character, kept brief)" : KINDS[a.kind].label.toLowerCase()} from these answers, following every answer closely; invent everything they left to you so it all fits together.${a.kind === "group" ? " Each member listed below becomes one member of the group." : ""}\n${lines.join("\n")}` +
     (nl.length ? `\n\nWhat these mean to the user (follow these closely):\n${nl.join("\n")}` : "") +
     `\n\nUse the picked kinks, species and traits as the card's tags where they fit.`;
@@ -3296,6 +3301,7 @@ function qzForm(a) {
 }
 async function qzMake(a) {
   if (!hasKey()) { toast("Add your API key in Settings first"); return; }
+  if (a.kind === "story") return sqMake(a);
   if (a.kind === "persona") { const pr = qzPrompt(a); QUIZ.a = null; await dropDraft("quiz"); PGEN.prompt = pr; PGEN.group = false; PGEN.card = null; return pgRun(() => pgCard(pr, false), "Building your persona from your answers…"); }
   await Store.set("quizLast", JSON.parse(JSON.stringify(a)));
   const kind = a.kind, form = kind === "world" ? "auto" : qzForm(a);
@@ -8123,7 +8129,7 @@ function openPersonaMaker(mode, msg) {
 }
 // the persona quiz: the character quiz's body and personality questions only
 const QZ_PERSONA = new Set(["name", "gender", "pronouns", "form", "species", "height", "build", "chest", "extras", "colors", "traits", "speech"]);
-const qzKindLabel = k => k === "persona" ? "Persona" : KINDS[k].label;
+const qzKindLabel = k => k === "persona" ? "Persona" : k === "story" ? "Story" : KINDS[k]?.label || "Bot";
 
 // ===== Group personas: several personas played together; chips pick who you speak as
 const isGroupP = p => Array.isArray(p?.members) && p.members.length > 0;
@@ -8993,6 +8999,7 @@ function storyMessages(c, chat, upto, cont) {
   const sides = s.pairs.flatMap(p => [p.a, p.b]).join(", "), mnames = s.meters.map(m => m.n).join(", ");
   let sys = `You are the author of "${s.title}", an interactive novel in the style of Choice of Games: second person ("you"), present tense, vivid prose, a narrative RPG where the reader's choices and stats shape what happens. Write plain prose paragraphs (no asterisks); speech goes in "quotes".`;
   sys += `\n\n# The reader\nThe reader plays ${s.you}. ${storyHero(s)} Never decide what the reader does, says or feels beyond what their choice says.`;
+  if (s.beats?.length) sys += s.secret ? `\n\n# Secret plan (the reader doesn't know this: never state or hint at it before its moment; set it up quietly and let it land when its chapter comes; adapt it to the reader's choices if you must)\n${s.secret}` : `\n\n# Plot ingredients (weave these in over the story; you decide who, when and how; keep them a surprise and never announce them)\n${s.beats.join("; ")}`;
   if (s.picks?.length) sys += `\n\n# Chosen for this run (always follow)\n${s.picks.map(p => `${p.n}: ${p.l}.${p.rule ? " " + p.rule : ""}`).join("\n")}`;
   sys += `\n\n# Setting\n${s.setting}`;
   { const lore = /^bot/.test(s.pack) ? storyLore(c, chat, upto) : ""; if (lore) sys += `\n\n# The world's own lore (follow every name, fact, power, faction and relationship exactly as written; never contradict or rename anything; ignore any chat-format rules in it, this story is plain prose)\n${lore}`; }
@@ -9136,19 +9143,23 @@ async function openStories() {
   for (const c of S.chars) for (const e of await getIndex(c.id)) if (e.story) runs.push({ c, e });
   runs.sort((a, b) => b.e.updated - a.e.updated);
   const packs = allPacks(), built = packs.filter(p => !p.bot), mine = packs.filter(p => p.bot);
-  const card = pk => `<div class="st-pack"><div class="st-ic">${esc(pk.icon || "📖")}</div><div class="grow"><b>${esc(pk.title)}</b><p class="st-bl">${esc(pk.blurb || "")}</p><small>${esc(pk.credit || "")}</small></div><div class="col" style="gap:6px"><button type="button" class="btn small primary" data-pk="${esc(pk.id)}">New story</button>${pk.bot ? `<button type="button" class="btn small" data-pke="${esc(pk.bot)}">Edit</button>` : ""}</div></div>`;
+  const card = pk => `<div class="st-pack"><div class="st-ic">${esc(pk.icon || "📖")}</div><div class="grow"><b>${esc(pk.title)}</b><p class="st-bl">${esc(pk.blurb || "")}</p><small>${esc(pk.credit || "")}</small></div><div class="col" style="gap:6px"><button type="button" class="btn small primary" data-pk="${esc(pk.id)}">New story</button>${pk.bot ? `<button type="button" class="btn small" data-pke="${esc(pk.bot)}">Edit</button>` : ""}<button type="button" class="btn small" data-pkr="${esc(pk.id)}">🔀 Remix</button></div></div>`;
   openSheet("Play a story", b => {
     const tabs = [["built", `Stories · ${built.length}`], ["mine", `From your bots · ${mine.length}`], ["runs", `Your runs · ${runs.length}`]];
-    b.innerHTML = `<p class="hint" style="margin:0">Interactive novels told one scene at a time: you pick what to do, your choices shape who you are, and your nature decides what succeeds.</p>
+    b.innerHTML = `<p class="hint" style="margin:0">Interactive novels told one scene at a time: you pick what to do, your choices shape who you are, and your nature decides what succeeds.</p>${RM.res ? `<button type="button" class="btn" id="stRmWait">🔀 Your remix of ${esc(RM.res.pk.title)} is waiting</button>` : ""}
       <div class="tabs st-tabs">${tabs.map(([k, l]) => `<button type="button" class="tab ${ST_TAB === k ? "on" : ""}" data-stt="${k}">${l}</button>`).join("")}</div>
       <div data-sp="built" ${ST_TAB === "built" ? "" : "hidden"}>${built.map(card).join("")}</div>
       <div data-sp="mine" ${ST_TAB === "mine" ? "" : "hidden"}>${mine.map(card).join("") || '<p class="note">None yet. Turn one of your bots into a story below.</p>'}
+        <button type="button" class="btn" id="stQuiz">📜 Write a story with the quiz</button>
         <button type="button" class="btn" id="stMakeFull">📚 Make one of your bots a full story</button>
         <button type="button" class="btn" id="stFromBot">📖 A quick one-off story from a bot</button></div>
       <div data-sp="runs" ${ST_TAB === "runs" ? "" : "hidden"}>${runs.length ? `<div class="stack">${runs.slice(0, 40).map((r, i) => `<button type="button" class="listrow" data-run="${i}"><span class="grow"><b>${r.e.obit ? '<span title="Ended in death">🪦</span> ' : ""}${esc(r.e.story)}</b> <span class="badge">${r.e.count}</span><span class="sub">${esc(r.e.preview || "")}</span></span><span class="sub">${fmtWhen(r.e.updated)}</span></button>`).join("")}</div>` : '<p class="note">No stories started yet.</p>'}</div>`;
     b.querySelectorAll("[data-stt]").forEach(x => x.onclick = () => { ST_TAB = x.dataset.stt; b.querySelectorAll("[data-stt]").forEach(y => y.classList.toggle("on", y === x)); b.querySelectorAll("[data-sp]").forEach(p => p.hidden = p.dataset.sp !== ST_TAB); });
     b.querySelectorAll("[data-pk]").forEach(x => x.onclick = () => storySetup(packOf(x.dataset.pk), null));
     b.querySelectorAll("[data-pke]").forEach(x => x.onclick = () => storyDefEdit(byId(x.dataset.pke)));
+    b.querySelectorAll("[data-pkr]").forEach(x => x.onclick = () => openRemix(x.dataset.pkr));
+    $("stQuiz").onclick = () => sqStart();
+    if ($("stRmWait")) $("stRmWait").onclick = () => remixReview();
     $("stFromBot").onclick = () => storyPickBot();
     $("stMakeFull").onclick = () => storyPickBot(true);
     b.querySelectorAll("[data-run]").forEach(x => x.onclick = () => { const r = runs[+x.dataset.run]; closeSheet(); openChat(r.c.id, r.e.id); });
@@ -9162,6 +9173,316 @@ function storyPickBot(full) {
     $("stQ").oninput = draw; draw();
   });
 }
+// ---- v2.8: the story quiz and remixes (owner 2026-10-30). The story quiz (quiz kind "story", questions QZ_STORY) writes a
+// world bot (genCard) and then its story (sqStoryDef): setting, roles, setup choices, gauges and chapters, reviewed before
+// it's made. The plot ingredients the owner picks stay as storyDef.beats; each run plans them privately at the start
+// (story.secret, never shown) so they stay a surprise. A remix copies a story (and its bot) and rewrites only what the
+// owner asks for: the AI answers with targeted edits (remixPlan) that remixApply places into the copy.
+const SQ_NOVORE = "no vore in this story";
+const sqVore = q => !(q.vorelaw?.pick || []).includes(SQ_NOVORE);
+const QZ_STORY = [
+  { id: "title", sec: "Premise", q: "A title, if you have one?", t: "text", ph: "e.g. Last One Out (or skip it and the story names itself)" },
+  { id: "genre", sec: "Premise", q: "What kind of story?", t: "many", o: ["fantasy", "dark fantasy", "sci-fi", "modern day", "post-apocalyptic", "horror", "historical", "myth and legend", "cyberpunk", "survival", "mystery / crime", "slice of life"] },
+  { id: "tone", sec: "Premise", q: "What should it feel like?", t: "many", o: ["grim and brutal", "dark", "tense", "horror", "tragic", "romantic", "lewd", "comedic", "absurd", "cozy", "adventurous", "mysterious"] },
+  { id: "hook", sec: "Premise", q: "The hook, in a line or two?", t: "text", ph: "e.g. a routine dungeon run goes wrong, and the thing that ate your friends follows you home" },
+  { id: "setting", sec: "World", q: "Where does it happen?", t: "one", o: ["a fantasy kingdom", "a big city", "a small town", "wilderness / forest", "jungle", "desert", "the frozen north", "the ocean / islands", "a dungeon / underground", "a space station or ship", "an alien world", "a ruined world", "a prison", "an arena", "an academy (adults)", "a castle or estate"] },
+  { id: "vorelaw", sec: "World", q: "How does vore fit this world?", t: "one", o: ["everyday and normal", "known but taboo", "illegal: it's murder", "legal only with consent", "a secret most people don't know", "only monsters do it", SQ_NOVORE] },
+  { id: "preds", sec: "World", q: "Who can eat people?", t: "many", when: q => sqVore(q), o: ["anyone", "women", "futas", "men", "anthros", "humans too", "monsters / creatures", "dragons", "giants", "only a few rare preds", "only one special pred"] },
+  { id: "folk", sec: "World", q: "Who lives there?", t: "many", o: ["humans", "anthros", "monsters", "ferals", "giants", "tiny folk", "dragons", "demons", "elves", "robots / synthetics", "aliens", "mixed everything"] },
+  { id: "role", sec: "You", q: "Who do you play?", t: "one", o: ["a newcomer", "an adventurer / delver", "a hunter", "prey trying to survive", "a pred", "a fighter", "a captive", "a worker", "a noble / royal", "a criminal", "a nobody", "someone this world defines (a monster, a chosen one…)"] },
+  { id: "picks", sec: "You", q: "What should you choose before each run?", hint: "These become setup choices, like the dragon's sex in The Wounded Dragon.", t: "many", o: ["your sex", "human or anthro", "your species", "pred or prey", "your role", "who comes with you", "a main character's sex", "a main character's build", "how you start (the opening)", "nothing: the same every time"] },
+  { id: "company", sec: "You", q: "Who's with you?", t: "many", o: ["nobody", "a partner", "a sibling", "a parent", "a best friend", "a party of friends", "a rival", "a stranger you just met", "a pet or familiar"] },
+  { id: "size", sec: "Cast", q: "How big is the cast?", t: "one", o: ["small (4-6)", "medium (8-10)", "large (12-15)"] },
+  { id: "leads", sec: "Cast", q: "Anything about the main characters?", t: "text", ph: "e.g. a crimson dragon hiding a wound; a femboy fox thief; a mother wolf who runs the tavern" },
+  { id: "castmix", sec: "Cast", q: "What should the cast be like?", t: "many", o: ["mostly women", "mostly men", "futas", "anthros", "humans", "monsters", "more preds than prey", "more prey than preds", "a mentor", "friendly faces", "villains", "rivals"] },
+  { id: "love", sec: "Cast", q: "Romance?", t: "one", o: ["none", "optional: you choose", "a central love interest", "several to choose from", "one-sided: they want you", "forbidden"] },
+  { id: "threat", sec: "Cast", q: "What's the main threat?", t: "one", o: ["a monster", "a pred", "a villain", "a guild or organisation", "the law", "the world itself", "a rival", "someone close to you", "nobody (slice of life)"] },
+  { id: "beats", sec: "Plot", q: "Plot ingredients?", hint: "Each run decides who, when and how in secret, so they stay a surprise. Type your own too.", t: "many", o: ["betrayal", "sole survivor", "a loved one turns pred", "a hidden identity", "a ticking clock", "being hunted", "captivity and escape", "revenge", "slow seduction", "a twist villain", "a rivalry", "a deal with a price", "a secret the world hides", "an unwanted bond", "mistaken identity", "a job gone wrong"] },
+  { id: "endings", sec: "Plot", q: "Which endings can happen?", t: "many", o: ["you win", "you escape", "together", "kept as a pet or prey", "digested", "you eat your way to the top", "tragic", "bittersweet", "open-ended"] },
+  { id: "chapters", sec: "Plot", q: "How long?", hint: "Each chapter is 6 scenes.", t: "one", o: ["5 chapters", "7 chapters", "9 chapters"] },
+  { id: "vtypes", sec: "Kinks", q: "Vore types?", t: "many", when: q => sqVore(q), o: ["oral vore", "cock vore", "unbirth", "anal vore", "breast vore", "tail vore", "absorption", "soft vore (swallowed alive)", "hard vore (chewing)", "digestion", "safe / endo", "reformation"] },
+  { id: "kinks", sec: "Kinks", q: "Other kinks?", t: "many", tags: true, o: ["sex", "weight gain", "disposal / scat", "humiliation", "feeding", "size difference", "macro / micro", "breeding", "non-con", "dubious consent", "incest (adults)", "musk", "inflation", "none"] },
+  { id: "limits", sec: "Kinks", q: "Anything to keep out?", t: "text", ph: "e.g. no scat, no gore" },
+  { id: "danger", sec: "Danger", q: "How dangerous, by default?", hint: "You can still change it when you start a run.", t: "one", o: ["story mode: you can't die", "real risk", "brutal: one bad call can kill"] },
+  { id: "gauges", sec: "Danger", q: "What should be tracked?", t: "many", o: ["health", "fullness", "a pred's hunger", "love or trust", "suspicion / heat", "money", "reputation", "weight", "stamina", "sanity", "time left"] },
+  { id: "more", sec: "Anything else", q: "Anything else the story should have?", t: "text", ph: "e.g. the narrator is a bit sarcastic; every chapter ends on a meal" }
+];
+const SQ = { a: null, prompt: "", note: "", card: null, def: null, busy: false };
+const SQ_COLS = ["#e2766f", "#3b6fd6", "#e86a9a", "#e8a95b", "#8fdc6a", "#9a6fd8"];
+const sqKeep = () => saveDraft("sq", { type: "sq", a: SQ.a, prompt: SQ.prompt, note: SQ.note, card: SQ.card, def: SQ.def }, true);
+function sqRestore(d) { Object.assign(SQ, { a: d.a || null, prompt: d.prompt || "", note: d.note || "", card: d.card || null, def: d.def || null }); }
+function sqStart() {
+  if (QUIZ.a?.kind !== "story") { QUIZ.a = qzNew("story"); QUIZ.i = 0; qzKeep(); }
+  qzDraw();
+}
+async function sqMake(a) {
+  Object.assign(SQ, { a: JSON.parse(JSON.stringify(a)), prompt: qzPrompt(a), note: "", card: null, def: null });
+  const k = qzKey(a); QUIZ.a = null; await dropDraft(k);
+  await sqRun();
+}
+const sqWait = t => openSheet("Story quiz", b => { S.sheetGuard = "wait"; b.innerHTML = `<div class="gen-wait" id="gWait">${lanternSVG("seq")}<p><b>${esc(t)}</b></p><p class="hint">A whole story world takes a few minutes. If you close this it keeps going, and the result waits for you under <b>New</b>.</p></div>`; });
+async function sqRun() {
+  if (SQ.busy) return; SQ.busy = true;
+  sqWait("Building the world from your answers…");
+  try {
+    const req = SQ.prompt + (SQ.note ? `\n\nChanges the user asked for after seeing an earlier version (follow them): ${SQ.note}` : "");
+    SQ.card = await genCard("world", "auto", sqWorldAsk(SQ.a, req)); SQ.def = null;
+    if ($("gWait")) sqWait("Writing its story: roles, setup choices, gauges and chapters…");
+    SQ.def = await sqStoryDef(SQ.card, SQ.a, req);
+    SQ.busy = false; await sqKeep();
+    if ($("gWait") || ($("sheet").hidden && $("chat").hidden)) sqReview(); else toast(`"${SQ.def.title}" is ready. Find it under New → Unfinished.`);
+  } catch (e) {
+    SQ.busy = false;
+    if (!$("gWait")) { toast("The story couldn't be written: " + e.message); return; }
+    openSheet("Story quiz", b => {
+      b.innerHTML = `<p class="note">The story couldn't be written: ${esc(e.message)}</p><button type="button" class="btn primary" id="sqTry">Try again</button>${SQ.a ? `<button type="button" class="btn" id="sqBack">Back to my answers</button>` : ""}`;
+      $("sqTry").onclick = () => sqRun();
+      if ($("sqBack")) $("sqBack").onclick = () => { QUIZ.a = JSON.parse(JSON.stringify(SQ.a)); QUIZ.i = qzSteps(QUIZ.a).length; qzKeep(); qzDraw(); };
+    });
+  }
+}
+const sqWorldAsk = (a, req) => `${req}\n\nBuild the WORLD this story happens in, as a world bot the user can also chat in. Follow every answer. Cast: as many listings as the cast-size answer asks (that overrides the usual 5-10), covering the main characters, the main threat, key places and factions and this world's rules; anyone who comes along with the reader gets a listing too. Keep the plot ingredients out of the card entirely: no secrets, twists or betrayals spelled out anywhere (they are planned privately when a story starts). ${a && !sqVore(a.q) ? "There is no vore in this world." : "Vore is part of this world exactly as the answers describe (who can eat people and how the world treats it); digestion and its aftermath are described graphically when they happen."}`;
+const sqCardBot = c => ({ name: c.name, kind: "world", tags: c.tags || [], description: c.description, scenario: c.scenario, firstMessage: (c.firstMessages || [])[0] || "", altGreetings: (c.firstMessages || []).slice(1), instructions: c.instructions, cast: c.cast || [], lore: c.lore || [], bookIds: [] });
+const sqSlug = (v, n) => String(v || "").toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, n);
+// setup choices from the AI (or a remix), cleaned to the v2.7 shape; options that came with a "when" keep it
+function sqOpts(list) {
+  const seen = new Set();
+  return (Array.isArray(list) ? list : []).map((x, i) => {
+    let id = sqSlug(x?.id, 16) || "o" + i; while (seen.has(id)) id += i; seen.add(id);
+    const choices = (Array.isArray(x?.choices) ? x.choices : []).map(c => Array.isArray(c) ? c : [c?.value, c?.label, c?.rule]).map(([v, l, r]) => [sqSlug(v || l, 20), String(l || v || "").trim().slice(0, 40), String(r || "").trim().slice(0, 400)]).filter(c => c[0] && c[1]).slice(0, 6);
+    const o = { id, n: String(x?.n || "").trim().slice(0, 40), hint: String(x?.hint || "").trim().slice(0, 160), choices };
+    if (x?.when?.id && Array.isArray(x.when.in)) o.when = { id: String(x.when.id), in: x.when.in.map(String) };
+    return o;
+  }).filter(x => x.n && x.choices.length >= 2).slice(0, 4);
+}
+const sqMeters = list => (Array.isArray(list) ? list : []).map((m, i) => ({ k: "m" + i, n: String(m?.n || "").trim().slice(0, 20), v: Number.isFinite(+m?.v) ? Math.max(0, Math.round(+m.v)) : 10, max: +m?.max === 0 ? 0 : 100, desc: String(m?.desc || "").slice(0, 80) })).filter(m => m.n).slice(0, 4);
+const sqPairs = list => (Array.isArray(list) ? list : []).map((p, i) => ({ a: String(p?.a || "").trim().slice(0, 20), b: String(p?.b || "").trim().slice(0, 20), ca: hexOk(p?.ca) || STORY_PACKS.dragon.pairs[i % 3].ca, cb: hexOk(p?.cb) || STORY_PACKS.dragon.pairs[i % 3].cb })).filter(p => p.a && p.b).slice(0, 3);
+const sqChapters = list => (Array.isArray(list) ? list : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "A chapter", goal: String(x?.goal || "").slice(0, 600), scenes: STORY_SCENES })).filter(x => x.goal).slice(0, 12);
+// the owner's plot ingredients, as written (picks plus their own)
+function sqBeats(a) {
+  const x = a?.q?.beats; if (!x) return [];
+  if (x.decide) return ["one to three twists of the story's own choosing"];
+  return [...(x.pick || []), ...String(x.other || "").split(/[;,\n]/)].map(t => t.trim()).filter(Boolean).slice(0, 12);
+}
+async function sqStoryDef(card, a, req) {
+  const n = +(String(qzSay({}, a?.q?.chapters) || "").match(/\d+/)?.[0]) || STORY_STD;
+  const sys = `You turn a world bot into a full interactive novel in the style of Choice of Games (a narrative RPG told in second person, one scene at a time, with fixed choices, opposed personality stats and meters), following the user's story quiz exactly. Stay faithful to the world: every name, place, faction and rule in it. Respond with only JSON: {"title": the story's title (the user's own, if they gave one), "icon": one emoji, "blurb": 2 sentences that sell it, "setting": 8-14 sentences: the world, its rules, who can eat whom, factions, key characters, the current situation and the tone (this is all the story writer knows, so pack in the important facts; never spell out the plot ingredients), "you": the default role the reader plays (one phrase, "a ..."), "roles": [2-5 roles the reader could play, each one phrase, the first the default], "options": [0-4 setup choices the reader makes before each run, only from what the user said they want to pick at the start, each {"id": a short lowercase id, "n": the question in 2-4 words (e.g. "You are"), "hint": a few words or "", "choices": [2-6 of [value (short lowercase), label (what the reader taps), rule (one or two sentences the narrator follows when it's picked)]]}], "pairs": [3 of {"a": side, "b": opposite side, "ca": "#hex", "cb": "#hex"}] (opposed traits that matter here), "meters": [2-4 of {"n": name, "v": starting value, "max": 100 or 0 for open-ended, "desc": a few words}] (what the user wants tracked; Health first when it's asked for), "chapters": [${n} of {"t": short title, "goal": two or three sentences on what happens and what's at stake, "scenes": 6}] (a full arc with a climax in the last one; goals set things up but never reveal the plot ingredients), "danger": "story" (the reader can't die), "real" or "brutal" (from the user's answer), "vore": true or false}. Every character is treated as a fully grown, mature being.`;
+  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: `${req}\n\nThe world bot:\n${botSource(sqCardBot(card))}` }], { temperature: 0.85, maxTokens: 5000 });
+  const chapters = sqChapters(j?.chapters); if (chapters.length < 3) throw new Error("The story's chapters came back incomplete. Try again.");
+  const meters = sqMeters(j?.meters), pairs = sqPairs(j?.pairs), roles = (Array.isArray(j?.roles) ? j.roles : []).map(r => String(r || "").trim().slice(0, 200)).filter(Boolean).slice(0, 5);
+  const you = String(j?.you || roles[0] || "the protagonist").slice(0, 200), own = String(a?.q?.title?.other || "").trim();
+  const dg = String(j?.danger || "").toLowerCase(), said = qzSay({}, a?.q?.danger);
+  const danger = /^story/.test(said) ? "story" : /^brutal/.test(said) ? "brutal" : /^real/.test(said) ? "real" : ["story", "real", "brutal"].includes(dg) ? dg : "real";
+  return {
+    title: (own || String(j?.title || card.name)).slice(0, 60), icon: [...String(j?.icon || "📖")].slice(0, 2).join("") || "📖", blurb: String(j?.blurb || card.summary || "").slice(0, 400),
+    credit: "Written from your story quiz. The story is written fresh as you play.", you, roles: roles.length ? roles : [you], options: sqOpts(j?.options),
+    setting: String(j?.setting || card.description || "").slice(0, 4000), pairs: pairs.length ? pairs : STORY_PACKS.dragon.pairs.map(p => ({ ...p })),
+    meters: meters.length ? meters : [{ k: "m0", n: "Health", v: 100, max: 100, desc: "your health; at 0 you're dead" }], chapters, danger,
+    vore: (a ? sqVore(a.q) : true) && j?.vore !== false, beats: sqBeats(a), at: Date.now()
+  };
+}
+function sqReview(err) {
+  const c = SQ.card, d = SQ.def; if (!c || !d) return;
+  const sec = (t, body) => body ? `<details class="gen-sec"><summary>${t}</summary><div class="gen-body">${body}</div></details>` : "";
+  const txt = t => t ? `<p>${esc(t).replace(/\n/g, "<br>")}</p>` : "";
+  openSheet("Your new story", b => {
+    S.sheetGuard = "sq";
+    b.innerHTML = `<div class="gen-sum"><h3>${esc(d.icon || "📖")} ${esc(d.title)}</h3><p>${esc(d.blurb)}</p><div class="gen-tags">${(c.tags || []).map(t => `<span class="badge">${esc(t)}</span>`).join("")}</div></div>
+      <p class="hint" style="margin:0">Tap a section to read it. The world becomes a bot you can also chat with, and the story goes on your Stories shelf.</p>
+      ${sec("World", txt(c.description))}
+      ${sec(`Listings · ${(c.cast || []).length}`, (c.cast || []).map(x => `<p><b>${esc(x.name)}</b> <span class="badge">${esc(WORLD_TYPES[x.type] || x.type)}</span><br>${esc(x.details)}</p>`).join(""))}
+      ${sec(`Openings · ${(c.firstMessages || []).length}`, (c.firstMessages || []).map((g, i) => `<p><b>#${i + 1}</b><br>${fmt(g)}</p>`).join(""))}
+      ${sec("The story's setting", txt(d.setting))}
+      ${sec(`Who you can play · ${d.roles.length}`, `<p>${d.roles.map(esc).join("<br>")}</p>`)}
+      ${d.options.length ? sec(`Setup choices · ${d.options.length}`, d.options.map(o => `<p><b>${esc(o.n)}</b>: ${o.choices.map(x => esc(x[1])).join(" · ")}</p>`).join("")) : ""}
+      ${sec(`Gauges · ${d.meters.length}`, d.meters.map(m => `<p><b>${esc(m.n)}</b> (starts at ${m.v}${m.max ? "/" + m.max : ""}): ${esc(m.desc)}</p>`).join(""))}
+      ${sec(`Chapters · ${d.chapters.length}`, `<ol class="sq-ch">${d.chapters.map(x => `<li><b>${esc(x.t)}</b><br>${esc(x.goal)}</li>`).join("")}</ol>`)}
+      ${d.beats.length ? sec("Your plot ingredients", `<p class="hint">Each run plans who, when and how in secret, so you won't see them coming.</p><p>${d.beats.map(esc).join(" · ")}</p>`) : ""}
+      ${sec("Rules", txt(c.instructions))}
+      ${sec(`Lore · ${(c.lore || []).length}`, (c.lore || []).map(l => `<p><b>${esc(l.keys)}</b><br>${esc(l.text)}</p>`).join(""))}
+      <p class="hint" style="margin:0">Starts ${esc(STORY_DANGER[d.danger]?.[0] || "Real risk")}${d.vore ? " · vore ticked" : ""}.</p>
+      <div class="group"><h3>Does this look right?</h3><p class="note">Create it as it is, or say what to change and it's written again with your note.</p>
+        <textarea id="sqNote" style="min-height:80px" placeholder="e.g. make the dragon female, a darker ending, add a friendly kobold"></textarea><button type="button" class="btn" id="sqRe">Rewrite with my note</button></div>
+      <div id="sqMsg" class="hint">${err ? esc(err) : ""}</div>
+      <button type="button" class="btn primary" id="sqMake">✓ Looks good, create it</button>
+      <button type="button" class="btn" id="sqEdit">Create it and edit the story</button>
+      <button type="button" class="btn" id="sqMore">↻ A different one from the same answers</button>
+      ${SQ.a ? `<button type="button" class="btn" id="sqAnswers">Change my answers</button>` : ""}`;
+    $("sqRe").onclick = () => { const note = $("sqNote").value.trim(); if (!note) { $("sqMsg").textContent = "Say what to change first."; return; } SQ.note = [SQ.note, note].filter(Boolean).join(" "); sqRun(); };
+    $("sqMake").onclick = () => sqFinish(false);
+    $("sqEdit").onclick = () => sqFinish(true);
+    confirmBtn($("sqMore"), "Tap again: this one will be replaced", () => { SQ.note = ""; sqRun(); });
+    if ($("sqAnswers")) $("sqAnswers").onclick = () => { QUIZ.a = JSON.parse(JSON.stringify(SQ.a)); QUIZ.i = qzSteps(QUIZ.a).length; qzKeep(); qzDraw(); };
+  });
+}
+async function sqFinish(edit) {
+  const c = SQ.card, d = SQ.def; if (!c || !d) return;
+  const btn = $(edit ? "sqEdit" : "sqMake"); btn.disabled = true; btn.textContent = "Picturing the world…";
+  const w = await cardToBot(c, "world");
+  w.summary = c.summary || d.blurb;
+  w.tags = [...new Set([...(w.tags || []), "story", ...(d.vore && !voreTagged(w) ? ["vore"] : [])])];
+  if (d.beats.length) w.instructions = [w.instructions, `Plot ingredients to weave in over time (you decide who, when and how; set them up quietly and never announce them): ${d.beats.join("; ")}.`].filter(Boolean).join("\n\n");
+  w.gaugesOn = true; w.gauges = d.meters.map((m, i) => ({ name: m.n, desc: m.desc || "", color: SQ_COLS[i % SQ_COLS.length], start: m.v }));
+  w.storyDef = { ...d, at: Date.now() };
+  await saveChars(); await dropDraft("sq"); SQ.card = null; SQ.def = null; S.sheetGuard = false;
+  try { achEvent("made", { id: w.id, from: "story" }); } catch {}
+  renderHome();
+  if (edit) storyDefEdit(w); else { closeSheet(); toast(`"${d.title}" is on your Stories shelf`); ST_TAB = "mine"; openStories(); }
+}
+// a run's private plan for the plot ingredients (never shown to the reader)
+async function storySecret(s) {
+  const j = await dsJSON([{ role: "system", content: `You secretly plan the hidden turns of "${s.title}", an interactive novel, before the reader starts. The reader never sees this plan. Turn each plot ingredient into something concrete for THIS run: who it involves, roughly when (which chapter) and how it plays out, fitting the setting, the reader's role and the choices made for this run. Make it a fresh, surprising take. Respond with only JSON: {"plan": 4-10 sentences}. Every character is treated as a fully grown, mature being.` },
+    { role: "user", content: `Setting: ${s.setting}\nThe reader plays ${s.you}.${s.picks?.length ? "\nChosen for this run: " + s.picks.map(p => `${p.n}: ${p.l}${p.rule ? " (" + p.rule + ")" : ""}`).join("; ") : ""}\nChapters:\n${s.chapters.map((c, i) => `${i + 1}. ${c.t}: ${c.goal}`).join("\n")}\nPlot ingredients: ${s.beats.join("; ")}` }], { temperature: 1, maxTokens: 900 });
+  return String(j?.plan || "").trim().slice(0, 3000);
+}
+
+// ---- remixes
+const RM = { busy: false, res: null };
+const rmLoreName = (l, i) => String(l?.name || String([].concat(l?.keys || "")[0] || "").split(",")[0] || `entry ${i + 1}`).trim();
+function remixSource(pk) {
+  const bot = pk.bot ? byId(pk.bot) : null;
+  const st = { title: pk.title, blurb: pk.blurb, you: pk.you, roles: pk.roles || [pk.you], setting: pk.setting, options: pk.options || [], pairs: pk.pairs, meters: pk.meters, chapters: pk.chapters || [] };
+  if (pk.eras) st.eras = Object.fromEntries(Object.entries(pk.eras).map(([k, e]) => [k, { n: e.n, setting: e.setting, chapters: e.chapters }]));
+  if (!bot) return { story: st };
+  return { name: bot.name, description: bot.description, appearance: bot.appearance || undefined, scenario: bot.scenario, firstMessage: bot.firstMessage, altGreetings: bot.altGreetings || [], instructions: bot.instructions, cast: (bot.cast || []).map(x => ({ name: x.name, type: x.type, details: x.details })), lore: (bot.lore || []).map((l, i) => ({ name: rmLoreName(l, i), keys: l.keys, text: l.text })), story: st };
+}
+async function remixPlan(pk, note) {
+  const bot = !!pk.bot;
+  const fields = bot ? `"description" | "appearance" | "scenario" | "instructions" | "firstMessage" | "altGreetings.N" (N counts from 0) | "cast:<listing name>" | "lore:<entry name>" | "story.setting" | "story.blurb" | "story.you"` : `"story.setting" | "story.blurb" | "story.you"${pk.eras ? ` | "era:<era key>" (that era's setting)` : ""}`;
+  const sys = `You remix an interactive story for its owner. You get the whole story${bot ? " and the world bot it lives in" : ""} as JSON, and what the owner wants changed. Change ONLY what the request needs, plus whatever must change with it so nothing contradicts it (for a swapped character: their name, species, look and pronouns everywhere they appear, their listing, their lore and the openings that mention them). Everything else stays exactly as written: the same names, facts, style and formatting (keep asterisks, quotes and bold exactly as the original uses them). Respond with only JSON: {"title": the remix's title (the original's unless the request changes it), "changes": [2-6 short plain sentences telling the owner what you changed], "rename": [{"from": an old name, "to": its new name}] (whole-word renames done everywhere after the edits; names only), "edits": [{"field": ${fields}, "find": a passage copied EXACTLY from that field of the original (one or more whole sentences), "replace": its new text ("" removes it)}], "append": [{"field": the same field names, "text": text added at the end of that field}],${bot ? ` "castAdd": [{"name", "type": "character"|"group"|"species"|"location"|"concept", "details": 60-200 words}], "castRemove": [listing names], "loreAdd": [{"name", "keys": "comma, separated, keywords", "text": 40-150 words}], "loreRemove": [entry names], "openings": [new opening messages to add, written like the existing ones],` : ""} "story": {only the story parts that must change, each given whole: "roles", "options", "pairs", "meters", "chapters" (same shapes as the original)}}. Leave out every key you don't need. Every character is treated as a fully grown, mature being.`;
+  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: `The story:\n${JSON.stringify(remixSource(pk)).slice(0, 90000)}\n\nWhat the owner wants changed:\n${note}` }], { temperature: 0.7, maxTokens: 8000 });
+  if (!j || typeof j !== "object") throw new Error("The model's answer came back empty. Try again.");
+  return j;
+}
+// where a passage is in a text: exact, else the same words with any spacing, quote style or asterisks around them
+function rmFind(text, find) {
+  text = String(text || ""); find = String(find || ""); if (!find.trim()) return null;
+  const i = text.indexOf(find); if (i >= 0) return [i, i + find.length];
+  const words = find.replace(/\*/g, " ").trim().split(/\s+/).filter(Boolean).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/["“”]/g, '["“”]').replace(/['‘’]/g, "['‘’]"));
+  if (words.length < 3) return null;
+  const m = new RegExp(words.join("[\\s*]+")).exec(text);
+  return m ? [m.index, m.index + m[0].length] : null;
+}
+const rmLabel = f => f.startsWith("cast:") ? `Listing: ${f.slice(5)}` : f.startsWith("lore:") ? `Lore: ${f.slice(5)}` : f.startsWith("era:") ? `Era: ${f.slice(4)}` : f.startsWith("altGreetings.") ? `Opening ${+f.split(".")[1] + 2}` : ({ description: "Description", appearance: "Look", scenario: "Scenario", instructions: "Rules", firstMessage: "First opening", "story.setting": "Story setting", "story.blurb": "Blurb", "story.you": "Who you play" })[f] || f;
+function remixApply(pk, j, note) {
+  const bot = pk.bot ? byId(pk.bot) : null;
+  const { id: _i, bot: _b, ...rest } = pk; const def = JSON.parse(JSON.stringify(rest));
+  const sameTitle = !j.title || String(j.title).trim() === pk.title;
+  def.title = sameTitle ? `${pk.title} (remix)` : String(j.title).trim().slice(0, 60);
+  def.credit = `A remix of ${pk.title}. The story is written fresh as you play.`; def.remixOf = pk.id;
+  let copy;
+  if (bot) { copy = JSON.parse(JSON.stringify(bot)); delete copy.storyDef; delete copy.people; delete copy.daily; copy.id = uid(); copy.name = sameTitle ? `${bot.name} (remix)` : def.title; copy.remixOf = bot.id; copy.altGreetings = copy.altGreetings || []; copy.cast = copy.cast || []; copy.lore = copy.lore || []; }
+  else copy = Object.assign(blankChar("world"), { name: def.title, description: def.setting, tags: ["story", ...(pk.vore ? ["vore"] : [])], remixOf: pk.id });
+  const ref = f => {
+    if (["description", "appearance", "scenario", "instructions", "firstMessage"].includes(f)) return bot ? { get: () => copy[f] || "", set: v => copy[f] = v } : null;
+    let m = /^altGreetings\.(\d+)$/.exec(f); if (m) return bot && copy.altGreetings[+m[1]] != null ? { get: () => copy.altGreetings[+m[1]], set: v => copy.altGreetings[+m[1]] = v } : null;
+    if (f.startsWith("cast:")) { const x = copy.cast.find(y => y.name.toLowerCase() === f.slice(5).trim().toLowerCase()); return x ? { get: () => x.details || "", set: v => x.details = v } : null; }
+    if (f.startsWith("lore:")) { const k = copy.lore.findIndex((l, i) => rmLoreName(l, i).toLowerCase() === f.slice(5).trim().toLowerCase()); return k >= 0 ? { get: () => copy.lore[k].text || "", set: v => copy.lore[k].text = v } : null; }
+    if (f.startsWith("era:")) { const e = def.eras?.[f.slice(4).trim()]; return e ? { get: () => e.setting || "", set: v => e.setting = v } : null; }
+    m = /^story\.(setting|blurb|you)$/.exec(f); if (m) return { get: () => def[m[1]] || "", set: v => def[m[1]] = v };
+    return null;
+  };
+  const applied = [], missed = [], added = [], removed = [], renamed = [], storyKeys = [];
+  for (const e of Array.isArray(j.edits) ? j.edits : []) {
+    const r = ref(String(e?.field || "")), t = r && r.get(), at = r && rmFind(t, e?.find);
+    if (!at) { missed.push(e); continue; }
+    r.set(t.slice(0, at[0]) + String(e.replace ?? "") + t.slice(at[1])); applied.push({ field: String(e.field), before: t.slice(at[0], at[1]), after: String(e.replace ?? "") });
+  }
+  for (const e of Array.isArray(j.append) ? j.append : []) {
+    const r = ref(String(e?.field || "")), add = String(e?.text || "").trim();
+    if (!r || !add) { if (add) missed.push(e); continue; }
+    r.set([r.get().trimEnd(), add].filter(Boolean).join("\n\n")); applied.push({ field: String(e.field), before: "", after: add });
+  }
+  if (bot) {
+    const gone = new Set((Array.isArray(j.castRemove) ? j.castRemove : []).map(n => String(n).toLowerCase()));
+    copy.cast = copy.cast.filter(x => { const g = gone.has(x.name.toLowerCase()); if (g) removed.push(`Listing: ${x.name}`); return !g; });
+    for (const x of Array.isArray(j.castAdd) ? j.castAdd : []) { const name = String(x?.name || "").trim(); if (!name) continue; copy.cast.push({ name, type: WORLD_TYPES[x.type] ? x.type : "character", details: String(x.details || "").trim() }); added.push(`Listing: ${name}`); }
+    const lgone = new Set((Array.isArray(j.loreRemove) ? j.loreRemove : []).map(n => String(n).toLowerCase()));
+    copy.lore = copy.lore.filter((l, i) => { const g = lgone.has(rmLoreName(l, i).toLowerCase()); if (g) removed.push(`Lore: ${rmLoreName(l, i)}`); return !g; });
+    for (const l of Array.isArray(j.loreAdd) ? j.loreAdd : []) { const text = String(l?.text || "").trim(), keys = Array.isArray(l?.keys) ? l.keys.join(", ") : String(l?.keys || "").trim(); if (!text || !keys) continue; copy.lore.push({ name: String(l.name || keys.split(",")[0]).trim(), keys, secondary: "", logic: 0, text, constant: false, whole: true, cs: false, enabled: true, order: 100 }); added.push(`Lore: ${String(l.name || keys.split(",")[0]).trim()}`); }
+    for (const g of Array.isArray(j.openings) ? j.openings : []) { const t = String(g || "").trim(); if (t) { copy.altGreetings.push(t); added.push(`Opening ${copy.altGreetings.length + 1}`); } }
+  }
+  const sp = j.story && typeof j.story === "object" ? j.story : {};
+  if (Array.isArray(sp.roles)) { const r = sp.roles.map(x => String(x || "").trim().slice(0, 200)).filter(Boolean).slice(0, 6); if (r.length) { def.roles = r; def.you = r[0]; storyKeys.push("roles"); } }
+  if (Array.isArray(sp.options)) { def.options = sqOpts(sp.options); storyKeys.push("setup choices"); }
+  if (Array.isArray(sp.pairs)) { const p = sqPairs(sp.pairs); if (p.length) { def.pairs = p; storyKeys.push("nature pairs"); } }
+  if (Array.isArray(sp.meters)) { const m = sqMeters(sp.meters); if (m.length) { def.meters = m; storyKeys.push("gauges"); } }
+  if (Array.isArray(sp.chapters)) { const c = sqChapters(sp.chapters); if (c.length >= 3) { def.chapters = c; storyKeys.push("chapters"); } }
+  // whole-word renames everywhere in the copy's text and the story
+  const walk = (o, re, to) => { if (Array.isArray(o)) o.forEach((v, i) => typeof v === "string" ? o[i] = v.replace(re, to) : v && typeof v === "object" && walk(v, re, to)); else if (o && typeof o === "object") for (const k of Object.keys(o)) { if (["id", "at", "customPortrait", "pix", "seed", "remixOf", "bot"].includes(k)) continue; const v = o[k]; if (typeof v === "string") o[k] = v.replace(re, to); else if (v && typeof v === "object") walk(v, re, to); } };
+  for (const r of Array.isArray(j.rename) ? j.rename : []) {
+    const from = String(r?.from || "").trim(), to = String(r?.to || "").trim(); if (from.length < 3 || !to || from === to) continue;
+    const re = new RegExp(`(?<![\\p{L}\\p{N}])${from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\p{L}\\p{N}])`, "gu");
+    for (const k of ["description", "appearance", "scenario", "instructions", "firstMessage", "summary"]) if (typeof copy[k] === "string") copy[k] = copy[k].replace(re, to);
+    walk(copy.altGreetings, re, to); walk(copy.cast, re, to); walk(copy.lore, re, to); walk(def, re, to);
+    renamed.push(`${from} → ${to}`);
+  }
+  if (!bot) copy.description = def.setting;
+  const changes = (Array.isArray(j.changes) ? j.changes : []).map(x => String(x || "").trim()).filter(Boolean).slice(0, 8);
+  return { pk, note, copy, def, changes, applied, missed, added, removed, renamed, storyKeys };
+}
+function openRemix(pkId, note = "") {
+  const pk = packOf(pkId); if (!pk) return;
+  const chips = [["swap", "Swap a character", "Swap "], ["add", "Add a character", "Add a new character: "], ["setting", "Change the setting", "Change the setting: "], ["role", "Change your role", "Let the reader play "], ["kinks", "Change the kinks", "Kinks: "]];
+  openSheet(`Remix: ${pk.title}`, b => {
+    b.innerHTML = `<p class="hint" style="margin:0">A remix is a copy of this story${pk.bot ? " and its bot" : ""} with only the parts you name rewritten. The original stays exactly as it is.</p>
+      ${RM.res && RM.res.pk.id === pk.id ? `<button type="button" class="btn" id="rmWaiting">🔀 Your last remix of this story is waiting</button>` : ""}
+      <div class="qz-opts" id="rmChips">${chips.map(([k, l]) => `<button type="button" class="qz-o" data-rc="${k}">${l}</button>`).join("")}</div>
+      ${field("What should change?", `<textarea id="rmNote" rows="5" placeholder="e.g. make Rhoswen a hyena instead of a fox; add a friendly kobold who helps the reader">${esc(note)}</textarea>`)}
+      <div id="rmMsg" class="hint"></div>
+      <button type="button" class="btn primary" id="rmGo">🔀 Make the remix</button>`;
+    b.querySelectorAll("[data-rc]").forEach(x => x.onclick = () => { const t = $("rmNote"), add = chips.find(c => c[0] === x.dataset.rc)[2]; t.value = (t.value.trim() ? t.value.trim() + "\n" : "") + add; t.focus(); t.setSelectionRange(t.value.length, t.value.length); });
+    if ($("rmWaiting")) $("rmWaiting").onclick = () => remixReview();
+    $("rmGo").onclick = () => { const n = $("rmNote").value.trim(); if (!n) { $("rmMsg").textContent = "Say what to change."; return; } if (!hasKey()) { $("rmMsg").textContent = "Remixes need your AI key (Settings → AI model)."; return; } remixRun(pk.id, n); };
+  });
+}
+async function remixRun(pkId, note) {
+  const pk = packOf(pkId); if (!pk || RM.busy) return; RM.busy = true;
+  waitSheet("Remix", `Remixing ${pk.title}…`);
+  try {
+    RM.res = remixApply(pk, await remixPlan(pk, note), note); RM.busy = false;
+    if ($("gWait") || ($("sheet").hidden && $("chat").hidden)) remixReview(); else toast(`Your remix of ${pk.title} is ready: Stories → Remix shows it`);
+  } catch (e) {
+    RM.busy = false;
+    if ($("gWait")) { openRemix(pkId, note); $("rmMsg").textContent = "Couldn't make the remix: " + e.message; } else toast("Couldn't make the remix: " + e.message);
+  }
+}
+function remixReview() {
+  const r = RM.res; if (!r) return;
+  const short = t => esc(String(t || "").length > 320 ? String(t).slice(0, 320) + "…" : String(t || ""));
+  const any = r.applied.length || r.added.length || r.removed.length || r.renamed.length || r.storyKeys.length;
+  openSheet("Your remix", b => {
+    S.sheetGuard = "sq";
+    b.innerHTML = `<div class="gen-sum"><h3>${esc(r.def.icon || "📖")} ${esc(r.def.title)}</h3><p>A copy of ${esc(r.pk.title)}${r.pk.bot ? " and its bot" : ""}. The original stays as it is.</p></div>
+      <div class="lbl">What changed</div><ul class="rm-ch">${(r.changes.length ? r.changes : ["(no summary came back)"]).map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+      ${r.applied.length ? `<details class="gen-sec"><summary>Rewritten passages · ${r.applied.length}</summary><div class="gen-body">${r.applied.map(x => `<p><b>${esc(rmLabel(x.field))}</b>${x.before ? `<br><s class="rm-was">${short(x.before)}</s>` : ""}<br>${short(x.after)}</p>`).join("")}</div></details>` : ""}
+      ${r.added.length ? `<p class="hint" style="margin:0">Added: ${r.added.map(esc).join(", ")}</p>` : ""}
+      ${r.removed.length ? `<p class="hint" style="margin:0">Removed: ${r.removed.map(esc).join(", ")}</p>` : ""}
+      ${r.renamed.length ? `<p class="hint" style="margin:0">Renamed everywhere: ${r.renamed.map(esc).join(", ")}</p>` : ""}
+      ${r.storyKeys.length ? `<p class="hint" style="margin:0">Story parts rewritten: ${r.storyKeys.map(esc).join(", ")}</p>` : ""}
+      ${r.missed.length ? `<p class="hint" style="margin:0">${r.missed.length} change${r.missed.length === 1 ? "" : "s"} couldn't be placed and ${r.missed.length === 1 ? "was" : "were"} left out.</p>` : ""}
+      ${any ? "" : `<p class="note">Nothing in the story changed. Try saying it another way.</p>`}
+      <div id="rmMsg" class="hint"></div>
+      ${any ? `<button type="button" class="btn primary" id="rmSave">✓ Save the remix</button><button type="button" class="btn" id="rmEdit">Save it and edit the story</button>` : ""}
+      <button type="button" class="btn" id="rmAgain">↻ Try again</button>
+      <button type="button" class="btn" id="rmChange">Change what I asked for</button>
+      <button type="button" class="btn danger" id="rmDrop">Discard</button>`;
+    if ($("rmSave")) $("rmSave").onclick = () => remixSave(false);
+    if ($("rmEdit")) $("rmEdit").onclick = () => remixSave(true);
+    $("rmAgain").onclick = () => { S.sheetGuard = false; remixRun(r.pk.id, r.note); };
+    $("rmChange").onclick = () => { S.sheetGuard = false; openRemix(r.pk.id, r.note); };
+    confirmBtn($("rmDrop"), "Tap again to throw it away", () => { RM.res = null; S.sheetGuard = false; closeSheet(); });
+  });
+}
+async function remixSave(edit) {
+  const r = RM.res; if (!r) return;
+  const btn = $(edit ? "rmEdit" : "rmSave"); btn.disabled = true; btn.textContent = "Saving…";
+  const w = r.copy; w.storyDef = { ...r.def, at: Date.now() };
+  if (!r.pk.bot && !w.customPortrait) await within(ensureVisual(w), 25000).catch(() => {});
+  S.chars.unshift(w); await saveChars(); RM.res = null; S.sheetGuard = false;
+  renderHome();
+  if (edit) storyDefEdit(w); else { closeSheet(); toast(`"${r.def.title}" is on your Stories shelf`); ST_TAB = "mine"; openStories(); }
+}
 // v2.5: stories from a bot tagged vore start with "Vore can happen" ticked (owner 2026-10-30); built-in packs keep their own setting
 const voreTagged = c => !!c && tagsOf(c).some(t => /\bvore\b/i.test(t));
 // v2.7: a story pack's own setup choices (pk.options [{id, n, hint, when: {id, in: [values]}, choices: [[value, label, rule]]}]),
@@ -9171,7 +9492,7 @@ const storyOptShown = (x, pick) => !x.when || (x.when.in || []).includes(pick[x.
 const storyOptsHTML = (pk, o) => (pk?.options || []).filter(x => storyOptShown(x, o.pick)).map(x => field(x.n, `<div class="tabs st-seg">${x.choices.map(([v, l]) => `<button type="button" class="tab ${o.pick[x.id] === v ? "on" : ""}" data-opt="${esc(x.id)}" data-v="${esc(v)}">${esc(l)}</button>`).join("")}</div>`, x.hint || "")).join("");
 const storyPicks = (pk, o) => (pk?.options || []).filter(x => storyOptShown(x, o.pick || {})).map(x => { const c = x.choices.find(y => y[0] === o.pick?.[x.id]) || x.choices[0]; return { n: x.n, v: c[0], l: c[1], rule: c[2] || "" }; });
 function storySetup(pk, bot) {
-  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: pk ? !!(pk.vore ?? voreTagged(pk.bot && byId(pk.bot))) : voreTagged(bot), length: "standard", role: "", era: pk?.eras ? Object.keys(pk.eras)[0] : "", danger: "real", voreWho: "all", voreKind: VORE_KINDS[pk?.id]?.multi ? [] : VORE_KINDS[pk?.id]?.opts[0][0] || "", pick: Object.fromEntries((pk?.options || []).map(x => [x.id, x.choices[0][0]])) }, h = { name: "", pron: "", color: "" };
+  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: pk ? !!(pk.vore ?? voreTagged(pk.bot && byId(pk.bot))) : voreTagged(bot), length: "standard", role: "", era: pk?.eras ? Object.keys(pk.eras)[0] : "", danger: STORY_DANGER[pk?.danger] ? pk.danger : "real", voreWho: "all", voreKind: VORE_KINDS[pk?.id]?.multi ? [] : VORE_KINDS[pk?.id]?.opts[0][0] || "", pick: Object.fromEntries((pk?.options || []).map(x => [x.id, x.choices[0][0]])) }, h = { name: "", pron: "", color: "" };
   const roles = pk?.roles?.length ? pk.roles : pk ? [pk.you] : []; if (roles.length) o.role = roles[0];
   openSheet(pk ? pk.title : `Story: ${bot.name}`, b => {
     const draw = () => {
@@ -9217,6 +9538,7 @@ async function storyBegin(pk, bot, o, h) {
   }
   { const { role, ownRole, pick, ...rest } = o; story.opts = rest; } story.hero = { ...h };
   if (pk?.options?.length) story.picks = storyPicks(pk, o);
+  if (pk?.beats?.length) { story.beats = pk.beats.slice(0, 12); if ($("stMsg")) $("stMsg").textContent = "Planning the twists in secret…"; try { story.secret = await storySecret(story); } catch {} }
   const ch = newChat(c, S.personaId, { create: false }); ch.messages = []; ch.story = story;
   S.charId = c.id; S.chat = ch; await saveChat(); closeSheet();
   await openChat(c.id, ch.id);
