@@ -1728,7 +1728,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.4 · Oct 29";
+const VERSION = "2.5 · Oct 30";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -9160,8 +9160,10 @@ function storyPickBot(full) {
     $("stQ").oninput = draw; draw();
   });
 }
+// v2.5: stories from a bot tagged vore start with "Vore can happen" ticked (owner 2026-10-30); built-in packs keep their own setting
+const voreTagged = c => !!c && tagsOf(c).some(t => /\bvore\b/i.test(t));
 function storySetup(pk, bot) {
-  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: !!pk?.vore, length: "standard", role: "", era: pk?.eras ? Object.keys(pk.eras)[0] : "", danger: "real", voreWho: "all", voreKind: VORE_KINDS[pk?.id]?.multi ? [] : VORE_KINDS[pk?.id]?.opts[0][0] || "" }, h = { name: "", pron: "", color: "" };
+  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: pk ? !!(pk.vore ?? voreTagged(pk.bot && byId(pk.bot))) : voreTagged(bot), length: "standard", role: "", era: pk?.eras ? Object.keys(pk.eras)[0] : "", danger: "real", voreWho: "all", voreKind: VORE_KINDS[pk?.id]?.multi ? [] : VORE_KINDS[pk?.id]?.opts[0][0] || "" }, h = { name: "", pron: "", color: "" };
   const roles = pk?.roles?.length ? pk.roles : pk ? [pk.you] : []; if (roles.length) o.role = roles[0];
   openSheet(pk ? pk.title : `Story: ${bot.name}`, b => {
     const draw = () => {
