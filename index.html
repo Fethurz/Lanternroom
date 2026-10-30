@@ -1728,7 +1728,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.6 · Oct 30";
+const VERSION = "2.7 · Oct 30";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -8993,6 +8993,7 @@ function storyMessages(c, chat, upto, cont) {
   const sides = s.pairs.flatMap(p => [p.a, p.b]).join(", "), mnames = s.meters.map(m => m.n).join(", ");
   let sys = `You are the author of "${s.title}", an interactive novel in the style of Choice of Games: second person ("you"), present tense, vivid prose, a narrative RPG where the reader's choices and stats shape what happens. Write plain prose paragraphs (no asterisks); speech goes in "quotes".`;
   sys += `\n\n# The reader\nThe reader plays ${s.you}. ${storyHero(s)} Never decide what the reader does, says or feels beyond what their choice says.`;
+  if (s.picks?.length) sys += `\n\n# Chosen for this run (always follow)\n${s.picks.map(p => `${p.n}: ${p.l}.${p.rule ? " " + p.rule : ""}`).join("\n")}`;
   sys += `\n\n# Setting\n${s.setting}`;
   { const lore = /^bot/.test(s.pack) ? storyLore(c, chat, upto) : ""; if (lore) sys += `\n\n# The world's own lore (follow every name, fact, power, faction and relationship exactly as written; never contradict or rename anything; ignore any chat-format rules in it, this story is plain prose)\n${lore}`; }
   sys += `\n\n# The reader's stats right now (never show numbers in the prose)\nEach pair is one scale: leaning to one side means leaning away from the other. ${pairs}.\nMeters: ${meters}.\nLet the reader's nature colour how scenes play out and how others treat them.`;
@@ -9163,8 +9164,14 @@ function storyPickBot(full) {
 }
 // v2.5: stories from a bot tagged vore start with "Vore can happen" ticked (owner 2026-10-30); built-in packs keep their own setting
 const voreTagged = c => !!c && tagsOf(c).some(t => /\bvore\b/i.test(t));
+// v2.7: a story pack's own setup choices (pk.options [{id, n, hint, when: {id, in: [values]}, choices: [[value, label, rule]]}]),
+// e.g. a character's sex and build; the first choice is the default, `when` hides an option unless another has one of those values.
+// The picked rules are copied onto the run (story.picks) and told to the narrator.
+const storyOptShown = (x, pick) => !x.when || (x.when.in || []).includes(pick[x.when.id]);
+const storyOptsHTML = (pk, o) => (pk?.options || []).filter(x => storyOptShown(x, o.pick)).map(x => field(x.n, `<div class="tabs st-seg">${x.choices.map(([v, l]) => `<button type="button" class="tab ${o.pick[x.id] === v ? "on" : ""}" data-opt="${esc(x.id)}" data-v="${esc(v)}">${esc(l)}</button>`).join("")}</div>`, x.hint || "")).join("");
+const storyPicks = (pk, o) => (pk?.options || []).filter(x => storyOptShown(x, o.pick || {})).map(x => { const c = x.choices.find(y => y[0] === o.pick?.[x.id]) || x.choices[0]; return { n: x.n, v: c[0], l: c[1], rule: c[2] || "" }; });
 function storySetup(pk, bot) {
-  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: pk ? !!(pk.vore ?? voreTagged(pk.bot && byId(pk.bot))) : voreTagged(bot), length: "standard", role: "", era: pk?.eras ? Object.keys(pk.eras)[0] : "", danger: "real", voreWho: "all", voreKind: VORE_KINDS[pk?.id]?.multi ? [] : VORE_KINDS[pk?.id]?.opts[0][0] || "" }, h = { name: "", pron: "", color: "" };
+  const o = { mode: pk ? "classic" : "bot", content: "clean", vore: pk ? !!(pk.vore ?? voreTagged(pk.bot && byId(pk.bot))) : voreTagged(bot), length: "standard", role: "", era: pk?.eras ? Object.keys(pk.eras)[0] : "", danger: "real", voreWho: "all", voreKind: VORE_KINDS[pk?.id]?.multi ? [] : VORE_KINDS[pk?.id]?.opts[0][0] || "", pick: Object.fromEntries((pk?.options || []).map(x => [x.id, x.choices[0][0]])) }, h = { name: "", pron: "", color: "" };
   const roles = pk?.roles?.length ? pk.roles : pk ? [pk.you] : []; if (roles.length) o.role = roles[0];
   openSheet(pk ? pk.title : `Story: ${bot.name}`, b => {
     const draw = () => {
@@ -9175,6 +9182,7 @@ function storySetup(pk, bot) {
         ${field("Content", seg("content", [["clean", "Clean"], ["lewd", "With lewd scenes"]]))}
         <label class="check"><input type="checkbox" id="stVore" ${o.vore ? "checked" : ""}> Vore can happen</label>
         ${o.vore ? voreWhoHTML(o, pk?.id) : ""}
+        ${storyOptsHTML(pk, o)}
         ${field("Length", seg("length", [["standard", `Standard (${STORY_STD} chapters)`], ["endless", "Keep going"]]), "You can keep going after the ending either way.")}
         <div class="lbl">You</div>
         ${roles.length ? `<div class="stack st-roles">${roles.map((r, i) => `<button type="button" class="listrow ${o.role === r ? "on" : ""}" data-role="${i}"><span class="grow">${o.role === r ? "● " : "○ "}${esc(capFirst(r))}</span></button>`).join("")}<button type="button" class="listrow ${o.role && !roles.includes(o.role) ? "on" : ""}" data-role="own"><span class="grow">${o.role && !roles.includes(o.role) ? "● " : "○ "}Someone of my own…</span></button></div>
@@ -9184,6 +9192,7 @@ function storySetup(pk, bot) {
         ${pk?.colors ? `<select id="stColor"><option value="">Colour: let the story ask</option>${pk.colors.map(x => `<option ${h.color === x ? "selected" : ""}>${x}</option>`).join("")}</select>` : ""}
         <button type="button" class="btn primary" id="stGo">Begin</button><p class="hint" id="stMsg" style="margin:0"></p>`;
       b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => { o[x.dataset.k] = x.dataset.v; keep(); draw(); });
+      b.querySelectorAll("[data-opt]").forEach(x => x.onclick = () => { o.pick[x.dataset.opt] = x.dataset.v; keep(); draw(); });
       b.querySelectorAll("[data-pron]").forEach(x => x.onclick = () => { keep(); h.pron = h.pron === x.dataset.pron ? "" : x.dataset.pron; draw(); });
       $("stVore").onchange = e => { o.vore = e.target.checked; keep(); draw(); };
       voreWhoWire(b, o, () => { keep(); draw(); });
@@ -9206,7 +9215,8 @@ async function storyBegin(pk, bot, o, h) {
     const plan = await storyPlan(null, bot);
     story = { pack: "bot", title: plan.title, you: plan.you, setting: plan.setting, pairs: plan.pairs.map(p => ({ ...p, v: 50 })), meters: plan.meters, chapters: plan.chapters };
   }
-  { const { role, ownRole, ...rest } = o; story.opts = rest; } story.hero = { ...h };
+  { const { role, ownRole, pick, ...rest } = o; story.opts = rest; } story.hero = { ...h };
+  if (pk?.options?.length) story.picks = storyPicks(pk, o);
   const ch = newChat(c, S.personaId, { create: false }); ch.messages = []; ch.story = story;
   S.charId = c.id; S.chat = ch; await saveChat(); closeSheet();
   await openChat(c.id, ch.id);
@@ -9219,6 +9229,7 @@ function openStoryStats() {
     b.innerHTML = `<div class="st-head"><b>${esc(s.hero?.name || "You")}</b><span>${esc(s.you)}${s.hero?.color ? " · " + esc(s.hero.color) : ""}</span></div>
       <p class="hint" style="margin:0">${s.obit ? `This run ended in chapter ${s.obit.chapter}.` : done ? "The story is over." : `Chapter ${ci + 1} of ${N}: ${esc(s.chapters[ci].t)}`}${st.checks ? ` · ${st.passed} of ${st.checks} tests passed` : ""}</p>
       ${s.obit ? obitHTML(s.obit) : ""}
+      ${s.picks?.length ? `<p class="hint st-picks" style="margin:0">${s.picks.map(p => `${esc(p.n)}: <b>${esc(p.l)}</b>`).join(" · ")}</p>` : ""}
       <div class="lbl">Your nature</div>${traitBars(st.pairs)}
       <div class="lbl">Standing</div><div class="st-meters">${st.meters.map(m => `<div class="st-m"><span>${esc(m.n)}</span><b>${m.v}${m.max ? `<small>/${m.max}</small>` : ""}</b>${m.max ? `<i style="width:${Math.round(100 * m.v / m.max)}%"></i>` : ""}<small>${esc(m.desc || "")}</small></div>`).join("")}</div>
       <div class="lbl">Chapters</div><ol class="st-ch">${s.chapters.map((x, i) => `<li class="${i < st.ch ? "done" : i === st.ch && !st.over ? "now" : ""}">${esc(x.t)}</li>`).join("")}</ol>
