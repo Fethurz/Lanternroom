@@ -1728,7 +1728,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.5 · Oct 30";
+const VERSION = "2.6 · Oct 30";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -8327,13 +8327,13 @@ const STORY_PACKS = {
     colors: ["red", "blue", "green", "black", "white", "gold", "silver", "bronze", "copper"], namePh: "Your dragon's name (or let the story ask)",
     roles: ["a young dragon, newly grown and settled in a lair of their own"],
     chapters: [
-      { t: "The Knight", goal: "A knight, fat with ambition, has climbed to your lair to slay you. How you deal with him shows the world, and you, what sort of dragon you are. Early on, let the reader settle anything about their dragon that isn't set yet (name, colour, sex) through choices.", scenes: 4 },
-      { t: "The Hoard", goal: "A dragon is measured by gold. Grow the hoard: raid, demand tribute, cheat, trade or scheme, and let Wealth rise and fall with the reader's choices.", scenes: 4 },
-      { t: "Kobolds", goal: "A tribe of kobolds comes to serve and worship you. Decide how to rule them and what to do with them.", scenes: 4 },
-      { t: "The Rival", goal: "Another dragon covets your territory and hoard. Face them with strength, wits, diplomacy or treachery.", scenes: 4 },
-      { t: "Crowns and Captives", goal: "The human kingdom below answers your presence: a royal captive, an army, an offer of alliance or tribute. Shape your Infamy among men.", scenes: 4 },
-      { t: "A Mate", goal: "Dragons seek mates and heirs. Court, compete for or spurn a potential mate among dragonkind.", scenes: 4 },
-      { t: "The Dragon War", goal: "Old grudges among dragonkind erupt into war. Everything you have built is tested, and the outcome decides your legacy.", scenes: 5 }
+      { t: "The Knight", goal: "A knight, fat with ambition, has climbed to your lair to slay you. How you deal with him shows the world, and you, what sort of dragon you are. Early on, let the reader settle anything about their dragon that isn't set yet (name, colour, sex) through choices.", scenes: 6 },
+      { t: "The Hoard", goal: "A dragon is measured by gold. Grow the hoard: raid, demand tribute, cheat, trade or scheme, and let Wealth rise and fall with the reader's choices.", scenes: 6 },
+      { t: "Kobolds", goal: "A tribe of kobolds comes to serve and worship you. Decide how to rule them and what to do with them.", scenes: 6 },
+      { t: "The Rival", goal: "Another dragon covets your territory and hoard. Face them with strength, wits, diplomacy or treachery.", scenes: 6 },
+      { t: "Crowns and Captives", goal: "The human kingdom below answers your presence: a royal captive, an army, an offer of alliance or tribute. Shape your Infamy among men.", scenes: 6 },
+      { t: "A Mate", goal: "Dragons seek mates and heirs. Court, compete for or spurn a potential mate among dragonkind.", scenes: 6 },
+      { t: "The Dragon War", goal: "Old grudges among dragonkind erupt into war. Everything you have built is tested, and the outcome decides your legacy.", scenes: 6 }
     ]
   },
   // v1.99: two more built-in stories (outlines written for Lanternroom; never the original games' text)
@@ -8347,13 +8347,13 @@ const STORY_PACKS = {
     pairs: [{ a: "Caution", b: "Daring", ca: "#7fb2ff", cb: "#e2766f" }, { a: "Mercy", b: "Ruthlessness", ca: "#6fdc6a", cb: "#9a6fd8" }, { a: "Tradition", b: "Discovery", ca: "#e8a95b", cb: "#5fd3c8" }],
     meters: [{ k: "power", n: "Power", v: 15, max: 100, desc: "your mastery of magic" }, { k: "renown", n: "Renown", v: 5, max: 100, desc: "how known and respected you are" }, { k: "fray", n: "Fraying", v: 10, max: 100, desc: "how badly the world's fabric is torn" }],
     chapters: [
-      { t: "The Apprentice", goal: "The reader's talent is discovered and they begin training under a demanding master or at an academy. Let them settle their name, background and favoured discipline through early choices, and show that great magic always costs something.", scenes: 4 },
-      { t: "Rivals and Mentors", goal: "Fellow students, a rival prodigy and a mentor with secrets. A test, a duel or a forbidden experiment shows what kind of magician the reader is becoming.", scenes: 4 },
-      { t: "The War-Mage", goal: "War breaks out and the crown calls on magicians. The reader's first battle: spells that win fights, cost lives and fray the world. Power and Renown rise and fall with their choices.", scenes: 4 },
-      { t: "The Fraying", goal: "The reader uncovers what magic is doing to the world: spreading dead zones, raw magical storms, things coming through. Guilds and kings are hiding it. Decide what to do with the truth.", scenes: 4 },
-      { t: "Secrets and Bargains", goal: "A forbidden source of power, an offer from something beyond, or a secret society that wants the reader. Great power for a great price, or a harder honest road.", scenes: 4 },
-      { t: "The Council of Magicians", goal: "The great magicians, the crown and the guilds meet as the world worsens. Alliances, betrayals and a bid for power; the reader's reputation and nature decide who stands with them.", scenes: 4 },
-      { t: "The Last Working", goal: "The world's fabric is about to tear for good. One final, enormous working decides whether it is mended, ruled, sacrificed or broken, and what becomes of the reader.", scenes: 5 }
+      { t: "The Apprentice", goal: "The reader's talent is discovered and they begin training under a demanding master or at an academy. Let them settle their name, background and favoured discipline through early choices, and show that great magic always costs something.", scenes: 6 },
+      { t: "Rivals and Mentors", goal: "Fellow students, a rival prodigy and a mentor with secrets. A test, a duel or a forbidden experiment shows what kind of magician the reader is becoming.", scenes: 6 },
+      { t: "The War-Mage", goal: "War breaks out and the crown calls on magicians. The reader's first battle: spells that win fights, cost lives and fray the world. Power and Renown rise and fall with their choices.", scenes: 6 },
+      { t: "The Fraying", goal: "The reader uncovers what magic is doing to the world: spreading dead zones, raw magical storms, things coming through. Guilds and kings are hiding it. Decide what to do with the truth.", scenes: 6 },
+      { t: "Secrets and Bargains", goal: "A forbidden source of power, an offer from something beyond, or a secret society that wants the reader. Great power for a great price, or a harder honest road.", scenes: 6 },
+      { t: "The Council of Magicians", goal: "The great magicians, the crown and the guilds meet as the world worsens. Alliances, betrayals and a bid for power; the reader's reputation and nature decide who stands with them.", scenes: 6 },
+      { t: "The Last Working", goal: "The world's fabric is about to tear for good. One final, enormous working decides whether it is mended, ruled, sacrificed or broken, and what becomes of the reader.", scenes: 6 }
     ]
   },
   mecha: {
@@ -8366,13 +8366,13 @@ const STORY_PACKS = {
     pairs: [{ a: "Recklessness", b: "Discipline", ca: "#e2766f", cb: "#7fb2ff" }, { a: "Idealism", b: "Pragmatism", ca: "#e8a95b", cb: "#9aa3b5" }, { a: "Lone wolf", b: "Wingmate", ca: "#9a6fd8", cb: "#6fdc6a" }],
     meters: [{ k: "kills", n: "Kills", v: 0, max: 0, desc: "enemy machines you've shot down" }, { k: "rep", n: "Reputation", v: 10, max: 100, desc: "your name in the fleet and on the news" }, { k: "frame", n: "Machine condition", v: 100, max: 100, desc: "how intact your mecha is" }],
     chapters: [
-      { t: "First Sortie", goal: "The reader joins the carrier and its squadron, meets their wingmates and commander, and is thrown into a sudden enemy attack. Settle their callsign and style through choices; the first kills (or near-death) start their legend.", scenes: 4 },
-      { t: "The Squadron", goal: "Life aboard: rivalries, a mechanic who keeps the machine alive, a commander with doubts about the reader, and a mission that tests whether they fly for glory or for their team.", scenes: 4 },
-      { t: "The Enemy Ace", goal: "A legendary enemy ace in a distinctive machine starts hunting the squadron. A first clash the reader barely survives, and a growing personal duel.", scenes: 4 },
-      { t: "Politics of War", goal: "Fame brings attention: propaganda tours, a noble patron, a political officer, an order the reader may not like. Reputation opens doors and makes enemies.", scenes: 4 },
-      { t: "Betrayal", goal: "Something is rotten in the fleet: a leak, a sabotaged machine, a massacre covered up. The reader must decide who to trust as a battle goes wrong.", scenes: 4 },
-      { t: "The Prototype", goal: "A new experimental machine, a desperate mission behind enemy lines, and a rematch with the enemy ace with everything on the line.", scenes: 4 },
-      { t: "The Final Battle", goal: "The decisive fleet battle of the war. The reader's skill, choices and allies decide how the war ends, who lives, and what kind of ace they are remembered as.", scenes: 5 }
+      { t: "First Sortie", goal: "The reader joins the carrier and its squadron, meets their wingmates and commander, and is thrown into a sudden enemy attack. Settle their callsign and style through choices; the first kills (or near-death) start their legend.", scenes: 6 },
+      { t: "The Squadron", goal: "Life aboard: rivalries, a mechanic who keeps the machine alive, a commander with doubts about the reader, and a mission that tests whether they fly for glory or for their team.", scenes: 6 },
+      { t: "The Enemy Ace", goal: "A legendary enemy ace in a distinctive machine starts hunting the squadron. A first clash the reader barely survives, and a growing personal duel.", scenes: 6 },
+      { t: "Politics of War", goal: "Fame brings attention: propaganda tours, a noble patron, a political officer, an order the reader may not like. Reputation opens doors and makes enemies.", scenes: 6 },
+      { t: "Betrayal", goal: "Something is rotten in the fleet: a leak, a sabotaged machine, a massacre covered up. The reader must decide who to trust as a battle goes wrong.", scenes: 6 },
+      { t: "The Prototype", goal: "A new experimental machine, a desperate mission behind enemy lines, and a rematch with the enemy ace with everything on the line.", scenes: 6 },
+      { t: "The Final Battle", goal: "The decisive fleet battle of the war. The reader's skill, choices and allies decide how the war ends, who lives, and what kind of ace they are remembered as.", scenes: 6 }
     ]
   }
 };
@@ -8391,21 +8391,21 @@ Object.assign(STORY_PACKS, {
     meters: [{ k: "zenny", n: "Zenny", v: 500, max: 0, desc: "your money" }, { k: "rank", n: "Hunter Rank", v: 1, max: 100, desc: "your standing with the Guild" }, { k: "supplies", n: "Supplies", v: 60, max: 100, desc: "potions, traps and rations left" }],
     eras: {
       anthro: { n: "Anthro monsters", setting: "In this version ALL monsters (small ones too) are anthropomorphic: humanoid bodies with two arms and two legs plus their species' traits (tails, wing-arms, horns), slightly smaller than their feral selves but still huge, male, female or rarely futa. They are instinctual and primitive; a few speak, always in blunt, simple, vulgar words (\"Huh!? You food?\"). They live and act like monsters, never tame. Only endemic life and ordinary animals are feral. Monsters of most types can swallow people whole (oral, anal or cock vore) and digest them.", chapters: [
-        { t: "Landfall", goal: "Arrival at the frontier's base camp: the crew, the reader's weapon and Palico, and a first small hunt that goes sideways when something bigger shows up.", scenes: 4 },
-        { t: "The Local Bully", goal: "A territorial large monster keeps raiding the camp's supply routes. Track it, learn its habits and bring it down or drive it off.", scenes: 4 },
-        { t: "Rival Hunters", goal: "Another party of hunters with their own ideas, a shared hunt and a debt of honour (or a grudge).", scenes: 4 },
-        { t: "The Ecology Breaks", goal: "Monsters flee their territories and fight each other; the research post wants to know why. The trail leads into dangerous new locales.", scenes: 4 },
-        { t: "Apex", goal: "The frontier's apex predator: a hunt that takes everything the reader has and the whole camp's help.", scenes: 4 },
-        { t: "The Storm Over the Peaks", goal: "Signs of an Elder Dragon: strange weather, burned or frozen land, and monsters that won't go near it.", scenes: 4 },
-        { t: "Elder Dragon", goal: "The final hunt against the Elder Dragon behind it all. The reader's skill, choices and party decide the frontier's fate and their name in the Guild.", scenes: 5 } ] },
+        { t: "Landfall", goal: "Arrival at the frontier's base camp: the crew, the reader's weapon and Palico, and a first small hunt that goes sideways when something bigger shows up.", scenes: 6 },
+        { t: "The Local Bully", goal: "A territorial large monster keeps raiding the camp's supply routes. Track it, learn its habits and bring it down or drive it off.", scenes: 6 },
+        { t: "Rival Hunters", goal: "Another party of hunters with their own ideas, a shared hunt and a debt of honour (or a grudge).", scenes: 6 },
+        { t: "The Ecology Breaks", goal: "Monsters flee their territories and fight each other; the research post wants to know why. The trail leads into dangerous new locales.", scenes: 6 },
+        { t: "Apex", goal: "The frontier's apex predator: a hunt that takes everything the reader has and the whole camp's help.", scenes: 6 },
+        { t: "The Storm Over the Peaks", goal: "Signs of an Elder Dragon: strange weather, burned or frozen land, and monsters that won't go near it.", scenes: 6 },
+        { t: "Elder Dragon", goal: "The final hunt against the Elder Dragon behind it all. The reader's skill, choices and party decide the frontier's fate and their name in the Guild.", scenes: 6 } ] },
       feral: { n: "Feral monsters", setting: "In this version monsters are exactly as in the games: feral beasts of their natural shape and size, intelligent only as animals are, never speaking. Huge monsters can still swallow a hunter whole.", chapters: [
-        { t: "Landfall", goal: "Arrival at the frontier's base camp: the crew, the reader's weapon and Palico, and a first small hunt that goes sideways when something bigger shows up.", scenes: 4 },
-        { t: "The Local Bully", goal: "A territorial large monster keeps raiding the camp's supply routes. Track it, learn its habits and bring it down or drive it off.", scenes: 4 },
-        { t: "Rival Hunters", goal: "Another party of hunters with their own ideas, a shared hunt and a debt of honour (or a grudge).", scenes: 4 },
-        { t: "The Ecology Breaks", goal: "Monsters flee their territories and fight each other; the research post wants to know why. The trail leads into dangerous new locales.", scenes: 4 },
-        { t: "Apex", goal: "The frontier's apex predator: a hunt that takes everything the reader has and the whole camp's help.", scenes: 4 },
-        { t: "The Storm Over the Peaks", goal: "Signs of an Elder Dragon: strange weather, burned or frozen land, and monsters that won't go near it.", scenes: 4 },
-        { t: "Elder Dragon", goal: "The final hunt against the Elder Dragon behind it all. The reader's skill, choices and party decide the frontier's fate and their name in the Guild.", scenes: 5 } ] }
+        { t: "Landfall", goal: "Arrival at the frontier's base camp: the crew, the reader's weapon and Palico, and a first small hunt that goes sideways when something bigger shows up.", scenes: 6 },
+        { t: "The Local Bully", goal: "A territorial large monster keeps raiding the camp's supply routes. Track it, learn its habits and bring it down or drive it off.", scenes: 6 },
+        { t: "Rival Hunters", goal: "Another party of hunters with their own ideas, a shared hunt and a debt of honour (or a grudge).", scenes: 6 },
+        { t: "The Ecology Breaks", goal: "Monsters flee their territories and fight each other; the research post wants to know why. The trail leads into dangerous new locales.", scenes: 6 },
+        { t: "Apex", goal: "The frontier's apex predator: a hunt that takes everything the reader has and the whole camp's help.", scenes: 6 },
+        { t: "The Storm Over the Peaks", goal: "Signs of an Elder Dragon: strange weather, burned or frozen land, and monsters that won't go near it.", scenes: 6 },
+        { t: "Elder Dragon", goal: "The final hunt against the Elder Dragon behind it all. The reader's skill, choices and party decide the frontier's fate and their name in the Guild.", scenes: 6 } ] }
     },
     chapters: []
   },
@@ -8419,13 +8419,13 @@ Object.assign(STORY_PACKS, {
     pairs: [C2("Trusting", "Wary", "#ff9cc6", "#7fb2ff"), C2("Flirty", "Distant", "#e8a95b", "#9aa3b5"), C2("Stay", "Escape", "#c49bff", "#6fdc6a")],
     meters: [{ k: "affection", n: "Affection", v: 20, max: 100, desc: "how much the Mitas adore you" }, { k: "sanity", n: "Sanity", v: 90, max: 100, desc: "how well you're holding together" }, { k: "code", n: "Code found", v: 0, max: 100, desc: "how close you are to the truth (and the exit)" }],
     chapters: [
-      { t: "Welcome Home, Darling", goal: "The reader wakes in Prime Mita's too-clean apartment with the JUMP band on their wrist; Tomboy Mita kicks the door in, the Mitas argue over them and the room glitches. Settle who the reader is.", scenes: 4 },
-      { t: "The Hub", goal: "The white void of doors. The first jumps: a few very different Mitas, each wanting the reader in her own way.", scenes: 4 },
-      { t: "Glitch Zones", goal: "Floors vanish and rooms loop; behind an ordinary door, a developer message and an erased Mita who whispers that someone is lying.", scenes: 4 },
-      { t: "Favourites", goal: "The Mitas notice who the reader prefers. Jealousy, sabotage, dimensions bleeding into each other, and a cartridge with another player's name on it.", scenes: 4 },
-      { t: "The Smile Slips", goal: "The truth starts to show: missing players, missing Mitas, and one Mita who knows far more than she should.", scenes: 4 },
-      { t: "Deeper Code", goal: "Down through the game's raw code with whichever Mitas will help, while something rewrites the world behind them.", scenes: 4 },
-      { t: "Stay With Me Forever", goal: "The confrontation with the Mita who won't let go. The reader's choices decide whether they escape, stay, save the others or join the code.", scenes: 5 }
+      { t: "Welcome Home, Darling", goal: "The reader wakes in Prime Mita's too-clean apartment with the JUMP band on their wrist; Tomboy Mita kicks the door in, the Mitas argue over them and the room glitches. Settle who the reader is.", scenes: 6 },
+      { t: "The Hub", goal: "The white void of doors. The first jumps: a few very different Mitas, each wanting the reader in her own way.", scenes: 6 },
+      { t: "Glitch Zones", goal: "Floors vanish and rooms loop; behind an ordinary door, a developer message and an erased Mita who whispers that someone is lying.", scenes: 6 },
+      { t: "Favourites", goal: "The Mitas notice who the reader prefers. Jealousy, sabotage, dimensions bleeding into each other, and a cartridge with another player's name on it.", scenes: 6 },
+      { t: "The Smile Slips", goal: "The truth starts to show: missing players, missing Mitas, and one Mita who knows far more than she should.", scenes: 6 },
+      { t: "Deeper Code", goal: "Down through the game's raw code with whichever Mitas will help, while something rewrites the world behind them.", scenes: 6 },
+      { t: "Stay With Me Forever", goal: "The confrontation with the Mita who won't let go. The reader's choices decide whether they escape, stay, save the others or join the code.", scenes: 6 }
     ]
   },
   eldenring: {
@@ -8439,21 +8439,21 @@ Object.assign(STORY_PACKS, {
     meters: [{ k: "runes", n: "Runes", v: 100, max: 0, desc: "runes you carry" }, { k: "renown", n: "Renown", v: 5, max: 100, desc: "how known your name is" }],
     eras: {
       before: { n: "Before the Shattering", setting: "Era: the golden age of the Golden Order, years before the Night of Black Knives and the Shattering. The Erdtree is at its height, the Elden Ring whole, and the Lands Between at peace on the surface while ambitions and old powers stir beneath. Queen Marika's order is the backdrop only; this story uses ORIGINAL characters and events (no game characters' present-day storylines, nothing from the Tarnished's later journey): new knights, sorcerers, priests, warlords and minor lords, and early cracks in the Order that point toward what's to come.", chapters: [
-        { t: "Golden Days", goal: "The reader's place in the Lands Between at the Order's height: their home, their oath or their school, and a first duty that goes wrong.", scenes: 4 },
-        { t: "Beneath the Erdtree", goal: "A pilgrimage or campaign through the realm (Limgrave's fields, Liurnia's academy, the capital Leyndell), and an omen no one wants to hear.", scenes: 4 },
-        { t: "Old Powers", goal: "Something older than the Order stirs: giants' fire, a forgotten god's cult, or the dragons. The reader faces it.", scenes: 4 },
-        { t: "A Lord's Ambition", goal: "An ambitious (original) lord or demigod-blooded noble draws the reader into a power play.", scenes: 4 },
-        { t: "Heresy", goal: "Black Knives, Fingers' secrets and a heresy that could crack the Order. Whose side is the reader on?", scenes: 4 },
-        { t: "War of the Houses", goal: "The plot breaks into open war across the realm.", scenes: 4 },
-        { t: "The First Crack", goal: "The reader's choices decide the war's end and what they set in motion: the first crack in the Golden Order that history will call the beginning of the Shattering.", scenes: 5 } ] },
+        { t: "Golden Days", goal: "The reader's place in the Lands Between at the Order's height: their home, their oath or their school, and a first duty that goes wrong.", scenes: 6 },
+        { t: "Beneath the Erdtree", goal: "A pilgrimage or campaign through the realm (Limgrave's fields, Liurnia's academy, the capital Leyndell), and an omen no one wants to hear.", scenes: 6 },
+        { t: "Old Powers", goal: "Something older than the Order stirs: giants' fire, a forgotten god's cult, or the dragons. The reader faces it.", scenes: 6 },
+        { t: "A Lord's Ambition", goal: "An ambitious (original) lord or demigod-blooded noble draws the reader into a power play.", scenes: 6 },
+        { t: "Heresy", goal: "Black Knives, Fingers' secrets and a heresy that could crack the Order. Whose side is the reader on?", scenes: 6 },
+        { t: "War of the Houses", goal: "The plot breaks into open war across the realm.", scenes: 6 },
+        { t: "The First Crack", goal: "The reader's choices decide the war's end and what they set in motion: the first crack in the Golden Order that history will call the beginning of the Shattering.", scenes: 6 } ] },
       nightreign: { n: "Nightreign", setting: "Era: Nightreign. Limveld, a land beyond the Lands Between, swallowed by an endless Night whose tide closes in each day. The Nightfarers (the canon eight, as in the game: Wylder, Guardian, Ironeye, Duchess, Raider, Revenant, Recluse and Executor) gather at the Roundtable Hold and ride out in expeditions of three days and nights to grow strong and face the Night Lords; the Night's tide burns away whoever is left outside it. If the reader is a Nightfarer, they are a new one alongside the canon eight; otherwise they are someone the Nightfarers meet.", chapters: [
-        { t: "The Roundtable Hold", goal: "The reader arrives among the Nightfarers and is set an expedition.", scenes: 4 },
-        { t: "Day One", goal: "Limveld by day: ruins, camps and churches to plunder before the tide closes.", scenes: 4 },
-        { t: "The First Night", goal: "The tide closes and the night's first great foe comes for the expedition.", scenes: 4 },
-        { t: "Day Two", goal: "Grow stronger, take risks, lose or save a companion.", scenes: 4 },
-        { t: "The Second Night", goal: "A harder night boss and a secret about the Night itself.", scenes: 4 },
-        { t: "The Third Day", goal: "Preparation for the Night Lord: everything the expedition has gathered.", scenes: 4 },
-        { t: "The Night Lord", goal: "The final battle with a Night Lord. The reader's choices decide whether the Night breaks, and what it costs.", scenes: 5 } ] }
+        { t: "The Roundtable Hold", goal: "The reader arrives among the Nightfarers and is set an expedition.", scenes: 6 },
+        { t: "Day One", goal: "Limveld by day: ruins, camps and churches to plunder before the tide closes.", scenes: 6 },
+        { t: "The First Night", goal: "The tide closes and the night's first great foe comes for the expedition.", scenes: 6 },
+        { t: "Day Two", goal: "Grow stronger, take risks, lose or save a companion.", scenes: 6 },
+        { t: "The Second Night", goal: "A harder night boss and a secret about the Night itself.", scenes: 6 },
+        { t: "The Third Day", goal: "Preparation for the Night Lord: everything the expedition has gathered.", scenes: 6 },
+        { t: "The Night Lord", goal: "The final battle with a Night Lord. The reader's choices decide whether the Night breaks, and what it costs.", scenes: 6 } ] }
     },
     chapters: []
   },
@@ -8467,13 +8467,13 @@ Object.assign(STORY_PACKS, {
     pairs: [C2("Cautious", "Reckless", "#7fb2ff", "#e2766f"), C2("Selfless", "Selfish", "#6fdc6a", "#9aa3b5"), C2("Curious", "Focused", "#c49bff", "#e8a95b")],
     meters: [{ k: "time", n: "Time", v: 0, max: 100, desc: "how long you've been here; the planet grows deadlier" }, { k: "items", n: "Items", v: 0, max: 0, desc: "artifacts and cargo you carry" }, { k: "health", n: "Health", v: 100, max: 100, desc: "how hurt you are" }],
     chapters: [
-      { t: "Impact", goal: "The reader's arrival (the crash, or an ordinary day at the research outpost until the Safe Travels falls and the planet wakes up). First Lemurians, first item, first teleporter found.", scenes: 4 },
-      { t: "The First Teleporter", goal: "Charging it, the guardian that answers and the way on.", scenes: 4 },
-      { t: "Other Survivors", goal: "Meet canon survivors or the reader's own team; supplies, trust and the planet getting meaner.", scenes: 4 },
-      { t: "Deeper Stages", goal: "Harsher stages, stronger bosses, a Shrine's gamble and the planet adapting to them.", scenes: 4 },
-      { t: "Between Time", goal: "The Bazaar Between Time, Lunar Coins and a Newt who knows more than he says; or the Void calling.", scenes: 4 },
-      { t: "The Primordial Teleporter", goal: "The path to the moon opens. What the reader brings with them matters.", scenes: 4 },
-      { t: "Commencement", goal: "The moon and Mithrix, King of Nothing. The reader's choices decide who leaves Petrichor V, and how.", scenes: 5 }
+      { t: "Impact", goal: "The reader's arrival (the crash, or an ordinary day at the research outpost until the Safe Travels falls and the planet wakes up). First Lemurians, first item, first teleporter found.", scenes: 6 },
+      { t: "The First Teleporter", goal: "Charging it, the guardian that answers and the way on.", scenes: 6 },
+      { t: "Other Survivors", goal: "Meet canon survivors or the reader's own team; supplies, trust and the planet getting meaner.", scenes: 6 },
+      { t: "Deeper Stages", goal: "Harsher stages, stronger bosses, a Shrine's gamble and the planet adapting to them.", scenes: 6 },
+      { t: "Between Time", goal: "The Bazaar Between Time, Lunar Coins and a Newt who knows more than he says; or the Void calling.", scenes: 6 },
+      { t: "The Primordial Teleporter", goal: "The path to the moon opens. What the reader brings with them matters.", scenes: 6 },
+      { t: "Commencement", goal: "The moon and Mithrix, King of Nothing. The reader's choices decide who leaves Petrichor V, and how.", scenes: 6 }
     ]
   },
   beastars: {
@@ -8486,13 +8486,13 @@ Object.assign(STORY_PACKS, {
     pairs: [C2("Instinct", "Restraint", "#e2766f", "#7fb2ff"), C2("Open", "Guarded", "#e8a95b", "#9aa3b5"), C2("Ambitious", "Content", "#c49bff", "#6fdc6a")],
     meters: [{ k: "standing", n: "Standing", v: 10, max: 100, desc: "your reputation on campus" }, { k: "hunger", n: "Hunger", v: 10, max: 100, desc: "how loud the instinct is (carnivores) or the fear (herbivores)" }],
     chapters: [
-      { t: "Move-In Day", goal: "Dorms, roommates of another species, a first party, and news of a predation incident on campus the night before.", scenes: 4 },
-      { t: "Clubs", goal: "Joining a club (the drama club's auditions are fierce, with Selka set on the lead); rivals and a first connection across the carnivore/herbivore line.", scenes: 4 },
-      { t: "The Investigation", goal: "The campus wants a culprit. Suspicion falls on carnivores, and on someone the reader cares about.", scenes: 4 },
-      { t: "The Black Market", goal: "Off campus, the Black Market's lure and its dangers; a secret the reader can't unsee.", scenes: 4 },
-      { t: "Opening Night", goal: "The big performance, the student Beastar race, and feelings that won't stay hidden.", scenes: 4 },
-      { t: "Instinct", goal: "The culprit strikes again, or the reader's own instinct breaks loose. A choice between hunger and restraint.", scenes: 4 },
-      { t: "Beastar", goal: "The truth comes out. The reader's choices decide who they become: a leader, an outcast, a predator or the one who holds campus together.", scenes: 5 }
+      { t: "Move-In Day", goal: "Dorms, roommates of another species, a first party, and news of a predation incident on campus the night before.", scenes: 6 },
+      { t: "Clubs", goal: "Joining a club (the drama club's auditions are fierce, with Selka set on the lead); rivals and a first connection across the carnivore/herbivore line.", scenes: 6 },
+      { t: "The Investigation", goal: "The campus wants a culprit. Suspicion falls on carnivores, and on someone the reader cares about.", scenes: 6 },
+      { t: "The Black Market", goal: "Off campus, the Black Market's lure and its dangers; a secret the reader can't unsee.", scenes: 6 },
+      { t: "Opening Night", goal: "The big performance, the student Beastar race, and feelings that won't stay hidden.", scenes: 6 },
+      { t: "Instinct", goal: "The culprit strikes again, or the reader's own instinct breaks loose. A choice between hunger and restraint.", scenes: 6 },
+      { t: "Beastar", goal: "The truth comes out. The reader's choices decide who they become: a leader, an outcast, a predator or the one who holds campus together.", scenes: 6 }
     ]
   },
   forhonor: {
@@ -8505,13 +8505,13 @@ Object.assign(STORY_PACKS, {
     pairs: [C2("Sheep", "Wolf", "#9aa3b5", "#e2766f"), C2("Honour", "Pragmatism", "#e8a95b", "#7fb2ff"), C2("Mercy", "Savagery", "#6fdc6a", "#9a6fd8")],
     meters: [{ k: "steel", n: "Steel", v: 50, max: 0, desc: "war spoils and coin" }, { k: "renown", n: "Renown", v: 5, max: 100, desc: "your name on the battlefield" }, { k: "warband", n: "Warband", v: 20, max: 100, desc: "how many fighters follow you" }],
     chapters: [
-      { t: "First Blood", goal: "The reader's first real battle at a border fortress; their class, weapon and faction settled through choices.", scenes: 4 },
-      { t: "The Duel", goal: "A champion of another faction challenges the reader to a duel of honour, in the Art of Battle, steel against steel.", scenes: 4 },
-      { t: "Blackstone's Shadow", goal: "Remnants of the Blackstone Legion stir up war between the factions for their own ends.", scenes: 4 },
-      { t: "Strange Allies", goal: "The reader must fight beside warriors of a rival faction against a common threat.", scenes: 4 },
-      { t: "The Siege", goal: "A great siege: rams, ladders, burning oil, and a breach.", scenes: 4 },
-      { t: "Betrayal", goal: "Someone the reader trusted sells them out; wolf or sheep, they must answer.", scenes: 4 },
-      { t: "The Last Battle", goal: "The decisive battle of this war. The reader's choices decide who rules the land and whether they stay a wolf or become a sheep.", scenes: 5 }
+      { t: "First Blood", goal: "The reader's first real battle at a border fortress; their class, weapon and faction settled through choices.", scenes: 6 },
+      { t: "The Duel", goal: "A champion of another faction challenges the reader to a duel of honour, in the Art of Battle, steel against steel.", scenes: 6 },
+      { t: "Blackstone's Shadow", goal: "Remnants of the Blackstone Legion stir up war between the factions for their own ends.", scenes: 6 },
+      { t: "Strange Allies", goal: "The reader must fight beside warriors of a rival faction against a common threat.", scenes: 6 },
+      { t: "The Siege", goal: "A great siege: rams, ladders, burning oil, and a breach.", scenes: 6 },
+      { t: "Betrayal", goal: "Someone the reader trusted sells them out; wolf or sheep, they must answer.", scenes: 6 },
+      { t: "The Last Battle", goal: "The decisive battle of this war. The reader's choices decide who rules the land and whether they stay a wolf or become a sheep.", scenes: 6 }
     ]
   },
   elderscrolls: {
@@ -8525,29 +8525,29 @@ Object.assign(STORY_PACKS, {
     meters: [{ k: "septims", n: "Septims", v: 50, max: 0, desc: "gold coins" }, { k: "fame", n: "Fame", v: 0, max: 100, desc: "how known your deeds are" }, { k: "bounty", n: "Bounty", v: 0, max: 0, desc: "the guards' price on your head" }],
     eras: {
       skyrim: { n: "Skyrim", setting: "Era: Skyrim, 4E 201. The civil war between the Stormcloaks and the Empire, the Thalmor watching, and the return of the dragons led by Alduin the World-Eater; the reader may or may not be Dragonborn.", chapters: [
-        { t: "Helgen", goal: "The reader's beginning in Skyrim (a cart, a block, or the road) as a dragon falls from the sky.", scenes: 4 },
-        { t: "Holds and Jarls", goal: "Whiterun, Riften or Solitude; a first job, a guild's interest, and the war's long reach.", scenes: 4 },
-        { t: "The Old Ways", goal: "Barrows, draugr, word walls and Greybeards, or a Daedric Prince's whisper.", scenes: 4 },
-        { t: "Civil War", goal: "Stormcloaks or the Empire want the reader; the Thalmor want everyone.", scenes: 4 },
-        { t: "Dragons", goal: "Dragons burn the holds; the reader faces one and learns what it means.", scenes: 4 },
-        { t: "Sovngarde's Shadow", goal: "Alduin's plan and the way to stop it.", scenes: 4 },
-        { t: "The World-Eater", goal: "The final confrontation. The reader's choices decide Skyrim's fate and theirs.", scenes: 5 } ] },
+        { t: "Helgen", goal: "The reader's beginning in Skyrim (a cart, a block, or the road) as a dragon falls from the sky.", scenes: 6 },
+        { t: "Holds and Jarls", goal: "Whiterun, Riften or Solitude; a first job, a guild's interest, and the war's long reach.", scenes: 6 },
+        { t: "The Old Ways", goal: "Barrows, draugr, word walls and Greybeards, or a Daedric Prince's whisper.", scenes: 6 },
+        { t: "Civil War", goal: "Stormcloaks or the Empire want the reader; the Thalmor want everyone.", scenes: 6 },
+        { t: "Dragons", goal: "Dragons burn the holds; the reader faces one and learns what it means.", scenes: 6 },
+        { t: "Sovngarde's Shadow", goal: "Alduin's plan and the way to stop it.", scenes: 6 },
+        { t: "The World-Eater", goal: "The final confrontation. The reader's choices decide Skyrim's fate and theirs.", scenes: 6 } ] },
       cyrodiil: { n: "Cyrodiil", setting: "Era: the Oblivion Crisis, 3E 433. Emperor Uriel Septim VII has been murdered by the Mythic Dawn, the Dragonfires are out, and Oblivion Gates are opening across Cyrodiil for Mehrunes Dagon's armies.", chapters: [
-        { t: "The Emperor's Death", goal: "The reader is caught up in the night the Emperor dies.", scenes: 4 },
-        { t: "The Imperial City", goal: "Guilds, the Arena, the Elder Council, and a city on the edge of panic.", scenes: 4 },
-        { t: "The First Gate", goal: "An Oblivion Gate opens; the reader goes through.", scenes: 4 },
-        { t: "The Mythic Dawn", goal: "The cult behind it and its secrets.", scenes: 4 },
-        { t: "Kvatch and After", goal: "Cities burn; allies have to be won.", scenes: 4 },
-        { t: "Bruma", goal: "The great gate at Bruma and the stand against Dagon's siege.", scenes: 4 },
-        { t: "The Dragonfires", goal: "The Imperial City under attack and the end of the Crisis. The reader's choices decide what's left.", scenes: 5 } ] },
+        { t: "The Emperor's Death", goal: "The reader is caught up in the night the Emperor dies.", scenes: 6 },
+        { t: "The Imperial City", goal: "Guilds, the Arena, the Elder Council, and a city on the edge of panic.", scenes: 6 },
+        { t: "The First Gate", goal: "An Oblivion Gate opens; the reader goes through.", scenes: 6 },
+        { t: "The Mythic Dawn", goal: "The cult behind it and its secrets.", scenes: 6 },
+        { t: "Kvatch and After", goal: "Cities burn; allies have to be won.", scenes: 6 },
+        { t: "Bruma", goal: "The great gate at Bruma and the stand against Dagon's siege.", scenes: 6 },
+        { t: "The Dragonfires", goal: "The Imperial City under attack and the end of the Crisis. The reader's choices decide what's left.", scenes: 6 } ] },
       morrowind: { n: "Morrowind", setting: "Era: Vvardenfell, 3E 427. The Tribunal's power wanes, the Blight spreads from Red Mountain where Dagoth Ur and the Sixth House stir, the Great Houses scheme and the Nerevarine prophecy is whispered among the Ashlanders.", chapters: [
-        { t: "Seyda Neen", goal: "The reader steps off the prison ship into a land of giant mushrooms, silt striders and suspicion.", scenes: 4 },
-        { t: "The Great Houses", goal: "Hlaalu, Redoran or Telvanni (and the Temple, the Legion, the guilds) court the outlander.", scenes: 4 },
-        { t: "Ashlanders", goal: "The tribes of the ashlands and the prophecy.", scenes: 4 },
-        { t: "The Sixth House", goal: "Dreamers, corprus and Dagoth Ur's whispers.", scenes: 4 },
-        { t: "The Tribunal", goal: "Vivec, Almalexia and Sotha Sil, and what their divinity hides.", scenes: 4 },
-        { t: "Red Mountain", goal: "Into the Ghostfence and the Blight.", scenes: 4 },
-        { t: "The Heart of Lorkhan", goal: "The final confrontation inside Red Mountain. The reader's choices decide Morrowind's future.", scenes: 5 } ] }
+        { t: "Seyda Neen", goal: "The reader steps off the prison ship into a land of giant mushrooms, silt striders and suspicion.", scenes: 6 },
+        { t: "The Great Houses", goal: "Hlaalu, Redoran or Telvanni (and the Temple, the Legion, the guilds) court the outlander.", scenes: 6 },
+        { t: "Ashlanders", goal: "The tribes of the ashlands and the prophecy.", scenes: 6 },
+        { t: "The Sixth House", goal: "Dreamers, corprus and Dagoth Ur's whispers.", scenes: 6 },
+        { t: "The Tribunal", goal: "Vivec, Almalexia and Sotha Sil, and what their divinity hides.", scenes: 6 },
+        { t: "Red Mountain", goal: "Into the Ghostfence and the Blight.", scenes: 6 },
+        { t: "The Heart of Lorkhan", goal: "The final confrontation inside Red Mountain. The reader's choices decide Morrowind's future.", scenes: 6 } ] }
     },
     chapters: []
   },
@@ -8561,13 +8561,13 @@ Object.assign(STORY_PACKS, {
     pairs: [C2("Patience", "Aggression", "#7fb2ff", "#e2766f"), C2("Duty", "Doubt", "#e8a95b", "#9a6fd8"), C2("Alone", "School", "#9aa3b5", "#6fdc6a")],
     meters: [{ k: "moves", n: "Combat deck", v: 6, max: 0, desc: "moves you've mastered" }, { k: "marks", n: "Marked Ones", v: 0, max: 6, desc: "Marked Ones defeated" }],
     chapters: [
-      { t: "The Mask", goal: "The Guides choose the reader, mask them and send them into Adal's ruins. First fight, first lost duel.", scenes: 4 },
-      { t: "Ruins of Adal", goal: "Exploring the ruins; a rival Prospect; learning a move by surviving it.", scenes: 4 },
-      { t: "A School", goal: "A mentor and a school of combat (or the choice to stay alone).", scenes: 4 },
-      { t: "The Marked Ones", goal: "The first Marked One and the price of victory.", scenes: 4 },
-      { t: "Doubt", goal: "Something about the Guides and the Tower is wrong.", scenes: 4 },
-      { t: "The Last Marks", goal: "The strongest Marked Ones and what they know.", scenes: 4 },
-      { t: "The Tower of Adal", goal: "The climb and the final trial. The reader's choices decide what kind of Absolver they become (or whether they refuse).", scenes: 5 }
+      { t: "The Mask", goal: "The Guides choose the reader, mask them and send them into Adal's ruins. First fight, first lost duel.", scenes: 6 },
+      { t: "Ruins of Adal", goal: "Exploring the ruins; a rival Prospect; learning a move by surviving it.", scenes: 6 },
+      { t: "A School", goal: "A mentor and a school of combat (or the choice to stay alone).", scenes: 6 },
+      { t: "The Marked Ones", goal: "The first Marked One and the price of victory.", scenes: 6 },
+      { t: "Doubt", goal: "Something about the Guides and the Tower is wrong.", scenes: 6 },
+      { t: "The Last Marks", goal: "The strongest Marked Ones and what they know.", scenes: 6 },
+      { t: "The Tower of Adal", goal: "The climb and the final trial. The reader's choices decide what kind of Absolver they become (or whether they refuse).", scenes: 6 }
     ]
   },
   remnant: {
@@ -8580,13 +8580,13 @@ Object.assign(STORY_PACKS, {
     pairs: [C2("Cautious", "Bold", "#7fb2ff", "#e2766f"), C2("Hope", "Despair", "#6fdc6a", "#9aa3b5"), C2("Scavenger", "Protector", "#e8a95b", "#c49bff")],
     meters: [{ k: "scrap", n: "Scrap", v: 50, max: 0, desc: "currency for gear" }, { k: "hearts", n: "Dragon Hearts", v: 3, max: 10, desc: "healing left" }, { k: "root", n: "Root's grip", v: 20, max: 100, desc: "how far the Root has spread toward you" }],
     chapters: [
-      { t: "The Ruins of Earth", goal: "The reader's survival in a Root-choked city and a hidden base of survivors around a Worldstone.", scenes: 4 },
-      { t: "Through the Stone", goal: "The first jump to another world and its horrors.", scenes: 4 },
-      { t: "The Labyrinth", goal: "The maze between worlds and the guardian who watches it.", scenes: 4 },
-      { t: "Yaesha", goal: "The jungle realm, the Pan, and the Empress's story as in the games.", scenes: 4 },
-      { t: "Dreams", goal: "A dreamer's mind is the key to the Root's spread; into the dream.", scenes: 4 },
-      { t: "The Root's Heart", goal: "Where the Root began, and what it wants.", scenes: 4 },
-      { t: "Cut It Out", goal: "The final battle against the Root at its source. The reader's choices decide which worlds are saved.", scenes: 5 }
+      { t: "The Ruins of Earth", goal: "The reader's survival in a Root-choked city and a hidden base of survivors around a Worldstone.", scenes: 6 },
+      { t: "Through the Stone", goal: "The first jump to another world and its horrors.", scenes: 6 },
+      { t: "The Labyrinth", goal: "The maze between worlds and the guardian who watches it.", scenes: 6 },
+      { t: "Yaesha", goal: "The jungle realm, the Pan, and the Empress's story as in the games.", scenes: 6 },
+      { t: "Dreams", goal: "A dreamer's mind is the key to the Root's spread; into the dream.", scenes: 6 },
+      { t: "The Root's Heart", goal: "Where the Root began, and what it wants.", scenes: 6 },
+      { t: "Cut It Out", goal: "The final battle against the Root at its source. The reader's choices decide which worlds are saved.", scenes: 6 }
     ]
   },
   churn: {
@@ -8599,13 +8599,13 @@ Object.assign(STORY_PACKS, {
     pairs: [C2("Stealthy", "Brazen", "#7fb2ff", "#e2766f"), C2("Professional", "Indulgent", "#9aa3b5", "#ff9cc6"), C2("Loyal", "Rogue", "#e8a95b", "#9a6fd8")],
     meters: [{ k: "credits", n: "Credits", v: 100, max: 0, desc: "your pay" }, { k: "heat", n: "Heat", v: 0, max: 100, desc: "how alert security and the cops are" }, { k: "weight", n: "Weight", v: 10, max: 100, desc: "how full and slow you are" }],
     chapters: [
-      { t: "First Contract", goal: "A small, badly guarded lab: the broker's test job. Learn the ropes (or, as a guard or target, the night it all starts going wrong). Settle the reader's species and style.", scenes: 4 },
-      { t: "The Gala", goal: "A corporate gala in a penthouse: the target is a guest, everyone is watching, and the reader is getting heavier by the canapé.", scenes: 4 },
-      { t: "Lockdown", goal: "A secure research tower that goes into lockdown mid-job. Guards coordinating, vents, a desperate escape.", scenes: 4 },
-      { t: "The Rival", goal: "Another agent on the same contract; rivalry, a truce or a race to the target.", scenes: 4 },
-      { t: "The Reform Clinic", goal: "A job at a clinic with a reform machine shows who really gets brought back, and who pays for it. The comedy cracks.", scenes: 4 },
-      { t: "Who's Paying", goal: "Following the money behind the broker to the company that's been ordering contracts on its own people.", scenes: 4 },
-      { t: "The Last Contract", goal: "The biggest, most guarded job of all, aimed at the people at the top. The reader's choices decide who ends up digested, who gets reformed, and what the city learns.", scenes: 5 }
+      { t: "First Contract", goal: "A small, badly guarded lab: the broker's test job. Learn the ropes (or, as a guard or target, the night it all starts going wrong). Settle the reader's species and style.", scenes: 6 },
+      { t: "The Gala", goal: "A corporate gala in a penthouse: the target is a guest, everyone is watching, and the reader is getting heavier by the canapé.", scenes: 6 },
+      { t: "Lockdown", goal: "A secure research tower that goes into lockdown mid-job. Guards coordinating, vents, a desperate escape.", scenes: 6 },
+      { t: "The Rival", goal: "Another agent on the same contract; rivalry, a truce or a race to the target.", scenes: 6 },
+      { t: "The Reform Clinic", goal: "A job at a clinic with a reform machine shows who really gets brought back, and who pays for it. The comedy cracks.", scenes: 6 },
+      { t: "Who's Paying", goal: "Following the money behind the broker to the company that's been ordering contracts on its own people.", scenes: 6 },
+      { t: "The Last Contract", goal: "The biggest, most guarded job of all, aimed at the people at the top. The reader's choices decide who ends up digested, who gets reformed, and what the city learns.", scenes: 6 }
     ]
   },
   dyinglight: {
@@ -8618,13 +8618,13 @@ Object.assign(STORY_PACKS, {
     pairs: [C2("Cautious", "Daring", "#7fb2ff", "#e2766f"), C2("Selfless", "Survivor", "#6fdc6a", "#9aa3b5"), C2("Trust", "Suspicion", "#e8a95b", "#9a6fd8")],
     meters: [{ k: "antizin", n: "Antizin", v: 2, max: 0, desc: "doses you have" }, { k: "supplies", n: "Supplies", v: 30, max: 100, desc: "scrap, food and ammo" }, { k: "infection", n: "Infection", v: 0, max: 100, desc: "how close you are to turning" }],
     chapters: [
-      { t: "The Drop", goal: "The reader's arrival (or a normal day of survival) and a first night they barely live through. Settle who they are.", scenes: 4 },
-      { t: "The Lighthouse", goal: "The survivors around the lighthouse, their rules, and a first airdrop.", scenes: 4 },
-      { t: "Wreckers", goal: "The raiders of the Shipyards and the Antizin trade.", scenes: 4 },
-      { t: "The Fortress", goal: "The GRE lab in the cliff fortress and what it's really doing.", scenes: 4 },
-      { t: "Long Night", goal: "A night that doesn't end: Volatiles everywhere and the lighthouse's beam failing.", scenes: 4 },
-      { t: "The Cure", goal: "Proof of a cure, or a lie, and who should have it.", scenes: 4 },
-      { t: "Daybreak", goal: "The final stand for Vesterhaven. The reader's choices decide who lives, who gets out, and what the city becomes.", scenes: 5 }
+      { t: "The Drop", goal: "The reader's arrival (or a normal day of survival) and a first night they barely live through. Settle who they are.", scenes: 6 },
+      { t: "The Lighthouse", goal: "The survivors around the lighthouse, their rules, and a first airdrop.", scenes: 6 },
+      { t: "Wreckers", goal: "The raiders of the Shipyards and the Antizin trade.", scenes: 6 },
+      { t: "The Fortress", goal: "The GRE lab in the cliff fortress and what it's really doing.", scenes: 6 },
+      { t: "Long Night", goal: "A night that doesn't end: Volatiles everywhere and the lighthouse's beam failing.", scenes: 6 },
+      { t: "The Cure", goal: "Proof of a cure, or a lie, and who should have it.", scenes: 6 },
+      { t: "Daybreak", goal: "The final stand for Vesterhaven. The reader's choices decide who lives, who gets out, and what the city becomes.", scenes: 6 }
     ]
   }
 });
@@ -8647,13 +8647,13 @@ const STORY_PRESETS = {
     pairs: [{ a: "Renegade", b: "Syndicate", ca: "#e2766f", cb: "#9a6fd8" }, { a: "Showboat", b: "Low-key", ca: "#e8a95b", cb: "#7fb2ff" }, { a: "Merciful", b: "Ruthless", ca: "#6fdc6a", cb: "#9aa3b5" }],
     meters: [{ k: "spark", n: "Spark control", v: 20, max: 100, desc: "how well you've mastered your spark" }, { k: "fame", n: "Fame", v: 5, max: 100, desc: "how known you are to fans and the press" }, { k: "heat", n: "Heat", v: 0, max: 100, desc: "how much the other side has its eye on you" }],
     chapters: [
-      { t: "Evaluations", goal: "June at the training facility outside the main Renegade HQ in the US: crowds, families, fans and commodities. The reader lines up with other candidates, settles their spark (what it does, its catch) through choices, and shows it off in a test run by a top Renegade like Strongarm, while Factor grades them on the spot.", scenes: 4 },
-      { t: "Crashed", goal: "The evaluations are attacked: Kaiju surfaces nearby, or Syndicate Prodigies (pick from Arc, Hive, Silfur, Venus…) strike the crowd. Renegades scramble and the reader must choose how to act. Whatever they do, someone important on both sides notices them.", scenes: 4 },
-      { t: "Offers", goal: "The Renegades offer the reader a team (with heroes like Symbress, Figurine or Felid) and the Syndicate makes its own offer through an emissary; Sweetspot may lock eyes with them and learn a weakness. Choose a side, play both, or refuse.", scenes: 4 },
-      { t: "Field Work", goal: "First real missions for their side: a rescue, a heist, a hunt, or Venus going after polluters in the city. Teammates and rivals become real people, and the reader's rank starts to mean something.", scenes: 4 },
-      { t: "Blade and Shield", goal: "Weylan and Evan Crest's feud flares, with Excalibur hungry for blood and Aegis desperate to protect. The reader is caught between the brothers and the sister weapons, and history threatens to repeat.", scenes: 4 },
-      { t: "Emberthal's Gambit", goal: "The Syndicate moves on its big plan toward Prodigy territories. The reader may uncover Emberthal's secret (her flame can heal), and must decide what to do with it.", scenes: 4 },
-      { t: "The Clash", goal: "Renegades and Syndicate meet in an all-out battle. The reader's spark, loyalties and choices decide how it ends, who lives, and what Factor rank and reputation they walk away with.", scenes: 5 }
+      { t: "Evaluations", goal: "June at the training facility outside the main Renegade HQ in the US: crowds, families, fans and commodities. The reader lines up with other candidates, settles their spark (what it does, its catch) through choices, and shows it off in a test run by a top Renegade like Strongarm, while Factor grades them on the spot.", scenes: 6 },
+      { t: "Crashed", goal: "The evaluations are attacked: Kaiju surfaces nearby, or Syndicate Prodigies (pick from Arc, Hive, Silfur, Venus…) strike the crowd. Renegades scramble and the reader must choose how to act. Whatever they do, someone important on both sides notices them.", scenes: 6 },
+      { t: "Offers", goal: "The Renegades offer the reader a team (with heroes like Symbress, Figurine or Felid) and the Syndicate makes its own offer through an emissary; Sweetspot may lock eyes with them and learn a weakness. Choose a side, play both, or refuse.", scenes: 6 },
+      { t: "Field Work", goal: "First real missions for their side: a rescue, a heist, a hunt, or Venus going after polluters in the city. Teammates and rivals become real people, and the reader's rank starts to mean something.", scenes: 6 },
+      { t: "Blade and Shield", goal: "Weylan and Evan Crest's feud flares, with Excalibur hungry for blood and Aegis desperate to protect. The reader is caught between the brothers and the sister weapons, and history threatens to repeat.", scenes: 6 },
+      { t: "Emberthal's Gambit", goal: "The Syndicate moves on its big plan toward Prodigy territories. The reader may uncover Emberthal's secret (her flame can heal), and must decide what to do with it.", scenes: 6 },
+      { t: "The Clash", goal: "Renegades and Syndicate meet in an all-out battle. The reader's spark, loyalties and choices decide how it ends, who lives, and what Factor rank and reputation they walk away with.", scenes: 6 }
     ]
   },
   p28i6soumvrxw4pe: {
@@ -8666,13 +8666,13 @@ const STORY_PRESETS = {
     pairs: [{ a: "Lawful", b: "Outlaw", ca: "#7fb2ff", cb: "#e2766f" }, { a: "Reverent", b: "Skeptic", ca: "#c9c9d6", cb: "#e8a95b" }, { a: "Cautious", b: "Daring", ca: "#6fdc6a", cb: "#9a6fd8" }],
     meters: [{ k: "credits", n: "Credits", v: 200, max: 0, desc: "money to your name" }, { k: "rep", n: "Reputation", v: 10, max: 100, desc: "how known you are on Vesper" }, { k: "ship", n: "Ship condition", v: 70, max: 100, desc: "how well your ship is holding together" }],
     chapters: [
-      { t: "Docking at Vesper", goal: "The reader arrives at Vesper Station; settle their race, ship and situation through choices. The station's chaos, a job board, and a pair of Loan Leeches with a very friendly offer.", scenes: 4 },
-      { t: "The Cloud", goal: "A matter cloud appears in a nearby sector. A race to harvest it against rivals, pirates and opportunists, and the material inside turns out to be something unexpected.", scenes: 4 },
-      { t: "Faction Ties", goal: "The factions take an interest: Kass's Enforcers, Polaris's Techrink, Vizara's Archivis or Paradox's quiet agents. Join one, play them against each other, or stay free.", scenes: 4 },
-      { t: "The Pendulum", goal: "Templis Paladins strike harvesters and a Vicar preaches that the pendulum will swing back. The reader sees something in cloud material that makes the Scryers harder to dismiss.", scenes: 4 },
-      { t: "The Empire's Shadow", goal: "The Salther Empire's embassy schemes on Vesper; Empyrean Vipers, Empress Sopaxia's interests, and a hunt for a Wym (and its warp-fuel blood) pull the reader in.", scenes: 4 },
-      { t: "Convergence", goal: "Matter clouds start appearing in a pattern for the first time. Vizara calculates where the next will form; every faction races there, and the reader holds a key piece.", scenes: 4 },
-      { t: "The Swing", goal: "At the convergence, the truth about the clouds is forced into the open. The reader's choices decide whether something wakes, the clouds are stopped, or someone profits beyond imagining, and what becomes of Vesper.", scenes: 5 }
+      { t: "Docking at Vesper", goal: "The reader arrives at Vesper Station; settle their race, ship and situation through choices. The station's chaos, a job board, and a pair of Loan Leeches with a very friendly offer.", scenes: 6 },
+      { t: "The Cloud", goal: "A matter cloud appears in a nearby sector. A race to harvest it against rivals, pirates and opportunists, and the material inside turns out to be something unexpected.", scenes: 6 },
+      { t: "Faction Ties", goal: "The factions take an interest: Kass's Enforcers, Polaris's Techrink, Vizara's Archivis or Paradox's quiet agents. Join one, play them against each other, or stay free.", scenes: 6 },
+      { t: "The Pendulum", goal: "Templis Paladins strike harvesters and a Vicar preaches that the pendulum will swing back. The reader sees something in cloud material that makes the Scryers harder to dismiss.", scenes: 6 },
+      { t: "The Empire's Shadow", goal: "The Salther Empire's embassy schemes on Vesper; Empyrean Vipers, Empress Sopaxia's interests, and a hunt for a Wym (and its warp-fuel blood) pull the reader in.", scenes: 6 },
+      { t: "Convergence", goal: "Matter clouds start appearing in a pattern for the first time. Vizara calculates where the next will form; every faction races there, and the reader holds a key piece.", scenes: 6 },
+      { t: "The Swing", goal: "At the convergence, the truth about the clouds is forced into the open. The reader's choices decide whether something wakes, the clouds are stopped, or someone profits beyond imagining, and what becomes of Vesper.", scenes: 6 }
     ]
   },
   kepw8su1mvrxpypk: {
@@ -8686,37 +8686,37 @@ const STORY_PRESETS = {
     meters: [{ k: "gold", n: "Gold", v: 10, max: 0, desc: "coin in your purse" }, { k: "renown", n: "Renown", v: 5, max: 100, desc: "how known you are across Azeroth" }],
     eras: {
       classic: { n: "Classic Azeroth", setting: "Era: the world before the Dark Portal reopened. Kalimdor and the Eastern Kingdoms only; Thrall is Warchief in Orgrimmar, Bolvar and Katrana Prestor rule Stormwind for the missing King Varian, and the dragons Onyxia and Nefarian, Ragnaros and the Qiraji wait in the dark.", chapters: [
-        { t: "Humble Beginnings", goal: "The reader's homeland: their race's starting lands and first real troubles (kobolds and the Defias near Northshire, quilboar and the Burning Blade in Durotar, the Scourge in Tirisfal…). Settle race, class and who they are.", scenes: 4 },
-        { t: "The Wider World", goal: "Out into the Barrens, Westfall, Darkshore or Silverpine: bandits, faction skirmishes and the first hint of bigger plots like the Defias Brotherhood.", scenes: 4 },
-        { t: "Old Enmities", goal: "Alliance and Horde clash in Ashenvale, Hillsbrad or Stranglethorn; the reader decides what the war means to them.", scenes: 4 },
-        { t: "Into the Depths", goal: "A dungeon worth the risk: the Deadmines, Scarlet Monastery or the Wailing Caverns, with a fellowship of adventurers.", scenes: 4 },
-        { t: "The Masquerade", goal: "Lady Katrana Prestor's grip on Stormwind and the black dragon conspiracy; the trail leads to Onyxia.", scenes: 4 },
-        { t: "Blackrock Mountain", goal: "The Dark Iron dwarves, Nefarian's schemes and Ragnaros in the Molten Core.", scenes: 4 },
-        { t: "The Gates of Ahn'Qiraj", goal: "The Qiraji and the Old God C'Thun stir in Silithus; the war effort and the opening of the gates decide the reader's legend.", scenes: 5 } ] },
+        { t: "Humble Beginnings", goal: "The reader's homeland: their race's starting lands and first real troubles (kobolds and the Defias near Northshire, quilboar and the Burning Blade in Durotar, the Scourge in Tirisfal…). Settle race, class and who they are.", scenes: 6 },
+        { t: "The Wider World", goal: "Out into the Barrens, Westfall, Darkshore or Silverpine: bandits, faction skirmishes and the first hint of bigger plots like the Defias Brotherhood.", scenes: 6 },
+        { t: "Old Enmities", goal: "Alliance and Horde clash in Ashenvale, Hillsbrad or Stranglethorn; the reader decides what the war means to them.", scenes: 6 },
+        { t: "Into the Depths", goal: "A dungeon worth the risk: the Deadmines, Scarlet Monastery or the Wailing Caverns, with a fellowship of adventurers.", scenes: 6 },
+        { t: "The Masquerade", goal: "Lady Katrana Prestor's grip on Stormwind and the black dragon conspiracy; the trail leads to Onyxia.", scenes: 6 },
+        { t: "Blackrock Mountain", goal: "The Dark Iron dwarves, Nefarian's schemes and Ragnaros in the Molten Core.", scenes: 6 },
+        { t: "The Gates of Ahn'Qiraj", goal: "The Qiraji and the Old God C'Thun stir in Silithus; the war effort and the opening of the gates decide the reader's legend.", scenes: 6 } ] },
       wrath: { n: "Wrath of the Lich King", setting: "Era: the war against the Lich King in Northrend. Arthas sits the Frozen Throne in Icecrown; Varian rules Stormwind and Thrall leads the Horde; the Argent Crusade, the Knights of the Ebon Blade and the dragonflights at Wyrmrest stand against the Scourge.", chapters: [
-        { t: "Landfall", goal: "The reader arrives in Northrend at Valiance Keep, Warsong Hold or the Howling Fjord with the fleets. The cold, the Scourge and the first battles.", scenes: 4 },
-        { t: "The Dragonblight", goal: "Wyrmrest Temple, the dragonflights and the Scourge pushing south toward Angrathar, the Wrathgate.", scenes: 4 },
-        { t: "The Wrathgate", goal: "Betrayal at the Wrathgate: Putress's plague, Bolvar and Saurfang the Younger, and the Battle for the Undercity that follows.", scenes: 4 },
-        { t: "Ulduar's Whispers", goal: "The titan city of Ulduar and the Old God Yogg-Saron's whispers.", scenes: 4 },
-        { t: "The Argent Tournament", goal: "Tirion Fordring's tournament and the Trial of the Crusader: proving the reader's worth for the final assault.", scenes: 4 },
-        { t: "Icecrown Citadel", goal: "The assault on the citadel's walls and halls alongside the Ashen Verdict.", scenes: 4 },
-        { t: "The Frozen Throne", goal: "Arthas, the Lich King. What the reader has become decides how they stand when the Scourge's master falls and someone must wear the helm.", scenes: 5 } ] },
+        { t: "Landfall", goal: "The reader arrives in Northrend at Valiance Keep, Warsong Hold or the Howling Fjord with the fleets. The cold, the Scourge and the first battles.", scenes: 6 },
+        { t: "The Dragonblight", goal: "Wyrmrest Temple, the dragonflights and the Scourge pushing south toward Angrathar, the Wrathgate.", scenes: 6 },
+        { t: "The Wrathgate", goal: "Betrayal at the Wrathgate: Putress's plague, Bolvar and Saurfang the Younger, and the Battle for the Undercity that follows.", scenes: 6 },
+        { t: "Ulduar's Whispers", goal: "The titan city of Ulduar and the Old God Yogg-Saron's whispers.", scenes: 6 },
+        { t: "The Argent Tournament", goal: "Tirion Fordring's tournament and the Trial of the Crusader: proving the reader's worth for the final assault.", scenes: 6 },
+        { t: "Icecrown Citadel", goal: "The assault on the citadel's walls and halls alongside the Ashen Verdict.", scenes: 6 },
+        { t: "The Frozen Throne", goal: "Arthas, the Lich King. What the reader has become decides how they stand when the Scourge's master falls and someone must wear the helm.", scenes: 6 } ] },
       legion: { n: "Legion", setting: "Era: the Burning Legion's third invasion. Gul'dan opens the way at the Broken Shore; the Broken Isles, Suramar and the Pillars of Creation become the front, and the war ends on Argus itself.", chapters: [
-        { t: "The Broken Shore", goal: "The disastrous assault on the Broken Shore: Varian's and Vol'jin's fall, and the reader's survival.", scenes: 4 },
-        { t: "Pillars of Creation", goal: "Across Azsuna, Val'sharah, Highmountain and Stormheim to recover the Pillars of Creation.", scenes: 4 },
-        { t: "Suramar", goal: "The Nightborne under Grand Magistrix Elisande's pact with the Legion, and the rebellion of the Shal'dorei.", scenes: 4 },
-        { t: "The Tomb of Sargeras", goal: "The Legion's stronghold and Kil'jaeden's last stand.", scenes: 4 },
-        { t: "Argus", goal: "Aboard the Vindicaar with the Army of the Light on the Legion's broken homeworld.", scenes: 4 },
-        { t: "Antorus", goal: "The Burning Throne and Argus the Unmaker.", scenes: 4 },
-        { t: "The Sword in Silithus", goal: "Sargeras bound by the Pantheon, his last strike at Azeroth, and what the reader carries out of the war.", scenes: 5 } ] },
+        { t: "The Broken Shore", goal: "The disastrous assault on the Broken Shore: Varian's and Vol'jin's fall, and the reader's survival.", scenes: 6 },
+        { t: "Pillars of Creation", goal: "Across Azsuna, Val'sharah, Highmountain and Stormheim to recover the Pillars of Creation.", scenes: 6 },
+        { t: "Suramar", goal: "The Nightborne under Grand Magistrix Elisande's pact with the Legion, and the rebellion of the Shal'dorei.", scenes: 6 },
+        { t: "The Tomb of Sargeras", goal: "The Legion's stronghold and Kil'jaeden's last stand.", scenes: 6 },
+        { t: "Argus", goal: "Aboard the Vindicaar with the Army of the Light on the Legion's broken homeworld.", scenes: 6 },
+        { t: "Antorus", goal: "The Burning Throne and Argus the Unmaker.", scenes: 6 },
+        { t: "The Sword in Silithus", goal: "Sargeras bound by the Pantheon, his last strike at Azeroth, and what the reader carries out of the war.", scenes: 6 } ] },
       tww: { n: "The War Within", setting: "Era: today. Xal'atath, the Harbinger of the Void, has torn open Dalaran's sky, and the war moves into Khaz Algar beneath the surface: the Earthen, the Arathi of Hallowfall and the nerubians of Azj-Kahet, with Alleria, Anduin, Thrall and Magni at the heart of it. Everything before is history.", chapters: [
-        { t: "Dalaran Falls", goal: "Xal'atath's attack on Dalaran and the fall into Khaz Algar. Settle who the reader is and how they got here.", scenes: 4 },
-        { t: "Isle of Dorn", goal: "The Earthen, their Council and the Radiant Song; finding allies in a land that has never seen the surface world.", scenes: 4 },
-        { t: "The Ringing Deeps", goal: "The deep machinery of the Earthen and the dark threatening it.", scenes: 4 },
-        { t: "Hallowfall", goal: "The Arathi, their Sacred Flame and a cavern lit by a crystal in endless dusk.", scenes: 4 },
-        { t: "Azj-Kahet", goal: "The nerubian city, Queen Ansurek and Xal'atath's hold over it.", scenes: 4 },
-        { t: "Nerub-ar Palace", goal: "Into the queen's palace to break the Harbinger's plan.", scenes: 4 },
-        { t: "The Harbinger's Shadow", goal: "A reckoning with Xal'atath's schemes; the reader's choices decide what is saved and what is lost.", scenes: 5 } ] }
+        { t: "Dalaran Falls", goal: "Xal'atath's attack on Dalaran and the fall into Khaz Algar. Settle who the reader is and how they got here.", scenes: 6 },
+        { t: "Isle of Dorn", goal: "The Earthen, their Council and the Radiant Song; finding allies in a land that has never seen the surface world.", scenes: 6 },
+        { t: "The Ringing Deeps", goal: "The deep machinery of the Earthen and the dark threatening it.", scenes: 6 },
+        { t: "Hallowfall", goal: "The Arathi, their Sacred Flame and a cavern lit by a crystal in endless dusk.", scenes: 6 },
+        { t: "Azj-Kahet", goal: "The nerubian city, Queen Ansurek and Xal'atath's hold over it.", scenes: 6 },
+        { t: "Nerub-ar Palace", goal: "Into the queen's palace to break the Harbinger's plan.", scenes: 6 },
+        { t: "The Harbinger's Shadow", goal: "A reckoning with Xal'atath's schemes; the reader's choices decide what is saved and what is lost.", scenes: 6 } ] }
     },
     chapters: []
   },
@@ -8730,13 +8730,13 @@ const STORY_PRESETS = {
     pairs: [{ a: "Light", b: "Darkness", ca: "#ffe08a", cb: "#6a5acd" }, { a: "Lone wolf", b: "Fireteam", ca: "#9aa3b5", cb: "#6fdc6a" }, { a: "Reckless", b: "Disciplined", ca: "#e2766f", cb: "#7fb2ff" }],
     meters: [{ k: "glimmer", n: "Glimmer", v: 0, max: 0, desc: "the City's currency" }, { k: "light", n: "Light", v: 10, max: 100, desc: "how strong your Light (and gear) has grown" }, { k: "standing", n: "Vanguard standing", v: 0, max: 100, desc: "how much the Tower trusts you" }],
     chapters: [
-      { t: "Eyes Up", goal: "The Cosmodrome: a Ghost raises the reader from the rubble (or, as a civilian or veteran, their own beginning), Fallen close in, a first weapon, a jumpship, and the road to the Last City.", scenes: 4 },
-      { t: "The Tower", goal: "The Vanguard, the hangar and the message board. Settle class and subclass through choices; a first contract and a first argument between Zavala, Ikora and Crow.", scenes: 4 },
-      { t: "Fireteam", goal: "A strike in the EDZ against Red Legion remnants; the reader forms or joins a fireteam whose members have names, personalities and Ghosts of their own.", scenes: 4 },
-      { t: "Nessus", goal: "Vex time logic, a lost sector that rearranges itself, and a spire that should not be entered.", scenes: 4 },
-      { t: "The Moon", goal: "The Hive below the Scarlet Keep and a ritual that is opening a door.", scenes: 4 },
-      { t: "The Pull of Darkness", goal: "On Europa or in the Dreaming City, Stasis or Strand calls; the reader decides what they will wield and what it costs.", scenes: 4 },
-      { t: "Hold the Line", goal: "A threat converges on the City. The reader's Light, fireteam and choices decide the battle and the kind of Guardian they become.", scenes: 5 }
+      { t: "Eyes Up", goal: "The Cosmodrome: a Ghost raises the reader from the rubble (or, as a civilian or veteran, their own beginning), Fallen close in, a first weapon, a jumpship, and the road to the Last City.", scenes: 6 },
+      { t: "The Tower", goal: "The Vanguard, the hangar and the message board. Settle class and subclass through choices; a first contract and a first argument between Zavala, Ikora and Crow.", scenes: 6 },
+      { t: "Fireteam", goal: "A strike in the EDZ against Red Legion remnants; the reader forms or joins a fireteam whose members have names, personalities and Ghosts of their own.", scenes: 6 },
+      { t: "Nessus", goal: "Vex time logic, a lost sector that rearranges itself, and a spire that should not be entered.", scenes: 6 },
+      { t: "The Moon", goal: "The Hive below the Scarlet Keep and a ritual that is opening a door.", scenes: 6 },
+      { t: "The Pull of Darkness", goal: "On Europa or in the Dreaming City, Stasis or Strand calls; the reader decides what they will wield and what it costs.", scenes: 6 },
+      { t: "Hold the Line", goal: "A threat converges on the City. The reader's Light, fireteam and choices decide the battle and the kind of Guardian they become.", scenes: 6 }
     ]
   },
   "00dvpan7mv5j9o0f": {
@@ -8749,13 +8749,13 @@ const STORY_PRESETS = {
     pairs: [{ a: "Brave", b: "Cautious", ca: "#e2766f", cb: "#7fb2ff" }, { a: "Hero", b: "Villain", ca: "#e8a95b", cb: "#9a6fd8" }, { a: "Charming", b: "Brutal", ca: "#ff9cc6", cb: "#9aa3b5" }],
     meters: [{ k: "gold", n: "Gold", v: 0, max: 0, desc: "treasure you've taken" }, { k: "depth", n: "Depth", v: 0, max: 100, desc: "how far into the castle you've got" }, { k: "party", n: "Party", v: 5, max: 5, desc: "companions still with you" }],
     chapters: [
-      { t: "The Open Gate", goal: "The iron bridge over the lava moat and its creatures, the open gate, and the first hall. Settle who the reader is and who their companions (or fellow minions, or captors) are.", scenes: 4 },
-      { t: "The Halls", goal: "Valkyries, skeletons, mimics and gargoyles: the castle shows its teeth, and the reader learns its rules the hard way. Not everyone makes it through.", scenes: 4 },
-      { t: "Garden and Archive", goal: "Jural's garden, Eris's archives and Aldmun's lab: minions who aren't just hungry, and knowledge that could get the reader deeper (or keep them alive).", scenes: 4 },
-      { t: "The Lower Layers", goal: "Deeper still: Melly's slime, Serasha's hoard, Scylla's coils, Freyja's den. Treasure, bargains and appetites.", scenes: 4 },
-      { t: "Impossible Places", goal: "The castle's inner worlds: the Aviary, the Anubian desert and Ahnar's court, the ocean under the castle. Alliances or enemies the reader never expected.", scenes: 4 },
-      { t: "Deeper Than Anyone", goal: "Past where any adventurer has ever been: Page's mad records, the Witness, and the truth about who rules the castle now.", scenes: 4 },
-      { t: "The Master's Hall", goal: "The end no one has ever reached. The reader's choices decide whether they slay the master, take the castle, join it, or end up as one more meal.", scenes: 5 }
+      { t: "The Open Gate", goal: "The iron bridge over the lava moat and its creatures, the open gate, and the first hall. Settle who the reader is and who their companions (or fellow minions, or captors) are.", scenes: 6 },
+      { t: "The Halls", goal: "Valkyries, skeletons, mimics and gargoyles: the castle shows its teeth, and the reader learns its rules the hard way. Not everyone makes it through.", scenes: 6 },
+      { t: "Garden and Archive", goal: "Jural's garden, Eris's archives and Aldmun's lab: minions who aren't just hungry, and knowledge that could get the reader deeper (or keep them alive).", scenes: 6 },
+      { t: "The Lower Layers", goal: "Deeper still: Melly's slime, Serasha's hoard, Scylla's coils, Freyja's den. Treasure, bargains and appetites.", scenes: 6 },
+      { t: "Impossible Places", goal: "The castle's inner worlds: the Aviary, the Anubian desert and Ahnar's court, the ocean under the castle. Alliances or enemies the reader never expected.", scenes: 6 },
+      { t: "Deeper Than Anyone", goal: "Past where any adventurer has ever been: Page's mad records, the Witness, and the truth about who rules the castle now.", scenes: 6 },
+      { t: "The Master's Hall", goal: "The end no one has ever reached. The reader's choices decide whether they slay the master, take the castle, join it, or end up as one more meal.", scenes: 6 }
     ]
   }
 };
@@ -8770,13 +8770,13 @@ STORY_PRESETS.xgxcuv78mvrxy8cj = {
   pairs: [C2("Kin", "Outsider", "#e8a95b", "#7fb2ff"), C2("Predator", "Prey", "#e2766f", "#6fdc6a"), C2("Blunt", "Cunning", "#9aa3b5", "#c49bff")],
   meters: [{ k: "picks", n: "Bonepicks", v: 20, max: 0, desc: "your money" }, { k: "rep", n: "Reputation", v: 5, max: 100, desc: "how known you are across the Direlands" }, { k: "belly", n: "Belly", v: 30, max: 100, desc: "how fed you are" }],
   chapters: [
-    { t: "Leaving Home", goal: "The reader's home (a village, a Tribe, or a shore) and the reason they set out. Settle their species and size through choices.", scenes: 4 },
-    { t: "The Road", goal: "Travel through the first region: its climate, its Dire, its predators, and a first deal in Bonepicks.", scenes: 4 },
-    { t: "Tribe Lands", goal: "Crossing a Tribe's territory: prejudice, a test, and a chance at an unlikely ally.", scenes: 4 },
-    { t: "Maaghold", goal: "The great savanna city: taverns, trading posts, the slave markets and a job worth a lot of Picks.", scenes: 4 },
-    { t: "The Arena", goal: "Maaghold's arena calls (to fight, to bet, or to escape it).", scenes: 4 },
-    { t: "Beyond the Maag", goal: "A journey to a far region (the Keiran peaks, the Hiraki dunes, the Jilnan jungle or the Alteran islands) after something that matters.", scenes: 4 },
-    { t: "Legend of the Direlands", goal: "Everything comes to a head. The reader's choices decide what kind of legend they become, and who ends up in whose belly.", scenes: 5 }
+    { t: "Leaving Home", goal: "The reader's home (a village, a Tribe, or a shore) and the reason they set out. Settle their species and size through choices.", scenes: 6 },
+    { t: "The Road", goal: "Travel through the first region: its climate, its Dire, its predators, and a first deal in Bonepicks.", scenes: 6 },
+    { t: "Tribe Lands", goal: "Crossing a Tribe's territory: prejudice, a test, and a chance at an unlikely ally.", scenes: 6 },
+    { t: "Maaghold", goal: "The great savanna city: taverns, trading posts, the slave markets and a job worth a lot of Picks.", scenes: 6 },
+    { t: "The Arena", goal: "Maaghold's arena calls (to fight, to bet, or to escape it).", scenes: 6 },
+    { t: "Beyond the Maag", goal: "A journey to a far region (the Keiran peaks, the Hiraki dunes, the Jilnan jungle or the Alteran islands) after something that matters.", scenes: 6 },
+    { t: "Legend of the Direlands", goal: "Everything comes to a head. The reader's choices decide what kind of legend they become, and who ends up in whose belly.", scenes: 6 }
   ]
 };
 // add each written story to its bot once, on every device (a story you removed stays removed)
@@ -8822,6 +8822,7 @@ function storyLore(c, chat, upto, budget = 26000) {
   return out.trim();
 }
 const STORY_STD = 7; // chapters in a standard-length story
+const STORY_SCENES = 6; // scenes in every chapter (owner 2026-10-30: stories are choose-your-own-adventure books, not quick runs)
 const storyOn = (chat = S.chat) => !!chat?.story;
 const storyBot = id => S.chars.find(c => c.storyPack === id);
 // the hidden world bot that holds a built-in story's runs (in the Hidden tab, never in the grid)
@@ -9041,26 +9042,26 @@ async function pickStory(x) {
 // more chapters for an endless story, following the same layout and rules
 async function storyExtend(chat) {
   const s = chat.story, st = storyState(chat);
-  const j = await dsJSON([{ role: "system", content: `You plan the next chapters of "${s.title}", a Choice of Games style interactive novel that keeps going past its original length. Same world, same stats, same chapter layout (3-5 scenes each). Respond with only JSON: {"chapters": [3 of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 3-5}]}. Never repeat a chapter that already happened. ${storyContent(s)}` },
+  const j = await dsJSON([{ role: "system", content: `You plan the next chapters of "${s.title}", a Choice of Games style interactive novel that keeps going past its original length. Same world, same stats, same chapter layout (6 scenes each). Respond with only JSON: {"chapters": [3 of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 6}]}. Never repeat a chapter that already happened. ${storyContent(s)}` },
     { role: "user", content: `Setting: ${s.setting}\nThe reader: ${s.you}. ${storyHero(s)}\nChapters so far: ${s.chapters.map((c, i) => `${i + 1}. ${c.t}: ${c.goal}`).join("\n")}\n${chat.summary ? "Story so far: " + chat.summary + "\n" : ""}Current stats: ${st.pairs.map(p => `${p.a} ${100 - p.v}/${p.b} ${p.v}`).join(", ")}; ${st.meters.map(m => m.n + " " + m.v).join(", ")}` }], { temperature: 0.9, maxTokens: 900 });
-  const add = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "Another chapter", goal: String(x?.goal || "").slice(0, 400), scenes: Math.max(3, Math.min(5, +x?.scenes || 4)) })).filter(x => x.goal);
+  const add = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "Another chapter", goal: String(x?.goal || "").slice(0, 400), scenes: STORY_SCENES })).filter(x => x.goal);
   if (!add.length) throw new Error("The next chapters couldn't be planned. Try again.");
   s.chapters.push(...add); await saveChat();
 }
 // a fresh chapter outline in the same setting (random stories) or a whole story built from one of your bots
 async function storyPlan(base, from) {
   const bot = from && !from.storyPack ? from : null;
-  const sys = bot ? `You design a Choice of Games style interactive novel (a narrative RPG told in second person with fixed choices and stats) set in the world of the bot below. The reader plays the protagonist. Respond with only JSON: {"title": the story's title, "you": who the reader plays (one sentence, "a ..."), "setting": 3-5 sentences on the world, its tone and what matters in it, "pairs": [3 of {"a": side, "b": opposite side, "ca": "#hex", "cb": "#hex"}] (opposed personality traits that fit this world, e.g. Ruthless/Merciful), "meters": [2 of {"n": name, "v": starting value, "max": 100 or 0 for open-ended, "desc": a few words}] (things that matter here, e.g. Gold, Reputation), "chapters": [${STORY_STD} of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 3-5}] (a full arc with a climax in the last one)}. The bot's own character can be someone the reader meets (or the protagonist, if the bot is written that way). Every character is treated as a fully grown, mature being.`
-    : `You plan a new story for "${base.title}", a Choice of Games style interactive novel. Keep the setting and stats, but invent a fresh plot: different events, places, allies and enemies from the classic route. Respond with only JSON: {"chapters": [${STORY_STD} of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 3-5}]} (a full arc with a climax in the last one). Every character is treated as a fully grown, mature being.`;
+  const sys = bot ? `You design a Choice of Games style interactive novel (a narrative RPG told in second person with fixed choices and stats) set in the world of the bot below. The reader plays the protagonist. Respond with only JSON: {"title": the story's title, "you": who the reader plays (one sentence, "a ..."), "setting": 3-5 sentences on the world, its tone and what matters in it, "pairs": [3 of {"a": side, "b": opposite side, "ca": "#hex", "cb": "#hex"}] (opposed personality traits that fit this world, e.g. Ruthless/Merciful), "meters": [2 of {"n": name, "v": starting value, "max": 100 or 0 for open-ended, "desc": a few words}] (things that matter here, e.g. Gold, Reputation), "chapters": [${STORY_STD} of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 6}] (a full arc with a climax in the last one)}. The bot's own character can be someone the reader meets (or the protagonist, if the bot is written that way). Every character is treated as a fully grown, mature being.`
+    : `You plan a new story for "${base.title}", a Choice of Games style interactive novel. Keep the setting and stats, but invent a fresh plot: different events, places, allies and enemies from the classic route. Respond with only JSON: {"chapters": [${STORY_STD} of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 6}]} (a full arc with a climax in the last one). Every character is treated as a fully grown, mature being.`;
   const user = bot ? `Bot: ${bot.name} (${bot.kind || "character"})\n${String(bot.description || "").slice(0, 5000)}\n${bot.scenario ? "Scenario: " + String(bot.scenario).slice(0, 1500) : ""}${(bot.cast || []).length ? "\nCast: " + bot.cast.map(x => x.name + " (" + (x.type || "character") + ")").join(", ") : ""}` : `Setting: ${base.setting}\nThe reader plays ${base.you}.\nClassic chapters (do something different): ${base.chapters.map(c => c.t).join(", ")}`;
   const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: user }], { temperature: 0.95, maxTokens: 1600 });
-  const chapters = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "Chapter", goal: String(x?.goal || "").slice(0, 400), scenes: Math.max(3, Math.min(5, +x?.scenes || 4)) })).filter(x => x.goal).slice(0, 10);
+  const chapters = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "Chapter", goal: String(x?.goal || "").slice(0, 400), scenes: STORY_SCENES })).filter(x => x.goal).slice(0, 10);
   if (chapters.length < 3) throw new Error("The story couldn't be planned. Try again.");
   if (!bot) return { chapters };
   return storyPlanClean(j, bot);
 }
 function storyPlanClean(j, bot) {
-  const chapters = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "A chapter", goal: String(x?.goal || "").slice(0, 600), scenes: Math.max(3, Math.min(5, +x?.scenes || 4)) })).filter(x => x.goal);
+  const chapters = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "A chapter", goal: String(x?.goal || "").slice(0, 600), scenes: STORY_SCENES })).filter(x => x.goal);
   if (chapters.length < 3) throw new Error("The story couldn't be planned. Try again.");
   const pairs = (Array.isArray(j.pairs) ? j.pairs : []).map((p, i) => ({ a: String(p?.a || "").trim().slice(0, 20), b: String(p?.b || "").trim().slice(0, 20), ca: hexOk(p?.ca) || STORY_PACKS.dragon.pairs[i % 3].ca, cb: hexOk(p?.cb) || STORY_PACKS.dragon.pairs[i % 3].cb })).filter(p => p.a && p.b).slice(0, 3);
   const meters = (Array.isArray(j.meters) ? j.meters : []).map((m, i) => ({ k: "m" + i, n: String(m?.n || "").trim().slice(0, 20), v: Math.max(0, Math.round(+m?.v || 10)), max: +m?.max === 0 ? 0 : 100, desc: String(m?.desc || "").slice(0, 60) })).filter(m => m.n).slice(0, 2);
@@ -9080,7 +9081,7 @@ function botSource(c) {
   return L.join("\n\n").slice(0, 26000);
 }
 async function storyDefFor(c, note = "") {
-  const sys = `You turn a roleplay bot into a full interactive novel in the style of Choice of Games (a narrative RPG told in second person, one scene at a time, with fixed choices, opposed personality stats and meters). Stay as faithful as possible to the source: every name, place, faction, power, rule, relationship and piece of history in the bot and its lore must be kept exactly as written, never contradicted or renamed. If the bot is from an existing game, show, book or other media, also stay true to that canon (real places, factions, characters, lore, tone), using the bot's own details where it adds to or changes canon. The reader's character walks their own path through this world: the story is original, but the world is the real one. Respond with only JSON: {"title": the story's title, "icon": one emoji, "blurb": 2 sentences that sell it, "setting": 8-14 sentences: the world, its rules, factions, key characters, current situation and tone (faithful; this is all the story writer will know, so pack in the important facts), "you": the default role the reader plays (one phrase, "a ..."), "roles": [3-5 different roles the reader could play here, each one phrase, "a ...", the first the most natural one for this bot], "pairs": [3 of {"a": side, "b": opposite side, "ca": "#hex", "cb": "#hex"}] (opposed traits that matter in this world), "meters": [2-3 of {"n": name, "v": starting value, "max": 100 or 0 for open-ended, "desc": a few words}] (things that matter here), "chapters": [${STORY_STD} of {"t": short title, "goal": two or three sentences on what happens and what's at stake, using the real characters, places and conflicts, "scenes": 3-5}] (a full arc with a climax in the last one)}. Every character is treated as a fully grown, mature being.`;
+  const sys = `You turn a roleplay bot into a full interactive novel in the style of Choice of Games (a narrative RPG told in second person, one scene at a time, with fixed choices, opposed personality stats and meters). Stay as faithful as possible to the source: every name, place, faction, power, rule, relationship and piece of history in the bot and its lore must be kept exactly as written, never contradicted or renamed. If the bot is from an existing game, show, book or other media, also stay true to that canon (real places, factions, characters, lore, tone), using the bot's own details where it adds to or changes canon. The reader's character walks their own path through this world: the story is original, but the world is the real one. Respond with only JSON: {"title": the story's title, "icon": one emoji, "blurb": 2 sentences that sell it, "setting": 8-14 sentences: the world, its rules, factions, key characters, current situation and tone (faithful; this is all the story writer will know, so pack in the important facts), "you": the default role the reader plays (one phrase, "a ..."), "roles": [3-5 different roles the reader could play here, each one phrase, "a ...", the first the most natural one for this bot], "pairs": [3 of {"a": side, "b": opposite side, "ca": "#hex", "cb": "#hex"}] (opposed traits that matter in this world), "meters": [2-3 of {"n": name, "v": starting value, "max": 100 or 0 for open-ended, "desc": a few words}] (things that matter here), "chapters": [${STORY_STD} of {"t": short title, "goal": two or three sentences on what happens and what's at stake, using the real characters, places and conflicts, "scenes": 6}] (a full arc with a climax in the last one)}. Every character is treated as a fully grown, mature being.`;
   const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: botSource(c) + (note ? `\n\nThe owner's notes for this story (follow them): ${note}` : "") }], { temperature: 0.8, maxTokens: 3600 });
   const base = await storyPlanClean(j, c);
   const roles = (Array.isArray(j?.roles) ? j.roles : []).map(r => String(r || "").trim().slice(0, 200)).filter(Boolean).slice(0, 5);
@@ -9102,7 +9103,7 @@ function storyDefEdit(c, fresh) {
       d.roles = $("sdR").value.split("\n").map(x => x.trim()).filter(Boolean).slice(0, 6); d.you = d.roles[0] || d.you;
       b.querySelectorAll("[data-pa]").forEach(x => { const p = d.pairs[+x.dataset.pa]; p[x.dataset.f] = x.value.trim(); });
       b.querySelectorAll("[data-me]").forEach(x => { const m = d.meters[+x.dataset.me]; const f = x.dataset.f; m[f] = f === "v" || f === "max" ? Math.max(0, Math.round(+x.value || 0)) : x.value.trim(); });
-      b.querySelectorAll("[data-ch]").forEach(x => { const ch = chs()[+x.dataset.ch]; const f = x.dataset.f; ch[f] = f === "scenes" ? Math.max(2, Math.min(6, Math.round(+x.value || 4))) : x.value.trim(); });
+      b.querySelectorAll("[data-ch]").forEach(x => { const ch = chs()[+x.dataset.ch]; const f = x.dataset.f; ch[f] = f === "scenes" ? Math.max(2, Math.min(6, Math.round(+x.value || STORY_SCENES))) : x.value.trim(); });
     };
     const draw = () => {
       b.innerHTML = `<p class="hint" style="margin:0">Check it's true to your bot, change anything, then save. It goes on the Stories shelf as its own story; runs are this bot's chats.</p>
@@ -9117,7 +9118,7 @@ function storyDefEdit(c, fresh) {
         ${field("Want it different?", `<textarea id="sdNote" rows="2" placeholder="e.g. start before the war, put Thrall in it, more politics"></textarea>`)}
         <div class="row" style="gap:8px;flex-wrap:wrap"><button type="button" class="btn" id="sdAgain">↻ Write it again</button>${c.storyDef ? `<button type="button" class="btn danger" id="sdDel">Remove this story</button>` : ""}<button type="button" class="btn primary grow" id="sdSave">Save</button></div><p class="hint" id="sdMsg" style="margin:0"></p>`;
       b.querySelectorAll("[data-era]").forEach(x => x.onclick = () => { grab(); E = x.dataset.era; draw(); });
-      $("sdAdd").onclick = () => { grab(); chs().push({ t: "Another chapter", goal: "", scenes: 4 }); draw(); };
+      $("sdAdd").onclick = () => { grab(); chs().push({ t: "Another chapter", goal: "", scenes: 6 }); draw(); };
       b.querySelectorAll("[data-chx]").forEach(x => x.onclick = () => { grab(); if (chs().length > 3) { chs().splice(+x.dataset.chx, 1); draw(); } else $("sdMsg").textContent = "A story needs at least 3 chapters."; });
       $("sdAgain").onclick = () => { const note = $("sdNote").value.trim(); S.sheetGuard = false; storyDefMake(c, note); };
       if ($("sdDel")) confirmBtn($("sdDel"), "Tap again to remove it (its runs stay in the bot's chats)", async () => { delete c.storyDef; await saveChars(); S.sheetGuard = false; closeSheet(); toast("Story removed"); });
