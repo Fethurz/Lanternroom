@@ -1690,7 +1690,8 @@ function dailyNewer(a, b) {
 /* ---------- Storage (IndexedDB, falls back to localStorage) ---------- */
 const Store = {
   db: null,
-  async open() {
+  open() { return this.opening || (this.opening = this.open1()); }, // v2.8.2: one shared promise, so sync can wait for it
+  async open1() {
     try {
       this.db = await new Promise((res, rej) => {
         const r = indexedDB.open("lanternroom", 1);
@@ -1732,7 +1733,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.8.1 · Oct 30";
+const VERSION = "2.8.2 · Oct 31";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -14541,6 +14542,7 @@ const Sync = {
   async put(k, v) { this.applying = true; const f0 = Store.fails || 0; try { if (v === undefined) await Store.del(k); else await Store.set(k, k === "settings" ? await keepLocal(v) : v); } finally { this.applying = false; } return (Store.fails || 0) === f0; },
   // v2.8.1: lists whose items must never vanish because one device held an old copy (deliberate deletions are told via forget)
   GUARD: new Set(["chars", "pbots", "personas", "books"]),
+  KEEP: /^(chars|pbots|personas|books|sounds|settings|dailyPast|quizPresets)$/,
   idsSet(k, v) { if (this.GUARD.has(k) && Array.isArray(v)) (this.st.ids = this.st.ids || {})[k] = v.map(x => x && x.id).filter(Boolean); },
   forget(id) { (this.gone = this.gone || new Set()).add(id); },
   // first login on a device: merge what's here with what's in the account, then upload the rest
@@ -14619,6 +14621,7 @@ const Sync = {
     if (!this.on() || this.busy) return;
     this.busy = true; const started = Date.now();
     try {
+      await Store.open(); // v2.8.2: never compare against "nothing" because storage hasn't opened yet
       const got = await this.pullAll(false), changed = []; let merged = false;
       this.st.ver = this.st.ver || {};
       for (const [k, v] of got) {
@@ -14689,7 +14692,17 @@ const Sync = {
     if (this.pushing) { this.again = true; return; }
     this.pushing = true; this.again = false; clearTimeout(this.timer);
     try {
+      await Store.open(); // v2.8.2: a push before storage opened read nothing and sent the bot list as deleted
       const keys = [...this.st.dirty], data = keys.filter(k => !k.startsWith("snd:")), blobs = keys.filter(k => k.startsWith("snd:"));
+      // v2.8.2: the account can't refuse a stale copy by itself (an upsert's insert step clears base_at before the update step
+      // looks at it), so look first: a key whose account copy is newer than the one this device last had is merged, not sent
+      const newer = new Set();
+      for (let i = 0; i < data.length; i += 40) {
+        const list = data.slice(i, i + 40).map(k => '"' + k.replace(/"/g, '\\"') + '"').join(",");
+        const r = await this.req(`/rest/v1/kv?select=key,client_at&key=in.(${encodeURIComponent(list)})`);
+        if (!r.ok) throw new Error("Couldn't reach your account.");
+        for (const x of await r.json()) if ((+x.client_at || 0) > ((this.st.ver || {})[x.key] || 0)) newer.add(x.key);
+      }
       // 1) bots, chats, settings and lists first, in batches of at most ~700 KB
       let batch = [], size = 0; const rejected = [];
       const send = async () => {
@@ -14707,10 +14720,12 @@ const Sync = {
       for (const k of data) {
         let v = await Store.get(k);
         if (v === null || (this.listKey(k) && v !== undefined && !Array.isArray(v))) { this.doneKey(k); continue; } // nothing sane to send
+        if (v === undefined && this.KEEP.test(k)) { this.doneKey(k); continue; } // v2.8.2: the bot list, settings and other whole lists are never sent as deleted
         if (k === "settings" && v) v = stripLocal(v);
         if ((this.stuck || {})[k] > Date.now() - 600000) continue; // this device couldn't save the account's copy a moment ago: wait, don't fetch it again and again
-        let base = (this.st.ver || {})[k] || 0;
-        if (this.GUARD.has(k) && Array.isArray(v) && (this.st.ids || {})[k]) { const have = new Set(v.map(x => x && x.id)); if (this.st.ids[k].filter(id => !have.has(id) && !(this.gone || new Set()).has(id)).length >= 2) base = 0; }
+        const base = (this.st.ver || {})[k] || 0;
+        if (newer.has(k)) { rejected.push(k); continue; } // another device saved a newer copy: merge it first
+        if (this.GUARD.has(k) && Array.isArray(v) && (this.st.ids || {})[k]) { const have = new Set(v.map(x => x && x.id)); if (this.st.ids[k].filter(id => !have.has(id) && !(this.gone || new Set()).has(id)).length >= 2) { rejected.push(k); continue; } }
         const row = { user_id: this.st.uid, key: k, value: v === undefined ? null : v, deleted: v === undefined, client_at: (this.st.edits = this.st.edits || {})[k] || (this.st.edits[k] = Date.now()), base_at: base }, n = JSON.stringify(row).length;
         if (batch.length && (size + n > 700000 || batch.length >= 20)) await send();
         batch.push(row); size += n;
