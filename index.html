@@ -1708,8 +1708,11 @@ const Store = {
     // saving the same thing again is not an edit: nothing is written or sent to other devices
     if (typeof Sync !== "undefined" && Sync.synced(k)) { const cur = await this.get(k); if (cur !== undefined && JSON.stringify(cur) === txt) return false; }
     if (typeof Sync !== "undefined") Sync.mark(k);
-    if (this.db) { await new Promise(res => { const tx = this.db.transaction("kv", "readwrite"); tx.objectStore("kv").put(JSON.parse(txt), k); tx.oncomplete = res; tx.onerror = res; }); return true; }
-    try { localStorage.setItem("lr:" + k, txt); } catch {}
+    if (this.db) {
+      const ok = await new Promise(res => { try { const tx = this.db.transaction("kv", "readwrite"); tx.objectStore("kv").put(JSON.parse(txt), k); tx.oncomplete = () => res(true); tx.onerror = tx.onabort = () => res(false); } catch { res(false); } });
+      if (!ok) storeFailed(k, txt.length); return ok;
+    }
+    try { localStorage.setItem("lr:" + k, txt); } catch { storeFailed(k, txt.length); return false; }
     return true;
   },
   async setRaw(k, v) { // stores Blobs as-is (IndexedDB only)
@@ -1729,7 +1732,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.8 · Oct 30";
+const VERSION = "2.8.1 · Oct 30";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2693,7 +2696,7 @@ function cardMenu(c) {
 }
 async function deleteBot(id) {
   delete S.recent[id]; Store.set("recent", S.recent);
-  S.chars = S.chars.filter(x => x.id !== id);
+  S.chars = S.chars.filter(x => x.id !== id); Sync.forget(id);
   for (const g of S.chars) if (g.members) g.members = g.members.filter(m => m !== id);
   await saveChars(); await deleteAllChats(id);
   closeSheet(); S.charId = null; S.chat = null; $("chat").hidden = true; $("home").hidden = false; renderHome();
@@ -5394,7 +5397,7 @@ function editPersona(p, isNew) {
       if (isNew && !$("chat").hidden && S.charId) { closeSheet(); await openChat(S.charId); } else { renderHome(); openPersonas(); }
     };
     if ($("peDel")) confirmBtn($("peDel"), "Tap again: deletes this persona and its chats", async () => {
-      S.personas = S.personas.filter(x => x.id !== work.id);
+      S.personas = S.personas.filter(x => x.id !== work.id); Sync.forget(work.id);
       for (const c of S.chars) { const idx = await getIndex(c.id); for (const e of idx.filter(x => x.personaId === work.id)) await deleteChat(c.id, e.id); }
       if (S.personaId === work.id) S.personaId = S.personas[0].id;
       await savePersonas();
@@ -5483,7 +5486,7 @@ function editBook(bk, isNew, preset) {
       openBooks();
     };
     if ($("bkDel")) confirmBtn($("bkDel"), "Tap again to delete this lorebook", async () => {
-      S.books = S.books.filter(x => x.id !== work.id);
+      S.books = S.books.filter(x => x.id !== work.id); Sync.forget(work.id);
       for (const c of S.chars) c.bookIds = (c.bookIds || []).filter(id => id !== work.id);
       await saveBooks(); await saveChars(); openBooks();
     });
@@ -5708,7 +5711,7 @@ function editChar(c, isNew, fromDraft) {
         if (undo) {
           ta.value = undo.text; ta.dispatchEvent(new Event("input"));
           if (K === "world") { work.cast.splice(work.cast.length - undo.added, undo.added); drawCast(); }
-          else { work.members = work.members.filter(id => !undo.created.includes(id)); S.chars = S.chars.filter(x => !undo.created.includes(x.id)); await saveChars(); drawMembers(); }
+          else { work.members = work.members.filter(id => !undo.created.includes(id)); S.chars = S.chars.filter(x => !undo.created.includes(x.id)); undo.created.forEach(id => Sync.forget(id)); await saveChars(); drawMembers(); }
           undo = null; btn.textContent = "⇆ Split into listings"; say("Split undone."); return;
         }
         if (!ta.value.trim()) { say("Paste or write some text in that box first.", true); return; }
@@ -5796,7 +5799,7 @@ function editChar(c, isNew, fromDraft) {
       else renderHome();
     };
     if ($("cDel")) confirmBtn($("cDel"), "Tap again to delete forever", async () => {
-      S.chars = S.chars.filter(x => x.id !== work.id);
+      S.chars = S.chars.filter(x => x.id !== work.id); Sync.forget(work.id);
       for (const g of S.chars) if (g.members) g.members = g.members.filter(id => id !== work.id);
       await saveChars();
       await deleteAllChats(work.id); await dropDraft(work.id);
@@ -14535,7 +14538,11 @@ const Sync = {
   },
   async logIn(email, password) { await this.auth("password", { email: email.trim().toLowerCase(), password }); await this.first(); },
   logOut() { this.st = { email: this.st.email }; this.save(); },
-  async put(k, v) { this.applying = true; try { if (v === undefined) await Store.del(k); else await Store.set(k, k === "settings" ? await keepLocal(v) : v); } finally { this.applying = false; } },
+  async put(k, v) { this.applying = true; const f0 = Store.fails || 0; try { if (v === undefined) await Store.del(k); else await Store.set(k, k === "settings" ? await keepLocal(v) : v); } finally { this.applying = false; } return (Store.fails || 0) === f0; },
+  // v2.8.1: lists whose items must never vanish because one device held an old copy (deliberate deletions are told via forget)
+  GUARD: new Set(["chars", "pbots", "personas", "books"]),
+  idsSet(k, v) { if (this.GUARD.has(k) && Array.isArray(v)) (this.st.ids = this.st.ids || {})[k] = v.map(x => x && x.id).filter(Boolean); },
+  forget(id) { (this.gone = this.gone || new Set()).add(id); },
   // first login on a device: merge what's here with what's in the account, then upload the rest
   async first() {
     this.status = "Merging this device with your account…";
@@ -14560,6 +14567,7 @@ const Sync = {
     }
     for (const [k, v] of remote) if (!local.includes(k) && v !== undefined) await this.put(k, v);
     this.st.ver = Object.fromEntries(remote.at || []);
+    for (const k of this.GUARD) this.idsSet(k, remote.get(k));
     this.st.dirty = [...new Set([...(this.st.dirty || []), ...toPush])]; this.save();
     await this.reload();
     await this.push();
@@ -14623,13 +14631,13 @@ const Sync = {
         if (new Set(this.st.dirty || []).has(k)) {
           // changed here and on another device since we last looked: keep both
           const mix = this.resolve(k, await Store.get(k), v, at);
-          this.st.ver[k] = at; if (open && mix) S.chat = JSON.parse(JSON.stringify(mix));
-          await this.put(k, mix); changed.push(k); merged = true; continue;
+          if (open && mix) S.chat = JSON.parse(JSON.stringify(mix));
+          if (await this.put(k, mix)) { this.st.ver[k] = at; this.idsSet(k, v); } changed.push(k); merged = true; continue;
         }
-        this.st.ver[k] = at;
-        if (v !== undefined) { const cur = await Store.get(k); if (stableJSON(k === "settings" ? stripLocal(cur) : cur) === stableJSON(v)) continue; }
+        if (v !== undefined) { const cur = await Store.get(k); if (stableJSON(k === "settings" ? stripLocal(cur) : cur) === stableJSON(v)) { this.st.ver[k] = at; this.idsSet(k, v); continue; } }
         if (open && v) S.chat = JSON.parse(JSON.stringify(v)); // swap at once so nothing saves the old copy over it
-        await this.put(k, v); changed.push(k);
+        // v2.8.1: only a copy this device managed to save counts as had; otherwise its next change is merged, never sent over the account's
+        if (await this.put(k, v)) { this.st.ver[k] = at; this.idsSet(k, v); } changed.push(k);
       }
       this.save();
       if (changed.length) await this.reload(changed);
@@ -14691,7 +14699,7 @@ const Sync = {
         const ok = new Map(((await r.json().catch(() => null)) || []).map(x => [x.key, +x.client_at || 0]));
         this.st.ver = this.st.ver || {};
         for (const x of batch) {
-          if (ok.has(x.key)) { this.st.ver[x.key] = ok.get(x.key); if ((this.st.edits || {})[x.key] === x.client_at) this.doneKey(x.key); this.sent[x.key] = Date.now(); }
+          if (ok.has(x.key)) { this.st.ver[x.key] = ok.get(x.key); this.idsSet(x.key, x.value); if ((this.st.edits || {})[x.key] === x.client_at) this.doneKey(x.key); this.sent[x.key] = Date.now(); }
           else rejected.push(x.key); // another device saved a newer copy first
         }
         this.save(); batch = []; size = 0;
@@ -14700,7 +14708,10 @@ const Sync = {
         let v = await Store.get(k);
         if (v === null || (this.listKey(k) && v !== undefined && !Array.isArray(v))) { this.doneKey(k); continue; } // nothing sane to send
         if (k === "settings" && v) v = stripLocal(v);
-        const row = { user_id: this.st.uid, key: k, value: v === undefined ? null : v, deleted: v === undefined, client_at: (this.st.edits = this.st.edits || {})[k] || (this.st.edits[k] = Date.now()), base_at: (this.st.ver || {})[k] || 0 }, n = JSON.stringify(row).length;
+        if ((this.stuck || {})[k] > Date.now() - 600000) continue; // this device couldn't save the account's copy a moment ago: wait, don't fetch it again and again
+        let base = (this.st.ver || {})[k] || 0;
+        if (this.GUARD.has(k) && Array.isArray(v) && (this.st.ids || {})[k]) { const have = new Set(v.map(x => x && x.id)); if (this.st.ids[k].filter(id => !have.has(id) && !(this.gone || new Set()).has(id)).length >= 2) base = 0; }
+        const row = { user_id: this.st.uid, key: k, value: v === undefined ? null : v, deleted: v === undefined, client_at: (this.st.edits = this.st.edits || {})[k] || (this.st.edits[k] = Date.now()), base_at: base }, n = JSON.stringify(row).length;
         if (batch.length && (size + n > 700000 || batch.length >= 20)) await send();
         batch.push(row); size += n;
       }
@@ -14747,9 +14758,10 @@ const Sync = {
       if (theirs === null || (this.listKey(k) && theirs !== undefined && !Array.isArray(theirs))) { this.st.ver[k] = at; continue; }
       const open = S.chat && S.chat.id && k === "c2:" + S.chat.id;
       const mix = this.resolve(k, await Store.get(k), theirs, at);
-      this.st.ver[k] = at; (this.st.edits = this.st.edits || {})[k] = Date.now();
       if (open && mix && !S.busy) S.chat = JSON.parse(JSON.stringify(mix));
-      await this.put(k, mix); changed.push(k);
+      if (await this.put(k, mix)) { this.st.ver[k] = at; (this.st.edits = this.st.edits || {})[k] = Date.now(); this.idsSet(k, theirs); delete (this.stuck || {})[k]; }
+      else (this.stuck = this.stuck || {})[k] = Date.now();
+      changed.push(k);
     }
     this.save();
     this.rounds = (this.rounds || 0) + 1;
@@ -14796,14 +14808,27 @@ document.addEventListener("visibilitychange", () => { if (!Sync.on()) return; if
 // other devices' changes arrive on their own: every 10 s while the app is on screen, and at once when it comes back
 setInterval(() => { if (Sync.on() && !document.hidden) Sync.pull(); }, 10000);
 for (const ev of ["focus", "online", "pageshow"]) addEventListener(ev, () => { if (Sync.on() && !document.hidden) { Sync.push(); Sync.pull(); } });
+// v2.8.1: a save this device couldn't make (storage full, or a browser that only gives ~5 MB) is reported, never hidden
+function storeFailed(k, size) {
+  Store.fails = (Store.fails || 0) + 1; Store.lastFail = { k, size, at: Date.now(), basic: !Store.db };
+  if (Date.now() - (Store.warned || 0) < 600000) return; Store.warned = Date.now();
+  setTimeout(() => { try { toast(`This device couldn't save ${k === "chars" ? "your bots" : "some of your data"}: its storage is full or limited${Store.db ? "" : " (this browser only gives Lanternroom about 5 MB)"}. Your account keeps everything, and this device won't overwrite it.`); } catch {} }, 0);
+}
+const mbOf = n => (n / 1048576).toFixed(n < 10485760 ? 1 : 0) + " MB";
+function storeLine(el) {
+  if (!el) return;
+  const put = e => { el.textContent = `This device keeps your data in ${Store.db ? "its browser database" : "basic storage (about 5 MB, too small for a big bot list)"}${e && e.quota ? ` · ${mbOf(e.usage || 0)} used of ${mbOf(e.quota)}` : ""}.${Store.lastFail ? ` ⚠ Couldn't save ${Store.lastFail.k === "chars" ? "your bots" : Store.lastFail.k} (${mbOf(Store.lastFail.size)}) ${fmtWhen(Store.lastFail.at)}: free up space on this device or use another browser.` : ""}`; };
+  put(null); try { navigator.storage?.estimate?.().then(put, () => {}); } catch {}
+}
 function drawAccount(box) {
   if (!box) return;
   if (Sync.on()) {
     box.innerHTML = `<h3>Account</h3><p class="note" style="margin:0">Logged in as <b>${esc(Sync.st.email || "")}</b>. Bots, chats, personas, lorebooks, rules, settings and your own sounds sync to every device where you log in. Your API key stays on each device.</p>
-      <div class="hint" id="acStat">${esc(Sync.status || "Syncing…")}</div>
+      <div class="hint" id="acStat">${esc(Sync.status || "Syncing…")}</div><div class="hint" id="acStore"></div>
       <div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn small" type="button" id="acNow">Sync now</button><button class="btn small" type="button" id="acOut">Log out</button></div>`;
     $("acNow").onclick = async () => { $("acStat").textContent = "Syncing…"; await Sync.push(); await Sync.pull(); $("acStat").textContent = Sync.status; };
     confirmBtn($("acOut"), "Tap again: this device keeps its copy", () => { Sync.logOut(); drawAccount(box); });
+    storeLine($("acStore"));
     return;
   }
   box.innerHTML = `<h3>Account</h3><p class="note" style="margin:0">Log in to keep your bots, chats, settings and sounds the same on every phone and computer. Your API key is entered once per device and stays there.</p>
