@@ -1754,7 +1754,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.9 · Oct 31";
+const VERSION = "2.9.1 · Oct 31";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -14704,49 +14704,83 @@ const Sync = {
     if (k === "daily") return dailyNewer(lose, win);
     return win;
   },
-  async pullAll(all) {
+  async pullAll(all, defer) {
     const out = new Map(); out.at = new Map(); let from = 0;
     for (;;) {
       const r = await this.req(`/rest/v1/kv?select=key,value,deleted,updated_at,client_at&order=updated_at.asc` + (all ? "" : `&updated_at=gt.${encodeURIComponent(this.st.pulled || "1970-01-01T00:00:00Z")}`), { headers: { Range: `${from}-${from + 199}` } });
       if (!r.ok) throw new Error("Couldn't reach your account.");
       const rows = await r.json();
-      for (const row of rows) { out.set(row.key, row.deleted ? undefined : row.value); out.at.set(row.key, +row.client_at || 0); this.st.pulled = row.updated_at; }
+      for (const row of rows) { out.set(row.key, row.deleted ? undefined : row.value); out.at.set(row.key, +row.client_at || 0); if (defer) out.last = row.updated_at; else this.st.pulled = row.updated_at; }
       if (rows.length < 200) break; from += 200;
     }
-    this.save();
+    if (!defer) this.save();
     return out;
   },
+  // take one key from the account into this device (fx collects what changed); one key failing never stops the others
+  async take(k, v, at, started, fx) {
+    try {
+      if (at && at <= (this.st.ver[k] || 0)) return; // a copy we already have (often our own change coming back)
+      if (!at && (this.sent[k] || 0) > started) return;
+      if (v === null || (this.listKey(k) && v !== undefined && !Array.isArray(v))) { this.st.ver[k] = at; return; } // never take a broken or empty value
+      const open = S.chat && S.chat.id && k === "c2:" + S.chat.id;
+      if (open && S.busy) return; // a reply is being written: take it after, by merging when this device saves
+      if (new Set(this.st.dirty || []).has(k)) {
+        // changed here and on another device since we last looked: keep both
+        const mix = this.resolve(k, await Store.get(k), v, at);
+        if (open && mix) S.chat = JSON.parse(JSON.stringify(mix));
+        if (await this.put(k, mix)) this.took(k, v, at); else this.missed(k, "this device couldn't save it");
+        fx.changed.push(k); fx.merged = true; return;
+      }
+      if (v !== undefined) { const cur = await Store.get(k); if (stableJSON(k === "settings" ? stripLocal(cur) : cur) === stableJSON(v)) { this.took(k, v, at); return; } }
+      if (open && v) S.chat = JSON.parse(JSON.stringify(v)); // swap at once so nothing saves the old copy over it
+      // v2.8.1: only a copy this device managed to save counts as had; otherwise its next change is merged, never sent over the account's
+      if (await this.put(k, v)) this.took(k, v, at); else this.missed(k, "this device couldn't save it");
+      fx.changed.push(k);
+    } catch (e) { this.missed(k, e.message); }
+  },
+  took(k, v, at) { this.st.ver[k] = at; this.idsSet(k, v); if (this.st.miss) delete this.st.miss[k]; },
+  missed(k, why) { (this.st.miss = this.st.miss || {})[k] = { at: Date.now(), why: String(why || "").slice(0, 120) }; },
   // fetch changes made on other devices since the last pull and apply them here
   async pull() {
     if (!this.on() || this.busy) return;
     this.busy = true; const started = Date.now();
     try {
       await Store.open(); // v2.8.2: never compare against "nothing" because storage hasn't opened yet
-      const got = await this.pullAll(false), changed = []; let merged = false;
+      const got = await this.pullAll(false, true), fx = { changed: [], merged: false };
       this.st.ver = this.st.ver || {};
-      for (const [k, v] of got) {
-        const at = got.at?.get(k) || 0;
-        if (at && at <= (this.st.ver[k] || 0)) continue; // a copy we already have (often our own change coming back)
-        if (!at && (this.sent[k] || 0) > started) continue;
-        if (v === null || (this.listKey(k) && v !== undefined && !Array.isArray(v))) { this.st.ver[k] = at; continue; } // never take a broken or empty value
-        const open = S.chat && S.chat.id && k === "c2:" + S.chat.id;
-        if (open && S.busy) continue; // a reply is being written: take it after, by merging when this device saves
-        if (new Set(this.st.dirty || []).has(k)) {
-          // changed here and on another device since we last looked: keep both
-          const mix = this.resolve(k, await Store.get(k), v, at);
-          if (open && mix) S.chat = JSON.parse(JSON.stringify(mix));
-          if (await this.put(k, mix)) { this.st.ver[k] = at; this.idsSet(k, v); } changed.push(k); merged = true; continue;
-        }
-        if (v !== undefined) { const cur = await Store.get(k); if (stableJSON(k === "settings" ? stripLocal(cur) : cur) === stableJSON(v)) { this.st.ver[k] = at; this.idsSet(k, v); continue; } }
-        if (open && v) S.chat = JSON.parse(JSON.stringify(v)); // swap at once so nothing saves the old copy over it
-        // v2.8.1: only a copy this device managed to save counts as had; otherwise its next change is merged, never sent over the account's
-        if (await this.put(k, v)) { this.st.ver[k] = at; this.idsSet(k, v); } changed.push(k);
-      }
+      for (const [k, v] of got) await this.take(k, v, got.at?.get(k) || 0, started, fx);
+      // v2.9.1: the bookmark moves only after every row was looked at, so a pull cut short (the app closed mid-save) is fetched again
+      if (got.last) this.st.pulled = got.last;
       this.save();
-      if (changed.length) await this.reload(changed);
-      if (merged) setTimeout(() => this.push(), 50);
+      if (fx.changed.length) await this.reload(fx.changed);
+      if (fx.merged) setTimeout(() => this.push(), 50);
       this.status = "Synced " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
     } catch (e) { this.status = e.message; }
+    finally { this.busy = false; }
+    if (Date.now() - (this.healed || 0) > 180000) this.heal();
+  },
+  // v2.9.1: anything the account has that this device never took in (a pull cut short, a save that failed) is fetched
+  // again by name. The PC program once kept an old bot list for good this way. Runs with the first pull and every 3 minutes.
+  async heal() {
+    if (!this.on() || this.busy) return;
+    this.busy = true; this.healed = Date.now(); const started = Date.now();
+    try {
+      await Store.open();
+      const r = await this.req("/rest/v1/kv?select=key,client_at");
+      if (!r.ok) return;
+      const ver = this.st.ver = this.st.ver || {}, dirty = new Set(this.st.dirty || []);
+      const miss = (await r.json()).filter(x => this.synced(x.key) && (+x.client_at || 0) > (ver[x.key] || 0) && !dirty.has(x.key)).map(x => x.key);
+      const fx = { changed: [], merged: false };
+      for (let i = 0; i < miss.length; i += 10) {
+        const list = miss.slice(i, i + 10).map(k => '"' + k.replace(/"/g, '\\"') + '"').join(",");
+        const q = await this.req(`/rest/v1/kv?select=key,value,deleted,client_at&key=in.(${encodeURIComponent(list)})`);
+        if (!q.ok) break;
+        for (const row of await q.json()) await this.take(row.key, row.deleted ? undefined : row.value, +row.client_at || 0, started, fx);
+      }
+      this.save();
+      if (fx.changed.length) await this.reload(fx.changed);
+      if (fx.merged) setTimeout(() => this.push(), 50);
+    } catch {}
     finally { this.busy = false; }
   },
   // Supabase's free plan takes files up to 50 MB. Big WAVs (long ambience recordings) are shrunk on the device
