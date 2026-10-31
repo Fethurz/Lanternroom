@@ -15,7 +15,7 @@ const open = require("./base.js");
   const wait = () => pg.waitForFunction(() => !S.busy, null, { timeout: 15000 }).catch(() => {});
   const lastA = () => pg.evaluate(() => { const m = S.chat.messages.filter(m => m.role === "assistant").at(-1); return { dead: m.dead || null, choices: (m.choices || []).length, n: S.chat.messages.length }; });
   const pick = async (i, next) => { if (next) Q.push(next); const n = await pg.evaluate(() => S.chat.messages.length); await pg.evaluate(i => pickChoice(S.chat.messages.filter(m => m.role === "assistant").at(-1).choices[i]), i); await pg.waitForFunction(k => S.chat.messages.length >= k + 2 && !S.busy, n, { timeout: 15000 }).catch(() => {}); await pg.waitForTimeout(150); };
-  const bar = () => pg.evaluate(() => [...document.querySelectorAll("#choiceBar .choice, #choiceBar .st-dead, #choiceBar .st-obit")].map(x => x.textContent.trim()));
+  const bar = () => pg.evaluate(() => [...document.querySelectorAll("#stPick .choice, #stPick .st-opt, #stPick .st-dead, #stPick .st-obit")].map(x => x.textContent.trim()));
   const begin = (id, o, h = {}) => pg.evaluate(async ([id, o, h]) => { const pk = packOf(id); await storyBegin(pk, null, { mode: "classic", content: "clean", vore: false, length: "standard", era: pk.eras ? Object.keys(pk.eras)[0] : "", danger: "real", voreWho: "all", voreKind: "", ...o }, { name: "Ember", pron: "she/her", color: "", ...h }); for (let i = 0; i < 200 && (S.busy || !S.chat.messages.length); i++) await new Promise(r => setTimeout(r, 50)); }, [id, o, h]);
   chk("version 2.4 or later", await pg.evaluate(() => ((v => v[0] * 1000 + +v[1])(VERSION.split(" ")[0].split("."))) >= 2004));
 
@@ -99,7 +99,7 @@ const open = require("./base.js");
   chk("prompt: Brutal", /# Danger: Brutal/.test(seen.at(-1)) && /one bad call can be fatal/.test(seen.at(-1)));
   await pick(0, scene("The lance finds your heart.", { dead: true, cause: "Slain by Sir Aldric" }));
   await pg.evaluate(() => storyEndRun()); await wait(); await pg.waitForTimeout(200);
-  const ob = await pg.evaluate(() => ({ o: S.chat.story.obit, bar: $("choiceBar").textContent, own: $("ownBar").textContent }));
+  const ob = await pg.evaluate(() => ({ o: S.chat.story.obit, bar: $("stPick")?.textContent, own: $("ownBar").textContent }));
   chk(`End the run writes an obituary (${ob.o?.epitaph})`, ob.o?.epitaph === "She flew too close to the knights." && /Ember was a proud young dragon/.test(ob.o.text) && ob.o.cause === "Slain by Sir Aldric");
   chk("the obituary card shows, with Start a new story", /She flew too close/.test(ob.bar) && /Start a new story/.test(ob.bar) && !/Rewind/.test(ob.bar) && /Run ended/.test(ob.own));
   const runs = await pg.evaluate(async () => { const id = S.chat.id, cid = S.charId; leaveChat(); const e = (await getIndex(cid)).find(x => x.id === id); await openStories(); document.querySelector('[data-stt="runs"]').click(); await new Promise(r => setTimeout(r, 100)); const t = document.querySelector('[data-sp="runs"]').textContent; closeSheet(); return { obit: e.obit, who: chatWho(e), t }; });

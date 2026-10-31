@@ -31,7 +31,7 @@ const open = require("./base.js");
     $("stName").value = "Ember"; document.querySelector('[data-pron="she/her"]').click(); $("stColor").value = "red"; $("stColor").dispatchEvent(new Event("change"));
     $("stGo").click(); for (let i = 0; i < 200 && (!S.chat?.story || S.busy || !S.chat.messages.length); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 300));
     const m = S.chat.messages[0], bot = byId(S.charId);
-    return { opts: S.chat.story.opts, hero: S.chat.story.hero, n: S.chat.messages.length, content: m?.content, choices: m?.choices?.map(x => x.t + ":" + JSON.stringify(x.st)), bot: { pack: bot.storyPack, hidden: bot.hidden }, bar: $("ownBar").textContent, choosing: $("chat").classList.contains("choosing"), btns: [...document.querySelectorAll("#choiceBar .choice")].map(x => x.textContent), own: !!$("chOwn") };
+    return { opts: S.chat.story.opts, hero: S.chat.story.hero, n: S.chat.messages.length, content: m?.content, choices: m?.choices?.map(x => x.t + ":" + JSON.stringify(x.st)), bot: { pack: bot.storyPack, hidden: bot.hidden }, bar: $("ownBar").textContent, choosing: $("chat").classList.contains("choosing"), btns: [...document.querySelectorAll("#stPick .st-opt")].map(x => x.textContent), own: !!$("chOwn") };
   });
   const s0 = sysSeen.at(-1) || "";
   chk(`Begin makes a hidden story bot and writes the first scene (${begin.n} message)`, begin.n === 1 && begin.bot.pack === "dragon" && begin.bot.hidden && begin.opts.content === "lewd" && begin.opts.vore && begin.hero.name === "Ember" && begin.hero.pron === "she/her" && begin.hero.color === "red");
@@ -40,9 +40,9 @@ const open = require("./base.js");
   chk(`choices are checked against the real stat names (${begin.choices?.length} kept)`, begin.choices?.length === 3 && /"side":"Brutality","amt":2/.test(begin.choices[0]) && /"infamy":5/.test(begin.choices[0]) && /"check":\{"stat":"Finesse","need":40\}/.test(begin.choices[1]) && /"leans":\[\]/.test(begin.choices[2]) && /"wealth":10/.test(begin.choices[2]) && !/Nope/.test(begin.choices[2]));
   chk(`the screen: fixed choices only, no message box or Write my own; the bar shows the chapter (${begin.bar})`, begin.choosing && begin.btns.length === 3 && !begin.own && /Chapter 1: The Knight/.test(begin.bar) && /1 \/ 6/.test(begin.bar));
   // pick the checked choice: the check is settled by the app, stats move, the next scene hears about it
-  const pick = await pg.evaluate(async () => { window.rand01 = () => 0.5; document.querySelectorAll("#choiceBar .choice")[1].click();
+  const pick = await pg.evaluate(async () => { window.rand01 = () => 0.5; (document.querySelectorAll("#stPick .st-opt")[1].click(), $("stNext").click());
     for (let i = 0; i < 200 && (S.busy || S.chat.messages.length < 3); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 200));
-    const u = S.chat.messages[1], st = storyState(S.chat); return { st: u.st, line: document.querySelector("#msgs .msg.user .st-line")?.textContent, fin: st.pairs[0].v, cun: st.pairs[1].v, bar: $("ownBar").textContent, scenes: st.scenes }; });
+    const u = S.chat.messages[1], st = storyState(S.chat); return { st: u.st, line: document.querySelector("#msgs .st-div")?.textContent, fin: st.pairs[0].v, cun: st.pairs[1].v, bar: $("ownBar").textContent, scenes: st.scenes }; });
   const s1 = sysSeen.at(-1) || "", u1 = userSeen.at(-1) || "";
   chk(`the check is settled by the app (Finesse ${pick.st?.check?.val} vs ${pick.st?.check?.need}: ${pick.st?.check?.ok ? "passed" : "failed"}) and shown on your choice (${pick.line})`, pick.st?.check?.ok === true && pick.st.check.val === 50 && /✓ Finesse/.test(pick.line || ""));
   chk(`stats move toward the chosen sides (Brutality/Finesse ${pick.fin}, Cunning/Honor ${pick.cun})`, pick.fin === 60 && pick.cun === 45);
@@ -50,7 +50,7 @@ const open = require("./base.js");
   // a scene without the story line gets its choices from a follow-up call
   const fb = await pg.evaluate(async () => { window.__nj = 1; return true; });
   noJson = true;
-  const fbr = await pg.evaluate(async () => { document.querySelectorAll("#choiceBar .choice")[0].click(); for (let i = 0; i < 200 && (S.busy || S.chat.messages.length < 5); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 200)); return S.chat.messages.at(-1).choices?.map(x => x.t); });
+  const fbr = await pg.evaluate(async () => { (document.querySelectorAll("#stPick .st-opt")[0].click(), $("stNext").click()); for (let i = 0; i < 200 && (S.busy || S.chat.messages.length < 5); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 200)); return S.chat.messages.at(-1).choices?.map(x => x.t); });
   noJson = false;
   chk(`a scene that came without choices gets them from a follow-up call (${fbr})`, fbr?.join() === "Roar.,Wait.");
   // stats screen and content switch
@@ -58,8 +58,8 @@ const open = require("./base.js");
   chk("the stats screen shows your nature, standing, chapters and lets you change the content", /Ember/.test(stats.t) && /Wealth/.test(stats.t) && /Infamy/.test(stats.t) && /The Dragon War/.test(stats.t) && /Your nature/.test(stats.t) && stats.c === "clean");
   // the ending: a short story to reach it quickly
   const end = await pg.evaluate(async () => { S.chat.story.chapters = [{ t: "One", goal: "a", scenes: 2 }, { t: "Two", goal: "b", scenes: 2 }]; await saveChat(); renderChoices();
-    document.querySelectorAll("#choiceBar .choice")[0].click(); for (let i = 0; i < 200 && (S.busy || S.chat.messages.length < 7); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 300));
-    return { last: S.chat.messages.at(-1), btns: [...document.querySelectorAll("#choiceBar .choice")].map(x => x.textContent), bar: $("ownBar").textContent }; });
+    (document.querySelectorAll("#stPick .st-opt")[0].click(), $("stNext").click()); for (let i = 0; i < 200 && (S.busy || S.chat.messages.length < 7); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 300));
+    return { last: S.chat.messages.at(-1), btns: [...document.querySelectorAll("#stPick .choice")].map(x => x.textContent), bar: $("ownBar").textContent }; });
   chk(`the last scene is the ending: no choices, then your tale / keep going / new story (${end.btns.join(" | ")})`, /FINAL scene/.test(sysSeen.at(-1)) && end.last.ending && !end.last.choices?.length && end.btns.length === 3 && /Keep going/.test(end.btns[1]) && /The end/.test(end.bar));
   const more = await pg.evaluate(async () => { $("stMore").click(); for (let i = 0; i < 200 && (S.busy || S.chat.messages.length < 8); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 200)); return { ch: S.chat.story.chapters.map(x => x.t), len: S.chat.story.opts.length, n: S.chat.messages.length }; });
   chk(`Keep going plans more chapters and writes the next scene (${more.ch.join(", ")})`, more.ch.length === 5 && more.ch[2] === "Aftermath" && more.len === "endless" && more.n === 8 && /chapter 3 of 5, "Aftermath"/.test(sysSeen.at(-1)));

@@ -872,13 +872,34 @@ img.px-av{border-radius:50%}
 #asBar{position:relative;z-index:1;display:flex;align-items:center;gap:6px;overflow-x:auto;padding:6px 10px 2px;font-size:13px}#asBar[hidden]{display:none}
 #asBar .as-l{flex:none;color:var(--muted);font-size:12px}#asBar .chip{flex:none;display:inline-flex;align-items:center;gap:6px}
 #choiceBar{position:relative;z-index:1;display:flex;flex-direction:column;gap:6px;padding:8px 10px;max-height:45vh;overflow-y:auto}#choiceBar[hidden]{display:none}
-#choiceBar .choice{display:flex;align-items:flex-start;gap:8px;text-align:left;min-height:40px;padding:9px 12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));background:color-mix(in srgb,var(--accent) 10%,var(--surface,var(--bg)));color:var(--text,inherit);font:inherit;font-size:14px;line-height:1.4;cursor:pointer}
-#choiceBar .choice:hover{background:color-mix(in srgb,var(--accent) 20%,var(--surface,var(--bg)))}#choiceBar .choice.risky{border-style:dashed}
-#choiceBar .choice>span:not(.ch-die){min-width:0;flex:1 1 auto;overflow-wrap:anywhere;white-space:normal}
+#choiceBar .choice,#stPick .choice{display:flex;align-items:flex-start;gap:8px;text-align:left;min-height:40px;padding:9px 12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));background:color-mix(in srgb,var(--accent) 10%,var(--surface,var(--bg)));color:var(--text,inherit);font:inherit;font-size:14px;line-height:1.4;cursor:pointer}
+#choiceBar .choice:hover,#stPick .choice:hover{background:color-mix(in srgb,var(--accent) 20%,var(--surface,var(--bg)))}#choiceBar .choice.risky{border-style:dashed}
+#choiceBar .choice>span:not(.ch-die),#stPick .choice>span{min-width:0;flex:1 1 auto;overflow-wrap:anywhere;white-space:normal}
 #choiceBar .ch-risk{flex:none;align-self:center;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 50%,var(--line));border-radius:999px;padding:2px 7px}
 #choiceBar .ch-die{flex:none;width:20px;height:20px;color:var(--accent);margin-top:1px}#choiceBar .ch-die svg{width:20px;height:20px}
 #choiceBar .ch-own{align-self:flex-end;background:none;border:0;color:var(--muted);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;min-height:34px}
 #chat.choosing #composer{display:none}
+/* v2.9: story pages */
+#chat.story-pg #msgs{gap:0;padding:14px 18px 28px}
+#chat.story-pg #msgs .msg.st-scene{max-width:680px;width:100%;align-self:center;background:none;border:0;box-shadow:none;padding:0;border-radius:0;font-size:17px;line-height:1.65;color:var(--fg)}
+#chat.story-pg #msgs .st-nar{margin:0 0 14px;color:color-mix(in srgb,var(--fg) 76%,var(--bg))}
+#chat.story-pg #msgs .st-say{margin:0 0 14px 4px;padding:3px 0 3px 14px;border-left:3px solid var(--accent);color:var(--fg)}
+#chat.story-pg #msgs .st-say .q{color:var(--fg)}
+#chat.story-pg #msgs .st-tag{color:color-mix(in srgb,var(--fg) 62%,var(--bg));font-size:.94em}
+#chat.story-pg #msgs .st-chap{font:400 21px/1.25 var(--f-display);margin:6px 0 18px;color:var(--accent);text-align:center}
+.st-div{display:flex;align-items:center;gap:10px;max-width:680px;width:100%;align-self:center;margin:2px 0 18px;font-size:13px}
+.st-div::before,.st-div::after{content:"";flex:1;height:1px;background:var(--line)}
+.st-div.ok b{color:#8fdc6a}.st-div.no b{color:#e2766f}
+.st-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;max-width:680px;width:100%;align-self:center;margin:0 0 14px;font-size:13px;color:var(--muted)}
+.st-nav button{min-height:34px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);color:var(--fg)}.st-nav button[disabled]{opacity:.35}
+#stPick{max-width:680px;width:100%;align-self:center;display:flex;flex-direction:column;gap:8px;margin:10px 0 4px}#stPick:empty{display:none}
+#stPick .st-opts{display:flex;flex-direction:column;gap:8px}
+#stPick .st-opt{display:flex;align-items:flex-start;gap:10px;text-align:left;min-height:44px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:color-mix(in srgb,var(--surface) 70%,transparent);font-size:15px;line-height:1.4;color:var(--fg)}
+#stPick .st-opt>span:last-child{min-width:0;flex:1;overflow-wrap:anywhere}
+#stPick .st-dot{flex:none;width:18px;height:18px;margin-top:1px;border-radius:50%;border:2px solid color-mix(in srgb,var(--accent) 60%,var(--line));display:grid;place-items:center}
+#stPick .st-opt[aria-checked="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+#stPick .st-opt[aria-checked="true"] .st-dot::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+#stPick .st-next{align-self:center;min-width:170px;min-height:42px;margin-top:6px}#stPick .st-next[disabled]{opacity:.45}
 .cur-sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-top:8px}
 .cur-icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px;margin-top:6px}.cur-ic{display:grid;place-items:center;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer;padding:0}.cur-ic svg{width:24px;height:24px}.cur-ic.on{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent)}
 .cur-col{align-items:center;gap:8px;margin-top:6px;font-size:13px}.cur-col label{display:flex;align-items:center;gap:8px}.cur-col input[type=color]{width:44px;height:34px;padding:0;border:1px solid var(--line);border-radius:8px;background:none}
@@ -1733,7 +1754,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.8.3 · Oct 31";
+const VERSION = "2.9 · Oct 31";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -4464,10 +4485,15 @@ function mrowOf(el) { let r = el.querySelector(":scope > .mrow"); if (!r) { r = 
 function renderMsgs(keepScroll) {
   const box = $("msgs"), atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   const c = char();
+  const top0 = box.scrollTop;
   box.innerHTML = "";
   const msgs = S.chat.messages;
   const lastAsst = msgs.map(m => m.role).lastIndexOf("assistant");
+  const pg = S.chat.story ? storyPage(msgs) : null; // v2.9: a story shows one scene per page
+  $("chat").classList.toggle("story-pg", !!pg);
+  if (pg) box.insertAdjacentHTML("beforeend", storyNavHTML(pg));
   msgs.forEach((m, i) => {
+    if (pg && !pg.show.has(i)) return;
     let d = document.createElement("div");
     d.dataset.i = i;
     let tail = d;
@@ -4497,6 +4523,9 @@ function renderMsgs(keepScroll) {
         b.insertAdjacentHTML("beforeend", fmt(seg.text));
         d.appendChild(b); tail = b;
       }
+    } else if (pg && m.role === "assistant") {
+      d.className = "msg assistant st-scene";
+      d.innerHTML = storyFmt(m.content);
     } else if (m.greeting && !m.content) {
       d.className = "msg assistant blank-open";
       d.innerHTML = `<div class="who-l">Blank start</div><p>Set the scene yourself. Write the opening as your first message and ${esc(c.name)} will pick it up from there.</p><p class="hint">Swipe ‹ for the written openings.</p>`;
@@ -4537,8 +4566,10 @@ function renderMsgs(keepScroll) {
     }
     box.appendChild(d);
   });
+  if (pg) { const pk = document.createElement("div"); pk.id = "stPick"; box.appendChild(pk); renderChoices(); }
   decorateSfx(box);
-  if (!keepScroll || atBottom) box.scrollTop = box.scrollHeight;
+  if (pg) { const key = S.chat.id + ":" + pg.p; if (S.stKey !== key) { S.stKey = key; box.scrollTop = 0; } else box.scrollTop = top0; } // a new page starts at its top
+  else if (!keepScroll || atBottom) box.scrollTop = box.scrollHeight;
   updateAmbience();
 }
 
@@ -4619,6 +4650,7 @@ $("btnMin").onclick = () => { $("input").blur(); composerOpen(false); };
 addEventListener("resize", () => { if ($("composer").classList.contains("open")) autoGrow(); });
 function showMsgTop(i) {
   const box = $("msgs"), el = box.querySelector(`[data-i="${i}"]`);
+  if (S.chat?.story) { box.scrollTop = 0; return; } // v2.9: a story scene is read from the top of its page
   if (el) box.scrollTop = Math.max(0, el.offsetTop - 8);
 }
 function setBusy(b) { S.busy = b; $("send").disabled = b; $("btnIllustrate").disabled = b; $("btnCont").disabled = b; $("send").classList.toggle("busy", b); try { renderChoices(); } catch {} }
@@ -4685,7 +4717,7 @@ async function generate(upto, existing, cont) {
   setBusy(true); setStatus("");
   let bubble;
   if (existing) bubble = $("msgs").querySelector(`[data-i="${upto}"]`);
-  else { bubble = document.createElement("div"); bubble.className = "msg assistant typing"; bubble.dataset.i = upto; $("msgs").appendChild(bubble); }
+  else { bubble = document.createElement("div"); bubble.className = "msg assistant typing" + (chat.story ? " st-scene" : ""); bubble.dataset.i = upto; const pk = $("stPick"); if (pk) $("msgs").insertBefore(bubble, pk); else $("msgs").appendChild(bubble); }
   if (bubble.classList.contains("msg-set")) { bubble.className = "msg assistant"; }
   const who = chat.story ? "The story" : c.kind === "world" ? "The narrator" : c.kind === "group" ? (S.nextSpeaker || "The group") : c.name;
   const waiting = verb => `<span class="typing-l"><span>${esc(who)} is ${verb}…</span>${lanternSVG("seq")}</span>`;
@@ -4702,7 +4734,7 @@ async function generate(upto, existing, cont) {
     const pause = matchMedia("(prefers-reduced-motion: reduce)").matches ? 150 : 800;
     for (let attempt = 0; attempt < 2; attempt++) {
       let latest = "", shown = false, revealP = null;
-      const show = () => { bubble.classList.remove("typing"); bubble.innerHTML = fmt(latest.split("[[")[0]); decorateSfx(bubble); if (follow) { const target = Math.min(box.scrollHeight - box.clientHeight, bubble.offsetTop - 8); if (target > box.scrollTop) box.scrollTop = target; } };
+      const show = () => { bubble.classList.remove("typing"); bubble.innerHTML = (chat.story ? storyFmt : fmt)(latest.split("[[")[0]); decorateSfx(bubble); if (follow) { const target = Math.min(box.scrollHeight - box.clientHeight, bubble.offsetTop - 8); if (target > box.scrollTop) box.scrollTop = target; } };
       const raw = await ds(buildPrompt(c, chat, upto, cont), {
         thinking: S.settings.thinking,
         temperature: attempt ? Math.min(S.settings.temperature, 0.7) : undefined,
@@ -8246,15 +8278,17 @@ function takeChoices(text) {
 }
 const DIE_MINI = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8 17.5 6v8L10 18.2 2.5 14V6z" fill="currentColor" opacity=".25"/><path d="M10 1.8 17.5 6v8L10 18.2 2.5 14V6zM10 1.8v6.4M2.5 6l7.5 2.2L17.5 6M10 8.2 6 15M10 8.2 14 15M6 15h8" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
 function renderChoices() {
-  const box = $("choiceBar"), chatEl = $("chat"); if (!box) return;
+  let box = $("choiceBar"); const chatEl = $("chat"); if (!box) return;
   const c = char(), last = S.chat?.messages?.filter(m => m.role !== "image").at(-1);
   renderOwnBar();
   const making = last?.crStep != null && !!S.chat?.creating;
   if (S.chat?.story) { // v1.97: stories have fixed choices only (no message box), and buttons after the ending
     const ended = last?.role === "assistant" && storyState(S.chat).over && S.chat.story.opts.length !== "endless";
     chatEl.classList.toggle("choosing", true);
-    if (chatEl.hidden || S.busy || !last) { box.hidden = true; box.innerHTML = ""; return; }
-    box.hidden = false;
+    box.hidden = true; box.innerHTML = ""; // v2.9: a story's choices sit at the end of its page
+    box = storyPickBox(); if (!box) return;
+    if (chatEl.hidden || S.busy || !last) { box.innerHTML = ""; return; }
+    if (S.stPage != null) { box.innerHTML = `<button type="button" class="choice" id="stNow"><span>Back to the current scene ›</span></button>`; $("stNow").onclick = () => { S.stPage = null; renderMsgs(); }; return; }
     if (S.chat.story.obit) return storyObitCard(box); // v2.4: the run was ended after a death
     if (last.role === "assistant" && last.dead) return storyDeathButtons(box, last);
     if (ended) return storyEndButtons(box);
@@ -8265,8 +8299,10 @@ function renderChoices() {
         setBusy(true); try { last.choices = await storyChoicesFor(S.chat, last.content); if (last.altMeta?.[last.alt || 0]) last.altMeta[last.alt || 0].choices = last.choices; await saveChat(); } catch (e) { setStatus(e.message, true); } finally { setBusy(false); } renderChoices(); };
       return;
     }
-    box.innerHTML = last.choices.map((x, i) => `<button type="button" class="choice" data-i="${i}"><span>${fmt(x.t)}</span></button>`).join("");
-    box.querySelectorAll(".choice").forEach(b => b.onclick = () => pickChoice(last.choices[+b.dataset.i]));
+    const sel = S.stSel?.id === last.id ? S.stSel.i : -1;
+    box.innerHTML = `<div class="st-opts" role="radiogroup" aria-label="What do you do?">${last.choices.map((x, i) => `<button type="button" class="st-opt" role="radio" aria-checked="${i === sel}" data-o="${i}"><span class="st-dot"></span><span>${fmt(x.t)}</span></button>`).join("")}</div><button type="button" class="btn primary st-next" id="stNext"${sel < 0 ? " disabled" : ""}>Next</button>`;
+    box.querySelectorAll(".st-opt").forEach(b => b.onclick = () => { S.stSel = { id: last.id, i: +b.dataset.o }; box.querySelectorAll(".st-opt").forEach(x => x.setAttribute("aria-checked", x === b)); $("stNext").disabled = false; });
+    $("stNext").onclick = () => { const x = S.stSel?.id === last.id ? last.choices[S.stSel.i] : null; if (!x || S.busy) return; S.stSel = null; pickChoice(x); };
     return;
   }
   const on = !!(S.chat && !chatEl.hidden && (choicesOn(c) || making) && last?.role === "assistant" && last.choices?.length && !S.busy);
@@ -9003,14 +9039,15 @@ function storyMessages(c, chat, upto, cont) {
   const last = k >= K, final = last && ci === N - 1 && s.opts.length !== "endless";
   const pairs = st.pairs.map(p => `${p.a} ${100 - p.v} · ${p.b} ${p.v}`).join("; "), meters = st.meters.map(m => `${m.n} ${m.v}${m.max ? "/" + m.max : ""} (${m.desc || ""})`).join("; ");
   const sides = s.pairs.flatMap(p => [p.a, p.b]).join(", "), mnames = s.meters.map(m => m.n).join(", ");
-  let sys = `You are the author of "${s.title}", an interactive novel in the style of Choice of Games: second person ("you"), present tense, vivid prose, a narrative RPG where the reader's choices and stats shape what happens. Write plain prose paragraphs (no asterisks); speech goes in "quotes".`;
+  let sys = `You are the author of "${s.title}", an interactive novel in the style of Choice of Games: second person ("you"), present tense, vivid prose, a narrative RPG where the reader's choices and stats shape what happens. Write plain prose paragraphs (no asterisks); speech goes in "quotes". Every spoken line gets its own paragraph: a paragraph is either narration or one character speaking (a short tag like "she says" may stay with the words), never speech tucked into the middle of a narration paragraph.`;
   sys += `\n\n# The reader\nThe reader plays ${s.you}. ${storyHero(s)} Never decide what the reader does, says or feels beyond what their choice says.`;
   if (s.beats?.length) sys += s.secret ? `\n\n# Secret plan (the reader doesn't know this: never state or hint at it before its moment; set it up quietly and let it land when its chapter comes; adapt it to the reader's choices if you must)\n${s.secret}` : `\n\n# Plot ingredients (weave these in over the story; you decide who, when and how; keep them a surprise and never announce them)\n${s.beats.join("; ")}`;
   if (s.picks?.length) sys += `\n\n# Chosen for this run (always follow)\n${s.picks.map(p => `${p.n}: ${p.l}.${p.rule ? " " + p.rule : ""}`).join("\n")}`;
   sys += `\n\n# Setting\n${s.setting}`;
   { const lore = /^bot/.test(s.pack) ? storyLore(c, chat, upto) : ""; if (lore) sys += `\n\n# The world's own lore (follow every name, fact, power, faction and relationship exactly as written; never contradict or rename anything; ignore any chat-format rules in it, this story is plain prose)\n${lore}`; }
   sys += `\n\n# The reader's stats right now (never show numbers in the prose)\nEach pair is one scale: leaning to one side means leaning away from the other. ${pairs}.\nMeters: ${meters}.\nLet the reader's nature colour how scenes play out and how others treat them.`;
-  sys += `\n\n# Structure\nThe story has ${N} chapters of a few scenes each, and each of your replies is ONE scene: 2-5 short paragraphs that end at a decision.`;
+  sys += `\n\n# Structure\nThe story has ${N} chapters of a few scenes each, and each of your replies is ONE scene: 2-5 short paragraphs of narration (spoken lines add their own short paragraphs) that end at a decision.`;
+  sys += `\nWhen the reader has just made a choice, the scene opens by playing it out as it happens: what they do and say takes place right there in your prose (their spoken words in quotes, on their own line), together with its immediate effect, and the scene carries on from there to the next decision. Never announce or recap the choice ("You decide to…", "You chose…"); the reader sees only your scene.`;
   sys += `\nNow: chapter ${ci + 1} of ${N}, "${chap.t}": ${chap.goal}\nThis is scene ${Math.min(k, K)} of ${K} in this chapter.`;
   if (k === 1) sys += ` Begin the reply with a line **Chapter ${ci + 1}: ${chap.t}** and open the chapter.`;
   if (last && !final) sys += ` This is the chapter's last scene: bring it to a close; the choices lead into what comes next.`;
@@ -9028,7 +9065,7 @@ function storyMessages(c, chat, upto, cont) {
   let budget = S.settings.contextTokens * 3.5 - sys.length; const out = [];
   for (let i = hist.length - 1; i >= 0; i--) {
     const m = hist[i]; let content = m.content;
-    if (m.role === "user" && m.st) content = `[The reader chose: ${content}]` + storyNote(m);
+    if (m.role === "user" && m.st) content = `[The reader chose: ${content}]${i === hist.length - 1 ? " Play it out at the start of this scene, as it happens." : ""}` + storyNote(m);
     if (budget - content.length < 0 && out.length >= 2) break; budget -= content.length;
     out.unshift({ role: m.role, content });
   }
@@ -9044,11 +9081,69 @@ async function storyChoicesFor(chat, text) {
   const j = await dsJSON([{ role: "system", content: `You write the choices for a scene of "${s.title}", a Choice of Games style interactive novel. Respond with only JSON: {"choices": [3-4 of {"t": what the reader does (short), "leans": [{"side": one of ${sides}, "amt": 1-3}], "meters": {name: change} (optional; names: ${s.meters.map(m => m.n).join(", ")}), "check": {"stat": side or meter, "need": 20-85} (optional, at most one)}]}. ${storyContent(s)}` }, { role: "user", content: text.slice(-3000) }], { temperature: 0.8, maxTokens: 700 });
   return storyChoices(s, j?.choices);
 }
+// v2.9: pages. Page k shows scene k (and its illustrations); while the next scene is being written (or failed) there is one
+// more page holding only the check result of the pick. S.stPage = an earlier page being reread, null = the current one.
+function storyPage(msgs) {
+  const sc = []; msgs.forEach((m, i) => { if (m.role === "assistant") sc.push(i); });
+  let li = msgs.length - 1; while (li >= 0 && msgs[li].role === "image") li--;
+  const pending = li >= 0 && msgs[li].role === "user", n = Math.max(1, sc.length + (pending ? 1 : 0));
+  if (S.stChat !== S.chat.id) { S.stChat = S.chat.id; S.stPage = null; }
+  if (S.stPage != null && S.stPage >= n - 1) S.stPage = null;
+  const p = S.stPage == null ? n - 1 : Math.max(0, S.stPage), show = new Set(); let user = null;
+  if (p < sc.length) {
+    show.add(sc[p]); for (let i = sc[p] + 1; i < msgs.length && msgs[i].role === "image"; i++) show.add(i);
+    let j = sc[p] - 1; while (j >= 0 && msgs[j].role === "image") j--; if (j >= 0 && msgs[j].role === "user") user = msgs[j];
+  } else if (pending) user = msgs[li];
+  return { p, n, cur: S.stPage == null, show, user };
+}
+function storyNavHTML(pg) {
+  let h = "";
+  if (pg.cur && pg.p > 0) h = `<div class="st-nav"><button type="button" data-stnav="prev">‹ Earlier scenes</button></div>`;
+  else if (!pg.cur) h = `<div class="st-nav"><button type="button" data-stnav="prev"${pg.p ? "" : " disabled"}>‹ Earlier</button><span>Scene ${pg.p + 1} of ${pg.n}</span><button type="button" data-stnav="next">Later ›</button></div>`;
+  const k = pg.user?.st?.check; if (k) h += `<div class="st-div ${k.ok ? "ok" : "no"}"><b>${k.ok ? "✓" : "✗"} ${esc(k.stat)}</b></div>`;
+  return h;
+}
+$("msgs").addEventListener("click", e => {
+  const b = e.target.closest("[data-stnav]"); if (!b || !S.chat?.story) return;
+  const pg = storyPage(S.chat.messages); S.stPage = b.dataset.stnav === "prev" ? Math.max(0, pg.p - 1) : pg.p + 1; // past the last page = the current one
+  S.openActs = null; renderMsgs();
+});
+function storyPickBox() { let b = $("stPick"); if (!b && S.chat?.story) { b = document.createElement("div"); b.id = "stPick"; $("msgs").appendChild(b); } return b; }
+// a scene laid out like a book page: narration as plain paragraphs, every spoken line in its own edged block (a short speech
+// tag like "she says" stays with its line), chapter titles as headings. A short quoted name or sign ("the Hollow") stays prose.
+const ST_QUOTE = /("[^"\n]+"|“[^”\n]+”)/, stWords = t => (t.match(/\S+/g) || []).length;
+const stSpeech = q => stWords(q) >= 4 || /[.,!?…—]/.test(q);
+function storyPara(p) {
+  const toks = p.split(ST_QUOTE), parts = [];
+  toks.forEach((t, k) => { if (!t) return; const q = k % 2 === 1 && stSpeech(t), l = parts.at(-1); if (!q && l && !l.q) l.t += t; else parts.push({ q, t }); });
+  const out = []; let say = null;
+  parts.forEach(x => {
+    if (x.q) {
+      if (!say) { // a lead-in that ends on a comma or colon ("She leans close and says,") joins the line it introduces
+        say = []; const prev = out.at(-1);
+        if (prev?.nar && /[,:]$/.test(prev.t)) { const ends = [...prev.t.matchAll(/[.!?…]["”']?\s+/g)], at = ends.length ? ends.at(-1).index + ends.at(-1)[0].length : 0; say.push({ tag: prev.t.slice(at).trim() }); if (at) prev.t = prev.t.slice(0, at).trim(); else out.pop(); }
+        out.push({ say });
+      }
+      say.push({ q: x.t }); return;
+    }
+    let t = x.t.trim(); if (!t) return;
+    if (say && /^[a-z]/.test(t)) { // the sentence carries on after the line ("you ask, low and even."): it stays with it
+      const e = /[.!?…]["”']?(\s+|$)/.exec(t), at = e ? e.index + e[0].length : t.length;
+      say.push({ tag: t.slice(0, at).trim() }); t = t.slice(at).trim(); if (!t) return;
+    } else if (say && stWords(t) <= 8) { say.push({ tag: t }); return; } // "She sighs." between or after the lines
+    say = null; out.push({ nar: true, t });
+  });
+  return out.map(b => b.nar ? `<p class="st-nar">${fmt(b.t)}</p>` : `<div class="st-say">${b.say.map(x => x.q ? fmt(x.q) : `<span class="st-tag">${fmt(x.tag)}</span>`).join(" ")}</div>`).join("");
+}
+function storyFmt(text) {
+  const t = String(text || "").replace(/\[\/?(?:colou?r|sfx)[^\]]*\]/gi, m => m.replace(/"/g, "'")); // tag attributes aren't speech
+  return t.split(/\n+/).map(p => p.trim()).filter(Boolean).map(p => { const h = /^\*\*\s*(Chapter\b[^*]{0,90}?)\s*\*\*$/i.exec(p) || /^#{1,4}\s*(Chapter\b.{0,90})$/i.exec(p); return h ? `<h3 class="st-chap">${esc(h[1])}</h3>` : storyPara(p); }).join("");
+}
 async function pickStory(x) {
   const chat = S.chat, s = chat.story, now = storyState(chat), k = x.st.check;
   const st = { leans: x.st.leans || [], meters: x.st.meters || {} };
   if (k) { const val = storyStat(now, k.stat) ?? 0, roll = Math.round((rand01() - 0.5) * 10); st.check = { stat: k.stat, need: k.need, val, ok: val + roll >= k.need }; }
-  S.pendingStory = st; S.writeOwn = false;
+  S.pendingStory = st; S.writeOwn = false; S.stPage = null;
   // past the last planned chapter in an endless story: plan more first
   const after = storyState({ ...chat, messages: [...chat.messages, { role: "user", st }] });
   if (after.over && s.opts.length === "endless") { setBusy(true); setStatus("Planning the next chapters…"); try { await storyExtend(chat); } finally { setBusy(false); setStatus(""); } }
