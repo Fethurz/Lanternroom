@@ -1754,7 +1754,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.9.2 · Oct 31";
+const VERSION = "2.9.3 · Oct 31";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -14609,6 +14609,7 @@ const SB = { url: "https://kttzglvsaxvzcbzfwfju.supabase.co", key: "eyJhbGciOiJI
 const LOCAL_ONLY = ["apiKey", "customKey", "uiScale", "cartKey"]; // per-device: keys and display size
 // JSON with object keys sorted, so the same data compares equal however the server ordered it
 const stableJSON = v => JSON.stringify(v, (k, x) => x && typeof x === "object" && !Array.isArray(x) ? Object.fromEntries(Object.keys(x).sort().map(n => [n, x[n]])) : x);
+const itemSig = x => { const s = stableJSON(x); return hash(s) + ":" + s.length; };
 const stripLocal = v => { const o = { ...(v || {}) }; for (const k of LOCAL_ONLY) delete o[k]; return o; };
 const keepLocal = async v => { const mine = (await Store.get("settings")) || {}; const o = { ...(v || {}) }; for (const k of LOCAL_ONLY) o[k] = mine[k] || ""; return o; };
 const Sync = {
@@ -14656,7 +14657,8 @@ const Sync = {
   // v2.8.1: lists whose items must never vanish because one device held an old copy (deliberate deletions are told via forget)
   GUARD: new Set(["chars", "pbots", "personas", "books"]),
   KEEP: /^(chars|pbots|personas|books|sounds|settings|dailyPast|quizPresets)$/,
-  idsSet(k, v) { if (this.GUARD.has(k) && Array.isArray(v)) (this.st.ids = this.st.ids || {})[k] = v.map(x => x && x.id).filter(Boolean); },
+  // v2.9.3: also how each item looked in that account copy, so a merge can tell which items this device really changed
+  idsSet(k, v) { if (this.GUARD.has(k) && Array.isArray(v)) { (this.st.ids = this.st.ids || {})[k] = v.map(x => x && x.id).filter(Boolean); (this.st.isig = this.st.isig || {})[k] = Object.fromEntries(v.filter(x => x && x.id).map(x => [x.id, itemSig(x)])); } },
   forget(id) { (this.gone = this.gone || new Set()).add(id); },
   // first login on a device: merge what's here with what's in the account, then upload the rest
   async first() {
@@ -14708,7 +14710,14 @@ const Sync = {
       src.forEach((m, i) => { if (have.has(m.id)) return; const prev = i ? out.findIndex(x => x.id === src[i - 1].id) : -1; out.splice(prev + 1 || out.length, 0, m); have.add(m.id); });
       return { ...lose, ...win, messages: out };
     }
-    if (this.listKey(k)) { const m = new Map(); for (const x of [...(lose || []), ...(win || [])]) if (x && x.id) m.set(x.id, x); const order = [...(win || []).map(x => x.id)]; return [...m.values()].sort((a, b) => { const i = order.indexOf(a.id), j = order.indexOf(b.id); return (i < 0 ? 1e9 : i) - (j < 0 ? 1e9 : j); }); }
+    if (this.listKey(k)) { const m = new Map(); for (const x of [...(lose || []), ...(win || [])]) if (x && x.id) m.set(x.id, x);
+      // v2.9.3: item by item, the side that actually changed an item wins it (an old device's untouched copy of a bot never
+      // beats the account's newer one just because the device changed something else in the list)
+      const base = this.GUARD.has(k) ? (this.st.isig || {})[k] : null;
+      if (base && Array.isArray(mine) && Array.isArray(theirs)) { const tb = new Map(theirs.filter(x => x && x.id).map(x => [x.id, x]));
+        for (const a of mine) { const b = a && a.id && tb.get(a.id); if (!b || !base[a.id]) continue;
+          if (itemSig(a) === base[a.id]) m.set(a.id, b); else if (itemSig(b) === base[a.id]) m.set(a.id, a); } }
+      const order = [...(win || []).map(x => x.id)]; return [...m.values()].sort((a, b) => { const i = order.indexOf(a.id), j = order.indexOf(b.id); return (i < 0 ? 1e9 : i) - (j < 0 ? 1e9 : j); }); }
     if (k === "recent") return this.merge(k, mine, theirs);
     if (k === "sndgone") return { ...lose, ...win };
     if (k === "settings" || k === "drafts") return { ...lose, ...win };
@@ -15086,7 +15095,9 @@ async function migrateChats() {
   }
   await migrateChats();
   if (!S.chars.length && !(await Store.get("seeded"))) { S.chars = [sampleChar()]; await Store.set("seeded", true); }
-  await applyStoryPresets().catch(() => {}); // v2.0: the owner's bots get their hand-written stories
+  // v2.0: the owner's bots get their hand-written stories. v2.9.3: on a signed-in device only after this start's sync has
+  // brought the account's bots (changing an old copy first made it look newer than the account's)
+  if (!Sync.on()) await applyStoryPresets().catch(() => {});
   await saveSettings(); await saveChars(); await savePersonas();
   renderHome();
   await achLoad().catch(() => {}); applyCosmetics(true);
@@ -15096,7 +15107,7 @@ async function migrateChats() {
       else if (q === "last") { const id = Object.entries(S.recent || {}).sort((a, b) => b[1] - a[1]).map(x => x[0]).find(id => S.chars.some(c => c.id === id)); if (id) setTimeout(() => openProfile(id), 300); }
       else if (q === "settings") setTimeout(() => $("btnSettings")?.click(), 300); } }
   if (Sync.on() && !Sync.st.m158) { for (const k of Sync.NEW158) if ((await Store.get(k)) !== undefined) Sync.mark(k); Sync.st.m158 = 1; Sync.save(); }
-  if (Sync.on()) Sync.push().then(() => Sync.pull());
+  if (Sync.on()) Sync.push().then(() => Sync.pull()).then(async () => { for (let i = 0; i < 600 && Sync.busy; i++) await new Promise(r => setTimeout(r, 100)); if (await applyStoryPresets().catch(() => false)) renderHome(); });
   setTimeout(() => { $("splash").classList.add("hide"); setTimeout(() => $("splash").remove(), 700); }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 1900);
 })();
 
