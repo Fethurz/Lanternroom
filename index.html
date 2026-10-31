@@ -1733,7 +1733,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.8.2 · Oct 31";
+const VERSION = "2.8.3 · Oct 31";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1752,7 +1752,7 @@ const DEFAULTS = {
   imgStyle: "detailed anime illustration, painterly, soft cinematic lighting",
   imgUrl: "https://image.pollinations.ai/prompt/{prompt}?width={w}&height={h}&seed={seed}&nologo=true&model=flux&enhance=false",
   portraits: true, backgrounds: true,
-  globalInstr: "", sfxColors: true, sfxSound: true, sfxVolume: 0.7, builtinPack: true, ambOn: true, ambVol: 0.35, actOn: true, actVol: 0.5, ambMuted: false, musicOn: true, musicVol: 0.2, autoSfx: true, rpgOn: true,
+  globalInstr: "", storyRules: "", sfxColors: true, sfxSound: true, sfxVolume: 0.7, builtinPack: true, ambOn: true, ambVol: 0.35, actOn: true, actVol: 0.5, ambMuted: false, musicOn: true, musicVol: 0.2, autoSfx: true, rpgOn: true,
   sfxRules: "Write every sound effect or onomatopoeia in bold capitals inside a color tag, like [color=green]**BWOORP**[/color].\n- green: belches, stomach gurgles and growls (never breathing)\n- white: breathing, panting, sighs, huffs, gasps and exhales\n- #a8875a (brown): farts\n- #c9a27e (light brown): pooping and defecation sounds\n- red: physical damage, impacts, bones breaking, combat, gunshots, explosions\n- for anything else pick a fitting color, e.g. lightskyblue for water and splashes, gold for magic, orange for fire, silver for metal and machines, hotpink for kisses\n- #f1ebda (cream): cum, ejaculation and semen sounds, and the sloshing or gurgling of full balls or cum-filled bellies\n- #ff6fae (pink): sex sounds, like hips slapping and thrusting"
 };
 const S = { recent: {}, settings: { ...DEFAULTS }, chars: [], pbots: [], personas: [], books: [], personaId: null, charId: null, chat: null, busy: false, openActs: null, nextSpeaker: "" };
@@ -5124,7 +5124,7 @@ function ruleTabs(ta) {
 // The settings sheet is one long form; this splits it into tabs by moving existing sections into panels.
 let SET_TAB = "account";
 function settingsTabs(b) {
-  const T = [["account", "Account"], ["ai", "AI model"], ["chats", "Chats"], ["sounds", "Sounds"], ["look", "Look"], ["backup", "Backup"]];
+  const T = [["account", "Account"], ["ai", "AI model"], ["chats", "Chats"], ["stories", "Stories"], ["sounds", "Sounds"], ["look", "Look"], ["backup", "Backup"]];
   const bar = document.createElement("div"); bar.className = "tabs set-tabs";
   const panels = {};
   for (const [k] of T) { const p = document.createElement("div"); p.className = "set-panel stack"; p.dataset.k = k; panels[k] = p; }
@@ -5134,6 +5134,7 @@ function settingsTabs(b) {
   put("account", $("sAccount"));
   put("ai", f("sProv")); put("ai", $("dsBox")); put("ai", $("cuBox")); put("ai", g("sTemp")); put("ai", $("sReset"));
   put("chats", g("sPersonas")); put("chats", f("sGlobal")); put("chats", g("sKeep"));
+  { const sr = document.createElement("div"); sr.className = "group"; sr.innerHTML = "<h3>All stories</h3>"; const el = f("sStoryRules"); if (el) sr.appendChild(el); put("stories", sr); } // v2.8.3
   const snd = document.createElement("div"); snd.className = "group"; snd.innerHTML = "<h3>Sound effects</h3>";
   for (const id of ["sSfx", "sSfxRules", "sSfxReset", "sSound", "sVol", "sAmb", "sAmbVol", "sAct", "sActVol"]) { const el = id === "sSfxReset" ? $(id) : f(id); if (el) snd.appendChild(el); }
   const note = allChats && [...allChats.querySelectorAll("p.note")].find(p => /🔊/.test(p.textContent)); if (note) snd.appendChild(note);
@@ -5219,6 +5220,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
     </div>
     <div class="group"><h3>All chats</h3>
       ${field("Rules for every chat", `<textarea id="sGlobal" style="min-height:100px" placeholder="e.g. Write in third person. Keep replies under 4 paragraphs. Describe smells and sounds.">${esc(st.globalInstr || "")}</textarea>`, "Applied to every character, world and group. Colored text works with [color=red]text[/color].")}
+      ${field("Rules for every story", `<textarea id="sStoryRules" style="min-height:100px" placeholder="e.g. Never end a scene on a question aimed at me. Describe physical acts explicitly. Put dialogue in quotes on its own line.">${esc(st.storyRules || "")}</textarea>`, "Applied to every story scene, and followed whenever a story is written for you: a bot's full story, the story quiz, remixes, a new plot and more chapters. Your rules for every chat still apply too; where they clash, these win.")}
       <label class="check"><input type="checkbox" id="sSfx" ${st.sfxColors ? "checked" : ""}> Colored sound effects</label>
       ${field("Sound effect colors", `<div id="sSfxRules" class="sfx-cols">${Object.entries(SFX_GROUPS).map(([g, [gl]]) => `<div class="lbl">${esc(gl)}</div><div class="sfx-row">${SFX_LIST.filter(x => x.g === g).map(x => `<label title="${esc(x.l)}"><input type="color" data-k="${x.k}" value="${sfxColor(x)}"> ${x.k}</label>`).join("")}</div>`).join("")}</div>`, "Every sound the chats can write, with its colour. Tap a colour to change it.")}
       <button class="btn small" type="button" id="sSfxReset">Restore default colors</button>
@@ -5274,7 +5276,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
   $("sCommBlocked").onclick = async () => { await commLoad(); openBlockedList(); };
   $("sCommAdd").onclick = async () => { await commLoad(); openAddPerson(); };
   $("sCommMine").onclick = async () => { await commLoad(); openMyPeople(); };
-  ruleTabs($("sGlobal"));
+  ruleTabs($("sGlobal")); ruleTabs($("sStoryRules"));
   drawAccount($("sAccount"));
   let scaleT = null;
   $("sScale").addEventListener("input", () => {
@@ -5309,7 +5311,7 @@ $("btnSettings").onclick = () => openSheet("Settings", b => {
       portraits: $("sPort").checked, backgrounds: $("sBg").checked,
       imgStyle: $("sStyle").value.trim() || DEFAULTS.imgStyle, imgUrl: $("sImg").value.trim() || DEFAULTS.imgUrl,
       keepRecent: n("sKeep", 16), factsEvery: n("sFacts", 4), summarizeAt: n("sSum", 12000),
-      globalInstr: $("sGlobal").value.trim(), sfxColors: $("sSfx").checked, sfxSound: $("sSound").checked, sfxVolume: n("sVol", 0.7), ambOn: $("sAmb").checked, ambVol: n("sAmbVol", 0.35), actOn: $("sAct").checked, actVol: n("sActVol", 0.5), musicOn: $("sMus").checked, musicVol: n("sMusVol", 0.2), autoSfx: $("sAuto").checked, rpgOn: $("sRpg").checked, sfxCols: Object.fromEntries([...$("sSfxRules").querySelectorAll("input[data-k]")].filter(i => i.value.toLowerCase() !== (SFX_BY[i.dataset.k].c || SFX_GROUPS[SFX_BY[i.dataset.k].g][1]).toLowerCase()).map(i => [i.dataset.k, i.value]))
+      globalInstr: $("sGlobal").value.trim(), storyRules: $("sStoryRules").value.trim(), sfxColors: $("sSfx").checked, sfxSound: $("sSound").checked, sfxVolume: n("sVol", 0.7), ambOn: $("sAmb").checked, ambVol: n("sAmbVol", 0.35), actOn: $("sAct").checked, actVol: n("sActVol", 0.5), musicOn: $("sMus").checked, musicVol: n("sMusVol", 0.2), autoSfx: $("sAuto").checked, rpgOn: $("sRpg").checked, sfxCols: Object.fromEntries([...$("sSfxRules").querySelectorAll("input[data-k]")].filter(i => i.value.toLowerCase() !== (SFX_BY[i.dataset.k].c || SFX_GROUPS[SFX_BY[i.dataset.k].g][1]).toLowerCase()).map(i => [i.dataset.k, i.value]))
     });
     await saveSettings(); closeSheet(); updateAmbience();
     if (!$("chat").hidden) updateStage(); else renderHome();
@@ -9018,6 +9020,7 @@ function storyMessages(c, chat, upto, cont) {
   sys += storyDangerText(s, st);
   sys += `\n\n# Content\n${storyContent(s)}`;
   if ((S.settings.globalInstr || "").trim()) sys += `\n\n# The user's instructions for every chat (always follow)\n${fill(S.settings.globalInstr, c)}`;
+  if ((S.settings.storyRules || "").trim()) sys += `\n\n# The user's rules for every story (always follow; where they clash with anything above, these win)\n${fill(S.settings.storyRules, c)}`;
   sys += onoPrompt(c, chat, upto);
   sys += `\n\nAfter the [[story: …]] line, add one final line in exactly this format, which the app reads and hides:\n[[mood: one of ${MOODS.join("/")} | place: short name of the current location | ambience: one of ${AMB_KEYS.join("/")} | activity: one of ${ACT_KEYS.join("/")} (only what is literally happening; when unsure, none) | hearing: inside or outside (inside only when the reader is inside a body)]]`;
   if (chat.summary) sys += `\n\n# Story so far\n${chat.summary}`;
@@ -9052,9 +9055,11 @@ async function pickStory(x) {
   $("input").value = x.t; await send();
 }
 // more chapters for an endless story, following the same layout and rules
+// v2.8.3: the owner's rules for every story, for prompts that write or plan stories
+function storyRulesAsk() { const r = (S.settings.storyRules || "").trim(); return r ? `\n\nThe user's rules for every story (everything you write must follow them, and plan the story so its scenes can follow them):\n${r}` : ""; }
 async function storyExtend(chat) {
   const s = chat.story, st = storyState(chat);
-  const j = await dsJSON([{ role: "system", content: `You plan the next chapters of "${s.title}", a Choice of Games style interactive novel that keeps going past its original length. Same world, same stats, same chapter layout (6 scenes each). Respond with only JSON: {"chapters": [3 of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 6}]}. Never repeat a chapter that already happened. ${storyContent(s)}` },
+  const j = await dsJSON([{ role: "system", content: `You plan the next chapters of "${s.title}", a Choice of Games style interactive novel that keeps going past its original length. Same world, same stats, same chapter layout (6 scenes each). Respond with only JSON: {"chapters": [3 of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 6}]}. Never repeat a chapter that already happened. ${storyContent(s)}${storyRulesAsk()}` },
     { role: "user", content: `Setting: ${s.setting}\nThe reader: ${s.you}. ${storyHero(s)}\nChapters so far: ${s.chapters.map((c, i) => `${i + 1}. ${c.t}: ${c.goal}`).join("\n")}\n${chat.summary ? "Story so far: " + chat.summary + "\n" : ""}Current stats: ${st.pairs.map(p => `${p.a} ${100 - p.v}/${p.b} ${p.v}`).join(", ")}; ${st.meters.map(m => m.n + " " + m.v).join(", ")}` }], { temperature: 0.9, maxTokens: 900 });
   const add = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "Another chapter", goal: String(x?.goal || "").slice(0, 400), scenes: STORY_SCENES })).filter(x => x.goal);
   if (!add.length) throw new Error("The next chapters couldn't be planned. Try again.");
@@ -9066,7 +9071,7 @@ async function storyPlan(base, from) {
   const sys = bot ? `You design a Choice of Games style interactive novel (a narrative RPG told in second person with fixed choices and stats) set in the world of the bot below. The reader plays the protagonist. Respond with only JSON: {"title": the story's title, "you": who the reader plays (one sentence, "a ..."), "setting": 3-5 sentences on the world, its tone and what matters in it, "pairs": [3 of {"a": side, "b": opposite side, "ca": "#hex", "cb": "#hex"}] (opposed personality traits that fit this world, e.g. Ruthless/Merciful), "meters": [2 of {"n": name, "v": starting value, "max": 100 or 0 for open-ended, "desc": a few words}] (things that matter here, e.g. Gold, Reputation), "chapters": [${STORY_STD} of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 6}] (a full arc with a climax in the last one)}. The bot's own character can be someone the reader meets (or the protagonist, if the bot is written that way). Every character is treated as a fully grown, mature being.`
     : `You plan a new story for "${base.title}", a Choice of Games style interactive novel. Keep the setting and stats, but invent a fresh plot: different events, places, allies and enemies from the classic route. Respond with only JSON: {"chapters": [${STORY_STD} of {"t": short title, "goal": one or two sentences on what happens and what's at stake, "scenes": 6}]} (a full arc with a climax in the last one). Every character is treated as a fully grown, mature being.`;
   const user = bot ? `Bot: ${bot.name} (${bot.kind || "character"})\n${String(bot.description || "").slice(0, 5000)}\n${bot.scenario ? "Scenario: " + String(bot.scenario).slice(0, 1500) : ""}${(bot.cast || []).length ? "\nCast: " + bot.cast.map(x => x.name + " (" + (x.type || "character") + ")").join(", ") : ""}` : `Setting: ${base.setting}\nThe reader plays ${base.you}.\nClassic chapters (do something different): ${base.chapters.map(c => c.t).join(", ")}`;
-  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: user }], { temperature: 0.95, maxTokens: 1600 });
+  const j = await dsJSON([{ role: "system", content: sys + storyRulesAsk() }, { role: "user", content: user }], { temperature: 0.95, maxTokens: 1600 });
   const chapters = (Array.isArray(j?.chapters) ? j.chapters : []).map(x => ({ t: String(x?.t || "").slice(0, 60) || "Chapter", goal: String(x?.goal || "").slice(0, 400), scenes: STORY_SCENES })).filter(x => x.goal).slice(0, 10);
   if (chapters.length < 3) throw new Error("The story couldn't be planned. Try again.");
   if (!bot) return { chapters };
@@ -9094,7 +9099,7 @@ function botSource(c) {
 }
 async function storyDefFor(c, note = "") {
   const sys = `You turn a roleplay bot into a full interactive novel in the style of Choice of Games (a narrative RPG told in second person, one scene at a time, with fixed choices, opposed personality stats and meters). Stay as faithful as possible to the source: every name, place, faction, power, rule, relationship and piece of history in the bot and its lore must be kept exactly as written, never contradicted or renamed. If the bot is from an existing game, show, book or other media, also stay true to that canon (real places, factions, characters, lore, tone), using the bot's own details where it adds to or changes canon. The reader's character walks their own path through this world: the story is original, but the world is the real one. Respond with only JSON: {"title": the story's title, "icon": one emoji, "blurb": 2 sentences that sell it, "setting": 8-14 sentences: the world, its rules, factions, key characters, current situation and tone (faithful; this is all the story writer will know, so pack in the important facts), "you": the default role the reader plays (one phrase, "a ..."), "roles": [3-5 different roles the reader could play here, each one phrase, "a ...", the first the most natural one for this bot], "pairs": [3 of {"a": side, "b": opposite side, "ca": "#hex", "cb": "#hex"}] (opposed traits that matter in this world), "meters": [2-3 of {"n": name, "v": starting value, "max": 100 or 0 for open-ended, "desc": a few words}] (things that matter here), "chapters": [${STORY_STD} of {"t": short title, "goal": two or three sentences on what happens and what's at stake, using the real characters, places and conflicts, "scenes": 6}] (a full arc with a climax in the last one)}. Every character is treated as a fully grown, mature being.`;
-  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: botSource(c) + (note ? `\n\nThe owner's notes for this story (follow them): ${note}` : "") }], { temperature: 0.8, maxTokens: 3600 });
+  const j = await dsJSON([{ role: "system", content: sys + storyRulesAsk() }, { role: "user", content: botSource(c) + (note ? `\n\nThe owner's notes for this story (follow them): ${note}` : "") }], { temperature: 0.8, maxTokens: 3600 });
   const base = await storyPlanClean(j, c);
   const roles = (Array.isArray(j?.roles) ? j.roles : []).map(r => String(r || "").trim().slice(0, 200)).filter(Boolean).slice(0, 5);
   return { title: base.title, icon: [...String(j?.icon || "📖")].slice(0, 2).join("") || "📖", blurb: String(j?.blurb || "").slice(0, 400), credit: `Made from your bot ${c.name}. The story is written fresh as you play.`, you: base.you, roles: roles.length ? roles : [base.you], setting: String(j?.setting || base.setting).slice(0, 4000), pairs: base.pairs, meters: base.meters, chapters: base.chapters, at: Date.now() };
@@ -9271,7 +9276,7 @@ function sqBeats(a) {
 async function sqStoryDef(card, a, req) {
   const n = +(String(qzSay({}, a?.q?.chapters) || "").match(/\d+/)?.[0]) || STORY_STD;
   const sys = `You turn a world bot into a full interactive novel in the style of Choice of Games (a narrative RPG told in second person, one scene at a time, with fixed choices, opposed personality stats and meters), following the user's story quiz exactly. Stay faithful to the world: every name, place, faction and rule in it. Respond with only JSON: {"title": the story's title (the user's own, if they gave one), "icon": one emoji, "blurb": 2 sentences that sell it, "setting": 8-14 sentences: the world, its rules, who can eat whom, factions, key characters, the current situation and the tone (this is all the story writer knows, so pack in the important facts; never spell out the plot ingredients), "you": the default role the reader plays (one phrase, "a ..."), "roles": [2-5 roles the reader could play, each one phrase, the first the default], "options": [0-4 setup choices the reader makes before each run, only from what the user said they want to pick at the start, each {"id": a short lowercase id, "n": the question in 2-4 words (e.g. "You are"), "hint": a few words or "", "choices": [2-6 of [value (short lowercase), label (what the reader taps), rule (one or two sentences the narrator follows when it's picked)]]}], "pairs": [3 of {"a": side, "b": opposite side, "ca": "#hex", "cb": "#hex"}] (opposed traits that matter here), "meters": [2-4 of {"n": name, "v": starting value, "max": 100 or 0 for open-ended, "desc": a few words}] (what the user wants tracked; Health first when it's asked for), "chapters": [${n} of {"t": short title, "goal": two or three sentences on what happens and what's at stake, "scenes": 6}] (a full arc with a climax in the last one; goals set things up but never reveal the plot ingredients), "danger": "story" (the reader can't die), "real" or "brutal" (from the user's answer), "vore": true or false}. Every character is treated as a fully grown, mature being.`;
-  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: `${req}\n\nThe world bot:\n${botSource(sqCardBot(card))}` }], { temperature: 0.85, maxTokens: 5000 });
+  const j = await dsJSON([{ role: "system", content: sys + storyRulesAsk() }, { role: "user", content: `${req}\n\nThe world bot:\n${botSource(sqCardBot(card))}` }], { temperature: 0.85, maxTokens: 5000 });
   const chapters = sqChapters(j?.chapters); if (chapters.length < 3) throw new Error("The story's chapters came back incomplete. Try again.");
   const meters = sqMeters(j?.meters), pairs = sqPairs(j?.pairs), roles = (Array.isArray(j?.roles) ? j.roles : []).map(r => String(r || "").trim().slice(0, 200)).filter(Boolean).slice(0, 5);
   const you = String(j?.you || roles[0] || "the protagonist").slice(0, 200), own = String(a?.q?.title?.other || "").trim();
@@ -9354,7 +9359,7 @@ async function remixPlan(pk, note) {
   const bot = !!pk.bot;
   const fields = bot ? `"description" | "appearance" | "scenario" | "instructions" | "firstMessage" | "altGreetings.N" (N counts from 0) | "cast:<listing name>" | "lore:<entry name>" | "story.setting" | "story.blurb" | "story.you" | "story.chapters.N" (that chapter's goal, N counts from 0)` : `"story.setting" | "story.blurb" | "story.you" | "story.chapters.N" (that chapter's goal, N counts from 0)${pk.eras ? ` | "era:<era key>" (that era's setting)` : ""}`;
   const sys = `You remix an interactive story for its owner. You get the whole story${bot ? " and the world bot it lives in" : ""} as JSON, and what the owner wants changed. Change ONLY what the request needs, plus whatever must change with it so nothing contradicts it (for a swapped character: their name, species, look and pronouns everywhere they appear, their listing, their lore and the openings that mention them). Everything else stays exactly as written: the same names, facts, style and formatting (keep asterisks, quotes and bold exactly as the original uses them). Respond with only JSON: {"title": the remix's title (the original's unless the request changes it), "changes": [2-6 short plain sentences telling the owner what you changed], "rename": [{"from": an old name, "to": its new name}] (whole-word renames done everywhere after the edits; names only), "edits": [{"field": ${fields}, "find": a passage copied EXACTLY from that field of the original (one or more whole sentences), "replace": its new text ("" removes it)}], "append": [{"field": the same field names, "text": text added at the end of that field}],${bot ? ` "castAdd": [{"name", "type": "character"|"group"|"species"|"location"|"concept", "details": 60-200 words}], "castRemove": [listing names], "loreAdd": [{"name", "keys": "comma, separated, keywords", "text": 40-150 words}], "loreRemove": [entry names], "openings": [new opening messages to add, written like the existing ones],` : ""} "story": {only the story parts that must change, each given whole: "roles", "options", "pairs", "meters", "chapters" (same shapes as the original)}}. Leave out every key you don't need. Every character is treated as a fully grown, mature being.`;
-  const j = await dsJSON([{ role: "system", content: sys }, { role: "user", content: `The story:\n${JSON.stringify(remixSource(pk)).slice(0, 90000)}\n\nWhat the owner wants changed:\n${note}` }], { temperature: 0.7, maxTokens: 8000 });
+  const j = await dsJSON([{ role: "system", content: sys + storyRulesAsk() }, { role: "user", content: `The story:\n${JSON.stringify(remixSource(pk)).slice(0, 90000)}\n\nWhat the owner wants changed:\n${note}` }], { temperature: 0.7, maxTokens: 8000 });
   if (!j || typeof j !== "object") throw new Error("The model's answer came back empty. Try again.");
   return j;
 }
