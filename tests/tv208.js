@@ -61,7 +61,7 @@ const open = require("./base.js");
   chk("the review opens", await wait(() => !!document.getElementById("sqMake")));
   const r = await pg.evaluate(() => ({ d: SQ.def, text: $("sheetBody")?.textContent || document.getElementById("sheet").textContent, dr: Object.keys(DRAFTS || {}) }));
   chk(`the user's own title wins (${r.d.title})`, r.d.title === "Last One Out");
-  chk(`chapters follow the answer and are 6 scenes (${r.d.chapters.length})`, r.d.chapters.length === 5 && r.d.chapters.every(c => c.scenes === 6));
+  chk(`chapters follow the answer and are 18 scenes (${r.d.chapters.length})`, r.d.chapters.length === 5 && r.d.chapters.every(c => c.scenes === 18));
   chk(`setup choices cleaned (${JSON.stringify(r.d.options.map(o => [o.id, o.choices.map(c => c[0])]))})`, r.d.options.length === 1 && r.d.options[0].id === "youare" && r.d.options[0].choices[0][0] === "woman");
   chk(`danger from the answer (${r.d.danger}), vore on`, r.d.danger === "brutal" && r.d.vore === true);
   chk(`plot ingredients kept as written (${r.d.beats.join("; ")})`, r.d.beats.join("|") === "betrayal|sole survivor|the cook is a spy");

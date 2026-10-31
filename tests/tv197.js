@@ -35,10 +35,10 @@ const open = require("./base.js");
   });
   const s0 = sysSeen.at(-1) || "";
   chk(`Begin makes a hidden story bot and writes the first scene (${begin.n} message)`, begin.n === 1 && begin.bot.pack === "dragon" && begin.bot.hidden && begin.opts.content === "lewd" && begin.opts.vore && begin.hero.name === "Ember" && begin.hero.pron === "she/her" && begin.hero.color === "red");
-  chk("the prompt sets up the novel: chapter 1 of 7, The Knight, scene 1 of 6, stats, hero, content, adults", /chapter 1 of 7, "The Knight"/.test(s0) && /scene 1 of 6/.test(s0) && /Brutality 50 · Finesse 50/.test(s0) && /Wealth 20/.test(s0) && /Their name is Ember/.test(s0) && /Colour: red/.test(s0) && /Sexual content is welcome/.test(s0) && /Vore/.test(s0) && /fully grown, mature being/.test(s0) && /\*\*Chapter 1: The Knight\*\*/.test(s0));
+  chk("the prompt sets up the novel: chapter 1 of 7, The Knight, scene 1 of 18, stats, hero, content, adults", /chapter 1 of 7, "The Knight"/.test(s0) && /scene 1 of 18/.test(s0) && /Brutality 50 · Finesse 50/.test(s0) && /Wealth 20/.test(s0) && /Their name is Ember/.test(s0) && /Colour: red/.test(s0) && /Sexual content is welcome/.test(s0) && /Vore/.test(s0) && /fully grown, mature being/.test(s0) && /\*\*Chapter 1: The Knight\*\*/.test(s0));
   chk(`the hidden story line is taken out and the scene keeps its plain prose (${(begin.content || "").slice(0, 50)}…)`, !/\[\[/.test(begin.content) && /^\*\*Chapter 1/.test(begin.content) && /"Foul wyrm!"/.test(begin.content));
   chk(`choices are checked against the real stat names (${begin.choices?.length} kept)`, begin.choices?.length === 3 && /"side":"Brutality","amt":2/.test(begin.choices[0]) && /"infamy":5/.test(begin.choices[0]) && /"check":\{"stat":"Finesse","need":40\}/.test(begin.choices[1]) && /"leans":\[\]/.test(begin.choices[2]) && /"wealth":10/.test(begin.choices[2]) && !/Nope/.test(begin.choices[2]));
-  chk(`the screen: fixed choices only, no message box or Write my own; the bar shows the chapter (${begin.bar})`, begin.choosing && begin.btns.length === 3 && !begin.own && /Chapter 1: The Knight/.test(begin.bar) && /1 \/ 6/.test(begin.bar));
+  chk(`the screen: fixed choices only, no message box or Write my own; the bar shows the chapter (${begin.bar})`, begin.choosing && begin.btns.length === 3 && !begin.own && /Chapter 1: The Knight/.test(begin.bar) && /1 \/ 18/.test(begin.bar));
   // pick the checked choice: the check is settled by the app, stats move, the next scene hears about it
   const pick = await pg.evaluate(async () => { window.rand01 = () => 0.5; (document.querySelectorAll("#stPick .st-opt")[1].click(), $("stNext").click());
     for (let i = 0; i < 200 && (S.busy || S.chat.messages.length < 3); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 200));
@@ -46,7 +46,7 @@ const open = require("./base.js");
   const s1 = sysSeen.at(-1) || "", u1 = userSeen.at(-1) || "";
   chk(`the check is settled by the app (Finesse ${pick.st?.check?.val} vs ${pick.st?.check?.need}: ${pick.st?.check?.ok ? "passed" : "failed"}) and shown on your choice (${pick.line})`, pick.st?.check?.ok === true && pick.st.check.val === 50 && /✓ Finesse/.test(pick.line || ""));
   chk(`stats move toward the chosen sides (Brutality/Finesse ${pick.fin}, Cunning/Honor ${pick.cun})`, pick.fin === 60 && pick.cun === 45);
-  chk("the next scene is told the choice and the check result, with the new stats, scene 2 of 6", /\[The reader chose: Charm him/.test(u1) && /Check on Finesse: SUCCESS/.test(u1) && /Brutality 40 · Finesse 60/.test(s1) && /scene 2 of 6/.test(s1) && !/Begin the reply with a line/.test(s1));
+  chk("the next scene is told the choice and the check result, with the new stats, scene 2 of 18", /\[The reader chose: Charm him/.test(u1) && /Check on Finesse: SUCCESS/.test(u1) && /Brutality 40 · Finesse 60/.test(s1) && /scene 2 of 18/.test(s1) && !/Begin the reply with a line/.test(s1));
   // a scene without the story line gets its choices from a follow-up call
   const fb = await pg.evaluate(async () => { window.__nj = 1; return true; });
   noJson = true;
