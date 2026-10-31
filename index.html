@@ -475,6 +475,21 @@ details.snd-sec summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:
 .draft-row .btn{flex:none}
 .pf-top{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:start}
 .pf-img{width:96px;aspect-ratio:4/5;object-fit:cover;border-radius:12px;background:var(--surface-2);border:1px solid var(--line)}
+/* v2.9.4: the bot profile opens on a big, uncropped portrait; tapping it opens the full-screen viewer */
+.pf-hero{display:flex;justify-content:center;width:100%;padding:0;margin:0 0 4px;border-radius:18px;cursor:zoom-in}
+.pf-hero img{display:block;max-width:100%;max-height:min(62vh,560px);width:auto;height:auto;border-radius:16px;background:var(--surface-2);border:1px solid var(--line);box-shadow:0 10px 40px -18px color-mix(in srgb,var(--accent) 60%,transparent)}
+.pf-hero img.pv-small,.pv-pic img.pv-small{width:min(320px,100%);aspect-ratio:4/5;object-fit:contain;image-rendering:pixelated}
+.pf-top.solo{grid-template-columns:minmax(0,1fr)}
+.pv-pop{position:fixed;inset:0;z-index:61;display:flex;flex-direction:column;background:color-mix(in srgb,var(--bg-deep) 94%,#000);padding:calc(env(safe-area-inset-top,0px) + 52px) 12px calc(env(safe-area-inset-bottom,0px) + 14px);animation:pvIn .18s ease-out}
+.pv-pic{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.pv-pic img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;border-radius:14px;box-shadow:0 0 60px -20px var(--accent)}
+.pv-x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:10px;width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--line);font-size:18px;color:var(--fg)}
+.pv-cap{display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:12px;text-align:center}
+.pv-cap b{font:400 22px/1.2 var(--f-display)}
+.pv-cap span{color:var(--muted);font-size:13.5px;max-width:560px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pv-cap .btn{margin-top:6px}
+@keyframes pvIn{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pv-pop{animation:none}}
 .pf-kind{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--kc,var(--accent))}
 .pf-kind.k-character{--kc:var(--k-character)}.pf-kind.k-world{--kc:var(--k-world)}.pf-kind.k-group{--kc:var(--k-group)}
 .pf-sum{margin:6px 0 0;font-size:14.5px;line-height:1.45}
@@ -1754,7 +1769,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.9.3 · Oct 31";
+const VERSION = "2.9.4 · Oct 31";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2758,7 +2773,8 @@ async function openProfile(id) {
   const tags = tagsOf(c);
   openSheet(c.name, b => {
     b.innerHTML = `
-      <div class="pf-top"><img class="pf-img" alt=""><div class="pf-meta"><div class="pf-kind k-${kind}">${kind === "world" ? "World" : kind === "group" ? `Group · ${members(c).length}` : "Character"}${c.fav ? ' <span class="fav-star">★</span>' : ""}${c.fromWorld && byId(c.fromWorld) ? ` · from ${esc(byId(c.fromWorld).name)}` : ""}</div><p class="pf-sum">${esc(botSummary(c)) || '<span class="hint">No description yet. Tap Edit to add one.</span>'}</p></div></div>
+      <button type="button" class="pf-hero" id="pfHero" aria-label="Look at ${esc(c.name)}"><img alt=""></button>
+      <div class="pf-top solo"><div class="pf-meta"><div class="pf-kind k-${kind}">${kind === "world" ? "World" : kind === "group" ? `Group · ${members(c).length}` : "Character"}${c.fav ? ' <span class="fav-star">★</span>' : ""}${c.fromWorld && byId(c.fromWorld) ? ` · from ${esc(byId(c.fromWorld).name)}` : ""}</div><p class="pf-sum">${esc(botSummary(c)) || '<span class="hint">No description yet. Tap Edit to add one.</span>'}</p></div></div>
       ${tags.length ? `<div class="pf-tags">${tags.map(t => `<span class="pf-tag"${tagStyle(t)}>${tagIcon(t)}${esc(t)}</span>`).join("")}</div>` : ""}
       ${field("Play as", `<select id="pfP">${S.personas.map(p => `<option value="${p.id}" ${p.id === S.personaId ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>`)}
       <div class="row"><button type="button" class="btn primary" id="pfGo"></button><button type="button" class="btn" id="pfNew">New chat</button></div>
@@ -2769,7 +2785,8 @@ async function openProfile(id) {
       ${idx.length ? `<div class="stack"><div class="lbl">People in this story</div><div class="stack" id="pfPeople">${c.people?.found ? "" : '<p class="hint" style="margin:0">Side characters, places and groups you\'ve met can become bots of their own.</p>'}</div><button type="button" class="btn small" id="pfFind">${c.people?.found ? "↻ Look again" : "✦ Find people in this story"}</button></div>` : ""}
       <div class="stack"><div class="lbl">Chats · ${idx.length}</div><div class="stack" id="pfChats"></div></div>
       <div class="row"><button type="button" class="btn small" id="pfEdit">Edit</button><button type="button" class="btn small" id="pfVoices">🎙 Voices</button><button type="button" class="btn small" id="pfStory">📖 Play as a story</button>${!c.storyPack ? `<button type="button" class="btn small" id="pfStoryDef">📚 ${c.storyDef ? "Edit its full story" : "Make it a full story"}</button>` : ""}<button type="button" class="btn small" id="pfManage">Manage chats</button><button type="button" class="btn small" id="pfMore">More…</button></div>`;
-    setImg(b.querySelector(".pf-img"), thumbURL(c), c);
+    { const im = b.querySelector("#pfHero img"), url = thumbURL(c); setImg(im, url, c); im.onload = () => { if (im.naturalWidth && im.naturalWidth < 260) im.classList.add("pv-small"); };
+      $("pfHero").onclick = () => viewPortrait(c.kind === "group" ? members(c)[0] || c : c, url); }
     const goLabel = () => { const pid = $("pfP").value, has = idx.some(e => e.personaId === pid); $("pfGo").textContent = has ? "Continue chat" : "Start chatting"; };
     goLabel();
     $("pfP").onchange = async e => { S.personaId = e.target.value; await savePersonas(); goLabel(); };
@@ -5903,6 +5920,7 @@ document.addEventListener("drop", e => { if (!$("home") || $("home").hidden || e
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape" || e.defaultPrevented) return;
   if ($("yearPop")) { $("yearPop")._close(); return; }
+  if ($("portView")) { $("portView")._close(); return; }
   if (!$("ambPop").hidden) { $("ambPop").hidden = true; return; }
   if ($("sheet") && !$("sheet").hidden) { userClose(); return; }
   if (HUB.open && !$("pixPop") && !$("voPop")) { if (!hubBack()) hubClose(); return; }
@@ -6748,8 +6766,30 @@ function openMemory() {
   });
 }
 
+/* ---------- Portrait viewer (v2.9.4) ----------
+   Owner 2026-10-31: tap the portrait in a chat any time to look at the character full screen; the whole picture shows
+   (never cropped). Closes with ✕, the phone's back button or Esc, like every other window. */
+function viewPortrait(c, url) {
+  if (!c) return;
+  document.getElementById("portView")?._close?.();
+  const host = char(), ch = S.chat;
+  if (c.kind === "group") c = memberByName(c, ch?.focus) || members(c)[0] || c;
+  const src = url || (c.kind === "world" ? coverURL(c) : portraitURL(c, host?.id === c.id ? ch?.mood : "neutral"));
+  const pop = document.createElement("div"); pop.id = "portView"; pop.className = "pv-pop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", c.name);
+  const sub = c.kind === "world" ? "World" : c.kind === "group" ? "Group" : botSummary(c);
+  pop.innerHTML = `<button type="button" class="pv-x" aria-label="Close">✕</button><div class="pv-pic"><img alt="${esc(c.name)}"></div>
+    <div class="pv-cap"><b>${esc(c.name)}</b>${sub ? `<span>${esc(sub)}</span>` : ""}${c.customPortrait || pixOk(c.pix) || c.kind === "group" ? "" : `<button type="button" class="btn small" id="pvLooks">Looks and expressions</button>`}</div>`;
+  const key = e => { if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); pop._close(); } };
+  pop._close = () => { pop.remove(); document.removeEventListener("keydown", key, true); syncNav(); };
+  document.body.appendChild(pop); document.addEventListener("keydown", key, true); syncNav();
+  const im = pop.querySelector("img"); setImg(im, src, c);
+  im.onload = () => { if (im.naturalWidth && im.naturalWidth < 260) im.classList.add("pv-small"); };
+  pop.querySelector(".pv-x").onclick = pop._close;
+  if ($("pvLooks")) $("pvLooks").onclick = () => { pop._close(); openPortrait(c); };
+}
+
 /* ---------- Portrait sheet ---------- */
-$("btnWho").onclick = () => openPortrait(char());
+$("btnWho").onclick = () => viewPortrait(char());
 function openPortrait(c) {
   const ch = S.chat;
   const host = char();
@@ -6834,7 +6874,7 @@ function leaveChat() { $("ambPop").hidden = true; $("chat").hidden = true; $("ho
 // While anything is open the app keeps one extra history entry; going back uses it up and we undo one step.
 let POP_IGNORE = 0, WANT_GUARD = false;
 function syncNav() {
-  const away = !$("sheet").hidden || !$("chat").hidden || !$("hub").hidden || !!document.getElementById("yearPop"), has = history.state && history.state.lr === "in";
+  const away = !$("sheet").hidden || !$("chat").hidden || !$("hub").hidden || !!document.getElementById("yearPop") || !!document.getElementById("portView"), has = history.state && history.state.lr === "in";
   if (away && !has) { if (POP_IGNORE) WANT_GUARD = true; else history.pushState({ lr: "in" }, ""); }
   else if (!away && has && !POP_IGNORE) { POP_IGNORE++; history.back(); }
 }
@@ -6842,6 +6882,7 @@ addEventListener("popstate", () => {
   // our own step back: re-check, since a window may have been swapped for the hub (or the other way) meanwhile
   if (POP_IGNORE) { POP_IGNORE--; WANT_GUARD = false; syncNav(); return; }
   if (document.getElementById("yearPop")) document.getElementById("yearPop")._close();
+  else if (document.getElementById("portView")) document.getElementById("portView")._close();
   else if (document.getElementById("voPop")) document.getElementById("voPop")._close();
   else if (document.getElementById("pixPop")) document.getElementById("pixPop")._close();
   else if (!$("ambPop").hidden) $("ambPop").hidden = true;
@@ -6908,7 +6949,7 @@ function renderSide() {
       ${!ch.summary && !facts.length ? `<p class="hint" style="margin:0">The story so far and key facts show up here as the chat grows.</p>` : ""}
       <div class="sd-btns"><button type="button" class="rbtn" id="sdMem">Memory</button><button type="button" class="rbtn" id="sdChats">Chats</button><button type="button" class="rbtn" id="sdEdit">Edit bot</button><button type="button" class="rbtn" id="sdMore">Options</button></div>`;
     setImg(box.querySelector("#sdPort img"), focus ? portraitURL(focus) : c.kind === "world" ? coverURL(c) : portraitURL(c), focus || c);
-    $("sdPort").onclick = () => openPortrait(char());
+    $("sdPort").onclick = () => viewPortrait(focus || c);
     box.querySelectorAll(".sd-rpg button").forEach(b => b.onclick = () => openRpg(b.dataset.rpg));
     box.querySelectorAll(".sd-mem button").forEach(b => { const m = b.dataset.n && memberByName(c, b.dataset.n); if (m) setImg(b.querySelector("img"), portraitURL(m), m); b.onclick = () => { S.nextSpeaker = b.dataset.n; renderSpeakers(); renderSide(); }; });
     $("sdMem").onclick = () => openMemory(); $("sdChats").onclick = () => openChats(S.charId); $("sdEdit").onclick = () => editChar(char(), false); $("sdMore").onclick = () => $("btnMore").click();
