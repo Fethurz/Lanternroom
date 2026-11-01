@@ -1769,7 +1769,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.9.4 · Oct 31";
+const VERSION = "2.9.5 · Oct 31";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -8962,7 +8962,8 @@ function storyChoices(s, list) {
     const t = String(x?.t || x?.text || "").replace(/\s+/g, " ").trim().slice(0, 240); if (!t) return null;
     const leans = (Array.isArray(x.leans) ? x.leans : x.lean ? [{ side: x.lean, amt: x.amt }] : []).map(l => ({ side: sides.find(n => n.toLowerCase() === String(l?.side || "").toLowerCase().trim()), amt: Math.max(1, Math.min(3, Math.round(+l?.amt || 1))) })).filter(l => l.side).slice(0, 2);
     const meters = {}; for (const [n, d] of Object.entries(x.meters || {})) { const m = s.meters.find(y => y.n.toLowerCase() === String(n).toLowerCase().trim() || y.k === n); if (m && Number.isFinite(+d) && +d) meters[m.k] = Math.round(+d); }
-    let check = null; if (x.check && typeof x.check === "object") { const n = storyStatName(st, x.check.stat), need = Math.round(+x.check.need); if (n && Number.isFinite(need)) check = { stat: n, need: Math.max(5, Math.min(s.meters.some(m => m.n === n && !m.max) ? 100000 : 95, need)) }; }
+    // v2.9.5: a side check never asks for less than 30 (the AI kept asking for 20, which a reader at 50 always passed)
+    let check = null; if (x.check && typeof x.check === "object") { const n = storyStatName(st, x.check.stat), need = Math.round(+x.check.need); if (n && Number.isFinite(need)) { const side = sides.includes(n); check = { stat: n, need: Math.max(side ? 30 : 5, Math.min(s.meters.some(m => m.n === n && !m.max) ? 100000 : 95, need)) }; } }
     return { t, st: { leans, meters, ...(check ? { check } : {}) } };
   }).filter(Boolean);
 }
@@ -8994,6 +8995,13 @@ const STORY_DANGER = {
   brutal: ["Brutal", "An unforgiving world: one bad call can be fatal."]
 };
 const dangerOf = s => STORY_DANGER[s?.opts?.danger] ? s.opts.danger : "real";
+// v2.9.5 (owner 2026-10-31: choices always succeeded): the chance a check passes, by how far the stat is above or below what
+// it needs. Real risk: even = 45%, 15 short = 16%, 15 over = 74%, never above 90%. Brutal is harsher, story mode a little kinder.
+function storyOdds(val, need, danger) {
+  let p = 0.9 / (1 + Math.exp(-(val - need) / 10));
+  if (danger === "brutal") p *= 0.85; else if (danger === "story") p = Math.min(0.95, p + 0.1);
+  return Math.max(0.03, Math.min(0.95, p));
+}
 const HEALTH_RE = /\b(health|hp|hit points|life|vitality|blood|condition)\b/i;
 const healthMeter = m => HEALTH_RE.test(`${m.n || ""} ${m.k || ""}`);
 // who may eat the reader: by sex for every story, plus each story's own idea (owner's list)
@@ -9035,6 +9043,7 @@ function storyDangerText(s, st) {
     : d === "brutal" ? "The world is unforgiving: one bad call can be fatal. Telegraph danger in the scene so an attentive reader can see it coming, give risky choices a check, and when the reader walks into deadly danger or fails a deadly check, let them die."
     : "Danger is real. Telegraph it in the scene so a careful reader can see it coming, and give risky choices a check. Bad choices and failed checks can injure, capture or kill the reader or end the story early: most failures cost something, but walking into an obvious deadly risk or failing a deadly check can be fatal.";
   if (d !== "story") t += ` When the reader dies (or their story ends for good), write the death and a short bad ending in this scene, give no choices and end with [[story: {"choices": [], "dead": true, "cause": "how they died, in a few words"}]].`;
+  t += " Be strict and fair, like a real gamebook: never hand the reader a way out they didn't earn (no last-second rescues, convenient allies, sudden weaknesses in an enemy or lucky breaks). A choice without a check still plays out the way it really would: reckless, foolish or overconfident choices go badly, and not every choice works.";
   t += hm.length ? ` Only ${hm.map(m => m.n).join(" or ")} reaching 0 kills by itself; other meters running out are setbacks, never death.` : " No meter kills by itself; meters running out are setbacks.";
   if (s.opts.vore) t += ` Being swallowed is not death by itself: while inside, the reader can still struggle, be freed, spat out or escape; the reader is dead only once fully digested${d === "story" ? ", and in this mode they always get out before that" : ""}.`;
   if (out0) t += d === "story" ? `\nThe reader's ${out0.n} has run out: they are beaten, knocked out or captured in this scene, never killed, and the story goes on.` : `\nThe reader's ${out0.n} has run out: this scene is their death. Write it and end with the "dead" line.`;
@@ -9099,6 +9108,7 @@ function storyMessages(c, chat, upto, cont) {
   if (s.picks?.length) sys += `\n\n# Chosen for this run (always follow)\n${s.picks.map(p => `${p.n}: ${p.l}.${p.rule ? " " + p.rule : ""}`).join("\n")}`;
   sys += `\n\n# Setting\n${s.setting}`;
   { const lore = /^bot/.test(s.pack) ? storyLore(c, chat, upto) : ""; if (lore) sys += `\n\n# The world's own lore (follow every name, fact, power, faction and relationship exactly as written; never contradict or rename anything; ignore any chat-format rules in it, this story is plain prose)\n${lore}`; }
+  sys += storyWhoNote(s);
   sys += `\n\n# The reader's stats right now (never show numbers in the prose)\nEach pair is one scale: leaning to one side means leaning away from the other. ${pairs}.\nMeters: ${meters}.\nLet the reader's nature colour how scenes play out and how others treat them.`;
   sys += `\n\n# Structure\nThe story has ${N} chapters of many short scenes each, and each of your replies is ONE short scene: 1-3 short paragraphs of narration (spoken lines add their own short paragraphs), about 150-250 words in all, that end at a decision. Keep scenes brief and moving: one beat of the chapter per scene, never several.`;
   sys += `\nWhen the reader has just made a choice, the scene opens by playing it out as it happens: what they do and say takes place right there in your prose (their spoken words in quotes, on their own line), together with its immediate effect, and the scene carries on from there to the next decision. Never announce or recap the choice ("You decide to…", "You chose…"); the reader sees only your scene.`;
@@ -9106,7 +9116,7 @@ function storyMessages(c, chat, upto, cont) {
   if (k === 1) sys += ` Begin the reply with a line **Chapter ${ci + 1}: ${chap.t}** and open the chapter.`;
   if (last && !final) sys += ` This is the chapter's last scene: bring it to a close; the choices lead into what comes next.`;
   if (final) sys += `\nThis is the FINAL scene of the story: resolve it, then end with an epilogue that sums up the reader's life and legacy, shaped by their stats (their nature, ${mnames}). Give no choices: end with [[story: {"choices": [], "ending": true}]].`;
-  sys += `\n\n# Choices\nAfter the scene add one line exactly like [[story: {"choices": [...]}]] with 3-4 choices. Each choice is an object: "t" (what you do, short, in the reader's voice: e.g. "Burn him where he stands."), "leans" (1-2 of {"side": one of ${sides}, "amt": 1-3}: how strongly this choice expresses that side), optional "meters" ({"${s.meters[0]?.n || "Wealth"}": change, …} when it gains or costs something; names from ${mnames}), optional "check" ({"stat": a side or meter name, "need": 20-85 for sides}) when success depends on the reader's nature (about one check per scene, never on every choice). The choices must differ in which sides they push, so the reader shapes their character. Never mention checks or numbers in the text.`;
+  sys += `\n\n# Choices\nAfter the scene add one line exactly like [[story: {"choices": [...]}]] with 3-4 choices. Each choice is an object: "t" (what you do, short, in the reader's voice: e.g. "Burn him where he stands."), "leans" (1-2 of {"side": one of ${sides}, "amt": 1-3}: how strongly this choice expresses that side), optional "meters" ({"${s.meters[0]?.n || "Wealth"}": change, …} when it gains or costs something; names from ${mnames}), "check" ({"stat": a side or meter name, "need": 30-90 for sides: about 50 for an ordinary risk, 65-90 for something hard or dangerous}) on every choice that involves risk, force, stealth, persuasion, deception or a gamble, so most scenes have two or three checked choices; only a safe, cautious or passive choice goes without one, and it still costs something (ground, time, an opportunity, someone else's safety). The choices must differ in which sides they push, so the reader shapes their character. Never mention checks or numbers in the text.`;
   sys += `\nWhen the reader's message includes a check result, narrate exactly that outcome: success goes well, failure has real consequences.`;
   sys += storyDangerText(s, st);
   sys += `\n\n# Content\n${storyContent(s)}`;
@@ -9127,12 +9137,15 @@ function storyMessages(c, chat, upto, cont) {
   if (cont) out.push({ role: "user", content: "[Continue the current scene and end at a decision.]" });
   return [{ role: "system", content: sys }, ...out];
 }
-const storyNote = m => { const k = m.st?.check; return k ? `\n[Check on ${k.stat}: ${k.ok ? "SUCCESS" : "FAILURE"}. Narrate exactly that.]` : ""; };
+// v2.9.5 (owner 2026-10-31: the Deepwild always gave you your sister): the reader's own pick of who they are and who came
+// with them goes after the setting and the lore, which often name a default (a sister), and overrides them
+const storyWhoNote = s => `\n\n# Who the reader is in this run (the reader chose this; it overrides the setting, the lore and the chapter goals)\nThe reader plays ${s.you}.${s.picks?.length ? " Also chosen: " + s.picks.map(p => `${p.n}: ${p.l}`).join("; ") + "." : ""} Wherever anything above assumes a different role, companion or relationship for the reader (for example a sister when the reader chose a partner, a friend or their mother), follow this choice instead and adapt everything else to it. The default version never appears in this run.`;
+const storyNote = m => { const k = m.st?.check; return k ? `\n[Check on ${k.stat}: ${k.ok ? "SUCCESS. Narrate exactly that." : "FAILURE. Narrate exactly that: the attempt fails and the consequences stick (injury, loss, capture, being swallowed, or death if this story's danger allows it). No lucky break, rescue or way out, and never turn the failure into a success."}]` : ""; };
 const storyLine = m => m.st?.check ? `<div class="rub-line st-line ${m.st.check.ok ? "ok" : "no"}">${m.st.check.ok ? "✓" : "✗"} ${esc(m.st.check.stat)}</div>` : "";
 // a scene that came without usable choices gets them from a small follow-up call
 async function storyChoicesFor(chat, text) {
   const s = chat.story, sides = s.pairs.flatMap(p => [p.a, p.b]).join(", ");
-  const j = await dsJSON([{ role: "system", content: `You write the choices for a scene of "${s.title}", a Choice of Games style interactive novel. Respond with only JSON: {"choices": [3-4 of {"t": what the reader does (short), "leans": [{"side": one of ${sides}, "amt": 1-3}], "meters": {name: change} (optional; names: ${s.meters.map(m => m.n).join(", ")}), "check": {"stat": side or meter, "need": 20-85} (optional, at most one)}]}. ${storyContent(s)}` }, { role: "user", content: text.slice(-3000) }], { temperature: 0.8, maxTokens: 700 });
+  const j = await dsJSON([{ role: "system", content: `You write the choices for a scene of "${s.title}", a Choice of Games style interactive novel. Respond with only JSON: {"choices": [3-4 of {"t": what the reader does (short), "leans": [{"side": one of ${sides}, "amt": 1-3}], "meters": {name: change} (optional; names: ${s.meters.map(m => m.n).join(", ")}), "check": {"stat": side or meter, "need": 30-90} (on every risky choice: force, stealth, persuasion, deception, a gamble; usually two or three per scene)}]}. ${storyContent(s)}` }, { role: "user", content: text.slice(-3000) }], { temperature: 0.8, maxTokens: 700 });
   return storyChoices(s, j?.choices);
 }
 // v2.9: pages. Page k shows scene k (and its illustrations); while the next scene is being written (or failed) there is one
@@ -9196,7 +9209,7 @@ function storyFmt(text) {
 async function pickStory(x) {
   const chat = S.chat, s = chat.story, now = storyState(chat), k = x.st.check;
   const st = { leans: x.st.leans || [], meters: x.st.meters || {} };
-  if (k) { const val = storyStat(now, k.stat) ?? 0, roll = Math.round((rand01() - 0.5) * 10); st.check = { stat: k.stat, need: k.need, val, ok: val + roll >= k.need }; }
+  if (k) { const val = storyStat(now, k.stat) ?? 0, p = storyOdds(val, k.need, dangerOf(s)); st.check = { stat: k.stat, need: k.need, val, ok: rand01() < p }; }
   S.pendingStory = st; S.writeOwn = false; S.stPage = null;
   // past the last planned chapter in an endless story: plan more first
   const after = storyState({ ...chat, messages: [...chat.messages, { role: "user", st }] });
@@ -9489,7 +9502,7 @@ async function sqFinish(edit) {
 }
 // a run's private plan for the plot ingredients (never shown to the reader)
 async function storySecret(s) {
-  const j = await dsJSON([{ role: "system", content: `You secretly plan the hidden turns of "${s.title}", an interactive novel, before the reader starts. The reader never sees this plan. Turn each plot ingredient into something concrete for THIS run: who it involves, roughly when (which chapter) and how it plays out, fitting the setting, the reader's role and the choices made for this run. Make it a fresh, surprising take. Respond with only JSON: {"plan": 4-10 sentences}. Every character is treated as a fully grown, mature being.` },
+  const j = await dsJSON([{ role: "system", content: `You secretly plan the hidden turns of "${s.title}", an interactive novel, before the reader starts. The reader never sees this plan. Turn each plot ingredient into something concrete for THIS run: who it involves, roughly when (which chapter) and how it plays out, fitting the setting, the reader's role and the choices made for this run (the reader's role and choices override the setting wherever they differ, for example a partner instead of a sister). Make it a fresh, surprising take. Respond with only JSON: {"plan": 4-10 sentences}. Every character is treated as a fully grown, mature being.` },
     { role: "user", content: `Setting: ${s.setting}\nThe reader plays ${s.you}.${s.picks?.length ? "\nChosen for this run: " + s.picks.map(p => `${p.n}: ${p.l}${p.rule ? " (" + p.rule + ")" : ""}`).join("; ") : ""}\nChapters:\n${s.chapters.map((c, i) => `${i + 1}. ${c.t}: ${c.goal}`).join("\n")}\nPlot ingredients: ${s.beats.join("; ")}` }], { temperature: 1, maxTokens: 900 });
   return String(j?.plan || "").trim().slice(0, 3000);
 }

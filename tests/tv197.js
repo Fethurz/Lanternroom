@@ -40,7 +40,7 @@ const open = require("./base.js");
   chk(`choices are checked against the real stat names (${begin.choices?.length} kept)`, begin.choices?.length === 3 && /"side":"Brutality","amt":2/.test(begin.choices[0]) && /"infamy":5/.test(begin.choices[0]) && /"check":\{"stat":"Finesse","need":40\}/.test(begin.choices[1]) && /"leans":\[\]/.test(begin.choices[2]) && /"wealth":10/.test(begin.choices[2]) && !/Nope/.test(begin.choices[2]));
   chk(`the screen: fixed choices only, no message box or Write my own; the bar shows the chapter (${begin.bar})`, begin.choosing && begin.btns.length === 3 && !begin.own && /Chapter 1: The Knight/.test(begin.bar) && /1 \/ 18/.test(begin.bar));
   // pick the checked choice: the check is settled by the app, stats move, the next scene hears about it
-  const pick = await pg.evaluate(async () => { window.rand01 = () => 0.5; (document.querySelectorAll("#stPick .st-opt")[1].click(), $("stNext").click());
+  const pick = await pg.evaluate(async () => { { const g = crypto.getRandomValues.bind(crypto); crypto.getRandomValues = a => { if (a instanceof Uint32Array && a.length === 1) { a[0] = 2147483648; return a; } return g(a); }; } (document.querySelectorAll("#stPick .st-opt")[1].click(), $("stNext").click());
     for (let i = 0; i < 200 && (S.busy || S.chat.messages.length < 3); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 200));
     const u = S.chat.messages[1], st = storyState(S.chat); return { st: u.st, line: document.querySelector("#msgs .st-div")?.textContent, fin: st.pairs[0].v, cun: st.pairs[1].v, bar: $("ownBar").textContent, scenes: st.scenes }; });
   const s1 = sysSeen.at(-1) || "", u1 = userSeen.at(-1) || "";

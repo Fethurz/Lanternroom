@@ -44,7 +44,7 @@ const open = require("./base.js");
     const o = () => [...document.querySelectorAll("#stPick .st-opt")], n0 = S.chat.messages.length;
     o()[0].click(); await new Promise(r => setTimeout(r, 150)); const a = { n: S.chat.messages.length - n0, on: o().map(x => x.getAttribute("aria-checked")), next: $("stNext").disabled };
     o()[1].click(); await new Promise(r => setTimeout(r, 150)); const c = { on: o().map(x => x.getAttribute("aria-checked")), busy: S.busy, n: S.chat.messages.length - n0 };
-    window.rand01 = () => 0.5; $("stNext").click();
+    { const g = crypto.getRandomValues.bind(crypto); crypto.getRandomValues = a => { if (a instanceof Uint32Array && a.length === 1) { a[0] = 2147483648; return a; } return g(a); }; } $("stNext").click();
     for (let i = 0; i < 200 && (S.busy || S.chat.messages.length < n0 + 2); i++) await new Promise(r => setTimeout(r, 50)); await new Promise(r => setTimeout(r, 250));
     return { a, c, sent: S.chat.messages.at(-2) };
   });
