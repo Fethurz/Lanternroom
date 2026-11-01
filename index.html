@@ -1769,7 +1769,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.9.5 · Oct 31";
+const VERSION = "2.9.6 · Oct 31";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -4464,7 +4464,7 @@ function updateStage() {
   const chip = c.kind === "world" ? "world" : c.kind === "group" ? `${ch.focus || members(c)[0]?.name || ""} · ${ch.mood || "neutral"}` : (ch.mood || "neutral");
   $("chatPlace").innerHTML = `<span class="mood-chip">${esc(chip)}</span>${esc(ch.place || "")}`;
   const sc = $("scene");
-  if (S.settings.backgrounds && ch.place) {
+  if (S.settings.backgrounds && ch.place && !ch.story) { // v2.9.6: stories keep the plain theme behind their text
     const url = sceneURL(c, ch.place);
     if (sc.dataset.url !== url) {
       sc.dataset.url = url; sc.classList.remove("on");
