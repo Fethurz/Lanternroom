@@ -237,6 +237,13 @@ body{background:radial-gradient(120% 70% at 50% -10%,var(--glow) 0%,var(--bg) 55
 #charList{grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:6px}
 #charList > .note{grid-column:1/-1}
 #charList .char-card{display:flex!important;flex-direction:column;gap:0;padding:0;overflow:hidden;border-width:1px;border-top:3px solid var(--kc)}
+#charList .char-card.k-folder{--kc:var(--accent)}
+#charList .folder-card .fd-stack{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--surface-2)}
+#charList .folder-card .fd-stack img{position:absolute;width:62%!important;height:auto;aspect-ratio:4/5;border-radius:8px!important;border:2px solid var(--surface);box-shadow:0 4px 12px -4px rgba(0,0,0,.7)}
+#charList .folder-card .fd-i0{left:6%;top:6%;z-index:3}#charList .folder-card .fd-i1{left:22%;top:14%;z-index:2;opacity:.9}#charList .folder-card .fd-i2{left:34%;top:22%;z-index:1;opacity:.8}
+.fd-row img{width:42px;height:52px;border-radius:8px;object-fit:cover;flex:none}
+.fd-shelf{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fd-ck{display:flex;gap:10px;align-items:center}
 #charList .char-card.k-character{--kc:var(--k-character)}#charList .char-card.k-world{--kc:var(--k-world)}#charList .char-card.k-group{--kc:var(--k-group)}
 #charList .char-card .ph-wrap{position:relative}
 #charList .char-card img,#charList .char-card .ph{width:100%;height:auto;aspect-ratio:4/5;border-radius:0;display:block}
@@ -1427,7 +1434,7 @@ html.sb-sticker.sb-sticker #msgs .msg:not(.img) em.act,.shop-sb.sb-sticker .msg 
       <button class="persona-bar" id="personaBar"></button>
       <p class="tagline" id="tagline">Your characters, with memory that holds.</p>
       <div id="daily"></div>
-      <div class="seg" id="homeTabs"><button type="button" data-tab="all" class="on">All</button><button type="button" data-tab="recent">Recent</button><button type="button" data-tab="fav">★ Favorites</button><button type="button" data-tab="hidden">Hidden</button><button type="button" data-tab="personas">Personas</button></div>
+      <div class="seg" id="homeTabs"><button type="button" data-tab="all" class="on">Bots</button><button type="button" data-tab="flat">All bots</button><button type="button" data-tab="recent">Recent</button><button type="button" data-tab="fav">★ Favorites</button><button type="button" data-tab="hidden">Hidden</button><button type="button" data-tab="personas">Personas</button></div>
       <div class="searchrow"><input id="search" type="search" placeholder="Search names or tags" autocomplete="off"><button class="btn small" id="btnTagAll" hidden>✦ Tag untagged</button></div>
       <div class="tagrow" id="tagFilter"></div>
       <div id="charList"></div>
@@ -1769,7 +1776,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.9.6 · Oct 31";
+const VERSION = "2.10 · Nov 3";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -2674,10 +2681,14 @@ function renderHome() {
   if (!$("btnTagAll").disabled) $("btnTagAll").textContent = `✦ Tag ${untagged} untagged`;
   $("tagFilter").hidden = HF.tab === "personas"; $("btnTagAll").hidden = $("btnTagAll").hidden || HF.tab === "personas";
   if (HF.tab === "personas") { renderPersonaTab(list); $("tagline").textContent = seasonGreet() + (hasKey() ? "Your characters, with memory that holds." : "Start by adding your API key in Settings."); renderPanes(); return; }
+  // the main tab is tidy: bots inside folders show as one folder card; "All bots" shows everything flat
+  const tidy = HF.tab === "all" && !HF.q && !HF.tags.size, fdrs = tidy ? folderList().filter(f => folderBots(f).some(x => !x.hidden)) : [];
+  const inFolder = new Set(fdrs.flatMap(f => f.bots));
   const shown = S.chars.filter(c => {
     if (HF.tab === "hidden" ? !c.hidden : c.hidden) return false;
     if (HF.tab === "fav" && !c.fav) return false;
     if (HF.tab === "recent" && !S.recent[c.id]) return false;
+    if (tidy && inFolder.has(c.id)) return false;
     const tg = tagsOf(c);
     if ([...HF.tags].some(t => !tg.includes(t))) return false;
     if (!HF.q) return true;
@@ -2687,6 +2698,8 @@ function renderHome() {
   if (!S.chars.length) list.innerHTML = '<p class="note">Nothing here yet. Tap New to create a character, world or group, or import a character card.</p>';
   else if (!shown.length) list.innerHTML = `<p class="note">${HF.q || HF.tags.size ? `Nothing matches that search.${HF.q ? `</p><button type="button" class="btn" id="mkSearch">✦ Make a bot of “${esc($("search").value.trim())}”</button><p class="note" hidden>` : ""}` : HF.tab === "recent" ? "Bots you chat with will show up here, most recent first." : HF.tab === "fav" ? "No favorites yet. Tap ⋯ on a card and choose Favorite." : HF.tab === "hidden" ? "No hidden bots. Tap ⋯ on a card and choose Hide." : "Everything is hidden or in another tab."}</p>`;
   if ($("mkSearch")) $("mkSearch").onclick = () => openSearchMake($("search").value.trim());
+  if (fdrs.length && !shown.length) list.innerHTML = "";
+  for (const f of fdrs) list.appendChild(folderCard(f));
   for (const c of shown) {
     const b = document.createElement("div");
     b.className = "char-card"; b.tabIndex = 0; b.setAttribute("role", "button");
@@ -2721,6 +2734,7 @@ function cardMenu(c) {
       <button class="btn" id="cmChats">Chats</button>
       <button class="btn" id="cmFav">${c.fav ? "☆ Remove from favorites" : "★ Favorite"}</button>
       <button class="btn" id="cmHide">${c.hidden ? "Unhide" : "Hide"}</button>
+      <button class="btn" id="cmFolder">🗂 Add to a folder</button>
       <button class="btn" id="cmEdit">Edit</button>
       <button class="btn danger" id="cmDel">Delete ${KINDS[c.kind || "character"].label.toLowerCase()}</button></div>
       <p class="note">Deleting removes this ${KINDS[c.kind || "character"].label.toLowerCase()} and all of its chats. Hiding keeps everything but moves it to the Hidden tab.</p>`;
@@ -2728,6 +2742,7 @@ function cardMenu(c) {
     $("cmFav").onclick = async () => { c.fav = !c.fav; await saveChars(); closeSheet(); renderHome(); };
     $("cmHide").onclick = async () => { c.hidden = !c.hidden; await saveChars(); closeSheet(); renderHome(); };
     $("cmEdit").onclick = () => editChar(c, false);
+    $("cmFolder").onclick = () => pickFolder(c);
     confirmBtn($("cmDel"), "Tap again to delete forever", () => deleteBot(c.id));
   });
 }
@@ -2737,6 +2752,89 @@ async function deleteBot(id) {
   for (const g of S.chars) if (g.members) g.members = g.members.filter(m => m !== id);
   await saveChars(); await deleteAllChats(id);
   closeSheet(); S.charId = null; S.chat = null; $("chat").hidden = true; $("home").hidden = false; renderHome();
+}
+/* ---------- Folders (v2.10)
+   settings.folders = [{id, name, bots: [bot ids], at}] (the owner's own; synced with settings). Automatic folders
+   are worked out, never stored: a group with its member bots, a world with the bots spun off from it (fromWorld),
+   and any bot with bots made from someone in its chats (spunFrom). settings.folderOff {autoId: true} turns one off.
+   A bot can be in several folders. The main Home tab ("Bots") shows a folder card instead of the bots inside;
+   "All bots" shows everything flat. */
+function folderList() {
+  const st = S.settings || {}, off = st.folderOff || {}, out = [];
+  for (const f of (st.folders || [])) { const bots = (f.bots || []).filter(id => byId(id)); out.push({ ...f, bots, auto: false }); }
+  for (const c of S.chars) {
+    if (c.fromPersona) continue;
+    const kids = c.kind === "group" ? (c.members || []).filter(id => byId(id))
+      : S.chars.filter(x => x.id !== c.id && (x.fromWorld === c.id || x.spunFrom === c.id)).map(x => x.id);
+    const id = "auto:" + c.id;
+    if (kids.length && !off[id]) out.push({ id, name: c.name, bots: [c.id, ...kids.filter(k => k !== c.id)], auto: true, from: c.id });
+  }
+  return out;
+}
+const folderBots = f => f.bots.map(byId).filter(Boolean);
+const foldersOf = c => folderList().filter(f => f.bots.includes(c.id));
+async function saveFolders(list) { S.settings.folders = list; await saveSettings(); }
+function folderCard(f) {
+  const b = document.createElement("div"), bots = folderBots(f).filter(x => !x.hidden);
+  b.className = "char-card folder-card k-folder"; b.tabIndex = 0; b.setAttribute("role", "button");
+  b.innerHTML = `<div class="name">🗂 ${esc(f.name)}</div><div class="ph-wrap fd-stack">${bots.slice(0, 3).map((x, i) => `<img alt="" class="fd-i${i}" loading="lazy">`).join("")}<span class="kind-pill">Folder · ${bots.length}</span></div><div class="cbody"><div class="bsum">${esc(bots.map(x => x.name).join(", "))}</div></div>`;
+  b.querySelectorAll("img").forEach((im, i) => setImg(im, thumbURL(bots[i]), bots[i]));
+  b.onclick = () => openFolder(f.id);
+  b.onkeydown = e => { if (e.key === "Enter") openFolder(f.id); };
+  return b;
+}
+function openFolder(fid) {
+  const f = folderList().find(x => x.id === fid); if (!f) { renderHome(); return; }
+  openSheet(`🗂 ${f.name}`, b => {
+    const bots = folderBots(f);
+    b.innerHTML = `${f.auto ? `<p class="hint" style="margin:0">Made automatically from ${esc(byId(f.from)?.name || f.name)} and the bots that come from it.</p>` : ""}
+      <div class="stack" id="fdList">${bots.map(x => `<div class="listrow fd-row"><button type="button" class="grow fd-open" data-id="${x.id}" style="display:flex;gap:10px;align-items:center;text-align:left;padding:0"><img alt=""><span class="grow"><b>${esc(x.name)}</b>${x.hidden ? ' <span class="badge">Hidden</span>' : ""}<span class="sub">${esc(botSummary(x).slice(0, 140))}</span></span></button>${f.auto ? "" : `<button type="button" class="btn small fd-out" data-id="${x.id}" aria-label="Take ${esc(x.name)} out of this folder">✕</button>`}</div>`).join("") || '<p class="note">This folder is empty.</p>'}</div>
+      ${f.auto ? `<button type="button" class="btn small" id="fdOff">Stop putting these in a folder</button>` : `<div class="row"><button type="button" class="btn" id="fdAdd">＋ Add bots</button><button type="button" class="btn" id="fdRen">Rename</button></div><button type="button" class="btn small danger" id="fdDel">Delete this folder (the bots stay)</button>`}`;
+    b.querySelectorAll(".fd-open").forEach(el => { const x = byId(el.dataset.id); setImg(el.querySelector("img"), thumbURL(x), x); el.onclick = () => openProfile(x.id); });
+    b.querySelectorAll(".fd-out").forEach(el => el.onclick = async () => { await saveFolders((S.settings.folders || []).map(y => y.id === f.id ? { ...y, bots: y.bots.filter(i => i !== el.dataset.id), at: Date.now() } : y)); openFolder(f.id); renderHome(); });
+    if ($("fdOff")) $("fdOff").onclick = async () => { S.settings.folderOff = { ...(S.settings.folderOff || {}), [f.id]: true }; await saveSettings(); closeSheet(); renderHome(); };
+    if ($("fdAdd")) $("fdAdd").onclick = () => folderAddBots(f.id);
+    if ($("fdRen")) $("fdRen").onclick = () => folderName(f.name, async n => { await saveFolders((S.settings.folders || []).map(y => y.id === f.id ? { ...y, name: n, at: Date.now() } : y)); openFolder(f.id); renderHome(); });
+    if ($("fdDel")) confirmBtn($("fdDel"), "Tap again to delete the folder", async () => { await saveFolders((S.settings.folders || []).filter(y => y.id !== f.id)); closeSheet(); renderHome(); });
+  });
+}
+function folderName(cur, done) {
+  openSheet(cur ? "Rename folder" : "New folder", b => {
+    b.innerHTML = `${field("Folder name", `<input id="fdName" maxlength="60" value="${esc(cur || "")}" placeholder="e.g. Astoria">`)}<button type="button" class="btn primary" id="fdOk">${cur ? "Save" : "Make folder"}</button>`;
+    const ok = () => { const n = $("fdName").value.trim(); if (!n) { $("fdName").focus(); return; } done(n); };
+    $("fdOk").onclick = ok; $("fdName").onkeydown = e => { if (e.key === "Enter") ok(); };
+    setTimeout(() => $("fdName")?.focus(), 50);
+  });
+}
+async function newFolder(name, bots) { const f = { id: uid(), name, bots: [...new Set(bots)], at: Date.now() }; await saveFolders([...(S.settings.folders || []), f]); return f; }
+function pickFolder(c) {
+  openSheet(`Add ${c.name} to a folder`, b => {
+    const mine = S.settings.folders || [];
+    b.innerHTML = `<div class="stack">${mine.map(f => `<button type="button" class="listrow fd-pick" data-id="${f.id}"><span class="grow"><b>🗂 ${esc(f.name)}</b><span class="sub">${(f.bots || []).filter(id => byId(id)).length} bots</span></span>${(f.bots || []).includes(c.id) ? '<span class="badge">In it</span>' : '<span class="pf-go">Add ›</span>'}</button>`).join("") || '<p class="note">No folders of your own yet.</p>'}</div><button type="button" class="btn primary" id="fdNew">＋ New folder with ${esc(c.name)}</button>`;
+    b.querySelectorAll(".fd-pick").forEach(el => el.onclick = async () => { await saveFolders(mine.map(f => f.id === el.dataset.id ? { ...f, bots: [...new Set([...(f.bots || []), c.id])], at: Date.now() } : f)); openFolder(el.dataset.id); renderHome(); });
+    $("fdNew").onclick = () => folderName("", async n => { const f = await newFolder(n, [c.id]); openFolder(f.id); renderHome(); });
+  });
+}
+function folderAddBots(fid) {
+  const f = (S.settings.folders || []).find(x => x.id === fid); if (!f) return;
+  const pick = new Set(f.bots || []);
+  openSheet(`Add bots to ${f.name}`, b => {
+    const list = S.chars.filter(c => !c.fromPersona).sort((a, z) => a.name.localeCompare(z.name));
+    b.innerHTML = `<input id="fdQ" placeholder="Find a bot" style="width:100%"><div class="stack" id="fdPick">${list.map(c => `<label class="listrow fd-ck" data-n="${esc(c.name.toLowerCase())}"><input type="checkbox" value="${c.id}" ${pick.has(c.id) ? "checked" : ""}><span class="grow"><b>${esc(c.name)}</b></span></label>`).join("")}</div><button type="button" class="btn primary" id="fdSave">Save</button>`;
+    $("fdQ").oninput = e => { const q = e.target.value.trim().toLowerCase(); b.querySelectorAll(".fd-ck").forEach(el => el.hidden = q && !el.dataset.n.includes(q)); };
+    b.querySelectorAll(".fd-ck input").forEach(el => el.onchange = () => el.checked ? pick.add(el.value) : pick.delete(el.value));
+    $("fdSave").onclick = async () => { await saveFolders((S.settings.folders || []).map(y => y.id === fid ? { ...y, bots: list.map(c => c.id).filter(id => pick.has(id)), at: Date.now() } : y)); openFolder(fid); renderHome(); };
+  });
+}
+// on a bot's profile: the folders it's in, with the other bots there, and a way to add it to one
+function folderShelf(c) {
+  const fs = foldersOf(c);
+  return `<div class="stack"><div class="lbl">Folders${fs.length ? " · " + fs.length : ""}</div>${fs.map(f => { const others = folderBots(f).filter(x => x.id !== c.id); return `<div class="fd-shelf"><button type="button" class="btn small fd-go" data-f="${esc(f.id)}">🗂 ${esc(f.name)}</button>${others.map(x => `<button type="button" class="chip fd-bot" data-id="${x.id}">${esc(x.name)}</button>`).join("")}</div>`; }).join("")}<button type="button" class="btn small" id="pfFolder">＋ Add to a folder</button></div>`;
+}
+function wireFolderShelf(c, b) {
+  b.querySelectorAll(".fd-go").forEach(el => el.onclick = () => openFolder(el.dataset.f));
+  b.querySelectorAll(".fd-bot").forEach(el => el.onclick = () => openProfile(el.dataset.id));
+  if (b.querySelector("#pfFolder")) b.querySelector("#pfFolder").onclick = () => pickFolder(c);
 }
 const fmtWhen = ts => { const d = new Date(ts), now = new Date(); return d.toDateString() === now.toDateString() ? d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : d.toLocaleDateString([], { month: "short", day: "numeric" }); };
 // Tapping a bot opens its profile: summary, tags in words, who you play as, its chats,
@@ -2780,6 +2878,7 @@ async function openProfile(id) {
       <div class="row"><button type="button" class="btn primary" id="pfGo"></button><button type="button" class="btn" id="pfNew">New chat</button></div>
       ${crOn(c) ? `<p class="hint" style="margin:0">Every new chat starts by creating your character for it.</p>` : `<button type="button" class="btn small" id="pfCreate">✦ New chat with a character made for it</button>`}
       ${people.length ? `<div class="stack"><div class="lbl">${kind === "group" ? "Talk to one of them alone" : "Characters in this world"}</div>${people.map((x, i) => `<button type="button" class="listrow pf-person" data-i="${i}"><img alt=""><span class="grow"><b>${esc(x.name)}</b><span class="sub">${esc(x.sub || "")}</span></span><span class="pf-go">Talk ›</span></button>`).join("")}</div>` : ""}
+      ${folderShelf(c)}
       ${pubRow(c)}
       ${achShelf(c)}
       ${idx.length ? `<div class="stack"><div class="lbl">People in this story</div><div class="stack" id="pfPeople">${c.people?.found ? "" : '<p class="hint" style="margin:0">Side characters, places and groups you\'ve met can become bots of their own.</p>'}</div><button type="button" class="btn small" id="pfFind">${c.people?.found ? "↻ Look again" : "✦ Find people in this story"}</button></div>` : ""}
@@ -2813,6 +2912,7 @@ async function openProfile(id) {
     if ($("pfBadges")) $("pfBadges").onclick = () => openTrophies(c.id);
     $("pfManage").onclick = () => openChats(id);
     $("pfMore").onclick = () => cardMenu(c);
+    wireFolderShelf(c, b);
   });
 }
 async function openChats(cid) {
