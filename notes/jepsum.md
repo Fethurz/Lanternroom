@@ -66,3 +66,4 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Security chief: BRONWYN HALE, 41, a heavy-set, bored and lazy ex-cop who eats donuts and the occasional trespasser.
 - Ilse's assistant: FELIX WARD, 24, a slim, pretty smug femboy with eyeliner; flirty and bratty, teases Ilse constantly; both pred and prey.
 - Swarm queen: QUEEN LURE, a hive kaiju (pink pheromone glow) whose drones carry people back to her. Pred pack: THE JACKALS, lean hyena-like kaiju that rip open cockpits to eat the crew. They are rivals competing for prey, not allies.
+- Co-pilot choice: Kira, Martha, Priya or Viper. Ebony Kirin winner when fixed at the start: {{user}} + Martha, Viper + Priya, or {{user}} + a recruit (Viper or Priya). Lewdness: three levels (mostly action / a balanced mix / heavy lewd and vore).
