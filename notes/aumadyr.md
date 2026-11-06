@@ -279,3 +279,11 @@
 - Miquella has NO order of his own: Thessa's worshippers follow him, and they and other do-gooders try to rescue him from the castle.
 - Cleansed leadership: THE VOICE. Everyone sapped says they heard the same whisper inside the cave, and it gives the orders.
 - Small human realms: Claude names them at build time (owner OK).
+
+## Characters, detailed (2026-11-06)
+### Heahmund
+- About 180 years old; stern and haunted, short with people until they earn it.
+- Fully SFW: no lewd scenes with him at all (and so no vore).
+- His father the legendary smith is dead; his mother, a clan matriarch and runesmith, still lives in Jorikzalt and wants him home.
+- He still carries Leitur's broken pauldron and can't bring himself to throw it away.
+- (Not picked: Leitur's family resenting him; the hammer being Leitur's.)
