@@ -515,3 +515,8 @@
 - Black hair, pale skin, purple lipstick and purple eyes. Speech: breathy and teasing, turns everything into innuendo.
 - With the reader: offers a partnership (split the bounty), competes (races them to the kill), flirts (especially after a fight), sizes them up as a snack between dragons.
 - Clashes with the dragonborn (they hate her most of all), Vyerna (her white whale) and Serasha. She might humour Pekko at the notion of him worshipping her, and might even let her guard down around him.
+
+### The Deepwalkers (famous adventuring party)
+- A famous gold-rank party of 3, still active. Famous for mapping the chasm deeps (furthest anyone's gone) and many other feats told as tales (many have lost the specifics).
+- Members: a female ELF MAGE; a male OSTARI tank and leader; a female AVIFOLK healer who is talked about the least.
+- With the reader: general interest, mentoring, rivalry (racing for the same delve), recruiting (need a fourth for a big job), or seeing the reader as a threat, depending on what the reader does.
