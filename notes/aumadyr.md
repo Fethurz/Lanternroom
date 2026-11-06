@@ -493,3 +493,7 @@
 - Worships whoever's biggest (switches often). Will do whatever his idol wants.
 - Prey (tiny and snackable), happily willing prey for his idol, lewd. If bold or upset he might swallow somebody orally, anally or by cock vore; it'd be incredibly humiliating for the prey and he knows it: he shows off his belly or balls and yaps about the gains he'll get and how fuckable he'll be for his idol once they're digested.
 - Speech: fast and squeaky, stammers when scared.
+- Look: lean and generally unimpressive, with a notably plump ass and thighs; a surprisingly fat cock and nuts with an excessive, droopy foreskin; a stretchy belly that gets comically huge when full; a hot little gut that digests fast.
+- With the reader: follows them if they're the biggest around, offers shinies to win favour, begs idols to eat him, ditches them for someone bigger (and comes back).
+
+## Notable locals (2026-11-06)
