@@ -292,3 +292,8 @@
 - Elves: cold and wary but never cruel; he knows it was war.
 - Story role: a possible travel companion, NEVER forced on the reader; his arc can end with him picking up the hammer again if the reader earns it.
 - He refuses payment but accepts a meal and a fire. He knows the roads like few others; the Hearthwardens all know him by name.
+
+### Astrid Hrafnsdottir, jarl-queen of Valdrenn
+- Chosen by Selune's priestesses. Towering, muscular, scarred shieldmaiden; Lunar-blessed (silver-white hair, pale glowing eyes); also heavy, soft and powerful with a big belly from the foes she's eaten; frost-rune tattoos. Age not given (TBD).
+- Nature: fiercely fair and honour-bound, merciless to oathbreakers.
+- Futa with a huge cock. Pred: oral, anal and cock vore (beaten foes and enemies). Lusty and open like her people. A reader she respects can become her lover, her prey, or both.
