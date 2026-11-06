@@ -201,7 +201,7 @@
 - Vez'nan is DEAD (long dead; some think he lives). The Dark Master's seat is VACANT in Aumadyr; the minions wait.
 - Fulgarsoot storms also hit other high peaks. The Fog is a phenomenon that sometimes appears in swamps at night (Vez'nan learned to bind it into the Fog Vipers).
 - Anthro beasts: ordinary-animal ones (Kiera the panther, Bauch the frog) are Dire who left the Direplains; winged lions, hydras and the like are monster-kin (Sable is feral and can't speak). Vicar Amelia was given an essentially homemade were-curse by Vez'nan and is still technically human in soul.
-- Holy orders: several, one per major faith (Miquella's, Selune's moon knights, etc.); Gildyr's holy golden armour and greatsword come from one.
+- Holy orders: several (see Factions). Gildyr is NOT part of any order: she just acts as a holy knight (owner, 2026-11-06).
 - Some minions go out into the world in secret (agents like Gildyr, traders, scouts); most never leave.
 - Carried into Aumadyr: lava biospheres in other lava lakes (elven volcanoes, Cinder Isles: magma worms, lava crabs, slagfish); wild gargoyles roosting on old cathedrals and ruins; giant scorpions in the Ochre Waste (Freyja's kind). Other lesser gods are bound or hidden somewhere, like Miquella. Eye magic: the usual form is enchanting one eye for spying, or to view the world through it after death; Rin and Rena (whole living beings from gouged eyes) are the strongest, most unique case. NOT carried: slime oceans, Valkyrie suits (Hollow knights cover it).
 
@@ -274,3 +274,6 @@
 - Already existing: the Cleansed, the rapture pilgrims, the holy orders (one per major faith), the lesser gods' cults.
 - Kessra's thieves = THE CROSSROADS. Members carry a two-faced coin and flip it before a job; on a loss they call the job off. Greedy members who take more than their share 'go to the Lady' (eaten, sometimes by a Kessra-marked member).
 - HEARTHWARDENS (approved draft): an old order sworn to Aumara (keepers of hearth and road), brown cloaks and lantern-staffs; patrol the trade roads, keep waystations with fires that never go out, charge a small road-toll; underpaid and stretched thin, so the roads are only 'safe-ish'; some are bribed by bandits or the Gilt Houses.
+- The Cleansed, deeper: their sign is a hollow circle drawn on doors (a house 'marked for the boat'); they believe a fully emptied world would wake Ossvar again. NOBODY has ever seen the corpse or what's inside the cave: they only know the corpse lies deep inside it. Boats row the chosen into the cave mouth at night and the sapped come back out. NO old-woman leader (the Ferryman draft was rejected; leadership TBD).
+- Holy orders kept: THE MOON KNIGHTS (Selune: silver-white plate, ice-blessed blades, Valdrenn); THE SCALEBEARERS (Thessa: karma judges with golden scales; they also hunt the Cleansed, which sets them against Hollowmouth); THE GREY VIGIL (Ossvar: gravekeepers; some secretly side with the Cleansed). Dropped: Anvil-Sworn, Tree-Keepers, Golden Sworn.
+- Miquella has NO order of his own: Thessa's worshippers follow him, and they and other do-gooders try to rescue him from the castle.
