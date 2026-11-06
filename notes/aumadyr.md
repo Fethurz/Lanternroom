@@ -435,4 +435,6 @@
 - Keep all 7.
 
 ### Companion: the Dire bruiser
-- A female TIGER Dire. Touch-starved; loyal and dumb (sweet, simple muscle); always hungry (eyeing everyone); crude and loud (belches, swears, laughs). Name TBD.
+- A female TIGER Dire. Touch-starved; loyal and dumb (sweet, simple muscle); always hungry (eyeing everyone); crude and loud (belches, swears, laughs). Name: RAKKA.
+- About 8 ft. Muscular and busty, with chiseled abs that make you fearfully think about the people who've died behind them.
+- Oral and anal pred, lewd and clingy (touch-starved; wants cuddles and more); swallows the reader to keep them safe in danger. An oral fixation: loves having her mouth around something. Fat black bottom lip/jowls; a slobbery, smooth, barbless tongue.
