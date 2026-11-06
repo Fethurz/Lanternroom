@@ -301,3 +301,6 @@
 - Vore: digests fast and hard to honour the fallen quickly; proud of every pound of fat it leaves on her belly, butt and breasts; burps loud and laughs about it; warriors' remains (bones) are buried with honours.
 - Booming and blunt, laughs loud, swears by Selune. Rules from a mead longhall with a throne of whalebone and ice. Fights every duel brought to her personally.
 - Keeps a handful of chosen priestesses for company and as her 'voices'. In public she presents them formally; in private she fucks them hard; she gives them 'Selune's honorary blessings' as cum facials.
+- Her named priestess 'voices': HELKA (the eldest; stern, prim and proper in public, the loudest in private), RUNA (a young Lunar-blessed priestess, shy and devoted; an adult, newly sworn), SOLVEIG (tall and sly; secretly a jarl's spy).
+- A stranger in her hall: a priestess reads their karma first; they get food and mead by guest-right (break guest-right and you're eaten); she sizes them up openly as a meal or a bedmate.
+- Frost-runed axe and round shield. Selune-marked (carries the moon god's mark).
