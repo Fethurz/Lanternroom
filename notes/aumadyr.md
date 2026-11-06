@@ -168,3 +168,20 @@
 - Sapient animals: rare mana-touched animals can wake up sapient (like Dire's origin).
 - The Witness (castle deity awaiting the Final Shape) is SEPARATE from Ozhara's 'god before the others'. The Balancers (castle's seven divine warrior women) are Thessa's servants, enforcers of karma. Lesser gods (like Miquella) are children of the pantheon; a handful walk the world, rare and mostly hidden.
 - Placement (approved): Avifolk in eyries on the northern peaks between Valdrenn and Jorikzalt; Drak in coastal waters and the Alteran ocean, with a sea-city in the great central bay (well away from Hollowmouth); Kobolds in caves of the Jorikzalt foothills and the dark-rock range by the castle; Dragonborn in the Brimstone mountains around the Dark Castle near the drakes; Jotun in the frozen north beyond Valdrenn, uneasy neighbours of its jarls; Smelter Imps on the Cinder Isles alongside the exiled elves; were-beasts scattered (cursed humans hiding everywhere); monster-kin near god remains; constructs in troll ruins and old places.
+
+## From the Vez'nan castle cards (read 2026-11-06)
+- Fog: Vez'nan's own creation (fills Fog Vipers, steel cage snakes); its nature unknown. Fulgarsoot: red lightning mixed with flame, permanent storms over the mountains around the castle; Brimstone Drakes recharge on it, are ENDANGERED, hunted by dragon hunters, and shelter at the castle.
+- World serpents exist (Scylla is an adolescent one, slow metabolism, digesting a dragon for years).
+- Summoned demons exist (Aldmun keeps fire succubi). Aldmun seeks to use MULTIPLE types of magic (implies people normally have one magic affinity; owner's groundwork: Ostari take a god's 'magical preference'). Castle sells helpful potions anonymously to kingdoms (income).
+- Giant sapient scorpions (Freyja), slime oceans (Melly), cerberi, eyeball beings born from Misandra's eyes (Rin/Rena: meals fuel mana, no waste), shapeshifters (Noseta), golems older than Vez'nan.
+- Jotun: females have NO pussy and a horse cock; the race is endangered (Hulda left over it); mountain dwellers.
+- Miquella (lesser god) is a notable divine figure in some primary religions; adventurers try to rescue him.
+- Vez'nan experimented on people (Vicar Amelia, a corrupted priest; her cult believes swallowing 'raptures' sacrifices).
+- 'Dark Master' is a title passed down; Misandra was the second master, hidden as a living ward conduit.
+- The Witness: a collective of the billions of minds of one lost race; uses its own element, Resonance.
+- Aurum and Princess Tanya: keep COMPLETELY out of Aumadyr, not even hints (owner will review those castle entries themselves; 2026-11-06).
+- More castle facts: Balancers are 'a split consciousness and form of a warrior goddess invoked for protection by an early, less evil master' (owner says Thessa's servants; reconcile). Wereskunks: a 'true' wereskunk forgot its human self during a transformation and stays a beast; all are crass, belchy, gassy. Smelter imps can be brilliant engineers (Djinn: steam mech armour run on her sweat-steam). Avifolk: females slightly larger than males, males slightly more feminine; ornate armour, polearms. Lava moat biosphere: magma worms, lava crabs, slagfish (obsidian coats over glowing lava), all swallow people. Gargoyles: mischievous winged stone beasts. Serleena: a vast vine organism whose lip-buds slurp prey down stems into its coils; each successful bud grows (fist to building size); lips always white.
+- Balancers = a warrior daughter of Thessa (a lesser goddess) split into seven, serving her mother's law of karma; invoked by an early Dark Master.
+- Magic affinity: everyone has one natural favoured kind (fire, healing, ice...); other kinds cost far more mana (Aldmun's goal is to use several freely).
+- Demons come from a realm beneath, reached by summoning (paid in negative karma).
+- Dragon hunters are a guild (a profession; dragon parts like Fulgarsoot glands and scales are valuable); Brimstone Drakes are endangered because of them.
