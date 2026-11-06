@@ -561,3 +561,4 @@
 - The Direlands bot (xgxcuv78mvrxy8cj) renamed: every 'Agatha' -> 'Aumadyr' and 'Direlands' -> 'Direplains' (bot name now 'Direplains', its story 'The Direplains').
 - Aurum and Princess Tanya appear nowhere in Aumadyr (checked).
 - Map page (2026-11-06): https://claude.ai/artifact/Narj21iAqX9XoQZN7GLK7a (source notes/aumadyr_map.html), traced from the owner's map with the revisions; tap places for info, danger tints, chapter highlights and played checkboxes (per device), three moons (Blood Moon toggle, third moon grows with progress), Direplains region inset. Owner wants it built into the app later.
+- Map status (2026-11-06): owner likes the concept, wants a better, more stylized look; bookmarked for later (then build into the app).
