@@ -349,3 +349,4 @@
 - Vore: oral, slow and heavy (a deep, grinding gut), also anal and unbirth; eats the clan's traitors behind closed doors as her justice.
 - With the reader: asks them to find Heahmund and bring him home; tests their worth with a task first; sizes them up as a lover or a meal; forges rune-gear for those she trusts.
 - Speech: dry and cutting.
+- Also: perfectly shaped, fuckable lips and a fat ass. She carved the runes on the armour Heahmund forged for Leitur, and blames herself too. Openly hates the elves (unlike her son). Other matriarchs want her seat.
