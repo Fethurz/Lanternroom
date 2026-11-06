@@ -396,3 +396,6 @@
 - Took Maaghold by winning the arena (undefeated for years).
 - Towering (close to 14 ft with her neck), lean and long-legged, toned but padded, a heavy belly that's always full from feasts. A full set of custom plate armour, even for her neck, usually with a bare midriff to let her belly spill out.
 - Vore: a fat, juicy bottom lip and a fat, long prehensile tongue; prey makes a visible bulge sliding slowly down her whole neck (a long, slow trip she savours); loud gulps that echo through the arena.
+- Insides: hot and churning (several stomachs, like a ruminant), FAST digestion, ginormous shits after; bones displayed in the arena as trophies; the fat goes to her belly and hips, padding her toned frame.
+- Speech: blunt Direspeak, crude savanna slang.
+- With the reader: trade deals (she needs outsiders for Dunhallow and Riftmarket), sizes them up as a meal or a bedmate, protects guests under Maaghold's rules.
