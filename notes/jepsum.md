@@ -90,3 +90,4 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Kira's stand-in partner: LEXI HART, 24, bubbly, Kira's best friend from Larkspur Falls, a greedy pred; territorial about {{user}}, sees them as competition for Kira.
 - Lexi: tall and athletic, tan, ponytail, a runner's body. Oral pred, greedy (gobbles fast, wants seconds), belches loudly and proudly, would try to swallow {{user}} to get them out of the way and win Kira back.
 - Owner wants: more on kaiju ranking, and {{user}}'s MOM as a supporting role (family tie, stakes, potential incest; she is an adult).
+- Ranking: the class letter (D to S) is overall power (size, element strength and toughness combined); the threat number (1 to 5) is how likely it is to cause mass casualties. Ranks are field ranks set by whoever spots it first and revised later.
