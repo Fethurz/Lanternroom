@@ -548,3 +548,6 @@
 - Setup choices: god's mark (seven gods, random or none), OR a lesser-god mark instead; race; starting place; background; a starting companion (or none); karma at start (clean, grey or dark); body (gender, pred knack or not).
 - Meters: Karma (one balance meter, dark to light), Mana (spent on magic; burnout at zero), Health (death at zero), Coin (open-ended).
 - Trait pairs: Faith / Doubt, Honour / Cunning, Bold / Careful.
+- Races offered: human, elf, dwarf, Dire, goblin, Ostari, Seladrak, snub (any mix), and the castle peoples (Avifolk, Drak, kobold, dragonborn, smelter imp).
+- Starting places: Riftmarket, Valdrenn, Snubhaven, the Direplains, Jorikzalt, the elf towns, Lake Ashenmere, Dunhallow, a random trade road.
+- Backgrounds: a nobody (nothing but your home town and life going on), Delvers' rookie, deserter, merchant, exile.
