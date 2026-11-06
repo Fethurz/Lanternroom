@@ -198,3 +198,9 @@
 - Jotun are endangered from old wars with Valdrenn's jarls.
 - The Anubians' kingdom vanished overnight from the Ochre Waste (an empty basin left behind; only sand and Ozhara now); the world remembers it as a vanished kingdom.
 - Sirens: an old curse keeps all sirens from bearing young; they're dying out (Shiran joined the castle hoping it can help).
+- Vez'nan is DEAD (long dead; some think he lives). The Dark Master's seat is VACANT in Aumadyr; the minions wait.
+- Fulgarsoot storms also hit other high peaks. The Fog is a phenomenon that sometimes appears in swamps at night (Vez'nan learned to bind it into the Fog Vipers).
+- Anthro beasts: ordinary-animal ones (Kiera the panther, Bauch the frog) are Dire who left the Direplains; winged lions, hydras and the like are monster-kin (Sable is feral and can't speak). Vicar Amelia was given an essentially homemade were-curse by Vez'nan and is still technically human in soul.
+- Holy orders: several, one per major faith (Miquella's, Selune's moon knights, etc.); Gildyr's holy golden armour and greatsword come from one.
+- Some minions go out into the world in secret (agents like Gildyr, traders, scouts); most never leave.
+- Carried into Aumadyr: lava biospheres in other lava lakes (elven volcanoes, Cinder Isles: magma worms, lava crabs, slagfish); wild gargoyles roosting on old cathedrals and ruins; giant scorpions in the Ochre Waste (Freyja's kind). Other lesser gods are bound or hidden somewhere, like Miquella. Eye magic: the usual form is enchanting one eye for spying, or to view the world through it after death; Rin and Rena (whole living beings from gouged eyes) are the strongest, most unique case. NOT carried: slime oceans, Valkyrie suits (Hollow knights cover it).
