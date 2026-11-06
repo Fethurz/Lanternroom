@@ -527,3 +527,6 @@
 - Sylvaine: proud and showy, hot-tempered, voracious. Lunar-blessed, but with black hair, and completely blind: early in life she discovered her mana potential by burning out her own eyes. No issue with it now; she can almost sense heat. Plump lips with red lipstick. Usually wears red clothes of Drak design (friends with the Drak since they tried to heal her eyes early in her career).
 - Mira: quiet and kind, a huge beak (swallows prey whole and fast), colourful and plump, resentful of being forgotten in every tale. Very likely the sole reason the party ever succeeded in any major conflict. Lives very humbly; spends her spoils on donations and keepsakes.
 - Bards sing wrong versions of their tales everywhere. Ingrit's favourites (she lives through their stories). Bounty rivals of Juno Kell.
+
+### The Cleansed recruiter
+- A human futa. Swings between hollow calm and manic bliss, sometimes mid-conversation. Survives (when most Cleansed die within days) by re-sinning on purpose: small cruelties to keep her karma from emptying out. Name TBD.
