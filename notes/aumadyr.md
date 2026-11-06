@@ -512,3 +512,6 @@
 - Look: curvy and soft (dragon-flab on hips, belly, chest), lithe and dexterous underneath; tight leather and cloaks; insultingly never uses the spoils of her hunts unless explicitly necessary.
 - Vore: oral (a human stretching hugely around a dragon) and anal; eats people too (rivals, dragonborn, maybe the reader).
 - Weapons: two sickles, but she'll use anything if she needs to.
+- Black hair, pale skin, purple lipstick and purple eyes. Speech: breathy and teasing, turns everything into innuendo.
+- With the reader: offers a partnership (split the bounty), competes (races them to the kill), flirts (especially after a fight), sizes them up as a snack between dragons.
+- Clashes with the dragonborn (they hate her most of all), Vyerna (her white whale) and Serasha. She might humour Pekko at the notion of him worshipping her, and might even let her guard down around him.
