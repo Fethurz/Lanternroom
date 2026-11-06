@@ -309,4 +309,4 @@
 - A male DRAGONBORN (not Dire): white scales, red eyes. His dragon line descends from a bone-white dragon that once served Ossvar.
 - Cold and practical (the dead are a resource) and creepily kind.
 - Pred: oral (swallows prey whole for their clean bones) and cock vore. Lewd is fine: cold-blooded, slow, unnervingly gentle.
-- Name: TBD.
+- Name: VAELTHIS. He became Chancellor by swallowing his predecessor (legal in Animar). He wants most to reach Ossvar: to speak with, or wake, the dead god his line once served. Speaks old-world polite: courtly, with careful compliments.
