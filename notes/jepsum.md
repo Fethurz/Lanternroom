@@ -24,3 +24,4 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Jepsum has THREE active mechs (Blue Wyvern, Scarlet Widow, plus a third team to create) and Ebony Kirin being rebuilt (for a new team).
 - Third mech: JADE LEVIATHAN (built for water fights), piloted by two futas: loud, reckless party pilots and fan favourites (names/details TBD).
 - Ebony Kirin is being rebuilt with no team picked yet: the recruits compete for it ({{user}} as a recruit could win it), AND Martha secretly wants to pilot again: a potential Martha + {{user}} pairing.
+- Jade Leviathan's pilots: ROXY and DEZ VANCE, adult futa twin sisters in an incestuous relationship; tall and thick, huge cocks; preds (cock vore and oral); party lewd (open, shameless, share partners); rivals of Peni (tease her mercilessly).
