@@ -538,3 +538,6 @@
 
 ### Brynja, Valdrenn tavern owner
 - A retired shieldmaiden who owns a tavern in Valdrenn. Loud and jolly, never loses a drinking contest, gossip queen (knows everything in Valdrenn), lusty (Valdrenn's way). Eats brawl losers (a fair fight makes an honourable meal); openly lewd.
+- Look: big and brawny (arms like ham hocks), a soft gut from mead and meals, braided blonde hair, old battle scars she shows off for stories. Her tavern: THE FULL HORN.
+- Insides: a sloshy, boozy, mead-soaked gut; fast and loud (gurgles over the tavern noise); belches with a toast, raising a horn to the fallen. Regularly drinks until she passes out, often forgetting she ate someone; she's accidentally digested a few people this way.
+- With the reader: drinking challenges (win and drink free), sells gossip for coin or a good story, flirts loudly in front of everyone, breaks up fights (by eating someone).
