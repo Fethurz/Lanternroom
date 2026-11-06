@@ -272,3 +272,5 @@
 - THE HEARTHWARDENS: a road-guard order that keeps the trade roads 'safe-ish'.
 - Not added: a karma-investigator faction, a silver mage guild.
 - Already existing: the Cleansed, the rapture pilgrims, the holy orders (one per major faith), the lesser gods' cults.
+- Kessra's thieves = THE CROSSROADS. Members carry a two-faced coin and flip it before a job; on a loss they call the job off. Greedy members who take more than their share 'go to the Lady' (eaten, sometimes by a Kessra-marked member).
+- HEARTHWARDENS (approved draft): an old order sworn to Aumara (keepers of hearth and road), brown cloaks and lantern-staffs; patrol the trade roads, keep waystations with fires that never go out, charge a small road-toll; underpaid and stretched thin, so the roads are only 'safe-ish'; some are bribed by bandits or the Gilt Houses.
