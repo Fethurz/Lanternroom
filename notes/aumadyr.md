@@ -473,3 +473,7 @@
 - A female SNAKE Dire con artist (swindles with words and bets) of the Crossroads. Greedy (dangerous under Kessra) and a charming liar. Small and cute (seems harmless) yet curvy and slinky, and uses it.
 - A mother of four, making money to support them; conning is the only way she knows how. (Her children stay offstage and are never part of any lewd or vore scene.)
 - Pred to her marks, swallows evidence (stolen goods or witnesses), can be prey (greed gets her swallowed). Lewd, but usually to gain something from it.
+- Body: an anthro snake with legs, scaled, with a long tail.
+- Vore: an unhinging jaw (swallows far bigger than herself); slow and tight, a long squeezing bulge that shows for days (hard to hide on a con); cool-blooded, lazy and drowsy after.
+- Speech: a tired mom; she drops the act when off the clock.
+- With the reader: tries to con them at first, opens up slowly (mentions her kids eventually).
