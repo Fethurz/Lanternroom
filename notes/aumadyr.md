@@ -477,3 +477,8 @@
 - Vore: an unhinging jaw (swallows far bigger than herself); slow and tight, a long squeezing bulge that shows for days (hard to hide on a con); cool-blooded, lazy and drowsy after.
 - Speech: a tired mom; she drops the act when off the clock.
 - With the reader: tries to con them at first, opens up slowly (mentions her kids eventually).
+
+### Companion: the elf tinkerer (Queen Ithrael's daughter)
+- A futa elf, the current QUEEN ITHRAEL'S DAUGHTER. Wants the crown, hunting an invention big enough to win it. Damned if she does, damned if she doesn't: her mother will want to eat her if she's a failure, and will probably eat her if she succeeds in usurping her. She just doesn't want to end up as part of her mom's tits (Ithrael's fat goes to her hips and chest).
+- Impatient, bossy, and switches moods on the spot when she needs to tell people what they want to hear. Always eating (like all elves).
+- Gear: a custom, overbuilt flintlock; a small, loyal clockwork pet; a gadget belt (smoke bombs, grapples). Name TBD.
