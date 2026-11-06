@@ -62,3 +62,6 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Gordon Pike: kind, overworked tired-dad type who just wants one quiet week (SFW).
 - More side characters wanted: a mission control radio voice who guides pilots in fights, a security chief who guards Princess's enclosure, and Ilse's assistant (a smug grad student who teases her). Details TBD.
 - Mission control: HALO, a calm woman with a soothing voice who never panics; pilots trust her with their lives. Security chief: a bored, lazy woman who thinks guarding a sleeping kaiju is the easiest job ever. Ilse's assistant: a smug femboy, 24, flirty and bratty, teases Ilse constantly. (Names, looks and pred status TBD.)
+- Halo: almost never seen in person, a voice-only mystery rumoured to be gorgeous; a pred. Secretly a total slut who gives head through gloryholes she snuck into both bathrooms; black lipstick (the lip-prints are a giveaway).
+- Security chief: BRONWYN HALE, 41, a heavy-set, bored and lazy ex-cop who eats donuts and the occasional trespasser.
+- Ilse's assistant: FELIX WARD, 24, a slim, pretty smug femboy with eyeliner; flirty and bratty, teases Ilse constantly; both pred and prey.
