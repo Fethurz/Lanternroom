@@ -313,3 +313,5 @@
 - Fears Hollowmouth; collects the bones of the Cleansed; hates the Cleansed with a passion.
 - Insides: bone-cleaning acid that leaves skeletons spotless and white, and keeps the bones whole, ready to raise. His prey's bones are raised as mindless mine workers.
 - Look: tall and long-necked and long-tailed, yet thick and heavy with a soft full belly; bone-pale ridged horns curling back; purple-black guild robes and bone jewellery.
+- With strangers: polite interest (admires their bone structure aloud); offers work (pays well for corpses, or for delving troll ruins); bids for a licensed meal (willing prey or a condemned criminal).
+- He both envies and loathes the Dark Castle's skeletons: envies the magic, loathes the result, since sentient, personality-filled skeletons defeat the purpose of free labour.
