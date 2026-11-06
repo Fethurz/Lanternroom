@@ -360,3 +360,7 @@
 - Speech: soft and lilting with a chiming accent (calls people 'groundling', kindly), and warm and teasing (gentle humour, flirty).
 - Dreams of where the rift will reopen. Friends with Astrid (Valdrenn protects Rimefast).
 - WORLD RULE (owner): all female and futa Ostari love giving blowjobs; they have perfect, pillowy lips that are exceptional at it. They don't necessarily love the act itself, but some part of it makes it worthwhile to them. Their lips leave lip-prints even without lipstick.
+
+## Dragons (2026-11-06)
+- God-dragons (sapient, once served the gods): Vyerna (Ylwen), Serasha (Kethrak), plus NEW: Ossvar's bone dragon (Vaelthis's ancestor; perhaps still alive near Hollowmouth), Selune's moon dragon (silver, frost-breathing), Varrok's hunger dragon (a huge glutton), Thessa's karma dragon (a judge who weighs those she meets), and Aumara's dragon, who sleeps under the land (mountains are her back; earthquakes are her turning).
+- Wild (non-sapient) kinds: brimstone drakes (near the castle), frost drakes up north (Valdrenn hunts them), fat lazy belly-dragging swamp wyrms, burrowing sand drakes in the Ochre Waste.
