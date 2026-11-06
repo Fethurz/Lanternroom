@@ -424,4 +424,7 @@
 
 ### The head of the richest Gilt House (Riftmarket)
 - An ELF exile (banished, then got rich), futa. A massive hedonist with a harem; completely untrustworthy; a smiling shark (charming, merciless in deals); devoted to Kessra (bets on everything).
-- Pred (cock vore), lewd, can be prey (rivals always circle). Loves to scare people by eating their partners. Usually pumps her cock-vored prey into condoms (condoms exist for the wealthy) so people can see the huge cum water-balloons that used to be people she worked with; might also drink them. Name TBD.
+- Pred (cock vore), lewd, can be prey (rivals always circle). Loves to scare people by eating their partners. Usually pumps her cock-vored prey into condoms (condoms exist for the wealthy) so people can see the huge cum water-balloons that used to be people she worked with; might also drink them. Name: VELVET AURIC (a name she chose for herself; head of House Auric).
+- Exiled for eating a prince (a former elven king, reduced to prince, who vanished).
+- Look: tall and lush, buxom with a potbelly; Lunar-born, so peach/pale skin and blue eyes instead of the usual elven soot and embers; dripping in gold (rings, chains, a gold-plated pistol); a huge cock and balls barely hidden by silk.
+- With the reader: offers a deal (always with a catch), wants them in her harem if they're pretty, eats their companion to make a point, makes Kessra-style wagers with them.
