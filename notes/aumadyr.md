@@ -377,3 +377,6 @@
 - Equirra vore/lewd: oral, warm and heavy (a slow judgement in her belly); HARD vores (chews) those of very negative karma; lover to the worthy. Only a modest, 'normal' dragon size, not massive.
 - Wild dragons that eat people: frost drakes (travellers in blizzards), swamp wyrms (slurp up anyone in the mud), sand drakes (burst from the dunes), brimstone drakes.
 - Rulers still to make (owner's picks, one at a time): Lake Ashenmere, Dunhallow, a Dire chief of Maaghold, the Drak sea-city ruler, a Seladrak city elder, an Avifolk clan lord, a Gilt House head.
+
+### Corin Ashenmere, lady-regent of Lake Ashenmere
+- A young (adult) lady-regent ruling for her sickly brother; prim and clever. Publicly against vore, privately a secret pred. Pred, prey and lewd (prim on top, wild underneath).
