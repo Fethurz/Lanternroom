@@ -406,3 +406,6 @@
 - Look: a total milf, big and heavy (koi grow huge with age), pearl jewellery and a crown of clam-shell gold, a large cock hidden in layered silks.
 - Vore: oral with a wide koi gape, and cock vore (lawbreakers end up in her balls); she eats the guilty publicly before the court. Slimy gut, mouth, nuts and dick: being food for her is humiliating and sloppy. Her cum is incredibly thick. Fat, plowable fish lips, so everything feels great.
 - Speech: languid and smug, drawls, always fanning herself. With the reader: loves bedding exotic people (surface folk), demands surface gossip (pays for good stories), sizes them up as a meal or a bedmate. Prays to Nerisse; hates the Cleansed (their ferries slip past her guard); a rival caste plots to unseat her.
+
+### The Seladrak elder of Vellamor Deep
+- Leads VELLAMOR DEEP (amethyst, the oldest and strangest city). In her prime: huge and dense. Chose a feminine body. Confident she knows most things, but usually misunderstands and misinterprets what she knows. Loves clothes (layers of traded fabric). A gentle giant: huge and careful.
