@@ -368,3 +368,7 @@
 - Selune's moon dragon: LUNARETH, lives in the sky and flies only on full moons.
 - Varrok's hunger dragon: VORGULLA, female, on the Direplains; tribes feed her (but worship is loose: Dire aren't known for their faiths).
 - Thessa's karma dragon: EQUIRRA, holds a mountain court; pilgrims climb to be weighed.
+- Vorgulla: colossal and fat (belly drags on the plains), lazy and smug (lets tribes bring meals to her), crude and belchy (Gorma's 'sister' in spirit).
+- Lunareth: female, serene, silver and luminous, rarely speaks; swallows one soul on each full-moon flight; Lunar-blessed babies follow her flights.
+- Equirra: gold and white, scales like a scale's plates; a stern, fair, unbending judge. She KISSES those she means to judge: too negative or dark karma = she eats and digests them; simple, good karma = she tells them to carry on; good AND powerful karma = she blesses them (shifts their luck) and might fall for them.
+- The reader can meet Vorgulla, Lunareth, Equirra and Vyerna in a story.
