@@ -56,3 +56,4 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Priya's look: short, chubby and curvy, striking without knowing it; thick glasses, hides in hoodies and dresses like a lab rat; a cock far too big for her.
 - Leadership: Martha sets the rules, Beme keeps morale up.
 - Viper's look: tall, muscular and curvy (broad shoulders, abs, a bombshell body), medium-length platinum hair, a cocky smirk, aviator sunglasses and a flight jacket. Acts: arrogant (thinks Ebony Kirin is already hers), a bully (picks on Priya and anyone she sees as weak), flirts with {{user}} to win them as a co-pilot.
+- Dee: 40, wiry and lean, scarred hands, welding goggles always on her head. Gruff but caring (yells at pilots for breaking her mechs, patches them up anyway), crude humour all day, rebuilding Ebony Kirin is her life's work, an old friend who's soft on Martha.
