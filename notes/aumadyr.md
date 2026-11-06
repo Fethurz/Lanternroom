@@ -124,3 +124,37 @@
 - Lunar-blessed: babies of any race born under a rare moon get high mana potential; Valdrenn prizes them.
 - Dwarves: classic (short, stout; men with braided beards; sturdy, broad women with braided hair).
 - Calendar: time counted by moons; Valdrenn's full-moon festival; the Blood Moon, when karma swings hardest.
+
+## New primary race (2026-11-06, Draenei-like)
+- Drawn to: the look (tall, horned, hooved, tailed, exotic skin) and exiles from elsewhere. Came from the sky. High mana and karma-sensitive (natural sensers). Live on Rimefast or an island (TBD which).
+- Rimefast is THEIRS alone (the Selune hermitage moves elsewhere; TBD). They fell through a rift from a broken sky-realm. Something that hunts them may follow them here.
+- Look: tall (7-8 ft), horned, digitigrade hooves, long tails; faintly glowing markings that brighten with mana; skin in sky colours (dusky blues, violets, twilight pinks, starry speckles). Futas and males have horse cocks.
+- VERY sensitive to godly presence: those born near places of lingering god essence take on the colouring and magical preference of that god.
+- Name: the OSTARI. Hunted by whatever broke their realm (unknown, vast, slowly finding the rift). Arrived centuries ago (settled; the exile is old history). Reception: a mix by nation (curious and wary, courted for their mages and karma sense, feared because of what hunts them).
+- Ostari society: watchful and devout (wardens watch the sky for the rift; scholars study the gods). Vore/lewd like the other races (females and futas have the racial knack; taboo publicly). A few live abroad (mercenary mages, scholars, karma investigators for hire).
+- The Selune ice-mage hermitage moves into Valdrenn's mountains (a peak shrine).
+
+## Wildlife and monsters (2026-11-06)
+- Wildlife mixes by region: ordinary animals near towns, stranger beasts in the wilds. Wild animals RARELY can swallow people.
+- Monsters = mana-warped beasts (twisted by too much mana or karma) AND god-spawned horrors (from dead or fading gods).
+- Kinds: classic fantasy (wyverns, basilisks, griffins, ogres...), wild undead (beyond Animar's tame skeletons), slimes and oozes, mimics and ambushers, and much weirder things: Vez'nan's castle minions are examples (gargoyles, fog vipers, silkslugs, draugr, brimstone drakes, mimics, smelter imps, scriptlings, bogues, wereskunks, dire seals...).
+- Monsters most common near god remains (Hollowmouth, Greenrest, the Ochre Waste), on Ashsilver Isle (silver-warped things around troll ruins), in the rift's dungeons under Riftmarket, and around the Dark Castle (its minions roam nearby). Some are sapient (most are beasts). Many are preds (swallowing, engulfing, dissolving). Signature creatures: ask per creature.
+## Bestiary (approved 2026-11-06)
+- Sinmaw: huge solitary ash-furred forest panther, gold eyes; smells negative karma, stalks the guilty and swallows them whole, leaves the innocent alone.
+- Wayhounds: lean pack dogs trailing caravans at night, mimicking lost travellers' voices to lure people off the path.
+- Mirebelly toad: cart-sized swamp toad (Fir swamp, Lake Ashenmere reeds); tongue-snaps travellers, pulls its eyes down to swallow.
+- Hollowborn: pale, smiling crawling things seeping out of Ossvar's corpse; kiss or swallow people and drain their negative karma, leaving them blissful and doomed.
+- Rootmothers: walking carnivorous trees of Greenrest, Ylwen's grove-guards; wrap trespassers in roots and draw them into hollow trunks.
+- Dune-leeches: man-sized sand worms of the Ochre Waste that swallow travellers whole; rumoured Ozhara's young.
+- Moonmoths: huge pale moths around Valdrenn's shrines, drawn to ice magic and moonlight; drink mana from sleeping mages.
+- Tarnish oozes: silver-flecked slimes in Ashsilver's ruins; hold mana like silver, dissolve people very slowly, keeping their karma.
+- Rift gulpers: blind big-jawed cave preds in the dungeons under Riftmarket, hunting by sound.
+- Chasm wyverns: nest in the rift's walls, snatch climbers off ropes.
+- Grave-gluttons: wild undead ghouls outside Animar's control; eat corpses and the living, swollen and rotting.
+- Cinder basilisks: lava basilisks on the Cinder Isles; their stare petrifies, then they swallow and melt the statue.
+- Sky-shards: crystalline beasts that fell through the Ostari's rift, heralds of what hunts them, growing more common.
+- Shellmaws: coastal ambushers that look like rocks or wrecks; swallow beachcombers and divers.
+- Dropped: Gorgehorn, Gilt mimics. Owner: look into Vez'nan's minions for more concrete species ideas.
+- Castle species also living wild across Aumadyr: Mimics (ruins/dungeons, grow ornate with digested valuables), Silkslugs (damp caves, swamps), Bogues (primitive slug-people tribes in flowered marshes, coloured by their flowers), Draugr (old battlefields and barrows).
+- Batch 2 approved: Pillowcaps (giant soft mushrooms in goblin cave-forests; sweet spore lull, then the cap folds over you like plump lips); Lantern-mouths (floating glowing jelly orbs in caves trailing slimy tongues, float onto prey and engulf them); Hollow knights (wild cousins of the Valkyries: empty armour sets wandering old battlefields; put one on and it seals and digests you); Snowmaw seals (Dire Seal cousins on the Valdrenn coast and Rimefast ice: slick, fat, slobbery, swallowing fishermen); Karma moths (small harmless moths that swarm people with strong karma; investigators follow them to suspects).
+- Dropped: Hearthmaws, Gutwyrms, Bellbloom.
