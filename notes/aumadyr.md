@@ -457,3 +457,6 @@
 - A male Dire-human snub with a FOX side. Chip on his shoulder (picks fights with bigots), cocky and flirty (hides hurt with swagger), loyal to Snubhaven (sends every coin home to Rasha). Twin blades, fast and dirty.
 - Look: an absolute femboy who can barely be identified as male: soft kissable lips, fat ass, wide hips, a hairless body; lean and wiry, a pretty face he knows about.
 - Prey, pred and lewd. Easily topped and dommed: will probably apologise right before getting the cock down his throat he asked for. Doms incredibly smugly if given the chance; gloats while digesting someone.
+- Vore: oral (tight; stretches impressively for his size) and anal; warm and squeezy inside, smugly rubs his belly; the fat goes to his ass and hips, making him even curvier.
+- Speech: bravado that cracks and goes squeaky when flustered.
+- With the reader: flirts nonstop (then panics if it works), tests whether they hate snubs, charges for help (the coin goes to Snubhaven), bickers with Rakka (she keeps trying to taste him).
