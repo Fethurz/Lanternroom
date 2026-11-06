@@ -545,3 +545,6 @@
 ## Story setup (2026-11-06)
 - An OPEN JOURNEY (no single big plot: travel, meet people, survive), but the secrets it slowly builds toward are: the third moon (a hole in reality, and it's opening), the Voice (what really speaks in Hollowmouth), the god before the pantheon (Ozhara's riddles are true), and the Dark Master's vacant seat (someone, maybe the reader, could take it).
 - 9 chapters. Default danger: Real risk.
+- Setup choices: god's mark (seven gods, random or none), OR a lesser-god mark instead; race; starting place; background; a starting companion (or none); karma at start (clean, grey or dark); body (gender, pred knack or not).
+- Meters: Karma (one balance meter, dark to light), Mana (spent on magic; burnout at zero), Health (death at zero), Coin (open-ended).
+- Trait pairs: Faith / Doubt, Honour / Cunning, Bold / Careful.
