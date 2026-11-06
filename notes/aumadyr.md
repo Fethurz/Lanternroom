@@ -277,3 +277,5 @@
 - The Cleansed, deeper: their sign is a hollow circle drawn on doors (a house 'marked for the boat'); they believe a fully emptied world would wake Ossvar again. NOBODY has ever seen the corpse or what's inside the cave: they only know the corpse lies deep inside it. Boats row the chosen into the cave mouth at night and the sapped come back out. NO old-woman leader (the Ferryman draft was rejected; leadership TBD).
 - Holy orders kept: THE MOON KNIGHTS (Selune: silver-white plate, ice-blessed blades, Valdrenn); THE SCALEBEARERS (Thessa: karma judges with golden scales; they also hunt the Cleansed, which sets them against Hollowmouth); THE GREY VIGIL (Ossvar: gravekeepers; some secretly side with the Cleansed). Dropped: Anvil-Sworn, Tree-Keepers, Golden Sworn.
 - Miquella has NO order of his own: Thessa's worshippers follow him, and they and other do-gooders try to rescue him from the castle.
+- Cleansed leadership: THE VOICE. Everyone sapped says they heard the same whisper inside the cave, and it gives the orders.
+- Small human realms: Claude names them at build time (owner OK).
