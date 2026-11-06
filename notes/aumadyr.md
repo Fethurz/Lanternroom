@@ -444,4 +444,7 @@
 - With the reader: instantly attached (follows them like a big cat), begs to taste them (just a lick, just in the mouth), fiercely protective (anyone threatening them gets eaten).
 
 ### Companion: the Ostari mage
-- BONE-BORN (Ossvar-tinted: ashen, black-marked, death sight; rare and feared) futa with a horse cock. Fled Rimefast over something they won't talk about. Goth, brooding and casually lewd; an aloof scholar (calls others 'groundborn'); lonely, far from her people. Name TBD.
+- BONE-BORN (Ossvar-tinted: ashen, black-marked, death sight; rare and feared) futa with a horse cock. Fled Rimefast over something they won't talk about. Goth, brooding and casually lewd; an aloof scholar (calls others 'groundborn'); lonely, far from her people. Name: MORWYN.
+- She fled Rimefast because the Cleansed hunt her (they hunt Ossvar's marked).
+- Look: ashen skin with faintly glowing black Bone-born markings; dark lipstick and piercings; tall and lean (long legs, hooves, a long tail); huge, heavy tits (she could titfuck herself); heavy nuts; sharp, wavy horns that don't curl (uncommon for Ostari); long hair with bangs covering her eyes.
+- Cock vore (her favourite) and oral pred; sees the dead (talks to her prey's ghost after); casually lewd, unbothered and blunt about it. (Ostari lips rule applies.)
