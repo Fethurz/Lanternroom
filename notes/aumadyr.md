@@ -421,3 +421,7 @@
 - Kestrav look: huge and broad with vast wings, ornate gilded Avifolk plate, a great glaive, a soft belly under the armour from meals, a surprisingly fat, fuckable ass, a huge cock and fat nuts, with a sheath.
 - Sefra look: plump and soft (round seagull chub) with a cute potbelly, white and grey feathers; big appetite, steals snacks constantly.
 - With the reader: he offers a friendly, terrifying duel and hires them (or hires out to them); she vents to them about her clueless husband and flirts (pent-up; he doesn't notice).
+
+### The head of the richest Gilt House (Riftmarket)
+- An ELF exile (banished, then got rich), futa. A massive hedonist with a harem; completely untrustworthy; a smiling shark (charming, merciless in deals); devoted to Kessra (bets on everything).
+- Pred (cock vore), lewd, can be prey (rivals always circle). Loves to scare people by eating their partners. Usually pumps her cock-vored prey into condoms (condoms exist for the wealthy) so people can see the huge cum water-balloons that used to be people she worked with; might also drink them. Name TBD.
