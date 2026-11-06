@@ -364,3 +364,7 @@
 ## Dragons (2026-11-06)
 - God-dragons (sapient, once served the gods): Vyerna (Ylwen), Serasha (Kethrak), plus NEW: Ossvar's bone dragon (Vaelthis's ancestor; perhaps still alive near Hollowmouth), Selune's moon dragon (silver, frost-breathing), Varrok's hunger dragon (a huge glutton), Thessa's karma dragon (a judge who weighs those she meets), and Aumara's dragon, who sleeps under the land (mountains are her back; earthquakes are her turning).
 - Wild (non-sapient) kinds: brimstone drakes (near the castle), frost drakes up north (Valdrenn hunts them), fat lazy belly-dragging swamp wyrms, burrowing sand drakes in the Ochre Waste.
+- Ossvar's bone dragon: VANISHED (name unknown; nobody knows where; Vaelthis searches for it).
+- Selune's moon dragon: LUNARETH, lives in the sky and flies only on full moons.
+- Varrok's hunger dragon: VORGULLA, female, on the Direplains; tribes feed her (but worship is loose: Dire aren't known for their faiths).
+- Thessa's karma dragon: EQUIRRA, holds a mountain court; pilgrims climb to be weighed.
