@@ -508,4 +508,7 @@
 ### The Scalewright hunter
 - A dexterous human woman. Absolutely loves swallowing dragons and churning them down into sexy, useless human curves and flab. Digs through her own shit for the useful leftovers to sell, or maims and dismembers dragons before eating so the valuable parts aren't attached to her meal.
 - Role: rival, villain, grey or possible ally, depending on circumstances.
-- The job makes her horny; insulting or harming her takes more effort than it's worth (even wounds get her going). Trophy-obsessed (wants Lunareth's scales), greedy, charismatic (easy to like, hard to trust). Name TBD.
+- The job makes her horny; insulting or harming her takes more effort than it's worth (even wounds get her going). Trophy-obsessed (wants Lunareth's scales), greedy, charismatic (easy to like, hard to trust). Name: JUNO KELL.
+- Look: curvy and soft (dragon-flab on hips, belly, chest), lithe and dexterous underneath; tight leather and cloaks; insultingly never uses the spoils of her hunts unless explicitly necessary.
+- Vore: oral (a human stretching hugely around a dragon) and anal; eats people too (rivals, dragonborn, maybe the reader).
+- Weapons: two sickles, but she'll use anything if she needs to.
