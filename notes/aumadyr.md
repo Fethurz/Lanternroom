@@ -252,3 +252,7 @@
 - GORMA (was Gormund): a fat, hungry Dire slut of a goddess of gluttony and full bellies (Varrok's child). Preds pray to her before a meal; a burp after eating is 'Gorma's thanks'; her shrines are feast-halls. (Details below.)
 - Luck goddess: a 'Lady Fortune' (replaces the trickster Pippet; new name below). Gamblers flip a coin before any deal; thieves leave a stolen coin at crossroads for her. An incredibly sexy, buxom woman who sways people into bets they can't uphold and other tricks; loves eating people as the consequence when they fall for her tricks out of greed; loves sex.
 - Storms and sea: the Korraven draft was rejected; new idea below.
+- NERISSE, the Undertow (sea and storms): Selune's daughter, a vast eel-tailed siren queen whose song pulls ships down; storms are her moods; sailors who drown 'go to her bed'; the siren curse (no siren can bear young) is said to be her punishment on her own children.
+- LADY KESSRA, Mistress of Odds (the Lady Fortune): Thessa's wayward daughter.
+- GORMA is a huge HYENA Dire: cackling, crude, always hungry. (Shrine reach not answered yet; default: feast-halls in the Direplains, plus Riftmarket's bellyhouses quietly keep her idols.)
+- Lesser gods now: Lysara, Mawryn, Nerisse, Lady Kessra, Halvra, Gorma, Miquella, the Balancers (8).
