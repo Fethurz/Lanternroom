@@ -333,3 +333,5 @@
 
 ### Snubhaven's elder
 - A Dire-human snub, futa. Young for the role (took over after the last elder died). Fiercely protective (kills anyone who threatens her people), warm under the grit (mothers every stray who arrives), bitter at the races that shun snubs.
+- Name: RASHA 'MOTHER' SAND (the camp gave her the nickname). Jackal Dire side: jackal ears and tail, claws and fangs, and a black bottom lip, as if her face got a gene for bestial jowls (probably gives incredible head).
+- Young (an adult) and not very battle-hardened; community-driven, so she can be eaten (prey is possible). Pred to threats (raiders, bigots), incl. cock vore. Lewd, but she has never taken a lover and is very innocent about lewd things.
