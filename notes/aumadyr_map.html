@@ -1,0 +1,305 @@
+<title>Aumadyr Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: a night sky strip with the three moons, the hand-drawn map below it, and a reading panel beside it (below it on phones). */
+:root{
+  --bg:#130d17; --surface:#1e1623; --line:#3a2d40; --text:#f0e7dc; --muted:#ab9ca8; --accent:#e8a95b;
+  --sea:#1d3240; --sea2:#24404f; --grass:#77803f; --grass2:#8c9446; --snow:#d3dbe0; --rock:#2f2c36; --sand:#c2a265; --lava:#d9772f;
+  --d1:#6fdc6a; --d2:#c8d84f; --d3:#e8a95b; --d4:#e8674b; --d5:#c43b6b;
+  --display:"Young Serif", Georgia, serif; --body:"Atkinson Hyperlegible", system-ui, sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--text)}
+body{font-family:var(--body);font-size:15px;line-height:1.5;margin:0;padding-block:18px 40px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 18px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,5vw,40px);margin:0;letter-spacing:.02em}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);margin:0;max-width:60ch}
+.sky{position:relative;border:1px solid var(--line);border-radius:14px;background:radial-gradient(120% 140% at 50% 0%, #2a1f38 0%, #150f1c 60%, #0f0a13 100%);overflow:hidden}
+.sky svg{display:block;width:100%;height:auto}
+.skycap{position:absolute;left:12px;bottom:8px;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bar label{font-size:13px;color:var(--muted)}
+button,select{font-family:var(--body);font-size:14px;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 14px;min-height:36px;cursor:pointer}
+button[aria-pressed="true"]{background:var(--accent);color:#1a1008;border-color:var(--accent);font-weight:700}
+button:focus-visible,select:focus-visible,.spot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
+.mapbox{border:1px solid var(--line);border-radius:14px;overflow:auto;background:var(--sea);-webkit-overflow-scrolling:touch;max-height:82vh}
+.mapbox svg{display:block;width:100%;height:auto}
+.mapbox.zoom svg{width:220%}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0;position:sticky;top:max(12px, env(safe-area-inset-top, 0px))}
+.panel h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0 0 2px}
+.kind{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.panel p{margin:8px 0}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:10px 0;font-size:14px}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;border-radius:999px;padding:2px 10px;border:1px solid var(--line)}
+.pill i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.chapters{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.ch{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:6px 8px;border-radius:10px;border:1px solid transparent;cursor:pointer}
+.ch:hover{border-color:var(--line)}
+.ch.on{border-color:var(--accent);background:rgba(232,169,91,.08)}
+.ch b{font-family:var(--display);font-weight:400;color:var(--accent);text-align:center}
+.ch input{width:18px;height:18px;accent-color:var(--accent)}
+.muted{color:var(--muted);font-size:13px}
+.inset{margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--sea)}
+.inset svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--muted)}
+.spot{cursor:pointer;outline:none}
+.spot .ring{transition:r .15s}
+.spot:hover .ring,.spot.sel .ring{r:26}
+.lbl{font-family:var(--display);font-size:30px;fill:#f4ecdf;paint-order:stroke;stroke:#140d12;stroke-width:7px;stroke-linejoin:round}
+.lbl.big{font-size:44px;letter-spacing:.04em}
+.lbl.sm{font-size:24px}
+.danger .dglow{opacity:.55}
+.dglow{opacity:0;transition:opacity .25s;pointer-events:none}
+.chfade .spot{opacity:.35}
+.chfade .spot.inch{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@keyframes drift{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.shards{transform-origin:600px 70px;animation:drift 90s linear infinite}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Aumadyr <span>Atlas</span></h1>
+      <p class="sub">Your map, redrawn with everything we built. Tap a place to read about it.</p>
+    </div>
+    <div class="bar" role="toolbar" aria-label="Map options">
+      <button id="bDanger" aria-pressed="false">Danger levels</button>
+      <button id="bZoom" aria-pressed="false">Zoom in</button>
+      <label for="selCh">Story</label>
+      <select id="selCh"><option value="0">All chapters</option></select>
+    </div>
+  </header>
+
+  <div class="sky" aria-label="The three moons">
+    <svg viewBox="0 0 1200 140" role="img" aria-label="Selune's tide moon, the cracked crystal moon and the pale third moon">
+      <defs>
+        <radialGradient id="mTide" cx="40%" cy="35%"><stop offset="0" stop-color="#fbf3e3"/><stop offset="1" stop-color="#b9b0a2"/></radialGradient>
+        <radialGradient id="mBlood" cx="40%" cy="35%"><stop offset="0" stop-color="#ff9b84"/><stop offset="1" stop-color="#8e1f2a"/></radialGradient>
+        <radialGradient id="mCrys" cx="40%" cy="35%"><stop offset="0" stop-color="#e5f3ff"/><stop offset="1" stop-color="#7a8fd0"/></radialGradient>
+        <radialGradient id="mHole" cx="50%" cy="50%"><stop offset="0" stop-color="#05030a"/><stop offset=".55" stop-color="#1b1226"/><stop offset="1" stop-color="#cfc6e6"/></radialGradient>
+      </defs>
+      <g fill="#fff" opacity=".6">
+        <circle cx="80" cy="30" r="1.4"/><circle cx="190" cy="100" r="1"/><circle cx="330" cy="40" r="1.2"/><circle cx="470" cy="110" r="1"/><circle cx="760" cy="26" r="1.3"/><circle cx="880" cy="104" r="1"/><circle cx="1010" cy="40" r="1.2"/><circle cx="1140" cy="96" r="1"/><circle cx="1090" cy="18" r="1"/><circle cx="40" cy="118" r="1"/>
+      </g>
+      <g id="tide" style="cursor:pointer"><circle id="tideDisc" cx="300" cy="70" r="40" fill="url(#mTide)"/><circle cx="288" cy="60" r="7" fill="#000" opacity=".08"/><circle cx="314" cy="84" r="5" fill="#000" opacity=".08"/></g>
+      <g>
+        <circle cx="600" cy="70" r="34" fill="url(#mCrys)"/>
+        <path d="M585 42 L603 66 L594 80 L612 100" stroke="#2b3a72" stroke-width="2.5" fill="none"/>
+        <path d="M603 66 L626 60" stroke="#2b3a72" stroke-width="2" fill="none"/>
+        <g class="shards" fill="#cfe2ff">
+          <path d="M548 54 l6 -8 4 9z"/><path d="M652 88 l7 4 -6 6z"/><path d="M560 104 l8 0 -4 7z"/><path d="M646 40 l5 -6 3 8z"/><path d="M536 82 l5 3 -5 4z"/><path d="M662 62 l6 1 -3 6z"/>
+        </g>
+      </g>
+      <g><circle id="hole" cx="900" cy="70" r="16" fill="url(#mHole)"/><circle id="holeRing" cx="900" cy="70" r="20" fill="none" stroke="#cfc6e6" stroke-opacity=".35" stroke-width="1.5"/></g>
+      <g font-family="Atkinson Hyperlegible, sans-serif" font-size="13" fill="#ab9ca8" text-anchor="middle">
+        <text x="300" y="132" id="tideCap">Selune's tide moon (tap: Blood Moon)</text>
+        <text x="600" y="132">The cracked crystal moon</text>
+        <text x="900" y="132" id="holeCap">The third moon</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="main">
+    <div class="mapbox" id="mapbox">
+      <svg id="map" viewBox="0 0 2000 1500" role="img" aria-label="Map of Aumadyr">
+        <defs>
+          <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="7"/>
+            <feDisplacementMap in="SourceGraphic" scale="16"/>
+          </filter>
+          <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+          <pattern id="waves" width="80" height="40" patternUnits="userSpaceOnUse">
+            <path d="M0 20 q20 -10 40 0 t40 0" stroke="#2b4a5a" stroke-width="2" fill="none" opacity=".55"/>
+          </pattern>
+          <clipPath id="landClip"><path d="M470 240 L560 70 L720 45 L900 95 L1100 62 L1300 50 L1520 80 L1660 120 L1700 260 L1690 440 L1590 420 L1470 470 L1420 600 L1360 720 L1270 720 L1230 600 L1150 480 L1030 390 L900 370 L790 385 L705 440 L680 560 L680 700 L705 790 L820 790 L960 772 L1100 792 L1220 860 L1310 960 L1335 1060 L1300 1170 L1200 1230 L1090 1255 L980 1232 L880 1170 L870 1120 L915 1080 L1000 1040 L995 990 L880 975 L780 1000 L715 1060 L705 1120 L770 1180 L880 1240 L1000 1280 L1060 1340 L1000 1410 L850 1445 L690 1445 L560 1420 L520 1340 L545 1270 L470 1205 L370 1215 L250 1228 L170 1175 L190 1000 L215 820 L235 650 L265 555 L300 455 L400 420 L470 330 Z"/><path d="M1490 960 L1600 885 L1705 892 L1775 950 L1835 1010 L1805 1110 L1790 1220 L1700 1285 L1590 1262 L1515 1200 L1478 1095 Z"/><path d="M70 70 L170 50 L240 110 L230 230 L200 340 L140 385 L80 330 L60 210 Z"/></clipPath>
+          <radialGradient id="glow"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+        </defs>
+
+        <rect width="2000" height="1500" style="fill:var(--sea)"/>
+        <rect width="2000" height="1500" fill="url(#waves)"/>
+
+        <g filter="url(#rough)"><g id="landShapes">
+          <path id="mainland" d="M470 240 L560 70 L720 45 L900 95 L1100 62 L1300 50 L1520 80 L1660 120 L1700 260 L1690 440 L1590 420 L1470 470 L1420 600 L1360 720 L1270 720 L1230 600 L1150 480 L1030 390 L900 370 L790 385 L705 440 L680 560 L680 700 L705 790 L820 790 L960 772 L1100 792 L1220 860 L1310 960 L1335 1060 L1300 1170 L1200 1230 L1090 1255 L980 1232 L880 1170 L870 1120 L915 1080 L1000 1040 L995 990 L880 975 L780 1000 L715 1060 L705 1120 L770 1180 L880 1240 L1000 1280 L1060 1340 L1000 1410 L850 1445 L690 1445 L560 1420 L520 1340 L545 1270 L470 1205 L370 1215 L250 1228 L170 1175 L190 1000 L215 820 L235 650 L265 555 L300 455 L400 420 L470 330 Z" style="fill:var(--grass)"/>
+          <path d="M1490 960 L1600 885 L1705 892 L1775 950 L1835 1010 L1805 1110 L1790 1220 L1700 1285 L1590 1262 L1515 1200 L1478 1095 Z" style="fill:var(--grass)"/>
+          <path d="M70 70 L170 50 L240 110 L230 230 L200 340 L140 385 L80 330 L60 210 Z" style="fill:var(--rock)"/>
+          <path d="M845 590 L920 565 L985 595 L990 650 L930 680 L860 665 Z" fill="#6c5b45"/>
+          <path d="M1755 615 L1820 595 L1870 630 L1860 685 L1790 695 L1750 660 Z" style="fill:var(--snow)"/>
+          <path d="M220 1255 L262 1250 L265 1290 L228 1300 Z" style="fill:var(--lava)"/>
+          <path d="M295 1300 L350 1290 L372 1340 L330 1380 L292 1356 Z" style="fill:var(--lava)"/>
+          <path d="M195 1360 L240 1352 L250 1392 L205 1400 Z" style="fill:var(--lava)"/>
+        </g>
+
+        <g clip-path="url(#landClip)">
+          <path d="M440 40 L1720 40 L1720 460 L1580 420 L1470 300 L1300 290 L1100 260 L900 280 L700 270 L470 330 Z" style="fill:var(--snow)" opacity=".95"/>
+          <path d="M60 60 L250 60 L250 230 L60 230 Z" style="fill:var(--snow)" opacity=".9"/>
+          <path d="M160 420 L420 420 L440 560 L300 640 L300 1000 L330 1080 L420 1120 L420 1260 L160 1260 Z" style="fill:var(--rock)"/>
+          <path d="M420 1100 L760 1140 L900 1230 L1080 1320 L1080 1460 L500 1460 L440 1260 Z" style="fill:var(--sand)"/>
+          <path d="M1470 1100 L1620 1160 L1640 1300 L1480 1300 Z" style="fill:var(--sand)" opacity=".9"/>
+          <path d="M1580 870 L1780 870 L1780 960 L1580 960 Z" style="fill:var(--snow)" opacity=".9"/>
+          <path d="M700 790 L1300 790 L1340 1050 L1200 1000 L760 1000 Z" style="fill:var(--grass2)" opacity=".55"/>
+        </g>
+        </g>
+
+        <path d="M300 640 C340 600 410 600 420 650 C430 720 400 780 340 790 C305 780 290 700 300 640 Z" style="fill:var(--sea)"/>
+        <ellipse cx="392" cy="900" rx="28" ry="46" fill="#3c6273"/>
+        <path d="M1095 1160 C1150 1145 1220 1150 1260 1170" stroke="#2a1c18" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <path d="M1110 1176 C1160 1165 1200 1170 1240 1186" stroke="#2a1c18" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/>
+        <rect x="1335" y="1082" width="150" height="34" rx="10" fill="#9a958c" stroke="#4a4640" stroke-width="4"/>
+        <rect x="930" y="1162" width="90" height="26" rx="8" fill="#9a958c" stroke="#4a4640" stroke-width="4" transform="rotate(-24 975 1175)"/>
+        <g fill="#f2f2f2" opacity=".5" filter="url(#soft)">
+          <ellipse cx="1780" cy="80" rx="90" ry="40"/><ellipse cx="90" cy="520" rx="80" ry="40"/><ellipse cx="1740" cy="1360" rx="120" ry="45"/><ellipse cx="90" cy="1330" rx="70" ry="30"/>
+        </g>
+
+        <g id="dangerLayer"></g>
+        <g id="spots"></g>
+      </svg>
+    </div>
+
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+
+  <div class="legend" id="legend"></div>
+</div>
+
+<script>
+const DCOL = ["", "#6fdc6a", "#c8d84f", "#e8a95b", "#e8674b", "#c43b6b"];
+const DNAME = ["", "Safe-ish", "Watch yourself", "Dangerous", "Very dangerous", "Deadly"];
+const CH = [
+  [1, "Home and the First Road", "Wherever you start; your mark wakes and you take to the road."],
+  [2, "Riftmarket and the Chasm", "Gilt Houses, Delvers, Kessra's tables, the first delve."],
+  [3, "The Direplains", "Maaghold's arena, Nalaya, Vorgulla."],
+  [4, "Valdrenn and Rimefast", "Astrid's hall, the Ostari, Lunareth on the full moon."],
+  [5, "Jorikzalt and the Seladrak Deeps", "Gudrun, Heahmund's story, Amethra."],
+  [6, "The Elven Volcanoes and the Cinder Isles", "Ithrael, Fennic, Sparrow; Animar on the road."],
+  [7, "Greenrest Wood and the Goblin Groves", "Vyerna, Equirra's court, Juno Kell."],
+  [8, "The Ochre Waste and Snubhaven", "Rasha, Ozhara, the god before."],
+  [9, "The Bay, Hollowmouth and the Castle Peaks", "Kinuyo, the Voice, the vacant seat, the third moon."]
+];
+// [id, name, kind, x, y, danger, chapter, size, rule, people, monsters, vore, about]
+const P = [
+ ["valdrenn","Valdrenn","Human kingdom",705,175,3,4,"big","Jarl-queen Astrid Hrafnsdottir, chosen by Selune's priestesses","Astrid and her priestesses Helka, Runa and Solveig; Brynja of The Full Horn; Moon Knights","Moonmoths, moonhounds, frost drakes, snowmaw seals on the coast","Strict, but swallowing a foe beaten in a fair fight is honourable ('feeding Halvra')","Norse-like longhalls, ice mages, duels and full-moon festivals. Honey mead and smoked seal. Old wars nearly wiped out the Jotun of the far north."],
+ ["eyries","Avifolk eyries","Clan towers",1060,200,3,4,"","Clan lords, among them Kestrav and his wife Sefra","Avifolk duelists, hired swords","Harrowkites, frost drakes","By clan code: code-breakers get eaten","Cliff towers around old sky monasteries. Honour duels, ornate armour and polearm schools. They fight for whoever honours their code."],
+ ["jorikzalt","Jorikzalt","Dwarven empire",1400,210,3,5,"big","A council of mining clans (the crown is ceremonial)","Gudrun Anvilmother and the clan matriarchs; Heahmund grew up here","Kobolds in the foothills, cave beasts","Strict: caught preds are shamed and exiled; matriarchs quietly eat traitors","Carved mountain halls, forges, mines and a walled fortress city. Dwarf women are runesmiths with mana that keeps them youthful. Stone-ale and mushroom bread. Ostrumeth, a Seladrak city, lies below."],
+ ["greenrest","Greenrest Wood","Ylwen's last grove",1330,560,5,7,"","Nobody: Vyerna guards it","Vyerna, the green dragon","Rootmothers, Vyerna","Vyerna eats anyone who settles","The last grove of Ylwen the Green Root. Vyerna warns travellers to leave by nightfall, and she means it."],
+ ["vyerna","Vyerna","Green dragon",1480,630,5,7,"sm","","Vyerna","","Oral only; tight, sour, crushing insides","Ylwen's oldest servant and technically her daughter: huge, mossy, tired and grieving."],
+ ["dunhallow","Dunhallow","Human county",745,380,1,1,"","Lord Tobin Hearthley","Tobin, his flocks, Dire mercenaries","Wolves, Wayhounds on the roads","Hushed, but Tobin trades openly with the Dire","A small shepherd county south of Valdrenn and the safe road east. Bea Thistlewood comes from here."],
+ ["elves","The elven volcanoes","Elf towns",395,520,3,6,"big","Queen Ithrael Cindermoor and King Fennic Ashgrave","Ithrael, Fennic and Brasswife, Sparrow","Magma worms, lava crabs, slagfish","Curious but disapproving; some study it","Green and blue spires on volcano slopes: pipes, smoke, test ranges and flintlocks. Elves eat coal, regenerate and hate the cold. Quarrenhal, a Seladrak city, lies below."],
+ ["quarrenhal","Seladrak deeps","Cave mouth",262,705,2,5,"sm","Seladrak elders","Seladrak traders; Amethra rules Vellamor Deep","Lantern-mouths, rift-like cave beasts","Seladrak rarely eat people, but when they do it's horrific","Cave openings lead down to OSTRUMETH (under Jorikzalt), QUARRENHAL (under the elven mountains) and VELLAMOR DEEP (amethyst, the oldest and strangest)."],
+ ["ashenmere","Lake Ashenmere","Human lake kingdom",420,880,2,1,"","Lady-regent Corin Ashenmere","Corin and her loyal handmaid","Mirebelly toads in the reeds","Hushed; Corin secretly eats rivals","A small, prim kingdom of fishing and farming near the elves, full of whispers and scandals."],
+ ["groves","Goblin grove caves","Goblin homes",638,790,2,7,"sm","Each tribe its own chief","Goblin tribes of cherry, birch, maple and more","Pillowcaps","Strict: harm their trees and see","Caves terraformed into glowing forests of each tribe's chosen tree. Welcoming, but rival tribes are always at civil war."],
+ ["animar","Animar","Necromancer city",700,880,3,6,"big","Bone Chancellor Vaelthis","Vaelthis and the necromancer guilds","Grave-gluttons (wild undead) outside the walls","Loose and licensed: they care about the bones","Purple spires and endless mines worked by mindless skeletons. Other nations call it a karma crime and trade with it anyway. The rich drink gravewine."],
+ ["ashsilver","Ashsilver Isle","Troll ruins",150,230,5,0,"","Nobody: bitter hidden trolls","A few surviving trolls","Silver constructs, tarnish oozes, silverfur wolves, spell-machines","None: survive","Half-buried tarnished-silver troll cities under snow and ash. Sick silver everywhere. High Silver script on every wall."],
+ ["serpent1","Sea serpents","Wild beasts",300,160,4,0,"sm","","","Sea serpents, world serpents sleeping in the deep","","Ships give these waters a wide berth."],
+ ["hollowmouth","Hollowmouth","Ossvar's corpse",915,620,5,9,"","The Voice","The Cleansed and their ferries; Grace","Hollowborn","Not vore: it saps your negative karma and leaves you hollow","A cave island in the central bay. The dead god's corpse lies somewhere deep inside; nobody has seen it. Most who are brought in die within days."],
+ ["kaigo","Kaigo","Drak sea-city",1130,540,2,9,"","Tide-empress Kinuyo","Kinuyo and the Drak castes","Pearlmaws, kelpies, shellmaws","Lawbreakers are eaten before the court","A half-sunken city of pagoda towers in the bay. The Drak guard the waters and turn boats back from Hollowmouth."],
+ ["riftmarket","Riftmarket","Free city",1180,1030,3,2,"big","Nobody officially: the Gilt Houses and the Iron Tally","Velvet Auric, Ingrit Ironbelly, Bea, the Deepwalkers, Irla and the Crossroads","Rift gulpers and chasm wyverns below","Loosest anywhere: bellyhouses run openly","Red roofs by the chasm, every race, black markets, Kessra's gambling tables. The Delvers' Compact starts here."],
+ ["chasm","The chasm","Dungeons",1180,1170,4,2,"sm","The Delvers' Compact maps it","Delvers, the Deepwalkers","Rift gulpers, chasm wyverns, mimics, troll ruins","Anything goes down there","A vast rift leading to caves and ancient dungeons. The Deepwalkers mapped it further than anyone."],
+ ["bridge","The stone bridge","Crossing",1410,1100,2,3,"sm","","Dire porters and caravans","","","The only land road between Aumadyr and the Direplains."],
+ ["direplains","The Direplains","Dire continent",1650,1060,4,3,"big","Maaghold: Nalaya; the tribes: themselves","Nalaya, Rakka (once), Dire of every kind, Vorgulla","Harrowkites, sand drakes, swamp wyrms, Sinmaw","Legal-ish among Dire; Maaghold has rules","A huge continent of Dire tribes and villages. Bonepicks are the coin. Tap for its regions."],
+ ["rimefast","Rimefast","Ostari ice isle",1810,640,2,4,"","The Wardens, led by Thaelune","Thaelune, the Ostari; Morwyn fled from here","Snowmaw seals, sky-shards","Taboo publicly, like most places","A city carved into a glacier, its halls glowing with Ostari markings. The rift they fell through drifts and reopens elsewhere."],
+ ["serpent2","Sea serpents","Wild beasts",1860,790,4,0,"sm","","","Sea serpents","",""],
+ ["darkcastle","The Dark Castle","Vez'nan's castle",235,1130,5,9,"big","Nobody: the Dark Master's seat is vacant","Serasha, the minions (waiting)","Brimstone drakes, gargoyles, everything the castle keeps","Its own rules","Under endless Fulgarsoot storms in the Brimstone peaks. Its hidden hand is in most of the world's politics. Dragonborn and kobolds live in the peaks."],
+ ["serasha","Serasha","Hoard dragoness",95,1000,4,9,"sm","","Serasha","","","The castle's crimson hoard dragoness, the Master's biggest fan."],
+ ["cinder","The Cinder Isles","Volcanic islets",290,1320,4,6,"","Exiled elven inventors","Exiled elves, smelter imp tribes","Cinder basilisks, lava biospheres","Loose","Orange volcanic islets with live lava vents and dangerous experiments."],
+ ["ochre","The Ochre Waste","Desert",790,1270,4,8,"big","Nobody","Ozhara, nomads, snubs","Dune-leeches, sand drakes, giant scorpions","None: survive","Heat and glare, and the empty basin where the Anubian kingdom vanished overnight."],
+ ["ozhara","Ozhara","Elder Coil",610,1185,5,8,"sm","","Ozhara","","Swallows whole caravans; weeks inside","An elder world serpent who speaks in riddles about a god before the pantheon."],
+ ["snubhaven","Snubhaven","Oasis camp",610,1370,2,8,"","Rasha 'Mother' Sand","Rasha, Renn's people, snubs of every mix","Bandits and bigots","Rasha eats raiders","Patched tents around an oasis: a refuge for half-breeds of every race."]
+];
+const DIRE = [
+ ["Keiran mountains","North: snow and high passes, mountain-dwelling Dire.","M 30 20 L 370 20 L 360 90 L 40 95 Z","#cfd7dc"],
+ ["Fir plains and the swamp","West: temperate flatlands, the swamp on the far edge (mirebelly toads, swamp wyrms).","M 30 95 L 130 95 L 130 230 L 30 230 Z","#7e8a46"],
+ ["The Maag and Maaghold","Centre: the savanna capital region; Maaghold of stone and redwood, the arena, Nalaya.","M 130 95 L 280 95 L 280 230 L 130 230 Z","#b39a4f"],
+ ["Jilnan jungle","East: dense jungle, agile Dire.","M 280 95 L 370 90 L 370 230 L 280 230 Z","#4f7a3c"],
+ ["Hiraki desert","South: sand and heat; sand drakes.","M 30 230 L 370 230 L 360 290 L 40 290 Z","#c9a764"]
+];
+let sel = null, danger = false, ch = 0, visited = {};
+try { visited = JSON.parse(localStorage.getItem("aum_visited") || "{}"); } catch (e) {}
+const NS = "http://www.w3.org/2000/svg";
+function el(t, a, p) { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+const spots = document.getElementById("spots"), dl = document.getElementById("dangerLayer");
+P.forEach(p => {
+  const [id, name, kind, x, y, d, c, size] = p;
+  el("circle", { cx: x, cy: y, r: size === "big" ? 150 : 90, fill: DCOL[d], class: "dglow", filter: "url(#soft)" }, dl);
+  const g = el("g", { class: "spot", tabindex: 0, role: "button", "aria-label": name, "data-id": id }, spots);
+  el("circle", { cx: x, cy: y, r: 46, fill: "transparent" }, g);
+  el("circle", { cx: x, cy: y, r: 20, fill: "#140d12", stroke: "#e8a95b", "stroke-width": 4, class: "ring" }, g);
+  el("circle", { cx: x, cy: y, r: 8, fill: DCOL[d] }, g);
+  const t = el("text", { x: x, y: y - 32, "text-anchor": "middle", class: "lbl" + (size === "big" ? " big" : size === "sm" ? " sm" : "") }, g);
+  t.textContent = name;
+  g.addEventListener("click", () => pick(id));
+  g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(id); } });
+});
+const selCh = document.getElementById("selCh");
+CH.forEach(([n, t]) => { const o = document.createElement("option"); o.value = n; o.textContent = n + ". " + t; selCh.appendChild(o); });
+function saveV() { try { localStorage.setItem("aum_visited", JSON.stringify(visited)); } catch (e) {} }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]); }
+function chaptersHTML() {
+  return `<h2>The journey</h2><p class="muted">Nine chapters, one region each. Tick the ones you've played; tap a chapter to light up its places.</p><div class="chapters">` +
+    CH.map(([n, t, g]) => `<div class="ch${ch === n ? " on" : ""}" data-ch="${n}"><b>${n}</b><span><span>${esc(t)}</span><br><span class="muted">${esc(g)}</span></span><input type="checkbox" aria-label="Played chapter ${n}" data-v="${n}" ${visited[n] ? "checked" : ""}></div>`).join("") + `</div>`;
+}
+function placeHTML(p) {
+  const [id, name, kind, x, y, d, c, size, rule, people, mons, vore, about] = p;
+  let h = `<div class="kind">${esc(kind)}</div><h2>${esc(name)}</h2><span class="pill"><i style="background:${DCOL[d]}"></i>${DNAME[d]}</span>`;
+  if (c) h += ` <span class="pill">Chapter ${c}</span>`;
+  if (about) h += `<p>${esc(about)}</p>`;
+  h += `<dl class="facts">`;
+  if (rule) h += `<dt>Rules</dt><dd>${esc(rule)}</dd>`;
+  if (people) h += `<dt>Who</dt><dd>${esc(people)}</dd>`;
+  if (mons) h += `<dt>Beasts</dt><dd>${esc(mons)}</dd>`;
+  if (vore) h += `<dt>Vore</dt><dd>${esc(vore)}</dd>`;
+  h += `</dl>`;
+  if (id === "direplains") {
+    h += `<div class="inset"><svg viewBox="0 0 400 310" role="img" aria-label="Regions of the Direplains">` +
+      DIRE.map((r, i) => `<path d="${r[2]}" fill="${r[3]}" stroke="#140d12" stroke-width="3" data-r="${i}" style="cursor:pointer"/>`).join("") +
+      `<text x="200" y="305" text-anchor="middle" font-size="12" fill="#ab9ca8">The Alteran ocean surrounds it all</text></svg></div><p class="muted" id="direInfo">Tap a region of the Direplains.</p>`;
+  }
+  h += `<p><button id="back">Back to the journey</button></p>`;
+  return h;
+}
+const panel = document.getElementById("panel");
+function draw() {
+  const p = P.find(q => q[0] === sel);
+  panel.innerHTML = p ? placeHTML(p) : chaptersHTML();
+  document.querySelectorAll(".spot").forEach(g => {
+    const q = P.find(z => z[0] === g.dataset.id);
+    g.classList.toggle("sel", g.dataset.id === sel);
+    g.classList.toggle("inch", ch > 0 && q[6] === ch);
+  });
+  document.getElementById("map").classList.toggle("chfade", ch > 0);
+  const b = document.getElementById("back"); if (b) b.onclick = () => { sel = null; draw(); };
+  panel.querySelectorAll("[data-ch]").forEach(r => r.addEventListener("click", e => { if (e.target.tagName === "INPUT") return; ch = ch === +r.dataset.ch ? 0 : +r.dataset.ch; selCh.value = ch; draw(); moons(); }));
+  panel.querySelectorAll("[data-v]").forEach(c => c.addEventListener("change", () => { visited[c.dataset.v] = c.checked; saveV(); moons(); }));
+  panel.querySelectorAll("[data-r]").forEach(r => r.addEventListener("click", () => { const d = DIRE[+r.dataset.r]; document.getElementById("direInfo").innerHTML = `<b>${esc(d[0])}</b>: ${esc(d[1])}`; }));
+}
+function pick(id) { sel = id; draw(); if (window.innerWidth < 900) panel.scrollIntoView({ behavior: "smooth", block: "start" }); }
+selCh.addEventListener("change", () => { ch = +selCh.value; draw(); moons(); });
+const bD = document.getElementById("bDanger");
+bD.addEventListener("click", () => { danger = !danger; bD.setAttribute("aria-pressed", danger); document.getElementById("map").classList.toggle("danger", danger); legend(); });
+const bZ = document.getElementById("bZoom"), mb = document.getElementById("mapbox");
+bZ.addEventListener("click", () => { const z = !mb.classList.contains("zoom"); mb.classList.toggle("zoom", z); bZ.setAttribute("aria-pressed", z); bZ.textContent = z ? "Zoom out" : "Zoom in"; });
+let blood = false;
+document.getElementById("tide").addEventListener("click", () => { blood = !blood; document.getElementById("tideDisc").setAttribute("fill", blood ? "url(#mBlood)" : "url(#mTide)"); document.getElementById("tideCap").textContent = blood ? "The Blood Moon: karma swings hardest" : "Selune's tide moon (tap: Blood Moon)"; });
+function moons() {
+  // The third moon grows as the journey goes on: the furthest of the picked chapter and the played ones.
+  const played = Object.keys(visited).filter(k => visited[k]).map(Number);
+  const far = Math.max(ch, played.length ? Math.max(...played) : 0);
+  const r = 14 + far * 3.2;
+  document.getElementById("hole").setAttribute("r", r);
+  document.getElementById("holeRing").setAttribute("r", r + 5);
+  document.getElementById("holeCap").textContent = far >= 9 ? "The third moon is opening" : "The third moon";
+}
+function legend() {
+  document.getElementById("legend").innerHTML = danger ? DNAME.slice(1).map((n, i) => `<span><span class="pill"><i style="background:${DCOL[i + 1]}"></i>${n}</span></span>`).join("") : `<span>Tap "Danger levels" to tint places by how deadly they are. Tap the tide moon for the Blood Moon. The third moon grows as you play.</span>`;
+}
+draw(); moons(); legend();
+</script>
