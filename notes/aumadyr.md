@@ -226,3 +226,7 @@
 - The trolls fell to a mana-plague: their tampering with silver and mana experiments caused it. It killed trolls with low mana and weakened those with high mana. That is also why their offspring (the elves) were born with much smaller mana potential.
 - The gods went silent AFTER the trolls fell.
 - The dwarf-elf war was about 60-80 years ago.
+- Vez'nan built the castle and died about 300-500 years ago. Since then the minions have cycled through MANY masters (the seat is vacant right now).
+- Humans were made by a god of the pantheon after the trolls fell (which god: see below).
+- The dwarf-elf war ended when Valdrenn stepped in and crushed both sides with magic: Valdrenn sat right in the middle of the conflict, so it got to the point where they had to act.
+- What's left of the mana-plague: troll-era silver is 'sick'. Handling it weakens your mana.
