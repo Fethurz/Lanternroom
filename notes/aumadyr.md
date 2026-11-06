@@ -390,3 +390,6 @@
 - A Dire-friendly lord who trades openly with the Direplains.
 - Name: LORD TOBIN HEARTHLEY. Dire-friendly for all of these reasons: trade (wool and mutton for Dire bonepicks made him rich), a secret Dire partner, he spent his youth on the Direplains, and Dire mercenaries guard his flocks. Easygoing (laughs off scandal) and big-hearted (quietly shelters snubs). Fully SFW (no lewd scenes; his partner is just mentioned).
 - 40s, weathered, lean shepherd's build. His secret partner is a she-wolf Dire who guards the flocks. With the reader: an open door (a bed and a meal for anyone), asks for help (wolves, raiders, Valdrenn's jarls pressing), and his land is the safe road to the Direplains.
+
+### Maaghold's ruler
+- Already established by the owner in a bot elsewhere (not found in the account's bots yet). A female GIRAFFE Dire; brutal but fair (keeps Maaghold's few rules), gluttonous, political. Pred (oral and anal, like all Dire), eats arena losers as a spectacle, lewd.
