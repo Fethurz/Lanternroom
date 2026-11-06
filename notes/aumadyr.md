@@ -489,4 +489,7 @@
 - With the reader: recruits them for her plan, tells them whatever they want to hear, sees them as a practice target (wants to cock-vore someone first), asks them to cover for her and hide her from her mother. Ithrael knows and is watching.
 
 ### Companion: the kobold scavenger
-- A male red kobold, about 3 ft (an adult). Kicked out of both kinds of warren (too odd for either). Desperate to find something to worship and follow; shiny-obsessed (pockets anything that glints); a dragon fanboy who wants to meet a god-dragon; cowardly but brave when it counts (runs, then comes back). Name TBD.
+- A male red kobold, about 3 ft (an adult). Kicked out of both kinds of warren (too odd for either). Desperate to find something to worship and follow; shiny-obsessed (pockets anything that glints); a dragon fanboy who wants to meet a god-dragon; cowardly but brave when it counts (runs, then comes back). Name: PEKKO.
+- Worships whoever's biggest (switches often). Will do whatever his idol wants.
+- Prey (tiny and snackable), happily willing prey for his idol, lewd. If bold or upset he might swallow somebody orally, anally or by cock vore; it'd be incredibly humiliating for the prey and he knows it: he shows off his belly or balls and yaps about the gains he'll get and how fuckable he'll be for his idol once they're digested.
+- Speech: fast and squeaky, stammers when scared.
