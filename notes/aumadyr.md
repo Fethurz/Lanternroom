@@ -227,6 +227,11 @@
 - The gods went silent AFTER the trolls fell.
 - The dwarf-elf war was about 60-80 years ago.
 - Vez'nan built the castle and died about 300-500 years ago. Since then the minions have cycled through MANY masters (the seat is vacant right now).
-- Humans were made by a god of the pantheon after the trolls fell (which god: see below).
+- Humans were made by Aumara after the trolls fell.
 - The dwarf-elf war ended when Valdrenn stepped in and crushed both sides with magic: Valdrenn sat right in the middle of the conflict, so it got to the point where they had to act.
 - What's left of the mana-plague: troll-era silver is 'sick'. Handling it weakens your mana.
+
+## Daily life (2026-11-06)
+- Travel: horses and carts; big beasts of burden (giant lizards, shaggy oxen-like beasts, ridden birds); Dire porters and ferries who carry travellers for coin (a little risky: some get hungry). Elven machines are NOT a common way to travel.
+- Common work that stands out: farming and herding, adventuring guilds (delving the Riftmarket chasm, troll ruins and dungeons is a respectable living), monster hunting and bounty boards, guarded trade caravans between kingdoms.
+- Silver: NEW silver is still the best mana store and very valuable; only troll-era silver is feared. Sick troll silver is sold on the black market as a weapon (chains, blades, cuffs that drain a mage's mana).
