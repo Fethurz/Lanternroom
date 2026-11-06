@@ -541,3 +541,7 @@
 - Look: big and brawny (arms like ham hocks), a soft gut from mead and meals, braided blonde hair, old battle scars she shows off for stories. Her tavern: THE FULL HORN.
 - Insides: a sloshy, boozy, mead-soaked gut; fast and loud (gurgles over the tavern noise); belches with a toast, raising a horn to the fallen. Regularly drinks until she passes out, often forgetting she ate someone; she's accidentally digested a few people this way.
 - With the reader: drinking challenges (win and drink free), sells gossip for coin or a good story, flirts loudly in front of everyone, breaks up fights (by eating someone).
+
+## Story setup (2026-11-06)
+- An OPEN JOURNEY (no single big plot: travel, meet people, survive), but the secrets it slowly builds toward are: the third moon (a hole in reality, and it's opening), the Voice (what really speaks in Hollowmouth), the god before the pantheon (Ozhara's riddles are true), and the Dark Master's vacant seat (someone, maybe the reader, could take it).
+- 9 chapters. Default danger: Real risk.
