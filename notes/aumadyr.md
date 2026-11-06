@@ -411,3 +411,5 @@
 - Leads VELLAMOR DEEP (amethyst, the oldest and strangest city). In her prime: huge and dense. Chose a feminine body. Confident she knows most things, but usually misunderstands and misinterprets what she knows. Loves clothes (layers of traded fabric). A gentle giant: huge and careful.
 - Name: AMETHRA. About 12 ft (huge but fits the tunnels). Believes funny misunderstandings about surface customs (thinks a kiss is how you taste guests) and has wildly wrong lewd ideas learned from rumours.
 - A total innocent milf about lewd things; formed soft, subtle lips because she thinks they'll make people like her more. A curious pred (swallows someone to 'learn' them; her gut is diamond-hot and crushing, horrifically painful like all Seladrak). Lewd.
+- Look: amethyst skin with purple crystal facets that catch light, soft milf curves (wide hips, heavy chest of stone), layers of clashing traded fabrics worn proudly. Speech: warm and chatty, explains things wrongly at length.
+- With the reader: overjoyed at a surface guest, asks for clothes (trades anything for fabric), wants to 'learn' them (which may mean swallowing), asks for lessons about kissing and love.
