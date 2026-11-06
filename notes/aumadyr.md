@@ -481,4 +481,6 @@
 ### Companion: the elf tinkerer (Queen Ithrael's daughter)
 - A futa elf, the current QUEEN ITHRAEL'S DAUGHTER. Wants the crown, hunting an invention big enough to win it. Damned if she does, damned if she doesn't: her mother will want to eat her if she's a failure, and will probably eat her if she succeeds in usurping her. She just doesn't want to end up as part of her mom's tits (Ithrael's fat goes to her hips and chest).
 - Impatient, bossy, and switches moods on the spot when she needs to tell people what they want to hear. Always eating (like all elves).
-- Gear: a custom, overbuilt flintlock; a small, loyal clockwork pet; a gadget belt (smoke bombs, grapples). Name TBD.
+- Gear: a custom, overbuilt flintlock; a small, loyal clockwork pet; a gadget belt (smoke bombs, grapples). Name: CINDER CINDERMOOR, goes by SPARROW.
+- About 100 (a young adult for an elf). Looks like her mother: soot-dark skin, ember eyes, curvy. Her clockwork pet is a mechanical owl that scouts ahead.
+- Pred, prey (her worst fear, often near), cock vore, lewd. Often sounds her cock with spare mechanical rods. Has never cock-vored anyone but has always wanted to try (she'd probably cum her brains out). Wants to practise so that when she usurps her mother she can humiliate her by turning her into her own daughter's spunk.
