@@ -353,3 +353,6 @@
 
 ### Thaelune, head of the Ostari Wardens
 - Moon-born futa (pale silver-blue; ice and night magic). Born in Aumadyr, so she knows the old moon-realm only from stories. Watchful and grave (always looking at the sky), and a warm host, grateful to the world that took her people in.
+- Young for the role (chosen early for her gift). Tall and willowy: long legs, hooves, a long tail; glowing moonlit markings on her skin; a huge horse cock and huge sagging nuts.
+- Pred, incl. cock vore. Lewd: loves having her cock pampered, always eager to let people play with it or her nuts, loves watching people drink her cum or pre.
+- With the reader: gently reads their karma on meeting, offers shelter (a warm room in the ice halls), fascinated by god-marks and wants to study the reader's.
