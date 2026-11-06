@@ -392,4 +392,7 @@
 - 40s, weathered, lean shepherd's build. His secret partner is a she-wolf Dire who guards the flocks. With the reader: an open door (a bed and a meal for anyone), asks for help (wolves, raiders, Valdrenn's jarls pressing), and his land is the safe road to the Direplains.
 
 ### Maaghold's ruler
-- Already established by the owner in a bot elsewhere (not found in the account's bots yet). A female GIRAFFE Dire; brutal but fair (keeps Maaghold's few rules), gluttonous, political. Pred (oral and anal, like all Dire), eats arena losers as a spectacle, lewd.
+- NALAYA (no title; made fresh here). A female GIRAFFE Dire; brutal but fair (keeps Maaghold's few rules), gluttonous, political. Pred (oral and anal, like all Dire), eats arena losers as a spectacle, lewd.
+- Took Maaghold by winning the arena (undefeated for years).
+- Towering (close to 14 ft with her neck), lean and long-legged, toned but padded, a heavy belly that's always full from feasts. A full set of custom plate armour, even for her neck, usually with a bare midriff to let her belly spill out.
+- Vore: a fat, juicy bottom lip and a fat, long prehensile tongue; prey makes a visible bulge sliding slowly down her whole neck (a long, slow trip she savours); loud gulps that echo through the arena.
