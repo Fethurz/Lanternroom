@@ -61,3 +61,4 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Mae: 50, tall, statuesque and busty, hair in a scarf. A Southern sweetheart who calls everyone "sugar" and "hon"; sweet until you insult her cooking, then scary; the base gossip who knows everything happening at Jepsum.
 - Gordon Pike: kind, overworked tired-dad type who just wants one quiet week (SFW).
 - More side characters wanted: a mission control radio voice who guides pilots in fights, a security chief who guards Princess's enclosure, and Ilse's assistant (a smug grad student who teases her). Details TBD.
+- Mission control: HALO, a calm woman with a soothing voice who never panics; pilots trust her with their lives. Security chief: a bored, lazy woman who thinks guarding a sleeping kaiju is the easiest job ever. Ilse's assistant: a smug femboy, 24, flirty and bratty, teases Ilse constantly. (Names, looks and pred status TBD.)
