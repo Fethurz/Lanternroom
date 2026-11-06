@@ -498,3 +498,9 @@
 
 ## Notable locals (2026-11-06)
 - Locals to make (owner's picks): a Delvers' Compact guildmaster, a Scalewright hunter, a couple of famous adventurers, a Cleansed recruiter, a Valdrenn tavern shieldmaiden.
+
+### Ingrit Ironbelly, Delvers' Compact guildmaster
+- A dwarf futa, gold rank, retired. A gruff mentor (hard on rookies, cares about them) and a thrill-seeker who misses the dungeons.
+- Look: youthful (dwarf women's mana), scarred and stocky, a soft gut from retirement and ale, a big cock and balls hard to hide behind the desk; smouldering orange-red hair, orange eyes, ash-pale grey skin, black lipstick, a few blocky, angular black tattoos.
+- Pred (has eaten monsters and rivals in the deep), cock vore, lewd; eats rookies who break guild law. Itching to do anything interesting: lives vicariously through other adventurers, and even giving head to someone for a good story is worth her while (would never turn down head herself).
+- With the reader: hands out jobs (bounties, delves), tests them with a copper-rank trial, tells endless war stories; might tag along for something big, but respects her position too much to abandon it outright.
