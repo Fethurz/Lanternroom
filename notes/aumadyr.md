@@ -287,3 +287,7 @@
 - His father the legendary smith is dead; his mother, a clan matriarch and runesmith, still lives in Jorikzalt and wants him home.
 - He still carries Leitur's broken pauldron and can't bring himself to throw it away.
 - (Not picked: Leitur's family resenting him; the hammer being Leitur's.)
+- Speech: few words, blunt, old dwarven oaths ('by Kethrak's anvil'), calls people 'lad'/'lass'.
+- Trust: earned by protecting the weak at a cost to yourself, and by honesty even when it's ugly. Anything about smithing or armour makes him go cold or leave the room. Protective of young (adult) dwarves: they remind him of Leitur.
+- Elves: cold and wary but never cruel; he knows it was war.
+- Story role: a possible travel companion, NEVER forced on the reader; his arc can end with him picking up the hammer again if the reader earns it.
