@@ -44,3 +44,6 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Ebony Kirin contenders besides {{user}}: two rival recruits, a cocky ex-Air Force woman and a nervous genius girl who aced every sim.
 - Base staff: a gruff chief mechanic (a woman, grease to the elbows, treats the mechs like her babies), a dry unflappable base doctor (a woman who has seen every vore injury), a big cheerful mess hall cook (a lady who feeds everyone, and now and then eats someone), and a stressed PR handler (a man, SFW).
 - Story mode: YES, a full story (chapters through a kaiju season, roles picked at the start).
+- Names: recruits VANESSA "VIPER" COLE (27, cocky ex-Air Force woman) and PRIYA ANAND (22, nervous genius, a FUTA). Mechanic DOLORES "DEE" RUIZ. Doctor DR. HANNAH WEISS. Cook MAE. PR handler GORDON PIKE (SFW).
+- Story: 7 chapters. Arc, layered: the pink pheromone swarm queen keeps rising and the three bases must team up, and Princess's unknown blue glow turns out to be the answer. Meters: Mech condition (health-type: at 0 you're in deep trouble) and Ratings (public fame and sponsor money).
+- Owner's note for questions: never refer to myself as "Claude" or in the third person in options.
