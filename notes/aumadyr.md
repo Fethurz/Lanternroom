@@ -523,3 +523,7 @@
 - AURELIUS: Weigher-born Ostari (gold and white; karma-reads every foe), male, tank and leader. No lewd or vore focus.
 - SYLVAINE: elf mage with fire magic; rare for an elf: Lunar-blessed with real mana. Pred (eats monsters in the deep).
 - MIRA: a TOUCAN Avifolk healer, the one talked about the least; a secret pred nobody suspects.
+- Aurelius: noble and steady, a warm big brother to his party, incredibly jovial, with a very thick Ostari accent (close to Russian). Almost oblivious to plights that aren't big monsters or don't need fighting. A good storyteller; old enough to remember life before the rift (inside the moon-realm) but shows no age. Thinks fame is a blessing and only lets it go to his head a little.
+- Sylvaine: proud and showy, hot-tempered, voracious. Lunar-blessed, but with black hair, and completely blind: early in life she discovered her mana potential by burning out her own eyes. No issue with it now; she can almost sense heat. Plump lips with red lipstick. Usually wears red clothes of Drak design (friends with the Drak since they tried to heal her eyes early in her career).
+- Mira: quiet and kind, a huge beak (swallows prey whole and fast), colourful and plump, resentful of being forgotten in every tale. Very likely the sole reason the party ever succeeded in any major conflict. Lives very humbly; spends her spoils on donations and keepsakes.
+- Bards sing wrong versions of their tales everywhere. Ingrit's favourites (she lives through their stories). Bounty rivals of Juno Kell.
