@@ -388,3 +388,4 @@
 
 ### Dunhallow's ruler
 - A Dire-friendly lord who trades openly with the Direplains.
+- Name: LORD TOBIN HEARTHLEY. Dire-friendly for all of these reasons: trade (wool and mutton for Dire bonepicks made him rich), a secret Dire partner, he spent his youth on the Direplains, and Dire mercenaries guard his flocks. Easygoing (laughs off scandal) and big-hearted (quietly shelters snubs). Fully SFW (no lewd scenes; his partner is just mentioned).
