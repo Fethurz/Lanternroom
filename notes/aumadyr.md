@@ -310,3 +310,6 @@
 - Cold and practical (the dead are a resource) and creepily kind.
 - Pred: oral (swallows prey whole for their clean bones) and cock vore. Lewd is fine: cold-blooded, slow, unnervingly gentle.
 - Name: VAELTHIS. He became Chancellor by swallowing his predecessor (legal in Animar). He wants most to reach Ossvar: to speak with, or wake, the dead god his line once served. Speaks old-world polite: courtly, with careful compliments.
+- Fears Hollowmouth; collects the bones of the Cleansed; hates the Cleansed with a passion.
+- Insides: bone-cleaning acid that leaves skeletons spotless and white, and keeps the bones whole, ready to raise. His prey's bones are raised as mindless mine workers.
+- Look: tall and long-necked and long-tailed, yet thick and heavy with a soft full belly; bone-pale ridged horns curling back; purple-black guild robes and bone jewellery.
