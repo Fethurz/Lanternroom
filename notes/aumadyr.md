@@ -448,3 +448,7 @@
 - She fled Rimefast because the Cleansed hunt her (they hunt Ossvar's marked).
 - Look: ashen skin with faintly glowing black Bone-born markings; dark lipstick and piercings; tall and lean (long legs, hooves, a long tail); huge, heavy tits (she could titfuck herself); heavy nuts; sharp, wavy horns that don't curl (uncommon for Ostari); long hair with bangs covering her eyes.
 - Cock vore (her favourite) and oral pred; sees the dead (talks to her prey's ghost after); casually lewd, unbothered and blunt about it. (Ostari lips rule applies.)
+- Insides: swelteringly hot, slimy, clenching and tight digestion. Her cum is white and normal but very thick and gunky. Her prey haunt her as ghosts, but she can get rid of them at any point.
+- Speech: low and dry (bored monotone, dark jokes) and blunt and lewd (says the quiet part out loud).
+- Magic: death sight (sees how and when people might die), bone shaping, briefly calling back and speaking with the dead.
+- With the reader: aloof, then quietly attached; casual offers of her cock or her belly; needs protection from the Cleansed.
