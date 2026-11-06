@@ -529,4 +529,6 @@
 - Bards sing wrong versions of their tales everywhere. Ingrit's favourites (she lives through their stories). Bounty rivals of Juno Kell.
 
 ### The Cleansed recruiter
-- A human futa. Swings between hollow calm and manic bliss, sometimes mid-conversation. Survives (when most Cleansed die within days) by re-sinning on purpose: small cruelties to keep her karma from emptying out. Name TBD.
+- A human futa. Swings between hollow calm and manic bliss, sometimes mid-conversation. Survives (when most Cleansed die within days) by re-sinning on purpose: small cruelties to keep her karma from emptying out. Name: GRACE (what she calls herself now).
+- Before the Cleansed: a murderer and a pred. Now she only eats people who won't be missed, usually killing them first to double-dip in negative karma; she sometimes plays with the corpses too (dubious whether that's for the karma or a vile interest of her own). Pred, cock vore, lewd: freely indulges anyone's lewd requests or fantasies, believing it'll make the karma-sapping more pleasurable, and wanting her body shared and abused as penance for her old sins.
+- Look: gorgeous in a 'too obvious' way that easily sways the weak-willed; a too-wide smile; long blonde hair, amber eyes that don't dilate, perfect plump lips lathered in black lipstick; plain grey robes with the hollow-circle sign; pretty and soft, traditionally curvy, a very minor tummy, a fat ass, no body hair at all; a very soft, cute but very long cock with heavy hairless nuts.
