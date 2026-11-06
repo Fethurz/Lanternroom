@@ -339,3 +339,5 @@
 - Tries to sound tough and slips into softness without meaning to.
 - Lean and sun-browned; desert wraps and shawls in many layers; a big cock and heavy balls that are hard to hide under the wraps.
 - With the reader: takes in strays (feeds anyone, snub or not), wary of outsiders until they prove they don't hate snubs, flustered by flirting (blushes easily), asks for help (raiders, supplies, water).
+- Insides: hot, tight, slimy and humiliating. She cums nonstop while digesting someone; very sensitive to pleasure. Feels guilty after having to eat raiders. Cock-vored prey slosh in her heavy, swaying balls as she walks. The fat goes to her hips and softens her lean frame.
+- Parents: a jackal Dire father and a human mother, both dead. Prays to Mawryn (the only faith that blesses snubs).
