@@ -319,3 +319,6 @@
 ### The elven queen and king
 - QUEEN ITHRAEL CINDERMOOR: made queen for inventing the flintlock (the guns that won battles in the dwarf-elf war, and killed Leitur's kind of armour).
 - KING FENNIC ASHGRAVE: made king for his clockwork automatons (walking, working machines).
+- Ithrael: proud and ruthless (no guilt for the war: the gun proved her right), a cold strategist. A pred and lewd (experimental like elves).
+- Fennic: a total femboy, often mistaken for a girl; a gentle eccentric who talks to his automatons like children; a lonely genius who prefers machines to people; paranoid, guarded by clockwork at all times. Lewd; usually prey, but also a rare pred.
+- They're rivals: each wants the other's crown reduced to 'Prince/Princess'. Ithrael very much wants to gurgle Fennic.
