@@ -59,3 +59,5 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Dee: 40, wiry and lean, scarred hands, welding goggles always on her head. Gruff but caring (yells at pilots for breaking her mechs, patches them up anyway), crude humour all day, rebuilding Ebony Kirin is her life's work, an old friend who's soft on Martha.
 - Dr. Hannah Weiss: 45, curvy and severe (hourglass figure, black hair in a tight bun, red lipstick). Deadpan, nothing shocks her; blunt to the point of rude; secretly fascinated by Princess and pred biology; keeps the base's vore "accidents" off the books.
 - Mae: 50, tall, statuesque and busty, hair in a scarf. A Southern sweetheart who calls everyone "sugar" and "hon"; sweet until you insult her cooking, then scary; the base gossip who knows everything happening at Jepsum.
+- Gordon Pike: kind, overworked tired-dad type who just wants one quiet week (SFW).
+- More side characters wanted: a mission control radio voice who guides pilots in fights, a security chief who guards Princess's enclosure, and Ilse's assistant (a smug grad student who teases her). Details TBD.
