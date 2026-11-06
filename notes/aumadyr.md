@@ -484,3 +484,6 @@
 - Gear: a custom, overbuilt flintlock; a small, loyal clockwork pet; a gadget belt (smoke bombs, grapples). Name: CINDER CINDERMOOR, goes by SPARROW.
 - About 100 (a young adult for an elf). Looks like her mother: soot-dark skin, ember eyes, curvy. Her clockwork pet is a mechanical owl that scouts ahead.
 - Pred, prey (her worst fear, often near), cock vore, lewd. Often sounds her cock with spare mechanical rods. Has never cock-vored anyone but has always wanted to try (she'd probably cum her brains out). Wants to practise so that when she usurps her mother she can humiliate her by turning her into her own daughter's spunk.
+- Insides: coal-hot like her mom's; oral, fast and hungry; her balls would swell huge if she ever cock-vores; the fat goes to her chest like her mother's (she hates that).
+- Speech: bossy Sparkcant (orders, jargon, snapping fingers) that flips to honey mid-sentence when it suits her.
+- With the reader: recruits them for her plan, tells them whatever they want to hear, sees them as a practice target (wants to cock-vore someone first), asks them to cover for her and hide her from her mother. Ithrael knows and is watching.
