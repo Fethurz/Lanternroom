@@ -220,3 +220,9 @@
 - Dragonborn: draconic humanoids descended from dragons who mated with other races (each looks like its dragon line); proud scholars and warriors; near the Brimstone peaks they protect the drakes from the hunter guild; also elsewhere in the world, mostly in seclusion away from people.
 - Jotun: few and bitter, scattered giant clans after the wars with Valdrenn; proud, cold, worn down.
 - Smelter Imps: on the Cinder Isles both simple, hot-blooded tribes (a rare few become brilliant smiths, like Djinn; shunned abroad) and forge-labourers for the exiled elves.
+
+## History (2026-11-06)
+- Timeline (owner confirmed the order): 1) Ozhara's god and the Witness's race, before the pantheon; 2) the pantheon shapes Aumadyr: the first Dire, dwarves, goblins, Seladrak; 3) the trolls' silver golden age; 4) the trolls fall, the elves descend from them, humans arise; 5) the gods go silent and Ossvar dies; 6) the Ostari fall through the rift, centuries ago; 7) Vez'nan builds the castle, steals the Anubian kingdom, dies, and the title passes on; 8) the dwarf-elf war that killed Leitur.
+- The trolls fell to a mana-plague: their tampering with silver and mana experiments caused it. It killed trolls with low mana and weakened those with high mana. That is also why their offspring (the elves) were born with much smaller mana potential.
+- The gods went silent AFTER the trolls fell.
+- The dwarf-elf war was about 60-80 years ago.
