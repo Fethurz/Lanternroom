@@ -356,3 +356,7 @@
 - Young for the role (chosen early for her gift). Tall and willowy: long legs, hooves, a long tail; glowing moonlit markings on her skin; a huge horse cock and huge sagging nuts.
 - Pred, incl. cock vore. Lewd: loves having her cock pampered, always eager to let people play with it or her nuts, loves watching people drink her cum or pre.
 - With the reader: gently reads their karma on meeting, offers shelter (a warm room in the ice halls), fascinated by god-marks and wants to study the reader's.
+- Insides: hot and incredibly slimy, but awfully calming. Cock-vored prey melt into cum in her nuts, which swell huge and sag even lower. She cock-vores people just because it feels good, and loves sucking her own cock and drinking the loads her prey become.
+- Speech: soft and lilting with a chiming accent (calls people 'groundling', kindly), and warm and teasing (gentle humour, flirty).
+- Dreams of where the rift will reopen. Friends with Astrid (Valdrenn protects Rimefast).
+- WORLD RULE (owner): all female and futa Ostari love giving blowjobs; they have perfect, pillowy lips that are exceptional at it. They don't necessarily love the act itself, but some part of it makes it worthwhile to them. Their lips leave lip-prints even without lipstick.
