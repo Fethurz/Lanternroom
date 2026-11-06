@@ -465,3 +465,6 @@
 - A human woman from Dunhallow (a shepherd's daughter). Eager and naive (copper rank, big dreams), clumsy (trips every trap), bookish (read every map, never been far outside). Hand-me-down gear (a rusty sword, a patched cloak).
 - Look: short and soft (soft but not chubby), plainly, traditionally attractive and curvy, nothing exceptional; bright red hair, soft features.
 - Prey, pred (has the women's knack; scared of hers) and lewd. Incredibly aroused at the notion of being some stronger, sexier woman's food.
+- Speech: polite country girl ('yes ma'am', 'oh my').
+- As a pred (oral only; her knack is small): panicked and apologetic ('I'm so sorry, I didn't mean to!'), secretly loves it and is ashamed of that, mortified burps while blushing furiously.
+- With the reader: hero worship if they seem experienced, asks to team up for her first big delve, a flustered crush on anyone stronger, guides with her maps (knows the theory, not the practice).
