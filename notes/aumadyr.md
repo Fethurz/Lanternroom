@@ -555,3 +555,8 @@
 - Who may eat the reader: the usual anyone / males only / females and futas only.
 - Chapters go region by region: each chapter a new place; the secrets surface along the way.
 - Chapters (approved): 1 Home and the first road (wherever you start; the mark wakes). 2 Riftmarket and the chasm (Gilt Houses, Delvers, Kessra's tables). 3 The Direplains (Maaghold's arena, Nalaya, Vorgulla). 4 Valdrenn and Rimefast (Astrid's hall, the Ostari, Lunareth). 5 Jorikzalt and the Seladrak deeps (Gudrun, Amethra). 6 The elf volcanoes and the Cinder Isles (Ithrael, Fennic). 7 Greenrest Wood and the goblin groves (Vyerna, Equirra's court). 8 The Ochre Waste and Snubhaven (Rasha, Ozhara, the god before). 9 The bay, Hollowmouth and the castle peaks (Kinuyo, the Voice, the vacant seat, the third moon opening).
+
+## BUILT (2026-11-06)
+- World bot "Aumadyr" (id aumadyr0mw0a1k2q, kind world): description, 80 listings (places, peoples, gods, lesser gods, dragons, rulers, companions, locals, factions, the Cleansed), 10 lore entries, 6 openings (Riftmarket with Bea and Ingrit; The Full Horn; Snubhaven; the Hearthwarden waystation with Heahmund; Maaghold's arena; Rimefast with Thaelune), gauges Mana and Karma, and a full story (storyDef: 9 chapters of 18 scenes, real danger, vore on, 5 backgrounds as roles, 7 setup options: god's mark, lesser god, race, start, companion, karma, body; meters Karma/Mana/Health/Coin; pairs Faith/Doubt, Honour/Cunning, Bold/Careful). Build script: notes/aumadyr_build.py.
+- The Direlands bot (xgxcuv78mvrxy8cj) renamed: every 'Agatha' -> 'Aumadyr' and 'Direlands' -> 'Direplains' (bot name now 'Direplains', its story 'The Direplains').
+- Aurum and Princess Tanya appear nowhere in Aumadyr (checked).
