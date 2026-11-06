@@ -399,3 +399,6 @@
 - Insides: hot and churning (several stomachs, like a ruminant), FAST digestion, ginormous shits after; bones displayed in the arena as trophies; the fat goes to her belly and hips, padding her toned frame.
 - Speech: blunt Direspeak, crude savanna slang.
 - With the reader: trade deals (she needs outsiders for Dunhallow and Riftmarket), sizes them up as a meal or a bedmate, protects guests under Maaghold's rules.
+
+### The Drak tide-empress of Kaigo
+- The Drak sea-city in the central bay is KAIGO. Ruled by a TIDE-EMPRESS at the top of the caste ladder: a koi Drak (gold and white, elegant fins), futa. Pred (swallows those who break the bay's laws) and lewd (formal court, private appetites). Name TBD.
