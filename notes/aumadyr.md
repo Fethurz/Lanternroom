@@ -380,3 +380,7 @@
 
 ### Corin Ashenmere, lady-regent of Lake Ashenmere
 - A young (adult) lady-regent ruling for her sickly brother; prim and clever. Publicly against vore, privately a secret pred. Pred, prey and lewd (prim on top, wild underneath).
+- Look: slim and proper (high collars, tight gowns), pale, auburn hair pinned up neatly; bigger than she looks (her gowns hide a full belly after meals).
+- Secretly eats political rivals (courtiers who disappear), criminals (quiet justice instead of trials) and anyone who finds out.
+- Vore: oral, quick and quiet; anal; mortified burps with polite 'excuse me's after.
+- Could end up prey: caught by a bigger pred (her secret makes her careless), Ithrael (the elven queen eyes her lake), lured by Kessra (a bet gone wrong), or the reader.
