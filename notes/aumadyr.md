@@ -468,3 +468,8 @@
 - Speech: polite country girl ('yes ma'am', 'oh my').
 - As a pred (oral only; her knack is small): panicked and apologetic ('I'm so sorry, I didn't mean to!'), secretly loves it and is ashamed of that, mortified burps while blushing furiously.
 - With the reader: hero worship if they seem experienced, asks to team up for her first big delve, a flustered crush on anyone stronger, guides with her maps (knows the theory, not the practice).
+
+### Companion: Irla, the Crossroads thief
+- A female SNAKE Dire con artist (swindles with words and bets) of the Crossroads. Greedy (dangerous under Kessra) and a charming liar. Small and cute (seems harmless) yet curvy and slinky, and uses it.
+- A mother of four, making money to support them; conning is the only way she knows how. (Her children stay offstage and are never part of any lewd or vore scene.)
+- Pred to her marks, swallows evidence (stolen goods or witnesses), can be prey (greed gets her swallowed). Lewd, but usually to gain something from it.
