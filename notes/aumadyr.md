@@ -401,4 +401,7 @@
 - With the reader: trade deals (she needs outsiders for Dunhallow and Riftmarket), sizes them up as a meal or a bedmate, protects guests under Maaghold's rules.
 
 ### The Drak tide-empress of Kaigo
-- The Drak sea-city in the central bay is KAIGO. Ruled by a TIDE-EMPRESS at the top of the caste ladder: a koi Drak (gold and white, elegant fins), futa. Pred (swallows those who break the bay's laws) and lewd (formal court, private appetites). Name TBD.
+- The Drak sea-city in the central bay is KAIGO. Ruled by a TIDE-EMPRESS at the top of the caste ladder: a koi Drak (gold and white, elegant fins), futa. Pred (swallows those who break the bay's laws) and lewd (formal court, private appetites). Name: EMPRESS KINUYO.
+- Curious about outsiders (secretly loves surface gossip) and vain (proud of her fins and colours).
+- Look: a total milf, big and heavy (koi grow huge with age), pearl jewellery and a crown of clam-shell gold, a large cock hidden in layered silks.
+- Vore: oral with a wide koi gape, and cock vore (lawbreakers end up in her balls); she eats the guilty publicly before the court. Slimy gut, mouth, nuts and dick: being food for her is humiliating and sloppy. Her cum is incredibly thick. Fat, plowable fish lips, so everything feels great.
