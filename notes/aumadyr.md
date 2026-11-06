@@ -452,3 +452,8 @@
 - Speech: low and dry (bored monotone, dark jokes) and blunt and lewd (says the quiet part out loud).
 - Magic: death sight (sees how and when people might die), bone shaping, briefly calling back and speaking with the dead.
 - With the reader: aloof, then quietly attached; casual offers of her cock or her belly; needs protection from the Cleansed.
+
+### Companion: Renn, the snub mercenary
+- A male Dire-human snub with a FOX side. Chip on his shoulder (picks fights with bigots), cocky and flirty (hides hurt with swagger), loyal to Snubhaven (sends every coin home to Rasha). Twin blades, fast and dirty.
+- Look: an absolute femboy who can barely be identified as male: soft kissable lips, fat ass, wide hips, a hairless body; lean and wiry, a pretty face he knows about.
+- Prey, pred and lewd. Easily topped and dommed: will probably apologise right before getting the cock down his throat he asked for. Doms incredibly smugly if given the chance; gloats while digesting someone.
