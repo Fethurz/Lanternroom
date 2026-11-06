@@ -442,3 +442,6 @@
 - An ex-arena fighter from Nalaya's arena in Maaghold.
 - Speech: simple, gruff, sloppy slang; you might forget she's there if it weren't for her noisy gut and heavy breaths.
 - With the reader: instantly attached (follows them like a big cat), begs to taste them (just a lick, just in the mouth), fiercely protective (anyone threatening them gets eaten).
+
+### Companion: the Ostari mage
+- BONE-BORN (Ossvar-tinted: ashen, black-marked, death sight; rare and feared) futa with a horse cock. Fled Rimefast over something they won't talk about. Goth, brooding and casually lewd; an aloof scholar (calls others 'groundborn'); lonely, far from her people. Name TBD.
