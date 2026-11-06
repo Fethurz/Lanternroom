@@ -460,3 +460,8 @@
 - Vore: oral (tight; stretches impressively for his size) and anal; warm and squeezy inside, smugly rubs his belly; the fat goes to his ass and hips, making him even curvier.
 - Speech: bravado that cracks and goes squeaky when flustered.
 - With the reader: flirts nonstop (then panics if it works), tests whether they hate snubs, charges for help (the coin goes to Snubhaven), bickers with Rakka (she keeps trying to taste him).
+
+### Companion: Bea Thistlewood, the Delvers' Compact rookie
+- A human woman from Dunhallow (a shepherd's daughter). Eager and naive (copper rank, big dreams), clumsy (trips every trap), bookish (read every map, never been far outside). Hand-me-down gear (a rusty sword, a patched cloak).
+- Look: short and soft (soft but not chubby), plainly, traditionally attractive and curvy, nothing exceptional; bright red hair, soft features.
+- Prey, pred (has the women's knack; scared of hers) and lewd. Incredibly aroused at the notion of being some stronger, sexier woman's food.
