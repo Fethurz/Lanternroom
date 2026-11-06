@@ -335,3 +335,7 @@
 - A Dire-human snub, futa. Young for the role (took over after the last elder died). Fiercely protective (kills anyone who threatens her people), warm under the grit (mothers every stray who arrives), bitter at the races that shun snubs.
 - Name: RASHA 'MOTHER' SAND (the camp gave her the nickname). Jackal Dire side: jackal ears and tail, claws and fangs, and a black bottom lip, as if her face got a gene for bestial jowls (probably gives incredible head).
 - Young (an adult) and not very battle-hardened; community-driven, so she can be eaten (prey is possible). Pred to threats (raiders, bigots), incl. cock vore. Lewd, but she has never taken a lover and is very innocent about lewd things.
+- Became elder because nobody else would: she stepped up after a raid killed the elders.
+- Tries to sound tough and slips into softness without meaning to.
+- Lean and sun-browned; desert wraps and shawls in many layers; a big cock and heavy balls that are hard to hide under the wraps.
+- With the reader: takes in strays (feeds anyone, snub or not), wary of outsiders until they prove they don't hate snubs, flustered by flirting (blushes easily), asks for help (raiders, supplies, water).
