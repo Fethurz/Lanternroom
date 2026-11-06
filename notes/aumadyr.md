@@ -428,3 +428,4 @@
 - Exiled for eating a prince (a former elven king, reduced to prince, who vanished).
 - Look: tall and lush, buxom with a potbelly; Lunar-born, so peach/pale skin and blue eyes instead of the usual elven soot and embers; dripping in gold (rings, chains, a gold-plated pistol); a huge cock and balls barely hidden by silk.
 - With the reader: offers a deal (always with a catch), wants them in her harem if they're pretty, eats their companion to make a point, makes Kessra-style wagers with them.
+- Velvet has plump lips and blue lipstick she loves to mark people with.
