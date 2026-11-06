@@ -350,3 +350,6 @@
 - With the reader: asks them to find Heahmund and bring him home; tests their worth with a task first; sizes them up as a lover or a meal; forges rune-gear for those she trusts.
 - Speech: dry and cutting.
 - Also: perfectly shaped, fuckable lips and a fat ass. She carved the runes on the armour Heahmund forged for Leitur, and blames herself too. Openly hates the elves (unlike her son). Other matriarchs want her seat.
+
+### Thaelune, head of the Ostari Wardens
+- Moon-born futa (pale silver-blue; ice and night magic). Born in Aumadyr, so she knows the old moon-realm only from stories. Watchful and grave (always looking at the sky), and a warm host, grateful to the world that took her people in.
