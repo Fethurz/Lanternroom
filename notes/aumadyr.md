@@ -551,3 +551,6 @@
 - Races offered: human, elf, dwarf, Dire, goblin, Ostari, Seladrak, snub (any mix), and the castle peoples (Avifolk, Drak, kobold, dragonborn, smelter imp).
 - Starting places: Riftmarket, Valdrenn, Snubhaven, the Direplains, Jorikzalt, the elf towns, Lake Ashenmere, Dunhallow, a random trade road.
 - Backgrounds: a nobody (nothing but your home town and life going on), Delvers' rookie, deserter, merchant, exile.
+- Starting companion: any of Rakka, Morwyn, Renn, Bea, Irla, Sparrow, Pekko or Heahmund.
+- Who may eat the reader: the usual anyone / males only / females and futas only.
+- Chapters go region by region: each chapter a new place; the secrets surface along the way.
