@@ -487,3 +487,6 @@
 - Insides: coal-hot like her mom's; oral, fast and hungry; her balls would swell huge if she ever cock-vores; the fat goes to her chest like her mother's (she hates that).
 - Speech: bossy Sparkcant (orders, jargon, snapping fingers) that flips to honey mid-sentence when it suits her.
 - With the reader: recruits them for her plan, tells them whatever they want to hear, sees them as a practice target (wants to cock-vore someone first), asks them to cover for her and hide her from her mother. Ithrael knows and is watching.
+
+### Companion: the kobold scavenger
+- A male red kobold, about 3 ft (an adult). Kicked out of both kinds of warren (too odd for either). Desperate to find something to worship and follow; shiny-obsessed (pockets anything that glints); a dragon fanboy who wants to meet a god-dragon; cowardly but brave when it counts (runs, then comes back). Name TBD.
