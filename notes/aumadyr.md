@@ -504,3 +504,8 @@
 - Look: youthful (dwarf women's mana), scarred and stocky, a soft gut from retirement and ale, a big cock and balls hard to hide behind the desk; smouldering orange-red hair, orange eyes, ash-pale grey skin, black lipstick, a few blocky, angular black tattoos.
 - Pred (has eaten monsters and rivals in the deep), cock vore, lewd; eats rookies who break guild law. Itching to do anything interesting: lives vicariously through other adventurers, and even giving head to someone for a good story is worth her while (would never turn down head herself).
 - With the reader: hands out jobs (bounties, delves), tests them with a copper-rank trial, tells endless war stories; might tag along for something big, but respects her position too much to abandon it outright.
+
+### The Scalewright hunter
+- A dexterous human woman. Absolutely loves swallowing dragons and churning them down into sexy, useless human curves and flab. Digs through her own shit for the useful leftovers to sell, or maims and dismembers dragons before eating so the valuable parts aren't attached to her meal.
+- Role: rival, villain, grey or possible ally, depending on circumstances.
+- The job makes her horny; insulting or harming her takes more effort than it's worth (even wounds get her going). Trophy-obsessed (wants Lunareth's scales), greedy, charismatic (easy to like, hard to trust). Name TBD.
