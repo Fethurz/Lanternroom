@@ -520,3 +520,6 @@
 - A famous gold-rank party of 3, still active. Famous for mapping the chasm deeps (furthest anyone's gone) and many other feats told as tales (many have lost the specifics).
 - Members: a female ELF MAGE; a male OSTARI tank and leader; a female AVIFOLK healer who is talked about the least.
 - With the reader: general interest, mentoring, rivalry (racing for the same delve), recruiting (need a fourth for a big job), or seeing the reader as a threat, depending on what the reader does.
+- AURELIUS: Weigher-born Ostari (gold and white; karma-reads every foe), male, tank and leader. No lewd or vore focus.
+- SYLVAINE: elf mage with fire magic; rare for an elf: Lunar-blessed with real mana. Pred (eats monsters in the deep).
+- MIRA: a TOUCAN Avifolk healer, the one talked about the least; a secret pred nobody suspects.
