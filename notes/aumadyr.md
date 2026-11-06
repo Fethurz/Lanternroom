@@ -341,3 +341,7 @@
 - With the reader: takes in strays (feeds anyone, snub or not), wary of outsiders until they prove they don't hate snubs, flustered by flirting (blushes easily), asks for help (raiders, supplies, water).
 - Insides: hot, tight, slimy and humiliating. She cums nonstop while digesting someone; very sensitive to pleasure. Feels guilty after having to eat raiders. Cock-vored prey slosh in her heavy, swaying balls as she walks. The fat goes to her hips and softens her lean frame.
 - Parents: a jackal Dire father and a human mother, both dead. Prays to Mawryn (the only faith that blesses snubs).
+
+### Gudrun Anvilmother (Heahmund's mother)
+- Jorikzalt clan matriarch and runesmith, ~230, still carves runes every day. A stern matriarch who rules her clan with an iron hand, secretly proud of the good Heahmund does on the roads. Wants him home.
+- Lewd and vore are both fine (private and intense, like dwarves).
