@@ -345,3 +345,7 @@
 ### Gudrun Anvilmother (Heahmund's mother)
 - Jorikzalt clan matriarch and runesmith, ~230, still carves runes every day. A stern matriarch who rules her clan with an iron hand, secretly proud of the good Heahmund does on the roads. Wants him home.
 - Lewd and vore are both fine (private and intense, like dwarves).
+- Look: shockingly youthful (WORLD RULE: female dwarves have so much latent mana that it naturally preserves their bodies); broad and sturdy with thick forge arms, soft and heavy (big belly, wide hips); long white braids threaded with rune-carved rings.
+- Vore: oral, slow and heavy (a deep, grinding gut), also anal and unbirth; eats the clan's traitors behind closed doors as her justice.
+- With the reader: asks them to find Heahmund and bring him home; tests their worth with a task first; sizes them up as a lover or a meal; forges rune-gear for those she trusts.
+- Speech: dry and cutting.
