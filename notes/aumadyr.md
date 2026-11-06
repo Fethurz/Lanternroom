@@ -263,3 +263,12 @@
 ## Languages (2026-11-06)
 - One common trade tongue almost everyone speaks: HEARTHSPEAK. Plus each people's own: Valdrenn Old Norse-ish RIMETONGUE; dwarves rune-carved KETHRIC, spoken in grunts and hammer-taps; elves clipped, technical SPARKCANT full of invented words; goblins sing-song ROOTSONG; Seladrak deep grinding stone-speech felt more than heard; Dire growls and body language plus Hearthspeak, each tribe its own calls; Ostari a chiming crystal-tongue, partly sung; trolls dead HIGH SILVER, found only on ruins and silver artifacts (the owner did NOT pick 'reading it wakes old spells', so leave that out); Animar just speaks the ordinary common human tongue.
 - The gods' old tongue is a spell language: speaking it right is magic. Translation charms exist but are pricey.
+
+## Factions and guilds (2026-11-06)
+- THE DELVERS' COMPACT: the main adventurers' guild, based in Riftmarket with lodges in every city. Ranks copper, iron, silver, gold (by what you've survived); jobs from bounty boards; maps the chasm's dungeons and troll ruins; buys troll silver (quietly sells the sick silver on). Open to every race, Dire included (great for 'retrieval').
+- THE SCALEWRIGHTS: the dragon hunters' guild, part of a wider HUNTERS' LODGE that also takes monster bounties (wyverns, basilisks, Sinmaw). Rich, ruthless, hated by the dragonborn; elven-made harpoon-crossbows.
+- Riftmarket has TWO big powers: THE GILT HOUSES (merchant families: money-changers and auctions, AND the bellyhouses, smuggling and sick silver; Kessra's and Gorma's idols sit in their back rooms) and THE IRON TALLY (a mercenary company for hire; the closest thing to a city guard, for a fee). No separate gang.
+- A thieves' guild loyal to Lady Kessra (name TBD; thieves leave her a stolen coin at crossroads).
+- THE HEARTHWARDENS: a road-guard order that keeps the trade roads 'safe-ish'.
+- Not added: a karma-investigator faction, a silver mage guild.
+- Already existing: the Cleansed, the rapture pilgrims, the holy orders (one per major faith), the lesser gods' cults.
