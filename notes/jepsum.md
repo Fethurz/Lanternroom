@@ -88,3 +88,5 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Gravemaw's skeleton lies half buried on a California beach. Story: real risk by default, vore ticked, the usual who-may-eat-you option plus its own "kaiju only / anyone" choice (done as a story setup option, no app change needed).
 - Tags: core (vore, world, sci-fi, mecha, kaiju, female, futa, femboy) and extras (milf, incest, rivals, macro, scat, burping). Tone: a mix of action-drama with humour, lewd comedy and dark high stakes. Kira's partner when {{user}} isn't her pilot: a set character (TBD).
 - Kira's stand-in partner: LEXI HART, 24, bubbly, Kira's best friend from Larkspur Falls, a greedy pred; territorial about {{user}}, sees them as competition for Kira.
+- Lexi: tall and athletic, tan, ponytail, a runner's body. Oral pred, greedy (gobbles fast, wants seconds), belches loudly and proudly, would try to swallow {{user}} to get them out of the way and win Kira back.
+- Owner wants: more on kaiju ranking, and {{user}}'s MOM as a supporting role (family tie, stakes, potential incest; she is an adult).
