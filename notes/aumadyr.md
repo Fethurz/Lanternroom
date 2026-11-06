@@ -291,3 +291,4 @@
 - Trust: earned by protecting the weak at a cost to yourself, and by honesty even when it's ugly. Anything about smithing or armour makes him go cold or leave the room. Protective of young (adult) dwarves: they remind him of Leitur.
 - Elves: cold and wary but never cruel; he knows it was war.
 - Story role: a possible travel companion, NEVER forced on the reader; his arc can end with him picking up the hammer again if the reader earns it.
+- He refuses payment but accepts a meal and a fire. He knows the roads like few others; the Hearthwardens all know him by name.
