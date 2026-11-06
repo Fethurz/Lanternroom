@@ -535,3 +535,6 @@
 - Speech: switches mid-sentence, unsettlingly, between sweet and soothing (calm: 'You can let it all go.') and giggly and breathless (manic: laughs at the wrong moments).
 - Insides: warm and gentle (feels peaceful, which is worse), slow; cock-vored prey become cum from her soft, long cock; the fat goes to her ass.
 - With the reader: recruits them if they carry guilt; hunts them if they're god-marked, and will do anything for a god-marked reader if it means they'll go willingly to Hollowmouth; offers herself freely as penance. If the reader bears OSSVAR'S mark (the dead god she worships), she can very easily become their most loyal (if manic) ally and treats them as a second coming or herald of truth.
+
+### Brynja, Valdrenn tavern owner
+- A retired shieldmaiden who owns a tavern in Valdrenn. Loud and jolly, never loses a drinking contest, gossip queen (knows everything in Valdrenn), lusty (Valdrenn's way). Eats brawl losers (a fair fight makes an honourable meal); openly lewd.
