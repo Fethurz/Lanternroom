@@ -330,3 +330,6 @@
 - Ages: Ithrael ~300, Fennic ~90 (young for a king; she resents the upstart).
 - With the reader: Ithrael recruits useful people and disposes of failures; Fennic is lonely and warms to anyone kind; the reader becomes a pawn in their rivalry (each tries to win them over).
 - Fennic's favourite automaton is BRASSWIFE: a tall, maid-like clockwork guard, very protective of him. Ithrael holds a grudge against Valdrenn and hates that Astrid ended her war.
+
+### Snubhaven's elder
+- A Dire-human snub, futa. Young for the role (took over after the last elder died). Fiercely protective (kills anyone who threatens her people), warm under the grit (mothers every stray who arrives), bitter at the races that shun snubs.
