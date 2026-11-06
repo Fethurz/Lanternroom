@@ -105,3 +105,4 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - The Matriarch and the Warden are both major players in the story alongside Queen Lure (chapter outline to rework). A hidden Lovely is blending in at the pilot bar in Larkspur Falls, unknown to everyone.
 - Hidden Lovely: CANDY, a new waitress at the pilot bar, sweet and flirty, Diane's coworker; regulars keep going missing.
 - Story is now 9 chapters (was 7) to fit Queen Lure, the Warden and the Matriarch.
+- 9 chapters (approved): 1 Arrival and the first fight; 2 the Ebony Kirin trials; 3 Larkspur Falls nights (Candy, missing regulars); 4 the Titanguard games against Japan and Norway; 5 the Warden's coordinated army; 6 the Jackals strike; 7 Princess's secret leaks (Sloane Mercer); 8 Queen Lure rises and the Matriarch comes for Princess; 9 the three-way war and the blue glow. Meters stay two: Mech condition and Ratings.
