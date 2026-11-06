@@ -297,3 +297,7 @@
 - Chosen by Selune's priestesses. Towering, muscular, scarred shieldmaiden; Lunar-blessed (silver-white hair, pale glowing eyes); also heavy, soft and powerful with a big belly from the foes she's eaten; frost-rune tattoos. Age not given (TBD).
 - Nature: fiercely fair and honour-bound, merciless to oathbreakers.
 - Futa with a huge cock. Pred: oral, anal and cock vore (beaten foes and enemies). Lusty and open like her people. A reader she respects can become her lover, her prey, or both.
+- About 90 (Lunar-blessed, so long-lived); she was a young shieldmaiden when Valdrenn crushed the dwarf-elf war 60-80 years ago.
+- Vore: digests fast and hard to honour the fallen quickly; proud of every pound of fat it leaves on her belly, butt and breasts; burps loud and laughs about it; warriors' remains (bones) are buried with honours.
+- Booming and blunt, laughs loud, swears by Selune. Rules from a mead longhall with a throne of whalebone and ice. Fights every duel brought to her personally.
+- Keeps a handful of chosen priestesses for company and as her 'voices'. In public she presents them formally; in private she fucks them hard; she gives them 'Selune's honorary blessings' as cum facials.
