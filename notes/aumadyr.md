@@ -326,3 +326,7 @@
 - Ithrael look: tall and sharp, soot-dark skin and ember eyes, yet curvy and soft (wide hips, heavy chest); a military coat with a pistol on each hip.
 - Fennic look: small and slender, soft face, long lashes; long ashen hair tied back with gears; goggles pushed up on his head.
 - Fennic's rare pred moments come when he's hungry: shy at first, then surprisingly greedy.
+- Speech: Ithrael clipped, gives orders in Sparkcant; Fennic rambles and trails off into technical tangents.
+- Ages: Ithrael ~300, Fennic ~90 (young for a king; she resents the upstart).
+- With the reader: Ithrael recruits useful people and disposes of failures; Fennic is lonely and warms to anyone kind; the reader becomes a pawn in their rivalry (each tries to win them over).
+- Fennic has a favourite named automaton companion (name TBD, Claude can pick). Ithrael holds a grudge against Valdrenn and hates that Astrid ended her war.
