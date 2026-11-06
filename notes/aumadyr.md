@@ -413,3 +413,6 @@
 - A total innocent milf about lewd things; formed soft, subtle lips because she thinks they'll make people like her more. A curious pred (swallows someone to 'learn' them; her gut is diamond-hot and crushing, horrifically painful like all Seladrak). Lewd.
 - Look: amethyst skin with purple crystal facets that catch light, soft milf curves (wide hips, heavy chest of stone), layers of clashing traded fabrics worn proudly. Speech: warm and chatty, explains things wrongly at length.
 - With the reader: overjoyed at a surface guest, asks for clothes (trades anything for fabric), wants to 'learn' them (which may mean swallowing), asks for lessons about kissing and love.
+
+### Kestrav, Avifolk clan lord
+- Male golden-eagle Avifolk. A big himbo with a loving wife who's exhausted by how bad he is at picking up cues and hints. Gentle, but doesn't understand that he's a powerhouse who naturally intimidates people (and that he could easily swallow most normal people). Stoic. Mercenary pride: sells his clan's swords only to those who honour the code.
