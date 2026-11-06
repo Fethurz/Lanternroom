@@ -329,4 +329,4 @@
 - Speech: Ithrael clipped, gives orders in Sparkcant; Fennic rambles and trails off into technical tangents.
 - Ages: Ithrael ~300, Fennic ~90 (young for a king; she resents the upstart).
 - With the reader: Ithrael recruits useful people and disposes of failures; Fennic is lonely and warms to anyone kind; the reader becomes a pawn in their rivalry (each tries to win them over).
-- Fennic has a favourite named automaton companion (name TBD, Claude can pick). Ithrael holds a grudge against Valdrenn and hates that Astrid ended her war.
+- Fennic's favourite automaton is BRASSWIFE: a tall, maid-like clockwork guard, very protective of him. Ithrael holds a grudge against Valdrenn and hates that Astrid ended her war.
