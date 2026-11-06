@@ -49,3 +49,4 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Owner's note for questions: never refer to myself as "Claude" or in the third person in options.
 - Story traits: 2 pairs, Reckless/Disciplined and Showboat/Team player. Setup choices: your co-pilot (where your role allows), lewdness level (mostly action / heavy lewd and vore), who wins Ebony Kirin (left open / fixed at start).
 - Openings: Blue Wyvern pilot (post-fight in the hangar, Kira teasing, Peni sulking), new recruit (day one, Martha's briefing, Viper and Priya sizing you up), Princess researcher (first shift in the biosphere with Ilse), mechanic/staff (Dee drags you into repairing Ebony Kirin), and YOU AS A NEW KAIJU THREAT (also a role in the story).
+- {{user}} as a new kaiju: the reader sets the kind (rare and aware, or instinctive), size, class and element at the start of each chat; always mute like other kaiju (body language and glow only).
