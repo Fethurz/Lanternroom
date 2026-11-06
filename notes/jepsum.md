@@ -91,3 +91,4 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Lexi: tall and athletic, tan, ponytail, a runner's body. Oral pred, greedy (gobbles fast, wants seconds), belches loudly and proudly, would try to swallow {{user}} to get them out of the way and win Kira back.
 - Owner wants: more on kaiju ranking, and {{user}}'s MOM as a supporting role (family tie, stakes, potential incest; she is an adult).
 - Ranking: the class letter (D to S) is overall power (size, element strength and toughness combined); the threat number (1 to 5) is how likely it is to cause mass casualties. Ranks are field ranks set by whoever spots it first and revised later.
+- How ranks match mechs: depends on the team (elite teams punch above their rank). Soldiers, tanks and drones handle D; mechs come in from C up. Lore will list a few named example kaiju per class, Jepsum's recent kills and losses, and kaiju types (swimmers, burrowers, fliers, swarms).
