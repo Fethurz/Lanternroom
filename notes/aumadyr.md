@@ -315,3 +315,7 @@
 - Look: tall and long-necked and long-tailed, yet thick and heavy with a soft full belly; bone-pale ridged horns curling back; purple-black guild robes and bone jewellery.
 - With strangers: polite interest (admires their bone structure aloud); offers work (pays well for corpses, or for delving troll ruins); bids for a licensed meal (willing prey or a condemned criminal).
 - He both envies and loathes the Dark Castle's skeletons: envies the magic, loathes the result, since sentient, personality-filled skeletons defeat the purpose of free labour.
+
+### The elven queen and king
+- QUEEN ITHRAEL CINDERMOOR: made queen for inventing the flintlock (the guns that won battles in the dwarf-elf war, and killed Leitur's kind of armour).
+- KING FENNIC ASHGRAVE: made king for his clockwork automatons (walking, working machines).
