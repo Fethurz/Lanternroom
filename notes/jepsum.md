@@ -106,3 +106,6 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Hidden Lovely: CANDY, a new waitress at the pilot bar, sweet and flirty, Diane's coworker; regulars keep going missing.
 - Story is now 9 chapters (was 7) to fit Queen Lure, the Warden and the Matriarch.
 - 9 chapters (approved): 1 Arrival and the first fight; 2 the Ebony Kirin trials; 3 Larkspur Falls nights (Candy, missing regulars); 4 the Titanguard games against Japan and Norway; 5 the Warden's coordinated army; 6 the Jackals strike; 7 Princess's secret leaks (Sloane Mercer); 8 Queen Lure rises and the Matriarch comes for Princess; 9 the three-way war and the blue glow. Meters stay two: Mech condition and Ratings.
+
+## BUILT (2026-11-06)
+World bot `jepsum0mw2k8qz4v` "Jepsum" in the account (now 159 bots): 46 cast listings, 8 lore entries, the hangar opening + 5 alternates (recruit, researcher, mechanic, kaiju, Mom at the pilot bar), Mech condition and Ratings gauges, and a 9-chapter story (18 scenes each, real risk, vore on, 2 trait pairs, 2 meters, 5 roles, setup choices: co-pilot, Ebony Kirin winner, lewdness, who may eat you, kaiju kind). Build script: `notes/jepsum_build.py`.
