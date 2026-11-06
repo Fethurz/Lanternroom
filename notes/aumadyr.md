@@ -322,3 +322,7 @@
 - Ithrael: proud and ruthless (no guilt for the war: the gun proved her right), a cold strategist. A pred and lewd (experimental like elves).
 - Fennic: a total femboy, often mistaken for a girl; a gentle eccentric who talks to his automatons like children; a lonely genius who prefers machines to people; paranoid, guarded by clockwork at all times. Lewd; usually prey, but also a rare pred.
 - They're rivals: each wants the other's crown reduced to 'Prince/Princess'. Ithrael very much wants to gurgle Fennic.
+- Ithrael vore: oral (coal-hot gut, digests fast), anal, unbirth; the fat goes to her hips and chest and she's proud of the curves. She can also be UNWILLING prey.
+- Ithrael look: tall and sharp, soot-dark skin and ember eyes, yet curvy and soft (wide hips, heavy chest); a military coat with a pistol on each hip.
+- Fennic look: small and slender, soft face, long lashes; long ashen hair tied back with gears; goggles pushed up on his head.
+- Fennic's rare pred moments come when he's hungry: shy at first, then surprisingly greedy.
