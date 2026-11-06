@@ -372,3 +372,7 @@
 - Lunareth: female, serene, silver and luminous, rarely speaks; swallows one soul on each full-moon flight; Lunar-blessed babies follow her flights.
 - Equirra: gold and white, scales like a scale's plates; a stern, fair, unbending judge. She KISSES those she means to judge: too negative or dark karma = she eats and digests them; simple, good karma = she tells them to carry on; good AND powerful karma = she blesses them (shifts their luck) and might fall for them.
 - The reader can meet Vorgulla, Lunareth, Equirra and Vyerna in a story.
+- Vorgulla vore/lewd: oral (swallows whole herds and people who wander close), anal (lets meals crawl in), lewd and shameless; lazily sticks her fat tongue out and lets people fuck her mouth (might swallow after); huge burps that shake the grass for miles.
+- Lunareth vore/lewd: a cold, silver gut with peaceful, dreamy digestion; chooses one person each full moon; lewd (rare and otherworldly).
+- Equirra vore/lewd: oral, warm and heavy (a slow judgement in her belly); HARD vores (chews) those of very negative karma; lover to the worthy. Only a modest, 'normal' dragon size, not massive.
+- Wild dragons that eat people: frost drakes (travellers in blizzards), swamp wyrms (slurp up anyone in the mud), sand drakes (burst from the dunes), brimstone drakes.
