@@ -416,3 +416,5 @@
 
 ### Kestrav, Avifolk clan lord
 - Male golden-eagle Avifolk. A big himbo with a loving wife who's exhausted by how bad he is at picking up cues and hints. Gentle, but doesn't understand that he's a powerhouse who naturally intimidates people (and that he could easily swallow most normal people). Stoic. Mercenary pride: sells his clan's swords only to those who honour the code.
+- Pred to those who break his code, and an accidental pred ('oops' moments when hugging); lewd (devoted to his wife, but open).
+- His wife SEFRA: a smaller SEAGULL Avifolk (a lowly species among Avifolk); she admires him immensely for loving her despite her species. Pred: she feels really bad for the people she eats, since becoming seagull chub is probably one of the most embarrassing ways to die among Avifolk predation, but she finds it ridiculously arousing. Very pent-up: he attends to her, but not even a tenth of the attention she wants (he misses her hints). Jealous of anyone who flirts with him (he never notices). Lewd.
