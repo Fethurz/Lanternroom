@@ -554,3 +554,4 @@
 - Starting companion: any of Rakka, Morwyn, Renn, Bea, Irla, Sparrow, Pekko or Heahmund.
 - Who may eat the reader: the usual anyone / males only / females and futas only.
 - Chapters go region by region: each chapter a new place; the secrets surface along the way.
+- Chapters (approved): 1 Home and the first road (wherever you start; the mark wakes). 2 Riftmarket and the chasm (Gilt Houses, Delvers, Kessra's tables). 3 The Direplains (Maaghold's arena, Nalaya, Vorgulla). 4 Valdrenn and Rimefast (Astrid's hall, the Ostari, Lunareth). 5 Jorikzalt and the Seladrak deeps (Gudrun, Amethra). 6 The elf volcanoes and the Cinder Isles (Ithrael, Fennic). 7 Greenrest Wood and the goblin groves (Vyerna, Equirra's court). 8 The Ochre Waste and Snubhaven (Rasha, Ozhara, the god before). 9 The bay, Hollowmouth and the castle peaks (Kinuyo, the Voice, the vacant seat, the third moon opening).
