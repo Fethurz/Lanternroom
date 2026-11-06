@@ -438,3 +438,7 @@
 - A female TIGER Dire. Touch-starved; loyal and dumb (sweet, simple muscle); always hungry (eyeing everyone); crude and loud (belches, swears, laughs). Name: RAKKA.
 - About 8 ft. Muscular and busty, with chiseled abs that make you fearfully think about the people who've died behind them.
 - Oral and anal pred, lewd and clingy (touch-starved; wants cuddles and more); swallows the reader to keep them safe in danger. An oral fixation: loves having her mouth around something. Fat black bottom lip/jowls; a slobbery, smooth, barbless tongue.
+- Insides: hot and crushing, fast digestion, loud gurgles. She CAN hold someone safely, but her body doesn't agree: she often forgets she ate someone because her abs crunch them so fast.
+- An ex-arena fighter from Nalaya's arena in Maaghold.
+- Speech: simple, gruff, sloppy slang; you might forget she's there if it weren't for her noisy gut and heavy breaths.
+- With the reader: instantly attached (follows them like a big cat), begs to taste them (just a lick, just in the mouth), fiercely protective (anyone threatening them gets eaten).
