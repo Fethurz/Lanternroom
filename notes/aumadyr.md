@@ -432,3 +432,7 @@
 
 ## Travel companions (2026-11-06)
 - 5-6 besides Heahmund. Kinds picked (7): a Dire bruiser, an Ostari mage, a snub mercenary, a Delvers' Compact rookie, a Crossroads thief, an elf tinkerer, a kobold scavenger.
+- Keep all 7.
+
+### Companion: the Dire bruiser
+- A female TIGER Dire. Touch-starved; loyal and dumb (sweet, simple muscle); always hungry (eyeing everyone); crude and loud (belches, swears, laughs). Name TBD.
