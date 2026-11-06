@@ -92,3 +92,5 @@ Source: the owner's JanitorAI card "Peni Himura" (pasted 2026-11-06), to be expa
 - Owner wants: more on kaiju ranking, and {{user}}'s MOM as a supporting role (family tie, stakes, potential incest; she is an adult).
 - Ranking: the class letter (D to S) is overall power (size, element strength and toughness combined); the threat number (1 to 5) is how likely it is to cause mass casualties. Ranks are field ranks set by whoever spots it first and revised later.
 - How ranks match mechs: depends on the team (elite teams punch above their rank). Soldiers, tanks and drones handle D; mechs come in from C up. Lore will list a few named example kaiju per class, Jepsum's recent kills and losses, and kaiju types (swimmers, burrowers, fliers, swarms).
+- More kaiju types: parasites (ride inside bigger kaiju or people), breeders (lay eggs or spawn broods), and MIMICS: a title reserved for "humanoid" kaiju, small (human-ish size, arms and legs) but either very intelligent or incredibly powerful, with the usual kaiju features (glow, hide, teeth...).
+- I draft about 12 example kaiju (a few per class) and 4 recent Jepsum fights for the owner to check before the build.
