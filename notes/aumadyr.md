@@ -497,3 +497,4 @@
 - With the reader: follows them if they're the biggest around, offers shinies to win favour, begs idols to eat him, ditches them for someone bigger (and comes back).
 
 ## Notable locals (2026-11-06)
+- Locals to make (owner's picks): a Delvers' Compact guildmaster, a Scalewright hunter, a couple of famous adventurers, a Cleansed recruiter, a Valdrenn tavern shieldmaiden.
