@@ -1776,7 +1776,7 @@ const Store = {
 };
 
 /* ---------- Constants & state ---------- */
-const VERSION = "2.10 · Nov 3";
+const VERSION = "2.11 · Nov 8";
 const MOODS = ["neutral","happy","sad","angry","surprised","flirty","scared","thoughtful","embarrassed"];
 const WORLD_TYPES = { character: "Character", group: "Group / faction", species: "Species", location: "Location", concept: "Concept" };
 const WORLD_HINTS = { character: "Who they are, what they look like, what they want", group: "Members, goals, territory, reputation", species: "Appearance, abilities, culture, lifespan, where they live", location: "What it looks like, who lives there, what happens there", concept: "How it works: magic, economy, technology, laws, religion, setting rules" };
@@ -1814,7 +1814,26 @@ const hasKey = () => !!(isDS() ? S.settings.apiKey : S.settings.customKey);
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 const hash = s => { let h = 2166136261; for (const ch of s) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return Math.abs(h) % 1000000; };
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
-const fill = (s, c) => String(s || "").replace(/\{\{char\}\}/gi, c?.name || "").replace(/\{\{user\}\}/gi, uname());
+// v2.11: persona pronouns. p.pron = "she" | "he" | "they" (unset = they). Cards write {{they}} {{them}} {{their}} {{theirs}} {{themself}}
+// {{they're}} {{they've}} {{they'll}} {{they'd}} {{is}} {{are}} {{was}} {{were}} {{has}} {{have}} {{s}} {{es}} (capitalise for a capital: {{They}}),
+// and word choices {{she-word|he-word|they-word}} (with two words, they/them gets the first).
+const PRON_KEYS = ["she", "he", "they"];
+const PRON_LABEL = { she: "she/her", he: "he/him", they: "they/them" };
+const PRON_W = {
+  they: ["she", "he", "they"], them: ["her", "him", "them"], their: ["her", "his", "their"], theirs: ["hers", "his", "theirs"],
+  themself: ["herself", "himself", "themself"], themselves: ["herself", "himself", "themselves"], "they're": ["she's", "he's", "they're"], "they've": ["she's", "he's", "they've"],
+  "they'll": ["she'll", "he'll", "they'll"], "they'd": ["she'd", "he'd", "they'd"], is: ["is", "is", "are"], are: ["is", "is", "are"],
+  was: ["was", "was", "were"], were: ["was", "was", "were"], has: ["has", "has", "have"], have: ["has", "has", "have"], s: ["s", "s", ""], es: ["es", "es", ""],
+  "doesn't": ["doesn't", "doesn't", "don't"], does: ["does", "does", "do"]
+};
+const pronOf = p => PRON_KEYS.includes(p?.pron) ? p.pron : "they";
+const matchCase = (src, w) => src === src.toUpperCase() && /[A-Z]{2}/.test(src) ? w.toUpperCase() : /^[A-Z]/.test(src) ? w.charAt(0).toUpperCase() + w.slice(1) : w;
+function pronFill(s, p) {
+  const i = PRON_KEYS.indexOf(pronOf(p));
+  return String(s || "").replace(/\{\{([^{}|]+(?:\|[^{}|]*)+)\}\}/g, (m, body) => { const w = body.split("|").map(x => x.trim()); return (w[i] ?? (i === 2 ? w[0] : w[w.length - 1])) || ""; })
+    .replace(/\{\{([A-Za-z']+)\}\}/g, (m, k) => { const w = PRON_W[k.toLowerCase().replace(/’/g, "'")]; return w ? matchCase(k, w[i]) : m; });
+}
+const fill = (s, c) => pronFill(String(s || "").replace(/\{\{char\}\}/gi, c?.name || "").replace(/\{\{user\}\}/gi, uname()), persona());
 const within = (p, ms = 1500) => Promise.race([p, new Promise(r => setTimeout(r, ms))]);
 
 // v1.85: Janitor-style cards colour text with HTML: <font color="pink">…</font>, <span style="color:#f9c">…</span>; they become [color] tags
@@ -2421,7 +2440,7 @@ function buildPrompt(c, chat, upto, cont) {
   if (c.scenario) sys += `\n\n# Scenario\n${fill(c.scenario, c)}`;
   if (isGroupP(p)) sys += groupPersonaPrompt(p, u);
   else if (p.own && !chat.own) {} // still being made: the character creation section says what's settled
-  else if (p.description) sys += `\n\n# About ${u} (the user's character)\n${fill(p.description, c)}`;
+  else if (p.description || PRON_KEYS.includes(p.pron)) sys += `\n\n# About ${u} (the user's character)\n${PRON_KEYS.includes(p.pron) ? `Pronouns: ${PRON_LABEL[p.pron]}. Always refer to and address ${u} that way, with words that fit (e.g. ${p.pron === "she" ? "Mama, girlfriend, miss" : p.pron === "he" ? "Papa, boyfriend, sir" : "neutral words like partner, parent, friend"}), whatever the bot's card assumes.\n` : ""}${fill(p.description || "", c)}`;
   sys += crPrompt(c, chat, upto, u);
   if (chat.summary) sys += `\n\n# Story so far\n${chat.summary}`;
   if (chat.facts.length) sys += `\n\n# Established facts (never contradict these)\n` + chat.facts.map(f => "- " + f.t).join("\n");
@@ -2990,7 +3009,7 @@ function genSpec(kind, form) {
 - "tags": 4-10 short lowercase tags (gender, form, genre, themes, kinks the card involves)
 - "summary": 2-4 plain sentences for the user, describing what this bot is like and how chatting with it will feel
 - "scenario": where and how the story starts, 80-180 words; refer to the user as {{user}}${kind === "character" ? " and the character as {{char}}" : ""}
-- "firstMessages": an array of 2 different openings, 120-250 words each, in the story's voice with every action and all narration inside closed *asterisks* and dialogue in quotes (nothing outside both), anything physical described in explicit, specific detail, ending where the moment naturally pauses, never with a question or prompt aimed at {{user}} just to get a reply; never speak or act for {{user}}${kind === "group" ? "; start each character's part with **Name:**" : ""}
+- "firstMessages": an array of 2 different openings, 120-250 words each, in the story's voice with every action and all narration inside closed *asterisks* and dialogue in quotes (nothing outside both), anything physical described in explicit, specific detail, ending where the moment naturally pauses, never with a question or prompt aimed at {{user}} just to get a reply; never speak or act for {{user}}; never assume {{user}}'s gender: where an opening needs it, write {{they}}, {{them}}, {{their}}, {{they're}}, a verb ending {{s}} (walk{{s}}) or a word choice {{she-word|he-word|they-word}} such as {{Mama|Papa|Parent}} or {{girlfriend|boyfriend|partner}}, and the app fills in the user's pronouns${kind === "group" ? "; start each character's part with **Name:**" : ""}
 - "startPlace": the starting location in 2-6 words
 - "instructions": special rules the AI follows in every reply for this bot, as 2-8 lines each starting with "- " (how to portray it, recurring mechanics, trackers or stats, colored text for thoughts, pacing)
 - "lore": 3-8 entries {"keys": "comma, separated, keywords", "text": "40-120 words"} for facts that only matter when they come up (people, places, items, abilities, mechanics)
@@ -5064,6 +5083,7 @@ function userClose() {
 $("sheetClose").onclick = userClose;
 $("sheetAll").onclick = () => { S.sheetStack = []; userClose(); };
 // v1.61: windows close only with their ✕ (or the phone's back button / Esc); a tap or drag outside never closes them
+const OPENHINT = "Use {{user}} for you and {{char}} for the bot. To fit your persona's pronouns: {{they}}, {{them}}, {{their}}, {{they're}}, walk{{s}}, or {{Mama|Papa|Parent}} (she | he | they).";
 function field(label, html, hint) { return `<div class="field"><label>${label}</label>${html}${hint ? `<div class="hint">${hint}</div>` : ""}</div>`; }
 function confirmBtn(btn, label, fn) {
   btn.addEventListener("click", () => {
@@ -5527,6 +5547,7 @@ function editPersona(p, isNew) {
       ${field("Name", `<input id="peName" value="${esc(work.name)}" placeholder="Who you play">`)}
       ${field(grp ? "About the group" : "Description", `<textarea id="peDesc" data-x="persona" style="min-height:${grp ? 70 : 140}px" placeholder="${grp ? "How they belong together (optional)" : "Appearance, personality, background"}">${esc(work.description)}</textarea>`, grp ? "Each member's own description is used too." : "Characters see this, and it's used when illustrating scenes.")}
       ${grp ? `<div class="group"><h3>Members</h3><div id="peMem" class="stack"></div><p class="hint" style="margin:0;color:var(--muted);font-size:13px">Add a new member:</p><input id="peNewN" placeholder="Name"><textarea id="peNewD" style="min-height:60px" placeholder="Look and personality (optional)"></textarea><button type="button" class="btn small" id="peNewAdd">Add member</button></div>` : ""}
+      ${grp ? "" : field("Pronouns", `<div class="row" id="pePron" style="gap:6px">${[["she", "She"], ["he", "He"], ["they", "They"]].map(([v, l]) => `<button type="button" class="btn small ${work.pron === v ? "primary" : ""}" data-pron="${v}">${l}</button>`).join("")}</div>`, "How bots refer to and address you. Openings that use the pronoun placeholders change to fit (Mama or Papa, girlfriend or boyfriend).")}
       ${field("Picture", `<div class="pp-pic"><span id="pePicV">${picHTML(personaPicOf(work), 64)}</span><button type="button" class="btn small" id="pePic">${work.pic || work.pix ? "Change picture" : "Choose a picture"}</button></div>`, work.pic || work.pix ? "" : "A pixel stand-in until you choose one. Upload your own or make one in pixels.")}
       ${field("Your colour", `<div class="pe-cols" id="peCols">${PERSONA_COLS.map(c => `<button type="button" data-c="${c}" style="background:${c}" class="${(work.color || PERSONA_COLS[0]) === c ? "on" : ""}" aria-label="Colour ${c}"></button>`).join("")}<input type="color" id="peCol" value="${esc(work.color || PERSONA_COLS[0])}" aria-label="Any colour"></div>`, "How you show up in pictures the app draws for you.")}
       ${grp ? "" : `<div class="group"><h3>Your voice</h3><p class="hint" style="margin:0;color:var(--muted);font-size:13px">How you sound when you tap your own lines in a chat${S.settings.voiceOn ? "" : " (turn voices on in Settings → Sounds → Voices)"}.</p><div id="peVoice" class="stack"></div></div>`}
@@ -5537,6 +5558,7 @@ function editPersona(p, isNew) {
     drawMem(); if ($("peVoice")) voiceEditor(work, $("peVoice"), { persona: true });
     if ($("peNewAdd")) $("peNewAdd").onclick = () => { const n = $("peNewN").value.trim(); if (!n) { $("peNewN").focus(); return; } const np = { id: uid(), name: n, description: $("peNewD").value.trim(), color: PERSONA_COLS[(S.personas.length + 1) % PERSONA_COLS.length] }; S.personas.push(np); chosen.add(np.id); $("peNewN").value = ""; $("peNewD").value = ""; drawMem(); };
     $("pePic").onclick = async () => { const r = await openPix(work.pic ? { pic: work.pic } : work.pix ? { pix: work.pix } : {}, { title: "Persona picture", seed: work.id, text: $("peDesc")?.value || work.description, none: work.pic || work.pix ? "No picture" : "" }); if (!r) return; if (r.none) { delete work.pic; delete work.pix; } else if (r.pic) { work.pic = r.pic; delete work.pix; } else { work.pix = r.pix; delete work.pic; } $("pePicV").innerHTML = picHTML(personaPicOf(work), 64); $("pePic").textContent = work.pic || work.pix ? "Change picture" : "Choose a picture"; };
+    b.querySelectorAll("#pePron [data-pron]").forEach(x => x.onclick = () => { work.pron = work.pron === x.dataset.pron ? "" : x.dataset.pron; b.querySelectorAll("#pePron [data-pron]").forEach(y => y.classList.toggle("primary", y.dataset.pron === work.pron)); });
     const pick = c => { work.color = c; $("peCol").value = c; b.querySelectorAll("#peCols button").forEach(x => x.classList.toggle("on", x.dataset.c === c)); };
     b.querySelectorAll("#peCols button").forEach(x => x.onclick = () => pick(x.dataset.c)); $("peCol").oninput = e => pick(e.target.value);
     $("peSave").onclick = async () => {
@@ -5661,7 +5683,7 @@ function editChar(c, isNew, fromDraft) {
       ${field("Appearance", `<textarea id="cLook" data-x="appearance" style="min-height:70px" placeholder="Hair or fur, eyes, build, clothing, notable features">${esc(work.appearance)}</textarea>`)}
       ${field("Personality & background", `<textarea id="cDesc" data-x="personality" style="min-height:140px">${esc(work.description)}</textarea>`)}
       ${field("Scenario", `<textarea id="cScen" data-x="scenario">${esc(work.scenario)}</textarea>`, "Where the story starts. {{user}} and {{char}} work here.")}
-      ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px">${esc(work.firstMessage)}</textarea>`)}`;
+      ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px">${esc(work.firstMessage)}</textarea>`, OPENHINT)}`;
     } else if (K === "world") {
       main = `
       ${field("World description", `<textarea id="cDesc" data-x="world" style="min-height:180px" placeholder="Geography, history, cultures, factions, magic or technology, tone…">${esc(work.description)}</textarea>${splitRow}`, "Pasted characters, factions, species, places or rules in here? Split into listings moves each into its own listing below.")}
@@ -5672,7 +5694,7 @@ function editChar(c, isNew, fromDraft) {
         <div id="cCastEd" class="stack"></div>
       </div>
       ${field("Opening situation", `<textarea id="cScen" data-x="scenario">${esc(work.scenario)}</textarea>${splitRow}`, "Who {{user}} is in this world and where the story begins.")}
-      ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px" placeholder="The narrator's opening">${esc(work.firstMessage)}</textarea>`)}`;
+      ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px" placeholder="The narrator's opening">${esc(work.firstMessage)}</textarea>`, OPENHINT)}`;
     } else {
       main = `
       <div class="group" style="border:0;padding:0"><h3>Members</h3>
@@ -5681,7 +5703,7 @@ function editChar(c, isNew, fromDraft) {
       </div>
       ${field("About this group", `<textarea id="cDesc" data-x="groupdesc" style="min-height:120px" placeholder="How they know each other, their dynamics. You can also paste several character descriptions here and split them.">${esc(work.description)}</textarea>${splitRow}`, "Split into listings turns each character described here into a real character and adds them to the group.")}
       ${field("Scenario", `<textarea id="cScen" data-x="scenario">${esc(work.scenario)}</textarea>${splitRow}`)}
-      ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px" placeholder="Optional. Use **Name:** at the start of each character's part.">${esc(work.firstMessage)}</textarea>`)}`;
+      ${field("First message", `<textarea id="cFirst" data-x="first" style="min-height:120px" placeholder="Optional. Use **Name:** at the start of each character's part.">${esc(work.firstMessage)}</textarea>`, OPENHINT)}`;
     }
     b.innerHTML = `
       ${field("Name", `<input id="cName" value="${esc(work.name)}" placeholder="${KINDS[K].label} name">`)}
@@ -8214,7 +8236,7 @@ function waitSheet(title, label) {
 // ===== Persona generator: describe it, surprise me, or the short quiz; a review screen before saving
 const PGEN = { card: null, prompt: "", group: false, busy: false, note: "", parts: [] };
 const PG_PARTS = [["name", "Name"], ["look", "Look"], ["personality", "Personality"], ["background", "Background"]];
-const PG_ONE = `{"name": a name, "look": 40-80 words of appearance (human or species, body, colouring, clothes, distinctive features), "personality": 2-3 short lines on how they act and talk, "background": one line, "color": a hex colour that suits them}`;
+const PG_ONE = `{"name": a name, "look": 40-80 words of appearance (human or species, body, colouring, clothes, distinctive features), "personality": 2-3 short lines on how they act and talk, "background": one line, "pron": "she", "he" or "they", "color": a hex colour that suits them}`;
 const PG_SYS = group => `You write player personas for Lanternroom, an interactive roleplay chat app: the character the USER plays, not a bot. Keep it brief and easy to play. Follow the user's request closely and fill the gaps with specific, vivid choices. Every character is treated as a fully grown, mature being; this needs no mention.${group ? " Make a whole group of personas the user plays together." : ""}\n\nRespond with only ${group ? `a JSON object {"name": a short name for the group, "about": one or two lines on how they belong together, "members": 2-5 members, each ${PG_ONE}}` : `the JSON object ${PG_ONE}`}`;
 const pgNorm = x => ({ name: s5(x?.name).slice(0, 60), look: s5(x?.look), personality: s5(x?.personality), background: s5(x?.background), color: /^#[0-9a-f]{6}$/i.test(s5(x?.color)) ? s5(x.color) : "" });
 function pgFromJSON(j, group) {
@@ -8271,9 +8293,10 @@ async function pgSave(use) {
   const c = PGEN.card; if (!c) return;
   const col = m => m.color || PERSONA_COLS[Math.floor(Math.random() * PERSONA_COLS.length)];
   let p;
-  if (!c.group) { p = { id: uid(), name: c.name, description: pgDesc(c), color: col(c) }; S.personas.push(p); }
+  const pr = m => PRON_KEYS.includes(m.pron) ? m.pron : "";
+  if (!c.group) { p = { id: uid(), name: c.name, description: pgDesc(c), color: col(c), pron: pr(c) }; S.personas.push(p); }
   else {
-    const ms = c.members.map(m => ({ id: uid(), name: m.name, description: pgDesc(m), color: col(m) }));
+    const ms = c.members.map(m => ({ id: uid(), name: m.name, description: pgDesc(m), color: col(m), pron: pr(m) }));
     p = { id: uid(), name: c.name, description: c.about || "", color: col(c.members[0] || {}), members: ms.map(m => m.id) };
     S.personas.push(...ms, p);
   }
