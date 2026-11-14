@@ -129,10 +129,24 @@ function buttFit() {
   const mob = pts.map(p => { const u = Math.max(0, Math.min(1, ((p[0] - g.cx) / g.R + 0.8) / 0.6)); return u * u * (3 - 2 * u); });
   const N = silSoft(pts, mob, BSOFT), B = E.butt; B.pts = N.pts; B.mob = mob; B.cmob = N.cmob; B.nrm = N.nrm; B.cx = N.cx; B.cy = N.cy; B.ry = N.ry; B.cap = BSOFT.cap * (1 + f); B.max = BSOFT.max * (1 + f);
   // the fold: a short crease from where the cheek's underside meets the back of the thigh, running a little way in and no further
-  const body = pix("body"), inside = p => { const x = Math.round(p[0]), y = Math.round(p[1]); return x >= 0 && y >= 0 && x < M.w && y < M.h && body[y * M.w + x] > 128; };
-  const mid = Math.round((NARC - 1) / 2), span = Math.round(M.butt.fold * Math.PI / 180 / ((Math.PI + 2 * g.al) / (NARC - 1)));
-  let i0 = -1; for (let i = mid; i < NARC; i++) if (inside(pts[i])) { i0 = i; break; }
-  const lead = Math.round(16 * Math.PI / 180 / ((Math.PI + 2 * g.al) / (NARC - 1))); if (i0 >= 0) i0 = Math.max(mid, i0 - lead);   // start just outside the body, so the fold always joins the cheek's edge to the body with no gap
+  const body = pix("body"), W_ = M.w, H_ = M.h, L16 = M.morph ? pix16("sdfL") : null, F16 = M.morph ? pix16("sdfF") : null;
+  const inside = p => { const x = Math.round(p[0]), y = Math.round(p[1]); if (x < 0 || y < 0 || x >= W_ || y >= H_) return false; const j = y * W_ + x; return L16 ? (1 - f) * L16[j] + f * F16[j] < 0 : body[j] > 128; };   // inside the figure as it stands at this weight
+  const dth = (Math.PI + 2 * g.al) / (NARC - 1), mid = Math.round((NARC - 1) / 2), span = Math.round(M.butt.fold * Math.PI / 180 / dth), lead = Math.round(16 * Math.PI / 180 / dth);
+  let i0 = -1;
+  if (M.butt.seamFrom != null) {   // a tail hangs behind this rump: the fold starts where the cheek's underside comes in over the thigh (the last place it is out in the open)
+    for (let i = NARC - 1; i >= mid; i--) if (!inside(pts[i])) { i0 = i + 1; break; }
+    if (i0 < 0) i0 = Math.min(NARC - 1, Math.round((100 * Math.PI / 180 - (g.ax - Math.PI / 2 - g.al)) / dth));
+    i0 = Math.max(mid, i0 - lead);
+    const from = Math.max(0, Math.round((M.butt.seamFrom * Math.PI / 180 - (g.ax - Math.PI / 2 - g.al)) / dth));
+    // creased only on its lower back edge where that lies over the tail or the thigh; its top runs on from the back with no line at all
+    B.seam = pts.map((p, i) => i < NARC && i >= from && i <= i0 + lead + span && (i >= i0 || inside(p)) ? 1 : 0);
+    B.foldW = pts.map((_, i) => Math.max(0, Math.min(1, 1 - (i - i0 - lead) / span)));
+    B.seamA = (u => 0.78 * u * u * (3 - 2 * u))(Math.max(0, Math.min(1, (f - 0.08) / 0.35)));   // no crease at all on the lean animal
+    return;
+  }
+  B.seamA = 0.78;
+  for (let i = mid; i < NARC; i++) if (inside(pts[i])) { i0 = i; break; }
+  if (i0 >= 0) i0 = Math.max(mid, i0 - lead);   // start just outside the body, so the fold always joins the cheek's edge to the body with no gap
   B.seam = pts.map((_, i) => i0 >= 0 && i >= i0 && i <= i0 + lead + span ? 1 : 0); B.foldW = pts.map((_, i) => i0 >= 0 ? Math.max(0, Math.min(1, 1 - (i - i0 - lead) / span)) : 0);
   if (M.butt.seamArc) {   // a tail that hangs down sits behind the cheek, so the cheek's whole back edge is creased against it, on round to the fold under it
     const [a0, a1] = M.butt.seamArc.map(d => d * Math.PI / 180), half = Math.PI / 2 + g.al, th = i => g.ax - half + 2 * half * i / (NARC - 1);
@@ -265,7 +279,7 @@ function draw(cv) {
     }
   } else {
     f.save(); f.beginPath(); M.rear.forEach(([x, y], i) => i ? f.lineTo(x, y) : f.moveTo(x, y)); f.closePath(); f.clip(); silFill(f, rp); f.restore();   // the cheek only ever shows on the rear end: never in the gap between the hind legs
-    if (BT.seam) { const cr = rp.map((p, i) => { const w = BT.foldW[i], q = BT.pts[i]; return [q[0] + (p[0] - q[0]) * w, q[1] + (p[1] - q[1]) * w]; }); silSeams(f, cr, BT.seam, lw); }   // the fold stays put where it runs into the thigh and follows the cheek at its outer end
+    if (BT.seam) { const cr = rp.map((p, i) => { const w = BT.foldW[i], q = BT.pts[i]; return [q[0] + (p[0] - q[0]) * w, q[1] + (p[1] - q[1]) * w]; }); if (BT.seamA > 0.01) { f.save(); f.globalAlpha = BT.seamA / 0.78; silSeams(f, cr, BT.seam, lw); f.restore(); } }   // the fold stays put where it runs into the thigh and follows the cheek at its outer end
   }
   f.setTransform(1, 0, 0, 1, 0, 0); f.globalCompositeOperation = "source-in"; f.fillStyle = E.color; f.fillRect(0, 0, W, Hh); f.globalCompositeOperation = "source-over";
   const c = cv.getContext("2d"); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, W, Hh); c.drawImage(V.F, 0, 0);

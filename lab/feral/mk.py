@@ -89,6 +89,7 @@ n=C['neck']; butt=None
 if 'butt' in C:
     T=C['butt']; butt={'tip':t(T['tip']),'c0':t(T['c0']),'r0':T['r0']*S,'c1':t(T['c1']),'r1':T['r1']*S,'fold':T['fold']}
     if 'seamArc' in T: butt['seamArc']=T['seamArc']
+    if 'seamFrom' in T: butt['seamFrom']=T['seamFrom']
 rig={'name':C['name'],'label':C['label'],'w':W,'h':H,'ground':(GY-OY)*S,'view':C['view'],
  'belly':{'frames':frames,'rootY':(P['mob'][0]-OY)*S,'looseY':(P['mob'][1]-OY)*S},
  'butt':butt,'near':[[t(p) for p in poly] for poly in C['near']],'rear':[t(p) for p in C['rear']] if 'rear' in C else None,
