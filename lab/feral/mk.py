@@ -13,40 +13,42 @@ if 'morph' in C:
     # The rump of the fat drawing is lifted out as its own soft part (the cheek), so it can wobble; under it the body keeps the lean shape
     from PIL import ImageDraw
     subprocess.run(['node','mkmask2.js',C['morph']['svg'],str(OX),str(OY),str(S),str(W),str(H),out+'/fat.png','[]'],check=True)
-    subprocess.run(['node','mkcontour.js',C['svg'],out+'/lean_contour.json'],check=True); subprocess.run(['node','mkcontour.js',C['morph']['svg'],out+'/fat_contour.json'],check=True)
-    LC=json.load(open(out+'/lean_contour.json')); FC=json.load(open(out+'/fat_contour.json')); K=C['cheek']
-    near=lambda P,q:min(range(len(P)),key=lambda k:math.hypot(P[k][0]-q[0],P[k][1]-q[1]))
-    def run(P,q0,q1):   # the outline between two points, the short way round
-        i,j=near(P,q0),near(P,q1); n=len(P); fwd=[P[(i+k)%n] for k in range((j-i)%n+1)]; back=[P[(i-k)%n] for k in range((i-j)%n+1)]
-        return fwd if len(fwd)<=len(back) else back
-    def even(pts,k,end=False):
-        cum=[0]
-        for p,q in zip(pts,pts[1:]): cum.append(cum[-1]+math.hypot(q[0]-p[0],q[1]-p[1]))
-        o=[]; j=0; m=k-1 if end else k
-        for i in range(k):
-            s_=cum[-1]*i/m
-            while j<len(cum)-2 and cum[j+1]<s_: j+=1
-            u=(s_-cum[j])/max(1e-9,cum[j+1]-cum[j]); p,q=pts[j],pts[j+1]; o.append((p[0]+(q[0]-p[0])*u,p[1]+(q[1]-p[1])*u))
-        return o
-    line=lambda p,q,k:[(p[0]+(q[0]-p[0])*i/k,p[1]+(q[1]-p[1])*i/k) for i in range(k)]
-    NA,NL,NB,NC=140,10,50,30
-    fA=even(run(FC,*K['fatA2']),NA,True); fB=even(run(FC,*K['fatB']),NB,True); fAs=even(run(FC,*K['fatA']),NA,True)   # the cheek starts a little forward of where the body hands over to it, so the two overlap and no notch shows
-    fat=fA+line(fA[-1],fB[0],NL+1)[1:]+fB+line(fB[-1],fA[0],NC+1)[1:-1]
-    lA=even(run(LC,*K['leanA2']),NA,True); lB=line(K['leanLink'],K['leanTip'],NB-1)+[tuple(K['leanTip'])]
-    lean=lA+line(lA[-1],lB[0],NL+1)[1:]+lB+line(lB[-1],lA[0],NC+1)[1:-1]
-    assert len(fat)==len(lean), (len(fat),len(lean))
-    ss=lambda u:(lambda v:v*v*(3-2*v))(max(0,min(1,u)))
-    n=len(fat); iB0=NA+NL; iB1=NA+NL+NB   # loose everywhere but the inner front edge; the two ends where it joins the body ease to still
-    mob=[ss((i-10)/18) if i<NA else 1 if i<iB0 else ss((iB1-1-i)/22) if i<iB1 else 0 for i in range(n)]
-    seam=[1 if iB0<=i<iB1 else 0 for i in range(n)]
-    extra['cheek']={'lean':[t(p) for p in lean],'fat':[t(p) for p in fat],'mob':[round(m,3) for m in mob],'seam':seam,'crease':K['crease']*S}
-    # the body at full weight: the fat drawing, but lean inside the cheek's own region (a little short of its inner edge, so no seam shows)
-    sub=fAs+line(fAs[-1],fB[0],NL+1)[1:]+fB+[(p[0]+10,p[1]) for p in line(fB[-1],fAs[0],NC+1)[1:-1]]
-    ras=lambda poly:np.asarray((lambda im:(ImageDraw.Draw(im).polygon([tuple(t(p)) for p in poly],fill=255),im)[1])(Image.new('L',(W,H),0)))>127
-    inpoly=ras(sub); fa=np.asarray(Image.open(out+'/fat.png'))[:,:,3]>127
-    under=ras(K['under']+[(K['under'][-1][0],2000),(K['under'][0][0],2000)])   # under the lean back line the fat drawing's own hips and thighs stay; only the bulge above it is the cheek's
-    fa=fa|ras(fB+[(p[0],p[1]+16) for p in reversed(fB)])                        # the drawn crease is filled in here: the bench draws it itself, so it can grow and move with the cheek
-    fatbody=np.where(inpoly,inside|(fa&under),fa)
+    fatbody=np.asarray(Image.open(out+'/fat.png'))[:,:,3]>127
+    if 'cheek' in C:
+        subprocess.run(['node','mkcontour.js',C['svg'],out+'/lean_contour.json'],check=True); subprocess.run(['node','mkcontour.js',C['morph']['svg'],out+'/fat_contour.json'],check=True)
+        LC=json.load(open(out+'/lean_contour.json')); FC=json.load(open(out+'/fat_contour.json')); K=C['cheek']
+        near=lambda P,q:min(range(len(P)),key=lambda k:math.hypot(P[k][0]-q[0],P[k][1]-q[1]))
+        def run(P,q0,q1):   # the outline between two points, the short way round
+            i,j=near(P,q0),near(P,q1); n=len(P); fwd=[P[(i+k)%n] for k in range((j-i)%n+1)]; back=[P[(i-k)%n] for k in range((i-j)%n+1)]
+            return fwd if len(fwd)<=len(back) else back
+        def even(pts,k,end=False):
+            cum=[0]
+            for p,q in zip(pts,pts[1:]): cum.append(cum[-1]+math.hypot(q[0]-p[0],q[1]-p[1]))
+            o=[]; j=0; m=k-1 if end else k
+            for i in range(k):
+                s_=cum[-1]*i/m
+                while j<len(cum)-2 and cum[j+1]<s_: j+=1
+                u=(s_-cum[j])/max(1e-9,cum[j+1]-cum[j]); p,q=pts[j],pts[j+1]; o.append((p[0]+(q[0]-p[0])*u,p[1]+(q[1]-p[1])*u))
+            return o
+        line=lambda p,q,k:[(p[0]+(q[0]-p[0])*i/k,p[1]+(q[1]-p[1])*i/k) for i in range(k)]
+        NA,NL,NB,NC=140,10,50,30
+        fA=even(run(FC,*K['fatA2']),NA,True); fB=even(run(FC,*K['fatB']),NB,True); fAs=even(run(FC,*K['fatA']),NA,True)   # the cheek starts a little forward of where the body hands over to it, so the two overlap and no notch shows
+        fat=fA+line(fA[-1],fB[0],NL+1)[1:]+fB+line(fB[-1],fA[0],NC+1)[1:-1]
+        lA=even(run(LC,*K['leanA2']),NA,True); lB=line(K['leanLink'],K['leanTip'],NB-1)+[tuple(K['leanTip'])]
+        lean=lA+line(lA[-1],lB[0],NL+1)[1:]+lB+line(lB[-1],lA[0],NC+1)[1:-1]
+        assert len(fat)==len(lean), (len(fat),len(lean))
+        ss=lambda u:(lambda v:v*v*(3-2*v))(max(0,min(1,u)))
+        n=len(fat); iB0=NA+NL; iB1=NA+NL+NB   # loose everywhere but the inner front edge; the two ends where it joins the body ease to still
+        mob=[ss((i-10)/18) if i<NA else 1 if i<iB0 else ss((iB1-1-i)/22) if i<iB1 else 0 for i in range(n)]
+        seam=[1 if iB0<=i<iB1 else 0 for i in range(n)]
+        extra['cheek']={'lean':[t(p) for p in lean],'fat':[t(p) for p in fat],'mob':[round(m,3) for m in mob],'seam':seam,'crease':K['crease']*S}
+        # the body at full weight: the fat drawing, but lean inside the cheek's own region (a little short of its inner edge, so no seam shows)
+        sub=fAs+line(fAs[-1],fB[0],NL+1)[1:]+fB+[(p[0]+10,p[1]) for p in line(fB[-1],fAs[0],NC+1)[1:-1]]
+        ras=lambda poly:np.asarray((lambda im:(ImageDraw.Draw(im).polygon([tuple(t(p)) for p in poly],fill=255),im)[1])(Image.new('L',(W,H),0)))>127
+        inpoly=ras(sub); fa=np.asarray(Image.open(out+'/fat.png'))[:,:,3]>127
+        under=ras(K['under']+[(K['under'][-1][0],2000),(K['under'][0][0],2000)])   # under the lean back line the fat drawing's own hips and thighs stay; only the bulge above it is the cheek's
+        fa=fa|ras(fB+[(p[0],p[1]+16) for p in reversed(fB)])                        # the drawn crease is filled in here: the bench draws it itself, so it can grow and move with the cheek
+        fatbody=np.where(inpoly,inside|(fa&under),fa)
     def sdf(m):   # signed distance to the outline: negative inside
         pd=np.pad(m,1,constant_values=False); pe=np.pad(m,1,constant_values=True)
         ein=m&~(pe[:-2,1:-1]&pe[2:,1:-1]&pe[1:-1,:-2]&pe[1:-1,2:]); ey,ex=np.nonzero(ein); ex=ex.astype(np.float32); ey=ey.astype(np.float32)

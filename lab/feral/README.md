@@ -23,3 +23,8 @@ is wherever `(1-f)*L + f*F < 0`: one smooth shape for every weight. The fat draw
 mass; under it the fat body keeps the lean back (`under`), and the drawn crease is filled in and redrawn by the bench so it
 can grow from a hairline and move with the cheek. `butt_aside` / `fat_aside` in `wolf.json` are the earlier teardrop cheek and
 fat blobs, kept but unused.
+
+## The horse now (round 12)
+`species/horse.json` is the owner's new slim horse (`src/horse2.svg`) with `src/horse2_fat.svg` as the full-weight morph, used whole
+(no `cheek` lift-out), and our own teardrop cheek (`butt`, creased against the hanging tail with `seamArc`) and sagging-circle belly
+drawn on top. `species/horse_v1.json` is the first horse (`src/horse.svg`, fat blobs), kept but not built.
