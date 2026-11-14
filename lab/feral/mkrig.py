@@ -17,11 +17,11 @@ P=B['shape']; NL,NR=P['neckL'],P['neckR']; NH,NT=180,60
 def outline(e):
     # the hanging part: always one smooth round curve from root to root. A light sag is a shallow arc; as it fills the sides
     # swell out past the root and the bottom rounds into a heavy sack, a little heavier toward the back
-    D=P['depth']*e**P['depthPow']; beta=P['bulge']*e**P['bulgePow']; q=P['q'][0]+(P['q'][1]-P['q'][0])*e
+    D=P['depth']*e**P['depthPow']; beta=P['bulge']*e**P['bulgePow']; k=2/P['n']
     xc=(NL[0]+NR[0])/2; a=(NR[0]-NL[0])/2; hang=[]
-    for i in range(801):
-        t=math.pi*i/800; st=math.sin(t); y0=NL[1]+(NR[1]-NL[1])*(1-math.cos(t))/2
-        hang.append((xc-a*math.cos(t)*(1+beta*st)+P['skew']*D*st*st, y0+D*st**q))
+    for i in range(801):   # a full, slightly squared-off half ellipse: curved at every point, never flat and never pointed
+        t=math.pi*i/800; st=math.sin(t); ct=math.cos(t); y0=NL[1]+(NR[1]-NL[1])*(1-ct)/2
+        hang.append((xc-a*math.copysign(abs(ct)**k,ct)*(1+beta*st)+P['skew']*D*st*st, y0+D*st**k))
     return even(hang,NH)+even(bez(NR,tuple(P['topC'][0]),tuple(P['topC'][1]),NL),NT)
 E_=[0,0.2,0.4,0.6,0.8,1]; frames=[outline(e) for e in E_]; full=frames[-1]
 ss=lambda u:(lambda v:v*v*(3-2*v))(max(0,min(1,u)))
@@ -30,16 +30,12 @@ mob=[0 if i>=ntop else round(ss((y-m0)/(m1-m0)),3) for i,(x,y) in enumerate(full
 r=lambda ps:[[round(x*S,1),round(y*S,1)] for x,y in ps]
 fm=json.load(open('fatmeta.json')); n=B['neck']
 # the rump: a round cheek that grows with weight, loose at the back and underneath, joined at the hip
-T=B['butt']; PER=14
-def cheek(K):   # a smooth closed curve through the key points, the same number of points between each pair
-    n=len(K); out=[]
-    for i in range(n):
-        p0,p1,p2,p3=K[(i-1)%n],K[i],K[(i+1)%n],K[(i+2)%n]
-        c1=(p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6); c2=(p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6)
-        out+=even(bez(p1,c1,c2,p2),PER)
-    return out
-nk=len(T['mob']); bmob=[round(T['mob'][i]+(T['mob'][(i+1)%nk]-T['mob'][i])*j/PER,3) for i in range(nk) for j in range(PER)]
-bseam=[1 if T['seam'][0]<=i<T['seam'][1] else 0 for i in range(nk) for j in range(PER)]
+T=B['butt']; NB=168
+# one round cheek, high on the back end. Only the part that sticks out behind the body is loose; where it sits inside the
+# body it never moves. The crease is the short fold under it, where it meets the back of the thigh
+cheek=lambda o:[(o['c'][0]+o['r']*math.cos(2*math.pi*i/NB),o['c'][1]+o['r']*math.sin(2*math.pi*i/NB)) for i in range(NB)]
+c0,c1=T['mobCos']; bmob=[round(ss((math.cos(2*math.pi*i/NB)-c0)/(c1-c0)),3) for i in range(NB)]
+bseam=[1 if T['seam'][0]<=360*i/NB<=T['seam'][1] else 0 for i in range(NB)]
 fx0,fx1,fmin=B['dropFade']; dropw=[round(1-(1-fmin)*ss((x-fx0)/(fx1-fx0)),3) for x,y in full]
 rig={'w':1110,'h':930,'ground':B['ground']*S,'belly':{'frames':[r(f) for f in frames],'mob':mob,'dropw':dropw,'seam':[1 if m>0.12 else 0 for m in mob]},
  'neck':{'piv':[n['piv'][0]*S,n['piv'][1]*S],'r0':n['r0']*S,'r1':n['r1']*S,'rmax':n['rmax']*S,'a0':n['a0'],'a1':n['a1'],'mouth':[n['mouth'][0]*S,n['mouth'][1]*S]},
