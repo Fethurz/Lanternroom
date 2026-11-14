@@ -25,16 +25,10 @@ m0,m1=B['mob']; ntop=NBL
 mob=[0 if i>=ntop else round(ss((y-m0)/(m1-m0)),3) for i,(x,y) in enumerate(full)]
 r=lambda ps:[[round(x*S,1),round(y*S,1)] for x,y in ps]
 fm=json.load(open('fatmeta.json')); n=B['neck']
-# the rump: a round cheek that grows with weight, loose at the back and underneath, joined at the hip
-T=B['butt']; NB=168
-# one round cheek, high on the back end. Only the part that sticks out behind the body is loose; where it sits inside the
-# body it never moves. The crease is the short fold under it, where it meets the back of the thigh
-cheek=lambda o:[(o['c'][0]+o['r']*math.cos(2*math.pi*i/NB),o['c'][1]+(o['rb'] if math.sin(2*math.pi*i/NB)>0 else o['r'])*math.sin(2*math.pi*i/NB)) for i in range(NB)]   # round on top, a heavier hang underneath
-c0,c1=T['mobCos']; bmob=[round(ss((math.cos(2*math.pi*i/NB-math.radians(T['mobAxis']))-c0)/(c1-c0)),3) for i in range(NB)]   # loose toward the back and underneath, still where it joins the back line
-bseam=[1 if T['seam'][0]<=360*i/NB<=T['seam'][1] else 0 for i in range(NB)]
+T=B['butt']; h=lambda p:[p[0]*S,p[1]*S]
 fx0,fx1,fmin=B['dropFade']; dropw=[round(1-(1-fmin)*ss((x-fx0)/(fx1-fx0)),3) for x,y in full]
 rig={'w':1110,'h':930,'ground':B['ground']*S,'belly':{'frames':[r(f) for f in frames],'mob':mob,'dropw':dropw,'rootY':m0*S,'looseY':m1*S,'seam':[1 if m>0.12 else 0 for m in mob]},
  'neck':{'piv':[n['piv'][0]*S,n['piv'][1]*S],'r0':n['r0']*S,'r1':n['r1']*S,'rmax':n['rmax']*S,'a0':n['a0'],'a1':n['a1'],'mouth':[n['mouth'][0]*S,n['mouth'][1]*S]},
- 'butt':{'lean':r(cheek(T['lean'])),'fat':r(cheek(T['fat'])),'mob':bmob,'seam':bseam},'near':[r(p) for p in B['near']],
+ 'butt':{'tip':h(T['tip']),'c0':h(T['c0']),'r0':T['r0']*S,'c1':h(T['c1']),'r1':T['r1']*S,'fold':T['fold']},'near':[r(p) for p in B['near']],'rear':r(B['rear']),
  'fat':{'gmax':fm['gmax'],'ds':fm['ds'],'drop':B['fatDrop']*S}}
 json.dump(rig,open('feral.json','w'),separators=(',',':')); print(len(json.dumps(rig)))
