@@ -21,7 +21,7 @@ def outline(e):
           (L,(xL,Y0+0.8*D),(xb-0.51*(xb-xL),yb),Bm),
           (Bm,(xb+0.54*(xR-xb),yb),(xR,Y0+0.81*D),R),
           (R,(xR,Y0+0.32*D),(NR[0]+28*b,NR[1]+0.115*D),NR),
-          (NR,(440,320),(330,322),NL)]
+          (NR,tuple(P['topC'][0]),tuple(P['topC'][1]),NL)]
     out=[]
     for s,k in zip(segs,CNT): out+=even(bez(*s),k)
     return out
@@ -31,7 +31,18 @@ m0,m1=B['mob']; ntop=sum(CNT[:4])
 mob=[0 if i>=ntop else round(ss((y-m0)/(m1-m0)),3) for i,(x,y) in enumerate(full)]
 r=lambda ps:[[round(x*S,1),round(y*S,1)] for x,y in ps]
 fm=json.load(open('fatmeta.json')); n=B['neck']
-rig={'w':1035,'h':930,'ground':B['ground']*S,'belly':{'frames':[r(f) for f in frames],'mob':mob,'seam':[1 if m>0.12 else 0 for m in mob]},
+# the rump: a round cheek that grows with weight, loose at the back and underneath, joined at the hip
+T=B['butt']; NB=160
+def cheek(o):
+    out=[]
+    for i in range(NB):
+        a=2*math.pi*i/NB; k=1+T['heavy'][0]*math.cos(a-math.radians(T['heavy'][1])); out.append((o['c'][0]+o['rx']*k*math.cos(a),o['c'][1]+o['ry']*k*math.sin(a)))
+    return out
+ux,uy=T['u']; bmob=[round(ss(math.cos(2*math.pi*i/NB)*ux+math.sin(2*math.pi*i/NB)*uy+0.55),3) for i in range(NB)]
+bseam=[1 if T['seam'][0]<=360*i/NB<=T['seam'][1] else 0 for i in range(NB)]
+fx0,fx1,fmin=B['dropFade']; dropw=[round(1-(1-fmin)*ss((x-fx0)/(fx1-fx0)),3) for x,y in full]
+rig={'w':1110,'h':930,'ground':B['ground']*S,'belly':{'frames':[r(f) for f in frames],'mob':mob,'dropw':dropw,'seam':[1 if m>0.12 else 0 for m in mob]},
  'neck':{'piv':[n['piv'][0]*S,n['piv'][1]*S],'r0':n['r0']*S,'r1':n['r1']*S,'rmax':n['rmax']*S,'a0':n['a0'],'a1':n['a1'],'mouth':[n['mouth'][0]*S,n['mouth'][1]*S]},
+ 'butt':{'lean':r(cheek(T['lean'])),'fat':r(cheek(T['fat'])),'mob':bmob,'seam':bseam},'near':[r(p) for p in B['near']],
  'fat':{'gmax':fm['gmax'],'ds':fm['ds'],'drop':B['fatDrop']*S}}
 json.dump(rig,open('feral.json','w'),separators=(',',':')); print(len(json.dumps(rig)))
