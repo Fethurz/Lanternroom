@@ -27,6 +27,8 @@ p{margin:0;color:var(--dim)}
 .mini canvas{width:100%;cursor:default}
 .mini span{display:block;font-size:11px;color:var(--dim);text-align:center;margin-top:2px}
 .row{display:flex;flex-wrap:wrap;gap:8px}
+header{display:flex;flex-direction:column;gap:8px}
+.tabs button{min-height:38px}
 button{font:700 15px var(--body);min-height:42px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer}
 button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -44,12 +46,13 @@ label.sl input{grid-column:1/-1;width:100%;accent-color:var(--accent);height:34p
 
 <main>
   <header>
-    <h1>Feral horse: <em>belly</em> and <em>weight gain</em></h1>
-    <p>Your horse on the app's own soft-body engine. Nothing is in the app yet. Poke it, then tell me what to change.</p>
+    <h1>Ferals: <em>belly</em>, <em>rump</em> and <em>weight gain</em></h1>
+    <p>Your silhouettes on the app's own soft-body engine. Nothing is in the app yet. Poke them, then tell me what to change.</p>
+    <div class="row tabs" role="group" aria-label="Animal"><button type="button" data-sp="horse" aria-pressed="true">Horse</button><button type="button" data-sp="wolf" aria-pressed="false">Wolf</button></div>
   </header>
 
   <div class="stage" id="stage">
-    <canvas id="big" class="sil-cv" role="img" aria-label="The feral horse silhouette with a belly that fills, a rump that wobbles and a body that fattens"></canvas>
+    <canvas id="big" class="sil-cv" role="img" aria-label="A feral silhouette with a belly that fills, a rump that wobbles and a body that fattens"></canvas>
   </div>
 
   <div class="acts">
@@ -91,16 +94,16 @@ label.sl input{grid-column:1/-1;width:100%;accent-color:var(--accent);height:34p
 </main>
 
 <script>
-const RIG = /*RIG*/null;
-const ASSET = /*ASSETS*/null;
+const RIGS = /*RIGS*/null;
+const ASSETS = /*ASSETS*/null;
 /*ENGINE*/
 
 // ---------- the feral body: the app's soft belly on the horse's own outline, a neck that bends for the belch, the app's fat scheme
-const M = RIG, PAD = 44, OX = 110, OY = 80, OXR = 240, still = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
-const IMG = {}; for (const k in ASSET) IMG[k] = Object.assign(new Image(), { src: ASSET[k] });
+let M, PAD, OX, OY, OXR, IMG = {}, E;   // the animal on the bench now: its rig, the room around it, its pictures, its moving state
+const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const ready = () => Object.values(IMG).every(i => i.complete && i.naturalWidth);
 const canvasOf = (w, h) => Object.assign(document.createElement("canvas"), { width: w, height: h });
-const bellyAt = (e, f) => { const FR = M.belly.frames, u = Math.max(0, Math.min(0.9999, e)) * (FR.length - 1), i = Math.floor(u), t = u - i, A = FR[i], Bf = FR[i + 1]; return A.map((p, j) => [p[0] + (Bf[j][0] - p[0]) * t, p[1] + (Bf[j][1] - p[1]) * t + f * M.fat.drop * M.belly.dropw[j]]); };
+const bellyAt = e => { const FR = M.belly.frames, u = Math.max(0, Math.min(0.9999, e)) * (FR.length - 1), i = Math.floor(u), t = u - i, A = FR[i], Bf = FR[i + 1]; return A.map((p, j) => [p[0] + (Bf[j][0] - p[0]) * t, p[1] + (Bf[j][1] - p[1]) * t]); };   // the same starting point at every weight
 const SOFT = { nc: 40, cap: 62, max: 30, k: 0.07, nb: 0.22, damp: 0.9, mk: 0.06 };
 // the rump: a round cheek hung from the back line at the tail root. Lean, it is a circle. As it fattens the circle grows and its
 // own weight drags it down and back, so it draws out into a heavy teardrop lying on the diagonal: the narrow end on the back
@@ -126,17 +129,27 @@ function buttFit() {
   let i0 = -1; for (let i = mid; i < NARC; i++) if (inside(pts[i])) { i0 = i; break; }
   const lead = Math.round(16 * Math.PI / 180 / ((Math.PI + 2 * g.al) / (NARC - 1))); if (i0 >= 0) i0 = Math.max(mid, i0 - lead);   // start just outside the body, so the fold always joins the cheek's edge to the body with no gap
   B.seam = pts.map((_, i) => i0 >= 0 && i >= i0 && i <= i0 + lead + span ? 1 : 0); B.foldW = pts.map((_, i) => i0 >= 0 ? Math.max(0, Math.min(1, 1 - (i - i0 - lead) / span)) : 0);
+  if (M.butt.seamArc) {   // a tail that hangs down sits behind the cheek, so the cheek's whole back edge is creased against it, on round to the fold under it
+    const [a0, a1] = M.butt.seamArc.map(d => d * Math.PI / 180), half = Math.PI / 2 + g.al, th = i => g.ax - half + 2 * half * i / (NARC - 1);
+    B.seam = pts.map((_, i) => i < NARC && th(i) >= a0 && th(i) <= a1 ? 1 : 0); B.foldW = pts.map((_, i) => i < NARC ? Math.max(0, Math.min(1, (a1 - th(i)) / 0.5)) : 0);
+  }
 }
 const BSOFT = { nc: 28, cap: 22, max: 26, k: 0.07, nb: 0.22, damp: 0.9, mk: 0.042, sagMax: 0.1 };
-const E = { belly: silSoft(bellyAt(0.55, 0), M.belly.mob, SOFT), butt: silSoft(buttAt(0), buttAt(0).map(() => 1), BSOFT), buttKey: "", fill: 0.55, fillV: 0, target: 0.55, fat: 0, fitKey: "", struggle: false,
-  head: { a: 0, va: 0, until: 0 }, puffs: [], cloudUntil: 0, t0: performance.now(), last: performance.now(), acc: 0, hand: null, color: "#e8a95b", puff: "176,222,150" };
+function setSpecies(name) {
+  M = RIGS[name]; ({ ox: OX, oy: OY, oxr: OXR, pad: PAD } = M.view);
+  IMG = {}; for (const k in ASSETS[name]) IMG[k] = Object.assign(new Image(), { src: ASSETS[name][k] });
+  PIX = {}; FATC = null; VIEW = new WeakMap();
+  const keep = E || { target: 0.55, fat: 0, struggle: false }, one = p => p.map(() => 1);
+  E = { belly: silSoft(bellyAt(keep.target), one(bellyAt(keep.target)), SOFT), butt: silSoft(buttAt(keep.fat), one(buttAt(keep.fat)), BSOFT), buttKey: "", fill: keep.target, fillV: 0, target: keep.target, fat: keep.fat, fitKey: "", struggle: keep.struggle,
+    head: { a: 0, va: 0, until: 0 }, puffs: [], cloudUntil: 0, t0: performance.now(), last: performance.now(), acc: 0, hand: null, color: "#e8a95b", puff: "176,222,150" };
+}
 function refit() {
   if (E.fat.toFixed(3) !== E.buttKey && ready()) { E.buttKey = E.fat.toFixed(3); buttFit(); }
   const key = E.fill.toFixed(4) + ":" + E.fat.toFixed(3); if (key === E.fitKey) return; E.fitKey = key;
-  const N = silSoft(bellyAt(Math.max(0, E.fill), E.fat), M.belly.mob, SOFT), B = E.belly;
+  const bq = bellyAt(Math.max(0, E.fill)), N = silSoft(bq, bq.map(() => 1), SOFT), B = E.belly;
   B.pts = N.pts; B.nrm = N.nrm; B.cx = N.cx; B.cy = N.cy; B.ry = N.ry;
   // how loose each point is follows where it is now: fixed where it sits up inside the body, free where it hangs below
-  const y0 = M.belly.rootY + E.fat * M.fat.drop, y1 = M.belly.looseY + E.fat * M.fat.drop;
+  const y0 = M.belly.rootY, y1 = M.belly.looseY;
   B.mob = B.pts.map(p => { const u = Math.max(0, Math.min(1, (p[1] - y0) / (y1 - y0))); return u * u * (3 - 2 * u); }); B.cmob = B.ci.map(i => B.mob[i]); B.seam = B.mob.map(m => m > 0.12 ? 1 : 0);
   const sz = 0.3 + 0.7 * Math.max(0, Math.min(1, E.fill)); B.cap = SOFT.cap * sz; B.max = SOFT.max * sz;   // a small belly wobbles less far than a big one
 }
@@ -173,7 +186,7 @@ function step(k, t) {
     silStepSoft(B, k, null, 0); B.vx += sway * 0.02 * k; }
 }
 // weight gain, the app's formula: alpha = f * G - D + 0.5 (G = growth at full weight, D = distance from the body)
-const PIX = {};
+let PIX = {};
 function pix(name) { if (PIX[name]) return PIX[name]; const im = IMG[name], c = canvasOf(im.naturalWidth, im.naturalHeight), x = c.getContext("2d"); x.drawImage(im, 0, 0); const d = x.getImageData(0, 0, c.width, c.height).data, o = new Uint8Array(c.width * c.height); for (let i = 0; i < o.length; i++) o[i] = d[i * 4]; return (PIX[name] = o); }
 let FATC = null;
 function fatLayer() {
@@ -182,7 +195,7 @@ function fatLayer() {
   for (let i = 0; i < w * h; i++) { const a = f * G[i] * sc - D[i] / ds + 0.5; if (a > 0) { const j = i * 4; o[j] = o[j + 1] = o[j + 2] = 255; o[j + 3] = a >= 1 ? 255 : a * 255; } }
   x.putImageData(im, 0, 0); FATC = { key, c }; return c;
 }
-const VIEW = new WeakMap();
+let VIEW = new WeakMap();
 function draw(cv) {
   const dpr = Math.min(2.5, devicePixelRatio || 1), W = Math.max(40, Math.round((cv.clientWidth || 140) * dpr)), Hh = Math.round(W * (M.h + PAD + OY) / (M.w + OX + OXR));
   if (cv.width !== W || cv.height !== Hh) { cv.width = W; cv.height = Hh; }
@@ -211,7 +224,7 @@ function draw(cv) {
     silFill(f, bp);
     // the crease only shows where the belly hangs past the body's own weight: never where it is still tucked inside the fat
     // (and a stretch of crease over a leg only counts if it runs on from a part of the belly that really pokes out)
-    let sm = B.seam || M.belly.seam;
+    let sm = B.seam || bp.map(() => 0);
     { const G = pix("fatG"), D = pix("fatD"), bd = pix("body"), k = E.fat * M.fat.gmax / 255, ds = M.fat.ds, n = bp.length;
       const cls = sm.map((v, i) => { if (!v) return 0; const x = Math.round(bp[i][0]), y = Math.round(bp[i][1]); if (x < 0 || y < 0 || x >= M.w || y >= M.h) return 1; const j = y * M.w + x; return bd[j] >= 128 ? 2 : E.fat > 0.002 && k * G[j] > D[j] / ds ? 3 : 1; });   // 1 out in the open, 2 over the body itself, 3 buried in fat
       const show = new Array(n).fill(0);
@@ -244,12 +257,13 @@ function draw(cv) {
 const CVS = [document.getElementById("big"), document.getElementById("mini")];
 let lastDraw = 0;
 function frame(ts) {
-  requestAnimationFrame(frame); if (!ready()) return;
+  requestAnimationFrame(frame); if (!E || !ready()) return;
   const dt = Math.min(0.05, (ts - E.last) / 1000); E.last = ts; E.acc += dt;
   while (E.acc > 1 / 120) { step(0.5, (ts - E.t0) / 1000); E.acc -= 1 / 120; }
   if (E.hand) { E.hand.mx *= 0.4; E.hand.my *= 0.4; }
   if (ts - lastDraw > 24) { lastDraw = ts; for (const cv of CVS) try { draw(cv); } catch (e) { console.warn(e); } }
 }
+setSpecies(Object.keys(RIGS)[0]);
 requestAnimationFrame(frame);
 
 // ---------- rubbing straight on the picture, like the app
@@ -274,5 +288,7 @@ $("bBounce").onclick = () => bounce();
 $("bEmpty").onclick = () => setFill(0);
 $("bStruggle").onclick = e => { E.struggle = !E.struggle; e.currentTarget.setAttribute("aria-pressed", E.struggle); };
 document.querySelectorAll("[data-fill]").forEach(b => b.onclick = () => { setFill(+b.dataset.fill); setFat(+b.dataset.fat); });
-window.BENCH = { E, belch, gulp, bounce, setFill, setFat };
+document.querySelectorAll("[data-sp]").forEach(b => b.onclick = () => { setSpecies(b.dataset.sp); document.querySelectorAll("[data-sp]").forEach(x => x.setAttribute("aria-pressed", x === b)); });
+window.BENCH = { get E() { return E; }, belch, gulp, bounce, setFill, setFat, setSpecies,
+  client(x, y) { const r = big.getBoundingClientRect(), q = r.width / (M.w + OX + OXR); return [r.left + (x + OX) * q, r.top + (y + OY) * q]; } };
 </script>
