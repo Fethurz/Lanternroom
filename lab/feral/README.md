@@ -14,3 +14,12 @@ Run from this folder (Node + Playwright, Python + numpy + Pillow):
   `alpha = f*G*gmax/255 - D + 0.5`; each pixel keeps the outline point that reaches it first), `rig.json`.
 - `python3 build.py` → `out/feral-horse-bench.html` (the engine functions are copied out of `index.html`).
 - `node shot.js '[["name","wolf",fill,fat,"belch",520]]'` → screenshots in `out/`; `python3 grid.py 3 a b c` joins them.
+
+## Two drawings: a morph (the wolf)
+When an animal has a second drawing at full weight (`morph.svg`, same pose), there is no fat map. `mk.py` writes two signed
+distance fields (`sdfL.png` lean, `sdfF.png` fat; 16 bits in the red and green channels, 1/64 px) and the figure at weight `f`
+is wherever `(1-f)*L + f*F < 0`: one smooth shape for every weight. The fat drawing's rump is lifted out as its own soft part
+(`cheek`: outline points along the fat contour between `fatA2`/`fatB`, matched to points on the lean one), so it wobbles as one
+mass; under it the fat body keeps the lean back (`under`), and the drawn crease is filled in and redrawn by the bench so it
+can grow from a hairline and move with the cheek. `butt_aside` / `fat_aside` in `wolf.json` are the earlier teardrop cheek and
+fat blobs, kept but unused.
