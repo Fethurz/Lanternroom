@@ -277,7 +277,7 @@ function draw(cv) {
         f.restore();
       }
     }
-  } else {
+  } else if (!M.morph || E.fat > 0.01) {   // on a morphing animal the lean figure is the drawing alone
     f.save(); f.beginPath(); M.rear.forEach(([x, y], i) => i ? f.lineTo(x, y) : f.moveTo(x, y)); f.closePath(); f.clip(); silFill(f, rp); f.restore();   // the cheek only ever shows on the rear end: never in the gap between the hind legs
     if (BT.seam) { const cr = rp.map((p, i) => { const w = BT.foldW[i], q = BT.pts[i]; return [q[0] + (p[0] - q[0]) * w, q[1] + (p[1] - q[1]) * w]; }); if (BT.seamA > 0.01) { f.save(); f.globalAlpha = BT.seamA / 0.78; silSeams(f, cr, BT.seam, lw); f.restore(); } }   // the fold stays put where it runs into the thigh and follows the cheek at its outer end
   }
