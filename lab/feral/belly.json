@@ -1,0 +1,3 @@
+{"shape":{"neckL":[300,372],"neckR":[470,366],"y0":368,"depth":226,"bulgePow":1.8,"depthPow":0.85,"bulgeL":38,"bulgeR":76,"bottomX":402},
+ "mob":[372,440],"ground":607,"fatDrop":46,
+ "neck":{"piv":[256,254],"r0":110,"r1":215,"rmax":350,"a0":3.0685,"a1":4.7843,"mouth":[22,228]}}
