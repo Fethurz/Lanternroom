@@ -208,7 +208,16 @@ function draw(cv) {
   f.setTransform(s, 0, 0, s, OX * s, OY * s);
   if (E.fill > 0.03) {
     const g = M.ground - 2, B = E.belly, bp = silPoints(B).map(([x, y]) => { if (y <= g) return [x, y]; const o = y - g; return [x + Math.sign(x - B.cx) * o * 0.35, g + o * 0.1]; });   // a belly that reaches the ground rests on it and spreads
-    silFill(f, bp); silSeams(f, bp, B.seam || M.belly.seam, lw);
+    silFill(f, bp);
+    // the crease only shows where the belly hangs past the body's own weight: never where it is still tucked inside the fat
+    // (and a stretch of crease over a leg only counts if it runs on from a part of the belly that really pokes out)
+    let sm = B.seam || M.belly.seam;
+    { const G = pix("fatG"), D = pix("fatD"), bd = pix("body"), k = E.fat * M.fat.gmax / 255, ds = M.fat.ds, n = bp.length;
+      const cls = sm.map((v, i) => { if (!v) return 0; const x = Math.round(bp[i][0]), y = Math.round(bp[i][1]); if (x < 0 || y < 0 || x >= M.w || y >= M.h) return 1; const j = y * M.w + x; return bd[j] >= 128 ? 2 : E.fat > 0.002 && k * G[j] > D[j] / ds ? 3 : 1; });   // 1 out in the open, 2 over the body itself, 3 buried in fat
+      const show = new Array(n).fill(0);
+      for (let i = 0; i < n; i++) if (cls[i] === 1) { show[i] = 1; for (const dir of [1, -1]) { let gap = 0; for (let s = 1; s < n; s++) { const j = (i + dir * s + n) % n, c = cls[j]; if (c === 2) { show[j] = 1; gap = 0; } else if (c === 3 && ++gap <= 6) continue; else break; } } }
+      sm = show; }
+    silSeams(f, bp, sm, lw);
     // the legs on the viewer's side go back on top: the belly and its crease pass behind them, and in front of the far legs
     f.save(); f.beginPath(); for (const poly of M.near) { poly.forEach(([x, y], i) => i ? f.lineTo(x, y) : f.moveTo(x, y)); f.closePath(); } f.clip();
     f.setTransform(1, 0, 0, 1, 0, 0); f.drawImage(V.B, 0, 0); f.restore(); f.setTransform(s, 0, 0, s, OX * s, OY * s);
