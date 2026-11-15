@@ -110,7 +110,32 @@ const SOFT = { nc: 40, cap: 62, max: 30, k: 0.07, nb: 0.22, damp: 0.9, mk: 0.06 
 // line, the round end hanging behind the thigh. It only ever lives on the rear end
 const NARC = 132, NSIDE = 18;
 function buttGeo(f) { const b = M.butt, cx = b.c0[0] + (b.c1[0] - b.c0[0]) * f, cy = b.c0[1] + (b.c1[1] - b.c0[1]) * f, R = b.r0 + (b.r1 - b.r0) * f, dx = cx - b.tip[0], dy = cy - b.tip[1], Ld = Math.hypot(dx, dy); return { cx, cy, R, ax: Math.atan2(dy, dx), al: Math.asin(Math.min(0.999, R / Ld)), Ld }; }
+// ---- the blended rump: a sloped teardrop whose point is buried in the haunch. It is not a shape laid over the body: its distance
+// field is melted into the body's own, so where it meets the back the two run into each other in one curve, with no angle anywhere
+function blobGeo(f) { const b = M.blob, R = b.r[0] + (b.r[1] - b.r[0]) * f, top = b.top[0] + (b.top[1] - b.top[0]) * (1 - Math.pow(1 - f, b.topPow)); return { cx: b.x[0] + (b.x[1] - b.x[0]) * f, cy: top + R, R, ax: b.a[0], ay: b.a[1], ra: R * b.ra }; }
+function sdTear(px, py, ax, ay, ra, bx, by, rb) {   // distance to a teardrop: a small circle at a, a big one at b, straight sides between
+  px -= ax; py -= ay; const ux = bx - ax, uy = by - ay, h = ux * ux + uy * uy, db = ra - rb;
+  if (h <= db * db + 1e-6) return Math.hypot(px - ux, py - uy) - rb;
+  let qx = Math.abs((px * uy - py * ux) / h); const qy = (px * ux + py * uy) / h, cx = Math.sqrt(h - db * db), k = cx * qy - db * qx, m = cx * qx + db * qy, n = qx * qx + qy * qy;
+  return k < 0 ? Math.sqrt(h * n) - ra : k > cx ? Math.sqrt(h * (n + 1 - 2 * qy)) - rb : m - ra;
+}
+let BLOBC = null;
+function blobPatch() {   // the rump melted into the figure, redrawn only when it has moved; half resolution is plenty
+  const f = E.fat; if (f < 0.004) return null;
+  const g = blobGeo(f), B = E.butt, ox = B.ox, oy = B.oy + B.sag * g.R * 0.5, key = [M.name, f.toFixed(3), ox.toFixed(1), oy.toFixed(1)].join(":"); if (BLOBC && BLOBC.key === key) return BLOBC;
+  const bx = g.cx + ox, by = g.cy + oy, ax = g.ax + ox * 0.15, ay = g.ay + oy * 0.15, k0 = M.blob.k[0], k1 = M.blob.k[1], pad = k1 + 6;
+  const x0 = Math.floor(Math.min(ax - g.ra, bx - g.R) - pad), y0 = Math.floor(Math.min(ay - g.ra, by - g.R) - pad), x1 = Math.ceil(Math.max(ax + g.ra, bx + g.R) + pad), y1 = Math.ceil(Math.max(ay + g.ra, by + g.R) + pad);
+  const w = Math.ceil((x1 - x0) / 2), h = Math.ceil((y1 - y0) / 2), c = BLOBC && BLOBC.c.width === w && BLOBC.c.height === h ? BLOBC.c : canvasOf(w, h), x = c.getContext("2d"), im = x.createImageData(w, h), o = im.data;
+  const L = pix16("sdfL"), F = pix16("sdfF"), W_ = M.w, H_ = M.h, gl = 1 - f;
+  for (let j = 0; j < h; j++) { const py = y0 + j * 2 + 1, kk = k0 + (k1 - k0) * Math.max(0, Math.min(1, (by + 0.2 * g.R - py) / g.R));   // a broad melt on top, a tight tuck underneath
+    for (let i = 0; i < w; i++) { const px = x0 + i * 2 + 1, dc = sdTear(px, py, ax, ay, g.ra, bx, by, g.R); if (dc >= kk) continue;
+      const db = px >= 0 && py >= 0 && px < W_ && py < H_ ? gl * L[py * W_ + px] + f * F[py * W_ + px] : 1e3, hh = Math.max(kk - Math.abs(db - dc), 0) / kk, d = Math.min(db, dc) - hh * hh * kk / 4;
+      const a = (0.5 - d / 2) * Math.min(1, (kk - dc) / 4); if (a > 0) { const q = (j * w + i) * 4; o[q] = o[q + 1] = o[q + 2] = 255; o[q + 3] = a >= 1 ? 255 : a * 255; } } }
+  x.putImageData(im, 0, 0); return (BLOBC = { key, c, x0, y0, w: w * 2, h: h * 2 });
+}
+const NBLOB = 96;
 function buttAt(f) {
+  if (M.blob) { const g = blobGeo(f); return Array.from({ length: NBLOB }, (_, i) => [g.cx + g.R * Math.cos(2 * Math.PI * i / NBLOB), g.cy + g.R * Math.sin(2 * Math.PI * i / NBLOB)]); }
   if (M.cheek) return M.cheek.lean.map((p, i) => { const q = M.cheek.fat[i]; return [p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f]; });
   const g = buttGeo(f), T = M.butt.tip, half = Math.PI / 2 + g.al, out = [];
   for (let i = 0; i < NARC; i++) { const th = g.ax - half + 2 * half * i / (NARC - 1); out.push([g.cx + g.R * Math.cos(th), g.cy + g.R * Math.sin(th)]); }
@@ -120,6 +145,17 @@ function buttAt(f) {
   return out;
 }
 function buttFit() {
+  if (M.blob) {
+    const f = E.fat, g = blobGeo(f), pts = buttAt(f), N = silSoft(pts, pts.map(() => 1), BSOFT), B = E.butt;
+    B.pts = N.pts; B.mob = pts.map(() => 1); B.cmob = N.cmob; B.nrm = N.nrm; B.cx = N.cx; B.cy = N.cy; B.ry = N.ry; B.cap = BSOFT.cap; B.max = BSOFT.max * (0.3 + 1.7 * f);
+    // the fold under it: from where its underside comes in over the thigh, a short way in; plus its lower back edge where that lies over the tail
+    const L16 = pix16("sdfL"), F16 = pix16("sdfF"), W_ = M.w, H_ = M.h, inside = p => { const x = Math.round(p[0]), y = Math.round(p[1]); if (x < 0 || y < 0 || x >= W_ || y >= H_) return false; const j = y * W_ + x; return (1 - f) * L16[j] + f * F16[j] < 0; };
+    const dth = 2 * Math.PI / NBLOB, span = Math.round(M.blob.fold * Math.PI / 180 / dth), lead = Math.round(14 * Math.PI / 180 / dth), from = Math.round(M.blob.seamFrom * Math.PI / 180 / dth), last = Math.round(170 * Math.PI / 180 / dth);
+    let i0 = -1; for (let i = last; i >= from; i--) if (!inside(pts[i])) { i0 = i + 1; break; }
+    if (i0 < 0) i0 = Math.round(95 * Math.PI / 180 / dth); i0 = Math.max(from, i0 - lead);
+    B.seam = pts.map((p, i) => i >= from && i <= i0 + lead + span && (i >= i0 || inside(p)) ? 1 : 0); B.foldW = pts.map((_, i) => Math.max(0, Math.min(1, 1 - (i - i0 - lead) / span)));
+    B.seamA = (u => 0.78 * u * u * (3 - 2 * u))(Math.max(0, Math.min(1, (f - 0.1) / 0.35))); return;
+  }
   if (M.cheek) {   // the drawn rump: loose all over except its inner front edge, and it swings further the heavier it gets
     const f = E.fat, pts = buttAt(f), N = silSoft(pts, M.cheek.mob, BSOFT), B = E.butt;
     B.pts = N.pts; B.mob = M.cheek.mob; B.cmob = N.cmob; B.nrm = N.nrm; B.cx = N.cx; B.cy = N.cy; B.ry = N.ry; B.cap = BSOFT.cap; B.max = BSOFT.max * 2.4 * f; B.seam = M.cheek.seam; B.foldW = M.cheek.mob; return;
@@ -157,7 +193,7 @@ const BSOFT = { nc: 28, cap: 22, max: 26, k: 0.07, nb: 0.22, damp: 0.9, mk: 0.04
 function setSpecies(name) {
   M = RIGS[name]; ({ ox: OX, oy: OY, oxr: OXR, pad: PAD } = M.view);
   IMG = {}; for (const k in ASSETS[name]) IMG[k] = Object.assign(new Image(), { src: ASSETS[name][k] });
-  PIX = {}; FATC = null; VIEW = new WeakMap();
+  PIX = {}; FATC = null; BLOBC = null; VIEW = new WeakMap();
   const keep = E || { target: 0.55, fat: 0, struggle: false }, one = p => p.map(() => 1);
   E = { belly: silSoft(bellyAt(keep.target), one(bellyAt(keep.target)), SOFT), butt: silSoft(buttAt(keep.fat), one(buttAt(keep.fat)), BSOFT), buttKey: "", fill: keep.target, fillV: 0, target: keep.target, fat: keep.fat, fitKey: "", struggle: keep.struggle,
     head: { a: 0, va: 0, until: 0 }, puffs: [], cloudUntil: 0, t0: performance.now(), last: performance.now(), acc: 0, hand: null, color: "#e8a95b", puff: "176,222,150" };
@@ -266,7 +302,15 @@ function draw(cv) {
     f.setTransform(1, 0, 0, 1, 0, 0); f.drawImage(V.B, 0, 0); f.restore(); f.setTransform(s, 0, 0, s, OX * s, OY * s);
   }
   const rp = silPoints(E.butt), BT = E.butt;
-  if (M.cheek) {   // the drawn rump, on top of everything; its under-fold fades in as it grows
+  if (M.blob) {
+    const P = blobPatch();
+    if (P) {
+      f.save(); if (M.rear) { f.beginPath(); M.rear.forEach(([x, y], i) => i ? f.lineTo(x, y) : f.moveTo(x, y)); f.closePath(); f.clip(); }
+      f.imageSmoothingEnabled = true; f.drawImage(P.c, P.x0, P.y0, P.w, P.h); f.restore();
+      if (BT.seam && BT.seamA > 0.01) { const g = blobGeo(E.fat), dx = BT.ox, dy = BT.oy + BT.sag * g.R * 0.5, cr = BT.pts.map((q, i) => [q[0] + dx * BT.foldW[i], q[1] + dy * BT.foldW[i]]);
+        f.save(); f.globalAlpha = BT.seamA / 0.78; silSeams(f, cr, BT.seam, lw); f.restore(); }
+    }
+  } else if (M.cheek) {   // the drawn rump, on top of everything; its under-fold fades in as it grows
     if (E.fat > 0.01 && BT.seam) {
       silFill(f, rp);
       // the fold under it: a hairline at first, opening into the drawn crescent as the cheek gets heavy (thickest toward its inner end)

@@ -28,3 +28,10 @@ fat blobs, kept but unused.
 `species/horse.json` is the owner's new slim horse (`src/horse2.svg`) with `src/horse2_fat.svg` as the full-weight morph, used whole
 (no `cheek` lift-out), and our own teardrop cheek (`butt`, creased against the hanging tail with `seamArc`) and sagging-circle belly
 drawn on top. `species/horse_v1.json` is the first horse (`src/horse.svg`, fat blobs), kept but not built.
+
+## The blended rump (`blob`, round 16)
+The horse's rump is no longer a shape laid over the body. `blob` in `species/horse.json` is a sloped teardrop (a small circle `a`
+buried in the haunch, a big one whose centre `x`, top `top` and radius `r` go from lean to fat), and the bench melts its distance
+field into the body's own with a smooth minimum (`k`: a broad melt on top, a tight tuck underneath). So it runs out of the back in
+one curve with no angle, rises above the back and sags as weight goes up, and is invisible on the lean horse. The patch is
+recomputed (at half resolution) only when the rump moves. `butt_teardrop` is the earlier laid-on cheek, kept but unused.

@@ -95,5 +95,7 @@ rig={'name':C['name'],'label':C['label'],'w':W,'h':H,'ground':(GY-OY)*S,'view':C
  'butt':butt,'near':[[t(p) for p in poly] for poly in C['near']],'rear':[t(p) for p in C['rear']] if 'rear' in C else None,
  'neck':{'piv':t(n['piv']),'r0':n['r0']*S,'r1':n['r1']*S,'rmax':n['rmax']*S,'a0':n['a0'],'a1':n['a1'],'mouth':t(n['mouth'])},
  'fat':{'gmax':gmax,'ds':1}}
+if 'blob' in C:
+    B=C['blob']; rig['blob']={'a':t(B['a']),'ra':B['ra'],'x':[(v-OX)*S for v in B['x']],'top':[(v-OY)*S for v in B['top']],'topPow':B['topPow'],'r':[v*S for v in B['r']],'fold':B['fold'],'seamFrom':B['seamFrom'],'k':[v*S for v in B['k']]}
 rig.update(extra)
 json.dump(rig,open(out+'/rig.json','w'),separators=(',',':')); print(C['name'],W,H,'gmax',round(gmax,1))
