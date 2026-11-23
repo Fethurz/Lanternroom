@@ -156,6 +156,16 @@ const PREDS = {
   hale:  { n: "Dr. Hale", k: "Cyborg scientist" },
   drone: { n: "The Drones", k: "Hive" },
   queen: { n: "The Queen", k: "Hive queen" },
+  bram:  { n: "Sgt. Bram", k: "Bull drill sergeant · anthro" },
+  twig:  { n: "Cpl. Twig", k: "Leopard gecko corporal · anthro" },
+  ryn:   { n: "Medic Ryn", k: "Futa grey wolf medic · anthro" },
+  celeste:{ n: "Celeste", k: "Snow leopard mother · anthro" },
+  noor:  { n: "Aunt Noor", k: "Futa snow leopard · anthro" },
+  twins: { n: "Ivy & Lux", k: "Snow leopard twins, 24 · anthro" },
+  saffra:{ n: "Saffra", k: "Futa lead mare · feral" },
+  kestrel:{ n: "Kestrel", k: "Young stallion · feral" },
+  thistle:{ n: "Thistle", k: "Pony mare · feral" },
+  maren: { n: "Maren", k: "Old matriarch mare · feral" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -1983,9 +1993,288 @@ hv_end_queensafe: { w: "The queen's chamber", in: 1, p: [
   "She takes you as her consort, not her food. She keeps you in her egg-sac, safe, warm, unharmed, and lets you out whenever you want. The drones treat you like royalty. Your crew wakes up in their cocoons, alive, and leaves. You stay."],
   s: ["kiss", "squelch"], end: { t: "Consort of the Hive", pred: "queen", hint: "Offer yourself", safe: 1 } },
 
+/* ===================== BOOT CAMP ===================== */
+bc_start: { w: "Fort Maw · Recruit Barracks", p: [
+  "Fort Maw trains the toughest preds in the army. It also trains prey: the \"ration corps\", recruits who carry supplies, run drills and, when the unit's hungry, become the supplies. You signed the papers without reading them. You're twenty-three. It's 0500. A whistle is blowing.",
+  "\"ON YOUR FEET, RATION!\" Sergeant Bram fills the doorway: a bull, seven feet of slab muscle in a tight olive tank top, abs like a washboard, a voice like a truck. Behind him: Corporal Twig, a gecko girl barely four foot tall, clipboard in hand, smirking. And Medic Ryn, a futa grey wolf in scrubs, leaning on the wall, looking at you like you're a lab sample.",
+  "\"Today,\" Bram bellows, \"you learn your place.\""],
+  c: [["Run the obstacle course with Sgt. Bram", "bc_bram"], ["Report to Cpl. Twig for inspection", "bc_twig"], ["Go to the med tent", "bc_ryn"], ["Ration day in the mess hall", "bc_mess"]] },
+
+bc_hub: { w: "The parade ground", p: ["A whistle blows somewhere. Recruits jog past, some carrying preds' packs, some looking suspiciously like they're inside someone's gut. Where now?"],
+  c: [["The obstacle course", "bc_bram"], ["Inspection", "bc_twig"], ["The med tent", "bc_ryn"], ["The mess hall", "bc_mess"], ["Desert", "bc_leave"]] },
+
+bc_leave: { w: "Over the fence", p: ["You go over the fence at night with a stolen canteen. Search drones hum overhead till dawn. You make it to town, and nobody follows.",
+  "A month later a letter arrives: *DISHONOURABLY DISCHARGED. ALSO, SGT. BRAM SAYS YOU OWE HIM A MEAL.*"],
+  end: { t: "AWOL", pred: "none", hint: "Desert" } },
+
+/* --- Sgt. Bram --- */
+bc_bram: { w: "The obstacle course", p: [
+  "The obstacle course is mud, rope, wire and walls. Sgt. Bram runs it beside you, shirtless now, sweat pouring down every ridge of those famous abs. He's the fittest pred on the base and he knows it. \"Keep up, ration! If you fall behind, I eat you. That's not a joke. That's regulation.\"",
+  "You're falling behind."],
+  c: [["Keep running till you drop", "bcb_end_behind"], ["Trip him in the mud", "bcb_end_mud"], ["Ask him to teach you properly", "bcb_end_safe"], ["Back", "bc_hub"]] },
+
+bcb_end_behind: { w: "The obstacle course", in: 1, p: [
+  "You drop at the rope wall. Bram stops. Sighs. \"Regulation.\" He hauls you up by your collar, one-handed, and opens his huge bovine jaws. ***GLLRK.*** He swallows you in the mud in front of the whole platoon, ***GLRK... GULP***, and you slide down past his pecs into his stomach, and those famous abs bulge out, ridge by ridge, stretching, until they're gone. ***Glorrrrp.***",
+  "He finishes the course with you in him. He's slower. He's huffing. His gut swings with every step. ***Shlosh. Shlosh.*** The platoon watches the hardest sergeant on base waddle over the finish line.",
+  "And afterwards it doesn't go away. A week later the photo's on the base noticeboard: Sgt. Bram, the camp's fittest pred, with a soft, round, sagging potbelly hanging over his fatigues, red-faced, the caption circled in marker: *REGULATION.* He's never been angrier. He's never been more turned on, either. The latrine filled with a whole person's worth of thick, steaming shit, and a new sign by the sink: SGT. BRAM'S PT IS CANCELLED UNTIL FURTHER NOTICE."],
+  s: ["gulp", "gulp", "gurgle", "slosh", "plop"], end: { t: "Regulation", pred: "bram", hint: "Fall behind" } },
+
+bcb_end_mud: { w: "The mud pit", in: 1, p: [
+  "You stick your foot out. Bram goes face-first into the mud pit. The whole platoon gasps. He rises slowly, dripping, and the look on his face is pure murder.",
+  "He drags you into the pit and pins you, and tears your fatigues off, and fucks you in the mud in front of everyone, ***PLAP PLAP PLAP***, rough, furious, the platoon chanting his name. When he cums he roars.",
+  "Then he eats you, feet first, mud and all, shoving you in with both hands. ***GLLK GLRK GULP.*** His abs disappear under a huge round gut. \"Worth it,\" he pants. It isn't, for him: by the end of the month he's lost his six-pack for good, and recruits salute his belly. He wears it like a medal, sweaty and furious and hard every time anyone touches it."],
+  s: ["struggle", "plap", "plap", "cum", "gulp", "gurgle"], end: { t: "Mud Pit", pred: "bram", hint: "Trip him" } },
+
+bcb_end_safe: { w: "The barracks", in: 1, p: [
+  "\"Teach me properly, Sarge.\" Bram stares. Nobody's ever asked him to TEACH. They just run, or beg. He teaches you. Every night after lights out, one on one, until you can finish the course.",
+  "The night you finally beat his time, he laughs, and grabs you, and kisses you, rough and proud. You make love in his quarters. After, he asks, gruff and embarrassed, if he can carry you overnight. He keeps you safe and warm inside him, his hand on his belly, and in the morning he coughs you up for reveille. He's a little softer around the middle. He says it's worth it."],
+  s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Personal Trainer", pred: "bram", hint: "Ask him to teach you", safe: 1 } },
+
+/* --- Cpl. Twig --- */
+bc_twig: { w: "The parade ground", p: [
+  "Inspection. You stand to attention in a row with the other ration recruits. Corporal Twig walks down the line: a leopard gecko, four foot nothing, spotted, huge golden eyes, uniform crisp, clipboard tucked under one arm. She's the smallest pred on base and has the meanest reputation.",
+  "She stops in front of you. She has to look UP at you. \"Your boots are dirty, ration.\" She taps your chest with her pen. \"I'm going to make an example of you.\""],
+  c: [["\"Yes, Corporal\"", "bct_end_example"], ["Laugh: she's tiny", "bct_end_laugh"], ["Tell her quietly you'll clean them", "bct_end_safe"], ["Back", "bc_hub"]] },
+
+bct_end_example: { w: "The parade ground", in: 1, p: [
+  "\"Yes, Corporal.\" \"Good. Platoon! Watch closely.\" She hands her clipboard to the recruit next to you. Then her jaw unhinges. Wide. Wider than her whole head. Far wider than anyone that small should manage. ***GLK.***",
+  "She swallows you standing at attention, in front of the entire platoon, in slow, deliberate, humiliating gulps, her tiny body stretching around you like a sock, ***GLK... GLK... GLRK...***, until your boots, your dirty boots, slip past her lips last. ***GULP.***",
+  "She's a four-foot gecko with a belly bigger than she is, and she takes her clipboard back and keeps inspecting, waddling down the line. \"Anyone ELSE have dirty boots?\" Nobody does.",
+  "At the evening formation she's noticeably thicker in the hips and tail. The latrine has a whole grown recruit's worth of shit in it, way bigger than the gecko who made it, and a sign in her neat handwriting: *THIS IS WHAT HAPPENS TO DIRTY BOOTS.*"],
+  s: ["gulp", "gulp", "gulp", "gurgle", "plop"], end: { t: "Made an Example", pred: "twig", hint: "Say 'Yes, Corporal'" } },
+
+bct_end_laugh: { w: "The parade ground", in: 1, p: [
+  "You laugh. The whole parade ground goes dead silent. Twig smiles, very slowly. \"Oh, I hoped you'd do that.\"",
+  "She climbs you like a tree, wraps her sticky gecko hands around your face, and swallows you headfirst while you're still laughing, ***GLK GLK GLK GULP***, dangling off your shoulders until your weight drags you both to the ground. Then she sits on the parade ground with her enormous belly in her lap and finishes the inspection from there.",
+  "You get digested on a parade ground by a lizard half your size, and the platoon salutes her as she waddles off."],
+  s: ["gulp", "gulp", "gulp", "gurgle"], end: { t: "Dismissed", pred: "twig", hint: "Laugh at her" } },
+
+bct_end_safe: { w: "The supply shed", in: 1, p: [
+  "\"I'll clean them, Corporal. Tonight.\" She narrows her eyes. Then nods. That night she finds you in the supply shed, polishing your boots, and sits down to watch. Then to help. Then to talk.",
+  "She's lonely. Everyone's scared of her. She kisses you between the shelves, standing on a crate to reach, and you make love on the supply-room floor. Then she swallows you, carefully, and curls up on a pile of blankets with you warm inside her, tail wrapped around her belly. In the morning she lets you out. Your boots are spotless."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Spit and Polish", pred: "twig", hint: "Offer to clean them", safe: 1 } },
+
+/* --- Medic Ryn --- */
+bc_ryn: { w: "The med tent", p: [
+  "Medic Ryn is a futa grey wolf in tight green scrubs, tall and lean, with a stethoscope round her neck and a very obvious bulge down her thigh. She's in charge of the ration corps' \"health checks\".",
+  "\"Strip,\" she says, clipboard ready. \"Full physical. I need to make sure you're... fit for consumption.\""],
+  c: [["Strip for the physical", "bcr_end_physical"], ["Refuse", "bcr_end_forced"], ["Ask her how she's doing", "bcr_end_safe"], ["Back", "bc_hub"]] },
+
+bcr_end_physical: { w: "The med tent", in: 1, p: [
+  "You strip. She checks everything. Slowly. Thoroughly. Her gloved fingers inside you. Your cock in her hand, \"reflex test\", until you cum, and she writes it down. Then she drops her scrubs. \"Final test. Fit for transport.\"",
+  "Her cock's tip opens over your head. ***SHLLRRK.*** She feeds you into it on the exam table, stroking you down, ***Glrrk... glrrk...***, until you drop into her balls, which swell huge and heavy under her scrubs. ***SHLORP.*** She stamps your file: FIT.",
+  "She delivers you that night to the officers' mess, in thick ropes, all over the colonel's dinner. ***SPLRRT. SPLRRT.*** The colonel's thrilled."],
+  s: ["cum", "squelch", "slosh", "cum"], end: { t: "Fit for Consumption", pred: "ryn", hint: "Strip" } },
+
+bcr_end_forced: { w: "The med tent", in: 1, p: [
+  "\"I'm not stripping.\" Ryn sighs. \"Non-compliant.\" She pins you to the exam table with one hand and straps you down. Then she climbs on and fucks you, rough, clinical, timing it on her watch. ***PLAP PLAP PLAP.***",
+  "Then she swallows you, straps and all, ***GLLRK. GULP.***, and writes on her clipboard: *Recruit non-compliant. Resolved.*"],
+  s: ["struggle", "plap", "plap", "gulp", "gurgle"], end: { t: "Non-Compliant", pred: "ryn", hint: "Refuse" } },
+
+bcr_end_safe: { w: "The med tent", in: 1, p: [
+  "\"How are YOU doing?\" Ryn stops writing. Nobody asks the medic. She sits down hard on the exam stool. \"...Tired,\" she says. \"I'm so tired.\"",
+  "You make her coffee. You give her a back rub. You make love, slow and quiet, on the cot behind the curtain. Then she takes you into her cock, so gently, and sleeps with you sloshing warm and safe in her balls, one hand on them. In the morning she lets you out. She signs you off as permanently unfit for consumption."],
+  s: ["kiss", "plap", "squelch", "slosh"], end: { t: "Unfit for Consumption", pred: "ryn", hint: "Ask how she is", safe: 1 } },
+
+/* --- Ration day --- */
+bc_mess: { w: "The mess hall", p: [
+  "Ration day. The ration corps stand in a line at the front of the mess hall. The preds sit at long tables with forks they don't need. A loudspeaker crackles: \"RATIONS WILL BE DISTRIBUTED BY RANK.\"",
+  "Sgt. Bram is at one table. Cpl. Twig at another. Medic Ryn at the officers' table. They're all looking at you."],
+  c: [["Volunteer to be served first", "bcm_end_shared"], ["Hide in the kitchen", "bcm_end_kitchen"], ["Back", "bc_hub"]] },
+
+bcm_end_shared: { w: "The mess hall", in: 1, p: [
+  "You step forward. Bram, Twig and Ryn all stand up at once. Then they all argue about rank. Twig outranks nobody but she's the meanest, Ryn's an officer, Bram's the loudest. It turns into a three-way tug of war over you in the middle of the mess hall.",
+  "Bram gets your legs, ***GLLK***. Twig gets your head, ***GLK***. Ryn's cock gets your arm, ***SHLRK***, and the whole hall is cheering. In the end, Twig wins, because she's small enough to dart under Bram's arm and slurp you out of both of them. ***GULP.***",
+  "Bram and Ryn sulk. Twig sits on the table with a belly three times her size, smug as anything. She gets a medal."],
+  s: ["struggle", "gulp", "gulp", "gulp", "gurgle"], end: { t: "Distributed by Rank", pred: "twig", hint: "Volunteer first" } },
+
+bcm_end_kitchen: { w: "The kitchen", in: 1, p: [
+  "You hide in the kitchen walk-in. The door opens. It's Bram. \"Found the ration.\" He picks you up and swallows you right there in the walk-in, ***GLLRK GULP***, and walks back out to the mess hall eating a bread roll on top of you, his gut swinging.",
+  "He loses another inch of abs. Then two. Then they're gone. The cooks name a dish after him."],
+  s: ["gulp", "gurgle"], end: { t: "Walk-In", pred: "bram", hint: "Hide in the kitchen" } },
+
+/* ===================== THE SKI LODGE ===================== */
+sl_start: { w: "Halvorsen Lodge", p: [
+  "The blizzard came in faster than the forecast said. Your car's buried. The only lights for miles belong to a huge timber ski lodge owned by the Halvorsens, a wealthy family of snow leopards, and they let you in out of the snow with big, warm, very interested smiles.",
+  "There's Celeste, the mother, silver-spotted, tall and lush and heavy-breasted in a cashmere sweater. Her younger sister Noor, a futa, curvier still, in a silk robe with an unmistakable bulge. And Celeste's twin daughters, Ivy and Lux, twenty-four, home from university, identical, giggling, sharing everything, including the way they look at you.",
+  "\"You'll stay the night,\" Celeste says. It isn't a question. \"The roads won't be clear for days.\""],
+  c: [["Sit by the fire with Celeste", "sl_mom"], ["Join Noor in the hot tub", "sl_noor"], ["Let the twins show you to your room", "sl_twins"]] },
+
+sl_hub: { w: "The lodge", p: ["The fire crackles. Snow piles against the windows. Somewhere in the lodge, someone's belly growls. Where now?"],
+  c: [["The fireplace (Celeste)", "sl_mom"], ["The hot tub (Noor)", "sl_noor"], ["The twins' room", "sl_twins"], ["Dinner with the whole family", "sl_dinner"], ["Walk out into the blizzard", "sl_leave"]] },
+
+sl_leave: { w: "The blizzard", p: ["You walk out into the snow. You get maybe a mile before a snowplough finds you, half frozen. The driver says you're lucky.",
+  "In spring, an envelope arrives from the Halvorsens: an invitation for next winter. It's signed by all four of them. Someone has drawn a little heart."], end: { t: "Snowbound", pred: "none", hint: "Brave the blizzard" } },
+
+sl_mom: { w: "The fireplace", p: [
+  "Celeste curls up on a huge fur rug by the fire with a glass of red wine and pats the spot next to her. \"Come warm up, darling.\" She's soft and heavy and warm, and when you sit, she pulls you right against her, your head on her breast. Her belly rumbles under your cheek. ***Grrrrrooorgl.***",
+  "\"Mm. Excuse me. Dinner's not for hours.\" She strokes your hair. \"I'm terribly hungry, darling.\""],
+  c: [["Kiss her", "slm_end_fire"], ["Try to get up", "slm_end_pinned"], ["Stay curled up and keep her company", "slm_end_safe"], ["Back", "sl_hub"]] },
+
+slm_end_fire: { w: "The fireplace", in: 1, p: [
+  "You kiss her. She tastes like wine. She rolls you onto the rug and climbs on top of you, sweater off, huge soft breasts in your face, and rides you slow and luxurious by the fire, purring, her long tail wrapped around your leg.",
+  "When you cum, she smiles down at you. \"Such a polite guest.\" And her jaw opens wide, wider, a snow leopard's huge maw. ***GLLK.*** She swallows you on the rug, slow and elegant, ***GLRK... GLRK... GULP***, and stretches out by the fire with a belly as round as a snowball. ***Grrrrooorgl.***",
+  "The family finds her there at dinner. \"Mother! You ate the guest!\" \"He was delicious, darlings.\" In the morning she goes to the lodge's marble bathroom and pushes you out, an enormous, steaming, human-sized pile, ***PLOP. PLOP.***, and the weight goes everywhere: hips, thighs, an even bigger chest. Her cashmere doesn't fit. She buys new cashmere."],
+  s: ["kiss", "plap", "cum", "gulp", "gurgle", "plop"], end: { t: "Fireside", pred: "celeste", hint: "Kiss her" } },
+
+slm_end_pinned: { w: "The fireplace", in: 1, p: [
+  "You try to get up. Celeste's arm tightens. She's much stronger than she looks. \"No, darling. Stay.\" She pins you to the rug with her whole soft heavy weight and takes you there, whether you like it or not, slow and firm, ***plap... plap...***, purring the whole time.",
+  "Then she swallows you without letting go, ***GLLRK. GULP.***, and settles back by the fire with her wine. \"So rude,\" she says to her belly, rubbing you. \"Leaving before dessert.\""],
+  s: ["struggle", "plap", "gulp", "gurgle"], end: { t: "Stay", pred: "celeste", hint: "Try to get up" } },
+
+slm_end_safe: { w: "The fireplace", in: 1, p: [
+  "You stay curled up against her and just keep her company. She tells you about her late husband, and the lodge, and how quiet winters get. She cries a little. You hold her.",
+  "Later you make love by the fire, slow and tender. Then she asks, so softly, if she might keep you warm tonight. Inside. She swallows you gently and sleeps on the rug with her arms around her belly. In the morning she lets you out and makes you hot chocolate. You come back every winter."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Keep Warm", pred: "celeste", hint: "Keep her company", safe: 1 } },
+
+sl_noor: { w: "The hot tub", p: [
+  "Aunt Noor is in the outdoor hot tub on the deck, snow falling all around, steam rising. She's naked. Her huge breasts float. Her cock floats, too, thick and spined and long, breaking the water. \"Get in, sweetie,\" she purrs. \"It's freezing.\""],
+  c: [["Get in", "sln_end_cock"], ["Say no and go back inside", "sln_end_dragged"], ["Get in and just relax with her", "sln_end_safe"], ["Back", "sl_hub"]] },
+
+sln_end_cock: { w: "The hot tub", in: 1, p: [
+  "You get in. She pulls you onto her lap and her cock slides up between your legs and into you, ***plap... plap...***, in the steaming water, snow landing on your shoulders. She fucks you until you cum into the water, then lifts you up.",
+  "Her cock's tip opens wide. ***SHLLRRK.*** She feeds you into it in the hot tub, stroking, ***Glrrk... glrrk...***, until you drop into her balls, which swell huge and float in the water like two giant snowballs. ***SHLORP.*** ***Shlosh.***",
+  "She spends you the next morning into the snow off the deck, in steaming ropes. ***SPLRRT. SPLRRT.*** The twins make snow angels in it."],
+  s: ["plap", "cum", "squelch", "slosh", "cum"], end: { t: "Hot Tub", pred: "noor", hint: "Get in" } },
+
+sln_end_dragged: { w: "The hot tub", in: 1, p: [
+  "\"No thanks.\" Noor's tail snaps around your ankle and yanks you in, clothes and all. ***SPLOOSH.*** She holds you down in the steaming water and fucks you, rough, laughing. Then she swallows you, dripping wet, ***GLLRK. GULP.*** \"Should've just got in, sweetie.\""],
+  s: ["struggle", "plap", "gulp", "gurgle"], end: { t: "Dragged In", pred: "noor", hint: "Refuse" } },
+
+sln_end_safe: { w: "The hot tub", in: 1, p: [
+  "You get in and just relax with her, watching the snow fall. She's surprised. Everyone always jumps on her or runs from her. She leans her head on your shoulder.",
+  "Later you make love, slow, in the steam. She takes you into her cock, so gently, and you sleep warm in her balls all night in her bed. In the morning she lets you out and laughs. \"You're the first one I've given back.\""],
+  s: ["kiss", "plap", "squelch", "slosh"], end: { t: "First One Back", pred: "noor", hint: "Just relax with her", safe: 1 } },
+
+sl_twins: { w: "The twins' room", p: [
+  "Ivy and Lux show you to \"your\" room. It's theirs. One huge bed. They lock the door, identically, and turn around, identically, and smile, identically.",
+  "\"We share everything,\" Ivy says. \"Everything,\" Lux agrees. \"Food, clothes, boyfriends.\" Ivy: \"Meals.\" Their bellies rumble at the same time. ***Grrrrrl.***"],
+  c: [["Let them share you", "slt_end_split"], ["Try the door", "slt_end_race"], ["Ask them which one is which", "slt_end_safe"], ["Back", "sl_hub"]] },
+
+slt_end_split: { w: "The twins' room", in: 1, p: [
+  "They share you. Ivy rides your face while Lux rides your cock, and they kiss over you, then swap, then swap again, until you've cum in both of them and can't tell which is which.",
+  "Then they share you the other way. Ivy takes your head and shoulders, Lux takes your legs, ***GLLK... GLLK...***, gulping toward each other until their muzzles meet at your waist and they're kissing with you between them. Then they pull. A tug of war. Lux wins with a big ***GULP*** and Ivy pouts.",
+  "\"Fine,\" Ivy says. And she swallows Lux. Whole. With you inside. ***GLLLLRRK.*** Ivy sits on the bed, enormous, holding her belly with both hands. \"Sharing,\" she says, smugly. ***Grrrrooorgl.***",
+  "She lets Lux out in the morning. You, she keeps. The weight goes to both of them somehow. They're identical, after all."],
+  s: ["plap", "plap", "cum", "gulp", "gulp", "gulp", "gurgle"], end: { t: "We Share Everything", pred: "twins", hint: "Let them share" } },
+
+slt_end_race: { w: "The twins' room", in: 1, p: [
+  "You try the door. Locked. Ivy grabs your arms. Lux grabs your legs. They throw you on the bed and pin you, and take turns with you, one holding you down while the other rides you, until you stop struggling.",
+  "Then they race. Who can swallow you first. Ivy starts at the head, Lux at the feet. ***GLK GLK GLK GLK.*** Ivy wins by a mile and Lux makes her pay for it by sitting on her stuffed belly all night. ***Shlosh.***"],
+  s: ["struggle", "plap", "plap", "gulp", "gulp", "slosh"], end: { t: "Race", pred: "twins", hint: "Try the door" } },
+
+slt_end_safe: { w: "The twins' room", in: 1, p: [
+  "\"Which one of you is which?\" They stop. Look at each other. Nobody ever bothers to ask. Everybody just treats them as one. \"...I'm Ivy,\" says Ivy, quietly. \"I like chess.\" \"I'm Lux,\" says Lux. \"I hate chess.\"",
+  "You spend the night learning everything that's different about them. You make love with each of them, one at a time, separately, which they've never had. Then they ask to hold you together: Ivy swallows you gently and Lux curls around her, and you sleep in a warm, twin-wrapped belly. In the morning they let you out. They take turns visiting you."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Ivy and Lux", pred: "twins", hint: "Ask who's who", safe: 1 } },
+
+sl_dinner: { w: "The dining room", p: [
+  "Dinner. A long timber table, candles, a roaring fire. Four snow leopards. No food on the table. Celeste lifts a silver dome off the platter in the middle. It's empty. She looks at you. \"Would you be a dear, darling, and climb up?\""],
+  c: [["Climb up", "sld_end_feast"], ["Cuddle with them all instead", "sld_end_pile"], ["Back", "sl_hub"]] },
+
+sld_end_feast: { w: "The dining room", in: 1, p: [
+  "You climb up on the platter. They all have you, right there on the table, one after another, Noor's cock, Celeste's soft thighs, the twins together, until you've cum on every one of them.",
+  "Then Celeste, as host, swallows you. Then Noor swallows Celeste, purring, because she's always been the greedy sister. Then the twins both try to swallow Noor at once and end up stuck mouth-to-mouth around her like a hot dog bun until Ivy wins. ***GLLLLLRRRRK.***",
+  "In the morning Ivy is so huge she can't get out of her chair, with her entire family and you inside her. ***Grrrrrrrrrooooorgl.*** \"Best... winter... ever,\" she wheezes."],
+  s: ["plap", "plap", "cum", "gulp", "gulp", "gulp", "gurgle"], end: { t: "Family Style", pred: "twins", hint: "Climb onto the platter" } },
+
+sld_end_pile: { w: "The living room", in: 1, p: [
+  "\"How about we all just cuddle?\" They look at each other. Then they all pile onto you on the huge fur rug by the fire: four snow leopards, warm, purring, tails everywhere.",
+  "You make love all together, slow and lazy, all night. In the end Celeste holds you inside her, and the others curl around her belly, a big warm pile. In the morning she lets you out. The roads are clear. Nobody wants you to leave. You don't."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Snowed In", pred: "celeste", hint: "Cuddle with them all", safe: 1 } },
+
+/* ===================== THE WILD HERD ===================== */
+wh_start: { w: "The open steppe", p: [
+  "Your horse threw you and bolted. You're alone on an endless grassy steppe under a huge sky, and you're not alone at all: a herd of wild horses is coming over the hill. Huge ones. Bigger than any horse should be. And they move like they're thinking.",
+  "They surround you. A tall golden lead mare with a white mane, a futa, a long mottled cock swinging under her belly. A young black stallion, snorting, jealous. A tiny shaggy dun pony mare, barely up to your waist, peeking out from behind the others. And an old grey mare, huge and heavy-bellied, with wise eyes.",
+  "The lead mare lowers her head and breathes on you, slow. Deciding. The herd waits."],
+  c: [["Approach the lead mare", "wh_lead"], ["Stand up to the stallion", "wh_stallion"], ["Follow the little pony", "wh_pony"], ["Go to the old mare", "wh_old"]] },
+
+wh_hub: { w: "The herd", p: ["The herd grazes around you, always keeping you in the middle. Where now?"],
+  c: [["The lead mare", "wh_lead"], ["The stallion", "wh_stallion"], ["The pony", "wh_pony"], ["The old mare", "wh_old"], ["Walk toward the mountains", "wh_leave"]] },
+
+wh_leave: { w: "The mountains", p: ["You walk for two days. The herd follows you the whole way, always at the edge of sight. When you reach a village, they stop on the hill and watch you go in.",
+  "Every year after, the herd passes the village. And every year, the lead mare stops on that hill and looks for you."], end: { t: "Watched", pred: "none", hint: "Walk away" } },
+
+wh_lead: { w: "The lead mare", p: [
+  "SAFFRA, the herd calls her, in snorts and stamps you somehow understand. The lead mare is huge, golden, with a cream mane to her knees and a futa's thick horsecock hanging heavy under her belly, her mare's cunt winking behind her balls. She smells like summer and musk. She's the herd's law.",
+  "She circles you. She sniffs your crotch. Her cock slides out, slapping her belly. She looks you in the eye. *Mine.*"],
+  c: [["Submit to her", "whl_end_claimed"], ["Try to climb on her back and ride away", "whl_end_thrown"], ["Groom her mane", "whl_end_safe"], ["Back", "wh_hub"]] },
+
+whl_end_claimed: { w: "The lead mare", in: 1, p: [
+  "You kneel in the grass. Saffra mounts you. The herd watches. Her huge horsecock spears into you and she breeds you, the way she'd breed the herd, ***PLAP... PLAP... PLAP***, slow and heavy and endless, her cream mane falling over your back, until she cums so much your belly swells and you can't stand.",
+  "Then she turns, and her cock's tip, flared and huge, opens over your head. ***SHLLLRRRK.*** She takes you up her cock while the herd watches, a bulge sliding down that long mottled shaft, into balls that swell huge and swing low. ***SHLORP.*** She trots around the herd showing them off. ***Shlosh. Shlosh.***",
+  "Days later, she breeds the young stallion's favourite mare with you. The foal's colouring is suspiciously close to yours."],
+  s: ["plap", "plap", "cum", "squelch", "slosh", "cum"], end: { t: "Claimed", pred: "saffra", hint: "Submit" } },
+
+whl_end_thrown: { w: "The lead mare", in: 1, p: [
+  "You grab her mane and swing onto her back. Saffra rears and throws you, effortlessly, and you land flat on your back in the grass. She stands over you, eyes blazing. *No one rides the lead mare.*",
+  "She swallows you. Head first, her huge horse mouth opening wide, ***GLLLRRK***, a long bulge sliding down her neck, ***GULP***, into a belly that sags low and round and swings as she trots. ***Shlosh.***",
+  "She takes days. In the end she leaves you on the steppe, a huge, steaming, human-like pile, as big as you ever were. ***FFFRRRT... PLOP... PLOP.*** The herd gives it a wide berth. A warning."],
+  s: ["struggle", "gulp", "gulp", "slosh", "plop"], end: { t: "No One Rides Her", pred: "saffra", hint: "Try to ride her" } },
+
+whl_end_safe: { w: "The lead mare", in: 1, p: [
+  "You comb her mane with your fingers. Slowly. All of it. Saffra stands perfectly still. Nobody grooms the lead mare. She's always looking after everyone else.",
+  "When you're done, she lies down in the grass and lets you lie against her, warm and golden. Later she takes you, gently, and keeps you in her balls all night, safe and warm, and lets you out at dawn. You run with the herd after that. She lets you ride."],
+  s: ["kiss", "squelch", "slosh"], end: { t: "Herd", pred: "saffra", hint: "Groom her mane", safe: 1 } },
+
+wh_stallion: { w: "The stallion", p: [
+  "KESTREL is the young black stallion, glossy and furious, rearing and stamping, his huge cock already out. He doesn't like you. Saffra keeps looking at you, and Kestrel wants to be the one she looks at.",
+  "He paws the ground and snorts in your face. A challenge."],
+  c: [["Stand your ground", "whs_end_mounted"], ["Run", "whs_end_trampled"], ["Back down and bow your head", "whs_end_safe"], ["Back", "wh_hub"]] },
+
+whs_end_mounted: { w: "The stallion", in: 1, p: [
+  "You stand your ground. He knocks you flat with his chest and mounts you, furious, and fucks you hard and fast, ***PLAP PLAP PLAP***, to show the herd who's in charge. Then he swallows you, rough, ***GLLRK. GULP.***, right in front of Saffra, and stares at her. *See? I'm bigger.*",
+  "He's not. But with you in his gut, he's rounder. He takes it as a win. Saffra yawns."],
+  s: ["plap", "plap", "cum", "gulp", "gurgle"], end: { t: "Jealous", pred: "kestrel", hint: "Stand your ground" } },
+
+whs_end_trampled: { w: "The stallion", in: 1, p: [
+  "You run. He chases you across the steppe, catches you in seconds and knocks you down. He takes you in the long grass while the herd watches from the hill. Then he backs onto you, ***SHLLLORRRP***, and swallows you up his ass, and trots back to the herd with a belly that swings. In the morning he leaves you on the hill as a mountain of human-like shit, right where Saffra will see it."],
+  s: ["struggle", "plap", "plap", "squelch", "gurgle", "plop"], end: { t: "Chased Down", pred: "kestrel", hint: "Run" } },
+
+whs_end_safe: { w: "The stallion", in: 1, p: [
+  "You back down and bow your head. Kestrel stops, confused. Then he snorts, and nudges you, gently. And then again. He's young. He's just scared of being replaced.",
+  "He mounts you later, slowly, almost shy, and keeps you safe in his belly all night, nuzzling it. In the morning he lets you out and stands beside you at the edge of the herd. You're his now, not Saffra's. Saffra's fine with that."],
+  s: ["plap", "gulp", "gurgle"], end: { t: "Not Replaced", pred: "kestrel", hint: "Bow your head", safe: 1 } },
+
+wh_pony: { w: "The pony", p: [
+  "THISTLE is a tiny shaggy dun pony mare, grown but barely up to your waist, with a fluffy forelock over her eyes and a fat little round belly. She's been peeking at you all day. Now she trots right up, sniffs your hand, and nickers. She's so small. She's so cute. She's licking her lips."],
+  c: [["Laugh and pet her", "whp_end_laugh"], ["Hide behind her when the stallion comes", "whp_end_hide"], ["Sit and share an apple with her", "whp_end_safe"], ["Back", "wh_hub"]] },
+
+whp_end_laugh: { w: "The pony", in: 1, p: [
+  "\"Aww, who's a tiny little pony?\" You ruffle her forelock. She bites your hand and doesn't let go. Then her little mouth opens, and opens, and she starts swallowing your arm. ***Glk. Glk. Glk.***",
+  "You're getting swallowed by a pony that comes up to your waist. You fall over in the grass. She keeps going, shoulders, head, ***GLRK... GLRK...***, her little body stretching into a ridiculous balloon, her legs barely touching the ground. ***GULP.***",
+  "The whole herd gathers round to look at the tiny pony with the giant belly. Kestrel laughs, a horse laugh. Thistle stamps at him, smug.",
+  "In the morning she squats in the grass and strains with her tiny body, and out comes a whole grown person's worth of huge, steaming, human-like shit, piled far taller than the pony who made it. ***FFFRRRT... PLOP... PLOP... PLOP.*** She stands on top of it."],
+  s: ["gulp", "gulp", "gulp", "gurgle", "plop"], end: { t: "Tiny Pony", pred: "thistle", hint: "Laugh at her" } },
+
+whp_end_hide: { w: "The pony", in: 1, p: [
+  "Kestrel charges at you. You dive behind Thistle. She's tiny, she's no cover at all, and then she turns around and swallows you to hide you. ***GLK GLK GLK GULP.*** \"Mmf!\" She just stands there, innocent, with a belly bigger than she is, while Kestrel stomps around looking for you.",
+  "She meant to let you out. She forgets. Ponies have short attention spans. By evening she's thicker everywhere and very pleased with herself."],
+  s: ["gulp", "gulp", "gurgle"], end: { t: "Hiding Place", pred: "thistle", hint: "Hide behind her" } },
+
+whp_end_safe: { w: "The pony", in: 1, p: [
+  "You sit in the grass and share an apple with her. Thistle eats her half, then nibbles your fingers, then puts her head in your lap and falls asleep. Later she very carefully swallows you, little gulps, and curls up in the grass with you in her round belly, safe, and you both sleep under the stars. In the morning she lets you out. She never leaves your side."],
+  s: ["gulp", "gurgle"], end: { t: "Apple", pred: "thistle", hint: "Share an apple", safe: 1 } },
+
+wh_old: { w: "The old mare", p: [
+  "MAREN is the oldest mare in the herd, huge and grey and heavy-bellied, with a sagging, enormous gut that rumbles constantly. ***Grrrrrooooorgl.*** She's been the herd's matriarch longer than Saffra's been alive. Her wise old eyes look you over. She doesn't need to chase anything anymore. Things just come to her."],
+  c: [["Go to her", "who_end_matriarch"], ["Rub her huge belly", "who_end_safe"], ["Back", "wh_hub"]] },
+
+who_end_matriarch: { w: "The old mare", in: 1, p: [
+  "You walk up to her. She doesn't move. She just opens her mouth, slowly, and waits, and you find you're climbing into it, like you've been called. ***GLLLRRK.***",
+  "She swallows you slowly, ***GLK... GLK... GULP***, and lies down in the grass with you in that huge old belly, and the herd gathers round her. ***Grrrrrooooorgl.*** It takes days. She's in no hurry. Old mares never are.",
+  "When she rises at last, she leaves a pile the size of a haystack, human-like and steaming, and walks on. The herd follows."],
+  s: ["gulp", "gulp", "gurgle", "plop"], end: { t: "Matriarch", pred: "maren", hint: "Go to her" } },
+
+who_end_safe: { w: "The old mare", in: 1, p: [
+  "You rub her huge belly. Maren groans, deep and happy, and lies down so you can reach more of it. You rub until the sun sets.",
+  "Then she swallows you, very gently, and keeps you safe in her warm old belly all night, the herd sleeping around her in a circle. At dawn she lets you out. The herd adopts you. Maren teaches you which grasses to eat. She's very patient."],
+  s: ["gurgle", "gulp", "gurgle"], end: { t: "Adopted", pred: "maren", hint: "Rub her belly", safe: 1 } },
+
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
-  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"], ["🦃 Thanksgiving: home with Mom, your sisters and the fun aunt", "k_start"], ["🎓 Gullet University: first day on the prey track", "u_start"], ["🛸 Abducted: a saucer studying human digestibility", "ab_start"], ["🚀 The Station: night shift on Kessa-9", "st_start"], ["🪐 Crash Landing: stranded on a jungle planet", "cr_start"], ["🍽️ The Galactic Diner: you're the exotic Earth special", "gd_start"], ["🤖 The Android Lab: test subject for pred androids", "an_start"], ["👾 The Hive: a derelict ship full of something", "hv_start"]] },
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"], ["🦃 Thanksgiving: home with Mom, your sisters and the fun aunt", "k_start"], ["🎓 Gullet University: first day on the prey track", "u_start"], ["🛸 Abducted: a saucer studying human digestibility", "ab_start"], ["🚀 The Station: night shift on Kessa-9", "st_start"], ["🪐 Crash Landing: stranded on a jungle planet", "cr_start"], ["🍽️ The Galactic Diner: you're the exotic Earth special", "gd_start"], ["🤖 The Android Lab: test subject for pred androids", "an_start"], ["👾 The Hive: a derelict ship full of something", "hv_start"], ["🎖️ Boot Camp: ration corps recruit at Fort Maw", "bc_start"], ["🏔️ The Ski Lodge: snowed in with the Halvorsens", "sl_start"], ["🐎 The Wild Herd: lost on the steppe with sapient horses", "wh_start"]] },
 
 f_start: { w: "Hollis Farm", p: [
   "Your car died two miles back. The only light for miles is Hollis Farm. The farmhouse lights are on, and there's a note tacked to the barn door in looping handwriting: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers. — Maggie*",
@@ -2683,12 +2972,12 @@ function drawStats() {
 }
 function go(id) {
   const n = N[id]; if (!n) return;
-  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start", "k_start", "u_start", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start", "k_start", "u_start", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "bc_start", "sl_start", "wh_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
   if (id === "menu") hush();
   if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
   VISITED[id] = 1;
   $("#where").textContent = n.w || "";
-  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "menu"].includes(id)) $("#text").innerHTML = "";
+  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "bc_start", "sl_start", "wh_start", "bc_hub", "sl_hub", "wh_hub", "menu"].includes(id)) $("#text").innerHTML = "";
   const first = $("#text").children.length;
   n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
   if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
@@ -2710,7 +2999,7 @@ function go(id) {
 // which endings a choice can still lead to (for the ✓ mark once all are seen)
 const RC = {};
 function reach(id, seen = new Set()) {
-  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "menu"].includes(id)) return out; seen.add(id);
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "bc_start", "sl_start", "wh_start", "bc_hub", "sl_hub", "wh_hub", "menu"].includes(id)) return out; seen.add(id);
   const n = N[id]; if (!n) return out; if (n.end) out.add(id);
   for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
   return (RC[id] = out);
