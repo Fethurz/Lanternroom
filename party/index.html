@@ -129,6 +129,10 @@ const PREDS = {
   cinder:{ n: "Basila", k: "Cockatrice · monster" },
   vesna: { n: "Vesna", k: "Futa centaur · monster" },
   shriek:{ n: "Shriek", k: "Harpy matriarch · monster" },
+  rhonda:{ n: "Mom", k: "Rhonda · she-wolf" },
+  kara:  { n: "Kara", k: "Big sister, 29 · she-wolf" },
+  sadie: { n: "Sadie", k: "Little sister, 21 · she-wolf" },
+  lou:   { n: "Aunt Lou", k: "Futa aunt, 42 · she-wolf" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -1273,9 +1277,128 @@ rh2_end_safe: { w: "The harpy roost", in: 1, p: [
   "You make love in the hay, her wings wrapped around you. After, she takes you into her mouth, gently, and flies you up to her nest and keeps you there all night, warm, under her wings. In the morning she lets you out and gives you a feather. She waits for you every day."],
   s: ["kiss", "plap", "gulp"], end: { t: "Feather", pred: "shriek", hint: "Call up to her softly", safe: 1 } },
 
+/* ===================== THANKSGIVING (family) ===================== */
+k_start: { w: "Home for Thanksgiving", p: [
+  "You're home from grad school for Thanksgiving. Twenty-four, finally an adult in everybody's eyes, standing on the porch of the house you grew up in with a bag over your shoulder.",
+  "The door flies open before you knock. It's Mom: Rhonda, a big, curvy she-wolf in an apron that does nothing to hide her huge tits or her soft, round belly, grey fur, warm eyes. She crushes you into a hug, buries your face in her cleavage and doesn't let go. \"My baby's HOME!\" Her belly gurgles against you. Loudly. ***Grrrrooorgl.***",
+  "Behind her in the hall: your big sister Kara, twenty-nine, a firefighter, shoulders like a linebacker and a tank top that's mostly holes. Your little sister Sadie, twenty-one, home from college, in a hoodie and glasses, blushing at you over a book. And at the kitchen door, leaning with a glass of wine, Aunt Lou, Mom's younger sister, curvier than Mom and with a very obvious bulge in her leggings.",
+  "Everyone's looking at you like you're the turkey."],
+  c: [["Help Mom in the kitchen", "k_mom"], ["Arm-wrestle Kara", "k_kara"], ["Hang out in Sadie's room", "k_sadie"], ["Have a drink with Aunt Lou", "k_lou"]] },
+
+k_hub: { w: "The house", p: ["The house smells like turkey and pie and wolf. Somebody's stomach growls in the other room. Where now?"],
+  c: [["The kitchen (Mom)", "k_mom"], ["The garage (Kara)", "k_kara"], ["Sadie's room", "k_sadie"], ["The porch (Aunt Lou)", "k_lou"], ["Make an excuse and drive back early", "k_leave"]] },
+
+k_leave: { w: "The highway", p: ["You fake a call from your advisor and drive back that night. Mom cries on the porch. Kara flips you off. Sadie texts you a single sad face. Aunt Lou texts *next year, sweetie. we'll be hungrier.*",
+  "You spend Thanksgiving alone with a microwave dinner, thinking about them the whole time."],
+  end: { t: "Early Flight", pred: "none", hint: "Leave early" } },
+
+/* --- Mom --- */
+k_mom: { w: "The kitchen", p: [
+  "Mom has you stirring the gravy while she bends over to baste the turkey, her huge soft ass right in front of you, her tail swishing against your hips. \"I missed you so much, baby,\" she says. \"You have no idea how much.\"",
+  "She straightens up, turns around, and pulls you into her chest again, and this time her hand slides down to your ass and squeezes. Her belly presses into you, hot, gurgling. \"You've gotten so big,\" she purrs. \"Mommy's so proud. Mommy's so... hungry.\""],
+  c: [["Kiss her", "km_end_dessert"], ["Pull away", "km_end_stuffed"], ["Hug her back and tell her you missed her too", "km_end_safe"], ["Back", "k_hub"]] },
+
+km_end_dessert: { w: "The kitchen", in: 1, p: [
+  "You kiss her. On the mouth. Mom moans like she's been waiting years for it, and she probably has, and she shoves you up against the fridge and kisses you back, deep and sloppy, her tongue all the way in your mouth.",
+  "She drops to her knees on the kitchen tiles and sucks you off, her big wolf muzzle bobbing, until you cum down her throat, and she swallows every drop and looks up at you with shining eyes. \"Good boy. My good boy.\" Then she stands, lifts her apron and sits you on the counter and rides you, her massive tits bouncing in your face, until she howls.",
+  "And then she opens her muzzle wide over your head. \"Mommy made you,\" she whispers. \"Mommy can have you back.\" ***GLLLK.*** She swallows you whole, slow, savouring, ***GLRK... GLRK... GULP***, while the turkey burns in the oven.",
+  "Her belly swells huge and round, dragging her apron down. She sits at the head of the table at Thanksgiving dinner with you inside her and rubs you through her stomach, cooing, while everybody else eats turkey. ***Grrrrrrooorgl.*** \"Isn't this nice?\" she says. \"The whole family together.\"",
+  "The next morning she sits on the toilet and groans you out, a whole grown son's worth, thick and endless and steaming, piling up out of the bowl. ***FFFRRRT... PLOP... PLOP.*** She looks at it and sighs, fond. Her hips are wider now. Her tits are bigger. She carries you everywhere."],
+  s: ["kiss", "cum", "plap", "gulp", "gulp", "gurgle", "plop"], end: { t: "Back Where You Came From", pred: "rhonda", hint: "Kiss Mom" } },
+
+km_end_stuffed: { w: "The kitchen", in: 1, p: [
+  "You pull away. \"Mom, what are you DOING?\" Her face falls. Then it hardens. \"Don't you pull away from your mother.\"",
+  "She grabs you by the collar and slams you down onto the kitchen table, scattering plates. She's bigger than you. She always was. She holds you down with one paw and yanks your pants off with the other, and climbs on, and rides you whether you want it or not, growling, \"You. Will. Not. Pull away. From. Me.\" ***PLAP. PLAP. PLAP.*** You cum inside your own mother. She doesn't stop.",
+  "Then she stuffs you. Not her stomach: the turkey's empty. No. Her. She swallows you right there on the table, feet first, shoving you down with both paws like she's stuffing a bird, ***GLRK. GLRK. GULP***, and pats her huge, stuffed gut. \"There. Now you can't leave.\"",
+  "She serves Thanksgiving dinner with you inside her. Kara notices. Sadie notices. Aunt Lou raises her glass. Mom just smiles. ***Grrrrnch.***"],
+  s: ["struggle", "plap", "plap", "cum", "gulp", "gulp", "crack"], end: { t: "Don't Pull Away", pred: "rhonda", hint: "Pull away" } },
+
+km_end_safe: { w: "The kitchen", in: 1, p: [
+  "You hug her back. Hard. \"I missed you too, Mom.\" She goes soft in your arms and cries a little into your hair.",
+  "Late that night, after everyone's asleep, she comes to your old room and crawls into bed with you. You make love, slow and quiet and crying a little, both of you. Then she asks, so softly: \"Can I hold you? Inside? Like when you were... just for tonight. I'll give you back.\"",
+  "She swallows you so gently, ***Glk... glk... GULP***, and lies in your bed with her arms wrapped around her round belly, humming the lullaby she used to sing. ***Grrrlbl.*** It's warm. It's safe. It's the best you've slept in years.",
+  "In the morning she burps you back up into her arms, ***Hrrrp***, and makes you pancakes. You come home every weekend after that."],
+  s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Home", pred: "rhonda", hint: "Tell Mom you missed her", safe: 1 } },
+
+/* --- Kara --- */
+k_kara: { w: "The garage", p: [
+  "Kara's in the garage lifting weights, sweaty, her tank top soaked through. She's twenty-nine, a firefighter, and she's always been bigger than you, always pinned you, always won. She grins. \"Arm-wrestle, twerp? Loser does whatever the winner says.\"",
+  "Her biceps are huge. Her tits are huge. Her belly is flat and ripped and, as you watch, it growls. ***Grrrrrl.*** \"Ignore that,\" she says. \"I'm hungry.\""],
+  c: [["Arm-wrestle her", "kk_end_lose"], ["Refuse", "kk_end_pin"], ["Tell her you always looked up to her", "kk_end_safe"], ["Back", "k_hub"]] },
+
+kk_end_lose: { w: "The garage", in: 1, p: [
+  "You arm-wrestle. You lose in about one second. ***Slam.*** \"Loser does what the winner says,\" Kara purrs. \"Strip.\"",
+  "You strip. She pins you down on the weight bench and sits on your face, her sweaty pussy grinding over your mouth, until she cums, thighs crushing your head. Then she slides down and rides your cock, rough, ***PLAP PLAP PLAP***, making you call her \"big sis\" the whole time.",
+  "\"And now,\" she says, \"you're going in.\" She hauls you up by the arms and opens her muzzle. ***GLLK.*** She swallows you like she's chugging a protein shake, fast and greedy, ***GLRK. GLRK. GULP***, and her ripped abs bulge out into a big, round, wobbling gut. ***Glorrrp.***",
+  "She flexes in the garage mirror with her little brother in her belly. \"Still winning,\" she says. In the morning she shits you out at the firehouse, a whole grown person's worth, a massive pile that clogs the station toilet. ***PLOP. PLOP. PLOP.*** The whole crew has to bring plungers."],
+  s: ["plap", "plap", "cum", "gulp", "gulp", "gurgle", "plop"], end: { t: "Big Sis Wins", pred: "kara", hint: "Arm-wrestle her" } },
+
+kk_end_pin: { w: "The garage", in: 1, p: [
+  "\"No.\" Kara laughs and tackles you to the garage floor, just like when you were kids, except now she's pinning your wrists over your head and grinding her crotch against yours, and you're both adults, and you're both very much feeling it.",
+  "\"Say uncle.\" You don't. She shoves your shorts down and takes you right there on the concrete. ***PLAP. PLAP.*** \"Say. Uncle.\" You say it. She doesn't stop.",
+  "When she's done, she turns around and sits on your face, and her ass opens, ***Shllorrrp***, and she sits harder, laughing, and pulls her little brother up her ass inch by inch until your feet disappear. She pats her stomach. \"Uncle.\""],
+  s: ["struggle", "plap", "plap", "squelch", "squelch", "gurgle"], end: { t: "Say Uncle", pred: "kara", hint: "Refuse her" } },
+
+kk_end_safe: { w: "The garage", in: 1, p: [
+  "\"I always looked up to you, you know. Literally and... not literally.\" Kara stops. Her ears go back. \"...Shut up, twerp.\" But she's blushing.",
+  "She sits down on the bench next to you. Then she kisses you, rough and clumsy, like she doesn't know how to be soft. You make love on the garage floor, and she holds you so tight afterwards you can barely breathe.",
+  "\"Let me protect you for once,\" she mumbles, and swallows you, gently, and falls asleep on the garage couch with her hand on her round belly. In the morning she lets you out, and punches your shoulder, and then hugs you. You text every day now."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Protected", pred: "kara", hint: "Tell her you looked up to her", safe: 1 } },
+
+/* --- Sadie --- */
+k_sadie: { w: "Sadie's room", p: [
+  "Sadie's twenty-one now, a junior in college. Small for a wolf, in a hoodie three sizes too big, glasses, books everywhere. She's always been the shy one. She shuts the door behind you and locks it. Then she won't look at you.",
+  "\"I, um,\" she whispers. \"I've had a crush on you since we were both adults. Is that weird? That's weird. I'm so sorry.\" Her belly gurgles. ***Grrrlbl.*** She clutches it. \"And also, I'm, um. Sort of a pred now? College changed me.\""],
+  c: [["Kiss her", "ks_end_kiss"], ["Laugh at her", "ks_end_laugh"], ["Tell her it's okay, and hold her", "ks_end_safe"], ["Back", "k_hub"]] },
+
+ks_end_kiss: { w: "Sadie's room", in: 1, p: [
+  "You kiss her. Sadie squeaks into your mouth. Then she grabs your shirt with both hands and drags you down onto her bed and kisses you like she's starving, all teeth and tongue and glasses knocking against your face.",
+  "You make love in her childhood bed, under her old posters, and she's loud, and she doesn't care who hears. When she cums she bites your shoulder. Then she looks up at you, flushed. \"Can I eat you? Please? I've thought about it so much.\"",
+  "She swallows you with little nervous gulps, ***glk... glk... glk... GULP***, and lies in bed rubbing her enormous belly, giggling. \"Oh my god. Oh my GOD. You're in me. My big brother's in me.\"",
+  "And she doesn't stop. She doesn't know how. She digests you, giggling and apologising and rubbing you all night. ***Grrrnch.*** By Christmas break, the shy little sister has the biggest hips in the family, and she can't stop smiling."],
+  s: ["kiss", "plap", "cum", "gulp", "gulp", "gurgle", "crack"], end: { t: "Crush", pred: "sadie", hint: "Kiss her" } },
+
+ks_end_laugh: { w: "Sadie's room", in: 1, p: [
+  "You laugh. \"You? A pred? You can't even eat a whole burger.\" Sadie's face goes very still. She takes off her glasses. She folds them. She sets them on the desk.",
+  "Then she shoves you onto the bed and her jaws open, and keep opening, and she swallows your head before you can even stop laughing. ***GLLK.*** \"I CAN eat a whole burger,\" she says, muffled, \"and I can eat YOU.\" ***GLRK. GLRK. GULP.***",
+  "She sits at the Thanksgiving table that night with her hoodie stretched over a belly bigger than Mom's, eating seconds of everything. Mom beams. \"My girls are growing up!\"",
+  "The next morning she locks herself in the upstairs bathroom and groans you out, a whole big brother's worth, huge and endless and steaming, overflowing the toilet. ***FFFRRRT... PLOP... PLOP.*** She calls through the door: \"MOM. We need a plunger. A big one.\""],
+  s: ["gulp", "gulp", "gulp", "gurgle", "plop"], end: { t: "Little Sister", pred: "sadie", hint: "Laugh at her" } },
+
+ks_end_safe: { w: "Sadie's room", in: 1, p: [
+  "\"It's okay,\" you say, and hold her. \"It's not weird. Well. It's a little weird. But it's okay.\" She melts into you and cries, and then laughs, and then kisses you, very carefully.",
+  "You make love, slow and sweet, and after she asks, shy: \"Could I... keep you in there for tonight? Just to see what it's like? I'll let you out. I promise. I've practised.\"",
+  "She swallows you so carefully, and lies there rubbing you, reading you her favourite book out loud. ***Grrrlbl.*** At dawn she lets you out, beaming. \"I did it! I didn't digest you!\" She's so proud of herself."],
+  s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Practised", pred: "sadie", hint: "Hold her", safe: 1 } },
+
+/* --- Aunt Lou --- */
+k_lou: { w: "The porch", p: [
+  "Aunt Lou is out on the porch with a bottle of wine. She's Mom's younger sister, forty-two, even curvier than Mom, black fur, red lipstick, and a futa. The bulge in her leggings is enormous and it's very clearly hard. She pats the swing next to her.",
+  "\"Sit with your auntie, sweetie. You've grown up SO nice.\" She looks at you over her wine glass. \"I've always been the fun aunt, haven't I?\""],
+  c: [["Sit with her", "kl_end_cock"], ["Go back inside", "kl_end_dragged"], ["Sit with her and just talk", "kl_end_safe"], ["Back", "k_hub"]] },
+
+kl_end_cock: { w: "The porch", in: 1, p: [
+  "You sit. Her hand's on your thigh immediately. Then she pulls her leggings down, and her cock flops out onto her lap, thick, black, knotted, dripping, with a pair of heavy balls under it. \"Go on. Taste your auntie.\"",
+  "You suck her cock on the porch swing while she drinks wine and strokes your ears. She cums down your throat with a moan. Then she presses the fat tip to your forehead and it opens. ***SHLLRRK.*** \"In you go, sweetie.\"",
+  "She strokes you down her cock, slowly, on the porch swing, ***Glrrk... glrrk... glrrk***, until you drop into her balls with a fat ***SHLORP*** and they swell huge in her lap. ***Shlosh.*** She sips her wine, pats them, and calls inside: \"Rhonda! Your kid's with me!\"",
+  "Later that night, she cums you out all over Mom's good Thanksgiving tablecloth, in front of the whole family. ***SPLRRT. SPLRRT. SPLRRT.*** Mom just sighs. \"Lou. REALLY.\""],
+  s: ["gag", "cum", "squelch", "slosh", "cum"], end: { t: "The Fun Aunt", pred: "lou", hint: "Sit with her" } },
+
+kl_end_dragged: { w: "The porch", in: 1, p: [
+  "You go back inside. Aunt Lou follows you. She corners you in the laundry room and pins you against the dryer. \"Don't walk away from your auntie, sweetie. That's rude.\"",
+  "She bends you over the dryer and fucks you, hard, her knot slamming against you, ***PLAP PLAP PLAP***, the dryer rumbling under you, until she knots you and cums so much it pours down your thighs. ***Shlorp.***",
+  "Then she swallows you, still knotted, pulling you off her cock and down her throat, ***GLLRK. GULP***, and goes back to the porch with a fat belly and a fresh glass of wine."],
+  s: ["struggle", "plap", "plap", "cum", "gulp", "gurgle"], end: { t: "Laundry Room", pred: "lou", hint: "Walk away" } },
+
+kl_end_safe: { w: "The porch", in: 1, p: [
+  "You sit and just talk. About school. About how Mom's been since Dad left. Aunt Lou listens, really listens, and her hand stops wandering and just rests on yours.",
+  "Later, when the stars are out, she kisses you, slow, tasting of wine. You make love on the porch swing under a blanket. After, she wraps you up in her arms. \"You want to sleep in Auntie tonight? I'll keep you safe.\" She swallows you so gently, and rocks the swing all night with you in her belly. ***Grrrlbl.***",
+  "In the morning she lets you out and makes you the hangover breakfast she used to make for Mom. She calls you every Sunday after that."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Porch Swing", pred: "lou", hint: "Just talk", safe: 1 } },
+
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
-  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"]] },
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"], ["🦃 Thanksgiving: home with Mom, your sisters and the fun aunt", "k_start"]] },
 
 f_start: { w: "Hollis Farm", p: [
   "Your car died two miles back. The only light for miles is Hollis Farm. The farmhouse lights are on, and there's a note tacked to the barn door in looping handwriting: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers. — Maggie*",
@@ -1973,12 +2096,12 @@ function drawStats() {
 }
 function go(id) {
   const n = N[id]; if (!n) return;
-  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start", "k_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
   if (id === "menu") hush();
   if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
   VISITED[id] = 1;
   $("#where").textContent = n.w || "";
-  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "menu"].includes(id)) $("#text").innerHTML = "";
+  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "menu"].includes(id)) $("#text").innerHTML = "";
   const first = $("#text").children.length;
   n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
   if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
@@ -2000,7 +2123,7 @@ function go(id) {
 // which endings a choice can still lead to (for the ✓ mark once all are seen)
 const RC = {};
 function reach(id, seen = new Set()) {
-  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "menu"].includes(id)) return out; seen.add(id);
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "menu"].includes(id)) return out; seen.add(id);
   const n = N[id]; if (!n) return out; if (n.end) out.add(id);
   for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
   return (RC[id] = out);
