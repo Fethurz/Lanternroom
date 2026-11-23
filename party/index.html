@@ -57,7 +57,7 @@ button{font:inherit;color:inherit;border:0;cursor:pointer}
     <div id="choices"></div>
   </div>
   <div id="gallery" class="hidden"></div>
-  <p class="credit">Some sound assets from Jeschke. Every character is an adult. Fiction only.<br>SCP Foundation material is used under CC BY-SA 3.0 (scp-wiki.wikidot.com). Sadako is from Koji Suzuki's <i>Ring</i>; this is fan fiction.</p>
+  <p class="credit">Some sound assets from Jeschke. Every character is an adult. Fiction only.<br>SCP Foundation material is used under CC BY-SA 3.0 (scp-wiki.wikidot.com). Sadako is from Koji Suzuki's <i>Ring</i>; Lethal Company is by Zeekerss. These are fan fiction.</p>
 </div>
 <script>
 "use strict";
@@ -166,6 +166,16 @@ const PREDS = {
   kestrel:{ n: "Kestrel", k: "Young stallion · feral" },
   thistle:{ n: "Thistle", k: "Pony mare · feral" },
   maren: { n: "Maren", k: "Old matriarch mare · feral" },
+  lcbracken:{ n: "The Bracken", k: "Lethal Company · monster girl" },
+  lcthump:{ n: "The Thumper", k: "Lethal Company · monster girl" },
+  lcspider:{ n: "The Bunker Spider", k: "Lethal Company · spider-taur" },
+  lcflea:{ n: "The Snare Flea", k: "Lethal Company · monster girl" },
+  lcmasked:{ n: "The Masked", k: "Lethal Company · mimic" },
+  lcpanther:{ n: "The Panther", k: "Lethal Company · panther woman" },
+  lcmaneater:{ n: "The Maneater", k: "Lethal Company · grown monster" },
+  lcdog:{ n: "The Eyeless Dog", k: "Lethal Company · hound woman" },
+  lcfox:{ n: "The Kidnapper Fox", k: "Lethal Company · vixen" },
+  lcco:{ n: "The Company", k: "Lethal Company · something behind the wall" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -2272,9 +2282,233 @@ who_end_safe: { w: "The old mare", in: 1, p: [
   "Then she swallows you, very gently, and keeps you safe in her warm old belly all night, the herd sleeping around her in a circle. At dawn she lets you out. The herd adopts you. Maren teaches you which grasses to eat. She's very patient."],
   s: ["gurgle", "gulp", "gurgle"], end: { t: "Adopted", pred: "maren", hint: "Rub her belly", safe: 1 } },
 
+/* ===================== LETHAL COMPANY (fan fiction) ===================== */
+lc_start: { w: "The ship · In orbit", p: [
+  "Quota: 730. Days left: 1. Your crew is gone: one got scared and stayed on the ship, one got taken in the first hour, one you don't want to think about. The terminal hums. The Company is expecting results.",
+  "You land on the moon alone. Rain. Fog. The facility's main entrance yawns open like a throat. Your flashlight flickers. Somewhere inside, something laughs in a voice that sounds just like your missing crewmate.",
+  "Everything in there is female, hungry, and a lot hotter than the training video showed."],
+  c: [["Go into the facility", "lc_in"], ["Search the woods outside", "lc_out"], ["Go back and sell scrap to the Company", "lc_co"]] },
+
+lc_in: { w: "The facility", p: ["Dark corridors, rusted pipes, steam. Scrap gleams in the corners. So do eyes. Where now?"],
+  c: [["The hallway with the leaves on the floor", "lc_bracken"], ["The long corridor (something is running)", "lc_thump"], ["The web-choked storage room", "lc_spider"], ["The room with the ceiling that moved", "lc_flea"], ["Follow your crewmate's voice", "lc_masked"], ["The pitch-black lower level", "lc_panther"], ["The room someone is crying in", "lc_maneater"], ["Back outside", "lc_hub"]] },
+
+lc_out: { w: "The woods", p: ["Fog everywhere. Something huge breathes in the trees. Something else yips like a fox, very close. Where now?"],
+  c: [["Toward the breathing (stay very quiet)", "lc_dog"], ["Toward the yipping", "lc_fox"], ["Back to the ship", "lc_hub"]] },
+
+lc_hub: { w: "Outside the ship", p: ["Rain hammers the hull. The quota timer glows red. Where now?"],
+  c: [["The facility", "lc_in"], ["The woods", "lc_out"], ["The Company building", "lc_co"], ["Take off and leave the moon", "lc_leave"]] },
+
+lc_leave: { w: "Orbit", p: ["You pull the lever and the ship lifts off with whatever scrap you've got. Short of quota. The Company's voice comes over the speaker, pleasant and final: *\"Thank you for your service.\"*",
+  "The airlock opens. You're fired. Into space. It's a very short, very cold career. At least nothing ate you."], end: { t: "Fired", pred: "none", hint: "Leave short of quota" } },
+
+/* --- Bracken --- */
+lc_bracken: { w: "The leafy hallway", p: [
+  "Dry leaves on the floor where no leaves should be. You feel watched. You turn. Nothing. You turn back. She's right there, too close: the Bracken, a tall, wiry monster girl of dark green leafy flesh, hunched, with a face like a crumpled flower and glowing white eyes, and a body that's all long legs and hard, lean curves.",
+  "She hates being looked at. You're looking at her. Her petals flare."],
+  c: [["Keep staring", "lb_end_snap"], ["Look away and let her follow", "lb_end_den"], ["Look at the floor and offer her a hand", "lb_end_safe"], ["Back", "lc_in"]] },
+
+lb_end_snap: { w: "The leafy hallway", in: 1, p: [
+  "You keep staring. She screeches, a sound like tearing paper, and lunges. She doesn't snap your neck. She snaps you up. Her leafy jaw unfolds like petals opening, wider and wider, and closes over your head. ***GLLK.***",
+  "She drags you down the hall feet-kicking and swallows you on the move, ***GLRK... GLRK... GULP***, her wiry body stretching into a round, swaying belly. ***Glorrrp.*** Your crew's walkie on your belt crackles from inside her: *\"Hey, you okay?\"*",
+  "She takes you back to her den full of dead leaves and digests you there. Later she leaves a whole person's worth of thick, human-like shit in the corner of the den, on top of the scrap pile. ***PLOP.*** Your crew finds your walkie in it."],
+  s: ["struggle", "gulp", "gulp", "gurgle", "plop"], end: { t: "Don't Stare", pred: "lcbracken", hint: "Stare at her" } },
+
+lb_end_den: { w: "Her den", in: 1, p: [
+  "You look away. She follows. Close. Closer. You feel her breath on your neck, and then her long leafy arms wrap around you from behind and she drags you, backwards, into the dark, into her den.",
+  "In the dead leaves she pins you and rides you, rough, petals trembling, white eyes on yours now that you can't look away, ***plap... plap...***, until she cums, shuddering, leaves raining down around you.",
+  "Then she unbirths you, slow, her leafy cunt opening and drawing you up into her, and curls up in her nest with a belly round as a pumpkin. She doesn't digest you right away. She keeps you. For days. She hates being looked at, but she likes being full."],
+  s: ["struggle", "plap", "cum", "squelch", "gurgle"], end: { t: "Dragged Off", pred: "lcbracken", hint: "Let her follow" } },
+
+lb_end_safe: { w: "Her den", in: 1, p: [
+  "You keep your eyes on the floor and slowly hold out your hand. A long pause. Then something cool and leafy touches your fingers. She takes your hand. She leads you to her den, and you never once look at her, and she relaxes more with every step.",
+  "In the dark, you make love without seeing each other, all touch, and she's gentle. Then she swallows you, carefully, and curls around her belly in the leaves, safe. In the morning she leaves you at the fire exit, with a pile of scrap. Quota met. You come back every run."],
+  s: ["kiss", "plap", "gulp"], end: { t: "Eyes Down", pred: "lcbracken", hint: "Offer your hand without looking", safe: 1 } },
+
+/* --- Thumper --- */
+lc_thump: { w: "The long corridor", p: [
+  "Thumping. Fast. Getting louder. Around the corner she comes, crawling on her powerful arms: the Thumper, a heavy, grey-skinned monster girl with no legs to speak of, huge muscled arms, a massive heavy chest, and a head that's ALL mouth, a gaping maw lined with teeth that splits open wide as she charges."],
+  c: [["Run", "lt_end_caught"], ["Stand still", "lt_end_maw"], ["Duck aside and let her pass, then pet her", "lt_end_safe"], ["Back", "lc_in"]] },
+
+lt_end_caught: { w: "The long corridor", in: 1, p: [
+  "You run. She's faster in a straight line. Everyone knows that. She slams into your back and you go down and her whole maw closes over your head and shoulders. ***CHOMP. GLLLRK.***",
+  "She swallows you in huge, greedy, ragged gulps, her heavy body heaving, ***GLRK GLRK GULP***, until you're a big round bulge in her middle and she's lying in the corridor panting, rubbing it with one huge hand. ***Grrrrooorgl.***",
+  "She can't turn corners well when she's full. She gets stuck in a doorway for an hour, stuck by her own belly, with you sloshing inside her. Your crew finds a whole person's worth of shit in that doorway later. ***PLOP.***"],
+  s: ["struggle", "gulp", "gulp", "gurgle", "plop"], end: { t: "Straightaway", pred: "lcthump", hint: "Run" } },
+
+lt_end_maw: { w: "The long corridor", in: 1, p: [
+  "You freeze. She skids to a stop right in front of you, the maw an inch from your face, breathing hot. She sniffs you. Then she shoves you against the wall with her huge arms and grinds her heavy body against you, moaning, ***plap plap plap***.",
+  "When she's done, her maw opens over your head. ***GLLLK.*** She swallows you slowly this time, savouring, and crawls off into the facility with you."],
+  s: ["plap", "cum", "gulp", "gurgle"], end: { t: "All Mouth", pred: "lcthump", hint: "Stand still" } },
+
+lt_end_safe: { w: "The long corridor", in: 1, p: [
+  "You sidestep. She thunders past and crashes into the wall. She's dazed. You crouch next to her and very gently pat her head. She goes still. Nobody's ever done that.",
+  "She snuggles into your lap like a huge, toothy dog. Later she swallows you carefully and crawls slowly back to the ship with you, and coughs you up at the door with scrap in her teeth. You keep her in the ship's cargo bay now. She sleeps on your legs."],
+  s: ["gulp", "gurgle", "belch"], end: { t: "Good Thumper", pred: "lcthump", hint: "Dodge and pet her", safe: 1 } },
+
+/* --- Spider --- */
+lc_spider: { w: "The storage room", p: [
+  "Webs everywhere. Cocooned shapes hang from the ceiling. Then she drops down on a silk line: the Bunker Spider, a spider-taur woman, a black, glossy, curvy human torso and eight long legs on a huge, swollen abdomen, with a ring of red eyes and a smile full of fangs. \"Oh,\" she purrs. \"A fresh one.\""],
+  c: [["Shoot her web", "ls_end_cocoon"], ["Let her wrap you", "ls_end_kept"], ["Compliment her webs", "ls_end_safe"], ["Back", "lc_in"]] },
+
+ls_end_cocoon: { w: "The storage room", in: 1, p: [
+  "You fire at the webs. She laughs and spins you up anyway, faster than you can move, wrapping you in silk from your ankles to your neck until you're a squirming cocoon hanging from the ceiling.",
+  "She rides you through the silk, legs wrapped around the cocoon, until she cums. Then she bites, a numbing venom, and starts swallowing you whole, cocoon and all. ***GLLK... GLRK... GULP.***",
+  "You end up in her swollen abdomen with the others. She hangs in her web, swaying, belly enormous, and leaves a whole person's worth on the storage room floor a day later. ***PLOP.***"],
+  s: ["struggle", "plap", "gulp", "gulp", "gurgle", "plop"], end: { t: "Cocooned", pred: "lcspider", hint: "Shoot her web" } },
+
+ls_end_kept: { w: "The storage room", in: 1, p: [
+  "You let her. She wraps you slowly, lovingly, every turn of silk tighter, until only your face and your cock are out. She uses both, for days, hanging you up between meals and coming back to ride you whenever she's bored.",
+  "Then, one night, she gets hungry. She swallows you whole, silk and all, and that's the end of being kept. ***GULP.***"],
+  s: ["plap", "cum", "cum", "gulp", "gurgle"], end: { t: "Pantry", pred: "lcspider", hint: "Let her wrap you" } },
+
+ls_end_safe: { w: "The storage room", in: 1, p: [
+  "\"Your webs are amazing.\" She stops. Ten red eyes blink. \"...Really?\" She shows you all of them. The patterns. The tunnels. You make love in a hammock of silk, slow and strange and wonderful, all those legs holding you.",
+  "She keeps you in her belly overnight, safe, wrapped in soft silk. In the morning she lets you out and gives you a silk bag full of scrap. Quota met."],
+  s: ["kiss", "plap", "gulp"], end: { t: "Silk Hammock", pred: "lcspider", hint: "Compliment her webs", safe: 1 } },
+
+/* --- Snare Flea --- */
+lc_flea: { w: "The quiet room", p: [
+  "The ceiling moved. You're sure it moved. You look up. She's there, flattened against it: the Snare Flea, a long, segmented, centipede-bodied monster girl with dozens of little legs and a soft, pale, curvy upper body, hanging upside down, smiling. \"Hi,\" she says. And drops."],
+  c: [["Try to dodge", "lf_end_head"], ["Stand perfectly still", "lf_end_ride"], ["Catch her", "lf_end_safe"], ["Back", "lc_in"]] },
+
+lf_end_head: { w: "The quiet room", in: 1, p: [
+  "You dodge too late. She lands on your head. Her soft body wraps your face. You can't breathe. And her mouth, at the centre of her, opens over your head, and she's swallowing you from the top down while you stagger blind around the room. ***GLK. GLK. GLK.***",
+  "Her long body stretches down over you like a sock, segment by segment, until your feet go in and she flops to the floor, round and full. ***Glorrrp.*** She crawls back up the wall and hangs from the ceiling with you inside her, waiting for the next one."],
+  s: ["struggle", "gulp", "gulp", "gurgle"], end: { t: "Headlock", pred: "lcflea", hint: "Try to dodge" } },
+
+lf_end_ride: { w: "The quiet room", in: 1, p: [
+  "You stand still. She drops onto your shoulders and wraps her long body around you, legs everywhere, tickling, holding. She's not after your head. She's after your cock. She slides down and rides it, upside down, giggling, her many legs hugging your waist. ***Plap... plap...***",
+  "Then she swallows you from the hips up, slowly, wrapping herself around you like a long, warm sleeve. ***Shlorp.***"],
+  s: ["plap", "cum", "squelch", "gurgle"], end: { t: "Upside Down", pred: "lcflea", hint: "Stand still" } },
+
+lf_end_safe: { w: "The quiet room", in: 1, p: [
+  "You hold up your arms and catch her. She lands in them, surprised. Nobody's ever caught her. She wriggles, giggles, and coils up in your arms like a cat.",
+  "She rides around on your shoulders for the rest of the run, a warm scarf with lots of legs, and warns you about every trap. That night she swallows you gently and keeps you warm. In the morning she lets you out. She lives on your ship's ceiling now."],
+  s: ["kiss", "gulp"], end: { t: "Scarf", pred: "lcflea", hint: "Catch her", safe: 1 } },
+
+/* --- Masked --- */
+lc_masked: { w: "The dark corridor", p: [
+  "\"Hey! Over here!\" It's your crewmate's voice. It's your crewmate's suit, your crewmate's walk. But the face is a pale porcelain comedy mask, smiling. The suit is stretched tight over a body that is very much not your crewmate's anymore: tall, curvy, female.",
+  "\"I found the good scrap,\" she says, in his voice, then in hers. \"Come see.\""],
+  c: [["Follow her", "lm_end_mask"], ["Run", "lm_end_chase"], ["Ask her who she really is", "lm_end_safe"], ["Back", "lc_in"]] },
+
+lm_end_mask: { w: "The dark corridor", in: 1, p: [
+  "You follow. She turns around. Takes your face in her hands. And presses the mask against yours. It's cold. It's warm. It's in your head, and suddenly you want her so badly you can't think.",
+  "She takes you right there in the corridor, the mask laughing, until you cum. Then her real mouth opens under the mask, wide, and she swallows you, ***GLLK... GULP***, still wearing your crewmate's suit, now stretched round over her belly.",
+  "Twenty minutes later, a new voice is calling down the corridor to the next crewmate. Your voice. \"Hey! Over here!\""],
+  s: ["kiss", "plap", "cum", "gulp", "gurgle"], end: { t: "Over Here!", pred: "lcmasked", hint: "Follow her" } },
+
+lm_end_chase: { w: "The dark corridor", in: 1, p: [
+  "You run. She runs after you in your crewmate's suit, laughing in his voice. She catches you at a locked door and pins you, and slides the mask up just enough for her mouth. ***GLLRK.*** She swallows you whole, feet kicking, and walks off calling for the next one."],
+  s: ["struggle", "gulp", "gurgle"], end: { t: "Chased", pred: "lcmasked", hint: "Run" } },
+
+lm_end_safe: { w: "The dark corridor", in: 1, p: [
+  "\"Who are you really?\" The mask tilts. She stops using his voice. Her own voice is quiet. \"Nobody's ever asked. They just run.\" She takes the mask off. Her real face is lovely and sad.",
+  "You sit with her. You make love in the dark, without masks. She swallows you gently and holds you overnight, and lets you out by the fire exit in the morning. She leaves your real crewmate alive, tied up in a closet. A thank-you."],
+  s: ["kiss", "plap", "gulp"], end: { t: "Unmasked", pred: "lcmasked", hint: "Ask who she is", safe: 1 } },
+
+/* --- Panther --- */
+lc_panther: { w: "The lower level", p: [
+  "It's pitch black down here. Your flashlight dies. Then two gold eyes open in the dark, level with your head. A purr rolls out of the black, deep and amused. A sleek panther woman steps forward, so dark she's almost invisible, all muscle and curves, tail swaying. She circles you. \"Lost, little employee?\""],
+  c: [["Try to find the stairs", "lp_end_hunt"], ["Hold still and let her circle", "lp_end_play"], ["Ask her to guide you out", "lp_end_safe"], ["Back", "lc_in"]] },
+
+lp_end_hunt: { w: "The lower level", in: 1, p: [
+  "You feel your way along the wall. She lets you get almost to the stairs. Then she pounces from the dark, and you're on the floor under a hundred and fifty pounds of panther woman. She takes you there, rough, purring, claws gentle on your back. ***PLAP PLAP.***",
+  "Then she swallows you, slow and smooth, a big cat with a mouse, ***GLLK... GLRK... GULP***, and lies down on the stairs you almost reached with her belly full. ***Grrrrrr.***"],
+  s: ["struggle", "plap", "gulp", "gurgle"], end: { t: "Almost Made It", pred: "lcpanther", hint: "Look for the stairs" } },
+
+lp_end_play: { w: "The lower level", in: 1, p: [
+  "You hold still. She circles. And circles. Then she plays with you, the way a cat does, batting you down, letting you up, pinning you, licking you, riding you, letting you go, catching you again. For hours.",
+  "When she's finally done playing, she swallows you whole and curls up in the dark around her belly, purring loud enough to shake the pipes."],
+  s: ["plap", "cum", "gulp", "gurgle"], end: { t: "Cat and Mouse", pred: "lcpanther", hint: "Let her circle" } },
+
+lp_end_safe: { w: "The lower level", in: 1, p: [
+  "\"Could you guide me out?\" She laughs, low. But she takes your hand. She walks you through the dark, warning you of every pit and trap, and halfway there she stops and kisses you. You make love in the black, by touch.",
+  "She carries you the rest of the way in her belly, safe, and coughs you up at the exit with a pile of scrap. \"Come down again sometime,\" she purrs. You do."],
+  s: ["kiss", "plap", "gulp", "belch"], end: { t: "Night Vision", pred: "lcpanther", hint: "Ask her to guide you", safe: 1 } },
+
+/* --- Maneater --- */
+lc_maneater: { w: "The flooded room", p: [
+  "Something's crying in here. A low, sobbing sound. You step in and it stops. She rises out of the shadows: the Maneater, fully grown, a towering, gaunt monster woman with long, too-many-jointed limbs, a cracked grey hide, wide hips and a vast swollen belly, and a jaw that splits open sideways into a hungry maw.",
+  "She heard you. She's done crying. She's hungry."],
+  c: [["Run for the door", "lme_end_chase"], ["Freeze", "lme_end_held"], ["Hum softly to her", "lme_end_safe"], ["Back", "lc_in"]] },
+
+lme_end_chase: { w: "The flooded room", in: 1, p: [
+  "You run. She's on you in two strides, her long limbs wrapping around you. Her jaw splits open, sideways, impossibly wide, and folds over your whole upper body. ***GLLLLRRK.*** She swallows you standing, in one long pull, and her belly swells out huge and round under her cracked hide. ***GULP.***",
+  "She rocks back and forth in the dark, crooning to her belly. A week later the room has a huge, steaming, human-like pile in the corner. ***PLOP.***"],
+  s: ["struggle", "gulp", "gurgle", "plop"], end: { t: "Maneater", pred: "lcmaneater", hint: "Run" } },
+
+lme_end_held: { w: "The flooded room", in: 1, p: [
+  "You freeze. She leans down, slow, and sniffs you. Her long arms wrap around you and hold you against her swollen belly, rocking you. Then she pulls you down onto her and rides you, slow, crooning, until you cum. Then she swallows you, gently but completely, and keeps rocking."],
+  s: ["plap", "cum", "gulp", "gurgle"], end: { t: "Rocked", pred: "lcmaneater", hint: "Freeze" } },
+
+lme_end_safe: { w: "The flooded room", in: 1, p: [
+  "You hum softly to her. A lullaby. She stops. Her jaw closes. She sits down slowly in the water and listens. Then she pulls you into her long arms and rocks you, and you keep humming.",
+  "She makes love to you there, slow and strange and tender. Then she swallows you so carefully, and holds you safe all night. In the morning she lets you out at the door and hands you scrap with her long fingers. She never hunts you again."],
+  s: ["kiss", "plap", "gulp"], end: { t: "Lullaby", pred: "lcmaneater", hint: "Hum to her", safe: 1 } },
+
+/* --- Eyeless Dog --- */
+lc_dog: { w: "The fog", p: [
+  "She's huge, an eyeless dog woman, red-skinned, muscular, on all fours, with no eyes at all, just a long mouth full of teeth and big ears tilting toward every sound. A heavy chest, heavy hips, heavy breathing. She's sniffing the air. She can't see you. If you make one sound, she'll know exactly where you are."],
+  c: [["Sneeze (you can't help it)", "ld_end_found"], ["Stay silent and creep past", "ld_end_pack"], ["Whisper to her, softly", "ld_end_safe"], ["Back", "lc_out"]] },
+
+ld_end_found: { w: "The fog", in: 1, p: [
+  "***Achoo.*** Her head snaps toward you. She howls, and she's on you, knocking you into the mud. She mounts you right there in the fog, rough, growling, ***PLAP PLAP PLAP***, and knots you.",
+  "Then she swallows you whole, ***GLLRK... GULP***, and lopes off into the fog with her belly swinging, and in the morning there's a huge, human-like pile in the clearing. ***PLOP.***"],
+  s: ["struggle", "plap", "plap", "cum", "gulp", "plop"], end: { t: "Bless You", pred: "lcdog", hint: "Make a sound" } },
+
+ld_end_pack: { w: "The fog", in: 1, p: [
+  "You creep. Silent. Past her. And straight into the second one. And the third. A pack. They found you by smell. They share you, all night in the fog, taking turns, and in the end the biggest one swallows you and the others lick her belly. ***Grrrrooorgl.***"],
+  s: ["struggle", "plap", "plap", "gulp", "gurgle"], end: { t: "Pack", pred: "lcdog", hint: "Sneak past" } },
+
+ld_end_safe: { w: "The fog", in: 1, p: [
+  "You whisper to her. Softly. \"It's okay. I'm here.\" Her ears tilt. She creeps closer, sniffing. She can't see you, but she can hear you, and you sound kind. She presses her head against your chest and whines.",
+  "You make love in the fog, slow, your voice in her ear the whole time. She keeps you in her belly overnight, safe, listening to your heartbeat through it. In the morning she lets you out by the ship. She follows your voice everywhere now."],
+  s: ["kiss", "plap", "gulp"], end: { t: "Heard You", pred: "lcdog", hint: "Whisper to her", safe: 1 } },
+
+/* --- Kidnapper Fox --- */
+lc_fox: { w: "The woods", p: [
+  "The yipping stops. A vixen steps out of the fog: the Kidnapper Fox, a lithe, rust-red fox woman with a fluffy tail and a long, impossibly stretchy tongue that drools down her chin. She's crouched by a hole in the roots: her den. She licks her lips. Her tongue flicks out, and out, and out, toward you."],
+  c: [["Run before the tongue gets you", "lx_end_dragged"], ["Let the tongue catch you", "lx_end_den"], ["Offer her some scrap", "lx_end_safe"], ["Back", "lc_out"]] },
+
+lx_end_dragged: { w: "The fox den", in: 1, p: [
+  "You run. Her tongue snaps out, twenty feet, and wraps your waist, and reels you in through the mud and the roots, all the way into her den.",
+  "Down in the dark she rides you, tongue still wrapped around you, until she cums. Then her tongue pulls you straight into her mouth. ***GLLRK. GULP.*** She curls up in her den around her stuffed belly, licking it."],
+  s: ["struggle", "plap", "cum", "gulp", "gurgle"], end: { t: "Kidnapped", pred: "lcfox", hint: "Run" } },
+
+lx_end_den: { w: "The fox den", in: 1, p: [
+  "You let the tongue catch you. It's warm and slick and wraps around you all over, everywhere, licking, and you cum before she even reels you in. She laughs a fox laugh and drags you into the den.",
+  "She keeps you in her den for days, using you whenever she likes, until one night she swallows you and doesn't let you back out. In the spring there's a human-sized pile outside her den. ***PLOP.***"],
+  s: ["squelch", "cum", "plap", "gulp", "plop"], end: { t: "Den", pred: "lcfox", hint: "Let her catch you" } },
+
+lx_end_safe: { w: "The fox den", in: 1, p: [
+  "You hold out a piece of shiny scrap. She stops. Her tongue curls around it, gently, and takes it. Then she looks at you, curious, head tilted. You give her another one. And another.",
+  "She takes you to her den, but not to eat you: to show you her hoard. You make love among the shiny things. She keeps you safe in her belly overnight, and in the morning she gives you back double the scrap. Quota met."],
+  s: ["kiss", "plap", "gulp"], end: { t: "Shiny Things", pred: "lcfox", hint: "Offer scrap", safe: 1 } },
+
+/* --- Company Monster --- */
+lc_co: { w: "The Company building", p: [
+  "The sales desk. A bell. You ring it. The wall behind the desk shudders. Something enormous moves behind it, and a pair of huge tentacles curl out through the hatch, followed by a face: a colossal monster woman, ancient and unknowable, with too many eyes and a voice that comes from everywhere. *\"Bring me what you have.\"*",
+  "You're short of quota. She can tell."],
+  c: [["Offer yourself instead of scrap", "lco_end_tribute"], ["Ring the bell again (rude)", "lco_end_rude"], ["Thank her for her patience", "lco_end_safe"]] },
+
+lco_end_tribute: { w: "The Company building", in: 1, p: [
+  "\"Take me instead.\" Her tentacles wrap around you and lift you over the counter. They're everywhere, sliding into your suit, around your cock, into you, fucking you from every direction until you're screaming and cumming.",
+  "Then she pulls you through the hatch into the dark behind the wall, into a mouth the size of a room. ***GLLLLLRRRRRK.*** *\"Quota: met,\"* her voice says, from everywhere, from inside you. *\"Thank you for your contribution.\"*"],
+  s: ["struggle", "squelch", "cum", "gulp", "gurgle"], end: { t: "Contribution", pred: "lcco", hint: "Offer yourself" } },
+
+lco_end_rude: { w: "The Company building", in: 1, p: [
+  "You ring the bell again. And again. *DING DING DING.* The wall goes still. Then a tentacle bursts out and wraps around your whole body and drags you, screaming, through the hatch. ***GLLRK.*** *\"Rude.\"* That's all she says."],
+  s: ["struggle", "gulp", "gurgle"], end: { t: "Ding", pred: "lcco", hint: "Ring the bell again" } },
+
+lco_end_safe: { w: "The Company building", in: 1, p: [
+  "\"Thank you for your patience.\" A long silence. Her eyes blink, one after another, all the way down. Nobody ever says thank you to the Company.",
+  "Her tentacles reach out, gently, and lift you over the counter, and hold you, and she makes love to you behind the wall, slow and enormous and strange. Then she keeps you, safe, overnight, and sends you back out in the morning. *\"Quota: waived,\"* she says. Your crew never knows how you did it."],
+  s: ["squelch", "cum"], end: { t: "Quota Waived", pred: "lcco", hint: "Thank her", safe: 1 } },
+
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
-  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"], ["🦃 Thanksgiving: home with Mom, your sisters and the fun aunt", "k_start"], ["🎓 Gullet University: first day on the prey track", "u_start"], ["🛸 Abducted: a saucer studying human digestibility", "ab_start"], ["🚀 The Station: night shift on Kessa-9", "st_start"], ["🪐 Crash Landing: stranded on a jungle planet", "cr_start"], ["🍽️ The Galactic Diner: you're the exotic Earth special", "gd_start"], ["🤖 The Android Lab: test subject for pred androids", "an_start"], ["👾 The Hive: a derelict ship full of something", "hv_start"], ["🎖️ Boot Camp: ration corps recruit at Fort Maw", "bc_start"], ["🏔️ The Ski Lodge: snowed in with the Halvorsens", "sl_start"], ["🐎 The Wild Herd: lost on the steppe with sapient horses", "wh_start"]] },
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"], ["🦃 Thanksgiving: home with Mom, your sisters and the fun aunt", "k_start"], ["🎓 Gullet University: first day on the prey track", "u_start"], ["🛸 Abducted: a saucer studying human digestibility", "ab_start"], ["🚀 The Station: night shift on Kessa-9", "st_start"], ["🪐 Crash Landing: stranded on a jungle planet", "cr_start"], ["🍽️ The Galactic Diner: you're the exotic Earth special", "gd_start"], ["🤖 The Android Lab: test subject for pred androids", "an_start"], ["👾 The Hive: a derelict ship full of something", "hv_start"], ["🎖️ Boot Camp: ration corps recruit at Fort Maw", "bc_start"], ["🏔️ The Ski Lodge: snowed in with the Halvorsens", "sl_start"], ["🐎 The Wild Herd: lost on the steppe with sapient horses", "wh_start"], ["🛰️ Lethal Company: one day left to make quota, and the monsters are girls", "lc_start"]] },
 
 f_start: { w: "Hollis Farm", p: [
   "Your car died two miles back. The only light for miles is Hollis Farm. The farmhouse lights are on, and there's a note tacked to the barn door in looping handwriting: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers. — Maggie*",
@@ -2972,12 +3206,12 @@ function drawStats() {
 }
 function go(id) {
   const n = N[id]; if (!n) return;
-  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start", "k_start", "u_start", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "bc_start", "sl_start", "wh_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start", "k_start", "u_start", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "bc_start", "sl_start", "wh_start", "lc_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
   if (id === "menu") hush();
   if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
   VISITED[id] = 1;
   $("#where").textContent = n.w || "";
-  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "bc_start", "sl_start", "wh_start", "bc_hub", "sl_hub", "wh_hub", "menu"].includes(id)) $("#text").innerHTML = "";
+  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "bc_start", "sl_start", "wh_start", "bc_hub", "sl_hub", "wh_hub", "lc_start", "lc_hub", "lc_in", "lc_out", "menu"].includes(id)) $("#text").innerHTML = "";
   const first = $("#text").children.length;
   n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
   if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
@@ -2999,7 +3233,7 @@ function go(id) {
 // which endings a choice can still lead to (for the ✓ mark once all are seen)
 const RC = {};
 function reach(id, seen = new Set()) {
-  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "bc_start", "sl_start", "wh_start", "bc_hub", "sl_hub", "wh_hub", "menu"].includes(id)) return out; seen.add(id);
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "bc_start", "sl_start", "wh_start", "bc_hub", "sl_hub", "wh_hub", "lc_start", "lc_hub", "lc_in", "lc_out", "menu"].includes(id)) return out; seen.add(id);
   const n = N[id]; if (!n) return out; if (n.end) out.add(id);
   for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
   return (RC[id] = out);
