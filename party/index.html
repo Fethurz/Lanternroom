@@ -102,6 +102,11 @@ const PREDS = {
   tamsin:{ n: "Tamsin", k: "Fox HR · anthro futa" },
   rocco: { n: "Rocco", k: "Grizzly security · anthro" },
   pip:   { n: "Pip", k: "Otter intern · anthro" },
+  sahra: { n: "Sahra", k: "Lioness · feral" },
+  bertha:{ n: "Bertha", k: "Hippo · feral" },
+  jade:  { n: "Jade", k: "Anaconda · feral" },
+  frost: { n: "Frost", k: "Polar bear · feral" },
+  pebbles:{ n: "Pebbles", k: "Sea otter · feral" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -450,9 +455,158 @@ pp_end_safe: { w: "The break room", in: 1, p: [
   "At dawn she burps you up, ***Hrrrp***, and gives you the rest of her yogurt. She gets promoted. So do you. She makes sure of it."],
   s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Mentor", pred: "pip", hint: "Offer to mentor her", safe: 1 } },
 
+/* ===================== THE ZOO ===================== */
+z_start: { w: "Harrow Park Zoo", p: [
+  "First night on the job as the zoo's night keeper. The manager left you a ring of keys, a flashlight and one piece of advice: \"Don't go in the enclosures. Ever. They're smarter than they look.\"",
+  "The zoo is dark and huge and humming with sounds. Things breathing. Things moving. Every enclosure you pass, eyes reflect your flashlight back at you, and they follow you.",
+  "Your list of rounds: the lion house, the hippo pool, the reptile house, the polar bear habitat, and the otter pond. Your keys open every single one of them."],
+  c: [["The lion house", "z_lion"], ["The hippo pool", "z_hippo"], ["The reptile house", "z_snake"], ["The polar bear habitat", "z_bear"], ["The otter pond", "z_otter"]] },
+
+z_hub: { w: "The zoo paths", p: ["Your flashlight beam shakes a little. Something roars, far off. Something else answers. Where now?"],
+  c: [["The lion house", "z_lion"], ["The hippo pool", "z_hippo"], ["The reptile house", "z_snake"], ["The polar bear habitat", "z_bear"], ["The otter pond", "z_otter"], ["Hide in the gift shop till morning", "z_leave"]] },
+
+z_leave: { w: "The gift shop", p: ["You lock yourself in the gift shop and hide behind the plush animals until dawn. All night, things press against the glass. A lioness's nose. A huge hippo eye. A snake's tongue, flicking.",
+  "In the morning the manager finds you asleep in a pile of stuffed toys. \"First night?\" he asks. \"Yeah. That's normal.\""],
+  end: { t: "Gift Shop", pred: "none", hint: "Hide till morning" } },
+
+/* --- Sahra, lioness --- */
+z_lion: { w: "The lion house", p: [
+  "The lioness is lying on a warm rock behind the glass, golden and heavy and enormous, bigger than any lioness should be. SAHRA, says the plaque. Her belly is low and round and full of something. It shifts.",
+  "She watches you with half-closed amber eyes. Then she gets up, stretches, long and slow and showing off every muscle, and walks right up to the keeper's door. She sits. She waits. Her tail flicks. *Well? Come in.*"],
+  c: [["Go in to feed her", "zl_end_feed"], ["Tap the glass and tease her", "zl_end_pounce"], ["Go in and lie down beside her", "zl_end_safe"], ["Keep walking", "z_hub"]] },
+
+zl_end_feed: { w: "The lion house", in: 1, p: [
+  "You unlock the door with a bucket of meat. Sahra doesn't look at the bucket. She looks at you, and she licks her lips, and she walks right past the meat.",
+  "She knocks you flat on your back in the straw and sits on your chest, purring like an engine. She licks you, all over, rough and wet, shredding your uniform with her tongue until you're naked and soaked in lion spit and hard. She licks your cock too, slow, until you're shaking.",
+  "Then she picks you up by the shoulders in her jaws, gently, and tips her head back. ***GLLRK.*** You slide headfirst down a lioness's throat, ***GULP. GULP.***, and land in a belly that was already half full. ***Glorrrp.***",
+  "She flops onto her warm rock on her side, belly hugely round, and purrs so loud you feel it in your bones. ***Grrrrrrnch.***",
+  "In the morning, the visitors watch her squat in the corner of her enclosure and push out a whole grown person's worth, a huge, steaming pile, ***FFFRRRT... PLOP... PLOP***. A kid points. Her mom says, \"Wow, she must have eaten a LOT.\""],
+  s: ["kiss", "gulp", "gulp", "gurgle", "plop"], end: { t: "Feeding Time", pred: "sahra", hint: "Feed her" } },
+
+zl_end_pounce: { w: "The lion house", in: 1, p: [
+  "You tap the glass. Tap. Tap. You wave the flashlight in her eyes. \"Here, kitty kitty.\" Sahra doesn't move. Then she's gone from the rock, and the keeper's door you thought was locked swings open behind you.",
+  "She's on you before you can turn. Two hundred kilos of lioness. She pins you face-down, her teeth on the back of your neck, not biting, just holding, the way she'd hold a mate. Her hips grind down on your ass. She's in heat. She ruts against you, growling, until she cums on your back.",
+  "Then she flips you and swallows you feet-first, ***GLLK, GLRK, GULP***, rough and fast, shaking her head to work you down, and you go into her stomach screaming. ***Grrrrnch.***",
+  "She doesn't keep you long. She's mean about it, pacing her enclosure, belly swinging, letting you slosh. By the time the zoo opens, the keepers are scooping a human-sized heap out of the lion house with a wheelbarrow. They never find the new night guy."],
+  s: ["struggle", "struggle", "gulp", "crack", "plop"], end: { t: "Here Kitty", pred: "sahra", hint: "Tease her" } },
+
+zl_end_safe: { w: "The lion house", in: 1, p: [
+  "You let yourself in and lie down beside her on the warm rock. Sahra freezes. Then she sniffs you, all over. Then she licks your face, once, and lies down with her whole weight half on top of you, purring.",
+  "Somewhere in the middle of the night she rolls you onto your back and mounts your hips, slow, rumbling, her tail wrapped around your leg, and you make love on the rock under the skylight. She bites your shoulder gently when she cums.",
+  "Then she swallows you so carefully, ***Glk... GULP***, and curls around her round belly, purring, keeping you warm and safe until dawn. ***Grrrrrrrrrrr.***",
+  "When the zoo opens, she coughs you up behind the rock where no visitors can see, licks you clean and pushes you toward the door with her head. Every night after that, she's waiting at the door."],
+  s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Pride", pred: "sahra", hint: "Lie down beside her", safe: 1 } },
+
+/* --- Bertha, hippo --- */
+z_hippo: { w: "The hippo pool", p: [
+  "The hippo pool is warm and murky and steaming in the night air. Bertha surfaces with a huge snort, ***PFFFFF***, and her head alone is bigger than you. Grey-pink, round, enormous. A female. She yawns.",
+  "Her mouth opens so wide you could park a car in it. Pink tongue. Huge tusks. She holds it open. And looks at you. And holds it open."],
+  c: [["Climb in her mouth (it's a dare, right?)", "zh_end_mouth"], ["Throw a cabbage in", "zh_end_sat"], ["Climb onto her back for a swim", "zh_end_safe"], ["Keep walking", "z_hub"]] },
+
+zh_end_mouth: { w: "The hippo pool", in: 1, p: [
+  "You climb in. Of course you do. It's warm and wet and her tongue is the size of a mattress. You sit on it. You laugh.",
+  "Her mouth closes. ***CLOMP.*** You stop laughing. Her tongue lifts and rolls you backwards into a throat as wide as a hallway. ***GLLLLRRRRK.*** Down you go.",
+  "Her stomach is ENORMOUS and stinks of rotting grass and it squeezes you like a garbage compactor. ***GRRRRRROOOOOOOOOORGL.*** It's not one stomach. It's a long, slow, miserable maze of them. It takes days.",
+  "Bertha floats in her pool the whole time, belly up, burping huge, rank bubbles. ***BLRRRRRRRRRP.***",
+  "And when you finally come out, she does what hippos do: she squats at the edge of the pool and whips her tail like a propeller, and sprays you, a whole grown person's worth of shit, all over the enclosure, the walls, the glass, the visitors' viewing window. ***FFFRRRRRRRRT... SPLATTER.*** The zoo closes the hippo pool for a week."],
+  s: ["gulp", "gurgle", "gurgle", "belch", "fart", "plop"], end: { t: "Dare", pred: "bertha", hint: "Climb in her mouth" } },
+
+zh_end_sat: { w: "The hippo pool", in: 1, p: [
+  "You throw a cabbage in. She catches it, crunches it, swallows it. Then she climbs out of the pool. Slowly. Hugely. All of her. She's the size of a minivan, and she's walking toward you.",
+  "You back up into the fence. She turns around. Her huge, round, wet grey ass fills your whole vision. Then it drops. ***FWUMP.*** You're flat in the mud under a hippo's butt and you can't breathe and you can't move.",
+  "She wiggles. Her hole is on your face. It opens. ***SHLLLORRRP.*** She just sits harder and you go up into her, pulled into the hot slick dark, wiggled in like a cork.",
+  "She waddles back into the pool with you inside. Days of it. Stomach after stomach, rotting and squeezing and miserable. And then, in the end, she sprays you out across the enclosure with her tail like a fan. ***FFFRRRRRRT... SPLATTER.*** Every visitor in the front row gets some."],
+  s: ["struggle", "squelch", "gurgle", "fart", "plop"], end: { t: "Sat On by a Hippo", pred: "bertha", hint: "Throw a cabbage" } },
+
+zh_end_safe: { w: "The hippo pool", in: 1, p: [
+  "You climb onto her back. Bertha rumbles, surprised, and then takes you for a slow, warm swim around the pool under the stars. She snorts happily. You lie on her wide back and laugh.",
+  "Then she sinks, gently, until you're floating by her face. She nuzzles you. She opens her mouth, slowly, and waits. You climb in. She closes it like she's holding an egg.",
+  "She doesn't swallow you. She just keeps you there, on her huge warm tongue, in the dark, with her breathing rumbling all around you, floating in the pool until sunrise. It's the best sleep you've ever had.",
+  "At dawn she opens her mouth on the bank and lets you out, slobbery and laughing. She's your favourite. You're hers."],
+  s: ["slosh", "slosh"], end: { t: "Hippo Ride", pred: "bertha", hint: "Climb onto her back", safe: 1 } },
+
+/* --- Jade, anaconda --- */
+z_snake: { w: "The reptile house", p: [
+  "The reptile house is hot and humid and dark. The biggest tank holds Jade, a green anaconda as thick as your waist and so long you can't see where she ends. She's a female. She's coiled in her pool, and her eyes are on you through the glass.",
+  "There's a keeper's hatch at the back of her tank. It's already unlatched. She pushed it open herself. Her tongue flicks out of the gap. Slowly."],
+  c: [["Go in to check her water", "zs_end_coil"], ["Fuck her (she's waiting for it)", "zs_end_fuck"], ["Go in and let her wrap around you", "zs_end_safe"], ["Keep walking", "z_hub"]] },
+
+zs_end_coil: { w: "The reptile house", in: 1, p: [
+  "You climb in to check the water. The water's fine. The snake isn't. A coil as thick as a tree slides around your ankles. Then your waist. Then your chest. ***Krrk.*** She squeezes every time you breathe out, and doesn't let you breathe back in.",
+  "When you're limp and gasping, her head comes around and her jaws open wide, unhinging with a wet click. ***Glk.*** She starts on your head. ***Glk. Glk. Glk.*** Her jaws walk over you, left, right, left, and her body stretches around you like a wet stocking.",
+  "Hours later there's a huge, person-shaped lump in the middle of the anaconda. She coils around it in the warm water and goes to sleep.",
+  "A week later she leaves a whole person's worth in the corner of her tank, a huge, steaming, human-sized pile, ***FFFRRRT... PLOP***. The reptile keeper just stares at it and says, \"...Where's the night guy?\""],
+  s: ["struggle", "crack", "gulp", "gulp", "gulp", "plop"], end: { t: "Squeeze", pred: "jade", hint: "Check her water" } },
+
+zs_end_fuck: { w: "The reptile house", in: 1, p: [
+  "You climb in, naked, and she's on you instantly, coils around your hips, her vent hot and swollen and pressing against your cock. You push in. ***Shlrrk.*** She shivers down all thirty feet of herself.",
+  "You fuck an anaconda in the warm water, her coils pumping you in slow, rippling waves. ***Plap... plap...*** You cum in her, hard.",
+  "And she keeps rippling. Her vent stretches. Your balls go in. Your hips. ***Shllorrrp.*** She's pulling you into her from the cock up, and her coils wrap tighter, helping. Your chest. Your face. ***Glorp.***",
+  "Inside her it's hot and tight and slick and endless. She goes still in her pool, one long snake with a long, person-shaped bulge, and very, very slowly digests you there."],
+  s: ["squelch", "plap", "cum", "squelch", "gurgle"], end: { t: "Cold-Blooded", pred: "jade", hint: "Fuck her" } },
+
+zs_end_safe: { w: "The reptile house", in: 1, p: [
+  "You climb in and lie in the warm water and let her come to you. Jade circles once, and then slides around you, slow, layer by layer, until you're wrapped from your toes to your shoulders in warm, heavy snake. She doesn't squeeze. She holds.",
+  "You stay like that for an hour. Her head rests on your shoulder. Her tongue flicks your ear, softly. Then she slides her vent over your cock and you make love, slow and rolling, her whole body pulsing around you.",
+  "After, she swallows you, careful and slow, ***Glk... glk... glk...***, and coils up in the warm pool with you inside her, holding you, until dawn. Then she lets you slide back out, warm and slick and safe.",
+  "You ask for the reptile house as your permanent round. You get it."],
+  s: ["kiss", "squelch", "cum", "gulp"], end: { t: "Wrapped Up", pred: "jade", hint: "Let her wrap around you", safe: 1 } },
+
+/* --- Frost, polar bear --- */
+z_bear: { w: "The polar bear habitat", p: [
+  "Frost is a polar bear the size of a car, white fur gone gold under the lights, padding along his fake ice. A male. When he sees you, he stands up on his hind legs, and he's twelve feet tall.",
+  "His cock is out of his sheath. It's huge. He's staring at you like you're a seal on an ice floe. Then he drops back down and walks to the keeper's gate and leans his weight on it. It creaks."],
+  c: [["Open the gate", "zb_end_maul"], ["Run", "zb_end_chase"], ["Open the gate and hold out your hand", "zb_end_safe"], ["Keep walking", "z_hub"]] },
+
+zb_end_maul: { w: "The polar bear habitat", in: 1, p: [
+  "You open the gate. Frost knocks you flat on the ice with one paw and holds you there, and mounts you. Just like that. His huge cock rams into you, ***PLAP***, and he fucks you on the ice, grunting, his weight crushing you, ***PLAP PLAP PLAP***, until he roars and cums so much you swell.",
+  "Then he rolls you over with his snout and eats you. Headfirst, rough, ***GLLLRK... GULP... GULP***, until your feet slide down his throat and he sits down hard on the ice with a gut like a boulder. ***Glorrrp.***",
+  "He sleeps it off on his ice. In the morning he waddles to the corner of his habitat and leaves you there: a huge, human-sized heap, steaming in the cold. ***FFFRRRT... PLOP... PLOP.*** The visitors take photos."],
+  s: ["plap", "plap", "cum", "gulp", "gurgle", "plop"], end: { t: "Seal", pred: "frost", hint: "Open the gate" } },
+
+zb_end_chase: { w: "The zoo paths", in: 1, p: [
+  "You run. Frost breaks the gate off its hinges. ***CRASH.*** Polar bears can run thirty miles an hour. You make it to the penguin exhibit.",
+  "He tackles you there, in front of a hundred watching penguins. He fucks you hard on the walkway, mounted, growling, ***PLAP PLAP PLAP***, and when he's done he eats you right there, ***GLLRK. GULP.***",
+  "He walks back to his habitat, gut swinging, and sits in the pool, letting you slosh. ***Shlosh.*** The penguins never get over it.",
+  "In the morning the keepers find a massive, steaming, human-sized pile on the polar bear's fake ice. And a broken gate. And no night guy."],
+  s: ["struggle", "plap", "plap", "gulp", "slosh", "plop"], end: { t: "Thirty Miles an Hour", pred: "frost", hint: "Run from him" } },
+
+zb_end_safe: { w: "The polar bear habitat", in: 1, p: [
+  "You open the gate and hold out your hand. Frost stops. He sniffs it. Then he pushes his huge head under it, like a dog wanting a pet. You scratch him. He groans, deep, and lies down on the ice and rolls over.",
+  "He's lonely. He's the only polar bear in the zoo. He nuzzles you, and licks you, and when he pulls you down into his warm fur you let him, and he's gentle, so gentle for something that big, the whole time.",
+  "Then he swallows you, slow, ***Glk... GULP***, and curls up in a giant white ball around his round belly on the ice. It's the warmest place in the zoo. ***Grrrrlbl.***",
+  "At dawn he coughs you up into the snow and licks you clean. You visit him every night. He waits by the gate."],
+  s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Warmest Place", pred: "frost", hint: "Hold out your hand", safe: 1 } },
+
+/* --- Pebbles, otter --- */
+z_otter: { w: "The otter pond", p: [
+  "The otter pond is the cute one. The kids' favourite. Pebbles is a sea otter about the size of a cat, floating on her back, cracking a clam on her tummy with a rock. When she sees you, she squeaks and waves her little paws.",
+  "She's adorable. She's tiny. She holds up the rock and looks at you, and then very deliberately at your crotch, and then back at your face, and squeaks again. It doesn't sound adorable anymore."],
+  c: [["Laugh at her", "zo_end_laugh"], ["Reach in to pet her", "zo_end_pulled"], ["Sit at the edge and feed her clams", "zo_end_safe"], ["Keep walking", "z_hub"]] },
+
+zo_end_laugh: { w: "The otter pond", in: 1, p: [
+  "\"You're like, a pet. A little pet. Aww.\" Pebbles stops squeaking. She drops the rock. She flips onto her belly and swims to the edge, climbs out and waddles up to your feet, tiny and dripping. She looks up at you.",
+  "Then she jumps at your face. ***Glk.*** Her little mouth opens, wider than her whole body, and she clamps onto your head with all four paws, and starts swallowing. ***Glk. Glk. Glk.*** You're getting eaten by an otter the size of a cat. You stumble. You fall in the pond.",
+  "She swallows you underwater, wriggling over you like a sock, and floats back up on her back with an enormous belly, bigger than she is by a mile. ***Glorrrp.*** She puts a clam on it and cracks it with her rock. ***Crack.*** She does it again. On you.",
+  "In the morning the kids are lined up at the pond when she climbs onto the rocks and squats. What comes out of a cat-sized otter is a whole grown person's worth, an enormous, endless, steaming pile, ***FFFRRRT... PLOP... PLOP... PLOP***, piling higher than the rocks. The kids scream. Pebbles floats on her back, smug, and waves."],
+  s: ["gulp", "gulp", "gurgle", "crack", "fart", "plop"], end: { t: "Cute Little Pet", pred: "pebbles", hint: "Laugh at her" } },
+
+zo_end_pulled: { w: "The otter pond", in: 1, p: [
+  "You reach in to pet her. She grabs your wrist with both paws, squeaking happily. Then she pulls. She's stronger than she looks. A LOT stronger. You go face-first into the pond.",
+  "Underwater, she flips around and wraps her tail around your neck and her little vent is on your face, open, sucking. ***Shllrrrp.*** You can't breathe. She's pulling you in. ***Shlorp. Shlorp.*** You're going up an otter.",
+  "She floats back up with you inside her, a huge, round, person-shaped bulge, on her back, holding her own belly with her tiny paws like it's her favourite rock.",
+  "In the morning the otter keeper finds the pond cloudy and a whole person's worth of shit piled on the rocks, and a very smug otter on top of it, eating a clam."],
+  s: ["struggle", "squelch", "squelch", "gurgle", "plop"], end: { t: "Pond Life", pred: "pebbles", hint: "Pet her" } },
+
+zo_end_safe: { w: "The otter pond", in: 1, p: [
+  "You sit on the edge and feed her clams, one at a time. Pebbles squeaks, delighted, and cracks every one on her tummy. Then she climbs out, into your lap, and curls up, and holds your hand in her little paws. Otters hold hands so they don't drift apart.",
+  "She squeaks, and opens her mouth, and looks up at you. Asking. You say okay. She swallows you so carefully, little wriggly gulps, ***glk... glk... glk...***, and floats on her back in the pond with you snug inside, holding her own tummy with both paws. ***Grrrlbl.***",
+  "At dawn she squeaks you back up, ***Hrrrp***, onto the rocks. She gives you her favourite rock. You keep it on your keyring."],
+  s: ["kiss", "gulp", "gurgle", "belch"], end: { t: "Holding Hands", pred: "pebbles", hint: "Feed her clams", safe: 1 } },
+
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
-  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"]] },
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"]] },
 
 f_start: { w: "Hollis Farm", p: [
   "Your car died two miles back. The only light for miles is Hollis Farm. The farmhouse lights are on, and there's a note tacked to the barn door in looping handwriting: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers. — Maggie*",
@@ -1150,12 +1304,12 @@ function drawStats() {
 }
 function go(id) {
   const n = N[id]; if (!n) return;
-  if (["start", "f_start", "g_start", "o_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (["start", "f_start", "g_start", "o_start", "z_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
   if (id === "menu") hush();
   if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
   VISITED[id] = 1;
   $("#where").textContent = n.w || "";
-  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "menu"].includes(id)) $("#text").innerHTML = "";
+  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "menu"].includes(id)) $("#text").innerHTML = "";
   const first = $("#text").children.length;
   n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
   if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
@@ -1177,7 +1331,7 @@ function go(id) {
 // which endings a choice can still lead to (for the ✓ mark once all are seen)
 const RC = {};
 function reach(id, seen = new Set()) {
-  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "menu"].includes(id)) return out; seen.add(id);
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "menu"].includes(id)) return out; seen.add(id);
   const n = N[id]; if (!n) return out; if (n.end) out.add(id);
   for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
   return (RC[id] = out);
