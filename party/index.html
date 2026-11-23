@@ -121,12 +121,13 @@ const PREDS = {
   s999:  { n: "SCP-999", k: "The Tickle Monster · Foundation" },
   sadako:{ n: "Sadako", k: "The cursed tape · ghost" },
   duchess:{ n: "Duchess", k: "Persian cat · feral" },
-  rex:   { n: "Rex", k: "Bearded dragon · feral" },
+  mango: { n: "Mango", k: "Scarlet macaw · feral" },
   pippa: { n: "Pippa", k: "Ferret · feral" },
   bubbles:{ n: "Bubbles", k: "Axolotl · feral" },
   scorch:{ n: "Scorch", k: "Wyvern broodmother · monster" },
-  gorr:  { n: "Gorr", k: "Minotaur stud · monster" },
-  cinder:{ n: "Cinder", k: "Hellhound alpha · feral" },
+  gorr:  { n: "Gorr", k: "Futa minotaur stud · monster" },
+  cinder:{ n: "Basila", k: "Cockatrice · monster" },
+  vesna: { n: "Vesna", k: "Centaur mare · monster" },
   shriek:{ n: "Shriek", k: "Harpy matriarch · monster" },
   none:  { n: "Nobody", k: "You got away" }
 };
@@ -1033,11 +1034,11 @@ sk_end_safe: { w: "Your apartment", in: 1, p: [
 p_start: { w: "Pawsome Pets · After closing", p: [
   "You're locking up the pet shop for the night. Your second week. The owner warned you: the adult animals in the back room are \"special\", and you should never, ever open their enclosures after dark.",
   "The lights hum. Water bubbles in the tanks. And in the back room, every one of the big grown animals is awake, pressed to the glass, watching you.",
-  "A huge fluffy Persian cat on a velvet cushion. A bearded dragon under a heat lamp. A ferret in a cage full of tubes. And an axolotl in the big tank, pink and smiling, the size of a dog."],
-  c: [["The Persian cat", "p_cat"], ["The bearded dragon", "p_liz"], ["The ferret", "p_fer"], ["The axolotl tank", "p_axo"]] },
+  "A huge fluffy Persian cat on a velvet cushion. A scarlet macaw on a perch, as big as a dog. A ferret in a cage full of tubes. And an axolotl in the big tank, pink and smiling, the size of a dog."],
+  c: [["The Persian cat", "p_cat"], ["The parrot", "p_liz"], ["The ferret", "p_fer"], ["The axolotl tank", "p_axo"]] },
 
 p_hub: { w: "The back room", p: ["The tanks bubble. Something scratches at a cage. Where now?"],
-  c: [["The Persian cat", "p_cat"], ["The bearded dragon", "p_liz"], ["The ferret", "p_fer"], ["The axolotl tank", "p_axo"], ["Lock up and go home", "p_leave"]] },
+  c: [["The Persian cat", "p_cat"], ["The parrot", "p_liz"], ["The ferret", "p_fer"], ["The axolotl tank", "p_axo"], ["Lock up and go home", "p_leave"]] },
 
 p_leave: { w: "The street", p: ["You lock up fast and don't look back. On the way out, you swear you hear something in the back room laugh.",
   "The next morning, the cat's cushion is empty and there's a smug Persian sitting on your apartment steps. You don't remember telling her where you live."],
@@ -1068,28 +1069,30 @@ pc_end_safe: { w: "The cat cushion", in: 1, p: [
   "In the morning she coughs you up like a very large hairball, licks you clean, and follows you home. The owner lets her go. \"She's never chosen anyone before.\" You're her servant now. You don't mind."],
   s: ["kiss", "gulp", "gurgle", "belch"], end: { t: "Her Servant", pred: "duchess", hint: "Spoil her", safe: 1 } },
 
-/* --- Rex, bearded dragon --- */
-p_liz: { w: "The lizard tank", p: [
-  "REX is a bearded dragon, but he's the size of a Labrador, spiky and tan, basking under his heat lamp with his beard puffed out black. He's a grown male. He bobs his head at you. Slowly. A display. A challenge.",
-  "Something red and doubled peeks out of his vent. He's very much in the mood."],
-  c: [["Open his tank", "pl_end_mount"], ["Tap the glass", "pl_end_tail"], ["Bring him a warm towel to bask on", "pl_end_safe"], ["Back", "p_hub"]] },
+/* --- Mango, parrot --- */
+p_liz: { w: "The parrot perch", p: [
+  "MANGO is a scarlet macaw, but she's absurdly big, the size of a Labrador, a riot of red, blue and gold feathers on a huge perch. She's grown, sharp-eyed and LOUD. She whistles at you. A wolf whistle. Then, in a perfect copy of the owner's voice: \"Hey, sexy.\"",
+  "She bobs her head. Her tail feathers flick up. Under them, her vent is swollen and pink. She's very much in the mood, and she's decided it's you."],
+  c: [["Open her cage", "pl_end_mount"], ["Tell her to shut up", "pl_end_tail"], ["Talk to her and teach her a new word", "pl_end_safe"], ["Back", "p_hub"]] },
 
-pl_end_mount: { w: "The lizard tank", in: 1, p: [
-  "You open the lid. He's out in a flash, clambering up your chest, knocking you onto the floor. His claws catch your shirt. His double cock slides out, slick and red, and he mounts you right there between the shelves, head bobbing, ***plap plap plap***, fast and frantic.",
-  "When he's done, he walks up your body, sits on your chest, and opens his mouth. ***Glk.*** He swallows you headfirst, jaw working, belly swelling, gulping you down past his spiky beard. ***GLRK. GULP.***",
-  "He crawls back under his heat lamp, so fat he can barely move, and basks. ***Grrrnch.*** In the morning his tank is full: a whole grown person's worth of shit piled up to the lamp."],
-  s: ["plap", "plap", "cum", "gulp", "gurgle", "plop"], end: { t: "Basking", pred: "rex", hint: "Open his tank" } },
+pl_end_mount: { w: "The parrot perch", in: 1, p: [
+  "You open the cage. She's out in a flash of red, landing on your chest and knocking you flat on the floor between the shelves. \"Hey, sexy! Hey, sexy!\" She waddles down your body, rubbing her vent against your crotch until you're hard, then she squats and grinds on you, wings spread, squawking, until she shudders and fluffs up all over.",
+  "Then she hops up onto your chest, tilts her head, and opens her big hooked beak. And keeps opening it. ***Glk.*** She swallows you headfirst, her throat bulging, feathers puffing out wider and wider around your shoulders. ***GLRK. GULP.***",
+  "She flutters back to her perch, barely managing it, a person-shaped bulge swinging under a Labrador-sized parrot, and squawks in triumph. \"GOOD GIRL! GOOD GIRL!\"",
+  "In the morning she squats on her perch and pushes out a whole grown person's worth of huge, steaming, human-like shit that piles up on the floor of her cage and spills out the door. ***FFFRRRT... PLOP... PLOP.*** \"Pretty bird,\" she says."],
+  s: ["struggle", "gulp", "gulp", "gurgle", "plop"], end: { t: "Pretty Bird", pred: "mango", hint: "Open her cage" } },
 
-pl_end_tail: { w: "The lizard tank", in: 1, p: [
-  "You tap the glass. Rex puffs his beard out jet black, furious, and the lid pops off. He lunges at you and whips his tail around your ankles and you go down.",
-  "His vent is right in front of your face. It opens, wide, sucking. He backs onto you, ***Shllorp***, pulling you in headfirst, rhythmic, his tail holding your legs. You're going up a pet store lizard. ***Shlorp. Shlorp.***",
-  "He crawls back under his lamp with a ridiculous person-shaped belly and basks, beard flat and smug."],
-  s: ["struggle", "squelch", "squelch", "gurgle"], end: { t: "Don't Tap the Glass", pred: "rex", hint: "Tap the glass" } },
+pl_end_tail: { w: "The parrot perch", in: 1, p: [
+  "\"Shut UP.\" Mango goes silent. Then, in a perfect copy of YOUR voice: \"Shut up.\" Then the cage door pops open. She knew how all along.",
+  "She lands on your face, claws in your hair, and turns around. Her vent is right on your mouth. It opens. She squats. ***Shllrrp.*** You're getting pulled up a parrot's butt while she screams your own words at you: \"SHUT UP! SHUT UP!\" ***Shlorp. Shlorp.***",
+  "She flaps back up to her perch, enormous and round. In the morning the owner finds her sitting on a whole person's worth of shit piled up in her cage, saying \"Shut up\" in your voice, over and over, very pleased with herself."],
+  s: ["struggle", "squelch", "squelch", "gurgle", "plop"], end: { t: "Shut Up", pred: "mango", hint: "Tell her to shut up" } },
 
-pl_end_safe: { w: "The lizard tank", in: 1, p: [
-  "You bring him a warm towel from the dryer and lay it under his lamp. Rex climbs onto it, closes his eyes, and lets his beard go soft and pale. Then he climbs onto you, and basks on you instead. You're warmer.",
-  "He mounts you, slow, almost polite, and afterward swallows you, gently, and sleeps under the lamp with you warm in his belly. In the morning he coughs you back up onto the towel. You buy him. You can't not."],
-  s: ["plap", "gulp", "gurgle"], end: { t: "Heat Lamp", pred: "rex", hint: "Give him a warm towel", safe: 1 } },
+pl_end_safe: { w: "The parrot perch", in: 1, p: [
+  "You talk to her for an hour. You teach her a new word. Your name. She says it back, perfectly, and then says it again, softer, and nuzzles her huge beak against your cheek.",
+  "She climbs into your lap and preens your hair. Then she says \"I love you\" in your own voice, which you definitely didn't teach her, and very gently swallows you, and sleeps on her perch with you warm and safe inside her, saying your name in her sleep.",
+  "In the morning she coughs you back up. You buy her. She says your name every time you come home."],
+  s: ["kiss", "gulp", "gurgle"], end: { t: "Your Name", pred: "mango", hint: "Teach her a word", safe: 1 } },
 
 /* --- Pippa, ferret --- */
 p_fer: { w: "The ferret cage", p: [
@@ -1143,10 +1146,10 @@ r_start: { w: "Grimhold Monster Ranch", p: [
   "The job ad said RANCH HAND WANTED, GOOD PAY, NO QUESTIONS. The ranch breeds monsters: big, grown, sapient ones, sold to castles and dungeons all over the land. Your job is to feed them, clean them, and help with the breeding.",
   "The rancher hands you a pitchfork and a list. \"Don't let any of 'em get you alone in their pen. They get... ideas. Especially in season.\"",
   "Everything on the ranch is in season."],
-  c: [["The wyvern broodmother's nest", "r_wyv"], ["The minotaur stud's stall", "r_mino"], ["The hellhound kennel", "r_hell"], ["The harpy roost", "r_harp"]] },
+  c: [["The wyvern broodmother's nest", "r_wyv"], ["The minotaur stud's stall", "r_mino"], ["The cockatrice coop", "r_hell"], ["The harpy roost", "r_harp"], ["The centaur paddock", "r_cent"]] },
 
 r_hub: { w: "The ranch yard", p: ["Somewhere a wyvern screeches. Something big stamps in a stall. The ranch smells like musk and heat. Where now?"],
-  c: [["The wyvern's nest", "r_wyv"], ["The minotaur's stall", "r_mino"], ["The hellhound kennel", "r_hell"], ["The harpy roost", "r_harp"], ["Quit and walk off the ranch", "r_leave"]] },
+  c: [["The wyvern's nest", "r_wyv"], ["The minotaur's stall", "r_mino"], ["The cockatrice coop", "r_hell"], ["The harpy roost", "r_harp"], ["The centaur paddock", "r_cent"], ["Quit and walk off the ranch", "r_leave"]] },
 
 r_leave: { w: "The road", p: ["You drop the pitchfork and walk. Behind you, every monster on the ranch howls, screeches and bellows at once.",
   "The rancher doesn't pay you. You get to keep your body. Probably a good trade."],
@@ -1175,50 +1178,78 @@ rw_end_safe: { w: "The wyvern nest", in: 1, p: [
   "She lets you lie against her belly all night. Then she pulls you in, gently, under her wing, and into her mouth, and keeps you safe and warm in her belly beside her brood. In the morning she lets you out. She won't let anybody else near her nest."],
   s: ["gurgle", "gulp", "gurgle"], end: { t: "Broodkeeper", pred: "scorch", hint: "Stroke her belly", safe: 1 } },
 
-/* --- Gorr, minotaur --- */
+/* --- Gorr, futa minotaur --- */
 r_mino: { w: "The stud stall", p: [
-  "GORR is the ranch's prize stud. A minotaur nine feet tall, black-furred, brass ring in his nose, chained at the wrists. His cock is the size of your leg and it's hard. It's always hard. He breeds three times a day.",
-  "\"You the new hand?\" he rumbles. \"Good. The cow they sent me ran off. You'll do.\""],
-  c: [["Unchain him", "rm_end_bred"], ["Refuse and run", "rm_end_caught"], ["Unchain him, and ask him what he wants", "rm_end_safe"], ["Back", "r_hub"]] },
+  "GORR is the ranch's prize stud. A futa minotaur nine feet tall, black-furred, brass ring in her nose, chained at the wrists. Her tits are huge, heavy and bare. Her cock is the size of your leg, and it's hard. It's always hard. Under her fat, swinging balls, her pussy is dripping too. She breeds three times a day, both ways.",
+  "\"You the new hand?\" she rumbles. \"Good. The cow they sent me ran off. You'll do.\""],
+  c: [["Unchain her", "rm_end_bred"], ["Refuse and run", "rm_end_caught"], ["Unchain her, and ask her what she wants", "rm_end_safe"], ["Back", "r_hub"]] },
 
 rm_end_bred: { w: "The stud stall", in: 1, p: [
-  "You unchain him. He grabs you by the waist and bends you over the hay bale and breeds you. That's it. That's all he's for. ***PLAP. PLAP. PLAP.*** He's huge and it hurts and he doesn't stop until he's pumped you so full your belly is round.",
-  "Then he does it again. And again. And then he picks you up and swallows you, still dripping with his cum. ***GLLRK. GULP.*** \"Needed a snack,\" he grunts. He goes back to his chains himself, belly huge, and sleeps.",
-  "In the morning he leaves a pile in his stall as big as you were. ***PLOP.*** The rancher logs it in the breeding book: *Stud successful. Hand lost.*"],
-  s: ["plap", "plap", "cum", "cum", "gulp", "plop"], end: { t: "Stud Service", pred: "gorr", hint: "Unchain him" } },
+  "You unchain her. She grabs you by the waist, bends you over the hay bale and breeds you. That's it. That's what she's for. ***PLAP. PLAP. PLAP.*** She's huge and it hurts and she doesn't stop until she's pumped you so full your belly is round, her tits slapping against your back.",
+  "Then she flips you, sits on your cock and rides it with her dripping cunt, still hard herself, her own cock slapping your chest. Then she picks you up and swallows you, still dripping with both of you. ***GLLRK. GULP.*** \"Needed a snack,\" she grunts. She goes back to her chains herself, belly huge, and sleeps.",
+  "In the morning she leaves a pile in her stall as big as you were. ***PLOP.*** The rancher logs it in the breeding book: *Stud successful. Hand lost.*"],
+  s: ["plap", "plap", "cum", "cum", "gulp", "plop"], end: { t: "Stud Service", pred: "gorr", hint: "Unchain her" } },
 
 rm_end_caught: { w: "The ranch yard", in: 1, p: [
-  "You run. He snaps his chains. Of course he does. He catches you in the yard, throws you over his shoulder, carries you back into his stall, and takes you over and over, his huge hands holding you down, bellowing.",
-  "When he's finally done, his cock opens and swallows you whole. ***SHLLRRK.*** You go down into his giant balls, ***SHLORP***, and he lies in the hay holding them, sloshing. ***Shlosh.***",
+  "You run. She snaps her chains. Of course she does. She catches you in the yard, throws you over her shoulder, carries you back into her stall and takes you over and over, her huge hands holding you down, bellowing.",
+  "When she's finally done, her cock opens and swallows you whole. ***SHLLRRK.*** You go down into her giant balls, ***SHLORP***, and she lies in the hay holding them, sloshing, groping her own tits. ***Shlosh.***",
   "Next week, the wyvern gets bred. That's you, too."],
-  s: ["struggle", "plap", "plap", "squelch", "slosh", "cum"], end: { t: "Broke His Chains", pred: "gorr", hint: "Run" } },
+  s: ["struggle", "plap", "plap", "squelch", "slosh", "cum"], end: { t: "Broke Her Chains", pred: "gorr", hint: "Run" } },
 
 rm_end_safe: { w: "The stud stall", in: 1, p: [
-  "You unchain him. Then you ask him what he actually wants. Gorr stares at you. Nobody has ever asked. \"...I want to stop being chained,\" he says, slowly. \"I want to sleep somewhere with a door I can open.\"",
-  "You make love in the hay, slow, his huge hands careful on you. Then he swallows you, gently, and you sleep together in his belly, and in the morning he carries you out of the ranch in it and walks out the front gate. Nobody can stop him. He lets you out on the road. You go somewhere together."],
-  s: ["plap", "gulp", "gurgle", "belch"], end: { t: "Unchained", pred: "gorr", hint: "Ask what he wants", safe: 1 } },
+  "You unchain her. Then you ask her what she actually wants. Gorr stares at you. Nobody has ever asked. \"...I want to stop being chained,\" she says, slowly. \"I want to sleep somewhere with a door I can open.\"",
+  "You make love in the hay, slow, her huge hands careful on you, her big soft tits pillowing your face. Then she swallows you, gently, and you sleep in her belly, and in the morning she carries you out of the ranch in it and walks out the front gate. Nobody can stop her. She lets you out on the road. You go somewhere together."],
+  s: ["plap", "gulp", "gurgle", "belch"], end: { t: "Unchained", pred: "gorr", hint: "Ask what she wants", safe: 1 } },
 
-/* --- Cinder, hellhound --- */
-r_hell: { w: "The hellhound kennel", p: [
-  "CINDER is the alpha hellhound: a feral black hound the size of a bear, flames licking up from his fur, eyes like coals. His pack lies around him in the kennel, panting smoke. He's grown, heavy-balled, and he's watching you through the bars with a very clear mind behind those burning eyes.",
-  "It's feeding time. You're carrying the meat. He's not looking at the meat."],
-  c: [["Open the kennel", "rh_end_pack"], ["Throw the meat and run", "rh_end_knot"], ["Sit down in front of him", "rh_end_safe"], ["Back", "r_hub"]] },
+/* --- Basila, cockatrice --- */
+r_hell: { w: "The cockatrice coop", p: [
+  "BASILA is the ranch's cockatrice: a hen the size of a horse, with a rooster-red comb, iridescent bronze feathers, a long scaly serpent's tail, and eyes that glow a sick yellow-green. A gaze that can turn you to stone. She wears a leather hood most of the time. Right now she isn't wearing it.",
+  "Her eggs sell for a fortune. She's laying season. She's sitting on her huge straw nest, puffed up and enormous, and she's staring right at you. Your legs are already starting to feel heavy."],
+  c: [["Bring her the feed bucket", "rh_end_pack"], ["Run before she looks at you", "rh_end_knot"], ["Put her hood back on, gently", "rh_end_safe"], ["Back", "r_hub"]] },
 
-rh_end_pack: { w: "The hellhound kennel", in: 1, p: [
-  "You open the kennel. Cinder walks out slowly and the pack follows. He mounts you first, burning hot, and knots you, and the pack watches, and then they take turns. ***PLAP PLAP PLAP.***",
-  "Then Cinder swallows you, alpha's right, ***GLLRK. GULP***, hot as an oven, and lies down at the head of his pack with a belly full of you, glowing faintly. ***Grrrnch.***",
-  "In the morning he leaves you smoking in the corner of the kennel: a whole person's worth, piled high. ***PLOP.*** The pack sniffs it, approving."],
-  s: ["plap", "plap", "cum", "gulp", "crack", "plop"], end: { t: "Alpha's Share", pred: "cinder", hint: "Open the kennel" } },
+rh_end_pack: { w: "The cockatrice coop", in: 1, p: [
+  "You walk toward her with the bucket. Your legs get heavier with every step. By the time you reach the nest you can't move them at all. Your arms go next. Stone creeping up your skin. You can still feel everything. You just can't move.",
+  "She climbs off her nest and circles you, clucking, delighted, a frozen statue of dinner. She rubs her vent against your hard, stiffened cock and rides it, slow, while you can't even twitch. Then she opens her beak. ***Glk.***",
+  "She swallows you whole, stiff as a board, a long, straight, ridiculous lump sliding down her neck. ***GLRK. GULP.*** In her warm stomach the stone wears off and you can finally struggle. It's too late. ***Grrrnch.***",
+  "She settles back on her eggs with a belly as round as a boulder. In the morning she climbs off the nest and leaves you beside it: a whole grown person's worth, a huge, steaming, human-like pile. ***FFFRRRT... PLOP... PLOP.***"],
+  s: ["struggle", "gulp", "gulp", "crack", "plop"], end: { t: "Petrified", pred: "cinder", hint: "Feed her" } },
 
 rh_end_knot: { w: "The ranch yard", in: 1, p: [
-  "You throw the meat and run. Cinder leaps the fence. He catches you in the yard and pins you, and his burning cock rams in, ***PLAP***, and he knots you there in the dirt, his heat soaking into you.",
-  "When the knot finally pops free, he turns and swallows you whole, ***GLLLRK***, and trots back into his kennel with his belly swinging, pleased with himself."],
-  s: ["struggle", "plap", "cum", "gulp", "gurgle"], end: { t: "Fetch", pred: "cinder", hint: "Run" } },
+  "You run, eyes on the ground. She comes after you anyway, half flying, half running, with a scream like a rooster from hell. Her serpent's tail whips around your legs and you go down in the mud.",
+  "She pins you with her talons and tilts your face up with her beak. Your eyes meet hers. Stone floods through you. You're frozen on your back in the yard.",
+  "She squats over your face and her vent opens, wide, slick and hot, and she sits. ***Shllorrrp.*** You go up a cockatrice, frozen solid the whole way, slowly, while she clucks and fluffs. She waddles back to her nest with a belly like a beach ball."],
+  s: ["struggle", "squelch", "squelch", "gurgle"], end: { t: "Don't Look", pred: "cinder", hint: "Run" } },
 
-rh_end_safe: { w: "The hellhound kennel", in: 1, p: [
-  "You sit down in front of the kennel. Cinder watches. Then he comes over and pushes his burning muzzle against the bars. It's warm, not hot. You scratch his chin. His flames go soft and low.",
-  "You let yourself in. He curls around you, warm as a fireplace, and later he swallows you, gently, and sleeps with you glowing safe inside him. In the morning the pack follows you everywhere. You're one of them now."],
-  s: ["gulp", "gurgle"], end: { t: "Pack", pred: "cinder", hint: "Sit with him", safe: 1 } },
+rh_end_safe: { w: "The cockatrice coop", in: 1, p: [
+  "You keep your eyes down and walk to her slowly, holding out her hood. You put it on her, gently, smoothing her feathers. She goes still. She's always been hooded by people throwing it at her. Nobody's ever been gentle about it.",
+  "She tucks her head against your chest and clucks softly. You sit with her on her nest all night, and at some point she very carefully swallows you, so carefully, and you sleep warm under her wings beside her eggs.",
+  "In the morning she coughs you back up into the straw. She won't let anyone else put her hood on after that."],
+  s: ["gulp", "gurgle"], end: { t: "Hooded", pred: "cinder", hint: "Put her hood on gently", safe: 1 } },
+
+/* --- Vesna, centaur --- */
+r_cent: { w: "The centaur paddock", p: [
+  "VESNA is the ranch's centaur mare: a woman from the waist up, tall and strong, with long chestnut hair, freckles and a pair of big bare tits, and from the waist down a huge, muscular chestnut horse, dappled and glossy, with a long flowing tail. She's being kept for breeding. She's in heat. She can smell you from across the paddock.",
+  "She trots right up to the fence, tail flicking high, and leans over it. \"Finally,\" she purrs. \"They sent me something that isn't a horse.\""],
+  c: [["Climb into the paddock", "rc_end_mount"], ["Climb on her back for a ride", "rc_end_ride"], ["Tell her you'll help her escape", "rc_end_safe"], ["Back", "r_hub"]] },
+
+rc_end_mount: { w: "The centaur paddock", in: 1, p: [
+  "You climb in. She turns around, lifts her tail, and backs her huge horse rump right up against you. Her mare's cunt is swollen and dripping, winking, as big as your head. \"Go on.\"",
+  "You fuck her. You have to stand on a feed bucket to reach. She stamps and moans and clenches, and when you cum she clenches harder, and then her cunt opens wide and she backs up. ***SHLLLORRRP.*** Your head goes in. Your shoulders. She backs up again. And again.",
+  "She takes you all the way into her womb, the way she'd take a stallion's load, and trots in a circle around the paddock with her belly swollen low and huge and swinging, laughing. ***Glorrrbl.***",
+  "She keeps you a long time. When she's done, she squats in the corner of the paddock and pushes out a whole person's worth of thick, steaming shit, a mountain of it, human-like and massive. ***FFFRRRT... PLOP... PLOP.*** The rancher writes it in the breeding book: *Mare satisfied.*"],
+  s: ["plap", "cum", "squelch", "gurgle", "plop"], end: { t: "Mare in Heat", pred: "vesna", hint: "Climb into the paddock" } },
+
+rc_end_ride: { w: "The centaur paddock", in: 1, p: [
+  "You climb onto her back. She takes off at a gallop around the paddock, laughing, and then she rears up and you fall off right in front of her. She looks down at you, flushed, tits heaving.",
+  "She reaches down, picks you up under the arms like a doll, and swallows you. Headfirst, her human throat stretching impossibly, ***GLLK... GLRK... GULP***, down into a belly that runs all the way back into her horse half. ***Glorrrp.***",
+  "Her horse belly swells round and heavy and sloshes with every step. She gallops around the paddock again, just to feel you bounce. ***Shlosh. Shlosh. Shlosh.***"],
+  s: ["struggle", "gulp", "gulp", "slosh", "gurgle"], end: { t: "Giddy Up", pred: "vesna", hint: "Ride her" } },
+
+rc_end_safe: { w: "The centaur paddock", in: 1, p: [
+  "\"I'll get you out of here,\" you whisper. Vesna stares. Then she laughs, softly, and pulls you over the fence into her arms and kisses you, hard.",
+  "That night you open the paddock gate. She kneels so you can climb on, and you ride her out of the ranch at a gallop under the stars, your arms around her waist. When you stop by a river at dawn, you make love in the long grass, and then she swallows you, gently, and sleeps with you safe in her horse belly.",
+  "In the morning she lets you out. \"Where to?\" she asks. Anywhere, as long as it's together."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Ride Out", pred: "vesna", hint: "Help her escape", safe: 1 } },
 
 /* --- Shriek, harpy --- */
 r_harp: { w: "The harpy roost", p: [
