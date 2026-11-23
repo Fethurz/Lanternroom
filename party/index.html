@@ -94,6 +94,14 @@ const PREDS = {
   peaches:{ n: "Peaches", k: "Hen · feral" },
   coral: { n: "Coral", k: "Sockeye salmon · feral" },
   maggie:{ n: "Maggie", k: "Redhead farmer · human" },
+  brock: { n: "Brock", k: "Bull bodybuilder · anthro" },
+  shay:  { n: "Shay", k: "Hyena spotter · anthro" },
+  kade:  { n: "Kade", k: "Shark swimmer · anthro" },
+  bun:   { n: "Bun", k: "Bunny \"beginner\" · anthro" },
+  vesper:{ n: "Ms. Vane", k: "Dragoness CEO · anthro" },
+  tamsin:{ n: "Tamsin", k: "Fox HR · anthro futa" },
+  rocco: { n: "Rocco", k: "Rhino security · anthro" },
+  pip:   { n: "Pip", k: "Otter intern · anthro" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -101,9 +109,350 @@ const PREDS = {
  node: { w: place, p: [paragraphs], s: [sounds], set: {stat: +n}, c: [[label, go, cond?]], end: {t, pred, hint}, in: inside? }
  ***Word*** = a sound word; {gulp} after it picks the recording (else the node's sounds play). */
 const N = {
+/* ===================== SAFE / LOVING ENDINGS ===================== */
+m_end_safe: { w: "The kitchen", in: 1, p: [
+  "You lean in and kiss her, frosting and all. Marla freezes. Then she cackles, delighted, and kisses you back so hard the counter creaks.",
+  "\"Oh, I LIKE you.\" She scoops you up like a toddler and swallows you whole, ***GLLK... GULP***, but slow, savouring, and when you land in her hot, sloshing gut, the acid doesn't come. Her belly just wraps around you like a waterbed and holds you.",
+  "She spends the whole party sitting on the counter with you in there, rubbing you, cooing at you, telling everyone who'll listen that she found a keeper. ***Grrrrrooorgl.*** Every time someone gets close, she growls.",
+  "At dawn she lies on her back on the kitchen floor and burps you up, gently, ***HRRRRP***, slimy and warm and safe, right into her arms. She smooshes you against her huge tits.",
+  "\"Breakfast date?\" she says. \"I promise I'll only eat the pancakes.\" She doesn't. But she always lets you back out."],
+  s: ["kiss", "gulp", "gurgle", "belch"], end: { t: "Keeper", pred: "marla", hint: "Kiss her", safe: 1 } },
+
+t_end_safe: { w: "Thane's room", in: 1, p: [
+  "You catch his face in your hands and kiss him first. Thane goes completely still. The big jock lion. His ears go back. \"...Oh,\" he says. \"Oh, okay. Yeah.\"",
+  "He carries you upstairs like you're made of glass. He fucks you slow, face to face, rumbling purrs shaking his whole chest, and when he cums he holds you so tight you can hear his heart. ***Thud thud thud.***",
+  "Afterwards he licks you clean, tender, and asks, shy, if he can keep you in there for the night. You say yes. He swallows you so gently you barely feel it. ***Glk... glk... GULP.*** His belly closes around you, warm and full and thumping with his heartbeat, and he wraps both arms over you and falls asleep purring. ***Grrrrrrrrrrr.***",
+  "In the morning he coughs you up into his sheets, slick and warm, and pulls you against his chest. \"Don't tell the team I'm soft,\" he mumbles. He makes you breakfast. He carries you to class in his belly for the rest of the semester."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Soft for You", pred: "thane", hint: "Kiss him first", safe: 1 } },
+
+v_end_safe: { w: "The bathroom", in: 1, p: [
+  "\"Can you just... hold me?\" Vivian blinks, slow. Then she smiles, and her coils wind around you, warm, layer by layer, until you're wrapped from your feet to your chest in snake, and she's stroking your hair.",
+  "She fucks you like that, coiled up on the bathroom floor, her ribbed cock sliding slow into you, kissing you the whole time, and when she cums she hisses your name.",
+  "Then she slides you into her pussy, gently, all the way into her womb. ***Shllrrrp. Glorp.*** It's warm and dark and her heartbeat is all around you. \"Sleep,\" she murmurs. You do.",
+  "She carries you home in her womb. In the morning she lets you out into her bed, wet and new and safe, and coils around you again. \"Mine,\" she says, and it sounds like a promise, not a threat. She keeps you in there most nights after that. You never want to leave."],
+  s: ["kiss", "squelch", "gurgle"], end: { t: "Held", pred: "viv", hint: "Ask her to hold you", safe: 1 } },
+
+d_end_safe: { w: "The backyard", in: 1, p: [
+  "You roll him over and scratch his belly. Duke melts. His tongue lolls. His leg kicks. His cock slides out anyway, but his eyes are soft now, and when you stroke it he whines and humps your hand like he's been waiting years for someone to be nice to him.",
+  "He mounts you after, but slowly, and when he knots you he licks the back of your neck the whole time, whining sweetly. ***Shlorp.*** You lie tied together in the grass, his chest heaving against your back.",
+  "Then he swallows you, gently, ***Glk... GULP***, and curls up on his dog bed around his full, round belly, and keeps you there all night. Safe. Warm. ***Grrrrlbl.*** Whenever you move, he whines and licks his gut.",
+  "In the morning he coughs you up onto the patio, licks you clean from head to toe, and follows you to your car. Dex sees him jump in the passenger seat. \"...Guess he's yours now,\" Dex shrugs. He sleeps on your bed every night. Sometimes inside you're his bed."],
+  s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Good Boy", pred: "duke", hint: "Scratch his belly", safe: 1 } },
+
+j_end_safe: { w: "The bedroom", in: 1, p: [
+  "Thane gets bored and wanders off. When he's gone, you say it. \"I like you,\" you tell her. \"Like, like-like.\" Jackolyn makes a sound like a kettle. Her ears go straight up. Then she panics, and lunges to hug you, and her mouth is open, and... ***GLLK.***",
+  "\"MMF! Mmf mmmf!\" You slide down into her, ***GLRK, GULP***, and she sits there on the bed with an enormous gut and her paws over her face. \"I'm sorry! I'm so sorry! That was SO not on purpose!\" ***Grrrrooorgl.***",
+  "But this time, she doesn't digest you. She concentrates, so hard, rubbing you, whispering \"not food, not food, not food\" to her belly, and it actually listens. The walls stay soft. You stay warm. She talks to you all night through her stomach, nervous and giggly, about games and anime and how cute you are.",
+  "At dawn she figures it out. She lies on her back, presses her belly, and burps you up, ***HRRRRP***, slimy and dazed and alive, onto her chest. She's so happy she cries.",
+  "\"I DID IT!\" Then she sees your face, and goes red to the tips of her antlers. \"...Do you still like-like me? After I ate you?\" You kiss her. She squeaks. It's the start of something very cute and very full."],
+  s: ["gulp", "gurgle", "belch", "kiss"], end: { t: "Not Food", pred: "jack", hint: "Tell her how you feel", safe: 1 } },
+
+s_end_safe: { w: "Your apartment", in: 1, p: [
+  "You fuck her slow, on Dex's bed, her body coiled around your hips, and when you cum inside her she shivers all down her length and wraps her tail around your cock to keep it there. She doesn't let go. She puts her head on your chest and flicks her tongue at your chin, soft, over and over. She's purring, if snakes could purr.",
+  "You can't leave her here. You wrap her around your shoulders under your hoodie, warm and heavy against your neck, and walk right out the front door. Nobody stops you. She's yours now.",
+  "At home she has the warmest tank money can buy. She never uses it. She sleeps in your bed, coiled around your waist. Every night she slithers down and sucks your cock into her vent and squeezes you dry, ***Shlrrk... shlorp...***, milking you in slow, rippling waves until you're drained and shaking. Your cumsock wife. She's always hungry for it.",
+  "Some nights she swallows you whole, slow and gentle, ***Glk... glk... glk...***, and you sleep curled up inside her, stretched out into a long, warm, loving lump of snake, and in the morning she lets you slide back out and flicks her tongue on your nose like a good-morning kiss.",
+  "Dex puts up posters. MISSING: MOCHI. Mochi looks at them when you walk past them and flicks her tongue, smug as ever."],
+  s: ["squelch", "cum", "kiss", "gulp"], end: { t: "Snake Wife", pred: "mochi", hint: "Take her home", safe: 1 } },
+
+c_end_safe: { w: "Clover's stall", in: 1, p: [
+  "You milk her slowly, gently, talking to her the whole time. Clover sighs and lowers her huge head to nuzzle you. Then her teat opens around your hand, and your arm, and you let it. ***Shlorrrp.***",
+  "You slide into her udder, warm and soft, floating in sweet milk, and she lies down in the straw so carefully you barely jostle. No squeezing. No churning. Just a heartbeat and warm milk and her low, contented moos humming through you. ***Shlosh.***",
+  "At dawn Maggie comes to milk her and gets a surprise: you, slithering out of a teat in a gush of cream, sputtering and safe. Maggie laughs so hard she sits down in the straw. \"Well, she likes you! Guess you've got a job, hired hand.\"",
+  "You stay. You sleep in Clover's udder most nights. She won't let anybody else milk her."],
+  s: ["slosh", "squelch", "slosh"], end: { t: "Hired Hand", pred: "clover", hint: "Milk her gently", safe: 1 } },
+
+h_end_safe: { w: "Ransom's stall", in: 1, p: [
+  "You stroke his neck first. Long and slow. Ransom shivers, and leans into you, and when you finally touch his cock he groans and presses his huge head against your chest. He's been lonely. Nobody's been gentle with him in a long, long time.",
+  "You let him in. He mounts you slowly, carefully, for something that huge, and it still hurts, but he goes still every time you gasp, until you're ready, and then he breeds you, deep, ***plap... plap... plap***, nickering softly in your ear.",
+  "Afterwards his cock opens around you and he takes you into his balls, ***Shllrrrk... SHLORP***, and stands over you all night, his huge heavy sack warm and safe and sloshing, swaying you gently. ***Shlosh.*** Nothing in there hurts.",
+  "At dawn he spurts you out onto the straw in a hot, white flood, sticky and new and very much alive. He licks you clean. When you try to walk to the gate, he follows. When Maggie tries to put him in his stall, he won't go unless you're in there with him."],
+  s: ["plap", "plap", "squelch", "slosh", "cum"], end: { t: "Gentle Giant", pred: "ransom", hint: "Stroke his neck first", safe: 1 } },
+
+e_end_safe: { w: "The sheep pen", in: 1, p: [
+  "You curl up in her wool. It's so warm. Bramble looks down at you for a long moment, then lies down on top of you, carefully, her weight soft as a duvet. She nuzzles your face. She licks your cheek.",
+  "Then she backs her rump over you and her pussy opens, gentle, and slides you inside. ***Shllrrrp.*** No squeezing. No hurry. She takes you all the way into her womb and lies there in the straw, belly swollen low and round, humming a low bleat that buzzes through you.",
+  "You sleep. When you wake, she's pushing, slow and steady, and you slide back out into the dawn, wet and warm and wrapped in a nest of her shed wool.",
+  "Maggie finds you there and raises an eyebrow. \"Huh. She adopted you.\" Bramble won't let you out of her sight after that. On cold nights, you go back inside."],
+  s: ["kiss", "squelch", "gurgle", "squelch"], end: { t: "Lamb", pred: "bramble", hint: "Curl up in her wool", safe: 1 } },
+
+h2_end_safe: { w: "The hen house", in: 1, p: [
+  "You scatter a handful of corn for her. Peaches eyes you. Eats the corn. Eyes you again. Then she hops down and pecks your hand, gently. Then climbs into your lap, settles down, and starts clucking softly.",
+  "You pet her. She closes her eyes. And then she reaches up and starts very carefully swallowing you, ***glk... glk... glk...***, like she's tucking you in, and you let her, because it's ridiculous and warm and she's purring like a cat.",
+  "She waddles back to her nest with a huge, round belly and sits, wings spread out over it, keeping you warm. ***Grrrlbl.*** Clucking sweetly at you all night.",
+  "At dawn she hacks you up into the nest, gently, ***Hrrrrk***, along with a single perfect egg. She pushes the egg toward you with her beak. A gift. Maggie can't believe it. \"She never gives ANYBODY her eggs.\""],
+  s: ["kiss", "gulp", "gurgle", "belch"], end: { t: "Mother Hen", pred: "peaches", hint: "Bring her some corn", safe: 1 } },
+
+sk_end_safe: { w: "The creek", in: 1, p: [
+  "You cup her gently in both hands under the cold water. Coral goes still. Then she presses her body against your chest, and nuzzles your neck with her plump mouth.",
+  "You make love in the shallows, slow, her body wrapped against yours, and when you cum she spawns too, warm and golden around you, and wriggles her vent open around your cock and draws you inside. ***Shllrrrp.*** All of you. Slow.",
+  "Inside her it's warm. Somehow there's air. She floats in the moonlit shallows with you curled up inside, belly round, fanning her tail gently, keeping you safe until the sun comes up.",
+  "At dawn she slides you out onto the soft bank. Every spawning season after that, you come back to the creek. She's always waiting."],
+  s: ["squelch", "cum", "squelch"], end: { t: "Every Season", pred: "coral", hint: "Hold her gently", safe: 1 } },
+
+mg_end_safe: { w: "The farmhouse", in: 1, p: [
+  "\"Want to get dinner sometime?\" you ask. Maggie blinks. Then she laughs, delighted, and pulls you inside and onto the couch.",
+  "You fuck in front of the fire, slow and sweaty, her heavy tits bouncing over your face, her thighs squeezing your hips until she cums and grabs your face and kisses you. Then she looks at you, flushed and hungry. \"Can I eat you? Just for tonight. I'll give you back.\"",
+  "You say yes. She swallows you slow, with little moans, ***Glk... glk... GULP***, and lies back on the couch rubbing her round, freckled belly with you safe inside, telling you stories about the farm until you fall asleep to her heartbeat. ***Grrrrrooorgl.***",
+  "In the morning she burps you up into her arms, ***HRRRP***, and laughs, and kisses you, and makes you breakfast. Your car never gets fixed. You never really try to fix it. You live on the farm now. She eats you about twice a week."],
+  s: ["plap", "kiss", "gulp", "gurgle", "belch"], end: { t: "Moved In", pred: "maggie", hint: "Ask her out", safe: 1 } },
+
+/* ===================== THE GYM ===================== */
+g_start: { w: "Iron Den Gym", p: [
+  "Iron Den is supposed to close at ten. It's past midnight, the front door's propped open, and the lights are still on over the weights. You only came back for your phone.",
+  "The air is thick and hot and wet. It smells like rubber mats, chalk, and sweat. A LOT of sweat. Musk so heavy it sticks to the back of your throat.",
+  "There are still people here. A bull grunting under a bar that's bending. A hyena girl stretching her thighs on the mats. A shark doing laps in the pool through the glass. And at the water fountain, a tiny bunny girl in brand-new gym clothes, looking lost.",
+  "Every one of them turns to look at you when the door clicks shut behind you."],
+  c: [["Go to the bench press", "gy_bull"], ["Go to the stretching mats", "gy_hyena"], ["Go to the pool", "gy_shark"], ["Go to the water fountain", "gy_bun"]] },
+
+g_hub: { w: "The gym floor", p: ["The music thumps. Someone grunts. The heat is unbearable. Where now?"],
+  c: [["The bench press", "gy_bull"], ["The stretching mats", "gy_hyena"], ["The pool", "gy_shark"], ["The water fountain", "gy_bun"], ["Grab your phone and leave", "g_leave"]] },
+
+g_leave: { w: "The parking lot", p: ["You grab your phone off the locker room bench and get out. The night air is freezing after all that heat. Behind you, through the windows, four heads turn to watch you go.",
+  "Your gym clothes smell like musk for a week. You don't wash them."],
+  end: { t: "Skipped Leg Day", pred: "none", hint: "Just get your phone" } },
+
+/* --- Brock --- */
+gy_bull: { w: "The bench press", p: [
+  "Brock is a bull. Seven feet of slab-heavy muscle, horns, a nose ring, and a pair of gym shorts struggling to hold in his cock. He racks the bar with a clang that shakes the floor and sits up, sweat pouring off his pecs.",
+  "\"Hey. You. Spot me?\" He doesn't wait for an answer. \"Or. Better idea.\" He spreads his thighs. His shorts are tenting. His abs are glistening. \"Worship.\""],
+  c: [["Get on your knees", "by_end_worship"], ["Say you're just here for your phone", "by_end_forced"], ["Spot him, and tell him he's doing great", "by_end_safe"], ["Back to the gym floor", "g_hub"]] },
+
+by_end_worship: { w: "The bench press", in: 1, p: [
+  "You get on your knees between his thighs. He grabs your head and drags your face up his abs, through the sweat, over every ridge, until you're licking his pecs and he's groaning. Then he pushes you down to his shorts and tugs them aside. His cock slaps your face, thick as your forearm, reeking of musk.",
+  "You suck. He fucks your throat like it's a set, counting reps out loud, ***Glk. Glk. Glk.*** \"Eight. Nine. Ten.\" He cums on twelve, so hard you choke.",
+  "Then he picks you up off the floor like a dumbbell and swallows you headfirst. ***GLLRK. GULP.*** His abs bulge out, rock-hard ridges stretching, giving, until they're gone, and there's just a big, round, sloshing gut where his six-pack used to be. ***Glorrrp.***",
+  "He gets back under the bar and does another set with you in there. Every rep, you slosh. Every rep, he groans. ***Shlosh. Shlosh.*** By morning you're the reason Iron Den's top lifter has a soft, sagging potbelly hanging over his belt, and he spends ten minutes in the mirror jiggling it, hard as a rock in his shorts."],
+  s: ["gag", "cum", "gulp", "slosh", "gurgle"], end: { t: "Rep Count", pred: "brock", hint: "Worship him" } },
+
+by_end_forced: { w: "The bench press", in: 1, p: [
+  "\"Wrong answer.\" He's up before you can turn. He grabs you by the back of the neck and slams you face-down on the bench, and pins you there with one huge hand while he yanks your pants down with the other.",
+  "He fucks you on the bench press. Rough, dry, brutal, ***PLAP PLAP PLAP***, the bar rattling in its rack. He's grunting like it's a deadlift. Nobody comes to help. Somebody in the pool whistles.",
+  "When he's done he flips you over, pins you by the throat, and opens his jaw over your head. ***GLLRK.*** He swallows you on the bench, legs kicking, hands shoving the rest of you in. ***GULP.***",
+  "You land in a gut packed with protein shakes and pre-workout, hot and acidic and furious. ***Grrrnch.*** He pats you. \"Bulking season.\"",
+  "The next morning, in the locker room, he squats on the toilet and strains like he's going for a PR. What comes out of him is a whole person's worth, a thick, endless, steaming coil, filling the bowl, overflowing it, piling up on the tiles. ***FFFRRRRT... PLOP... PLOP.*** The cleaner quits."],
+  s: ["plap", "plap", "gulp", "crack", "plop"], end: { t: "Bulking Season", pred: "brock", hint: "Turn him down" } },
+
+by_end_safe: { w: "The bench press", in: 1, p: [
+  "You spot him. You count his reps. You tell him he's crushing it, and his form's perfect, and he's the strongest guy you've ever seen. Brock goes very quiet. Then very red.",
+  "\"...Nobody ever says that,\" he mutters. \"They just say I'm big.\"",
+  "He kisses you against the squat rack, slow and clumsy and sweet, and fucks you on the mats with his huge arms wrapped all the way around you. Afterward he asks, shy, if he can keep you in there for his next set. Just to feel you. You laugh and say yes.",
+  "He swallows you gently, ***Glk... GULP***, and does three sets with you snug in his gut, talking to you between every one, his hand on his belly. ***Grrrlbl.*** Then he lies on the mats and burps you back up, warm and slick, and pulls you onto his chest.",
+  "You're his spotter now. Every night after closing."],
+  s: ["kiss", "plap", "gulp", "belch"], end: { t: "Spotter", pred: "brock", hint: "Encourage him", safe: 1 } },
+
+/* --- Shay --- */
+gy_hyena: { w: "The stretching mats", p: [
+  "Shay is a hyena in a sports bra and booty shorts so tight they're basically paint. She's in a deep stretch, legs spread wide, her huge, muscled ass in the air, thighs thick enough to crack walnuts. She looks at you upside down between her legs and grins.",
+  "\"Hey cutie. Wanna help me stretch?\""],
+  c: [["Help her stretch", "sh_end_thighs"], ["Laugh and say no", "sh_end_ass"], ["Lie down and stretch with her", "sh_end_safe"], ["Back to the gym floor", "g_hub"]] },
+
+sh_end_thighs: { w: "The stretching mats", in: 1, p: [
+  "You kneel down to push on her back. She grabs you and flips you, quick as anything, and suddenly your head is locked between those thighs. She squeezes. ***Krrk.*** You can't breathe. She laughs.",
+  "She grinds her pussy against your face through her shorts until they're soaked through, then shoves them aside and rides your mouth properly, cackling, thighs clamping tighter every time she gets close. She cums twice.",
+  "Then she sits up, still straddling your face, and her pussy opens, and she just sits down. ***Shllorrrp.*** Your head goes in. Then your shoulders. She bounces on you like a squat, rep after rep, pulling you up into her cunt, until your feet disappear. ***Glorp.***",
+  "She finishes her stretches with a huge, round, squirming belly. ***Grrrlbl.*** By morning you've melted into her thighs, and they're even thicker. She does a hundred squats to show them off."],
+  s: ["struggle", "squelch", "cum", "squelch", "gurgle"], end: { t: "Thigh Day", pred: "shay", hint: "Help her stretch" } },
+
+sh_end_ass: { w: "The stretching mats", in: 1, p: [
+  "You laugh and turn to go. Shay sweeps your legs out from under you with one kick. You hit the mat on your back. She stands over you, turns around, and drops that huge muscled ass right on your face. ***FWUMP.***",
+  "\"Oops,\" she giggles. Her shorts are already pushed aside. Her hole is right on your mouth, hot and sweaty. She farts on you, ***Pffffrt***, and laughs so hard her ass jiggles, and then she squats harder and it opens. ***Shlorrrp.***",
+  "She pulls you up her ass like she's doing hip thrusts, every pump dragging you deeper into her guts, giggling the whole time. ***Shlorp. Shlorp. Shlorp.*** Your feet go in last.",
+  "You're squeezed into her stomach, a huge, round bulge on her toned body. She takes a gym selfie with it. ***Grrrnch.***",
+  "And in the morning, she takes a big, triumphant, wet, groaning shit in the locker room toilet, a whole grown person's worth, pouring out of her muscled ass and spilling over onto the floor. ***FFFRRRRT... SPLORT... PLOP.*** She takes a selfie with that, too."],
+  s: ["fart", "squelch", "squelch", "crack", "plop"], end: { t: "Booty Gains", pred: "shay", hint: "Laugh her off" } },
+
+sh_end_safe: { w: "The stretching mats", in: 1, p: [
+  "You lie down next to her and stretch. She cackles and coaches you, pushing your legs further, laughing at how stiff you are. Then her hands slow down. Then she's kissing you, upside down, on the mats.",
+  "You fuck on the mats, sweaty and laughing, her legs wrapped around you so tight you can't move. After, she lies on her back panting and pats her flat belly. \"Wanna come in? I'll be nice. Promise.\"",
+  "She swallows you gently, ***Glk... glk... GULP***, and rolls over on the mats, and you can feel her laughing from the inside, and her hands rubbing you, and her purring heartbeat. ***Grrrrooorgl.***",
+  "At dawn she burps you up onto her chest. ***HRRRRP.*** She's grinning. \"Same time tomorrow? I'll make you flexible yet.\""],
+  s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Workout Buddy", pred: "shay", hint: "Stretch with her", safe: 1 } },
+
+/* --- Kade --- */
+gy_shark: { w: "The pool", p: [
+  "The pool is dark except for the underwater lights. Kade the shark is floating at the deep end, arms spread on the edge, grey skin glistening. He's huge. Swimmer's shoulders. A grin with way, way too many teeth.",
+  "\"Water's warm,\" he says. Under the water, something big and pale is floating between his legs. It's his cock. It's very big. \"Come on in.\""],
+  c: [["Get in", "ks_end_deep"], ["Sit on the edge and dangle your feet", "ks_end_pulled"], ["Get in and kiss him", "ks_end_safe"], ["Back to the gym floor", "g_hub"]] },
+
+ks_end_deep: { w: "The pool", in: 1, p: [
+  "You slip in. He's on you in a second, wrapping you up from behind, his cock sliding between your thighs under the water. \"Good,\" he growls into your ear, and drags you under.",
+  "He fucks you underwater, holding your breath for you with one hand over your mouth, ***plap... plap...***, slow and heavy in the water, letting you up for air only when he wants to. He cums inside you in a hot cloud that drifts up around your faces.",
+  "Then his jaws open. Shark jaws. Rows on rows. They close around your shoulders, not biting, just holding, and he swallows you whole in the deep end. ***GLLLRRK. GULP.*** A swirl of bubbles. A big, round bulge in a shark's belly, sinking to the bottom of the pool.",
+  "He floats on his back afterwards, rubbing his gut, letting the pool lights shine through his stretched-thin belly. ***Grrrnch.*** The pool's closed for cleaning the next day. Nobody asks why."],
+  s: ["plap", "cum", "gulp", "crack"], end: { t: "Deep End", pred: "kade", hint: "Get in the water" } },
+
+ks_end_pulled: { w: "The pool", in: 1, p: [
+  "You sit on the edge and dangle your feet. Kade swims closer, smiling. Then he grabs your ankles and yanks you in. ***SPLOOSH.***",
+  "Underwater, he spins you around and shoves your face against his ass. His tail's out of the way. His hole is gaping, open like a mouth, and he backs onto you. ***Shlrrrp.*** You're in to the shoulders before you can even fight. He pumps his hips, dragging you up inside him, bubbles streaming from your mouth.",
+  "Your kicking legs vanish. He surfaces and floats on his back with a huge, squirming belly, cackling, holding it with both hands. ***Glorrrbl.***",
+  "The next day he shits you out in the pool showers, all of you, a full person's worth, an endless steaming pile filling the shower stall. ***FFFRRRT... PLOP... PLOP.*** The sign on the shower door says OUT OF ORDER for a week."],
+  s: ["struggle", "squelch", "squelch", "gurgle", "plop"], end: { t: "No Running", pred: "kade", hint: "Sit on the edge" } },
+
+ks_end_safe: { w: "The pool", in: 1, p: [
+  "You slide into the water and swim right up to him and kiss him, teeth and all. Kade goes stiff with surprise. Then he laughs, a real laugh, and wraps his arms around you and kisses you back, carefully, around all the teeth.",
+  "You make out in the deep end, then he fucks you slow against the wall, holding you up in the water so you don't have to swim. When he's done he nuzzles your neck. \"Can I keep you? Just till sunrise?\"",
+  "He swallows you so carefully you can feel him not biting, ***Glk... GULP***, and floats on his back in the warm water all night, holding his belly, humming. ***Grrrlbl.*** It's warm in there. It rocks like a boat.",
+  "At dawn he coughs you up into the shallow end and swims laps around you, smug and happy. You come back every night."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Lifeguard", pred: "kade", hint: "Kiss him", safe: 1 } },
+
+/* --- Bun --- */
+gy_bun: { w: "The water fountain", p: [
+  "The bunny is tiny. Four foot nothing, white fur, floppy ears, wearing a leotard with the tags still on and holding a pink water bottle. She looks absolutely terrified of the gym. Her name tag says BUN, NEW MEMBER.",
+  "\"Um! Hi! Do you know how the, um, the machines work? I don't know how any of them work.\" She giggles nervously. She's so small. She looks so harmless.",
+  "Her nose twitches. She's looking at you like she's never seen anything so tasty."],
+  c: [["Show her how the machines work", "bn_end_trap"], ["Laugh at the newbie", "bn_end_humiliate"], ["Sit with her and make her feel welcome", "bn_end_safe"], ["Back to the gym floor", "g_hub"]] },
+
+bn_end_trap: { w: "The leg press", in: 1, p: [
+  "You show her the leg press. She sits in it. Then she grabs your arm and pulls you down between her legs, and her little thighs close around your head like a vice. They're NOT little. They're steel.",
+  "\"Thanks for the help!\" she giggles. Her leotard is pulled aside. Her tiny pink pussy is RIGHT there, and it opens, wider than her whole body should allow, and she pushes the leg press. ***Shllorrrp.***",
+  "Rep. Your head goes in. Rep. Your shoulders. Rep. Rep. Rep. She leg-presses you straight up into her cunt, counting out loud in that sweet little voice, and you're kicking, and you're twice her size, and it doesn't matter at all. ***Glorp.***",
+  "She stands up with a belly bigger than she is. ***Grrrrrooorgl.*** \"Wow,\" she says, patting it. \"Leg day is the best day.\" And she waddles off, tiny and smug and enormous, to try the next machine.",
+  "She gains all of you. Fat little thighs, wide hips, a big soft rump that strains her leotard. She doesn't look harmless anymore."],
+  s: ["struggle", "squelch", "squelch", "gurgle"], end: { t: "Leg Press", pred: "bun", hint: "Teach her the machines" } },
+
+bn_end_humiliate: { w: "The water fountain", in: 1, p: [
+  "You laugh at her. \"You're gonna get eaten alive in here, newbie.\"",
+  "Bun stops smiling. \"...Oh?\" She puts down her water bottle. Then she hops up onto the fountain, grabs your face with both tiny paws, and opens her mouth. And opens it. And opens it. ***GLLK.***",
+  "You're being swallowed by a bunny. She's a third your size. She's using a water fountain as a step stool. ***GLRK. GLRK. GULP.*** Her tiny throat bulges like a balloon around your shoulders and she just keeps going, giggling through her nose.",
+  "She hops down with a belly that nearly drags on the floor. ***Glorrrrrp.*** She takes a sip of water. \"Who's getting eaten alive?\"",
+  "The next morning, she waddles into the locker room, squats on the toilet, and strains, cheeks puffed. What comes out of a four-foot bunny is a whole grown person's worth of shit, a huge, endless, steaming coil piling higher than she is. ***FFFRRRT... PLOP... PLOP... PLOP.*** She wipes her tiny butt and hops back out to the gym, a lot thicker than she came in."],
+  s: ["gulp", "gulp", "gurgle", "fart", "plop"], end: { t: "Newbie", pred: "bun", hint: "Mock the newbie" } },
+
+bn_end_safe: { w: "The locker room", in: 1, p: [
+  "You sit with her and tell her everybody was new once. Bun lights up. You show her the treadmill. She falls off it. You catch her. She stays in your arms a little longer than she needs to.",
+  "\"I'm, um,\" she whispers. \"I'm not really a beginner. I come here to... eat people.\" Her nose twitches. \"But I like you. Can I eat you and NOT digest you? Is that weird?\"",
+  "It's a little weird. You say yes. She's so careful about it, little gulps, ***glk... glk... glk...***, holding your hand until it's in her mouth too, and then you're curled up in the warmest, softest belly in the gym, and she's sitting in the locker room hugging you through her stomach. ***Grrrlbl.***",
+  "At dawn she burps you up, ***Hrrrp***, and you both laugh, and she asks if you'll be her gym buddy. You go every night. She never gets any fitter. You don't mind."],
+  s: ["kiss", "gulp", "gurgle", "belch"], end: { t: "Gym Buddy", pred: "bun", hint: "Make her feel welcome", safe: 1 } },
+
+/* ===================== THE OFFICE ===================== */
+o_start: { w: "Vane & Kessler, 34th floor", p: [
+  "It's 11 p.m. and you're still at the office, because the quarterly report is due and your boss is a dragon. Literally. The floor is dark except for a few desk lamps.",
+  "You're not alone. The corner office light is on: Ms. Vane, the CEO. The HR office door is open a crack. The security guard is doing his rounds, his footsteps heavy enough to rattle the cubicle walls. And somebody's rustling around in the break room.",
+  "Your phone buzzes. *Ms. Vane: My office. Now.*"],
+  c: [["Go to Ms. Vane's office", "ov_vane"], ["Stop by HR", "ov_fox"], ["Go see the security guard", "ov_rhino"], ["Check the break room", "ov_otter"]] },
+
+o_hub: { w: "The office floor", p: ["The printer hums in the dark. Somewhere, a door clicks. Where now?"],
+  c: [["Ms. Vane's office", "ov_vane"], ["HR", "ov_fox"], ["The security guard", "ov_rhino"], ["The break room", "ov_otter"], ["Leave the report and go home", "o_leave"]] },
+
+o_leave: { w: "The elevator", p: ["You grab your coat and hit the elevator button. As the doors close you see four pairs of eyes in the dark office watching you go.",
+  "The report's late. You get written up. It's the best thing that ever happened to you."],
+  end: { t: "Clocked Out", pred: "none", hint: "Go home" } },
+
+/* --- Vesper --- */
+ov_vane: { w: "The corner office", p: [
+  "Ms. Vesper Vane is a dragoness in a tailored black suit, eight feet tall, horns swept back, scales the deep red of old wine. She's leaning back in her chair with her heels on the desk, tail curled lazily around the chair leg. The skirt is very short. Her thighs are very thick.",
+  "\"The report's late,\" she says, smoke curling from her nostrils. \"I'm hungry. I've been in budget meetings all day.\" She looks you up and down. \"Convince me not to have you for a late dinner.\""],
+  c: [["Grovel", "vv_end_desk"], ["Talk back", "vv_end_tail"], ["Tell her you'll stay as late as she needs", "vv_end_safe"], ["Back to your desk", "o_hub"]] },
+
+vv_end_desk: { w: "The corner office", in: 1, p: [
+  "You get on your knees and beg. Vesper smiles. She uncrosses her legs. No panties. \"Go on, then. Beg properly.\"",
+  "You eat her out under the desk while she takes a call, her clawed hand on the back of your head, smoke curling from her nose. \"Yes. Yes, the merger. Mm. Hold on.\" She cums on your face without missing a word.",
+  "Then she hangs up, grabs you by the tie, drags you up across her desk, and swallows you. ***GLLLRRK.*** Papers scatter. Her long throat bulges around you. ***GULP. GULP.***",
+  "You land in a dragon's gut, hot as a furnace. Her belly swells out over her skirt, pushing the desk back. ***Glorrrp.*** She rubs you, satisfied, and goes back to her emails.",
+  "\"Consider this your performance review,\" she purrs, and belches a puff of black smoke. ***HRRRRROOOAP.***"],
+  s: ["squelch", "cum", "gulp", "gulp", "belch"], end: { t: "Performance Review", pred: "vesper", hint: "Grovel" } },
+
+vv_end_tail: { w: "The corner office", in: 1, p: [
+  "\"Maybe if you didn't dump everything on me at five p.m.\" The room goes silent. Vesper's eyes narrow to slits. Her tail uncurls from the chair.",
+  "It whips around your waist and lifts you off your feet. The tip of it, broad and spade-shaped, opens like a mouth. ***SHLLRRK.*** It swallows your head.",
+  "Her tail swallows you whole, a bulge working its way down its long, thick length while she watches, sipping her coffee. ***Glrrk... glrrk... glrrk...*** You go all the way down to the base, into a swelling at the root of her tail, hot and tight and clenching.",
+  "She sits back down, her tail curled around her chair with a huge lump in it, and finishes the quarterly report herself. ***Grrrnch.***",
+  "In the morning, the executive bathroom gets a whole person's worth of dragon shit, a colossal, steaming, groaning pile, ***FFFRRRT... PLOP... PLOP***, and HR gets a memo about attitude."],
+  s: ["struggle", "squelch", "gulp", "crack", "plop"], end: { t: "Insubordination", pred: "vesper", hint: "Talk back" } },
+
+vv_end_safe: { w: "The corner office", in: 1, p: [
+  "\"I'll stay as late as you need.\" Vesper studies you. Then she takes her heels off the desk. \"...Sit.\"",
+  "You finish the report together. Somewhere around 2 a.m. she's laughing at your jokes. Around 3 she's kissing you, slow and hot, against the window, the whole city lit up behind you. She fucks you on the conference table, wings half spread, purring like a furnace.",
+  "\"I don't want you to go home,\" she says after, quietly. \"Stay in me tonight.\" She swallows you gently, ***Glk... GULP***, and stretches out on her office couch with her claws over her belly and you curled up warm inside. ***Grrrrlbl.***",
+  "At dawn she coughs you up onto the couch and buttons her suit. \"You're getting promoted,\" she says. \"To my assistant. Personal.\" She means very personal."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Corner Office", pred: "vesper", hint: "Offer to stay late", safe: 1 } },
+
+/* --- Tamsin --- */
+ov_fox: { w: "HR", p: [
+  "Tamsin from HR is a vixen in a pencil skirt and glasses, red fur, a fluffy tail, and a smile that's all business. She waves you in and closes the door.",
+  "\"I've been reviewing your browser history,\" she says sweetly, turning her monitor around. It's... a lot of vore. \"I'd hate for that to get out.\" Her skirt is tented. A lot. \"Unless we can come to an arrangement.\""],
+  c: [["Agree to the arrangement", "tm_end_cock"], ["Threaten to report her", "tm_end_forced"], ["Admit you're into it, and ask if she is too", "tm_end_safe"], ["Back to your desk", "o_hub"]] },
+
+tm_end_cock: { w: "HR", in: 1, p: [
+  "\"Good.\" She hikes up her skirt. Her cock springs free, pink and knotted and dripping, a heavy pair of balls under it. \"Kneel.\"",
+  "You suck her cock under her desk while she files paperwork. Then she presses the tip against your forehead and it opens. ***SHLLRRK.*** Your head goes in. \"You did want this, didn't you? Says so in your browser history.\"",
+  "She strokes you down her shaft, inch by inch, purring. ***Glrrk... glrrk...*** You drop into her balls with a fat, wet ***SHLORP*** and they swell, huge and round, under her desk.",
+  "She crosses her legs over them and gets back to work. ***Shlosh.*** By morning you're a stain on HR's office carpet and a very large note in your file: RESIGNED."],
+  s: ["gag", "squelch", "slosh", "cum"], end: { t: "Arrangement", pred: "tamsin", hint: "Take her deal" } },
+
+tm_end_forced: { w: "HR", in: 1, p: [
+  "\"I'll report you!\" Tamsin laughs. \"To who? I'm HR.\" She's out of her chair, slamming you face-down over her desk, pinning your arms, yanking your pants down.",
+  "Her knotted cock rams into you, ***PLAP***, and she fucks you hard and fast, her tail swishing, her glasses fogging up. She knots you and cums so much it leaks down your thighs. ***Shlorp.***",
+  "Then she pulls out, flips you, and swallows you whole, ***GLLRK. GULP***, and sits back down with a fat, squirming belly under her blouse, adjusting her glasses. ***Grrrnch.***",
+  "In the morning she shits you out in the women's room, a whole grown person's worth, a huge, steaming pile overflowing the stall. ***FFFRRRT... PLOP.*** She fills out the incident report herself. Cause of absence: none given."],
+  s: ["plap", "plap", "cum", "gulp", "crack", "plop"], end: { t: "Filed Away", pred: "tamsin", hint: "Threaten her" } },
+
+tm_end_safe: { w: "HR", in: 1, p: [
+  "\"...Yeah. I'm into it. Are you?\" Tamsin's ears go flat. Her face goes pink under the fur. She turns the monitor back around. \"...I might have been looking at it because I was. Into it.\"",
+  "You end up making out on her desk, then fucking, her knot locking you together, both of you laughing at how unprofessional it is. Then she looks at you with those glasses all fogged up. \"Can I? Just to try?\"",
+  "She takes you into her cock, so slowly, ***Shlrrrk... glrrk... glrrk...***, and holds her balls in both hands the whole night, rubbing you. Nothing hurts. It's warm and wet and she's whispering to you.",
+  "At dawn she spills you out onto her office floor in a hot flood, alive and sticky, and helps you up, and kisses you. \"Don't tell HR,\" she says, and then laughs. \"Oh, wait.\""],
+  s: ["kiss", "plap", "squelch", "slosh", "cum"], end: { t: "Off the Record", pred: "tamsin", hint: "Be honest with her", safe: 1 } },
+
+/* --- Rocco --- */
+ov_rhino: { w: "The security desk", p: [
+  "Rocco the security guard is a rhino. A big, grey, slab of a rhino in a uniform shirt that's lost half its buttons, a radio on his belt and a huge gut pushing over it. He's got his feet up watching the cameras.",
+  "\"Shouldn't be here this late,\" he rumbles. \"After hours. Gotta search you.\" He cracks his knuckles."],
+  c: [["Let him search you", "rr_end_search"], ["Run for the elevator", "rr_end_chase"], ["Bring him a coffee and keep him company", "rr_end_safe"], ["Back to your desk", "o_hub"]] },
+
+rr_end_search: { w: "The security desk", in: 1, p: [
+  "He pats you down. Slowly. Thoroughly. Very thoroughly. His hands cup your ass. Your crotch. \"Gonna have to do a cavity search.\"",
+  "He bends you over the security desk and his fingers are in you, then his cock, thick and heavy, ***PLAP***, and he fucks you while the cameras watch, grunting, his gut slapping against your back. ***PLAP. PLAP.***",
+  "\"Suspicious,\" he decides when he's done, and opens his mouth. ***GLLRRK. GULP.*** He swallows you on the spot and sits back down, his gut now huge and round and squirming, belt buckle straining. ***Glorrrp.***",
+  "He watches the cameras all night with his hand on his belly. ***Grrrnch.*** In the morning, the men's room on the lobby floor is closed for repairs. The pile is bigger than the stall."],
+  s: ["plap", "plap", "gulp", "crack", "plop"], end: { t: "Cavity Search", pred: "rocco", hint: "Let him search you" } },
+
+rr_end_chase: { w: "The elevator", in: 1, p: [
+  "You run. Rocco doesn't. He just watches you on the cameras, and when you reach the elevator, he's already standing in it. \"Took the stairs,\" he says, not even out of breath.",
+  "He grabs you and pins you to the elevator wall, and fucks you as it rides down, all thirty-four floors, ***PLAP PLAP PLAP***, so hard the elevator shakes. Floor 1. Ding.",
+  "Then he backs his huge grey ass up against you, and his hole opens like a door. ***SHLLORRRP.*** He pushes back and you go in, face-first, shoulders, hips. ***Shlorp. Shlorp.*** The doors close on your feet.",
+  "He rides the elevator back up with a big lump in his gut. ***Glorrbl.*** In the morning he squats on the lobby toilet and pushes you out, a whole grown person's worth, filling the stall. ***FFFRRRT... PLOP... PLOP.*** \"Shouldn't run,\" he says to nobody."],
+  s: ["struggle", "plap", "plap", "squelch", "gurgle", "plop"], end: { t: "Going Down", pred: "rocco", hint: "Run" } },
+
+rr_end_safe: { w: "The security desk", in: 1, p: [
+  "You bring him a coffee and sit with him. Rocco blinks. Nobody ever sits with him. He shows you the cameras, and the weird stuff people do in the office at night, and you laugh until you cry.",
+  "Around 3 a.m. he kisses you, clumsy and gentle. You fuck in the security room, slow, his big arms around you, and afterwards he says, embarrassed, \"Nights get lonely. Could I... keep you? Just till my shift's over?\"",
+  "He swallows you so gently, ***Glk... GULP***, and leans back in his chair with both hands on his round gut, watching the cameras and talking to you all night about everything. ***Grrrlbl.***",
+  "At six his shift ends and he burps you up in the locker room. ***HRRRP.*** He gets you a coffee. You come back every night after that."],
+  s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Night Shift", pred: "rocco", hint: "Keep him company", safe: 1 } },
+
+/* --- Pip --- */
+ov_otter: { w: "The break room", p: [
+  "Pip is an otter intern. Small, sleek, brown, in an oversized blazer, eating somebody else's yogurt out of the fridge. She's been here three weeks and she's already gunning for your job. Everybody knows it.",
+  "\"Oh! Hey!\" she says, way too brightly. \"Working late? Me too. Hey, so I heard there's a promotion opening. Yours, actually. If you were to, like... disappear.\" She licks the yogurt spoon, slowly."],
+  c: [["Laugh at her", "pp_end_job"], ["Share your snacks with her", "pp_end_fridge"], ["Offer to mentor her", "pp_end_safe"], ["Back to your desk", "o_hub"]] },
+
+pp_end_job: { w: "The break room", in: 1, p: [
+  "\"You? Take MY job? You're an intern.\" Pip smiles. She puts down the yogurt. Then she leaps at your face.",
+  "She's tiny. She's slippery. She's an otter. Her jaws open, wider than her whole head, ***GLLK***, and she wraps her arms around your neck and swallows you down, wriggling her whole body over you like a sock. ***Glrk. Glrk. GULP.***",
+  "A three-foot otter intern sits on the break room floor with a belly bigger than she is, patting it. ***Grrrrooorgl.*** \"Guess I'm getting promoted!\"",
+  "In the morning she shits you out in the break room bathroom, a whole grown person's worth, the toilet overflowing, the pile reaching the sink. ***FFFRRRT... PLOP... PLOP... PLOP.*** She moves into your cubicle that afternoon, a lot thicker than she was. She keeps your mug."],
+  s: ["gulp", "gulp", "gurgle", "fart", "plop"], end: { t: "Promoted", pred: "pip", hint: "Laugh at the intern" } },
+
+pp_end_fridge: { w: "The break room", in: 1, p: [
+  "You open the fridge to offer her a sandwich. She shoves you in. The fridge door slams. When it opens again a minute later, you're shivering and she's laughing and her mouth is open around your head. ***GLLK.***",
+  "\"Thanks for sharing,\" she says, muffled, and swallows. ***GLRK. GULP.*** You go down her tiny body in jerks, her blazer splitting at the seams as her gut swells huge.",
+  "She sits on the break room counter digesting you with her feet swinging, eating everybody else's lunch out of the fridge too. ***Grrrnch.***",
+  "In the morning there's a sign on the break room bathroom: OUT OF ORDER. Under it, in Pip's handwriting: *sorry!!*"],
+  s: ["struggle", "gulp", "gulp", "crack", "plop"], end: { t: "Lunch Thief", pred: "pip", hint: "Share your snacks" } },
+
+pp_end_safe: { w: "The break room", in: 1, p: [
+  "\"Want some help? I could show you the ropes.\" Pip blinks. Nobody's offered her anything since she got here. Her whiskers twitch. \"...Really?\"",
+  "You end up working until 4 a.m. together. She's smart. Too smart. She falls asleep on your shoulder. When she wakes up she kisses you, then panics, then kisses you again, and you fuck on the break room couch, quick and giggly and messy.",
+  "\"Can I eat you?\" she asks after. \"Like, not to take your job. Just because you're nice.\" You say yes. She's so careful, wriggling you down slow and wiggly, ***glk... glk... GULP***, and curls up on the couch with you, hugging her round tummy. ***Grrrlbl.***",
+  "At dawn she burps you up, ***Hrrrp***, and gives you the rest of her yogurt. She gets promoted. So do you. She makes sure of it."],
+  s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Mentor", pred: "pip", hint: "Offer to mentor her", safe: 1 } },
+
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
-  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"]] },
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"]] },
 
 f_start: { w: "Hollis Farm", p: [
   "Your car died two miles back. The only light for miles is Hollis Farm. The farmhouse lights are on, and there's a note tacked to the barn door in looping handwriting: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers. — Maggie*",
@@ -130,7 +479,7 @@ c_milk: { w: "Clover's stall", p: [
   "You kneel and grab a teat. It's warm and fat and slick. You squeeze. Milk sprays. Clover groans, deep and shuddering, and her back legs spread wider, pushing her udder right into your face.",
   "Milk dribbles down your chin. The teat in your hand is getting bigger. It's swelling, the tip opening, wider and wetter, pulsing like a mouth."],
   s: ["slosh"],
-  c: [["Suck it", "c_end_udder"], ["Pull away", "c_end_crush"]] },
+  c: [["Suck it", "c_end_udder"], ["Keep milking her gently", "c_end_safe"], ["Pull away", "c_end_crush"]] },
 
 c_end_udder: { w: "Clover's udder", in: 1, p: [
   "You wrap your lips around it and suck. Clover MOOS, loud and filthy, and the teat surges forward over your face. ***SHLORRRP.*** Your whole head is inside her nipple, milk pouring over you, the soft rubbery tube squeezing around your neck.",
@@ -208,7 +557,7 @@ h_touch: { w: "Ransom's stall", p: [
   "You reach through the bars and wrap your hand around it. You can't even close your fingers. It's burning hot and heavy and it twitches against your palm. Ransom groans, a deep, shuddering, almost human sound, and thrusts, slowly, into your hand.",
   "Precum spills over your fingers. Thick and hot. Lots of it. He thrusts again, harder, and the head flares against your wrist."],
   s: ["squelch"],
-  c: [["Lick it", "h_end_suck"], ["Keep stroking", "h_end_raped"]] },
+  c: [["Lick it", "h_end_suck"], ["Stroke his neck first", "h_end_safe"], ["Keep stroking", "h_end_raped"]] },
 
 h_end_suck: { w: "Ransom's stall", in: 1, p: [
   "You press your face against the bars and lick the flared tip. It tastes like salt and musk and it twitches against your tongue. You lick again. Then you get your lips around it. Barely. Your jaw cracks.",
@@ -233,7 +582,7 @@ f_sheep: { w: "The sheep pen", p: [
 e_wool: { w: "The sheep pen", p: [
   "You climb in and sink both hands deep into her fleece. It's warm and thick and smells like lanolin and sweat. Bramble leans into you, heavy, pressing you back against the fence with her whole soft weight. Then she turns around.",
   "Her rump is right in front of you, big and round and woolly, her stubby tail flicking up. Underneath it, she's wet. Swollen and pink and dripping in the straw. She backs toward you, slowly. Bleating."],
-  c: [["Fuck her", "e_end_fucked"], ["Let her sit on you", "e_end_smother"]] },
+  c: [["Fuck her", "e_end_fucked"], ["Let her sit on you", "e_end_smother"], ["Curl up in her wool", "e_end_safe"]] },
 
 e_end_fucked: { w: "The sheep pen", in: 1, p: [
   "You drop your pants and push into her. She's scorching hot and tight and she clenches around your cock like a fist, and bleats so loud the horse stamps in his stall. You fuck her against the fence, fingers buried in her wool, ***plap... plap... plap***, her heavy rump bouncing back against your hips.",
@@ -269,7 +618,7 @@ f_hen: { w: "The hen house", p: [
   "There's one hen in the hen house, sitting on top of the nesting boxes like a throne. A fat, glossy red hen, about a foot and a half tall, with a bright comb and the beadiest, nastiest little eyes you have ever seen on a bird. PEACHES, says a hand-painted sign. Under it, in Maggie's handwriting: DO NOT TOUCH HER EGGS.",
   "She clucks at you. It is not a friendly cluck. It is the cluck of somebody who has decided you're beneath her.",
   "She's a chicken. You could pick her up with one hand."],
-  c: [["Laugh at her", "h2_laugh"], ["Steal one of her eggs", "h2_egg"], ["Leave the hen house", "f_hub"]] },
+  c: [["Laugh at her", "h2_laugh"], ["Steal one of her eggs", "h2_egg"], ["Bring her some corn", "h2_end_safe"], ["Leave the hen house", "f_hub"]] },
 
 h2_laugh: { w: "The hen house", p: [
   "You laugh. It's a CHICKEN. Peaches stops clucking. She puffs up every feather on her body until she's twice the size, which is still about knee-high. She glares. The rest of the barn goes silent. Even the horse stops shifting."],
@@ -334,7 +683,7 @@ sk_grab: { w: "The creek", in: 1, p: [
 
 sk_swim: { w: "The creek", p: [
   "You strip and wade in. The water's freezing. Something warm brushes your thigh. Then your ass. Then she's circling you, slow and slick, her body sliding between your legs, her mouth nibbling at your skin."],
-  c: [["Let her nibble", "sk_end_spawn"], ["Grab her", "sk_grab"]] },
+  c: [["Let her nibble", "sk_end_spawn"], ["Hold her gently", "sk_end_safe"], ["Grab her", "sk_grab"]] },
 
 /* ===== MAGGIE: the farmhouse ===== */
 f_house: { w: "The farmhouse", p: [
@@ -369,7 +718,7 @@ mg_end_chase: { w: "The farmyard", in: 1, p: [
 mg_flirt: { w: "The farmhouse", p: [
   "You tell her she's not what you pictured a farmer looking like. She laughs, loud and warm, and leans in the doorway so her tits press together in her flannel. \"Yeah? What'd you picture?\" She takes your hand and puts it right on one. \"This better?\"",
   "It's huge and soft and heavy in your palm. Her nipple's hard through the shirt."],
-  c: [["Squeeze", "mg_end_breast"], ["Kiss her", "mg_end_dessert"]] },
+  c: [["Squeeze", "mg_end_breast"], ["Kiss her", "mg_end_dessert"], ["Ask her out on a date", "mg_end_safe"]] },
 
 mg_end_breast: { w: "The farmhouse bedroom", in: 1, p: [
   "You squeeze. She moans and drags you inside by the collar, up the stairs, onto a creaking bed, and rips her shirt open. Her tits flop out, enormous, freckled, pale, with fat pink nipples already leaking milk.",
@@ -403,7 +752,7 @@ m_drink: { w: "The kitchen", p: [
   "It's purple and it tastes like cough syrup and gasoline. You drink it anyway. Marla watches you over the rim of her own cup the whole time, grinning with way too many teeth.",
   "\"Good boy,\" she purrs, and slaps her gut. It wobbles and gurgles loud enough to hear over the music. ***Grrrrrooorgl.*** \"Ugh. Still hungry. I'm always fuckin' hungry.\""],
   s: ["gurgle"], set: { drinks: 1 },
-  c: [["Another one", "m_drunk"], ["Rub her belly for her", "m_rub"], ["Get out of there", "hub"]] },
+  c: [["Another one", "m_drunk"], ["Rub her belly for her", "m_rub"], ["Kiss her", "m_end_safe"], ["Get out of there", "hub"]] },
 
 m_drunk: { w: "The kitchen floor", p: [
   "Three drinks later you're on the kitchen floor and you don't remember sitting down. Marla is squatting over you, her massive thighs either side of your head, her pussy dripping through a pair of soaked panties right above your face.",
@@ -477,7 +826,7 @@ living: { w: "The living room", p: [
 t_sit: { w: "The couch", p: [
   "He throws one massive arm around your shoulders and drags you into his side. He smells like sweat, beer and that musk you smelled at the door. It's him. It's coming off him in waves.",
   "\"You smell good,\" he rumbles, and licks the side of your face, slow and rough, like he's tasting a steak. His other hand drops into your lap and squeezes. \"Real good.\""],
-  c: [["Let him", "t_lap"], ["Push his hand away", "t_end_forced"]] },
+  c: [["Let him", "t_lap"], ["Kiss him first", "t_end_safe"], ["Push his hand away", "t_end_forced"]] },
 
 t_lap: { w: "The couch", p: [
   "His hand rubs. His shorts tent, and keep tenting. When he tugs them down, his cock slaps against his abs, a thick, barbed lion dick as long as your forearm, already dripping.",
@@ -543,7 +892,7 @@ v_room: { w: "The bathroom", p: [
   "She locks the door. Her tail coils around your legs before you've even turned around, and squeezes. Not hard. Just enough to say: you're not leaving.",
   "She pulls her dress up. Her cock is thick, ribbed, purple-grey and glistening, with a pair of heavy balls under it. And behind them, her pussy, wet and swollen.",
   "\"Pick one,\" she whispers. \"I'm feeling generous.\""],
-  c: [["Her cock", "v_end_cv"], ["Her pussy", "v_end_unbirth"]] },
+  c: [["Her cock", "v_end_cv"], ["Her pussy", "v_end_unbirth"], ["Ask her to just hold you", "v_end_safe"]] },
 
 v_end_cv: { w: "The bathroom", in: 1, p: [
   "\"Good choice.\" Her coils tighten and lift you right off the floor, upside down, face level with her cock. She rubs the tip over your lips, then your eyes, then your forehead. Then her slit stretches open around your head. ***SHLLRRK.***",
@@ -624,7 +973,7 @@ j_nice: { w: "The bedroom", p: [
   "You sit on the edge of the bed. She blinks at you like you're a talking cat. Then she very cautiously turns the laptop around.",
   "\"It's, um. It's a monster-taming game. You can, um, you can have the monsters eat the enemies? I mean. That's not the point. That's not really the point. I just like that part.\" Her ears go pink.",
   "You talk for a while. She warms up. She's funny when she forgets to be nervous. And then the door bangs open, and Thane fills the doorway, beer in hand, sniffing. \"Smells like snacks up here.\""],
-  c: [["Shield her with your body", "j_end_shield"], ["Hide behind her (she's tiny, but still)", "j_end_hide"], ["Ask her quietly if she likes that part for real", "j_end_curious"]] },
+  c: [["Shield her with your body", "j_end_shield"], ["Hide behind her (she's tiny, but still)", "j_end_hide"], ["Ask her quietly if she likes that part for real", "j_end_curious"], ["Tell her you like her", "j_end_safe"]] },
 
 j_end_shield: { w: "The bedroom", in: 1, p: [
   "You stand up between Thane and the bed. Thane laughs, grabs you by the collar and lifts you off your feet, and opens his huge lion jaws over your head.",
@@ -691,7 +1040,7 @@ s_fuck: { w: "Dex's bed", p: [
   "You drop your pants. She coils around your thighs, flicks her tongue all over your cock until it's dripping, and then slides her body up and over it, turning, until the smooth vent under her tail is pressed against your tip.",
   "She's tight and hot and slick, and she squeezes. You push in. ***Shlrrk.*** She shudders all down her length, every scale rippling, and wraps her tail around your balls to pull you deeper. You're fucking a snake on Dex's bed. A pet snake. And she's loving it."],
   s: ["squelch"],
-  c: [["Keep fucking her", "s_end_fucked"], ["Push your cock deeper than it should go", "s_end_vent"]] },
+  c: [["Keep fucking her", "s_end_fucked"], ["Push your cock deeper than it should go", "s_end_vent"], ["Fuck her slow, then take her home with you", "s_end_safe"]] },
 
 s_end_fucked: { w: "Dex's bed", in: 1, p: [
   "You fuck her. Her coils milk you in waves, squeezing your hips in time with your thrusts, ***plap… plap… plap***, wet and tight and rippling, until you cum hard inside her, pumping your load into a fucking pet snake while the party thumps through the floor.",
@@ -755,7 +1104,7 @@ yard: { w: "The backyard", p: [
 d_pet: { w: "The backyard", p: [
   "You scratch behind his ears. He leans into it. Then he gets up, walks behind you, and shoves his nose right between your ass cheeks through your jeans, snuffling hard.",
   "When you turn around, his red cock is sliding out of his sheath, long and pointed and dripping. His tail wags slow. His eyes say: *Get on your knees.*"],
-  c: [["Get on your knees", "d_end_knot"], ["Run back inside", "d_end_chase"]] },
+  c: [["Get on your knees", "d_end_knot"], ["Roll him over and scratch his belly", "d_end_safe"], ["Run back inside", "d_end_chase"]] },
 
 d_end_knot: { w: "The backyard", in: 1, p: [
   "You get on your hands and knees in the grass. Duke mounts you immediately, front legs locking around your waist, and his cock hunts and stabs until it finds your hole and rams in. ***PLAP.***",
@@ -801,12 +1150,12 @@ function drawStats() {
 }
 function go(id) {
   const n = N[id]; if (!n) return;
-  if (id === "start" || id === "f_start") { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (["start", "f_start", "g_start", "o_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
   if (id === "menu") hush();
   if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
   VISITED[id] = 1;
   $("#where").textContent = n.w || "";
-  if (["start", "hub", "f_start", "f_hub", "menu"].includes(id)) $("#text").innerHTML = "";
+  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "menu"].includes(id)) $("#text").innerHTML = "";
   const first = $("#text").children.length;
   n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
   if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
@@ -814,7 +1163,7 @@ function go(id) {
   if (n.end) {
     const isNew = !SEEN[id]; SEEN[id] = Date.now(); saveSeen();
     const pr = PREDS[n.end.pred];
-    $("#text").insertAdjacentHTML("beforeend", `<div class="end"><div class="who">${esc(pr.n)} · ${esc(pr.k)}</div><h2>${isNew ? "New ending: " : "Ending: "}${esc(n.end.t)}</h2></div>`);
+    $("#text").insertAdjacentHTML("beforeend", `<div class="end"><div class="who">${esc(pr.n)} · ${esc(pr.k)}</div><h2>${isNew ? "New ending: " : "Ending: "}${esc(n.end.t)}${n.end.safe ? " 💛" : ""}</h2></div>`);
     $("#choices").innerHTML = `<button class="ch" data-go="${ST.scen || "start"}">↺ Start this night over</button><button class="ch" data-go="menu">Pick a different night</button><button class="ch" data-gal>See all endings</button>`;
   } else {
     const opts = (n.c || []).filter(c => !c[2] || c[2](ST));
@@ -828,7 +1177,7 @@ function go(id) {
 // which endings a choice can still lead to (for the ✓ mark once all are seen)
 const RC = {};
 function reach(id, seen = new Set()) {
-  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "menu"].includes(id)) return out; seen.add(id);
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "menu"].includes(id)) return out; seen.add(id);
   const n = N[id]; if (!n) return out; if (n.end) out.add(id);
   for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
   return (RC[id] = out);
@@ -841,7 +1190,7 @@ function gallery(show) {
   const byPred = {}; ENDS.forEach(e => (byPred[e.pred] = byPred[e.pred] || []).push(e));
   $("#gallery").innerHTML = `<button class="btn" data-back style="margin-bottom:14px">‹ Back to the game</button><div class="gal">` +
     Object.entries(byPred).map(([p, es]) => `<div class="gp"><div class="k">${esc(PREDS[p].k)}</div><h2>${esc(PREDS[p].n)} · ${es.filter(e => SEEN[e.k]).length}/${es.length}</h2>
-      <div class="slots">${es.map(e => `<span class="sl ${SEEN[e.k] ? "on" : ""}">${SEEN[e.k] ? esc(e.t) : "? " + esc(e.hint)}</span>`).join("")}</div></div>`).join("") + "</div>";
+      <div class="slots">${es.map(e => `<span class="sl ${SEEN[e.k] ? "on" : ""}">${e.safe ? "💛 " : ""}${SEEN[e.k] ? esc(e.t) : "? " + esc(e.hint)}</span>`).join("")}</div></div>`).join("") + "</div>";
   scrollTo({ top: 0 });
 }
 document.addEventListener("click", e => {
