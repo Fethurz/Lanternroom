@@ -92,6 +92,7 @@ const PREDS = {
   ransom:{ n: "Ransom", k: "Stallion · feral" },
   bramble:{ n: "Bramble", k: "Ewe · feral" },
   peaches:{ n: "Peaches", k: "Hen · feral" },
+  coral: { n: "Coral", k: "Sockeye salmon · feral" },
   maggie:{ n: "Maggie", k: "Redhead farmer · human" },
   none:  { n: "Nobody", k: "You got away" }
 };
@@ -109,10 +110,10 @@ f_start: { w: "Hollis Farm", p: [
   "The barn is warm and thick with the smell of hay and sweat and something heavier underneath. Musk. Animal musk. Lots of it.",
   "As your eyes adjust, you see them. In every stall, eyes are open. Watching you. A cow. A huge black horse. A sheep the size of a sofa, wool and all. And through the open door of the hen house, a fat red hen, glaring like you owe her money.",
   "Not one of them looks like a dumb animal. Every one of them looks like it's deciding something."],
-  c: [["Head for the cow's stall", "f_cow"], ["Check on the stallion", "f_horse"], ["Look at the sheep", "f_sheep"], ["Peek in the hen house", "f_hen"], ["Knock on the farmhouse door", "f_house"]] },
+  c: [["Head for the cow's stall", "f_cow"], ["Check on the stallion", "f_horse"], ["Look at the sheep", "f_sheep"], ["Peek in the hen house", "f_hen"], ["Knock on the farmhouse door", "f_house"], ["Follow the splashing out back", "f_creek"]] },
 
 f_hub: { w: "The barn", p: ["The barn creaks. Something shifts in the dark. Every animal is still watching you. Where now?"],
-  c: [["The cow's stall", "f_cow"], ["The stallion's stall", "f_horse"], ["The sheep pen", "f_sheep"], ["The hen house", "f_hen"], ["The farmhouse", "f_house"], ["Sleep in the truck outside instead", "f_leave"]] },
+  c: [["The cow's stall", "f_cow"], ["The stallion's stall", "f_horse"], ["The sheep pen", "f_sheep"], ["The hen house", "f_hen"], ["The farmhouse", "f_house"], ["The creek", "f_creek"], ["Sleep in the truck outside instead", "f_leave"]] },
 
 f_leave: { w: "Hollis's truck", p: ["You lock yourself in the old truck and sleep sitting up. All night, things press against the windows: a huge wet nose, a horse's eye, a hen's beak tapping the glass. Tap. Tap. Tap. And once, a redhead in a flannel shirt, cupping her hands to the window and smiling.",
   "In the morning a tow truck comes. Every animal on the farm watches you go. Maggie waves from the porch, licking her lips."],
@@ -296,6 +297,44 @@ h2_egg: { w: "The hen house", p: [
   "You reach under her for an egg. Peaches lets you get your whole hand under her. Then she clamps down. Her legs lock on your wrist and she sits. Hard. Your hand is pinned in hot feathers, and she's staring at you, and something under her is opening around your fingers. Wet. Sucking."],
   s: ["squelch"],
   c: [["Yank your hand out", "h2_end_lost"], ["Hold still", "h2_end_sat"]] },
+
+/* ===== CORAL: the creek ===== */
+f_creek: { w: "The creek", p: [
+  "Behind the barn, a cold creek runs over smooth stones under the moon. Something splashes in the shallows. A fish. A big one: a sockeye salmon in full spawning colours, body a deep, glossy, almost obscene red, head a dark mossy green, about as long as your leg.",
+  "She's not swimming upstream. She's lying in the shallows on her side, half out of the water, slowly fanning her tail. Watching you. Her mouth opens and closes, plump and pink.",
+  "Then she rolls, just a little, showing off the curve of her belly. Her vent is swollen and pink and twitching. She's in season. She's waiting for something. And her eye says it's you."],
+  c: [["Wade in and touch her", "sk_touch"], ["Try to catch her with your hands", "sk_grab"], ["Strip and swim", "sk_swim"], ["Back to the barn", "f_hub"]] },
+
+sk_touch: { w: "The creek", p: [
+  "You kneel in the cold water and run your hand down her side. She's slick and firm and shivering. She arches into your palm like a cat. When your fingers brush her vent, she flips her tail hard enough to splash you, and her vent opens, wet and soft, sucking at your fingertips."],
+  c: [["Fuck her", "sk_end_spawn"], ["Push your hand in", "sk_end_arm"]] },
+
+sk_end_spawn: { w: "The creek", in: 1, p: [
+  "You drop your pants in the shallows and press your cock to her vent. She shudders all down her body and slides back onto you. ***Shlrrk.*** She's cold outside and scalding inside, tight and slick and rippling, and she wriggles on your cock like she's swimming upstream on it.",
+  "You fuck a salmon in a creek at midnight. ***Plap... plap... sploosh.*** She thrashes in your hands, tail slapping your thighs, and when you cum she spawns at the same time, a gush of hot, bright orange roe spilling over your legs in the water.",
+  "Then she keeps wriggling. Backwards. Her vent opens wider around your cock, your balls, your hips, sucking you in with every flex of her tail. ***Shllorrrp.*** You fall back in the shallows. She swims right up you, swallowing you up her vent, one wriggle at a time.",
+  "Your face goes under the water, then into her. ***Glorp.*** A leg-long salmon now has a belly as big as a whole grown person, so round she can't swim, just float, bobbing belly-up in the creek, fins flicking lazily.",
+  "In the morning, Maggie finds her lying in the shallows straining, and what comes out of that one salmon is a whole person's worth of soft, wet, steaming shit, ***FFFRRRT... PLORRP... PLOP***, piling up on the stones and damming the creek. Maggie just laughs. \"Damn, girl.\""],
+  s: ["squelch", "plap", "cum", "squelch", "gurgle", "fart", "plop"], end: { t: "Spawning Season", pred: "coral", hint: "Fuck her" } },
+
+sk_end_arm: { w: "The creek", in: 1, p: [
+  "You push your hand in. It goes in easily. Too easily. She clenches, hard, around your wrist, and starts wriggling, and your arm goes in up to the elbow. ***Shlrrp.*** You can't pull it out. She's sucking.",
+  "She thrashes upstream, and drags you with her, face-first into the cold water. Your shoulder goes in. Your head. You're being pulled into a fish by your own arm, and she's swimming the whole time, wriggling you in deeper with every stroke of her tail. ***Shlorp. Shlorp.***",
+  "Your legs kick above the water for a moment. Then they slide in. A salmon floats in the creek with a huge, taut, person-shaped belly, belly-up, twitching her tail in what is clearly pleasure. ***Glorrrp.***",
+  "By morning she's shitting you out on the bank, a whole person's worth, piled higher than she is long. She flops back into the water and swims off. You got stuck in a fish."],
+  s: ["squelch", "squelch", "gurgle", "plop"], end: { t: "Arm's Length", pred: "coral", hint: "Reach inside her" } },
+
+sk_grab: { w: "The creek", in: 1, p: [
+  "You lunge and grab her around the middle with both hands. She's slippery. She squirts out of your grip, flips in the air, and slaps you across the face with her tail. ***SMACK.*** You fall flat on your back in the shallows.",
+  "She lands on your chest. Her mouth opens, wide, wider, a plump pink ring stretching impossibly, and she lunges at your face. ***Glk.*** A fish is swallowing your head. Her gills flare wide as you go in. ***Glk. Glk. Glk.***",
+  "She wriggles down over you, tail thrashing, inching her whole body over your shoulders like a sock being pulled on. You're three times her size. It doesn't matter. ***GULP.*** Your feet kick out of a salmon's mouth, then they don't.",
+  "She lies in the shallows with a ridiculous, enormous belly, gills puffing, and burps up a stream of bubbles. ***Blrrrrp.*** It stinks of you.",
+  "Maggie finds the pile on the creek bank in the morning, as big as a grown person and steaming in the cold air. She looks at the smug, deflated salmon. \"You? Really?\""],
+  s: ["struggle", "gulp", "gulp", "gulp", "belch", "plop"], end: { t: "The One That Got Away", pred: "coral", hint: "Grab her" } },
+
+sk_swim: { w: "The creek", p: [
+  "You strip and wade in. The water's freezing. Something warm brushes your thigh. Then your ass. Then she's circling you, slow and slick, her body sliding between your legs, her mouth nibbling at your skin."],
+  c: [["Let her nibble", "sk_end_spawn"], ["Grab her", "sk_grab"]] },
 
 /* ===== MAGGIE: the farmhouse ===== */
 f_house: { w: "The farmhouse", p: [
