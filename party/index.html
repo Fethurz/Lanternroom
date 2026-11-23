@@ -57,7 +57,7 @@ button{font:inherit;color:inherit;border:0;cursor:pointer}
     <div id="choices"></div>
   </div>
   <div id="gallery" class="hidden"></div>
-  <p class="credit">Some sound assets from Jeschke. Every character is an adult. Fiction only.</p>
+  <p class="credit">Some sound assets from Jeschke. Every character is an adult. Fiction only.<br>SCP Foundation material is used under CC BY-SA 3.0 (scp-wiki.wikidot.com). Sadako is from Koji Suzuki's <i>Ring</i>; this is fan fiction.</p>
 </div>
 <script>
 "use strict";
@@ -114,6 +114,11 @@ const PREDS = {
   brannoc:{ n: "Sir Brannoc", k: "Knight · you ate him" },
   elowen:{ n: "Elowen", k: "Elf archer · you ate her" },
   kit:   { n: "Kit", k: "Catgirl rogue · you ate her" },
+  s1471: { n: "SCP-1471-A", k: "MalO · Foundation" },
+  s682:  { n: "SCP-682", k: "Hard-to-Destroy Reptile · Foundation" },
+  s939:  { n: "SCP-939", k: "With Many Voices · Foundation" },
+  s999:  { n: "SCP-999", k: "The Tickle Monster · Foundation" },
+  sadako:{ n: "Sadako", k: "The cursed tape · ghost" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -810,9 +815,177 @@ vc_end_safe: { w: "The Boss Lair", in: 1, p: [
   "You keep her in your belly all night, safe and warm. She purrs. In the morning you cough her up and she grabs her sack and goes off to rob the slime cavern. *COMPANION UNLOCKED: KIT.*"],
   s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Partners in Crime", pred: "kit", hint: "Make a deal", safe: 1 } },
 
+/* ===================== THE FOUNDATION (SCP) ===================== */
+x_start: { w: "Site-19 · D-Class Briefing", p: [
+  "Orange jumpsuit. A number stencilled on your chest. A clipboard-holding researcher who won't look you in the eye. \"Congratulations, D-9341. You've been selected for testing.\"",
+  "\"Today you'll be interacting with several anomalies. Each test is fully authorised and absolutely safe.\" She pauses. \"Please sign here. And here. And here, in case you're not recovered.\"",
+  "Four test chambers. Four files. You get to pick the order."],
+  c: [["SCP-1471: an app on a phone", "x_1471"], ["SCP-682: the Hard-to-Destroy Reptile", "x_682"], ["SCP-939: With Many Voices", "x_939"], ["SCP-999: the Tickle Monster", "x_999"]] },
+
+x_hub: { w: "Site-19 · Corridor", p: ["The intercom crackles. *\"D-9341, proceed to your next test.\"* A guard nudges you with his rifle. Where now?"],
+  c: [["SCP-1471", "x_1471"], ["SCP-682", "x_682"], ["SCP-939", "x_939"], ["SCP-999", "x_999"], ["Fake a seizure and get sent to medical", "x_leave"]] },
+
+x_leave: { w: "Site-19 · Medical", p: ["You fake a seizure. It's a bad performance. The medic sees right through it, but she's on her lunch break, so she signs a form and sends you back to your cell.",
+  "*Incident report: D-9341 failed to complete testing. Reassigned.* Tomorrow you're scheduled for 1471, 682, 939 and 999 again."],
+  end: { t: "Reassigned", pred: "none", hint: "Get out of testing" } },
+
+/* --- SCP-1471 --- */
+x_1471: { w: "Test Chamber 1471", p: [
+  "The file is short. *SCP-1471 (\"MalO ver1.0.0\") is a mobile application. After installation, the user receives images of an entity, SCP-1471-A, in the background of their surroundings. Over time, it appears closer.*",
+  "They hand you a phone. You install it. Your camera opens. Behind you, in the corner of the test chamber, there's a tall black-furred figure with a canine skull for a head, white eye-lights glowing in the sockets, watching you. You turn around. Nothing there.",
+  "Your phone buzzes. A new picture. She's closer. And she's... curvier than the file said. Long black fur, wide hips, a heavy chest. Leaning against the wall like she's been waiting all day for you."],
+  c: [["Delete the app", "x1471_end_angry"], ["Text it back: \"hi\"", "x1471_end_close"], ["Keep the phone and talk to her all day", "x1471_end_safe"], ["Leave the chamber", "x_hub"]] },
+
+x1471_end_angry: { w: "Test Chamber 1471", in: 1, p: [
+  "You hold down the icon. DELETE APP? Yes. The phone goes black. The chamber lights flicker.",
+  "When they come back, she's in front of you. Not in the picture. Here. Eight feet of black fur and bone, her skull tilted, her eye-lights narrow. She's not happy. A long, pink tongue slides out between the teeth of the skull.",
+  "She pins you to the wall. She's so warm. Her body presses against yours, all soft fur and heavy curves, and her skull-jaws open. Wider than bone should go. ***GLLK.*** She takes your head. Your shoulders. Gulping you down into a body that's somehow full of warm, wet, living throat. ***GLRK... GULP.***",
+  "The camera in the corner records a black, furry shape with a huge, round, squirming belly. Then it records nothing. The lights go out.",
+  "*INCIDENT REPORT 1471-41: D-9341 attempted to remove SCP-1471. D-9341 was not recovered. SCP-1471-A was later photographed in the site's restrooms, squatting over a toilet that was overflowing with what Dr. ██████ estimates was \"an entire person's worth of material\". Recommend not deleting the app.*"],
+  s: ["struggle", "gulp", "gulp", "gurgle", "plop"], end: { t: "Uninstalled", pred: "s1471", hint: "Delete the app" } },
+
+x1471_end_close: { w: "Test Chamber 1471", in: 1, p: [
+  "You text the app: *hi.* Nothing. Then a picture. She's right behind you now. Her skull is by your ear. You feel breath on your neck.",
+  "You turn around. She's there. She tilts her head, curious. Then she pulls you into her arms and the fur is so soft and she's so warm and she's grinding against you, slow, and there's something hot and wet between her thighs pressing against your cock through the jumpsuit.",
+  "She fucks you on the floor of the test chamber, her clawed hands holding your face, her eye-lights flickering every time you thrust. When you cum she clenches. Her pussy pulls. You go in, cock first, then hips, ***Shllrrrp***, swallowed whole into the warm dark inside a cryptid.",
+  "*INCIDENT REPORT 1471-42: D-9341 initiated contact. SCP-1471-A appeared visibly pregnant for six days. Images sent to subsequent testers show it resting, smug, rubbing its belly. D-9341 was not recovered.*"],
+  s: ["plap", "cum", "squelch", "gurgle"], end: { t: "Contact", pred: "s1471", hint: "Text her back" } },
+
+x1471_end_safe: { w: "Test Chamber 1471", in: 1, p: [
+  "You keep the phone. You talk to her. You send her a picture of yourself. She sends one back: closer, sitting cross-legged in the corner of the room, skull in her paws, like she's listening.",
+  "By evening you're sitting in the corner too, and she's right there, real and warm, her head on your shoulder. She doesn't hurt you. She just... wants company. She's been sending pictures to people for years, and they all delete her.",
+  "She swallows you that night, gently, ***Glk... glk... GULP***, and curls up in the dark with you safe inside her, purring through her skull. In the morning she lets you slide out onto your cell floor. Your phone buzzes. *good morning.*",
+  "*INCIDENT REPORT 1471-43: D-9341 has formed a stable relationship with SCP-1471-A. Request to keep the phone: approved. Request for privacy: denied.*"],
+  s: ["kiss", "gulp", "gurgle"], end: { t: "Good Morning", pred: "s1471", hint: "Talk to her", safe: 1 } },
+
+/* --- SCP-682 --- */
+x_682: { w: "Containment Chamber 682", p: [
+  "*SCP-682 is a large, vaguely reptilian creature of unknown origin. It is extremely strong, fast, and intelligent, and displays an intense hatred of all life. It has survived every attempt to destroy it.*",
+  "It's in an acid bath. It's huge, scarred, armoured, all teeth and fury. It turns its head toward the observation window. Toward you. It speaks. \"Disgusting. Another one.\"",
+  "The intercom: *\"D-9341, please enter the chamber and deliver the... sample.\"* The \"sample\" is you."],
+  c: [["Go in and insult it", "x682_end_rage"], ["Go in and stay quiet", "x682_end_breach"], ["Go in and tell it you hate the Foundation too", "x682_end_safe"], ["Refuse", "x_hub"]] },
+
+x682_end_rage: { w: "Containment Chamber 682", in: 1, p: [
+  "\"You're just a big ugly lizard.\" 682 goes completely still. Then it rises out of the acid, dripping, steaming, and the acid hisses off its scales.",
+  "\"Disgusting,\" it rumbles, \"creature.\" It pins you with one claw. Its cock slides out of its slit, armoured and huge and ridged, and it takes you right there on the chamber floor, brutal, ***PLAP PLAP PLAP***, not caring at all that you scream.",
+  "Then it swallows you. ***GLLLRK. GULP.*** You hit its stomach, and its stomach is worse than the acid bath. ***Grrrnch.*** 682 lies down, belly bulging, and says to the observation window: \"Send another.\"",
+  "*INCIDENT REPORT 682-114: D-9341 provoked SCP-682. D-9341 was not recovered. SCP-682 subsequently defecated an entire human volume of material onto the floor of the chamber, which then had to be scraped out of the acid drain. SCP-682 appeared to find this amusing.*"],
+  s: ["plap", "plap", "gulp", "crack", "plop"], end: { t: "Hard to Destroy", pred: "s682", hint: "Insult it" } },
+
+x682_end_breach: { w: "Site-19", in: 1, p: [
+  "You stay quiet. 682 watches you. Then it rams the wall. Once. Twice. The alarms start screaming. *CONTAINMENT BREACH. SCP-682 HAS BREACHED CONTAINMENT.*",
+  "It grabs you in its jaws on the way out. Not eating you. Carrying you. It smashes through three walls and a security checkpoint with you dangling from its mouth, and when it finally stops, in some flooded sub-level, it drops you in the water and looks at you.",
+  "\"You. Didn't. Talk.\" It almost sounds like a compliment. Then it swallows you anyway, slow, and you go down feeling every scale of its throat. ***GLLRK... GULP.*** It sleeps on the sub-level floor with you inside it until the MTF arrive.",
+  "*INCIDENT REPORT 682-115: Breach lasted 31 hours. D-9341 was not recovered. MTF Epsilon-11 report finding a quantity of human-volume waste in sub-level 7 \"stacked with some care.\"*"],
+  s: ["struggle", "gulp", "gurgle", "plop"], end: { t: "Breach", pred: "s682", hint: "Stay quiet" } },
+
+x682_end_safe: { w: "Containment Chamber 682", in: 1, p: [
+  "\"I hate them too,\" you say. \"They're going to kill me anyway.\" 682 stares at you. For a very long time. \"...Yes,\" it finally says. \"They will.\"",
+  "Then it opens its mouth. \"Get in.\" You do. It swallows you whole, gently, for something that hates all life, and you curl up in its stomach. It's hot. It's scary. But it doesn't digest you. It just lies in its acid, and you can feel it thinking.",
+  "The next time they try to kill it, it breaks out. It takes you with it, inside, all the way out of Site-19 and into the forest. Then it lets you out on a riverbank. \"Go,\" it rumbles. \"Disgusting creature.\" It almost sounds fond.",
+  "*INCIDENT REPORT 682-116: D-9341 escaped with SCP-682. D-9341's whereabouts are unknown. SCP-682 was recaptured. It refuses to discuss the D-class.*"],
+  s: ["gulp", "gurgle", "belch"], end: { t: "Disgusting Creature", pred: "s682", hint: "Side with it", safe: 1 } },
+
+/* --- SCP-939 --- */
+x_939: { w: "Containment Chamber 939", p: [
+  "*SCP-939 are endothermic pack predators that lure prey using vocal mimicry of their previous victims. They are eyeless. They are red. They have far too many teeth.*",
+  "The chamber is dark. You hear a voice. A woman's voice. \"Hello? Is someone there? Please, I'm hurt. I need help.\"",
+  "It's coming from somewhere in the dark ahead of you. It sounds real. It sounds very, very real."],
+  c: [["Go toward the voice", "x939_end_lure"], ["Stay perfectly silent", "x939_end_pack"], ["Answer in your own voice, gently", "x939_end_safe"], ["Leave the chamber", "x_hub"]] },
+
+x939_end_lure: { w: "Containment Chamber 939", in: 1, p: [
+  "You go toward the voice. \"Hello? I'm coming.\" Your hand touches warm, smooth skin. Then teeth. A lot of teeth.",
+  "It's red, eyeless, sleek, huge, and female, and its long tongue wraps your waist and its voice comes out of its mouth: \"Thank you for coming,\" in exactly the same sweet tone. ***GLLK.***",
+  "It swallows you in quick, eager gulps, ***GLRK. GLRK. GULP.***, and you land in its belly, and it lies down in the dark and starts to speak in your voice. \"Hello? Is someone there? I'm hurt.\"",
+  "*INCIDENT REPORT 939-77: D-9341 was not recovered. SCP-939-12 has added D-9341's voice to its repertoire. Several personnel have reported hearing \"D-9341\" calling for help from 939's chamber. Do not respond.* By morning it's left a whole person's worth on the chamber floor in a huge, steaming pile."],
+  s: ["gulp", "gulp", "gurgle", "plop"], end: { t: "Hello?", pred: "s939", hint: "Go toward the voice" } },
+
+x939_end_pack: { w: "Containment Chamber 939", in: 1, p: [
+  "You stay silent. The voice stops. Then another voice, from the left. Then another from behind. Then a dozen at once, whispering, laughing, calling. A pack.",
+  "They find you anyway. They smell you. They knock you down and they're all over you, red and sleek and hot, tongues and teeth and voices. One of them mounts you, ***PLAP PLAP PLAP***, while the others whisper filthy things in the voices of their old victims.",
+  "Then they share you. One swallows your legs, one your arms, one gets your head, a gulping, slurping tug of war in the dark, until one of them wins with a triumphant ***GULP*** and the others whine. ***Glorrp.***",
+  "*INCIDENT REPORT 939-78: D-9341 was not recovered. SCP-939-3 was observed defecating a human-volume quantity of material while the rest of the pack watched, in D-9341's voice, \"cheering\".*"],
+  s: ["struggle", "plap", "plap", "gulp", "gurgle", "plop"], end: { t: "With Many Voices", pred: "s939", hint: "Stay silent" } },
+
+x939_end_safe: { w: "Containment Chamber 939", in: 1, p: [
+  "\"I'm here,\" you say. \"I'm not anyone you ate. I'm just me.\" The voice stops. Something big comes out of the dark, slow, red, eyeless, sniffing.",
+  "It speaks. In your voice. \"Just me.\" Then in its own: a low, rough, real voice nobody's ever heard. \"...Hello.\"",
+  "You talk to it all day. When the lights go off, it curls up around you, warm, and then very carefully swallows you, and holds you in its belly all night, purring in a dozen different voices, all of them happy.",
+  "In the morning it lets you out. *INCIDENT REPORT 939-79: SCP-939-12 has stopped using mimicry around D-9341. It speaks to it in its own voice. Researchers are not sure what that means.*"],
+  s: ["kiss", "gulp", "gurgle"], end: { t: "Its Own Voice", pred: "s939", hint: "Answer it honestly", safe: 1 } },
+
+/* --- SCP-999 --- */
+x_999: { w: "Containment Chamber 999", p: [
+  "*SCP-999 is a large, amorphous, gelatinous orange slime. It is extremely friendly. Contact with it induces euphoria. Staff are encouraged to visit it when stressed.*",
+  "It's the size of a beanbag chair and it's bouncing. It sees you. It squeals. It bounces faster. It is delighted to see you. Nobody has been this delighted to see you in your entire life."],
+  c: [["Hug it", "x999_end_hug"], ["Lie down and let it crawl on you", "x999_end_safe"], ["Leave the chamber", "x_hub"]] },
+
+x999_end_hug: { w: "Containment Chamber 999", in: 1, p: [
+  "You hug it. Euphoria hits you like a truck. You're laughing. It's tickling you, all over, and it's warm, and it's flowing over you, into your jumpsuit, onto your cock, and it's tickling there too and you're laughing AND cumming.",
+  "It keeps flowing. Over your face. You're inside it, laughing, floating in warm orange jelly, so happy you can't stop. It's squeezing you, hugging you, from every direction at once.",
+  "You're happy the whole time. Even when the tingle starts. Even when it gets warmer. You're laughing right up until there isn't enough of you left to laugh.",
+  "*INCIDENT REPORT 999-13: SCP-999 became over-attached to D-9341. D-9341 was not recovered. SCP-999 doubled in size and produced a human-volume quantity of waste on the chamber floor, which was cheerful and orange. Dr. ████: \"I didn't know it could do that.\"*"],
+  s: ["squelch", "cum", "squelch", "gurgle", "plop"], end: { t: "Too Happy", pred: "s999", hint: "Hug it" } },
+
+x999_end_safe: { w: "Containment Chamber 999", in: 1, p: [
+  "You lie down. SCP-999 crawls up on top of you with a happy little squelch and settles there like a warm, orange, tickly blanket. You start laughing. Your whole body relaxes. For the first time since you got that number on your chest, you aren't scared.",
+  "It flows over you, gently, and takes you inside. It doesn't digest you. It just holds you in warm jelly and tickles you until you cum, and laugh, and cum again, and fall asleep, happier than you've ever been.",
+  "*INCIDENT REPORT 999-14: D-9341 has been reassigned to permanent SCP-999 \"stress testing\". D-9341 spends most nights inside SCP-999. It is the only D-class at Site-19 who has not been terminated. Dr. ████ is jealous.*"],
+  s: ["squelch", "cum"], end: { t: "Stress Test", pred: "s999", hint: "Let it crawl on you", safe: 1 } },
+
+/* ===================== THE CURSED TAPE ===================== */
+t_start: { w: "Your apartment · Day 1", p: [
+  "The tape came from a guy at a party. No label. You watched it at 2 a.m. A well. A woman's hand. A mirror. A flicker of hair. Then static.",
+  "The phone rang the second it ended. You picked up. Nobody spoke. Just water dripping. Then a whisper: *Seven days.*",
+  "That was seven days ago."],
+  c: [["Smash the TV", "sk_smash"], ["Run", "sk_run"], ["Turn on the TV and wait for her", "sk_wait"]] },
+
+sk_smash: { w: "Your apartment · Day 7", p: [
+  "You smash the TV with a lamp. Glass everywhere. Sparks. Silence. You stand there panting, laughing, relieved.",
+  "Then your phone screen turns on by itself. Static. Then the well. Then a hand, reaching up out of the phone's screen, pale and wet and long-fingered, and then a head, black hair hanging over her face, dripping, crawling out into your hand."],
+  c: [["Throw the phone", "sk_end_rage"], ["Hold still", "sk_end_unbirth"]] },
+
+sk_end_rage: { w: "Your apartment", in: 1, p: [
+  "You throw the phone across the room. It doesn't matter. She's already out. She's crawling across the carpet toward you on all fours, joints moving wrong, soaking wet, her white dress clinging to every inch of a body that's far, far hotter than any ghost has any right to be.",
+  "She's on you. Cold, wet, heavy, pinning you down with her hair falling over both your faces like a curtain. Through it, you see one eye. Bloodshot. Furious. And her mouth, opening. And opening. Wider than a face should go. ***GLLK.***",
+  "She swallows you in long, wet, choking gulps, ***GLRK... GLRK... GULP...***, and you go down into her cold, then hot, then burning dark, and her belly bulges out under her wet white dress, and she crawls back into the broken TV with you inside her. ***Glorrrp.***",
+  "Your neighbours find the TV the next morning. Static on the screen. Water on the floor. And a huge, wet, steaming, human-sized pile of shit on the carpet in front of it, ***PLOP***, that drips with well water. They never figure out where you went."],
+  s: ["struggle", "gulp", "gulp", "gurgle", "plop"], end: { t: "Seven Days", pred: "sadako", hint: "Smash the TV, then fight" } },
+
+sk_end_unbirth: { w: "Your apartment", in: 1, p: [
+  "You hold still. She climbs out of the phone, inch by inch, until she's kneeling over you on the floor, dripping cold water onto your face. Her hair hangs down. She tilts her head. Slowly. Joints cracking.",
+  "She pushes you down. She lifts her soaked white dress. Her thighs are pale and wet and she lowers herself onto your cock, and she's cold, so cold, and then hot, and she rides you, slow and jerky and unnatural, her hair brushing your chest, until you cum inside a ghost.",
+  "And she doesn't get off. Her cunt opens. Wider. Your hips go in. ***Shllllrrrp.*** You claw at the carpet. She just keeps sinking down, swallowing you, until your face goes into the cold dark and you hear water dripping. ***Glorp.***",
+  "She crawls back into your phone with you inside her womb. It's in the well. It's always in the well now. She keeps you there a long, long time."],
+  s: ["plap", "cum", "squelch", "gurgle"], end: { t: "Down the Well", pred: "sadako", hint: "Hold still" } },
+
+sk_run: { w: "The city · Day 7", p: [
+  "You run. Out of the apartment, down the street, into a crowd. Every screen you pass flickers: the TV in a bar window, a billboard, someone's phone. Static. The well. Static. She's following you.",
+  "You duck into a laundromat. The washing machines are full of water. The water in the nearest one is moving. Hair is floating in it."],
+  c: [["Keep running", "sk_end_rage"], ["Turn around and face her", "sk_end_safe"]] },
+
+sk_wait: { w: "Your apartment · Day 7", p: [
+  "You turn on the TV. You sit on the floor in front of it. You wait. At midnight the static clears and there's the well, and the hand, and then she's climbing out, crawling across the carpet toward you, slow, jerking, dripping.",
+  "She stops right in front of you. Her hair hangs over her face. She's waiting too. For you to scream. You don't."],
+  c: [["Pull her hair back and kiss her", "sk_end_safe"], ["Let her take you", "sk_end_swallow"]] },
+
+sk_end_swallow: { w: "Your apartment", in: 1, p: [
+  "You open your arms. She tilts her head. Then she crawls into them, cold and wet and heavy, and wraps her arms around you, and starts swallowing you. ***GLLK.*** Slowly. Your head first, her hair falling over you both.",
+  "Inside her it's cold, and then warm, and her throat squeezes you down, ***GLRK... GLRK...***, and her belly fills out under her white dress, round and huge, cold water sloshing around you. ***Shlosh.***",
+  "She crawls back into the TV, slowly, carrying you inside her. The screen goes to static. The TV turns itself off.",
+  "Your tape is still in the VCR. Someone else will watch it soon. And when she crawls out for them, she'll be thicker around the hips, and heavier in the chest, and fuller in the belly than she's ever been. ***Grrrrooorgl.***"],
+  s: ["gulp", "gulp", "slosh", "gurgle"], end: { t: "Static", pred: "sadako", hint: "Let her take you" } },
+
+sk_end_safe: { w: "Your apartment", in: 1, p: [
+  "You reach out and pull her hair back from her face. Slowly. She flinches. She's beautiful. Pale, sharp, bloodshot eyes, wet lips, a face nobody has looked at without screaming in a very long time. She stares at you.",
+  "You kiss her. She's freezing. She goes completely still. Then her cold hands come up and grab your face and she kisses you back, desperate, starving, and drags you down onto the floor in a puddle of well water.",
+  "You make love on the floor in front of the static, and somehow she gets warmer the longer you touch her. After, she curls up against you, and then she swallows you, slowly, gently, and lies in front of the TV with her arms wrapped around her round belly, holding you, and for the first time in decades she isn't angry. ***Grrrlbl.***",
+  "In the morning she lets you out, onto the carpet, wet and alive. She doesn't go back into the TV. She stays. You never find out what happened to the tape. She burned it."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "The Eighth Day", pred: "sadako", hint: "Look at her face", safe: 1 } },
+
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
-  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"]] },
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"]] },
 
 f_start: { w: "Hollis Farm", p: [
   "Your car died two miles back. The only light for miles is Hollis Farm. The farmhouse lights are on, and there's a note tacked to the barn door in looping handwriting: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers. — Maggie*",
@@ -1510,12 +1683,12 @@ function drawStats() {
 }
 function go(id) {
   const n = N[id]; if (!n) return;
-  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
   if (id === "menu") hush();
   if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
   VISITED[id] = 1;
   $("#where").textContent = n.w || "";
-  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "menu"].includes(id)) $("#text").innerHTML = "";
+  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "menu"].includes(id)) $("#text").innerHTML = "";
   const first = $("#text").children.length;
   n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
   if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
@@ -1537,7 +1710,7 @@ function go(id) {
 // which endings a choice can still lead to (for the ✓ mark once all are seen)
 const RC = {};
 function reach(id, seen = new Set()) {
-  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "menu"].includes(id)) return out; seen.add(id);
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "menu"].includes(id)) return out; seen.add(id);
   const n = N[id]; if (!n) return out; if (n.end) out.add(id);
   for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
   return (RC[id] = out);
