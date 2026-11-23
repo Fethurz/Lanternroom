@@ -97,10 +97,10 @@ const PREDS = {
   brock: { n: "Brock", k: "Bull bodybuilder · anthro" },
   shay:  { n: "Shay", k: "Hyena spotter · anthro" },
   kade:  { n: "Kade", k: "Shark swimmer · anthro" },
-  bun:   { n: "Bun", k: "Bunny \"beginner\" · anthro" },
+  bun:   { n: "Nibbles", k: "Mouse \"beginner\" · anthro" },
   vesper:{ n: "Ms. Vane", k: "Dragoness CEO · anthro" },
   tamsin:{ n: "Tamsin", k: "Fox HR · anthro futa" },
-  rocco: { n: "Rocco", k: "Rhino security · anthro" },
+  rocco: { n: "Rocco", k: "Grizzly security · anthro" },
   pip:   { n: "Pip", k: "Otter intern · anthro" },
   none:  { n: "Nobody", k: "You got away" }
 };
@@ -201,7 +201,7 @@ mg_end_safe: { w: "The farmhouse", in: 1, p: [
 g_start: { w: "Iron Den Gym", p: [
   "Iron Den is supposed to close at ten. It's past midnight, the front door's propped open, and the lights are still on over the weights. You only came back for your phone.",
   "The air is thick and hot and wet. It smells like rubber mats, chalk, and sweat. A LOT of sweat. Musk so heavy it sticks to the back of your throat.",
-  "There are still people here. A bull grunting under a bar that's bending. A hyena girl stretching her thighs on the mats. A shark doing laps in the pool through the glass. And at the water fountain, a tiny bunny girl in brand-new gym clothes, looking lost.",
+  "There are still people here. A bull grunting under a bar that's bending. A hyena girl stretching her thighs on the mats. A shark doing laps in the pool through the glass. And at the water fountain, a tiny mouse girl in brand-new gym clothes, looking lost.",
   "Every one of them turns to look at you when the door clicks shut behind you."],
   c: [["Go to the bench press", "gy_bull"], ["Go to the stretching mats", "gy_hyena"], ["Go to the pool", "gy_shark"], ["Go to the water fountain", "gy_bun"]] },
 
@@ -296,9 +296,9 @@ ks_end_safe: { w: "The pool", in: 1, p: [
   "At dawn he coughs you up into the shallow end and swims laps around you, smug and happy. You come back every night."],
   s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Lifeguard", pred: "kade", hint: "Kiss him", safe: 1 } },
 
-/* --- Bun --- */
+/* --- Nibbles --- */
 gy_bun: { w: "The water fountain", p: [
-  "The bunny is tiny. Four foot nothing, white fur, floppy ears, wearing a leotard with the tags still on and holding a pink water bottle. She looks absolutely terrified of the gym. Her name tag says BUN, NEW MEMBER.",
+  "The mouse is tiny. Four foot nothing, soft grey-brown fur, big round pink-lined ears, a long bare pink tail, wearing a leotard with the tags still on and holding a pink water bottle. She looks absolutely terrified of the gym. Her name tag says NIBBLES, NEW MEMBER.",
   "\"Um! Hi! Do you know how the, um, the machines work? I don't know how any of them work.\" She giggles nervously. She's so small. She looks so harmless.",
   "Her nose twitches. She's looking at you like she's never seen anything so tasty."],
   c: [["Show her how the machines work", "bn_end_trap"], ["Laugh at the newbie", "bn_end_humiliate"], ["Sit with her and make her feel welcome", "bn_end_safe"], ["Back to the gym floor", "g_hub"]] },
@@ -313,14 +313,14 @@ bn_end_trap: { w: "The leg press", in: 1, p: [
 
 bn_end_humiliate: { w: "The water fountain", in: 1, p: [
   "You laugh at her. \"You're gonna get eaten alive in here, newbie.\"",
-  "Bun stops smiling. \"...Oh?\" She puts down her water bottle. Then she hops up onto the fountain, grabs your face with both tiny paws, and opens her mouth. And opens it. And opens it. ***GLLK.***",
-  "You're being swallowed by a bunny. She's a third your size. She's using a water fountain as a step stool. ***GLRK. GLRK. GULP.*** Her tiny throat bulges like a balloon around your shoulders and she just keeps going, giggling through her nose.",
-  "She hops down with a belly that nearly drags on the floor. ***Glorrrrrp.*** She takes a sip of water. \"Who's getting eaten alive?\"",
-  "The next morning, she waddles into the locker room, squats on the toilet, and strains, cheeks puffed. What comes out of a four-foot bunny is a whole grown person's worth of shit, a huge, endless, steaming coil piling higher than she is. ***FFFRRRT... PLOP... PLOP... PLOP.*** She wipes her tiny butt and hops back out to the gym, a lot thicker than she came in."],
+  "Nibbles stops smiling. \"...Oh?\" She puts down her water bottle. Then she scrambles up onto the fountain, grabs your face with both tiny paws, and opens her mouth. And opens it. And opens it. ***GLLK.***",
+  "You're being swallowed by a mouse. She's a third your size. She's using a water fountain as a step stool. ***GLRK. GLRK. GULP.*** Her tiny throat bulges like a balloon around your shoulders and she just keeps going, giggling through her nose.",
+  "She climbs down with a belly that nearly drags on the floor. ***Glorrrrrp.*** She takes a sip of water. \"Who's getting eaten alive?\"",
+  "The next morning, she waddles into the locker room, squats on the toilet, and strains, cheeks puffed. What comes out of a four-foot mouse is a whole grown person's worth of shit, a huge, endless, steaming coil piling higher than she is. ***FFFRRRT... PLOP... PLOP... PLOP.*** She wipes her tiny butt, tail flicking, and scurries back out to the gym, a lot thicker than she came in."],
   s: ["gulp", "gulp", "gurgle", "fart", "plop"], end: { t: "Newbie", pred: "bun", hint: "Mock the newbie" } },
 
 bn_end_safe: { w: "The locker room", in: 1, p: [
-  "You sit with her and tell her everybody was new once. Bun lights up. You show her the treadmill. She falls off it. You catch her. She stays in your arms a little longer than she needs to.",
+  "You sit with her and tell her everybody was new once. Nibbles lights up. You show her the treadmill. She falls off it. You catch her. She stays in your arms a little longer than she needs to.",
   "\"I'm, um,\" she whispers. \"I'm not really a beginner. I come here to... eat people.\" Her nose twitches. \"But I like you. Can I eat you and NOT digest you? Is that weird?\"",
   "It's a little weird. You say yes. She's so careful about it, little gulps, ***glk... glk... glk...***, holding your hand until it's in her mouth too, and then you're curled up in the warmest, softest belly in the gym, and she's sitting in the locker room hugging you through her stomach. ***Grrrlbl.***",
   "At dawn she burps you up, ***Hrrrp***, and you both laugh, and she asks if you'll be her gym buddy. You go every night. She never gets any fitter. You don't mind."],
@@ -398,13 +398,13 @@ tm_end_safe: { w: "HR", in: 1, p: [
 
 /* --- Rocco --- */
 ov_rhino: { w: "The security desk", p: [
-  "Rocco the security guard is a rhino. A big, grey, slab of a rhino in a uniform shirt that's lost half its buttons, a radio on his belt and a huge gut pushing over it. He's got his feet up watching the cameras.",
+  "Rocco the security guard is a grizzly bear. A big, brown, shaggy slab of a bear in a uniform shirt that's lost half its buttons, a radio on his belt and a huge gut pushing over it. He's got his feet up watching the cameras.",
   "\"Shouldn't be here this late,\" he rumbles. \"After hours. Gotta search you.\" He cracks his knuckles."],
   c: [["Let him search you", "rr_end_search"], ["Run for the elevator", "rr_end_chase"], ["Bring him a coffee and keep him company", "rr_end_safe"], ["Back to your desk", "o_hub"]] },
 
 rr_end_search: { w: "The security desk", in: 1, p: [
   "He pats you down. Slowly. Thoroughly. Very thoroughly. His hands cup your ass. Your crotch. \"Gonna have to do a cavity search.\"",
-  "He bends you over the security desk and his fingers are in you, then his cock, thick and heavy, ***PLAP***, and he fucks you while the cameras watch, grunting, his gut slapping against your back. ***PLAP. PLAP.***",
+  "He bends you over the security desk and his fingers are in you, then his cock, thick and heavy, his claws digging into the desk, ***PLAP***, and he fucks you while the cameras watch, grunting, his gut slapping against your back. ***PLAP. PLAP.***",
   "\"Suspicious,\" he decides when he's done, and opens his mouth. ***GLLRRK. GULP.*** He swallows you on the spot and sits back down, his gut now huge and round and squirming, belt buckle straining. ***Glorrrp.***",
   "He watches the cameras all night with his hand on his belly. ***Grrrnch.*** In the morning, the men's room on the lobby floor is closed for repairs. The pile is bigger than the stall."],
   s: ["plap", "plap", "gulp", "crack", "plop"], end: { t: "Cavity Search", pred: "rocco", hint: "Let him search you" } },
@@ -412,7 +412,7 @@ rr_end_search: { w: "The security desk", in: 1, p: [
 rr_end_chase: { w: "The elevator", in: 1, p: [
   "You run. Rocco doesn't. He just watches you on the cameras, and when you reach the elevator, he's already standing in it. \"Took the stairs,\" he says, not even out of breath.",
   "He grabs you and pins you to the elevator wall, and fucks you as it rides down, all thirty-four floors, ***PLAP PLAP PLAP***, so hard the elevator shakes. Floor 1. Ding.",
-  "Then he backs his huge grey ass up against you, and his hole opens like a door. ***SHLLORRRP.*** He pushes back and you go in, face-first, shoulders, hips. ***Shlorp. Shlorp.*** The doors close on your feet.",
+  "Then he backs his huge furry ass up against you, and his hole opens like a door. ***SHLLORRRP.*** He pushes back and you go in, face-first, shoulders, hips. ***Shlorp. Shlorp.*** The doors close on your feet.",
   "He rides the elevator back up with a big lump in his gut. ***Glorrbl.*** In the morning he squats on the lobby toilet and pushes you out, a whole grown person's worth, filling the stall. ***FFFRRRT... PLOP... PLOP.*** \"Shouldn't run,\" he says to nobody."],
   s: ["struggle", "plap", "plap", "squelch", "gurgle", "plop"], end: { t: "Going Down", pred: "rocco", hint: "Run" } },
 
