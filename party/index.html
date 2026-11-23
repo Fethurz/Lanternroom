@@ -88,13 +88,211 @@ const PREDS = {
   duke:  { n: "Duke", k: "German Shepherd · feral" },
   jack:  { n: "Jackolyn", k: "Jackalope nerd · anthro" },
   mochi: { n: "Mochi", k: "Pet ball python · feral" },
-  none:  { n: "Nobody", k: "You made it home" }
+  clover:{ n: "Clover", k: "Dairy cow · feral" },
+  ransom:{ n: "Ransom", k: "Stallion · feral" },
+  gus:   { n: "Gus", k: "Billy goat · feral" },
+  honk:  { n: "Honk", k: "Goose · feral" },
+  none:  { n: "Nobody", k: "You got away" }
 };
 
 /* ---------- the story ----------
  node: { w: place, p: [paragraphs], s: [sounds], set: {stat: +n}, c: [[label, go, cond?]], end: {t, pred, hint}, in: inside? }
  ***Word*** = a sound word; {gulp} after it picks the recording (else the node's sounds play). */
 const N = {
+/* ===================== THE FARM ===================== */
+menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night in Hollis's barn, and the animals are awake", "f_start"]] },
+
+f_start: { w: "Hollis Farm", p: [
+  "Your car died two miles back. The only light for miles is Hollis Farm, and old man Hollis is gone till Monday. There's a note on the farmhouse door: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers.*",
+  "The barn is warm and thick with the smell of hay and sweat and something heavier underneath. Musk. Animal musk. Lots of it.",
+  "As your eyes adjust, you see them. In every stall, eyes are open. Watching you. A cow. A huge black horse. A goat with a wicked look on his face. And on a hay bale by the door, a goose, glaring like you owe it money.",
+  "Not one of them looks like a dumb animal. Every one of them looks like it's deciding something."],
+  c: [["Head for the cow's stall", "f_cow"], ["Check on the stallion", "f_horse"], ["Look at the goat", "f_goat"], ["Shoo the goose off the hay bale", "f_goose"]] },
+
+f_hub: { w: "The barn", p: ["The barn creaks. Something shifts in the dark. Every animal is still watching you. Where now?"],
+  c: [["The cow's stall", "f_cow"], ["The stallion's stall", "f_horse"], ["The goat pen", "f_goat"], ["The goose's hay bale", "f_goose"], ["Sleep in the truck outside instead", "f_leave"]] },
+
+f_leave: { w: "Hollis's truck", p: ["You lock yourself in the old truck and sleep sitting up. All night, things press against the windows: a huge wet nose, a horse's eye, a goose beak tapping the glass. Tap. Tap. Tap.",
+  "In the morning a tow truck comes. Every animal on the farm watches you go. The goose follows the tow truck for half a mile."],
+  end: { t: "Locked Doors", pred: "none", hint: "Don't sleep in the barn" } },
+
+/* ===== CLOVER: the cow ===== */
+f_cow: { w: "Clover's stall", p: [
+  "The cow is ENORMOUS. A dairy cow the size of a small car, black and white, with a belly so wide it bulges past both sides of the stall and an udder so swollen it nearly drags in the straw: four fat pink teats, leaking milk in thin streams.",
+  "Her name's on the stall in chipped paint: CLOVER. She looks at you with huge, wet, half-lidded eyes, and lows, long and soft. It sounds like an invitation. It sounds like a woman sighing.",
+  "She shifts her weight, and her udder swings toward you."],
+  c: [["Milk her", "c_milk"], ["Pet her big belly", "c_belly"], ["Climb into the straw and sleep beside her", "c_sleep"], ["Back off", "f_hub"]] },
+
+c_milk: { w: "Clover's stall", p: [
+  "You kneel and grab a teat. It's warm and fat and slick. You squeeze. Milk sprays. Clover groans, deep and shuddering, and her back legs spread wider, pushing her udder right into your face.",
+  "Milk dribbles down your chin. The teat in your hand is getting bigger. It's swelling, the tip opening, wider and wetter, pulsing like a mouth."],
+  s: ["slosh"],
+  c: [["Suck it", "c_end_udder"], ["Pull away", "c_end_crush"]] },
+
+c_end_udder: { w: "Clover's udder", in: 1, p: [
+  "You wrap your lips around it and suck. Clover MOOS, loud and filthy, and the teat surges forward over your face. ***SHLORRRP.*** Your whole head is inside her nipple, milk pouring over you, the soft rubbery tube squeezing around your neck.",
+  "She shoves back against you, rocking her whole weight onto your face, and the teat swallows you in long, milking pulls. Shoulders. Chest. Hips. ***Glorp... glorp... glorp.*** Your legs kick out of the end of a cow tit.",
+  "Then you drop into the udder. It's a hot, tight, pitch-black bag full of milk, and it stretches around you until it's dragging on the floor, as big as a hay bale, four teats spurting from the pressure of you squirming inside. ***SHLOSHH.***",
+  "Clover lies down on it. Right on top of it. On top of you. The whole udder squashes flat and milk floods your mouth and nose and she just sighs, contented, and goes to sleep. ***Shlosh.***",
+  "It takes days. You soften slowly, melting into the warm milk, churned and sloshed every time she rolls over. When Hollis comes home on Monday, Clover gives eleven gallons. It tastes like you. He drinks a glass and says it's the best milk she's ever made."],
+  s: ["squelch", "slosh", "slosh", "slosh"], end: { t: "Fresh Milk", pred: "clover", hint: "Suck the teat" } },
+
+c_end_crush: { w: "Clover's stall", in: 1, p: [
+  "You yank your hand back. Clover doesn't like that. She turns her massive head and SHOVES you with it into the corner of the stall, and then her huge wet tongue slaps across you, wrapping your whole torso like a fist. ***Shlrrp.***",
+  "She drags you into her mouth. Flat, grinding cow teeth. She doesn't chew you, she doesn't have to: her tongue just rolls you back and her throat takes you. ***GLLLRK. GULP.*** A bulge the size of a person slides down her long neck.",
+  "And you land in the first of FOUR stomachs. It's a vast, hot, churning vat of fermenting hay and gas and stink, and it squeezes you around and around in the sludge like laundry. ***GRRRRRROOOOOORRRGL.*** You can't breathe for the smell. You throw up. It just gets mixed in.",
+  "Then it pushes you on. Into the second. Smaller, tighter, ribbed walls that squeeze you in slimy honeycomb folds. Then the third, crushing you in hard, rhythmic clenches. ***Krrnnch.*** Then the fourth, where the real acid is, and by then you're glad.",
+  "It takes her three full days. Three days of hot, wet, rotting misery, passed from gut to gut like you're nothing. Clover just stands in her stall the whole time, swaying gently, belly gurgling louder than the barn radio. ***HRRRRRROOOOOAAAAP.*** Her belches stink up the whole farm.",
+  "On the fourth day she backs her huge ass up to the gutter, lifts her tail, and you come out. All of you. A fat, endless, steaming rope of cow shit as heavy as a full-grown person, pouring and pouring and splattering, ***FFFRRRRRT... SPLAT... SPLORRT***, a heaping pile of what used to be you, bigger than a wheelbarrow, sliding across the barn floor.",
+  "Hollis comes home to it Monday. He just sighs and goes to get the big shovel."],
+  s: ["gulp", "gurgle", "gurgle", "crack", "belch", "fart", "plop"], end: { t: "Four Stomachs", pred: "clover", hint: "Refuse her" } },
+
+c_belly: { w: "Clover's stall", p: [
+  "You put both hands on her belly. It's huge and tight and warm, and under your palms it's moving. Gurgling. Churning. ***Glrrrrrrrooorgl.*** Something inside it shifts that is not hay.",
+  "There's a shape. A hand. Pressing out against her side, weak and slow. Then it slides away, back into the churn.",
+  "Clover turns her head and looks at you. She chews. Slowly. Smugly. She knows you saw."],
+  s: ["gurgle"],
+  c: [["Run", "c_end_crush"], ["Keep rubbing", "c_end_joined"]] },
+
+c_end_joined: { w: "Clover's belly", in: 1, p: [
+  "You keep rubbing. Whoever's in there is past saving. Clover leans into your hands and groans, and her belly rumbles like thunder. ***GRRRRRRRRRROOOOOOOOORGL.***",
+  "Then she swings her head around, slurps you up off your feet with one swipe of her tongue, ***SHLRRRP***, and swallows you whole. ***GLLRK. GULP.***",
+  "You slide down into hot, dark, stinking sludge, and you're not alone. Someone else is in here. Some other hiker. Soft. Barely moving. Half dissolved into fermenting hay. You're pressed up against them. ***Grrrnch.*** Their hand finds yours.",
+  "Then the stomach squeezes, and the two of you are squeezed together into the next one. And the next. Mashed into one lump of warm, sloshing, groaning mess, passing from stomach to stomach together.",
+  "By the end of the week, Clover has to lift her tail twice. Hollis has to buy a second wheelbarrow."],
+  s: ["gurgle", "gulp", "gurgle", "crack", "plop"], end: { t: "Company", pred: "clover", hint: "Keep rubbing" } },
+
+c_sleep: { w: "Clover's stall", in: 1, p: [
+  "You curl up in the warm straw against her side. Her belly rises and falls. It's so warm. You drift off.",
+  "You wake up in the dark with a weight on your legs. Clover is lying on you. Not crushing. Just pinning. Her huge head is right in front of your face. Her breath is hot and sweet like grass.",
+  "Her tongue comes out and slowly, lovingly, licks you. All of you. Face, chest, cock, legs, rough and wet and hot, over and over, ***Shlrrp... shlrrp...***, like she's grooming a calf, until you're shaking and soaked and your cock is throbbing against her tongue.",
+  "Then she gets her tongue under you, curls it around you, and lifts you into her mouth. ***Glk.*** So gently. ***GULP.***",
+  "Four stomachs. Three days. And she lies in the straw the whole time with her chin on the floor and her belly gurgling, occasionally licking her lips, like a cat that ate a canary. ***Grrrrroooorgl.*** At least it's warm."],
+  s: ["kiss", "kiss", "gulp", "gurgle", "belch"], end: { t: "Grooming", pred: "clover", hint: "Sleep beside her" } },
+
+/* ===== RANSOM: the stallion ===== */
+f_horse: { w: "Ransom's stall", p: [
+  "The stallion is black as tar and the size of a truck, all hard muscle under a sweat-slick coat. RANSOM, says the stall door. And under his belly, swinging heavily as he shifts his weight, is the biggest cock you've ever seen. It's half out of the sheath already. Mottled pink and black. As long as your leg.",
+  "He snorts at you. His nostrils flare wide. He's scenting you. Then he stamps one hoof, hard, and his cock slides out the rest of the way, slapping against his belly. ***Thwap.***",
+  "He doesn't look like a horse. He looks like a man who's been locked up a very long time."],
+  c: [["Open his stall", "h_open"], ["Touch it through the bars", "h_touch"], ["Back away, slowly", "h_run"]] },
+
+h_open: { w: "Ransom's stall", p: [
+  "You slide the bolt. Ransom shoulders the door open before you can step back, and you're pinned between two tons of horse and the barn wall. His breath blasts hot over your face. His cock is pressed against your stomach, throbbing, leaking hot precum through your shirt.",
+  "He bites the back of your shirt and yanks. It tears. He does the same with your pants. Then he steps back, just enough, and looks at you. And then at a hay bale. Bent-over height."],
+  c: [["Bend over the bale", "h_end_bred"], ["Try to slip out the door", "h_end_raped"]] },
+
+h_end_bred: { w: "The barn floor", in: 1, p: [
+  "You bend over the bale. Ransom rears up and comes down on you, front legs either side, and that huge flared horse cock rams against your ass, misses, slaps your back, rams again, and then sinks in. ***SHLRK.***",
+  "It's too big. It's way too big. It stretches you open so wide you see stars, and he's only got the head in. He whinnies and THRUSTS. ***PLAP.*** Your belly bulges out with the shape of his cock. ***PLAP. PLAP. PLAP.*** He fucks you like a breeding mare, brutal and fast, the bale skidding across the floor.",
+  "He cums like a firehose. ***SPLRRRT. SPLRRT.*** It fills your guts, swells your belly round and tight, pours out around his cock and splatters the straw.",
+  "When he pulls out with a wet ***SHLOP***, you're gaping and leaking and too wrecked to stand. He turns around. He backs his huge, muscled ass toward you. His tail lifts.",
+  "His hole opens and swallows your head. ***Shllrrrp.*** He backs onto you, rhythmic and heavy, ***Shlorp... shlorp... shlorp***, and pulls you up inside him, cum still dripping out of you, until your feet disappear and he huffs and drops his tail.",
+  "You're squeezed up through his guts, hot and slick and endless, into a belly that bulges down between his legs. ***Glorrrbl.*** He trots in a circle around the barn showing it off.",
+  "And then, by morning, you come back out the same way you went in, a horse-sized, person-sized, steaming mountain of shit dropped in one long, groaning, tail-high push in the middle of the aisle. ***FFFFRRRRRT... PLOP... PLOP... PLOP.*** He steps over it and goes back to sleep."],
+  s: ["plap", "plap", "cum", "squelch", "gurgle", "fart", "plop"], end: { t: "Bred and Buried", pred: "ransom", hint: "Bend over" } },
+
+h_end_raped: { w: "The barn floor", in: 1, p: [
+  "You make a dash for the door. Ransom's hoof slams it shut before you even get there. ***BANG.*** He shoves you face-first into the straw with his chest and mounts you right there on the floor. You scream. He doesn't care. ***PLAP.***",
+  "He's huge. It hurts. He fucks you anyway, pinning you down with his weight, pounding you so hard your whole body skids forward with every thrust. ***PLAP PLAP PLAP.*** It goes on forever. He cums twice without pulling out.",
+  "Then he flips you over with his nose. His cock is still out, still hard, dripping, right above your face. The tip flares wide. And opens. ***SHLLRRRK.*** It swallows your head.",
+  "He thrusts into the air and his cock swallows you deeper, gulping you down the shaft, bulge rolling toward his balls, ***Glrrk... glrrk... glrrk...***, and you drop into a sack so heavy it swings almost to his knees. ***SHLORP.***",
+  "His balls swell to the size of watermelons around you, sloshing with hot, thick horse cum. ***Shlosh. Shlosh.*** He just goes back to his stall and stands there, legs splayed wide around them, dripping.",
+  "The next morning, Hollis's prize mare gets the biggest, thickest load of her life. That's you. Most of you is still dripping out of her by lunch."],
+  s: ["plap", "plap", "cum", "squelch", "slosh", "cum"], end: { t: "Stud Fee", pred: "ransom", hint: "Try to run" } },
+
+h_touch: { w: "Ransom's stall", p: [
+  "You reach through the bars and wrap your hand around it. You can't even close your fingers. It's burning hot and heavy and it twitches against your palm. Ransom groans, a deep, shuddering, almost human sound, and thrusts, slowly, into your hand.",
+  "Precum spills over your fingers. Thick and hot. Lots of it. He thrusts again, harder, and the head flares against your wrist."],
+  s: ["squelch"],
+  c: [["Lick it", "h_end_suck"], ["Keep stroking", "h_end_raped"]] },
+
+h_end_suck: { w: "Ransom's stall", in: 1, p: [
+  "You press your face against the bars and lick the flared tip. It tastes like salt and musk and it twitches against your tongue. You lick again. Then you get your lips around it. Barely. Your jaw cracks.",
+  "Ransom shoves forward. The bars rattle. The fat tip pops into your mouth and slams the back of your throat. ***GLK.*** You gag. He doesn't stop. ***GLK. GLK. GLK.*** He's fucking your face through the bars of his stall, and your throat bulges every time he thrusts.",
+  "Then he cums. ***GLLRRRK.*** It's too much. It's gallons. Your stomach swells instantly, round and tight, then rounder, then so full you're pinned against the bars by your own gut, and it's still pouring into you, out of your nose, down your chin.",
+  "When he finally pulls out, you collapse in the straw, a huge, sloshing, hugely pregnant-looking belly full of horse cum, unable to stand up. ***Shlosh.***",
+  "That's when the goat wanders over. He sniffs your gut. He looks very interested."],
+  s: ["gag", "gag", "cum", "slosh"], end: { t: "Overfed", pred: "ransom", hint: "Suck him through the bars" } },
+
+h_run: { w: "Ransom's stall", p: [
+  "You back away slowly. Ransom watches you go. Then he kicks his stall door so hard it flies off the hinges. ***CRASH.***"],
+  s: ["struggle"],
+  c: [["Run!", "h_end_raped"], ["Freeze", "h_end_bred"]] },
+
+/* ===== GUS: the goat ===== */
+f_goat: { w: "The goat pen", p: [
+  "The goat is the size of a pony, with long curling horns and a beard and the meanest yellow eyes you've ever seen. GUS, says the sign on his pen. Underneath, someone has added in marker: EATS EVERYTHING.",
+  "He's chewing a tin can. He spits it out when he sees you. His eyes go from your shoes, to your belt, to your face. He licks his lips.",
+  "Then he bleats, and it sounds exactly like a laugh."],
+  c: [["Offer him some hay", "g_hay"], ["Hop the fence and stare him down", "g_stare"], ["Leave him alone", "f_hub"]] },
+
+g_hay: { w: "The goat pen", p: [
+  "You hold out a fistful of hay. Gus eats it. Then he eats your sleeve. Then he eats your other sleeve. He's chewing on your shirt and staring at you the whole time, unblinking, slowly working his way up toward your collar.",
+  "\"Hey. HEY. Quit it.\" He doesn't quit it."],
+  c: [["Let him strip you", "g_end_stripped"], ["Shove him away", "g_end_ram"]] },
+
+g_end_stripped: { w: "The goat pen", in: 1, p: [
+  "You let him. He eats your shirt right off your body. Then your belt. Then your pants, button and zipper and all, ***crunch***, and then your underwear, until you're standing naked in a goat pen at midnight while a goat chews your boxers and stares at your cock.",
+  "He drops the boxers. He leans in and licks it. Rough, fast goat tongue, ***shlrp shlrp shlrp***, and you're hard in seconds, and he bleats that laugh again.",
+  "Then his mouth opens over it. Over your cock. Your balls. Your hips. ***Glk.*** He's eating you crotch-first, the same way he ate your clothes, like you're just one more thing he found lying around. ***Glk... glk... GULP.***",
+  "You go down into his first stomach and the smell hits you like a truck. Rotting hay, wet cardboard, tin cans, your own clothes, all of it fermenting in a hot, stinking bath. ***GRRRRROOOORGL.***",
+  "Four stomachs. Every one tighter, slimier, more miserable than the last. Gus lies in his pen burping the whole time, ***BRRRAAAAP***, long, rank, rolling goat burps that you can taste from the inside.",
+  "Two days later he drops you all at once in a single colossal heap: a steaming pile of goat shit as big as a whole grown person, with your belt buckle glinting on top like a cherry. He looks at the barn cat. The barn cat looks at the pile. Gus bleats that laugh again."],
+  s: ["kiss", "gulp", "gurgle", "belch", "plop"], end: { t: "Eats Everything", pred: "gus", hint: "Let him eat your clothes" } },
+
+g_end_ram: { w: "The goat pen", in: 1, p: [
+  "You shove him. Bad idea. He backs up, lowers his horns and slams into your gut. ***THUD.*** You fold over, wheezing, and he does it again, knocking you flat into the mud.",
+  "Then he mounts you. He's a goat. He doesn't care what hole. His thin, red goat cock jabs and stabs and finds your ass and rams in, ***PLAP PLAP PLAP PLAP***, fast and frantic, his hooves digging into your back, bleating in your ear.",
+  "He cums in about thirty seconds. Then he does it again. Then he gets off, turns around, and pisses on you. Marking you. Then he eats you.",
+  "Headfirst, no ceremony, just big, rough, mean gulps, ***GLLRK. GLLRK. GULP***, chewing at your clothes as you go down just to be a dick about it.",
+  "Four stomachs. Every one of them stinks. It takes three days. He spends the whole time headbutting the fence for fun with your shape bouncing inside him. ***SHLOSH.***",
+  "And when he's done, he climbs up on top of the hay bale and squats and makes sure everybody in the barn sees it: you, dropped in one huge, steaming, groaning, endless coil of goat shit, as big as you ever were, ***FFFRRRT... SPLORT... PLOP***, piled right in the middle of the barn where the goose will step in it."],
+  s: ["struggle", "plap", "plap", "cum", "gulp", "gurgle", "fart", "plop"], end: { t: "Head Butt", pred: "gus", hint: "Shove him" } },
+
+g_stare: { w: "The goat pen", p: [
+  "You hop the fence and stare him in the eye. Gus stares back. Neither of you blinks. It goes on for a long time. Then he very slowly opens his mouth, keeping eye contact, and lets out the longest, loudest, rankest belch you have ever heard in your life, right into your face. ***BRRRRRRRRRRAAAAAAAAAAAAAAAAP.***",
+  "It smells like garbage and old hay and something that used to be a person."],
+  s: ["belch"],
+  c: [["Gag and back off", "g_end_ram"], ["Hold your ground", "g_end_stripped"]] },
+
+/* ===== HONK: the goose ===== */
+f_goose: { w: "The hay bale", p: [
+  "The goose is fat and white and mean, sitting on the hay bale like a throne. It hisses at you. It's a goose. It's maybe two feet tall. You're a grown adult.",
+  "It hisses again. A long, rude, rattling hiss. It spreads its wings and puffs up to about twice its size, which is still about knee high. It does not move off the hay bale. Its little black eyes say, very clearly: *Fuck off.*",
+  "There's a name tag on its leg. HONK."],
+  c: [["Laugh at it", "o_laugh"], ["Shoo it off", "o_shoo"], ["Leave it alone", "f_hub"]] },
+
+o_laugh: { w: "The hay bale", p: [
+  "You laugh. It's a GOOSE. Honk stops hissing. It goes silent. It folds its wings very neatly. It stares at you with the coldest look you have ever seen on any living thing. And then it honks, once, and every animal in the barn turns its head toward you at the same time."],
+  c: [["Keep laughing", "o_end_humiliated"], ["Apologise to the goose", "o_end_sorry"]] },
+
+o_end_humiliated: { w: "The barn floor", in: 1, p: [
+  "\"What are you gonna do, bite my ankles?\"",
+  "Honk launches. A flying, honking, flapping bundle of fury slamming into your face. ***HONK. HONK.*** Wings beat at your head. You stumble backwards, trip on a bucket, and land flat on your back in the straw. Honk lands on your chest.",
+  "It bites your nose. Hard. Then it opens its beak and keeps opening it, its long neck swelling, and it starts swallowing your face. ***Glk.*** You can't believe it. You try to swat it off and it's just a goose, it should be EASY, but its neck has your head and it won't let go. ***Glk. Glk. Glk.***",
+  "Its throat stretches into a long, thin, ridiculous sleeve around your shoulders. A goose. Swallowing a person. The horse is watching. The goat is laughing that bleating laugh. ***GLLRK.*** Your hips go in. Your feet kick in the air out of a goose's beak like a cartoon.",
+  "***GULP.*** And then there's a goose on the barn floor with a body stretched out into a huge, round, person-shaped balloon, its little feet barely touching the ground, its head bobbing smugly on top. ***Glorrrp.***",
+  "It waddles around the whole barn like that. Every animal looks. You can hear them. The goat won't stop laughing.",
+  "In the morning, Honk climbs back up onto its hay bale, squats, and starts honking. Strained. Furious. It takes forever. What comes out of a two-foot goose is a full grown person's worth of soft, wet, enormous shit, ***FFFFRRRRRRT... PLOP... PLOP... SPLORRT***, way, way bigger than the goose that made it, piling up and sliding off the bale onto the floor. Honk stands on top of the pile and honks in triumph. You got eaten by a goose. You lost to a goose."],
+  s: ["struggle", "gulp", "gulp", "gulp", "gurgle", "fart", "plop"], end: { t: "Lost to a Goose", pred: "honk", hint: "Laugh at it" } },
+
+o_end_sorry: { w: "The hay bale", in: 1, p: [
+  "\"...Sorry?\" you say to the goose.",
+  "Honk tilts its head. Considers. Then hops down from the hay bale, waddles up to you, and pecks your shin. Then the other shin. ***Peck. Peck.*** You flinch back, and trip, and go down on your ass, and then you're at goose level.",
+  "Honk looks you in the eye. Then it lifts its tail, waddles backwards, and squats on your face.",
+  "Its vent opens. It's warm and it smells awful and it's opening wider and wider over your nose and mouth and eyes. ***Shllrrp.*** It squats lower and your head goes in. The goose is sitting on you and you're going up its ass. ***Shlorp. Shlorp.*** You're inside a goose, in the hot, tight, foul dark, getting squeezed up through a goose. A two-foot goose.",
+  "It honks the entire time. Triumphant. You can feel it vibrating through its whole body. Your feet go in last, and Honk waddles back up on its hay bale with a body swollen into a big, round, sagging, person-shaped lump, and settles down on it like an egg.",
+  "You apologised to a goose, and the goose made you into shit. In the morning it squeezes you out right there on the bale, a whole person's worth, piled so high the goose is buried in it up to the neck. It honks once from the top of the pile. Satisfied."],
+  s: ["struggle", "squelch", "squelch", "gurgle", "plop"], end: { t: "Apology Accepted", pred: "honk", hint: "Apologise" } },
+
+o_shoo: { w: "The hay bale", p: [
+  "You flap your arms at it. \"Shoo! Go on. Scram.\" Honk doesn't scram. It stretches out its neck and hisses so loud that Ransom stamps in his stall.",
+  "Then it bites your hand, and holds on."],
+  s: ["struggle"],
+  c: [["Shake it off", "o_end_humiliated"], ["Freeze", "o_end_sorry"]] },
+
 start: { w: "The front door", p: [
   "Dex's place is already thumping when you get there. Bass through the walls, red lights in the windows, a smell of weed and spilled beer and something else under it. Something animal. Musk.",
   "You told yourself one drink. You told yourself you'd leave by midnight. Nobody at this party gives a shit what you told yourself.",
@@ -512,16 +710,17 @@ function fmt(t) {
 }
 function drawStats() {
   const d = ST.drinks, label = d === 0 ? "Sober" : d < 3 ? "Buzzed" : d < 5 ? "Drunk" : "Wasted";
-  $("#stats").innerHTML = `<span class="pill">🍹 ${label}</span>`;
+  $("#stats").innerHTML = ST.scen === "start" ? `<span class="pill">🍹 ${label}</span>` : "";
   const n = ENDS.filter(e => SEEN[e.k]).length; $("#gN").textContent = `${n}/${ENDS.length}`;
 }
 function go(id) {
   const n = N[id]; if (!n) return;
-  if (id === "start") { ST = { drinks: 0 }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (id === "start" || id === "f_start") { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (id === "menu") hush();
   if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
   VISITED[id] = 1;
   $("#where").textContent = n.w || "";
-  if (id === "start" || id === "hub") $("#text").innerHTML = "";
+  if (["start", "hub", "f_start", "f_hub", "menu"].includes(id)) $("#text").innerHTML = "";
   const first = $("#text").children.length;
   n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
   if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
@@ -530,7 +729,7 @@ function go(id) {
     const isNew = !SEEN[id]; SEEN[id] = Date.now(); saveSeen();
     const pr = PREDS[n.end.pred];
     $("#text").insertAdjacentHTML("beforeend", `<div class="end"><div class="who">${esc(pr.n)} · ${esc(pr.k)}</div><h2>${isNew ? "New ending: " : "Ending: "}${esc(n.end.t)}</h2></div>`);
-    $("#choices").innerHTML = `<button class="ch" data-go="start">↺ Back to the party (start over)</button><button class="ch" data-gal>See all endings</button>`;
+    $("#choices").innerHTML = `<button class="ch" data-go="${ST.scen || "start"}">↺ Start this night over</button><button class="ch" data-go="menu">Pick a different night</button><button class="ch" data-gal>See all endings</button>`;
   } else {
     const opts = (n.c || []).filter(c => !c[2] || c[2](ST));
     $("#choices").innerHTML = opts.map(([t, to]) => {
@@ -543,7 +742,7 @@ function go(id) {
 // which endings a choice can still lead to (for the ✓ mark once all are seen)
 const RC = {};
 function reach(id, seen = new Set()) {
-  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || id === "hub" || id === "start") return out; seen.add(id);
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "menu"].includes(id)) return out; seen.add(id);
   const n = N[id]; if (!n) return out; if (n.end) out.add(id);
   for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
   return (RC[id] = out);
@@ -554,7 +753,7 @@ function gallery(show) {
   $("#game").classList.toggle("hidden", show); $("#gallery").classList.toggle("hidden", !show);
   if (!show) return;
   const byPred = {}; ENDS.forEach(e => (byPred[e.pred] = byPred[e.pred] || []).push(e));
-  $("#gallery").innerHTML = `<button class="btn" data-back style="margin-bottom:14px">‹ Back to the party</button><div class="gal">` +
+  $("#gallery").innerHTML = `<button class="btn" data-back style="margin-bottom:14px">‹ Back to the game</button><div class="gal">` +
     Object.entries(byPred).map(([p, es]) => `<div class="gp"><div class="k">${esc(PREDS[p].k)}</div><h2>${esc(PREDS[p].n)} · ${es.filter(e => SEEN[e.k]).length}/${es.length}</h2>
       <div class="slots">${es.map(e => `<span class="sl ${SEEN[e.k] ? "on" : ""}">${SEEN[e.k] ? esc(e.t) : "? " + esc(e.hint)}</span>`).join("")}</div></div>`).join("") + "</div>";
   scrollTo({ top: 0 });
@@ -565,7 +764,7 @@ document.addEventListener("click", e => {
   if (e.target.closest("[data-gal]") || e.target.closest("#gBtn")) return gallery(true);
   if (e.target.closest("[data-back]")) return gallery(false);
 });
-go("start");
+go("menu");
 </script>
 </body>
 </html>
