@@ -133,6 +133,7 @@ const PREDS = {
   kara:  { n: "Kara", k: "Big sister, 29 · she-wolf" },
   sadie: { n: "Sadie", k: "Little sister, 21 · she-wolf" },
   lou:   { n: "Aunt Lou", k: "Futa aunt, 42 · she-wolf" },
+  family:{ n: "The whole family", k: "Mom, Kara, Sadie & Aunt Lou" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -1283,20 +1284,66 @@ k_start: { w: "Home for Thanksgiving", p: [
   "The door flies open before you knock. It's Mom: Rhonda, a big, curvy she-wolf in an apron that does nothing to hide her huge tits or her soft, round belly, grey fur, warm eyes. She crushes you into a hug, buries your face in her cleavage and doesn't let go. \"My baby's HOME!\" Her belly gurgles against you. Loudly. ***Grrrrooorgl.***",
   "Behind her in the hall: your big sister Kara, twenty-nine, a firefighter, shoulders like a linebacker and a tank top that's mostly holes. Your little sister Sadie, twenty-one, home from college, in a hoodie and glasses, blushing at you over a book. And at the kitchen door, leaning with a glass of wine, Aunt Lou, Mom's younger sister, curvier than Mom and with a very obvious bulge in her leggings.",
   "Everyone's looking at you like you're the turkey."],
-  c: [["Help Mom in the kitchen", "k_mom"], ["Arm-wrestle Kara", "k_kara"], ["Hang out in Sadie's room", "k_sadie"], ["Have a drink with Aunt Lou", "k_lou"]] },
+  c: [["Help Mom in the kitchen", "k_mom"], ["Arm-wrestle Kara", "k_kara"], ["Hang out in Sadie's room", "k_sadie"], ["Have a drink with Aunt Lou", "k_lou"], ["Skip ahead to Thanksgiving dinner", "k_dinner"]] },
 
 k_hub: { w: "The house", p: ["The house smells like turkey and pie and wolf. Somebody's stomach growls in the other room. Where now?"],
-  c: [["The kitchen (Mom)", "k_mom"], ["The garage (Kara)", "k_kara"], ["Sadie's room", "k_sadie"], ["The porch (Aunt Lou)", "k_lou"], ["Make an excuse and drive back early", "k_leave"]] },
+  c: [["The kitchen (Mom)", "k_mom"], ["The garage (Kara)", "k_kara"], ["Sadie's room", "k_sadie"], ["The porch (Aunt Lou)", "k_lou"], ["Thanksgiving dinner (everyone)", "k_dinner"], ["Make an excuse and drive back early", "k_leave"]] },
 
 k_leave: { w: "The highway", p: ["You fake a call from your advisor and drive back that night. Mom cries on the porch. Kara flips you off. Sadie texts you a single sad face. Aunt Lou texts *next year, sweetie. we'll be hungrier.*",
   "You spend Thanksgiving alone with a microwave dinner, thinking about them the whole time."],
   end: { t: "Early Flight", pred: "none", hint: "Leave early" } },
 
+/* --- Family interactions --- */
+k_dinner: { w: "The dining room", p: [
+  "Thanksgiving dinner. Everyone's at the table. The turkey's carved. Nobody's eating it. Mom's looking at you. Kara's looking at you. Sadie's looking at you over her glasses. Aunt Lou is looking at you and very slowly licking her lips.",
+  "Mom clears her throat. \"So. Before we eat. We, um. We should talk about who gets to... have you.\"",
+  "Every belly at the table growls at once. ***Grrrrrrooooorgl.***"],
+  c: [["\"Why not all of you?\"", "kx_end_share"], ["\"Fight for it.\"", "kx_end_fight"], ["Let them decide among themselves", "kx_end_chain"], ["\"Can we just cuddle?\"", "kx_end_pile"]] },
+
+kx_end_share: { w: "The dining room", in: 1, p: [
+  "\"Why not all of you?\" Dead silence. Then Aunt Lou laughs so hard she spills her wine, and Mom blushes to the ears, and Kara says \"Fucking finally,\" and Sadie hides her face in her hands.",
+  "They clear the table onto the floor. They lay you on it like the turkey. And they all have you. Kara rides your cock while Mom kisses you, deep and wet. Sadie sucks your fingers, nervous and eager. Aunt Lou fucks your mouth, slow, cooing \"good boy\". You cum in Kara, then in Mom, then in Sadie, and the whole table shakes. ***PLAP. PLAP. PLAP.***",
+  "Then they share you the way they share the turkey. Mom gets first pick, because she's Mom. She swallows your head and shoulders, ***GLLK***, and Kara takes your legs, and they meet in the middle, tugging, laughing, until Mom wins with a huge ***GULP*** and Kara grumbles.",
+  "But Mom doesn't keep you. Later that night, she lets Kara swallow her, with you inside. And then Aunt Lou swallows Kara. And Sadie, giggling, tries to swallow Aunt Lou and gets stuck halfway, and Mom has to help push from inside. ***Glorrrrp.***",
+  "By morning there's one very, very round little sister lying on the living room floor, with her entire family inside her, and you in the very middle. ***Grrrrrrrrrroooooorgl.*** She can't move. She's never been happier. \"Best Thanksgiving ever,\" she whispers."],
+  s: ["kiss", "plap", "plap", "cum", "gulp", "gulp", "gulp", "gurgle"], end: { t: "Family Dinner", pred: "family", hint: "Offer yourself to everyone" } },
+
+kx_end_fight: { w: "The living room", in: 1, p: [
+  "\"Fight for it.\" Oh, they do. Kara flips the table. Mom tackles Kara. Aunt Lou pours herself another glass of wine and watches. Sadie quietly crawls under the table toward you.",
+  "It's a brawl, all fur and teeth and tits, wolves rolling across the living room, the TV going over, Mom and Kara wrestling for a grip on your legs. Mom gets your left foot in her mouth. Kara gets your right. ***GLLK. GLLK.***",
+  "And while they're both gulping at your legs, tugging, snarling at each other through mouthfuls of you, Sadie pops up in front of you, opens her muzzle wide, and swallows you from the head down, ***GLRK. GLRK. GLRK.***, meeting their mouths in the middle, and with one last huge, greedy ***GULP*** she slurps you right out of both of them.",
+  "Mom and Kara stare at her, panting. Sadie sits there on the carpet with an enormous belly and her glasses crooked, beaming. \"I win.\" ***Grrrrrooooorgl.***",
+  "She digests you smug, curled up on the couch, while her mom and big sister sulk on either side of her, rubbing her belly jealously. The next morning she shits you out in the upstairs bathroom, a whole grown man's worth, huge and endless. ***PLOP. PLOP. PLOP.*** \"MOM,\" she calls. \"Plunger.\""],
+  s: ["struggle", "struggle", "gulp", "gulp", "gulp", "gurgle", "plop"], end: { t: "Tug of War", pred: "family", hint: "Make them fight" } },
+
+kx_end_chain: { w: "The house", in: 1, p: [
+  "\"You decide.\" They look at each other. Aunt Lou shrugs. \"Age before beauty.\" She stands, pulls her leggings down and takes you into her cock right there at the table, ***SHLLRRK... SHLORP***, until you're sloshing in her balls.",
+  "Then she walks around the table and offers her cock to Mom. \"Sis. You want him? Come and get him.\" Mom blushes so hard her ears go flat. And then she drops to her knees and sucks her sister off, and Aunt Lou cums you out right down Mom's throat, ***SPLRRT. GLLK. GULP.***, and you're in Mom's stomach in a hot flood of cream.",
+  "Mom pats her belly, flustered and pleased. Then Kara grabs her. \"Nope. My turn.\" And Kara swallows Mom whole, with you inside her, ***GLLLRRK. GULP***, and stands there in the dining room with a belly so huge she has to hold it up with both arms. ***Glorrrrp.***",
+  "Sadie looks at Kara. Kara looks at Sadie. \"Don't you dare,\" Kara says. Sadie dares. She can't fit Kara. She gets as far as her big sister's hips and stays stuck there all night, with Kara's legs sticking out of her mouth, until dawn, when everybody's too tired and too full to care. ***Grrrrrooorgl.***",
+  "You're passed down the line until there's nobody left to pass you to."],
+  s: ["squelch", "slosh", "cum", "gulp", "gulp", "gulp", "gurgle"], end: { t: "Passed Down", pred: "family", hint: "Let them decide" } },
+
+kx_end_pile: { w: "The living room", in: 1, p: [
+  "\"Can we just... cuddle?\" The table goes quiet. Then Mom bursts into tears and pulls you into a hug, and then Kara's in it, and Sadie, and Aunt Lou, all fur and tits and warm bellies, a whole wolf family piled on top of you on the living room floor.",
+  "You make love like that, everyone, slow and messy and laughing, passing kisses around, until you're all wrecked and sweaty and tangled on the carpet.",
+  "Then Mom asks, so softly, if she can hold you. Everyone helps. She swallows you, gently, and then they all curl up around her, Kara's arm over her belly, Sadie's head on it, Aunt Lou's tail over everyone, a big warm pile with you safe in the very middle. ***Grrrlbl.***",
+  "In the morning Mom lets you out and everyone's still there, asleep, tangled. You don't go back to grad school for a while. Nobody asks you to."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Pack", pred: "family", hint: "Ask to cuddle", safe: 1 } },
+
+kx_end_walkin: { w: "The kitchen", in: 1, p: [
+  "Mom's on her knees in front of you in the kitchen, mouth full of your cock, when the back door opens. Kara. Grease on her hands. She stops. She stares. Mom freezes with you in her mouth.",
+  "\"...Seriously, Mom?\" Kara says. And then: \"Scoot over.\"",
+  "They share you on the kitchen floor, mother and daughter, Kara riding your face while Mom rides your cock, the two of them kissing over you, hands all over each other's tits. ***PLAP. PLAP.*** When you cum, Mom howls.",
+  "Then they both want to eat you. They both start. Mom takes your head, Kara your feet, and they gulp toward each other, ***GLLK... GLRK...***, until their muzzles meet over your belly and they're kissing with mouths full of you. Mom swallows harder. ***GULP.*** She wins.",
+  "Kara pouts and rubs Mom's huge belly. Then she grins, and swallows Mom too, with you still inside. ***GLLLLRRRK.*** \"I always win,\" she says, sitting on the kitchen floor with a gut bigger than the fridge."],
+  s: ["kiss", "plap", "plap", "cum", "gulp", "gulp", "gulp", "gurgle"], end: { t: "Walked In", pred: "family", hint: "Get caught with Mom" } },
+
 /* --- Mom --- */
 k_mom: { w: "The kitchen", p: [
   "Mom has you stirring the gravy while she bends over to baste the turkey, her huge soft ass right in front of you, her tail swishing against your hips. \"I missed you so much, baby,\" she says. \"You have no idea how much.\"",
   "She straightens up, turns around, and pulls you into her chest again, and this time her hand slides down to your ass and squeezes. Her belly presses into you, hot, gurgling. \"You've gotten so big,\" she purrs. \"Mommy's so proud. Mommy's so... hungry.\""],
-  c: [["Kiss her", "km_end_dessert"], ["Pull away", "km_end_stuffed"], ["Hug her back and tell her you missed her too", "km_end_safe"], ["Back", "k_hub"]] },
+  c: [["Kiss her", "km_end_dessert"], ["Pull away", "km_end_stuffed"], ["Hug her back and tell her you missed her too", "km_end_safe"], ["Let her go down on you, even though Kara could walk in", "kx_end_walkin"], ["Back", "k_hub"]] },
 
 km_end_dessert: { w: "The kitchen", in: 1, p: [
   "You kiss her. On the mouth. Mom moans like she's been waiting years for it, and she probably has, and she shoves you up against the fridge and kisses you back, deep and sloppy, her tongue all the way in your mouth.",
