@@ -156,12 +156,12 @@ const PREDS = {
   hale:  { n: "Dr. Hale", k: "Cyborg scientist" },
   drone: { n: "The Drones", k: "Hive" },
   queen: { n: "The Queen", k: "Hive queen" },
-  bram:  { n: "Sgt. Bram", k: "Bull drill sergeant · anthro" },
+  bram:  { n: "Sgt. Bram", k: "Hawk drill sergeant · anthro" },
   twig:  { n: "Cpl. Twig", k: "Leopard gecko corporal · anthro" },
   ryn:   { n: "Medic Ryn", k: "Futa grey wolf medic · anthro" },
   celeste:{ n: "Celeste", k: "Snow leopard mother · anthro" },
   noor:  { n: "Aunt Noor", k: "Futa snow leopard · anthro" },
-  twins: { n: "Ivy & Lux", k: "Snow leopard twins, 24 · anthro" },
+  twins: { n: "Ivy & Lux", k: "Futa snow leopard twins, 24 · anthro" },
   saffra:{ n: "Saffra", k: "Futa lead mare · feral" },
   kestrel:{ n: "Kestrel", k: "Young stallion · feral" },
   thistle:{ n: "Thistle", k: "Pony mare · feral" },
@@ -1996,7 +1996,7 @@ hv_end_queensafe: { w: "The queen's chamber", in: 1, p: [
 /* ===================== BOOT CAMP ===================== */
 bc_start: { w: "Fort Maw · Recruit Barracks", p: [
   "Fort Maw trains the toughest preds in the army. It also trains prey: the \"ration corps\", recruits who carry supplies, run drills and, when the unit's hungry, become the supplies. You signed the papers without reading them. You're twenty-three. It's 0500. A whistle is blowing.",
-  "\"ON YOUR FEET, RATION!\" Sergeant Bram fills the doorway: a bull, seven feet of slab muscle in a tight olive tank top, abs like a washboard, a voice like a truck. Behind him: Corporal Twig, a gecko girl barely four foot tall, clipboard in hand, smirking. And Medic Ryn, a futa grey wolf in scrubs, leaning on the wall, looking at you like you're a lab sample.",
+  "\"ON YOUR FEET, RATION!\" Sergeant Bram fills the doorway: a red-tailed hawk, seven feet of slab muscle and rust-brown feathers in a tight olive tank top, wings folded like a cape, a hooked yellow beak, abs like a washboard, a voice like a truck. Behind him: Corporal Twig, a gecko girl barely four foot tall, clipboard in hand, smirking. And Medic Ryn, a futa grey wolf in scrubs, leaning on the wall, looking at you like you're a lab sample.",
   "\"Today,\" Bram bellows, \"you learn your place.\""],
   c: [["Run the obstacle course with Sgt. Bram", "bc_bram"], ["Report to Cpl. Twig for inspection", "bc_twig"], ["Go to the med tent", "bc_ryn"], ["Ration day in the mess hall", "bc_mess"]] },
 
@@ -2014,7 +2014,7 @@ bc_bram: { w: "The obstacle course", p: [
   c: [["Keep running till you drop", "bcb_end_behind"], ["Trip him in the mud", "bcb_end_mud"], ["Ask him to teach you properly", "bcb_end_safe"], ["Back", "bc_hub"]] },
 
 bcb_end_behind: { w: "The obstacle course", in: 1, p: [
-  "You drop at the rope wall. Bram stops. Sighs. \"Regulation.\" He hauls you up by your collar, one-handed, and opens his huge bovine jaws. ***GLLRK.*** He swallows you in the mud in front of the whole platoon, ***GLRK... GULP***, and you slide down past his pecs into his stomach, and those famous abs bulge out, ridge by ridge, stretching, until they're gone. ***Glorrrrp.***",
+  "You drop at the rope wall. Bram stops. Sighs. \"Regulation.\" He hauls you up by your collar, one-handed, and opens his huge hooked beak, wider and wider. ***GLLRK.*** He swallows you in the mud in front of the whole platoon, ***GLRK... GULP***, and you slide down past his pecs into his stomach, and those famous abs bulge out, ridge by ridge, stretching, until they're gone. ***Glorrrrp.***",
   "He finishes the course with you in him. He's slower. He's huffing. His gut swings with every step. ***Shlosh. Shlosh.*** The platoon watches the hardest sergeant on base waddle over the finish line.",
   "And afterwards it doesn't go away. A week later the photo's on the base noticeboard: Sgt. Bram, the camp's fittest pred, with a soft, round, sagging potbelly hanging over his fatigues, red-faced, the caption circled in marker: *REGULATION.* He's never been angrier. He's never been more turned on, either. The latrine filled with a whole person's worth of thick, steaming shit, and a new sign by the sink: SGT. BRAM'S PT IS CANCELLED UNTIL FURTHER NOTICE."],
   s: ["gulp", "gulp", "gurgle", "slosh", "plop"], end: { t: "Regulation", pred: "bram", hint: "Fall behind" } },
@@ -2096,7 +2096,7 @@ bcm_end_kitchen: { w: "The kitchen", in: 1, p: [
 /* ===================== THE SKI LODGE ===================== */
 sl_start: { w: "Halvorsen Lodge", p: [
   "The blizzard came in faster than the forecast said. Your car's buried. The only lights for miles belong to a huge timber ski lodge owned by the Halvorsens, a wealthy family of snow leopards, and they let you in out of the snow with big, warm, very interested smiles.",
-  "There's Celeste, the mother, silver-spotted, tall and lush and heavy-breasted in a cashmere sweater. Her younger sister Noor, a futa, curvier still, in a silk robe with an unmistakable bulge. And Celeste's twin daughters, Ivy and Lux, twenty-four, home from university, identical, giggling, sharing everything, including the way they look at you.",
+  "There's Celeste, the mother, silver-spotted, tall and lush and heavy-breasted in a cashmere sweater. Her younger sister Noor, a futa, curvier still, in a silk robe with an unmistakable bulge. And Celeste's twin daughters, Ivy and Lux, twenty-four, home from university, identical futas, giggling, sharing everything, including the way they look at you, and the matching bulges in their leggings.",
   "\"You'll stay the night,\" Celeste says. It isn't a question. \"The roads won't be clear for days.\""],
   c: [["Sit by the fire with Celeste", "sl_mom"], ["Join Noor in the hot tub", "sl_noor"], ["Let the twins show you to your room", "sl_twins"]] },
 
@@ -2148,24 +2148,24 @@ sln_end_safe: { w: "The hot tub", in: 1, p: [
 
 sl_twins: { w: "The twins' room", p: [
   "Ivy and Lux show you to \"your\" room. It's theirs. One huge bed. They lock the door, identically, and turn around, identically, and smile, identically.",
-  "\"We share everything,\" Ivy says. \"Everything,\" Lux agrees. \"Food, clothes, boyfriends.\" Ivy: \"Meals.\" Their bellies rumble at the same time. ***Grrrrrl.***"],
+  "\"We share everything,\" Ivy says. \"Everything,\" Lux agrees. \"Food, clothes, boyfriends.\" Ivy: \"Meals.\" They tug their leggings down at the same time: two thick, spined, identical cocks, two pairs of heavy balls. Their bellies rumble at the same time. ***Grrrrrl.***"],
   c: [["Let them share you", "slt_end_split"], ["Try the door", "slt_end_race"], ["Ask them which one is which", "slt_end_safe"], ["Back", "sl_hub"]] },
 
 slt_end_split: { w: "The twins' room", in: 1, p: [
-  "They share you. Ivy rides your face while Lux rides your cock, and they kiss over you, then swap, then swap again, until you've cum in both of them and can't tell which is which.",
-  "Then they share you the other way. Ivy takes your head and shoulders, Lux takes your legs, ***GLLK... GLLK...***, gulping toward each other until their muzzles meet at your waist and they're kissing with you between them. Then they pull. A tug of war. Lux wins with a big ***GULP*** and Ivy pouts.",
-  "\"Fine,\" Ivy says. And she swallows Lux. Whole. With you inside. ***GLLLLRRK.*** Ivy sits on the bed, enormous, holding her belly with both hands. \"Sharing,\" she says, smugly. ***Grrrrooorgl.***",
+  "They share you. Ivy fucks your mouth while Lux fucks your ass, and they kiss over you, then swap, then swap again, then ride you, cocks slapping your belly, until you've cum in both of them, they've both cum in you, and you can't tell which is which.",
+  "Then they share you the other way. Ivy's cock takes your head and shoulders, ***SHLLRRK***, and Lux's cock takes your feet, ***SHLLRRK***, both stroking, both pulling, until their cockheads meet at your waist, and it's a tug of war between two shafts. Lux wins, with a big wet ***SHLORP***, and her balls swell huge. Ivy pouts.",
+  "\"Fine,\" Ivy says. And she swallows Lux. Whole. Balls, you and all. ***GLLLLRRK.*** Ivy sits on the bed, enormous, holding her belly with both hands, her own cock throbbing on top of it. \"Sharing,\" she says, smugly. ***Grrrrooorgl.***",
   "She lets Lux out in the morning. You, she keeps. The weight goes to both of them somehow. They're identical, after all."],
   s: ["plap", "plap", "cum", "gulp", "gulp", "gulp", "gurgle"], end: { t: "We Share Everything", pred: "twins", hint: "Let them share" } },
 
 slt_end_race: { w: "The twins' room", in: 1, p: [
-  "You try the door. Locked. Ivy grabs your arms. Lux grabs your legs. They throw you on the bed and pin you, and take turns with you, one holding you down while the other rides you, until you stop struggling.",
-  "Then they race. Who can swallow you first. Ivy starts at the head, Lux at the feet. ***GLK GLK GLK GLK.*** Ivy wins by a mile and Lux makes her pay for it by sitting on her stuffed belly all night. ***Shlosh.***"],
+  "You try the door. Locked. Ivy grabs your arms. Lux grabs your legs. They throw you on the bed and pin you, and take turns with you, one holding you down while the other fucks you with her thick spined cock, until you stop struggling.",
+  "Then they race. Who can take you first. Ivy goes for your head with her mouth, Lux goes for your feet with her cock. ***GLK GLK GLK. SHLRK SHLRK.*** Ivy wins by a mile and Lux makes her pay for it by sitting on her stuffed belly all night, fucking her. ***Shlosh.***"],
   s: ["struggle", "plap", "plap", "gulp", "gulp", "slosh"], end: { t: "Race", pred: "twins", hint: "Try the door" } },
 
 slt_end_safe: { w: "The twins' room", in: 1, p: [
   "\"Which one of you is which?\" They stop. Look at each other. Nobody ever bothers to ask. Everybody just treats them as one. \"...I'm Ivy,\" says Ivy, quietly. \"I like chess.\" \"I'm Lux,\" says Lux. \"I hate chess.\"",
-  "You spend the night learning everything that's different about them. You make love with each of them, one at a time, separately, which they've never had. Then they ask to hold you together: Ivy swallows you gently and Lux curls around her, and you sleep in a warm, twin-wrapped belly. In the morning they let you out. They take turns visiting you."],
+  "You spend the night learning everything that's different about them. You make love with each of them, one at a time, separately, which they've never had: Ivy slow and nervous, Lux rough and grinning, both of them cumming with your name. Then they ask to hold you together: Ivy swallows you gently and Lux curls around her, and you sleep in a warm, twin-wrapped belly. In the morning they let you out. They take turns visiting you."],
   s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Ivy and Lux", pred: "twins", hint: "Ask who's who", safe: 1 } },
 
 sl_dinner: { w: "The dining room", p: [
@@ -2174,7 +2174,7 @@ sl_dinner: { w: "The dining room", p: [
 
 sld_end_feast: { w: "The dining room", in: 1, p: [
   "You climb up on the platter. They all have you, right there on the table, one after another, Noor's cock, Celeste's soft thighs, the twins together, until you've cum on every one of them.",
-  "Then Celeste, as host, swallows you. Then Noor swallows Celeste, purring, because she's always been the greedy sister. Then the twins both try to swallow Noor at once and end up stuck mouth-to-mouth around her like a hot dog bun until Ivy wins. ***GLLLLLRRRRK.***",
+  "Then Celeste, as host, swallows you. Then Noor swallows Celeste, purring, because she's always been the greedy sister. Then the twins both try to take Noor at once, Ivy with her mouth and Lux with her cock, and end up stuck around her like a hot dog bun until Ivy wins. ***GLLLLLRRRRK.***",
   "In the morning Ivy is so huge she can't get out of her chair, with her entire family and you inside her. ***Grrrrrrrrrooooorgl.*** \"Best... winter... ever,\" she wheezes."],
   s: ["plap", "plap", "cum", "gulp", "gulp", "gulp", "gurgle"], end: { t: "Family Style", pred: "twins", hint: "Climb onto the platter" } },
 
