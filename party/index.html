@@ -136,8 +136,8 @@ const PREDS = {
   family:{ n: "The whole family", k: "Mom, Kara, Sadie & Aunt Lou" },
   hesper:{ n: "Professor Hesper", k: "Dragoness professor · anthro" },
   tasha: { n: "Tasha", k: "Futa tigress, 23 · sorority president" },
-  pepper:{ n: "Pepper", k: "Skunk lab partner, 20 · anthro" },
-  thornback:{ n: "Dean Thornback", k: "Komodo dragon dean · anthro" },
+  delia: { n: "Delia", k: "Crocodile swimmer, 21 · anthro" },
+  kessler:{ n: "Dean Kessler", k: "Futa snow leopard dean · anthro" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -1451,11 +1451,11 @@ kl_end_safe: { w: "The porch", in: 1, p: [
 u_start: { w: "Gullet University · Orientation", p: [
   "Gullet University: the finest college for predators in the country, and the only one with a Prey Studies program. You're a twenty-two-year-old transfer student, and your schedule says PREY TRACK in bright red letters.",
   "Your student ID says you're \"available for practicals\". Everyone you pass in the quad looks at your ID, and then at you, and then licks their lips. Every student here is a grown adult. Every one of them is hungry.",
-  "Your first day: Intro to Predation with Professor Hesper. Then a party at the Kappa Gulp sorority house. Then lab with your new lab partner. Then the Dean wants to see you. Something about \"orientation\"."],
-  c: [["Intro to Predation", "u_prof"], ["The sorority party", "u_soro"], ["Biology lab", "u_lab"], ["The Dean's office", "u_dean"]] },
+  "Your first day: Intro to Predation with Professor Hesper. Then a party at the Kappa Gulp sorority house. Then whoever you run into in the halls. Then the Dean wants to see you. Something about \"orientation\"."],
+  c: [["Intro to Predation", "u_prof"], ["The sorority party", "u_soro"], ["The hallways", "u_lab"], ["The Dean's office", "u_dean"]] },
 
 u_hub: { w: "The quad", p: ["The bell rings. Students stream past, some of them noticeably rounder than an hour ago. Where now?"],
-  c: [["Professor Hesper's lecture hall", "u_prof"], ["Kappa Gulp", "u_soro"], ["The bio lab", "u_lab"], ["The Dean's office", "u_dean"], ["Drop out", "u_leave"]] },
+  c: [["Professor Hesper's lecture hall", "u_prof"], ["Kappa Gulp", "u_soro"], ["The hallways", "u_lab"], ["The Dean's office", "u_dean"], ["Drop out", "u_leave"]] },
 
 u_leave: { w: "The registrar", p: ["You fill out the drop form and hand it to the registrar, a bored goat lady. She stamps it without looking. \"Refund's in four to six weeks.\"",
   "You leave the campus untouched. Your inbox fills up with messages from preds asking whether you're coming back for spring semester."],
@@ -1512,53 +1512,59 @@ us_end_safe: { w: "The quad at night", in: 1, p: [
   "She asks if she can hold you, in her balls, just till sunrise. She takes you in so gently and sits under the bleachers cradling them, purring. At dawn she lets you out in a warm, sticky gush and walks you back to your dorm."],
   s: ["kiss", "plap", "squelch", "slosh"], end: { t: "Under the Bleachers", pred: "tasha", hint: "Ask her to leave with you", safe: 1 } },
 
-/* --- Pepper, lab partner --- */
-u_lab: { w: "Biology lab", p: [
-  "Your lab partner is Pepper, a skunk girl, twenty, small, in a lab coat too big for her and goggles pushed up on her head. She's tiny. She smells a little. She's very nervous.",
-  "\"Um, so, the lab says we have to dissect a frog,\" she says, \"but I already ate the frog. Sorry. I get hungry when I'm nervous.\" Her belly gurgles. ***Grrrlbl.*** She looks at you. Then at the lab table. Her tail is fluffing up."],
-  c: [["Laugh at her", "ul_end_musk"], ["Lean in to look at her notes", "ul_end_tail"], ["Tell her it's fine and help her", "ul_end_safe"], ["Back", "u_hub"]] },
+/* --- Delia, the girl in the hall --- */
+u_lab: { w: "The hallway", p: [
+  "You're hurrying down the hall to class when someone steps into your way. A crocodile girl. Twenty-one, varsity swim team, six and a half feet of green scales and hard muscle in a cropped team hoodie and short shorts, a thick tail swinging behind her. DELIA, says the name on her backpack.",
+  "\"Hey,\" she says, slowly, looking at the red PREY TRACK on your lanyard. Her eyes are gold and slit. \"You're new. You look lost.\" She smiles. Lots of teeth. \"Want me to walk you to class?\"",
+  "Her stomach growls. ***Grrrrrrl.*** \"Ignore that. Skipped breakfast.\""],
+  c: [["Let her walk you to class", "ul_end_example"], ["Say no thanks and try to get around her", "ul_end_tail"], ["Walk with her and actually talk", "ul_end_safe"], ["Back", "u_hub"]] },
 
-ul_end_musk: { w: "Biology lab", in: 1, p: [
-  "You laugh. Pepper turns bright red under her fur, and her tail goes straight up, and then... ***PFFFFFFFFFT.*** A cloud of skunk musk right in your face.",
-  "It's not just smell. Your head swims. Your knees go weak. You're on the floor, dizzy and drooling and rock hard. Pepper looks at you, surprised. Then interested. \"Oh,\" she says. \"Oh, that's useful.\"",
-  "She sits on your face, her fluffy tail over your head, and her ass opens and she just sits down, wiggling. ***Shllorrrp.*** You go up a skunk girl, musk-drunk, smiling. ***Shlorp. Shlorp.*** Her lab coat stretches over a belly bigger than she is.",
-  "She gets an A on the lab. The professor never asks where you went. In the morning the lab bathroom has a whole person's worth of musky, steaming shit piled in it. ***PLOP.*** The building is evacuated."],
-  s: ["fart", "squelch", "squelch", "gurgle", "plop"], end: { t: "Musk-Drunk", pred: "pepper", hint: "Laugh at her" } },
+ul_end_example: { w: "Lecture Hall 1", in: 1, p: [
+  "\"Sure, thanks.\" She walks beside you. Then she walks a little behind you. Then, in the empty stairwell, she's not walking anymore.",
+  "Her jaws close over your head and shoulders. ***GLLK.*** A crocodile's jaws. You can't open them. She lifts you clean off the steps and swallows, ***GLRK. GLRK. GULP***, tipping her head back, letting gravity do the work, and your kicking feet slide in last. You land in her stomach in a heap. ***Glorrrp.***",
+  "Then she walks to class. With you in her. Your class. She's in it too.",
+  "Professor Hesper looks up as Delia waddles in five minutes late with a huge, round, squirming gut stretching her hoodie and her shorts. \"Ah. Miss Delia. And... is that our new prey-track transfer?\" Delia pats her belly. ***Grrrrooorgl.*** \"Yep.\"",
+  "Hesper lights up. \"Perfect. Everyone, up front. Today's lecture: how NOT to avoid being prey.\" She makes Delia stand on the demonstration table. She points at the bulge with a laser pointer. \"Note the subject accepted an escort from an unknown predator. Mistake one. Note the subject entered an empty stairwell. Mistake two. Note the subject is now,\" she taps Delia's belly, ***shlosh***, \"lunch.\"",
+  "Two hundred students take notes. Someone asks if they can touch it. Delia lets them. They line up. You feel every hand. \"This will be on the midterm,\" Hesper says.",
+  "The next morning, the swim team locker room toilet gets a whole grown person's worth of huge, steaming, human-like shit, ***FFFRRRT... PLOP... PLOP***, and Delia is noticeably thicker in the thighs at practice."],
+  s: ["struggle", "gulp", "gulp", "gurgle", "slosh", "plop"], end: { t: "How NOT to Avoid Being Prey", pred: "delia", hint: "Let her walk you to class" } },
 
-ul_end_tail: { w: "Biology lab", in: 1, p: [
-  "You lean in to look at her notes. Your face ends up right by her mouth. She panics. Her jaws open. ***GLLK.*** \"Mmf! Sorry! Mmf!\"",
-  "She's tiny and she's swallowing you anyway, in panicked, apologetic little gulps, her goggles fogging up, ***GLRK... GLRK... GULP***, until you're curled up in a belly so big she has to sit on the lab floor. ***Grrrrooorgl.***",
-  "\"I'm so sorry,\" she says to her stomach. \"I'll, um. I'll write you a really good lab report.\" She does. It's twelve pages. You're the conclusion."],
-  s: ["gulp", "gulp", "gulp", "gurgle"], end: { t: "Lab Report", pred: "pepper", hint: "Lean in close" } },
+ul_end_tail: { w: "The hallway", in: 1, p: [
+  "\"No thanks, I'm good.\" You try to step around her. Her tail sweeps your legs out from under you and you hit the floor. She drags you into the girls' bathroom by the ankle.",
+  "She sits on you on the bathroom floor and grinds, rough, until she cums. Then she shoves her shorts aside, lowers her hips over you, and her cunt opens, wide and wet. ***SHLLLORRRP.*** She sits. You go in, head first, slowly, while she braces on the sinks and moans.",
+  "She walks back out into the hall with her belly swollen low and huge, and goes to swim practice. She does laps with you inside her. ***Shlosh. Shlosh.*** Her best time all season."],
+  s: ["struggle", "plap", "cum", "squelch", "gurgle"], end: { t: "Swim Practice", pred: "delia", hint: "Try to get past her" } },
 
-ul_end_safe: { w: "Biology lab", in: 1, p: [
-  "\"It's fine. We'll fake the results.\" Pepper stares at you. Then she laughs, a little squeaky laugh, and you spend the whole lab making up frog data together.",
-  "After class she kisses you in the supply closet, nervous and fast. You make love on a pile of lab coats. Her tail wraps around you both like a blanket.",
-  "\"Can I, um, keep you in me tonight? I won't spray. I promise.\" She swallows you carefully and sleeps in her dorm with you curled up inside. In the morning she lets you out and gives you her notes. You're lab partners for four years."],
-  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Lab Partners", pred: "pepper", hint: "Help her", safe: 1 } },
+ul_end_safe: { w: "The hallway", in: 1, p: [
+  "You walk with her and actually talk. She's funny. She's a marine bio major. She's lonely, because everyone on the prey track runs when they see her teeth. By the time you get to class, you're both laughing.",
+  "You skip class. You make love in the empty pool locker room, her strong arms around you, her tail curled around your legs. After, she asks, shy, if she can carry you to her next class. \"Just to show off. I'll let you out after. Promise.\"",
+  "She swallows you so carefully and sits through a whole lecture with her hand on her round belly, and when Hesper asks who she's got in there, she says \"My boyfriend,\" and two hundred people go \"awww\". She lets you out after class. She meets you in the hall every day."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Walked to Class", pred: "delia", hint: "Actually talk to her", safe: 1 } },
 
-/* --- Dean Thornback --- */
+/* --- Dean Kessler --- */
 u_dean: { w: "The Dean's office", p: [
-  "Dean Thornback is a komodo dragon in a three-piece suit, huge, scaly, slow, with a forked tongue that flicks out while he reads your file. The office is all leather and dark wood. There's a lot of space on his desk.",
-  "\"Ah. The transfer. Prey track.\" Flick. \"I like to give every new prey student a personal orientation. To make sure they understand their... role.\" He loosens his tie."],
-  c: [["Accept your orientation", "ud_end_desk"], ["Threaten to report him", "ud_end_expel"], ["Ask about a scholarship", "ud_end_safe"], ["Back", "u_hub"]] },
+  "Dean Margaux Kessler is a futa snow leopard in a sharp grey suit, tall and elegant, silver-spotted fur, icy blue eyes and a long, thick tail. Her skirt does nothing to hide the huge bulge of her cock, or the heavy balls underneath. The office is all glass and white leather. There's a lot of space on her desk.",
+  "\"Ah. The transfer. Prey track.\" She reads your file, slowly. \"I like to give every new prey student a personal orientation. To make sure they understand their... role.\" She uncrosses her legs."],
+  c: [["Accept your orientation", "ud_end_desk"], ["Threaten to report her", "ud_end_expel"], ["Ask about a scholarship", "ud_end_safe"], ["Back", "u_hub"]] },
 
 ud_end_desk: { w: "The Dean's office", in: 1, p: [
-  "You accept. He bends you over his desk and fucks you slow and heavy with one of his two cocks, then the other, ***PLAP... PLAP...***, his tongue flicking against your neck, reading your file over your shoulder the whole time.",
-  "Then he swallows you, slow as a komodo, inch by inch, ***GLK... GLK... GLK...***, over twenty minutes, while he takes a phone call. ***GULP.*** \"Yes, the budget. Mm.\"",
-  "He keeps you in his belly through three faculty meetings. In the morning, the executive restroom gets a whole person's worth, an enormous, steaming pile that the facilities crew is far too scared to mention."],
-  s: ["plap", "plap", "cum", "gulp", "gulp", "gurgle", "plop"], end: { t: "Orientation", pred: "thornback", hint: "Accept your orientation" } },
+  "You accept. She hikes her skirt and her cock swings free, thick and pink and spined like a big cat's, her balls heavy and full. She bends you over her glass desk and fucks you slow and deep, reading your file over your shoulder, purring. ***PLAP... PLAP...***",
+  "She cums in you, a flood, and then turns you around, sits back in her chair, and holds her cock up to your face. The tip opens. ***SHLLRRK.*** \"Your orientation, transfer.\"",
+  "She strokes you down her shaft while she takes a phone call, ***Glrrk... glrrk... glrrk...***, and you drop into her balls with a fat ***SHLORP***. They swell huge under her skirt. She crosses her legs over them. ***Shlosh.*** \"Yes, the budget. Mm.\"",
+  "She keeps you through three faculty meetings. Then she spends you across her glass desk in thick, endless ropes. ***SPLRRT. SPLRRT. SPLRRT.*** Her assistant cleans it up without a word."],
+  s: ["plap", "plap", "cum", "squelch", "slosh", "cum"], end: { t: "Orientation", pred: "kessler", hint: "Accept your orientation" } },
 
 ud_end_expel: { w: "The Dean's office", in: 1, p: [
-  "\"I'll report you.\" Thornback smiles. Slowly. \"To whom? I'm the Dean.\" He stands. He's huge. He grabs you and throws you face-down across the desk and takes you, hard, ***PLAP PLAP PLAP***, until you can't say anything at all.",
-  "Then he swallows you, rough, and sits back down, and signs a form with his belly bulging against the desk. EXPELLED. He stamps it. \"Effective immediately.\" ***Grrrnch.***"],
-  s: ["struggle", "plap", "plap", "gulp", "crack"], end: { t: "Expelled", pred: "thornback", hint: "Threaten him" } },
+  "\"I'll report you.\" Kessler smiles. Slowly. \"To whom? I'm the Dean.\" She stands. She's huge. She throws you face-down across her desk and takes you, hard, her spined cock raking you, ***PLAP PLAP PLAP***, until you can't say anything at all.",
+  "Then she swallows you, rough and fast, ***GLLRK. GULP***, and sits back down with her belly bulging against the glass, and signs a form. EXPELLED. She stamps it. \"Effective immediately.\" ***Grrrnch.***",
+  "The next morning, the executive restroom gets a whole grown person's worth of huge, steaming, human-like shit. Nobody on staff dares mention it."],
+  s: ["struggle", "plap", "plap", "gulp", "crack", "plop"], end: { t: "Expelled", pred: "kessler", hint: "Threaten her" } },
 
-ud_end_safe: { w: "The Dean's office", in: 1, p: [
-  "\"Is there... a scholarship?\" Thornback laughs, a dry hiss. Then he looks at you properly. \"Hm. There is. A very special one. I give it to one student a year.\"",
-  "It involves you living in his house, which is huge and warm and full of books. He's gentle, for a komodo. You make love by his fireplace. He keeps you in his belly most nights, reading aloud to you through it. In the morning he always lets you out, and you always have breakfast together.",
+ud_end_safe: { w: "The Dean's house", in: 1, p: [
+  "\"Is there... a scholarship?\" Kessler laughs, low. Then she looks at you properly. \"Hm. There is. A very special one. I give it to one student a year.\"",
+  "It involves living in her house, which is huge and warm and full of books. She's gentle, for a snow leopard. You make love by her fireplace, her tail wrapped around your waist. Most nights she keeps you in her balls, warm and sloshing, reading aloud while she strokes them. In the morning she always lets you out, and you always have breakfast together.",
   "You graduate with honours. Tuition-free."],
-  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Full Ride", pred: "thornback", hint: "Ask for a scholarship", safe: 1 } },
+  s: ["kiss", "plap", "squelch", "slosh"], end: { t: "Full Ride", pred: "kessler", hint: "Ask for a scholarship", safe: 1 } },
 
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
