@@ -2,7 +2,7 @@
 // The page itself is always fetched fresh when online (so updates land right away) and kept as a fallback;
 // built-in sounds, icons and fonts are stored once and served from the phone after that.
 // Nothing else is touched: the AI, the account (Supabase) and pictures go straight to the network.
-const SHELL = "lr-shell-1", MEDIA = "lr-media-1";
+const SHELL = "lr-shell-2", MEDIA = "lr-media-1";
 const SHELL_FILES = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/maskable-512.png", "./icons/apple-touch-icon.png", "./icons/icon.svg"];
 
 self.addEventListener("install", e => {
@@ -41,6 +41,8 @@ self.addEventListener("fetch", e => {
   if (url.origin !== location.origin) return; // AI, account, pictures: untouched
   if (req.headers.has("range")) return; // audio seeking goes straight to the network
   const path = url.pathname;
+  // the separate games (/party/, /belly/) are always fetched straight from the network
+  if (/\/(party|belly)\//.test(path)) return;
   if (req.mode === "navigate" || /\/(index\.html)?$/.test(path)) return e.respondWith(fresh(req, SHELL, "./index.html"));
   if (/\/sounds\/.+\/manifest\.json$/.test(path) || /manifest\.webmanifest$/.test(path)) return e.respondWith(refreshing(req, SHELL));
   if (/\/(sounds|icons)\//.test(path)) return e.respondWith(stored(req, MEDIA));
