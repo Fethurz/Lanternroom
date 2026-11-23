@@ -90,8 +90,9 @@ const PREDS = {
   mochi: { n: "Mochi", k: "Pet ball python · feral" },
   clover:{ n: "Clover", k: "Dairy cow · feral" },
   ransom:{ n: "Ransom", k: "Stallion · feral" },
-  gus:   { n: "Gus", k: "Billy goat · feral" },
-  honk:  { n: "Honk", k: "Goose · feral" },
+  bramble:{ n: "Bramble", k: "Ewe · feral" },
+  peaches:{ n: "Peaches", k: "Hen · feral" },
+  maggie:{ n: "Maggie", k: "Redhead farmer · human" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -101,20 +102,20 @@ const PREDS = {
 const N = {
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
-  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night in Hollis's barn, and the animals are awake", "f_start"]] },
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"]] },
 
 f_start: { w: "Hollis Farm", p: [
-  "Your car died two miles back. The only light for miles is Hollis Farm, and old man Hollis is gone till Monday. There's a note on the farmhouse door: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers.*",
+  "Your car died two miles back. The only light for miles is Hollis Farm. The farmhouse lights are on, and there's a note tacked to the barn door in looping handwriting: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers. — Maggie*",
   "The barn is warm and thick with the smell of hay and sweat and something heavier underneath. Musk. Animal musk. Lots of it.",
-  "As your eyes adjust, you see them. In every stall, eyes are open. Watching you. A cow. A huge black horse. A goat with a wicked look on his face. And on a hay bale by the door, a goose, glaring like you owe it money.",
+  "As your eyes adjust, you see them. In every stall, eyes are open. Watching you. A cow. A huge black horse. A sheep the size of a sofa, wool and all. And through the open door of the hen house, a fat red hen, glaring like you owe her money.",
   "Not one of them looks like a dumb animal. Every one of them looks like it's deciding something."],
-  c: [["Head for the cow's stall", "f_cow"], ["Check on the stallion", "f_horse"], ["Look at the goat", "f_goat"], ["Shoo the goose off the hay bale", "f_goose"]] },
+  c: [["Head for the cow's stall", "f_cow"], ["Check on the stallion", "f_horse"], ["Look at the sheep", "f_sheep"], ["Peek in the hen house", "f_hen"], ["Knock on the farmhouse door", "f_house"]] },
 
 f_hub: { w: "The barn", p: ["The barn creaks. Something shifts in the dark. Every animal is still watching you. Where now?"],
-  c: [["The cow's stall", "f_cow"], ["The stallion's stall", "f_horse"], ["The goat pen", "f_goat"], ["The goose's hay bale", "f_goose"], ["Sleep in the truck outside instead", "f_leave"]] },
+  c: [["The cow's stall", "f_cow"], ["The stallion's stall", "f_horse"], ["The sheep pen", "f_sheep"], ["The hen house", "f_hen"], ["The farmhouse", "f_house"], ["Sleep in the truck outside instead", "f_leave"]] },
 
-f_leave: { w: "Hollis's truck", p: ["You lock yourself in the old truck and sleep sitting up. All night, things press against the windows: a huge wet nose, a horse's eye, a goose beak tapping the glass. Tap. Tap. Tap.",
-  "In the morning a tow truck comes. Every animal on the farm watches you go. The goose follows the tow truck for half a mile."],
+f_leave: { w: "Hollis's truck", p: ["You lock yourself in the old truck and sleep sitting up. All night, things press against the windows: a huge wet nose, a horse's eye, a hen's beak tapping the glass. Tap. Tap. Tap. And once, a redhead in a flannel shirt, cupping her hands to the window and smiling.",
+  "In the morning a tow truck comes. Every animal on the farm watches you go. Maggie waves from the porch, licking her lips."],
   end: { t: "Locked Doors", pred: "none", hint: "Don't sleep in the barn" } },
 
 /* ===== CLOVER: the cow ===== */
@@ -135,7 +136,7 @@ c_end_udder: { w: "Clover's udder", in: 1, p: [
   "She shoves back against you, rocking her whole weight onto your face, and the teat swallows you in long, milking pulls. Shoulders. Chest. Hips. ***Glorp... glorp... glorp.*** Your legs kick out of the end of a cow tit.",
   "Then you drop into the udder. It's a hot, tight, pitch-black bag full of milk, and it stretches around you until it's dragging on the floor, as big as a hay bale, four teats spurting from the pressure of you squirming inside. ***SHLOSHH.***",
   "Clover lies down on it. Right on top of it. On top of you. The whole udder squashes flat and milk floods your mouth and nose and she just sighs, contented, and goes to sleep. ***Shlosh.***",
-  "It takes days. You soften slowly, melting into the warm milk, churned and sloshed every time she rolls over. When Hollis comes home on Monday, Clover gives eleven gallons. It tastes like you. He drinks a glass and says it's the best milk she's ever made."],
+  "It takes days. You soften slowly, melting into the warm milk, churned and sloshed every time she rolls over. At dawn Maggie milks her, and Clover gives eleven gallons. It tastes like you. Maggie drinks a glass, licks her lips and says it's the best milk Clover's ever made."],
   s: ["squelch", "slosh", "slosh", "slosh"], end: { t: "Fresh Milk", pred: "clover", hint: "Suck the teat" } },
 
 c_end_crush: { w: "Clover's stall", in: 1, p: [
@@ -145,7 +146,7 @@ c_end_crush: { w: "Clover's stall", in: 1, p: [
   "Then it pushes you on. Into the second. Smaller, tighter, ribbed walls that squeeze you in slimy honeycomb folds. Then the third, crushing you in hard, rhythmic clenches. ***Krrnnch.*** Then the fourth, where the real acid is, and by then you're glad.",
   "It takes her three full days. Three days of hot, wet, rotting misery, passed from gut to gut like you're nothing. Clover just stands in her stall the whole time, swaying gently, belly gurgling louder than the barn radio. ***HRRRRRROOOOOAAAAP.*** Her belches stink up the whole farm.",
   "On the fourth day she backs her huge ass up to the gutter, lifts her tail, and you come out. All of you. A fat, endless, steaming rope of cow shit as heavy as a full-grown person, pouring and pouring and splattering, ***FFFRRRRRT... SPLAT... SPLORRT***, a heaping pile of what used to be you, bigger than a wheelbarrow, sliding across the barn floor.",
-  "Hollis comes home to it Monday. He just sighs and goes to get the big shovel."],
+  "Maggie finds it at dawn, whistles, and goes to get the big shovel."],
   s: ["gulp", "gurgle", "gurgle", "crack", "belch", "fart", "plop"], end: { t: "Four Stomachs", pred: "clover", hint: "Refuse her" } },
 
 c_belly: { w: "Clover's stall", p: [
@@ -160,7 +161,7 @@ c_end_joined: { w: "Clover's belly", in: 1, p: [
   "Then she swings her head around, slurps you up off your feet with one swipe of her tongue, ***SHLRRRP***, and swallows you whole. ***GLLRK. GULP.***",
   "You slide down into hot, dark, stinking sludge, and you're not alone. Someone else is in here. Some other hiker. Soft. Barely moving. Half dissolved into fermenting hay. You're pressed up against them. ***Grrrnch.*** Their hand finds yours.",
   "Then the stomach squeezes, and the two of you are squeezed together into the next one. And the next. Mashed into one lump of warm, sloshing, groaning mess, passing from stomach to stomach together.",
-  "By the end of the week, Clover has to lift her tail twice. Hollis has to buy a second wheelbarrow."],
+  "By the end of the week, Clover has to lift her tail twice. Maggie has to buy a second wheelbarrow."],
   s: ["gurgle", "gulp", "gurgle", "crack", "plop"], end: { t: "Company", pred: "clover", hint: "Keep rubbing" } },
 
 c_sleep: { w: "Clover's stall", in: 1, p: [
@@ -199,7 +200,7 @@ h_end_raped: { w: "The barn floor", in: 1, p: [
   "Then he flips you over with his nose. His cock is still out, still hard, dripping, right above your face. The tip flares wide. And opens. ***SHLLRRRK.*** It swallows your head.",
   "He thrusts into the air and his cock swallows you deeper, gulping you down the shaft, bulge rolling toward his balls, ***Glrrk... glrrk... glrrk...***, and you drop into a sack so heavy it swings almost to his knees. ***SHLORP.***",
   "His balls swell to the size of watermelons around you, sloshing with hot, thick horse cum. ***Shlosh. Shlosh.*** He just goes back to his stall and stands there, legs splayed wide around them, dripping.",
-  "The next morning, Hollis's prize mare gets the biggest, thickest load of her life. That's you. Most of you is still dripping out of her by lunch."],
+  "The next morning, Maggie's prize mare gets the biggest, thickest load of her life. That's you. Most of you is still dripping out of her by lunch."],
   s: ["plap", "plap", "cum", "squelch", "slosh", "cum"], end: { t: "Stud Fee", pred: "ransom", hint: "Try to run" } },
 
 h_touch: { w: "Ransom's stall", p: [
@@ -213,7 +214,7 @@ h_end_suck: { w: "Ransom's stall", in: 1, p: [
   "Ransom shoves forward. The bars rattle. The fat tip pops into your mouth and slams the back of your throat. ***GLK.*** You gag. He doesn't stop. ***GLK. GLK. GLK.*** He's fucking your face through the bars of his stall, and your throat bulges every time he thrusts.",
   "Then he cums. ***GLLRRRK.*** It's too much. It's gallons. Your stomach swells instantly, round and tight, then rounder, then so full you're pinned against the bars by your own gut, and it's still pouring into you, out of your nose, down your chin.",
   "When he finally pulls out, you collapse in the straw, a huge, sloshing, hugely pregnant-looking belly full of horse cum, unable to stand up. ***Shlosh.***",
-  "That's when the goat wanders over. He sniffs your gut. He looks very interested."],
+  "That's when the sheep wanders over. She sniffs your gut. She looks very interested."],
   s: ["gag", "gag", "cum", "slosh"], end: { t: "Overfed", pred: "ransom", hint: "Suck him through the bars" } },
 
 h_run: { w: "Ransom's stall", p: [
@@ -221,77 +222,123 @@ h_run: { w: "Ransom's stall", p: [
   s: ["struggle"],
   c: [["Run!", "h_end_raped"], ["Freeze", "h_end_bred"]] },
 
-/* ===== GUS: the goat ===== */
-f_goat: { w: "The goat pen", p: [
-  "The goat is the size of a pony, with long curling horns and a beard and the meanest yellow eyes you've ever seen. GUS, says the sign on his pen. Underneath, someone has added in marker: EATS EVERYTHING.",
-  "He's chewing a tin can. He spits it out when he sees you. His eyes go from your shoes, to your belt, to your face. He licks his lips.",
-  "Then he bleats, and it sounds exactly like a laugh."],
-  c: [["Offer him some hay", "g_hay"], ["Hop the fence and stare him down", "g_stare"], ["Leave him alone", "f_hub"]] },
+/* ===== BRAMBLE: the ewe ===== */
+f_sheep: { w: "The sheep pen", p: [
+  "The sheep is a ewe, but she's the size of a sofa: a huge, round, rolling mound of thick cream-coloured wool with a black face and long, lazy-lidded black eyes. BRAMBLE, says the sign on her pen. She's lying in the straw like a queen on a cushion.",
+  "When you lean on the fence, she gets up. Slowly. Her wool sways. She's thick all over, wide hips, a heavy round rump, and her belly hangs low and soft under the fleece. She walks right up to the fence, sniffs your crotch through the slats, and bleats, low and throaty.",
+  "Her eyes don't look like a sheep's. They look bored, and hungry, and amused."],
+  c: [["Climb in and bury your hands in her wool", "e_wool"], ["Feed her some hay", "e_hay"], ["Leave her be", "f_hub"]] },
 
-g_hay: { w: "The goat pen", p: [
-  "You hold out a fistful of hay. Gus eats it. Then he eats your sleeve. Then he eats your other sleeve. He's chewing on your shirt and staring at you the whole time, unblinking, slowly working his way up toward your collar.",
-  "\"Hey. HEY. Quit it.\" He doesn't quit it."],
-  c: [["Let him strip you", "g_end_stripped"], ["Shove him away", "g_end_ram"]] },
+e_wool: { w: "The sheep pen", p: [
+  "You climb in and sink both hands deep into her fleece. It's warm and thick and smells like lanolin and sweat. Bramble leans into you, heavy, pressing you back against the fence with her whole soft weight. Then she turns around.",
+  "Her rump is right in front of you, big and round and woolly, her stubby tail flicking up. Underneath it, she's wet. Swollen and pink and dripping in the straw. She backs toward you, slowly. Bleating."],
+  c: [["Fuck her", "e_end_fucked"], ["Let her sit on you", "e_end_smother"]] },
 
-g_end_stripped: { w: "The goat pen", in: 1, p: [
-  "You let him. He eats your shirt right off your body. Then your belt. Then your pants, button and zipper and all, ***crunch***, and then your underwear, until you're standing naked in a goat pen at midnight while a goat chews your boxers and stares at your cock.",
-  "He drops the boxers. He leans in and licks it. Rough, fast goat tongue, ***shlrp shlrp shlrp***, and you're hard in seconds, and he bleats that laugh again.",
-  "Then his mouth opens over it. Over your cock. Your balls. Your hips. ***Glk.*** He's eating you crotch-first, the same way he ate your clothes, like you're just one more thing he found lying around. ***Glk... glk... GULP.***",
-  "You go down into his first stomach and the smell hits you like a truck. Rotting hay, wet cardboard, tin cans, your own clothes, all of it fermenting in a hot, stinking bath. ***GRRRRROOOORGL.***",
-  "Four stomachs. Every one tighter, slimier, more miserable than the last. Gus lies in his pen burping the whole time, ***BRRRAAAAP***, long, rank, rolling goat burps that you can taste from the inside.",
-  "Two days later he drops you all at once in a single colossal heap: a steaming pile of goat shit as big as a whole grown person, with your belt buckle glinting on top like a cherry. He looks at the barn cat. The barn cat looks at the pile. Gus bleats that laugh again."],
-  s: ["kiss", "gulp", "gurgle", "belch", "plop"], end: { t: "Eats Everything", pred: "gus", hint: "Let him eat your clothes" } },
+e_end_fucked: { w: "The sheep pen", in: 1, p: [
+  "You drop your pants and push into her. She's scorching hot and tight and she clenches around your cock like a fist, and bleats so loud the horse stamps in his stall. You fuck her against the fence, fingers buried in her wool, ***plap... plap... plap***, her heavy rump bouncing back against your hips.",
+  "She pushes back harder. Harder. Her pussy is opening wider around your cock, then around your balls, then around your hips, sucking. ***Shllrrrp.*** You're not fucking her anymore. She's swallowing you. Ass first, hips first, her cunt gaping wide and rippling, dragging you in while you're still cumming into her.",
+  "You grab at the fence. Your fingers slip off. Your chest goes in. Your face presses into the wool of her rump for one last breath of lanolin, and then she backs fully onto you, and you're gone. ***GLORP.***",
+  "Inside her it's hot and dark and tight, curled up in a womb that stretches out under her wool into a huge, low, swaying belly that drags in the straw. ***Glrrrbl.*** She lies down on it with a sigh, chewing on nothing, eyes half shut.",
+  "She takes her time. A long, slow, warm week of being squeezed and softened, and by the end of it Bramble is the fattest sheep in the county. Her fleece barely covers her new hips. Maggie has to make her a bigger pen."],
+  s: ["plap", "plap", "cum", "squelch", "gurgle"], end: { t: "Woolgathering", pred: "bramble", hint: "Fuck her" } },
 
-g_end_ram: { w: "The goat pen", in: 1, p: [
-  "You shove him. Bad idea. He backs up, lowers his horns and slams into your gut. ***THUD.*** You fold over, wheezing, and he does it again, knocking you flat into the mud.",
-  "Then he mounts you. He's a goat. He doesn't care what hole. His thin, red goat cock jabs and stabs and finds your ass and rams in, ***PLAP PLAP PLAP PLAP***, fast and frantic, his hooves digging into your back, bleating in your ear.",
-  "He cums in about thirty seconds. Then he does it again. Then he gets off, turns around, and pisses on you. Marking you. Then he eats you.",
-  "Headfirst, no ceremony, just big, rough, mean gulps, ***GLLRK. GLLRK. GULP***, chewing at your clothes as you go down just to be a dick about it.",
-  "Four stomachs. Every one of them stinks. It takes three days. He spends the whole time headbutting the fence for fun with your shape bouncing inside him. ***SHLOSH.***",
-  "And when he's done, he climbs up on top of the hay bale and squats and makes sure everybody in the barn sees it: you, dropped in one huge, steaming, groaning, endless coil of goat shit, as big as you ever were, ***FFFRRRT... SPLORT... PLOP***, piled right in the middle of the barn where the goose will step in it."],
-  s: ["struggle", "plap", "plap", "cum", "gulp", "gurgle", "fart", "plop"], end: { t: "Head Butt", pred: "gus", hint: "Shove him" } },
+e_end_smother: { w: "The sheep pen", in: 1, p: [
+  "You lie down in the straw. Bramble steps over you and sits. Her huge, woolly rump drops onto your face. ***FWUMP.*** Pitch-black, scorching, airless wool, a sofa's worth of sheep pressing down on your face. You can't breathe. You can smell nothing but her.",
+  "She wiggles. Grinding down. Getting comfortable. And her hole is right there on your mouth, and it opens, hot and slick, and she squats harder. ***Shllorp.*** Your head goes up her ass.",
+  "She just keeps sitting. Every little wiggle of her hips pulls you further in, ***Shlorp... shlorp... shlorp...***, your shoulders, your chest, slow and steady, a sheep just settling into a comfy seat that happens to be you. Your legs kick in the straw. Then they slide up inside her too.",
+  "You're squeezed up through her into four stomachs, one after another, every one of them hotter and fouler and more crushing than the last. ***GRRRRROOORGL.*** It takes three days. Three days of slimy, fermenting, rolling misery while Bramble lies in her pen and burps up sour little ***Hrrrup***s, looking very pleased.",
+  "On the fourth morning she backs into the corner, lifts her tail, and strains. And keeps straining. What comes out of her is a long, fat, endless coil of shit as big as a full-grown person, piling up in a steaming heap in the corner of the pen. ***FFFRRRT... SPLORRT... PLOP.*** She walks away from it without a look back."],
+  s: ["struggle", "squelch", "squelch", "gurgle", "belch", "fart", "plop"], end: { t: "Sat On", pred: "bramble", hint: "Let her sit on you" } },
 
-g_stare: { w: "The goat pen", p: [
-  "You hop the fence and stare him in the eye. Gus stares back. Neither of you blinks. It goes on for a long time. Then he very slowly opens his mouth, keeping eye contact, and lets out the longest, loudest, rankest belch you have ever heard in your life, right into your face. ***BRRRRRRRRRRAAAAAAAAAAAAAAAAP.***",
-  "It smells like garbage and old hay and something that used to be a person."],
+e_hay: { w: "The sheep pen", p: [
+  "You hold out some hay. Bramble ignores it. She licks your hand instead. Then your wrist. Then your forearm, slow and wet and warm, tasting you, and she lets out a long, rumbling belch right on your arm. ***Hrrrrrrrap.*** It smells like old grass and something that used to be a person."],
   s: ["belch"],
-  c: [["Gag and back off", "g_end_ram"], ["Hold your ground", "g_end_stripped"]] },
+  c: [["Pull your arm back", "e_end_gulped"], ["Let her keep licking", "e_end_smother"]] },
 
-/* ===== HONK: the goose ===== */
-f_goose: { w: "The hay bale", p: [
-  "The goose is fat and white and mean, sitting on the hay bale like a throne. It hisses at you. It's a goose. It's maybe two feet tall. You're a grown adult.",
-  "It hisses again. A long, rude, rattling hiss. It spreads its wings and puffs up to about twice its size, which is still about knee high. It does not move off the hay bale. Its little black eyes say, very clearly: *Fuck off.*",
-  "There's a name tag on its leg. HONK."],
-  c: [["Laugh at it", "o_laugh"], ["Shoo it off", "o_shoo"], ["Leave it alone", "f_hub"]] },
+e_end_gulped: { w: "The sheep pen", in: 1, p: [
+  "You pull your arm back. Bramble's eyes narrow. She shoves her whole weight into the fence and it cracks, and she's on you, a soft, heavy wall of wool knocking you flat on your back in the straw.",
+  "She noses up your shirt and licks your belly, your chest, your throat, rough and greedy, and then her mouth opens over your head. ***GLLK.*** She swallows you like you're a mouthful of grass, long, rolling, sheep gulps working you down her throat. ***GLLRK. GULP.***",
+  "You hit the first of four stomachs in a hot, stinking slop. ***GRRRRROOOOORGL.*** It's miserable. It's slimy and sour and tight and it takes forever, and every time you get pushed into the next one it's worse.",
+  "She lies in the straw for three days, belly swollen round under her fleece, chewing on air and looking smug about it. Then she leaves you in the corner of the pen, in one huge, steaming, human-sized heap. ***SPLORRT... PLOP.***",
+  "You got eaten by a sheep. Of all the things on this farm. A sheep."],
+  s: ["struggle", "gulp", "gulp", "gurgle", "plop"], end: { t: "Baa", pred: "bramble", hint: "Refuse her" } },
 
-o_laugh: { w: "The hay bale", p: [
-  "You laugh. It's a GOOSE. Honk stops hissing. It goes silent. It folds its wings very neatly. It stares at you with the coldest look you have ever seen on any living thing. And then it honks, once, and every animal in the barn turns its head toward you at the same time."],
-  c: [["Keep laughing", "o_end_humiliated"], ["Apologise to the goose", "o_end_sorry"]] },
+/* ===== PEACHES: the hen ===== */
+f_hen: { w: "The hen house", p: [
+  "There's one hen in the hen house, sitting on top of the nesting boxes like a throne. A fat, glossy red hen, about a foot and a half tall, with a bright comb and the beadiest, nastiest little eyes you have ever seen on a bird. PEACHES, says a hand-painted sign. Under it, in Maggie's handwriting: DO NOT TOUCH HER EGGS.",
+  "She clucks at you. It is not a friendly cluck. It is the cluck of somebody who has decided you're beneath her.",
+  "She's a chicken. You could pick her up with one hand."],
+  c: [["Laugh at her", "h2_laugh"], ["Steal one of her eggs", "h2_egg"], ["Leave the hen house", "f_hub"]] },
 
-o_end_humiliated: { w: "The barn floor", in: 1, p: [
-  "\"What are you gonna do, bite my ankles?\"",
-  "Honk launches. A flying, honking, flapping bundle of fury slamming into your face. ***HONK. HONK.*** Wings beat at your head. You stumble backwards, trip on a bucket, and land flat on your back in the straw. Honk lands on your chest.",
-  "It bites your nose. Hard. Then it opens its beak and keeps opening it, its long neck swelling, and it starts swallowing your face. ***Glk.*** You can't believe it. You try to swat it off and it's just a goose, it should be EASY, but its neck has your head and it won't let go. ***Glk. Glk. Glk.***",
-  "Its throat stretches into a long, thin, ridiculous sleeve around your shoulders. A goose. Swallowing a person. The horse is watching. The goat is laughing that bleating laugh. ***GLLRK.*** Your hips go in. Your feet kick in the air out of a goose's beak like a cartoon.",
-  "***GULP.*** And then there's a goose on the barn floor with a body stretched out into a huge, round, person-shaped balloon, its little feet barely touching the ground, its head bobbing smugly on top. ***Glorrrp.***",
-  "It waddles around the whole barn like that. Every animal looks. You can hear them. The goat won't stop laughing.",
-  "In the morning, Honk climbs back up onto its hay bale, squats, and starts honking. Strained. Furious. It takes forever. What comes out of a two-foot goose is a full grown person's worth of soft, wet, enormous shit, ***FFFFRRRRRRT... PLOP... PLOP... SPLORRT***, way, way bigger than the goose that made it, piling up and sliding off the bale onto the floor. Honk stands on top of the pile and honks in triumph. You got eaten by a goose. You lost to a goose."],
-  s: ["struggle", "gulp", "gulp", "gulp", "gurgle", "fart", "plop"], end: { t: "Lost to a Goose", pred: "honk", hint: "Laugh at it" } },
+h2_laugh: { w: "The hen house", p: [
+  "You laugh. It's a CHICKEN. Peaches stops clucking. She puffs up every feather on her body until she's twice the size, which is still about knee-high. She glares. The rest of the barn goes silent. Even the horse stops shifting."],
+  c: [["Keep laughing", "h2_end_lost"], ["Say sorry to the chicken", "h2_end_sat"]] },
 
-o_end_sorry: { w: "The hay bale", in: 1, p: [
-  "\"...Sorry?\" you say to the goose.",
-  "Honk tilts its head. Considers. Then hops down from the hay bale, waddles up to you, and pecks your shin. Then the other shin. ***Peck. Peck.*** You flinch back, and trip, and go down on your ass, and then you're at goose level.",
-  "Honk looks you in the eye. Then it lifts its tail, waddles backwards, and squats on your face.",
-  "Its vent opens. It's warm and it smells awful and it's opening wider and wider over your nose and mouth and eyes. ***Shllrrp.*** It squats lower and your head goes in. The goose is sitting on you and you're going up its ass. ***Shlorp. Shlorp.*** You're inside a goose, in the hot, tight, foul dark, getting squeezed up through a goose. A two-foot goose.",
-  "It honks the entire time. Triumphant. You can feel it vibrating through its whole body. Your feet go in last, and Honk waddles back up on its hay bale with a body swollen into a big, round, sagging, person-shaped lump, and settles down on it like an egg.",
-  "You apologised to a goose, and the goose made you into shit. In the morning it squeezes you out right there on the bale, a whole person's worth, piled so high the goose is buried in it up to the neck. It honks once from the top of the pile. Satisfied."],
-  s: ["struggle", "squelch", "squelch", "gurgle", "plop"], end: { t: "Apology Accepted", pred: "honk", hint: "Apologise" } },
+h2_end_lost: { w: "The hen house floor", in: 1, p: [
+  "\"What are you gonna do, peck me?\"",
+  "She flies at your face. A screaming, flapping ball of red feathers and claws. ***BWAAAK.*** You stumble back, trip over a feed bucket and land flat on your back in the straw. Peaches lands on your chest and pecks you right between the eyes.",
+  "Then her beak opens, and keeps opening, and her little neck bulges, and she starts swallowing your face. ***Glk.*** You can't believe it. She's a chicken. You swat at her, and she's tiny, she should go flying, but her beak has your head and she won't let go. ***Glk. Glk. Glk.***",
+  "Her neck stretches into a long, ridiculous tube around your shoulders. The horse is watching. The cow is watching. The sheep bleats and it sounds exactly like a laugh. ***GLLRK.*** Your feet kick in the air out of a chicken's beak like a cartoon.",
+  "***GULP.*** And there's a hen in the straw with a body swollen into a huge, round, person-shaped balloon, her stubby little legs barely touching the ground, her head bobbing smugly on top. ***Glorrrp.*** She clucks.",
+  "In the morning she hops up onto her nesting box and strains, clucking furiously, feathers puffed. What comes out of a foot-and-a-half chicken is a whole grown person's worth of soft, wet, enormous shit, ***FFFFRRRRRT... PLOP... PLOP... SPLORRT***, way bigger than the hen who made it, piling over the box and down onto the floor. Peaches climbs on top of the pile and crows. You lost to a chicken."],
+  s: ["struggle", "gulp", "gulp", "gulp", "gurgle", "fart", "plop"], end: { t: "Pecking Order", pred: "peaches", hint: "Laugh at her" } },
 
-o_shoo: { w: "The hay bale", p: [
-  "You flap your arms at it. \"Shoo! Go on. Scram.\" Honk doesn't scram. It stretches out its neck and hisses so loud that Ransom stamps in his stall.",
-  "Then it bites your hand, and holds on."],
-  s: ["struggle"],
-  c: [["Shake it off", "o_end_humiliated"], ["Freeze", "o_end_sorry"]] },
+h2_end_sat: { w: "The hen house", in: 1, p: [
+  "\"...Sorry?\" you say to the chicken.",
+  "Peaches tilts her head. Considers. Then hops down and pecks your shin. Peck. Peck. You flinch back, trip, and land on your ass, and now you're at chicken level.",
+  "She looks you right in the eye. Then she turns around, fluffs out her tail feathers, and squats on your face like she's settling onto a nest.",
+  "Her vent opens, warm and foul, wider and wider over your face. ***Shllrrp.*** She settles lower and your head goes in. You're going up a chicken's ass. ***Shlorp. Shlorp.*** A chicken that you could have picked up with one hand. She clucks contentedly the whole time, wiggling down onto you like you're an egg she's brooding.",
+  "Your feet go in last. She waddles back to her nesting box, swollen into a big, round, sagging, person-shaped lump, and settles on top of it.",
+  "In the morning she squeezes you out right there on the nest, a whole person's worth, piled so high the hen is buried in it up to her comb. She clucks once from the top. Satisfied."],
+  s: ["struggle", "squelch", "squelch", "gurgle", "plop"], end: { t: "Brooded", pred: "peaches", hint: "Apologise" } },
+
+h2_egg: { w: "The hen house", p: [
+  "You reach under her for an egg. Peaches lets you get your whole hand under her. Then she clamps down. Her legs lock on your wrist and she sits. Hard. Your hand is pinned in hot feathers, and she's staring at you, and something under her is opening around your fingers. Wet. Sucking."],
+  s: ["squelch"],
+  c: [["Yank your hand out", "h2_end_lost"], ["Hold still", "h2_end_sat"]] },
+
+/* ===== MAGGIE: the farmhouse ===== */
+f_house: { w: "The farmhouse", p: [
+  "The farmhouse door opens before you knock. Maggie Hollis fills it: six feet of farm girl in a flannel shirt tied up under a pair of huge, heavy tits, cut-off jeans riding up thick freckled thighs, and a mane of copper-red hair pulled back in a messy ponytail. Her arms are strong from work. Her hips are wide. She looks you up and down, slowly, and grins.",
+  "\"Well, howdy. Car trouble?\" She steps aside to let you in. \"Come on, sugar. I just made dinner. Plenty for two.\"",
+  "There's a big pot on the stove. And she's looking at you the way the animals were."],
+  c: [["Stay for dinner", "mg_dinner"], ["Flirt with her", "mg_flirt"], ["Say you're fine in the barn", "f_hub"]] },
+
+mg_dinner: { w: "The farmhouse kitchen", p: [
+  "She feeds you stew and biscuits and pie and three beers, and she eats more than you, way more, bowl after bowl, until her shirt rides up over a round, tight belly and she leans back in her chair and lets out a long, satisfied ***Hrrrrrrrup***.",
+  "\"'Scuse me.\" She doesn't look sorry. She pats her stomach. \"Still got room for dessert, though.\" She's looking at you."],
+  s: ["belch"],
+  c: [["\"What's for dessert?\"", "mg_end_dessert"], ["Make for the door", "mg_end_chase"]] },
+
+mg_end_dessert: { w: "The farmhouse kitchen", in: 1, p: [
+  "\"You, sugar.\" She stands up, takes your face in both hands and kisses you, deep and hungry, tongue sliding into your mouth. Then her jaw drops open around your whole head. ***GLLK.***",
+  "She swallows you right there at the kitchen table, big, greedy, country-girl gulps, ***GLRK... GULP... GULP***, her hands on your ass shoving you down. Her throat bulges. Her huge tits squash around you as you pass behind them.",
+  "You land in a stomach already packed with stew and pie, and it stretches out around you into a huge, tight, freckled dome that pushes her shirt buttons right off. ***Glorrrrrp.*** She sits back down, both hands on her gut, and belches so loud the plates rattle. ***BWWOOOOOAAAAP.***",
+  "\"Mm. Best dinner I've had all year.\" She rubs you in slow circles all night, by the fire, and you go soft and warm and gone.",
+  "And then it all lands on her. Her tits swell a full cup size and strain her flannel. Her ass gets so big her cut-offs won't button. Her thighs press together when she walks. She looks at herself in the mirror the next morning, grabs a handful of her new hips, and laughs. \"Gonna need more hired hands.\""],
+  s: ["kiss", "gulp", "gulp", "gurgle", "belch"], end: { t: "Dessert", pred: "maggie", hint: "Stay for dinner" } },
+
+mg_end_chase: { w: "The farmyard", in: 1, p: [
+  "You bolt. She doesn't even get up right away. She finishes her beer. Then she grabs a coil of rope off the hook by the door and walks out after you, unhurried.",
+  "She lassos you at the fence. ***Whip.*** The rope yanks tight around your arms and you go face-down in the mud. She hogties you like a calf, quick and practised, then rolls you over with her boot.",
+  "\"Didn't anybody tell you not to run from a farm girl?\" She unbuttons her cut-offs and shoves them down. Then she squats right over your face and grinds her wet, hairy, red-furred pussy onto your mouth. ***Squelch.*** \"Make me cum and I'll be quick about it.\"",
+  "She rides your face until she screams, thighs clamping your head, juices soaking you. Then she just doesn't get up. Her cunt opens wider and she sinks down. ***Shllllrrrp.*** You're still tied. You can't do anything but wriggle as she pulls you up into her, hogtied, rope and all.",
+  "Her belly swells huge and low and tight, sloshing in the mud. She lies back in the farmyard under the stars, fingers still working her clit. ***Glorp.*** \"Shoulda stayed for dinner, sugar.\"",
+  "In the morning she squats in the outhouse and you come out of her, all of you, a whole grown person's worth of shit, groaning out of her huge freckled ass in one long, thick, endless rope. ***FFFRRRRT... PLOP... PLOP.*** She has to go out and borrow a second outhouse."],
+  s: ["struggle", "squelch", "cum", "squelch", "gurgle", "plop"], end: { t: "Roped", pred: "maggie", hint: "Run from her" } },
+
+mg_flirt: { w: "The farmhouse", p: [
+  "You tell her she's not what you pictured a farmer looking like. She laughs, loud and warm, and leans in the doorway so her tits press together in her flannel. \"Yeah? What'd you picture?\" She takes your hand and puts it right on one. \"This better?\"",
+  "It's huge and soft and heavy in your palm. Her nipple's hard through the shirt."],
+  c: [["Squeeze", "mg_end_breast"], ["Kiss her", "mg_end_dessert"]] },
+
+mg_end_breast: { w: "The farmhouse bedroom", in: 1, p: [
+  "You squeeze. She moans and drags you inside by the collar, up the stairs, onto a creaking bed, and rips her shirt open. Her tits flop out, enormous, freckled, pale, with fat pink nipples already leaking milk.",
+  "\"Go on. Suck.\" You suck. Milk floods your mouth, warm and sweet, and she grabs your head and presses it in, and her nipple is opening. Stretching. ***Shlorrrp.*** Your whole face goes into her tit.",
+  "\"Oh fuck yes,\" she groans, squeezing it with both hands, cramming you in like stuffing a sausage. Your shoulders. Your arms. Your hips. Your kicking feet. ***Glorp.*** Her left breast swells as big as a beach ball, sloshing heavy against her ribs.",
+  "She lies back with it propped on her belly and jiggles it, slow, playing with you through the skin. ***Shlosh. Shlosh.*** \"Gonna be the best milk I ever made.\"",
+  "You melt into her by morning. Her tits never quite go back down. She does the chores the next day with a flannel shirt that won't close anymore and a big, lopsided, smug grin."],
+  s: ["kiss", "squelch", "slosh", "slosh"], end: { t: "Farm Fresh", pred: "maggie", hint: "Squeeze" } },
 
 start: { w: "The front door", p: [
   "Dex's place is already thumping when you get there. Bass through the walls, red lights in the windows, a smell of weed and spilled beer and something else under it. Something animal. Musk.",
