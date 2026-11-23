@@ -87,6 +87,7 @@ const PREDS = {
   marla: { n: "Marla", k: "Hyena glutton · anthro" },
   duke:  { n: "Duke", k: "German Shepherd · feral" },
   jack:  { n: "Jackolyn", k: "Jackalope nerd · anthro" },
+  mochi: { n: "Mochi", k: "Pet ball python · feral" },
   none:  { n: "Nobody", k: "You made it home" }
 };
 
@@ -302,7 +303,7 @@ upstairs: { w: "Upstairs", p: [
   "A jackalope girl. Barely up to your chest, sandy-brown fur, tall pink-lined ears, two little smooth antlers, big orange-brown eyes behind a pair of glasses. Black crop top, pink shorts, little hooves tucked under her. She's playing some RPG with the volume low.",
   "She jumps when she sees you. Her nose twitches like crazy. \"O-oh! Sorry! I'm not, um. I'm not really a party person. I'll... I can leave? Is this your room? Sorry.\"",
   "She's tiny. She's nervous. She smells like prey."],
-  c: [["Close the door behind you and lick your lips", "j_corner"], ["Sit down and ask what she's playing", "j_nice"], ["Laugh at her", "j_mean"], ["Back downstairs", "hub"]] },
+  c: [["Close the door behind you and lick your lips", "j_corner"], ["Sit down and ask what she's playing", "j_nice"], ["Laugh at her", "j_mean"], ["Try the door marked DEX", "dexroom"], ["Back downstairs", "hub"]] },
 
 j_corner: { w: "The bedroom", p: [
   "You close the door. Click. You lock it. Her ears flatten straight back.",
@@ -387,6 +388,77 @@ j_end_bully: { w: "The bedroom", in: 1, p: [
   "You told her she wasn't worth eating. She burps up your phone. ***BRRAAP. Clunk.*** It still has her picture on it. You'd been taking one to laugh at later.",
   "She wears the weight like she earned it: wide hips, a big soft butt, chubby arms, a belly that sits on her lap when she plays games now. She's still a nerd. She's still small. Nobody laughs at her anymore."],
   s: ["struggle", "gulp", "gulp", "gurgle", "crack", "belch"], end: { t: "Not Worth Eating", pred: "jack", hint: "Bully her" } },
+
+/* ===== MOCHI: Dex's room ===== */
+dexroom: { w: "Dex's bedroom", p: [
+  "Dex's bedroom smells like weed and a heat lamp. Clothes everywhere. And along one wall, a huge glass tank with a hand-written sign taped to it: MOCHI. DO NOT OPEN. SHE BITES.",
+  "Inside, coiled under the warm red light, is a snake. A ball python, cream and caramel and dark chocolate brown, as thick as your forearm and maybe five feet long. Grown, glossy, full-bodied. Smaller than you. A lot smaller than you.",
+  "She lifts her head when you come in. Her tongue flicks, slow. And she looks at you, really looks, with a lazy, knowing tilt of her head that no snake should be able to do. She's been in this tank all night, listening to the party. She's bored. And you smell like a drunk.",
+  "She bumps her nose against the lid. Once. Twice. *Well? Let me out.*"],
+  c: [["Open the tank", "s_open"], ["Laugh at the sign and tap the glass", "s_tap"], ["Lie down on Dex's bed for a minute", "s_nap"], ["Leave", "hub"]] },
+
+s_open: { w: "Dex's bedroom", p: [
+  "You slide the lid off. Mochi pours out of the tank like warm syrup, onto the dresser, onto your arm, up around your shoulders. She's heavy and smooth and very warm from the lamp.",
+  "She drapes herself around your neck, flicks her tongue against your ear, and then slithers down, slow, over your chest, your stomach, and coils around your hips. Her head rests right on your crotch. Her tongue flicks. And flicks. Right there. You feel your cock twitch under her chin.",
+  "She looks up at you. Her eyes are very, very smug."],
+  c: [["Pull your pants down for her", "s_fuck"], ["Pet her head and wait", "s_end_slow"]] },
+
+s_fuck: { w: "Dex's bed", p: [
+  "You drop your pants. She coils around your thighs, flicks her tongue all over your cock until it's dripping, and then slides her body up and over it, turning, until the smooth vent under her tail is pressed against your tip.",
+  "She's tight and hot and slick, and she squeezes. You push in. ***Shlrrk.*** She shudders all down her length, every scale rippling, and wraps her tail around your balls to pull you deeper. You're fucking a snake on Dex's bed. A pet snake. And she's loving it."],
+  s: ["squelch"],
+  c: [["Keep fucking her", "s_end_fucked"], ["Push your cock deeper than it should go", "s_end_vent"]] },
+
+s_end_fucked: { w: "Dex's bed", in: 1, p: [
+  "You fuck her. Her coils milk you in waves, squeezing your hips in time with your thrusts, ***plap… plap… plap***, wet and tight and rippling, until you cum hard inside her, pumping your load into a fucking pet snake while the party thumps through the floor.",
+  "You collapse back on the bed, panting. Mochi slides off your cock, slow and satisfied, and slithers up your chest. She flicks her tongue across your lips like a kiss. Then she opens her mouth over your face. And opens. And her jaws unhinge with a soft little click.",
+  "***Glk.*** Your head goes in. She's half your width. It doesn't matter. She walks her jaws over you, left side, right side, left side, ***glk… glk… glk…***, and her body stretches thin and shiny around your shoulders, scales spreading apart until the skin between them shows.",
+  "It takes her an hour. You're too drunk and too spent to stop her, and the whole time you can feel her body pulsing around you, satisfied, tasting your cum still on your cock as it goes in last. ***GULP.***",
+  "In the morning, Dex finds his snake on his bed, swollen into a long, grotesque, person-shaped lump, her body stretched so tight she can't move. She's sleeping. Her tail twitches happily.",
+  "\"Holy shit, Mochi, what did you eat?\" He takes a picture. It gets 40,000 likes. Caption: *my girl caught a BIG one lmao.* Nobody knows the big one is you, and that you fucked her first. ***Grrrlbl.***",
+  "She doesn't eat again for six months. She's fat and slow and smug the entire time."],
+  s: ["plap", "cum", "gulp", "gulp", "gurgle"], end: { t: "Pet Project", pred: "mochi", hint: "Fuck her" } },
+
+s_end_vent: { w: "Dex's bed", in: 1, p: [
+  "You push deeper. And she lets you. Her vent stretches, slick and impossibly yielding, and her coils tighten around your thighs and pull. Your cock goes in. Your balls go in. ***Shlllrrp.*** Your hips go in.",
+  "\"Wait. Wait, wait.\" She doesn't wait. Her whole body ripples, a long, slow, rolling squeeze from her tail toward her head, and it drags you in after your own cock. Your stomach. Your chest. You're being swallowed by a snake's cunt from the dick up. ***Glorrp.***",
+  "Your hands claw at the sheets. Her body bulges around your shoulders, stretched thin, glistening. You can see the bedroom upside down through the gap. Then her vent closes over your face with a soft, wet ***shlp***.",
+  "Inside her is tight. So tight. Muscle on every side, pressing, rippling, warm and slick, and the whole thing is still clenching like she's riding out an orgasm. She's cumming, and every spasm pulls you further up into her.",
+  "You fucked a five-foot pet snake, and the pet snake fucked you all the way inside her. That's how you go. Slowly. Squeezed into nothing over a long, lazy week in a heated tank, while she lies under the red lamp with a huge bulge in her middle, occasionally flicking her tongue at Dex like she's got a secret."],
+  s: ["squelch", "squelch", "gurgle", "crack"], end: { t: "Swallowed by Her Cunt", pred: "mochi", hint: "Go deeper" } },
+
+s_end_slow: { w: "Dex's bedroom", in: 1, p: [
+  "You stroke her head. She leans into it, flicking her tongue against your fingers, tasting them. Then she takes one into her mouth. Then two. Then your whole hand. ***Glk.***",
+  "\"Hey. Hey, no.\" You pull. She doesn't let go. Her teeth all point backwards. Pulling only makes them hook in. She coils tighter around your hips and starts walking her jaws up your arm. ***Glk. Glk. Glk.***",
+  "It's slow. It's ridiculous. You're three times her weight, standing in Dex's bedroom with a pet snake slowly eating your arm up to the shoulder, and you can't make her stop. She's got your wrist pinned against her throat. Every time you yank, she just swallows harder.",
+  "Your knees buckle. You go down onto the carpet. Her coils wrap around your chest and squeeze out every breath, ***krrk***, and once you stop struggling she gets to your head. ***GLLK.***",
+  "From outside you're a long, lumpy, stretched-out snake, mostly bulge, lying on Dex's bedroom floor. Somebody opens the door, sees her, says \"lol nice\" and closes it again.",
+  "You got eaten by a pet. A small one. Arm first."],
+  s: ["gulp", "gulp", "struggle", "gulp", "gurgle"], end: { t: "Hand-Fed", pred: "mochi", hint: "Pet her" } },
+
+s_tap: { w: "Dex's bedroom", p: [
+  "You laugh. \"She bites,\" you read out loud, and tap the glass. Tap. Tap. TAP. Mochi watches your finger. She doesn't flinch. Her tongue flicks once, slow, like she's memorising you.",
+  "Then she pushes the lid up with her nose. It's not even latched. It never was. She drops onto the floor in a heavy coil right between you and the door."],
+  c: [["Laugh harder: it's just a pet", "s_end_mock"], ["Back away", "hub"]] },
+
+s_end_mock: { w: "Dex's bedroom", in: 1, p: [
+  "\"What are you gonna do, little noodle?\" She strikes. Not at your face. At your ankle. Her coils whip around your legs and yank, and you go down hard on your ass. ***Thud.***",
+  "Then she's on you, coil over coil, around your thighs, your waist, your chest, pinning your arms to your sides, squeezing with every breath you let out until you can't let any more in. ***Krrrk.*** Five feet of pet snake. You can't move.",
+  "She takes her time. She noses your face, flicks her tongue across your eyes, your lips, savouring how scared you are. Then her jaw unhinges with a click, and she starts on your head. ***Glk. Glk. Glk.***",
+  "You're screaming into her throat. Nobody can hear you over the bass. You're bigger than her and it doesn't matter at all. Her body stretches around you like a sock, thinner and thinner, scales spreading, until she's just a skin of snake around a human shape. ***GULP.***",
+  "She slithers back into her tank, slowly, heavily, dragging her huge distended belly over the edge with a lot of effort, and settles under the heat lamp to digest. ***Grrrrooorgl.***",
+  "The next morning, Dex taps the glass. Tap tap. \"Mochi, what the fuck did you eat?\" She flicks her tongue at him. Smug. In about a week, she'll leave what's left of you in the corner of the tank, a tight little pellet of hair and bones, and he'll scoop you out with a paper towel and throw you in the trash."],
+  s: ["struggle", "crack", "gulp", "gulp", "gurgle", "plop"], end: { t: "She Bites", pred: "mochi", hint: "Tap the glass" } },
+
+s_nap: { w: "Dex's bed", in: 1, p: [
+  "You flop on Dex's bed. Just for a minute. The room spins. You close your eyes.",
+  "You wake up and you can't move your arms. Something heavy and warm is wrapped around your chest. Your feet are wet. Your feet are... in something.",
+  "You look down. Mochi is out of her tank. She's coiled three times around your middle, holding your arms down, and she's got both your feet in her mouth, stretched wide, already up to your ankles. ***Glk.*** She looks at you along the length of your own legs. Her eyes are half-closed. Content. *Oh. You're awake.*",
+  "She doesn't stop. She walks her jaws up your calves. Your knees. ***Glk... glk...*** She's so much smaller than you that her whole body is a bulging, stretched sleeve around your thighs by the time she reaches your hips, and you're still drunk enough that you can barely kick.",
+  "Your cock is hard. You don't know why. She swallows it too, slowly, with a little tongue flick at the end. ***Glorrp.***",
+  "Your chest. Your shoulders. Your chin. You see Dex's ceiling fan through the stretched pink gap of her mouth, and then you don't.",
+  "Dex comes home at dawn to find his snake curled on his pillow, fat as a log, digesting. He shrugs. \"Must've got a rat.\" He goes to sleep right next to you."],
+  s: ["gulp", "gulp", "gulp", "gurgle"], end: { t: "Passed Out", pred: "mochi", hint: "Take a nap" } },
 
 /* ===== DUKE: the backyard ===== */
 yard: { w: "The backyard", p: [
