@@ -86,6 +86,7 @@ const PREDS = {
   viv:   { n: "Vivian", k: "Python futa · anthro" },
   marla: { n: "Marla", k: "Hyena glutton · anthro" },
   duke:  { n: "Duke", k: "German Shepherd · feral" },
+  jack:  { n: "Jackolyn", k: "Jackalope nerd · anthro" },
   none:  { n: "Nobody", k: "You made it home" }
 };
 
@@ -97,10 +98,10 @@ start: { w: "The front door", p: [
   "Dex's place is already thumping when you get there. Bass through the walls, red lights in the windows, a smell of weed and spilled beer and something else under it. Something animal. Musk.",
   "You told yourself one drink. You told yourself you'd leave by midnight. Nobody at this party gives a shit what you told yourself.",
   "Inside, the crowd is half humans, half fur and scales, everyone already wasted. Someone grabs your ass on the way past and you don't even see who."],
-  c: [["Head for the kitchen and get a drink", "kitchen"], ["Squeeze into the living room", "living"], ["Join the bathroom line", "bathline"], ["Slip out to the backyard", "yard"]] },
+  c: [["Head for the kitchen and get a drink", "kitchen"], ["Squeeze into the living room", "living"], ["Join the bathroom line", "bathline"], ["Slip out to the backyard", "yard"], ["Sneak upstairs", "upstairs"]] },
 
 hub: { w: "The hallway", p: ["The party roars on around you. Your face is hot. Somewhere a glass breaks and everyone cheers. Where now?"],
-  c: [["The kitchen", "kitchen"], ["The living room", "living"], ["The bathroom line", "bathline"], ["The backyard", "yard"], ["Fuck this, go home", "home", s => s.drinks < 3]] },
+  c: [["The kitchen", "kitchen"], ["The living room", "living"], ["The bathroom line", "bathline"], ["The backyard", "yard"], ["Upstairs", "upstairs"], ["Fuck this, go home", "home", s => s.drinks < 3]] },
 
 home: { w: "Outside", p: ["You stumble out into the cold air, still sober enough to find your car keys. Behind you, the party howls on. You'll never know who you would have ended up inside tonight.",
   "Your dick is hard the whole drive home."], end: { t: "Lightweight", pred: "none", hint: "Leave early" } },
@@ -294,6 +295,98 @@ v_wait: { w: "The bathroom line", p: [
   "You wait. Vivian goes in alone. Muffled moans, a long wet slurp, a gulp, and when she comes out ten minutes later, her belly is round and squirming and the guy who was in front of you isn't anywhere.",
   "\"Your turn,\" she smiles, and holds the door open for you."],
   c: [["Go in", "v_room"], ["Leave the line", "hub"]] },
+
+/* ===== JACKOLYN: upstairs ===== */
+upstairs: { w: "Upstairs", p: [
+  "The upstairs hallway is dark and quieter, all closed doors and muffled moaning. At the far end, a bedroom door stands ajar, and inside, sitting cross-legged on the bed with a laptop and a can of soda, is the smallest person at the party.",
+  "A jackalope girl. Barely up to your chest, sandy-brown fur, tall pink-lined ears, two little smooth antlers, big orange-brown eyes behind a pair of glasses. Black crop top, pink shorts, little hooves tucked under her. She's playing some RPG with the volume low.",
+  "She jumps when she sees you. Her nose twitches like crazy. \"O-oh! Sorry! I'm not, um. I'm not really a party person. I'll... I can leave? Is this your room? Sorry.\"",
+  "She's tiny. She's nervous. She smells like prey."],
+  c: [["Close the door behind you and lick your lips", "j_corner"], ["Sit down and ask what she's playing", "j_nice"], ["Laugh at her", "j_mean"], ["Back downstairs", "hub"]] },
+
+j_corner: { w: "The bedroom", p: [
+  "You close the door. Click. You lock it. Her ears flatten straight back.",
+  "\"Wh... what are you doing?\" She scoots back on the bed until she hits the headboard, clutching the laptop like a shield. \"I-I'm not, I'm not food, I'm just, I'm a person, I'm...\"",
+  "You climb onto the bed. You open your mouth wide, right over her, close enough that she can feel your breath on her ears. She's shaking. Her pupils are huge."],
+  c: [["Go for it", "j_end_panic"], ["Pin her down and take your time", "j_end_pinned"]] },
+
+j_end_panic: { w: "The bedroom", in: 1, p: [
+  "You lunge. She SQUEAKS. And then something happens that doesn't make any sense.",
+  "Her little muzzle opens. And opens. And keeps opening, way past what her tiny head should allow, a wet pink cave rushing up to meet you, and your face goes into it instead of the other way around. ***GLLK.***",
+  "\"Mmmph?! Mmmf mmf!\" She's panicking. Her throat is panicking too, swallowing on pure reflex, ***GLRK, GLRK, GULP***, her little hands shoving at your shoulders, which only pushes you deeper. You're twice her size. It shouldn't be possible. Her throat bulges out like a snake's around your shoulders and keeps going.",
+  "Your hips go in. Your legs kick against her face. ***GULP.*** And then your feet slurp past her buck teeth and her mouth snaps shut and you're folded up tight in a stomach that's way too small for you, so it stretches. And stretches. ***Glorrrrrp.***",
+  "From outside, her belly balloons out over her lap, past her knees, off the edge of the bed, until it's bigger than she is: a huge, taut, wobbling ball with a tiny jackalope stuck on the back of it, legs sticking out in the air.",
+  "\"Oh no. Oh no oh no oh no.\" Her voice comes muffled through the walls around you. She pats you. ***Grrrooorgl.*** \"I'm so sorry! I'm s-sorry, I didn't mean to, I'll let you out, just, um, give me a sec, I'll let you out in a bit, okay? O-okay?\"",
+  "She doesn't know how. She tries. She hiccups. ***Hic.*** She tries to burp you up and only manages a long, squeaky, embarrassed ***Hrrrup***. And then her stomach decides for her. The walls clench. The acid comes in hot.",
+  "You, the predator, digested by a nerd who barely reaches your nipples. She keeps apologising the whole time, softer and softer, rubbing slow circles on your outline, and somewhere around the third hour you hear her mumble, \"...it's kind of warm, though.\"",
+  "By morning you're a single long bone and a burp. ***BRRRAAAP.*** She blushes so hard her ears go red.",
+  "And the rest of you lands on her. Hips twice as wide as last night, thighs so thick they rub together and squeak, a round, heavy ass that pushes her shorts down, tits straining her crop top, a soft little pot of a belly hanging over her waistband. On a girl her size it's obscene. She stares at herself in the mirror for a long, long time. Then she pokes her belly and it jiggles. ***Blorp.***",
+  "\"...Oh,\" she whispers. And she smiles, just a little."],
+  s: ["gulp", "gulp", "gulp", "gurgle", "belch", "crack", "belch"], end: { t: "Who's the Pred Now", pred: "jack", hint: "Corner her" } },
+
+j_end_pinned: { w: "The bedroom", in: 1, p: [
+  "You pin her wrists to the mattress, grinning, and lean down to lick her. You want to enjoy this. You want her to squirm.",
+  "She squirms. She whimpers. And then your tongue goes across her lips and she panics and bites down on it, ***Chomp***, not hard, but enough to hold on. And she SUCKS.",
+  "***Shlrrrrrp.*** Your tongue goes in. Your face goes in. Her eyes are screwed shut, tears in them, and she's sobbing \"sorry, sorry\" around your head while her throat drags you down in long, greedy, involuntary gulps. ***GLRK. GLRK. GULP.*** Your hands lose her wrists. Her hands grab your belt and push, because her body wants the rest of you.",
+  "You go down hips first, legs flailing over the bed, and her belly bursts out of her crop top, swelling bigger and bigger until it pushes her right off the mattress onto her back on the floor, a tiny rabbit girl buried under a mountain of stuffed, gurgling gut. ***Glorrrrp. Grrrrrooorgl.***",
+  "\"I'm sorry! I'm s-so sorry! You were gonna eat me! You can't... you can't just be mad, you were gonna eat ME!\" She's crying and hiccuping. ***Hic. Hrrp.***",
+  "Then, quieter, rubbing you: \"...you're really heavy.\" ***Grrrlbl.*** \"Um. I'll let you out in a bit. I just. Um. Need to figure out how.\"",
+  "She never figures out how. She falls asleep on the floor, cuddling her own gut, and wakes up three sizes bigger in every direction, her shorts split up the back, her thighs so thick she has to waddle to the bathroom, her hips knocking into both sides of the door frame. She burps up your belt buckle. ***Plink.***",
+  "She keeps it."],
+  s: ["kiss", "gulp", "gulp", "gurgle", "belch", "crack"], end: { t: "Pinned", pred: "jack", hint: "Take your time with her" } },
+
+j_nice: { w: "The bedroom", p: [
+  "You sit on the edge of the bed. She blinks at you like you're a talking cat. Then she very cautiously turns the laptop around.",
+  "\"It's, um. It's a monster-taming game. You can, um, you can have the monsters eat the enemies? I mean. That's not the point. That's not really the point. I just like that part.\" Her ears go pink.",
+  "You talk for a while. She warms up. She's funny when she forgets to be nervous. And then the door bangs open, and Thane fills the doorway, beer in hand, sniffing. \"Smells like snacks up here.\""],
+  c: [["Shield her with your body", "j_end_shield"], ["Hide behind her (she's tiny, but still)", "j_end_hide"], ["Ask her quietly if she likes that part for real", "j_end_curious"]] },
+
+j_end_shield: { w: "The bedroom", in: 1, p: [
+  "You stand up between Thane and the bed. Thane laughs, grabs you by the collar and lifts you off your feet, and opens his huge lion jaws over your head.",
+  "Jackolyn squeaks. She grabs your leg to pull you back. Thane pulls harder. And Jackolyn panics, and lunges, and her mouth opens around your feet. ***GLLK.***",
+  "It's a tug of war with you as the rope, a lion's jaws on your head and a jackalope's on your legs, and the lion loses, because the tiny one is swallowing on pure terror and her throat won't stop. ***GLRK. GLRK. GLRK.*** You slip out of Thane's teeth and slide down into her, ***GULP***, chest, neck, face, and her mouth closes over your hair.",
+  "Thane stares at a four-foot jackalope with a belly the size of a bean bag chair. She stares back, wide-eyed, gut gurgling. ***Grrrroooorgl.*** He backs out of the room very slowly.",
+  "\"I s-saved you!\" she gasps, and then realises where she saved you to. \"Oh. Oh, no. Um.\"",
+  "You protected her. She digests you anyway, crying, apologising, rubbing you, and hiccuping little burps that taste like you. ***Hic... hrrup.*** It's the most humiliating way to die anyone at this party has ever heard of, and everyone hears about it.",
+  "She comes downstairs the next afternoon wearing a borrowed hoodie that doesn't cover the bottom of her new gut, waddling on thighs that won't stop clapping together, hips so wide she has to turn sideways on the stairs. Every head turns. She goes bright red and holds her belly like she's protecting you. \"H-he was really nice,\" she mumbles."],
+  s: ["struggle", "gulp", "gulp", "gurgle", "belch", "crack"], end: { t: "Saved", pred: "jack", hint: "Protect her" } },
+
+j_end_hide: { w: "The bedroom", in: 1, p: [
+  "You duck behind her. She's about as much cover as a lamp. Thane laughs so hard he spills his beer, and grabs for you, and Jackolyn is in the way, and his huge paw closes around HER.",
+  "She doesn't think. She just panics in the closest direction, which is backwards, which is you. She spins and her mouth stretches wide and she dives at you like you're the safest place in the room. ***GLLK. GLRK. GULP.***",
+  "\"Mmf! Mmmf!\" She's hiding INSIDE you. No, wait. She's hiding you inside HER. Your head's already in her stomach before you understand what's happening. ***Glorrrrp.***",
+  "Thane looks at the jackalope with the enormous squirming belly, shrugs, and leaves to find something easier. Jackolyn sits down on the floor very carefully. ***Grrrrlbl.***",
+  "\"I hid us,\" she whispers to her gut. \"You're safe. I'll let you out when he's gone. I promise.\" She tries. She really tries. ***Hrrrrk.*** Nothing comes up but a squeaky burp. \"...when I figure it out.\"",
+  "You hid behind the smallest, most harmless person at the party, and the smallest, most harmless person at the party digested you. She gains it all: soft, wide hips, a fat round rear, thick thighs, chubby cheeks, a heavy little belly. She has to buy all new jeans. She tells the cashier she's had a big week."],
+  s: ["gulp", "gulp", "gurgle", "belch", "crack"], end: { t: "Hiding Spot", pred: "jack", hint: "Hide behind her" } },
+
+j_end_curious: { w: "The bedroom", in: 1, p: [
+  "\"Do you like that part for real?\" you whisper, while Thane is still sniffing at the door. She goes completely still. Her ears turn bright red. She looks at you, and then at your mouth, and then down at your stomach.",
+  "\"...I did it once,\" she whispers. \"By accident. At a party like this.\" Her nose twitches. \"It was. Um. I keep thinking about it.\"",
+  "Thane wanders off. The door clicks shut. She's still looking at you.",
+  "\"Can I...\" Her voice is barely a squeak. \"Can I try it on purpose? Just. Just once. I'll let you out after. I'm pretty sure I can let you out after.\"",
+  "You say yes. Of course you say yes. And she climbs into your lap, tiny and trembling, and puts her mouth on your head, and slowly, carefully, nervously, swallows you. ***Glk... glk... glk...*** Little gulps. Lots of them. You feel her shiver every time one goes down.",
+  "Your feet slide in last, and you're curled up inside the tiniest girl you've ever met, in a stomach stretched into a giant drum, and above you she's breathing hard, both hands on her gut. ***Grrrooorgl.*** \"Oh. Oh wow. You're so... you're so big. I'm so FULL.\"",
+  "She does not let you out after. She doesn't even try. Around two in the morning, the guilt finally catches up to her. \"I'm sorry,\" she mumbles, almost asleep. \"I'm sorry. I'm sorry. You feel so good.\"",
+  "You are the reason a shy little jackalope stopped being prey. She wakes up soft and heavy everywhere, hips she can barely fit between the bed and the wall, and spends a long time in the mirror squishing her thighs, jiggling her new belly, and smiling to herself.",
+  "That night, she goes to another party. On purpose."],
+  s: ["gulp", "gulp", "gurgle", "belch", "crack"], end: { t: "On Purpose", pred: "jack", hint: "Encourage her curiosity" } },
+
+j_mean: { w: "The bedroom", p: [
+  "You laugh. Right at her. A rabbit nerd hiding from a party with a video game. You tell her she's lucky she's too small to be worth eating.",
+  "Her ears droop. Her nose twitches. \"I... okay,\" she says quietly. \"Okay. Sorry.\""],
+  c: [["Grab her laptop and dangle it out of her reach", "j_end_bully"], ["Leave her alone", "hub"]] },
+
+j_end_bully: { w: "The bedroom", in: 1, p: [
+  "You hold her laptop over your head. She hops for it, tiny hooves clacking, little hands reaching, and you laugh harder. \"Come on, bunny. Jump.\"",
+  "She jumps. She grabs your shirt to climb, frantic, and when you shove her back she grabs on harder, and somewhere in the scramble her face ends up right in front of yours, and she squeaks in panic, and her mouth just. Opens.",
+  "***GLLK.*** It's over your head before you can even laugh again. The laptop clatters to the floor. She's hanging off you, her jaw stretched impossibly around your shoulders, and she's swallowing. ***GLRK. GLRK.*** It's like being eaten by a panicking hamster. You go down anyway.",
+  "***GULP.*** She lands on her butt on the carpet with her belly erupting outward, enormous, round and taut, and pins herself to the floor underneath it. ***Glorrrrrp.*** She picks up the laptop. Checks it. It's fine.",
+  "\"Um,\" she says. She pats you. ***Grrrrrgl.*** \"I'm. Sorry? I'll let you... I'll let you out. In a bit.\" A long pause. She saves her game. \"...After this level.\"",
+  "She plays for six more hours with the laptop balanced on top of her gurgling, shrinking gut. Your struggles slow down. Her apologies get less frequent. At one point she cheers at a boss kill and pats her stomach. \"Thanks for the company.\"",
+  "You told her she wasn't worth eating. She burps up your phone. ***BRRAAP. Clunk.*** It still has her picture on it. You'd been taking one to laugh at later.",
+  "She wears the weight like she earned it: wide hips, a big soft butt, chubby arms, a belly that sits on her lap when she plays games now. She's still a nerd. She's still small. Nobody laughs at her anymore."],
+  s: ["struggle", "gulp", "gulp", "gurgle", "crack", "belch"], end: { t: "Not Worth Eating", pred: "jack", hint: "Bully her" } },
 
 /* ===== DUKE: the backyard ===== */
 yard: { w: "The backyard", p: [
