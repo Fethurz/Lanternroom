@@ -134,6 +134,10 @@ const PREDS = {
   sadie: { n: "Sadie", k: "Little sister, 21 · she-wolf" },
   lou:   { n: "Aunt Lou", k: "Futa aunt, 42 · she-wolf" },
   family:{ n: "The whole family", k: "Mom, Kara, Sadie & Aunt Lou" },
+  hesper:{ n: "Professor Hesper", k: "Dragoness professor · anthro" },
+  tasha: { n: "Tasha", k: "Futa tigress, 23 · sorority president" },
+  pepper:{ n: "Pepper", k: "Skunk lab partner, 20 · anthro" },
+  thornback:{ n: "Dean Thornback", k: "Komodo dragon dean · anthro" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -1443,9 +1447,122 @@ kl_end_safe: { w: "The porch", in: 1, p: [
   "In the morning she lets you out and makes you the hangover breakfast she used to make for Mom. She calls you every Sunday after that."],
   s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Porch Swing", pred: "lou", hint: "Just talk", safe: 1 } },
 
+/* ===================== GULLET UNIVERSITY ===================== */
+u_start: { w: "Gullet University · Orientation", p: [
+  "Gullet University: the finest college for predators in the country, and the only one with a Prey Studies program. You're a twenty-two-year-old transfer student, and your schedule says PREY TRACK in bright red letters.",
+  "Your student ID says you're \"available for practicals\". Everyone you pass in the quad looks at your ID, and then at you, and then licks their lips. Every student here is a grown adult. Every one of them is hungry.",
+  "Your first day: Intro to Predation with Professor Hesper. Then a party at the Kappa Gulp sorority house. Then lab with your new lab partner. Then the Dean wants to see you. Something about \"orientation\"."],
+  c: [["Intro to Predation", "u_prof"], ["The sorority party", "u_soro"], ["Biology lab", "u_lab"], ["The Dean's office", "u_dean"]] },
+
+u_hub: { w: "The quad", p: ["The bell rings. Students stream past, some of them noticeably rounder than an hour ago. Where now?"],
+  c: [["Professor Hesper's lecture hall", "u_prof"], ["Kappa Gulp", "u_soro"], ["The bio lab", "u_lab"], ["The Dean's office", "u_dean"], ["Drop out", "u_leave"]] },
+
+u_leave: { w: "The registrar", p: ["You fill out the drop form and hand it to the registrar, a bored goat lady. She stamps it without looking. \"Refund's in four to six weeks.\"",
+  "You leave the campus untouched. Your inbox fills up with messages from preds asking whether you're coming back for spring semester."],
+  end: { t: "Dropped Out", pred: "none", hint: "Drop out" } },
+
+/* --- Professor Hesper --- */
+u_prof: { w: "Lecture Hall 1", p: [
+  "Professor Hesper is a dragoness in a tweed jacket and glasses, nine feet tall, scales the deep blue of ink, tail draped over the lecture podium. She's the most-published predator in the field. Two hundred grown pred students fill the hall.",
+  "\"Today's lecture: the swallow reflex. I'll need a volunteer from the prey track.\" She looks over her glasses. Directly at you. \"Ah. Perfect. Come down, please.\""],
+  c: [["Volunteer", "up_end_demo"], ["Try to sneak out of the lecture", "up_end_caught"], ["Stay after class to ask her a question", "up_end_safe"], ["Back", "u_hub"]] },
+
+up_end_demo: { w: "Lecture Hall 1", in: 1, p: [
+  "You walk down. She lays you on the demonstration table. \"Observe, everyone. Note the prey's elevated heart rate.\" She strips you with one claw, slowly, lecturing the whole time. \"Note the arousal response. Very common.\"",
+  "She strokes your cock in front of two hundred students until you cum all over the demonstration table, and makes the class take notes. Then she lifts you by the ankles. \"And now, the swallow.\"",
+  "She tips her head back and lowers you in, feet first, so slowly the front row can see every gulp, ***GLK... GLK... GLRK...***, pausing to point at her throat with a laser pointer. \"Note the peristalsis.\" ***GULP.***",
+  "You land in her stomach. She pats it. \"Questions?\" Two hundred hands go up. ***Grrrrrooooorgl.*** She finishes the lecture with her belly resting on the podium.",
+  "Next class, there's a slide in her PowerPoint labelled DISPOSAL, with a photo of the faculty restroom: a whole person's worth, huge and steaming and human-like, filling the stall. ***PLOP.*** \"This will be on the midterm.\""],
+  s: ["cum", "gulp", "gulp", "gulp", "gurgle", "plop"], end: { t: "Demonstration", pred: "hesper", hint: "Volunteer" } },
+
+up_end_caught: { w: "Lecture Hall 1", in: 1, p: [
+  "You try to sneak out. Hesper's tail snaps across the aisle and wraps around your waist and lifts you up over two hundred students. \"Leaving early? That'll cost you participation points.\"",
+  "She drops you headfirst into her mouth in front of everyone. ***GLLLRK.*** No savouring this time. ***GULP.*** \"Let that be a lesson,\" she says, and pats her belly, and goes on lecturing.",
+  "Your grade for the class is an F. You're in no position to appeal."],
+  s: ["struggle", "gulp", "gurgle", "crack"], end: { t: "Participation", pred: "hesper", hint: "Sneak out" } },
+
+up_end_safe: { w: "Her office", in: 1, p: [
+  "You stay after class and ask her a real question, about her research. Hesper's eyes light up. Nobody ever asks about her research. She takes you back to her office and talks for three hours.",
+  "Somewhere in there, she takes off her glasses. You make love on her desk, on top of a pile of ungraded papers. After, she asks if you'd like to be her research assistant. \"Fieldwork mostly,\" she says. \"Internal observation.\"",
+  "She swallows you gently and keeps you overnight, taking notes on her own stomach while you sleep. In the morning she lets you out. You get co-author credit."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Research Assistant", pred: "hesper", hint: "Ask about her research", safe: 1 } },
+
+/* --- Tasha, sorority --- */
+u_soro: { w: "The Kappa Gulp house", p: [
+  "The Kappa Gulp house is a mansion with a pool, a hot tub and a two-story banner: PREY NIGHT!!! The music's deafening. The sisters are all preds, all in bikinis, all a little round.",
+  "The president is Tasha, a futa tigress, twenty-three, tall, striped, gold-eyed, in a pink bikini that doesn't come close to holding in her thick cock or her huge, swinging balls. She drapes an arm over your shoulders. \"Ooh, a prey-track transfer! Welcome to rush, cutie. Wanna pledge?\""],
+  c: [["Pledge", "us_end_hazing"], ["Say you're just here for the free drinks", "us_end_keg"], ["Ask Tasha if she wants to get out of here", "us_end_safe"], ["Back", "u_hub"]] },
+
+us_end_hazing: { w: "The Kappa Gulp house", in: 1, p: [
+  "\"I'll pledge.\" The whole house cheers. \"HAZING! HAZING!\" They strip you and tie you to the beer pong table. Every sister gets a turn riding you. You lose count. You cum until it hurts.",
+  "Then Tasha stands over you with her cock in her hand. \"Final initiation, pledge.\" The tip opens. ***SHLLRRK.*** She feeds you into her cock while the whole sorority chants, \"CHUG! CHUG! CHUG!\" ***Glrrk... glrrk... glrrk...***",
+  "You drop into her balls, ***SHLORP***, and they swell huge and heavy under her bikini bottom, and she does a keg stand with you sloshing in there. ***Shlosh.*** Everyone screams.",
+  "By morning, you're the load she leaves all over the hot tub. ***SPLRRT. SPLRRT.*** They don't drain it. It's tradition now."],
+  s: ["plap", "cum", "cum", "squelch", "slosh", "cum"], end: { t: "Pledged", pred: "tasha", hint: "Pledge" } },
+
+us_end_keg: { w: "The Kappa Gulp house", in: 1, p: [
+  "\"I'm just here for the free drinks.\" Tasha laughs. \"Drinks aren't free, cutie. Nothing's free here.\" She picks you up, upside down, and holds you over the keg. \"Keg stand!\"",
+  "You do a keg stand. She holds your legs. Then she lowers you, still upside down, straight into her open mouth. ***GLLK.*** She swallows you like a beer, chugging, ***GLRK GLRK GLRK GULP***, while the sisters chant.",
+  "She slams her empty cup down and BELCHES. ***BWWOOOAAAARRRP.*** The house loses its mind. In the morning there's a whole person's worth of shit in the upstairs bathroom and a sorority sister charging $5 to see it."],
+  s: ["gulp", "gulp", "gulp", "belch", "plop"], end: { t: "Keg Stand", pred: "tasha", hint: "Just want drinks" } },
+
+us_end_safe: { w: "The quad at night", in: 1, p: [
+  "\"Want to get out of here?\" Tasha blinks. Nobody ever asks the president to LEAVE her own party. \"...Yeah. Actually. Yeah.\"",
+  "You walk around campus all night. She tells you she's exhausted from pretending to be a party girl and she just wants to be a vet. You make love on the football field at 3 a.m., under the bleachers, slow and sweet.",
+  "She asks if she can hold you, in her balls, just till sunrise. She takes you in so gently and sits under the bleachers cradling them, purring. At dawn she lets you out in a warm, sticky gush and walks you back to your dorm."],
+  s: ["kiss", "plap", "squelch", "slosh"], end: { t: "Under the Bleachers", pred: "tasha", hint: "Ask her to leave with you", safe: 1 } },
+
+/* --- Pepper, lab partner --- */
+u_lab: { w: "Biology lab", p: [
+  "Your lab partner is Pepper, a skunk girl, twenty, small, in a lab coat too big for her and goggles pushed up on her head. She's tiny. She smells a little. She's very nervous.",
+  "\"Um, so, the lab says we have to dissect a frog,\" she says, \"but I already ate the frog. Sorry. I get hungry when I'm nervous.\" Her belly gurgles. ***Grrrlbl.*** She looks at you. Then at the lab table. Her tail is fluffing up."],
+  c: [["Laugh at her", "ul_end_musk"], ["Lean in to look at her notes", "ul_end_tail"], ["Tell her it's fine and help her", "ul_end_safe"], ["Back", "u_hub"]] },
+
+ul_end_musk: { w: "Biology lab", in: 1, p: [
+  "You laugh. Pepper turns bright red under her fur, and her tail goes straight up, and then... ***PFFFFFFFFFT.*** A cloud of skunk musk right in your face.",
+  "It's not just smell. Your head swims. Your knees go weak. You're on the floor, dizzy and drooling and rock hard. Pepper looks at you, surprised. Then interested. \"Oh,\" she says. \"Oh, that's useful.\"",
+  "She sits on your face, her fluffy tail over your head, and her ass opens and she just sits down, wiggling. ***Shllorrrp.*** You go up a skunk girl, musk-drunk, smiling. ***Shlorp. Shlorp.*** Her lab coat stretches over a belly bigger than she is.",
+  "She gets an A on the lab. The professor never asks where you went. In the morning the lab bathroom has a whole person's worth of musky, steaming shit piled in it. ***PLOP.*** The building is evacuated."],
+  s: ["fart", "squelch", "squelch", "gurgle", "plop"], end: { t: "Musk-Drunk", pred: "pepper", hint: "Laugh at her" } },
+
+ul_end_tail: { w: "Biology lab", in: 1, p: [
+  "You lean in to look at her notes. Your face ends up right by her mouth. She panics. Her jaws open. ***GLLK.*** \"Mmf! Sorry! Mmf!\"",
+  "She's tiny and she's swallowing you anyway, in panicked, apologetic little gulps, her goggles fogging up, ***GLRK... GLRK... GULP***, until you're curled up in a belly so big she has to sit on the lab floor. ***Grrrrooorgl.***",
+  "\"I'm so sorry,\" she says to her stomach. \"I'll, um. I'll write you a really good lab report.\" She does. It's twelve pages. You're the conclusion."],
+  s: ["gulp", "gulp", "gulp", "gurgle"], end: { t: "Lab Report", pred: "pepper", hint: "Lean in close" } },
+
+ul_end_safe: { w: "Biology lab", in: 1, p: [
+  "\"It's fine. We'll fake the results.\" Pepper stares at you. Then she laughs, a little squeaky laugh, and you spend the whole lab making up frog data together.",
+  "After class she kisses you in the supply closet, nervous and fast. You make love on a pile of lab coats. Her tail wraps around you both like a blanket.",
+  "\"Can I, um, keep you in me tonight? I won't spray. I promise.\" She swallows you carefully and sleeps in her dorm with you curled up inside. In the morning she lets you out and gives you her notes. You're lab partners for four years."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Lab Partners", pred: "pepper", hint: "Help her", safe: 1 } },
+
+/* --- Dean Thornback --- */
+u_dean: { w: "The Dean's office", p: [
+  "Dean Thornback is a komodo dragon in a three-piece suit, huge, scaly, slow, with a forked tongue that flicks out while he reads your file. The office is all leather and dark wood. There's a lot of space on his desk.",
+  "\"Ah. The transfer. Prey track.\" Flick. \"I like to give every new prey student a personal orientation. To make sure they understand their... role.\" He loosens his tie."],
+  c: [["Accept your orientation", "ud_end_desk"], ["Threaten to report him", "ud_end_expel"], ["Ask about a scholarship", "ud_end_safe"], ["Back", "u_hub"]] },
+
+ud_end_desk: { w: "The Dean's office", in: 1, p: [
+  "You accept. He bends you over his desk and fucks you slow and heavy with one of his two cocks, then the other, ***PLAP... PLAP...***, his tongue flicking against your neck, reading your file over your shoulder the whole time.",
+  "Then he swallows you, slow as a komodo, inch by inch, ***GLK... GLK... GLK...***, over twenty minutes, while he takes a phone call. ***GULP.*** \"Yes, the budget. Mm.\"",
+  "He keeps you in his belly through three faculty meetings. In the morning, the executive restroom gets a whole person's worth, an enormous, steaming pile that the facilities crew is far too scared to mention."],
+  s: ["plap", "plap", "cum", "gulp", "gulp", "gurgle", "plop"], end: { t: "Orientation", pred: "thornback", hint: "Accept your orientation" } },
+
+ud_end_expel: { w: "The Dean's office", in: 1, p: [
+  "\"I'll report you.\" Thornback smiles. Slowly. \"To whom? I'm the Dean.\" He stands. He's huge. He grabs you and throws you face-down across the desk and takes you, hard, ***PLAP PLAP PLAP***, until you can't say anything at all.",
+  "Then he swallows you, rough, and sits back down, and signs a form with his belly bulging against the desk. EXPELLED. He stamps it. \"Effective immediately.\" ***Grrrnch.***"],
+  s: ["struggle", "plap", "plap", "gulp", "crack"], end: { t: "Expelled", pred: "thornback", hint: "Threaten him" } },
+
+ud_end_safe: { w: "The Dean's office", in: 1, p: [
+  "\"Is there... a scholarship?\" Thornback laughs, a dry hiss. Then he looks at you properly. \"Hm. There is. A very special one. I give it to one student a year.\"",
+  "It involves you living in his house, which is huge and warm and full of books. He's gentle, for a komodo. You make love by his fireplace. He keeps you in his belly most nights, reading aloud to you through it. In the morning he always lets you out, and you always have breakfast together.",
+  "You graduate with honours. Tuition-free."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Full Ride", pred: "thornback", hint: "Ask for a scholarship", safe: 1 } },
+
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
-  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"], ["🦃 Thanksgiving: home with Mom, your sisters and the fun aunt", "k_start"]] },
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"], ["🦃 Thanksgiving: home with Mom, your sisters and the fun aunt", "k_start"], ["🎓 Gullet University: first day on the prey track", "u_start"]] },
 
 f_start: { w: "Hollis Farm", p: [
   "Your car died two miles back. The only light for miles is Hollis Farm. The farmhouse lights are on, and there's a note tacked to the barn door in looping handwriting: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers. — Maggie*",
@@ -2143,12 +2260,12 @@ function drawStats() {
 }
 function go(id) {
   const n = N[id]; if (!n) return;
-  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start", "k_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start", "k_start", "u_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
   if (id === "menu") hush();
   if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
   VISITED[id] = 1;
   $("#where").textContent = n.w || "";
-  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "menu"].includes(id)) $("#text").innerHTML = "";
+  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "menu"].includes(id)) $("#text").innerHTML = "";
   const first = $("#text").children.length;
   n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
   if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
@@ -2170,7 +2287,7 @@ function go(id) {
 // which endings a choice can still lead to (for the ✓ mark once all are seen)
 const RC = {};
 function reach(id, seen = new Set()) {
-  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "menu"].includes(id)) return out; seen.add(id);
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "menu"].includes(id)) return out; seen.add(id);
   const n = N[id]; if (!n) return out; if (n.end) out.add(id);
   for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
   return (RC[id] = out);
