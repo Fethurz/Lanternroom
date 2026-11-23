@@ -171,7 +171,7 @@ const PREDS = {
   lcspider:{ n: "The Bunker Spider", k: "Lethal Company · spider-taur" },
   lcflea:{ n: "The Snare Flea", k: "Lethal Company · monster girl" },
   lcmasked:{ n: "The Masked", k: "Lethal Company · mimic" },
-  lcpanther:{ n: "The Puma", k: "Lethal Company · huntress" },
+  lcpanther:{ n: "The Puma", k: "Lethal Company · feral" },
   riley: { n: "Riley", k: "Lethal Company · crewmate" },
   lcmaneater:{ n: "The Maneater", k: "Lethal Company · grown monster" },
   lcdog:{ n: "The Eyeless Dog", k: "Lethal Company · hound woman" },
@@ -2291,10 +2291,10 @@ lc_start: { w: "The ship · In orbit", p: [
   c: [["Check on Riley on the ship", "lc_riley"], ["Go into the facility", "lc_in"], ["Search the woods outside", "lc_out"], ["Go back and sell scrap to the Company", "lc_co"]] },
 
 lc_in: { w: "The facility", p: ["Dark corridors, rusted pipes, steam. Scrap gleams in the corners. So do eyes. Where now?"],
-  c: [["The hallway with the leaves on the floor", "lc_bracken"], ["The long corridor (something is running)", "lc_thump"], ["The web-choked storage room", "lc_spider"], ["The room with the ceiling that moved", "lc_flea"], ["Follow your crewmate's voice", "lc_masked"], ["The dark lower level (alone, limping)", "lc_panther"], ["The room someone is crying in", "lc_maneater"], ["Back outside", "lc_hub"]] },
+  c: [["The hallway with the leaves on the floor", "lc_bracken"], ["The long corridor (something is running)", "lc_thump"], ["The web-choked storage room", "lc_spider"], ["The room with the ceiling that moved", "lc_flea"], ["Follow your crewmate's voice", "lc_masked"], ["The room someone is crying in", "lc_maneater"], ["Back outside", "lc_hub"]] },
 
 lc_out: { w: "The woods", p: ["Fog everywhere. Something huge breathes in the trees. Something else yips like a fox, very close. Where now?"],
-  c: [["Toward the breathing (stay very quiet)", "lc_dog"], ["Toward the yipping", "lc_fox"], ["Back to the ship", "lc_hub"]] },
+  c: [["Toward the breathing (stay very quiet)", "lc_dog"], ["Toward the yipping", "lc_fox"], ["Haul your scrap back along the trail (alone, limping)", "lc_panther"], ["Back to the ship", "lc_hub"]] },
 
 lc_hub: { w: "Outside the ship", p: ["Rain hammers the hull. The quota timer glows red. Where now?"],
   c: [["Riley, on the ship", "lc_riley"], ["The facility", "lc_in"], ["The woods", "lc_out"], ["The Company building", "lc_co"], ["Take off and leave the moon", "lc_leave"]] },
@@ -2409,27 +2409,27 @@ lm_end_safe: { w: "The dark corridor", in: 1, p: [
   s: ["kiss", "plap", "gulp"], end: { t: "Unmasked", pred: "lcmasked", hint: "Ask who she is", safe: 1 } },
 
 /* --- Panther (puma) --- */
-lc_panther: { w: "The lower level", p: [
-  "It's dark down here and you're alone, limping a little from a bad landing, a heavy brass bell in your arms. Easy prey. And somewhere behind you something moves, soft and quick, and then it's quiet again.",
-  "She's a puma woman: tawny, lean and long, all coiled muscle and tight curves, with a long tail and gold eyes. She doesn't fight. She doesn't chase. She waits for the slow ones, the hurt ones, the ones carrying too much, and she strikes from behind before they ever see her. If you catch her looking, she bolts."],
-  c: [["Keep walking with the bell", "lp_end_hunt"], ["Spin around and face her", "lp_end_came"], ["Set the bell down, sit, and stay calm", "lp_end_safe"], ["Back", "lc_in"]] },
+lc_panther: { w: "The forest trail", p: [
+  "You're hauling scrap back to the ship through the woods alone, limping a little from a bad landing, a heavy brass bell in your arms. Easy prey. Somewhere behind you, in the trees, something moves, soft and quick, and then it's quiet again.",
+  "She's a puma: a big, feral mountain lion, tawny and lean, all coiled muscle under a sleek coat, with a long tail, gold eyes and a mind sharp enough to choose her moment. She doesn't fight. She doesn't chase. She waits for the slow ones, the hurt ones, the ones carrying too much, and she strikes from behind before they ever see her. If you catch her looking, she bolts."],
+  c: [["Keep walking with the bell", "lp_end_hunt"], ["Spin around and face her", "lp_end_came"], ["Set the bell down, sit, and stay calm", "lp_end_safe"], ["Back", "lc_out"]] },
 
-lp_end_hunt: { w: "The lower level", in: 1, p: [
-  "You keep walking, bell in your arms, limping. You never hear her. One second you're alone, the next she's on your back, her weight driving you face-first onto the grating, the bell clanging away down the hall. ***CLANG.***",
-  "She doesn't wait around. Predators like her never do. She takes you right there, fast and hungry, hips grinding, claws in your suit, ***plap plap plap***, before anyone can come. Then her jaws open wide and she swallows you headfirst, quick, efficient, ***GLLK. GLRK. GULP***, and she's gone into the vents with her belly swinging before your crew even hears the bell land.",
-  "Later, somewhere in the dark of the facility, she leaves a whole person's worth of human-like shit in a quiet corner, and moves on to the next easy one. ***PLOP.***"],
+lp_end_hunt: { w: "The forest trail", in: 1, p: [
+  "You keep walking, bell in your arms, limping. You never hear her. One second you're alone, the next she's on your back, her weight driving you face-first into the mud, the bell tumbling away down the slope. ***CLANG.***",
+  "She doesn't wait around. Hunters like her never do. She pins you with her forepaws, mounts you right there on the trail, fast and hungry, hips grinding, claws in your suit, ***plap plap plap***, before anything else can come. Then her jaws open wide and she swallows you headfirst, quick and efficient, working you down with hard jerks of her head, ***GLLK. GLRK. GULP***, and she's gone into the trees with her belly swinging low before your crew even hears the bell land.",
+  "Later, somewhere deep in the woods, she leaves a whole person's worth of thick, human-like shit under a pine tree, and slinks off to wait for the next easy one. ***PLOP.***"],
   s: ["struggle", "plap", "gulp", "gulp", "gurgle", "plop"], end: { t: "Easy Prey", pred: "lcpanther", hint: "Carry heavy scrap alone" } },
 
-lp_end_came: { w: "The lower level", in: 1, p: [
-  "You spin around. She's right there, mid-crouch, about to spring. Your eyes meet. She YELPS, a high cat-shriek, and bolts, gone into the dark in a flash of tawny tail. You laugh, shaky. Scared off a monster just by looking at it.",
+lp_end_came: { w: "The forest trail", in: 1, p: [
+  "You spin around. She's right there in the ferns, mid-crouch, about to spring. Your eyes meet. She hisses and bolts, gone into the fog in a flash of tawny tail. You laugh, shaky. Scared off a mountain lion just by looking at it.",
   "You pick up the bell again. You relax. You limp on.",
-  "She was only circling. She comes back when you're halfway up the stairs, arms full and eyes forward, and this time she doesn't miss. She hits you from behind, pins you on the steps, takes you quick and greedy, and swallows you before you can turn your head again. ***GLLK... GULP.*** She bolts, full, into the dark."],
+  "She was only circling. She comes back when you're nearly at the ship, arms full and eyes on the ramp, and this time she doesn't miss. She hits you from behind, pins you in the mud, takes you quick and greedy, and swallows you before you can turn your head again. ***GLLK... GULP.*** She's back in the trees before the ship's door even opens."],
   s: ["struggle", "plap", "gulp", "gurgle"], end: { t: "She Came Back", pred: "lcpanther", hint: "Face her, then relax" } },
 
-lp_end_safe: { w: "The lower level", in: 1, p: [
-  "You put the bell down, sit on the grating, and stay very calm, very still, facing the dark. She doesn't attack. She watches. She can't figure you out. You're not running and you're not fighting.",
-  "It takes an hour. She creeps closer, flinching at every breath you take. Finally she sniffs your hand. Then she sits. Then she leans against you, shaking, and you stroke her back until she stops shaking. You make love slowly, quietly, and she bolts twice in the middle and comes back both times, sheepish.",
-  "She swallows you so carefully, curled up in a vent with you safe inside, and lets you out at the exit at dawn with your bell. She follows you at a distance on every run now. Anything that tries to sneak up on you gets ambushed first."],
+lp_end_safe: { w: "The forest trail", in: 1, p: [
+  "You put the bell down, sit in the wet ferns, and stay very calm, very still, facing the trees. She doesn't attack. She watches. She can't figure you out. You're not running and you're not fighting.",
+  "It takes an hour. She creeps closer, flinching at every breath you take. Finally she sniffs your hand. Then she lies down. Then she presses her big head into your chest, trembling, and you stroke her back until she stops. When she rolls over and offers herself, you make love slowly, in the ferns, and she bolts twice in the middle and comes back both times, sheepish.",
+  "She swallows you so carefully and curls up under a fallen log with you safe inside, purring. At dawn she lets you out by the ship, with your bell. She follows you through the woods on every run now, and anything that tries to sneak up on you gets ambushed first."],
   s: ["kiss", "plap", "gulp"], end: { t: "Skittish", pred: "lcpanther", hint: "Stay calm and still", safe: 1 } },
 
 /* --- Riley, crewmate --- */
