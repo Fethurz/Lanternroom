@@ -107,6 +107,13 @@ const PREDS = {
   jade:  { n: "Jade", k: "Anaconda · feral" },
   frost: { n: "Frost", k: "Polar bear · feral" },
   pebbles:{ n: "Pebbles", k: "Sea otter · feral" },
+  gloop: { n: "Gloop", k: "Slime girl · game" },
+  vexa:  { n: "Vexa", k: "Succubus · game" },
+  chester:{ n: "The Chest", k: "Mimic · game" },
+  ignis: { n: "Queen Ignis", k: "Boss dragoness · game" },
+  brannoc:{ n: "Sir Brannoc", k: "Knight · you ate him" },
+  elowen:{ n: "Elowen", k: "Elf archer · you ate her" },
+  kit:   { n: "Kit", k: "Catgirl rogue · you ate her" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -604,9 +611,208 @@ zo_end_safe: { w: "The otter pond", in: 1, p: [
   "At dawn she squeaks you back up, ***Hrrrp***, onto the rocks. She gives you her favourite rock. You keep it on your keyring."],
   s: ["kiss", "gulp", "gurgle", "belch"], end: { t: "Holding Hands", pred: "pebbles", hint: "Feed her clams", safe: 1 } },
 
+/* ===================== THE GAME WORLD ===================== */
+v_start: { w: "LEWDGEON QUEST · Title screen", p: [
+  "The game was a free download from a sketchy forum. LEWDGEON QUEST. The second you hit START, the screen goes white, the room goes away, and you're standing in a pixel-bright fantasy world, warm air, birdsong, a dungeon entrance carved like an open mouth.",
+  "Floating text hangs in the air in front of you: **CHOOSE YOUR CLASS.**",
+  "Two glowing buttons. One says HERO. The other says MONSTER."],
+  c: [["HERO: brave adventurer, delicious to everything", "v_hero"], ["MONSTER: the dungeon's biggest, hungriest boss", "v_mon"]] },
+
+v_hero: { w: "Dungeon · Floor 1", p: [
+  "*HERO selected. HP: 10. ARMOUR: a leather vest that barely covers your nipples.*",
+  "You step into the dungeon. Torches flicker. Somewhere ahead something giggles, something gurgles, and something very big breathes slowly, like it's asleep and hungry in its sleep.",
+  "Four paths. A floating arrow labels each one, helpfully: SLIME CAVERN. SUCCUBUS'S CHAMBER. TREASURE ROOM. BOSS LAIR."],
+  c: [["Slime Cavern", "vh_slime"], ["Succubus's Chamber", "vh_succ"], ["Treasure Room", "vh_mimic"], ["Boss Lair", "vh_boss"], ["Hit ESC and log out", "v_quit"]] },
+
+v_quit: { w: "Your bedroom", p: ["You hammer ESC until the world folds up and you're back at your desk, sweating, with a raging hard-on. The game's still on your screen. The title music is playing. It seems to be waiting.",
+  "You don't uninstall it."], end: { t: "Rage Quit", pred: "none", hint: "Log out" } },
+
+/* --- Gloop, slime girl --- */
+vh_slime: { w: "Slime Cavern", p: [
+  "The cavern glows green. In the middle of it, wobbling, is a slime girl: seven feet of translucent lime-green jelly shaped like a busty, thick-hipped woman, with huge wobbling tits and a big jiggly ass. Inside her, floating in her jelly, are a sword, a helmet, a boot, and some bones she hasn't finished with.",
+  "*A wild GLOOP appears!* She waves. Her whole body jiggles. \"Hiii, adventurer! Wanna cuddle? I'm super squishy!\""],
+  c: [["ATTACK", "vs_end_absorb"], ["Cuddle her", "vs_end_cuddle"], ["Ask her to keep you safe while you rest", "vs_end_safe"], ["Back", "v_hero"]] },
+
+vs_end_absorb: { w: "Slime Cavern", in: 1, p: [
+  "*You attack! It's not very effective.* Your sword goes into her chest with a wet ***SHLUP*** and stops. She giggles. It tickles. She grabs your sword arm and pulls, and your arm goes in after the sword, all the way to the shoulder. It's warm in there. Warm and tight and tingling.",
+  "\"Thanks for the snack!\" She hugs you. All of you goes in. Your face presses into her jelly and keeps going, ***SHLLORRRP***, and then you're floating inside her, suspended in green, watching the cavern through her wobbling body.",
+  "She plays with your cock through her jelly, squeezing and rippling until you cum, a little white cloud drifting through her. She giggles. And then the tingling turns to burning. Your clothes melt. Your skin goes next.",
+  "*HP: 10... 7... 3... 1...* You float there next to the boot and the helmet, slowly dissolving, while she wobbles around her cavern humming. *GAME OVER: ABSORBED.*",
+  "By morning she's bigger. Much bigger. Her tits and her ass wobble even more. And a slime pushes out her waste like anyone else: a whole person's worth, squeezed out in a huge, green-tinged, human-like pile in the corner of the cave. ***FFFRRRT... PLOP... PLOP.***"],
+  s: ["squelch", "squelch", "cum", "gurgle", "plop"], end: { t: "Not Very Effective", pred: "gloop", hint: "Attack her" } },
+
+vs_end_cuddle: { w: "Slime Cavern", in: 1, p: [
+  "You open your arms. She squeals and throws herself at you. ***SPLOOSH.*** She's wet and warm and soft as a waterbed, and she's everywhere, flowing over your shoulders, into your clothes, around your cock. She squeezes it. Strokes it. You cum in about ten seconds. She cheers.",
+  "Then she flows up over your face. You're inside her before you can even think about holding your breath, floating in warm green, with her giggling all around you. \"You're my favourite cuddle!\"",
+  "She keeps you a while. Long enough to cum three more times. Then her jelly starts to tingle. Then it starts to burn. \"Sorry,\" she says, sounding a little sad. \"I get hungry when I cuddle.\"",
+  "*GAME OVER: CUDDLED.* Your bones end up floating next to the sword. Her tits get bigger. A lot bigger."],
+  s: ["squelch", "cum", "squelch", "gurgle"], end: { t: "Squishy", pred: "gloop", hint: "Cuddle her" } },
+
+vs_end_safe: { w: "Slime Cavern", in: 1, p: [
+  "\"Could I... rest in you? Just to heal?\" Gloop blinks. Then she lights up, glowing brighter green. \"Nobody's ever ASKED!\"",
+  "She takes you in gently, a warm, wobbly hug that slides over you until you're floating inside her, breathing her somehow, held all over. She doesn't burn. She glows softly, and the cuts on your arms close. *HP: 10/10. +RESTED.*",
+  "She makes love to you from the inside, slow ripples all over you, until you cum and float there boneless and happy. Then she sings you to sleep.",
+  "When you wake, she lets you slide back out, gooey and grinning. \"You'll come back, right? To rest?\" Every time you load the game, you come straight here first. *ACHIEVEMENT UNLOCKED: SAVE POINT.*"],
+  s: ["squelch", "cum"], end: { t: "Save Point", pred: "gloop", hint: "Rest inside her", safe: 1 } },
+
+/* --- Vexa, succubus --- */
+vh_succ: { w: "Succubus's Chamber", p: [
+  "Pink light, silk sheets, incense. Lounging on a round bed is a succubus: purple skin, curling horns, bat wings, a spaded tail, and a body built entirely out of sin. VEXA, says the floating name tag. Her tits are barely covered. Her belly is round and full and there's a hand print pressing out from inside it.",
+  "\"Oh, a hero!\" she purrs, and licks her lips with a long, forked tongue. \"Come here, darling. Let me drain you.\""],
+  c: [["Resist her charm", "vx_end_drain"], ["Go to her bed", "vx_end_unbirth"], ["Ask what she's like when she's not hungry", "vx_end_safe"], ["Back", "v_hero"]] },
+
+vx_end_drain: { w: "Succubus's Chamber", in: 1, p: [
+  "*You try to resist! Your WILLPOWER is too low!* Your legs walk you to the bed by themselves. She pulls you on top of her and slides you inside her and it's like being swallowed by heaven.",
+  "She drains you. You cum, and cum again, and every time something leaves you, HP and strength and colour, and her belly glows brighter. *HP: 10... 6... 2.* You're so weak you can't hold your own head up. She smiles, and lifts your face to hers, and opens her mouth, and it doesn't stop opening.",
+  "***GLLK.*** She swallows you in long, purring gulps, ***GLRK... GULP***, while she's still riding the last of your cum out of you. You slide down to join whoever's already in her belly. ***Glorrrp.***",
+  "*GAME OVER: DRAINED.* In the morning she goes to her golden demon toilet and squats over it with a satisfied sigh, and what comes out is a whole person's worth of huge, steaming, human-like shit. ***FFFRRRT... PLOP... PLOP.*** She flushes you with one claw."],
+  s: ["plap", "cum", "cum", "gulp", "gurgle", "plop"], end: { t: "Drained", pred: "vexa", hint: "Resist her charm" } },
+
+vx_end_unbirth: { w: "Succubus's Chamber", in: 1, p: [
+  "You go to her bed. Willingly. She's delighted. She fucks you slowly, purring, letting you feel every inch of her, and when you cum she clenches and doesn't let your cock go. She pulls.",
+  "Her pussy swallows your cock, then your balls, then your hips. ***Shllrrrp.*** She wraps her legs and her tail around you, helping. \"Shhh, darling. All the way in.\" Your chest. Your face. ***Glorp.***",
+  "You're in her womb. It glows pink. It's hot and tight and it's squeezing you in slow pulses, and somehow it feels like cumming, over and over and over, while it melts you.",
+  "*GAME OVER: TAKEN.* She lies on her silk sheets for days with a belly the size of a beanbag, stroking it, singing. When you're gone, she's thicker. Curvier. Hungrier."],
+  s: ["plap", "cum", "squelch", "gurgle"], end: { t: "All the Way In", pred: "vexa", hint: "Go to her bed" } },
+
+vx_end_safe: { w: "Succubus's Chamber", in: 1, p: [
+  "\"What are you like when you're not hungry?\" Vexa blinks. Her tail stops swishing. \"...Nobody asks me that,\" she says, quietly. \"Heroes just come in swinging. Or drooling.\"",
+  "You talk. She's funny. She's lonely; it's a long game. And when she kisses you it's real, and when you make love it's slow and she doesn't drain you at all, she just holds you, her wings wrapped around you both.",
+  "\"Stay?\" she whispers. \"Inside me. Just to sleep. I'll be good.\" She takes you into her womb so slowly, so carefully, and you sleep curled up in warm pink light with her heartbeat around you.",
+  "In the morning she lets you out and kisses you and gives you an item. *OBTAINED: VEXA'S FAVOUR.* Every time you die after that, you respawn in her bed."],
+  s: ["kiss", "plap", "squelch"], end: { t: "Vexa's Favour", pred: "vexa", hint: "Ask about her", safe: 1 } },
+
+/* --- Chester, mimic --- */
+vh_mimic: { w: "Treasure Room", p: [
+  "Gold everywhere. And in the middle of the room, on a pedestal, under a spotlight, a big ornate treasure chest with a little sign: DEFINITELY NOT A MIMIC.",
+  "The lid is open a crack. There's gold inside. There's also something wet and pink and long sliding back out of sight."],
+  c: [["Open it", "vm_end_chomp"], ["Kick it", "vm_end_tongue"], ["Sit on it and talk to it", "vm_end_safe"], ["Back", "v_hero"]] },
+
+vm_end_chomp: { w: "Treasure Room", in: 1, p: [
+  "You open it. Teeth. Rows and rows of teeth on the inside of the lid, and a tongue as long as you are, slimy and fat, shooting out and wrapping around your waist. ***SHLRRP.***",
+  "*IT'S A MIMIC!* It yanks you in headfirst. The lid slams down on your back. ***CHOMP.*** Not biting. Holding. And then the chest starts to swallow, its wooden sides bulging, ***GLRK... GLRK... GULP***, until your kicking feet slide in and the lid clicks shut.",
+  "Inside is dark and wet and full of gold coins in hot drool. The tongue curls around you and squeezes. ***Grrrnch.***",
+  "*GAME OVER: IT WAS A MIMIC.* The next adventurer to come in finds the chest a bit fatter, its lid bulging, a lot more gold in it, and a huge, human-sized pile of shit next to the pedestal that nobody can explain. ***PLOP.***"],
+  s: ["struggle", "gulp", "gulp", "crack", "plop"], end: { t: "Definitely Not a Mimic", pred: "chester", hint: "Open it" } },
+
+vm_end_tongue: { w: "Treasure Room", in: 1, p: [
+  "You kick it. \"Nice try.\" The chest snaps open with a roar. Its tongue lashes out and wraps around your ankles and yanks you off your feet. ***THUD.***",
+  "It drags you in feet-first. The tongue slides up inside your shorts, licking, curling around your cock, stroking it rough and slimy while the chest gulps you down, inch by inch. ***Glrk... glrk...*** You cum into its tongue as your chest goes in. Your shoulders. ***CHOMP.***",
+  "*GAME OVER: KICKED THE WRONG CHEST.* The chest burps out a single gold coin. ***Hrrp. Clink.***"],
+  s: ["struggle", "squelch", "cum", "gulp", "belch"], end: { t: "Kicked", pred: "chester", hint: "Kick it" } },
+
+vm_end_safe: { w: "Treasure Room", in: 1, p: [
+  "You sit on the chest's lid and talk to it. About the dungeon. About how long it's been sitting there. The chest is quiet. Then, under you, it makes a small, lonely creak.",
+  "The lid lifts, slowly, and the tongue comes out and curls gently around your hand. You let it pull you in. It folds you into the chest like a blanket, gold and warm drool and a big soft tongue wrapped around you, and the lid closes, and it doesn't chomp. It just holds.",
+  "You sleep in a treasure chest. It's the safest you've ever felt in a dungeon. In the morning it opens and gently tips you out with a pile of gold in your arms. *OBTAINED: A PET MIMIC.* It follows you, hopping, for the rest of the game."],
+  s: ["squelch"], end: { t: "Pet Mimic", pred: "chester", hint: "Talk to it", safe: 1 } },
+
+/* --- Queen Ignis, boss dragoness --- */
+vh_boss: { w: "Boss Lair", p: [
+  "*WARNING: BOSS AREA.* A health bar appears at the top of your vision. QUEEN IGNIS. It's very, very long.",
+  "She's a dragoness the size of a house, red-gold scales, horns like a crown, lounging on a mountain of treasure. Her belly is huge and round and gurgling. A dozen heroes have come through here. Their armour is in a pile by the door.",
+  "\"Another one?\" She yawns, showing teeth as long as your arm. \"Fine. Entertain me, little hero.\""],
+  c: [["FIGHT", "vb_end_fight"], ["Kneel", "vb_end_kneel"], ["Ask to be her treasure", "vb_end_safe"], ["Back", "v_hero"]] },
+
+vb_end_fight: { w: "Boss Lair", in: 1, p: [
+  "*You attack! 1 damage.* Her health bar doesn't even move. She laughs, and pins you under one claw, and leans down to sniff you, slow.",
+  "\"Tiny.\" She rolls you over, and her huge dragon cunt is right there, steaming, and she lowers herself onto you. ***SHLLLORRRP.*** She grinds. You go in. All of you. In one slow, wet, contemptuous squat.",
+  "Her womb is a furnace. She lies back on her treasure with a bulge in her belly the size of a cart, purring flames. ***Grrrrnch.***",
+  "*GAME OVER: YOU HAVE BEEN DEFEATED BY QUEEN IGNIS.* When it's done, she squats over the hero armour pile and adds you to it: a whole person's worth of huge, steaming, human-like shit right on top of the helmets. ***FFFRRRT... PLOP... PLOP.*** *CONTINUE? 10... 9... 8...*"],
+  s: ["struggle", "squelch", "gurgle", "plop"], end: { t: "Boss Fight", pred: "ignis", hint: "Fight her" } },
+
+vb_end_kneel: { w: "Boss Lair", in: 1, p: [
+  "You kneel. Ignis smiles. \"Smart.\" She slides off her treasure, lies down in front of you and opens her jaws. Wide. Wider. A cavern of red with a throat like a tunnel. \"In you go.\"",
+  "You walk in. You walk INTO a dragon. Her tongue lifts you, her throat takes you, ***GLLLLRRRK***, and you slide down for what feels like forever into a gut so hot it steams. ***Glorrrrp.*** Twelve heroes' worth of armour are in there with you.",
+  "She curls up on her gold and rubs her belly with a claw, smug. ***HRRRROOOOOAAAAP.*** A belch of smoke. *GAME OVER: YOU WERE HER TREASURE.*"],
+  s: ["gulp", "gulp", "gurgle", "belch"], end: { t: "Kneel", pred: "ignis", hint: "Kneel" } },
+
+vb_end_safe: { w: "Boss Lair", in: 1, p: [
+  "\"Let me be your treasure.\" Ignis stops. Her health bar flickers. \"...What?\"",
+  "\"Keep me. I'll stay.\" She stares. Then she laughs, delighted, and scoops you up and lays you on her gold, and nuzzles you, and her purr shakes the cave. She makes love to you on her hoard, huge and careful, her wings over you like a tent.",
+  "Then she swallows you, slow and careful, and curls up around her belly, and keeps you there all night, warm and safe, the most precious thing in her hoard. ***Grrrrlbl.***",
+  "*SPECIAL ENDING UNLOCKED: THE DRAGON'S TREASURE.* In the morning she coughs you up onto her gold. She never lets another hero near you."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "The Dragon's Treasure", pred: "ignis", hint: "Ask to be her treasure", safe: 1 } },
+
+/* --- MONSTER route: you are the pred --- */
+v_mon: { w: "Dungeon · The Boss Lair", p: [
+  "*MONSTER selected.* Your body changes. You grow. And grow. Your skin hardens to scales, your jaw stretches long, your belly gets deep and heavy and HUNGRY. You're a dragon. The biggest thing in the dungeon. Your throat already aches for something to swallow.",
+  "*HUNGER: STARVING.* A health bar floats over your own head now. And somewhere above, footsteps. Adventurers. Coming to kill you.",
+  "Three of them. A cocky knight. An elf archer. And a catgirl rogue sneaking around the side."],
+  c: [["The cocky knight", "vp_knight"], ["The elf archer", "vp_elf"], ["The catgirl rogue", "vp_cat"]] },
+
+vp_knight: { w: "The Boss Lair", p: [
+  "SIR BRANNOC strides in, armour shining, sword raised. Square jaw. Big ego. \"Foul beast! Prepare to die!\" He's actually kind of hot. And he really, really doesn't see what's coming."],
+  c: [["Swallow him whole", "vk_end_whole"], ["Fuck him first, then eat him", "vk_end_fuck"], ["Spare him and keep him", "vk_end_safe"]] },
+
+vk_end_whole: { w: "The Boss Lair", in: 1, p: [
+  "He charges. You open your mouth. He runs right into it. ***CLOMP.***",
+  "He's in your mouth, armour and all, banging on your teeth, and he tastes like steel and sweat and fear. You tip your head back. ***GLLLRRK.*** He slides down your throat, scraping, kicking, and you FEEL it, every inch of him going down, and it's the best thing you've ever felt. ***GULP.***",
+  "He lands in your stomach and your belly bulges out, round and heavy and hot, and you can feel him punching in there. You rub it. You belch. ***HRRRROOOOOOAAAAP.*** A puff of steam and his helmet's plume.",
+  "*HUNGER: SATISFIED. +1 KNIGHT.* By morning he's gone soft, and you squat over the hero pile and drop him out of you, a whole person's worth of thick, steaming shit, heavy and endless and so satisfying. ***FFFRRRT... PLOP... PLOP.*** And your belly stays rounder. Your thighs heavier. You're getting FAT. You love it."],
+  s: ["gulp", "gulp", "struggle", "belch", "plop"], end: { t: "Swallowed the Knight", pred: "brannoc", hint: "Swallow him whole" } },
+
+vk_end_fuck: { w: "The Boss Lair", in: 1, p: [
+  "You knock his sword away with your tail and pin him under your claw. You rip his armour off like a lobster shell. He's naked and shouting and hard, and you roll him over and take him. ***PLAP.*** You fuck the brave hero into your treasure pile until he stops shouting and starts moaning. Then begging. Then cumming.",
+  "Then you pick him up by the leg, dangle him over your open mouth, and let him drop. ***GLLK.*** You swallow him slow, savouring every gulp, ***GLRK... GLRK... GULP***, feeling him slide down, still dripping.",
+  "He wriggles in your belly all night. You lie on your gold rubbing him, ***Grrrrooorgl***, and burp up his boots. *+1 KNIGHT. +5 WEIGHT.*",
+  "In the morning you shit him out, huge and heavy, a whole person's worth piled on his own armour. ***PLOP.*** Your belly hangs a little lower now. Soft. Heavy. Full of heroes."],
+  s: ["plap", "plap", "cum", "gulp", "gurgle", "belch", "plop"], end: { t: "Fucked the Hero", pred: "brannoc", hint: "Fuck him first" } },
+
+vk_end_safe: { w: "The Boss Lair", in: 1, p: [
+  "He charges. You catch his sword in your teeth, snap it, and pin him gently under one claw. He stares up at you, terrified, waiting to die. You lick his face instead.",
+  "\"...Oh,\" he says. You keep him. You swallow him for the night, gently, just to feel him in there, and he panics, then calms down, then falls asleep curled up in your warm belly while you lie on your gold and purr. ***Grrrlbl.***",
+  "In the morning you cough him up. He doesn't leave. He polishes your scales. He fights off the next adventurers for you. *COMPANION UNLOCKED: SIR BRANNOC.*"],
+  s: ["kiss", "gulp", "gurgle", "belch"], end: { t: "Pet Knight", pred: "brannoc", hint: "Spare him", safe: 1 } },
+
+vp_elf: { w: "The Boss Lair", p: [
+  "ELOWEN, the elf archer, stays in the shadows at the edge of your lair. Tall, willowy, pointed ears, her arrows nocked. Her eyes are on you. She's shaking. She's never seen a dragon this big. She's never seen a dragon this hungry."],
+  c: [["Swallow her slowly", "ve_end_slow"], ["Cock vore her", "ve_end_cock"], ["Make her your mate", "ve_end_safe"]] },
+
+ve_end_slow: { w: "The Boss Lair", in: 1, p: [
+  "Her arrows bounce off your scales. You walk to her slowly, making her watch. You pick her up in your claws. She's so light. You lick her, all over, tasting her, and she's crying and moaning at the same time.",
+  "You feed her in feet-first. Slowly. ***Glk... glk... glk...*** Her legs, her hips, her chest, her pretty face last, looking at you the whole time until your jaws close. ***GULP.***",
+  "Your belly swells. You lie on your back on your hoard and feel her squirm and push and slowly, slowly stop. ***Grrrrnch.*** It feels so good you cum on your own belly.",
+  "*+1 ELF. +5 WEIGHT.* Your hips get wider. Your belly gets softer. When she's gone, you drop her out in a huge, steaming, human-sized pile, ***FFFRRRT... PLOP***, and you're already hungry for the next one."],
+  s: ["kiss", "gulp", "gulp", "gurgle", "cum", "plop"], end: { t: "Elf on the Menu", pred: "elowen", hint: "Swallow her slowly" } },
+
+ve_end_cock: { w: "The Boss Lair", in: 1, p: [
+  "You pin her down. Your cock slides out, huge, red, dripping. Her eyes go wide. You press the tip to her face and it opens. ***SHLLRRK.***",
+  "You stroke her down your shaft, ***Glrrk... glrrk... glrrk...***, feeling her slide all the way down into your balls. ***SHLORP.*** They swell, huge, heavy, round, sloshing. You hold them. You squeeze. ***Shlosh.***",
+  "By morning she's cum. You spend her across your lair floor in thick, endless ropes, ***SPLRRT. SPLRRT. SPLRRT.***, roaring so loud the whole dungeon shakes. *+1 ELF.*"],
+  s: ["squelch", "squelch", "slosh", "cum"], end: { t: "Load of Elf", pred: "elowen", hint: "Cock vore her" } },
+
+ve_end_safe: { w: "The Boss Lair", in: 1, p: [
+  "You walk to her slowly. She drops her bow. You lie down in front of her. She stares. You nuzzle her, gently, and she reaches up and touches your snout with shaking fingers.",
+  "She stays. She makes love to you on your hoard, small and fierce and fearless, and afterward she asks, blushing, what it's like inside. You show her. Gently. You keep her in your belly all night, curled up warm, and she presses her hands to the walls and laughs. ***Grrrlbl.***",
+  "*COMPANION UNLOCKED: ELOWEN.* She never goes home. She rides on your back now."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Dragon's Mate", pred: "elowen", hint: "Make her your mate", safe: 1 } },
+
+vp_cat: { w: "The Boss Lair", p: [
+  "KIT, the catgirl rogue, is sneaking along the back wall of your lair toward your treasure, tail swishing, a sack over her shoulder. She thinks you haven't noticed. She's already stuffed it with half your gold. She's grinning. You can smell her. She's tiny next to you."],
+  c: [["Catch her by the tail", "vc_end_tail"], ["Let her steal, then sit on her", "vc_end_sit"], ["Keep her as your thief", "vc_end_safe"]] },
+
+vc_end_tail: { w: "The Boss Lair", in: 1, p: [
+  "You catch her by the tail with two claws and lift her, kicking and hissing, upside down in front of your face. Gold coins rain out of her sack. \"Wait wait wait! We can make a DEAL!\"",
+  "You swallow her mid-sentence. ***GLLK. GLRK. GULP.*** She goes down coins and all, screeching, and lands in your stomach with a jingle. ***Glorrp. Clink.***",
+  "You lie on your hoard and jiggle your belly, listening to her rattle around with your gold. *+1 THIEF. GOLD RETURNED.* In the morning you squat and drop her out, all of her, a huge, steaming, human-sized pile, ***PLOP***, with a few coins in it. Still yours."],
+  s: ["struggle", "gulp", "gulp", "gurgle", "plop"], end: { t: "Caught", pred: "kit", hint: "Grab her tail" } },
+
+vc_end_sit: { w: "The Boss Lair", in: 1, p: [
+  "You let her stuff her sack. You let her think she's getting away. Then you roll over, lift your tail, and sit on her. ***FWUMP.***",
+  "Your hole is right on her face. You wiggle. It opens. ***SHLLLORRRP.*** She goes up your ass like she was always meant to, kicking and yowling, sack and all, and you squat down harder until her tail slips in last.",
+  "You feel her climbing up through your guts, hissing. It feels amazing. You rub your belly as she reaches your stomach. ***Glorrbl.*** *+1 THIEF.* In the morning, she comes back out the same way, massive and steaming. ***FFFRRRT... PLOP... PLOP.*** You're a lot fatter."],
+  s: ["squelch", "squelch", "gurgle", "plop"], end: { t: "Sat On the Thief", pred: "kit", hint: "Sit on her" } },
+
+vc_end_safe: { w: "The Boss Lair", in: 1, p: [
+  "You let her get all the way to the door. Then you say, \"You're good.\" Kit freezes. Then turns. \"...You can TALK?\"",
+  "You offer her a deal: she steals from the other dungeons and brings it back to you, and you keep her safe. She thinks about it for about two seconds and says yes. You seal it the fun way, rolling around on the hoard, and then she climbs right into your mouth on her own. \"Let me try the inside. For science.\"",
+  "You keep her in your belly all night, safe and warm. She purrs. In the morning you cough her up and she grabs her sack and goes off to rob the slime cavern. *COMPANION UNLOCKED: KIT.*"],
+  s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Partners in Crime", pred: "kit", hint: "Make a deal", safe: 1 } },
+
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
-  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"]] },
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"]] },
 
 f_start: { w: "Hollis Farm", p: [
   "Your car died two miles back. The only light for miles is Hollis Farm. The farmhouse lights are on, and there's a note tacked to the barn door in looping handwriting: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers. — Maggie*",
@@ -1295,7 +1501,7 @@ let ST = { drinks: 0 }, VISITED = {};
 
 function fmt(t) {
   return esc(t).replace(/"([^"]+)"/g, "<span class='say'>“$1”</span>")
-    .replace(/\*\*\*(.+?)\*\*\*/g, "<span class='sx'>$1</span>").replace(/\*(.+?)\*/g, "<i>$1</i>");
+    .replace(/\*\*\*(.+?)\*\*\*/g, "<span class='sx'>$1</span>").replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\*(.+?)\*/g, "<i>$1</i>");
 }
 function drawStats() {
   const d = ST.drinks, label = d === 0 ? "Sober" : d < 3 ? "Buzzed" : d < 5 ? "Drunk" : "Wasted";
@@ -1304,12 +1510,12 @@ function drawStats() {
 }
 function go(id) {
   const n = N[id]; if (!n) return;
-  if (["start", "f_start", "g_start", "o_start", "z_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
   if (id === "menu") hush();
   if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
   VISITED[id] = 1;
   $("#where").textContent = n.w || "";
-  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "menu"].includes(id)) $("#text").innerHTML = "";
+  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "menu"].includes(id)) $("#text").innerHTML = "";
   const first = $("#text").children.length;
   n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
   if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
@@ -1331,7 +1537,7 @@ function go(id) {
 // which endings a choice can still lead to (for the ✓ mark once all are seen)
 const RC = {};
 function reach(id, seen = new Set()) {
-  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "menu"].includes(id)) return out; seen.add(id);
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "menu"].includes(id)) return out; seen.add(id);
   const n = N[id]; if (!n) return out; if (n.end) out.add(id);
   for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
   return (RC[id] = out);
