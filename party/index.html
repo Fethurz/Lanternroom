@@ -177,6 +177,12 @@ const PREDS = {
   lcdog:{ n: "The Eyeless Dog", k: "Lethal Company · hound woman" },
   lcfox:{ n: "The Kidnapper Fox", k: "Lethal Company · vixen" },
   lcco:{ n: "The Company", k: "Lethal Company · something behind the wall" },
+  ugra:  { n: "Chief Ugra", k: "Futa cave woman chief" },
+  regina:{ n: "Regina", k: "Tyrannosaur · feral" },
+  raptors:{ n: "Sickle's pack", k: "Raptors (futa alpha) · feral" },
+  nile:  { n: "Nile & Nessa", k: "Spinosaurus & plesiosaur · feral" },
+  trixie:{ n: "Trixie & Bronte", k: "Triceratops & futa brachiosaur · feral" },
+  skye:  { n: "Skye", k: "Pterodactyl · feral" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -2536,9 +2542,174 @@ lco_end_safe: { w: "The Company building", in: 1, p: [
   "Her tentacles reach out, gently, and lift you over the counter, and hold you, and she makes love to you behind the wall, slow and enormous and strange. Then she keeps you, safe, overnight, and sends you back out in the morning. *\"Quota: waived,\"* she says. Your crew never knows how you did it."],
   s: ["squelch", "cum"], end: { t: "Quota Waived", pred: "lcco", hint: "Thank her", safe: 1 } },
 
+/* ===================== ONE MILLION YEARS B.C. (time travel) ===================== */
+dn_start: { w: "Somewhere in the deep past", p: [
+  "The lab's time machine was supposed to go back ten minutes. It went back about sixty-six million years and kept rattling. When the smoke clears you're standing in a steaming prehistoric jungle with a dead machine, a broken watch and a very bad feeling. (Nobody told the past that cavemen and dinosaurs aren't supposed to overlap. They overlap.)",
+  "Ferns taller than houses. A volcano smoking on the horizon. Something roars, and the ground shakes. Smoke rises from a cave on the cliff: a fire, and drums, and laughter. People.",
+  "And every big shape moving through the trees is watching you, the soft little stranger who fell out of the sky."],
+  c: [["Climb up to the cave with the fire", "cv_ugra"], ["Follow the huge footprints", "dn_rex"], ["Hide in the tall ferns", "dn_raptor"], ["Go down to the river", "dn_spino"], ["Walk out into the grassy plain", "dn_trike"], ["Climb the cliff to the nests", "dn_ptera"]] },
+
+dn_hub: { w: "The prehistoric jungle", p: ["The volcano rumbles. Something huge drinks from the river. Drums beat up at the cave. Where now?"],
+  c: [["The cave tribe", "cv_ugra"], ["The tyrannosaur's tracks", "dn_rex"], ["The ferns", "dn_raptor"], ["The river", "dn_spino"], ["The plain", "dn_trike"], ["The cliff nests", "dn_ptera"], ["Try to fix the time machine", "dn_leave"]] },
+
+dn_leave: { w: "The time machine", p: ["You bang on the machine with a rock for three days. Things circle you every night. On the fourth morning it sparks, hums and throws you forward in time, back into the lab, filthy and shaking, ten minutes after you left.",
+  "Your lab coat smells like dinosaur musk for weeks. You keep it."], end: { t: "Back to the Lab", pred: "none", hint: "Fix the time machine" } },
+
+/* --- Chief Ugra --- */
+cv_ugra: { w: "The cave", p: [
+  "The cave is full of fire and furs and bones and cave women: big, strong, half-naked, painted, laughing. And on a throne of skulls at the back sits their chief, Ugra.",
+  "She's enormous. Seven feet of hard muscle under a thick layer of soft fat, broad shoulders, huge arms, heavy breasts barely covered by a strip of hide, and a big round gut stuffed full from the feast, resting on her thick thighs. Under her loincloth, there's a bulge the size of your forearm. She's chewing on a whole roasted leg of something. She's got a club across her lap.",
+  "She looks at you. She grins. She points the bone at you and grunts one word to her tribe: \"MINE.\""],
+  c: [["Bow to the chief", "cv_end_claimed"], ["Try to run", "cv_end_clubbed"], ["Stand up to her", "cv_end_fight"], ["Show her something from the future", "cv_end_safe"], ["Back", "dn_hub"]] },
+
+cv_end_claimed: { w: "The cave", in: 1, p: [
+  "You bow. The tribe cheers. Ugra tosses the bone aside, grabs you by the hair and drags you up onto her throne, into her lap, onto her soft gut. She rips your lab clothes off like paper. Her loincloth comes away. Her cock is thick and heavy and already hard, and she fucks you right there on the skull throne in front of the whole tribe, holding you down by the neck, grunting, ***PLAP. PLAP. PLAP.***",
+  "When she's done she belches in your face, ***BWWOOOAAARRP***, all roasted meat and berry wine, and laughs. Then she lifts you up like you weigh nothing, tips her head back, and opens her mouth wide. ***GLLLLK.***",
+  "She swallows you headfirst in front of her tribe, ***GLRK... GLRK... GULP***, her thick throat bulging, and you slide down into a gut already packed with the feast. Her belly swells out over her thighs, huge and round and taut. ***Glorrrrrp.*** The tribe pounds the drums. She pats you and roars.",
+  "In the morning she squats at the cave's mouth, grunting, and pushes you out in one massive, steaming, endless pile, a whole stranger's worth, the biggest the tribe has ever seen. ***FFFFRRRRT... PLOP... PLOP... PLOP.*** They paint it on the cave wall. Ugra's belly stays a little rounder. Her thighs are a little thicker. She's proud."],
+  s: ["plap", "plap", "cum", "belch", "gulp", "gulp", "gurgle", "plop"], end: { t: "Mine", pred: "ugra", hint: "Bow to her" } },
+
+cv_end_clubbed: { w: "The jungle", in: 1, p: [
+  "You run. You get maybe twenty feet. ***BONK.*** Her club hits the back of your head and you go down in the mud, seeing stars.",
+  "You wake up being dragged by your ankle through the jungle, back toward the cave. Ugra's carrying you like a fresh kill. She throws you down on the furs and takes you, hard, while her tribe holds your arms, ***PLAP PLAP PLAP***, until she floods you so full your belly swells.",
+  "Then she sits on you. Her huge soft ass drops onto your face and her hole opens, hot and wide, and she grinds down. ***SHLLLORRRP.*** You go up the chief's ass, slowly, while she eats another roasted leg on top of you. Her gut gets even bigger. ***Grrrnch.***",
+  "The tribe tells the story for generations: the stranger who ran from Ugra. They paint it on the wall, too. It's not flattering."],
+  s: ["struggle", "struggle", "plap", "plap", "cum", "squelch", "gurgle"], end: { t: "Bonk", pred: "ugra", hint: "Run from her" } },
+
+cv_end_fight: { w: "The cave", in: 1, p: [
+  "You stand up straight and tell her no. The cave goes silent. Ugra stands. She's a head and a half taller than you. She looks you up and down, and laughs, and her cock throbs. She likes that.",
+  "She wrestles you in front of the whole tribe and pins you in about three seconds. Then her cock's tip, fat and dripping, presses against your forehead. And opens. ***SHLLLRRRK.***",
+  "She pumps you down her shaft in front of everyone, ***Glrrk... glrrk... glrrk***, and you drop into her balls, ***SHLORP***, which swell huge and heavy and hang down between her thighs, sloshing. ***Shlosh.*** She waddles back to her throne with them swinging. \"Strong one,\" she grunts. \"Good for babies.\"",
+  "That night she breeds every woman in the tribe with what's left of you."],
+  s: ["struggle", "squelch", "slosh", "slosh", "cum"], end: { t: "Strong One", pred: "ugra", hint: "Stand up to her" } },
+
+cv_end_safe: { w: "The cave", in: 1, p: [
+  "You pull a lighter out of your pocket and flick it on. A flame from nothing. The whole cave gasps. Ugra stops chewing. She stares at the flame. Then at you. Very slowly, she reaches out, and you show her how it works.",
+  "She laughs, delighted, like a kid. That night she makes you sit beside her throne, not at her feet. She feeds you the best meat. Then she takes you to her furs and makes love to you, rough and warm and laughing, her huge soft body all around you.",
+  "When she pulls you into her mouth, it's gentle. She swallows you, slow, and curls up in her furs with her big belly wrapped in her arms, holding you there all night, safe, humming. In the morning she lets you out and puts a necklace of teeth around your neck. You're her mate now. The tribe bows to you, too."],
+  s: ["kiss", "plap", "gulp", "gurgle", "belch"], end: { t: "Fire Bringer", pred: "ugra", hint: "Show her the future", safe: 1 } },
+
+/* --- Regina, T. rex --- */
+dn_rex: { w: "The footprints", p: [
+  "The footprints are as big as bathtubs. At the end of them, standing in a clearing over a fresh kill, is Regina: a female tyrannosaur, forty feet of muscle and scale, a head the size of a car and a heavy, swaying belly. She lifts her head from the carcass, blood on her teeth, and looks at you. One huge gold eye. Then the other.",
+  "She sniffs. You smell different. Strange. Soft. She's curious. She's also still hungry."],
+  c: [["Freeze", "dr_end_still"], ["Run", "dr_end_run"], ["Rub her belly when she lies down", "dr_end_sex"], ["Hold out your hand to her snout", "dr_end_safe"], ["Back", "dn_hub"]] },
+
+dr_end_still: { w: "The clearing", in: 1, p: [
+  "You freeze. That doesn't work; she sees you fine. She sniffs you, slowly, from your shoes to your head. Her tongue comes out, huge and hot, and licks you, all over, knocking you flat in the mud.",
+  "Then her jaws close around you, gently, and lift you off the ground. She tips her head back. ***GLLLLRRRRK.*** You slide down a throat as wide as a hallway. ***GULP.*** Down into a gut so big you can stand up in it, hot and dark and roaring. ***GRRRRRRROOOOOOORGL.***",
+  "She lies down on top of her kill, belly hugely swollen, and roars at the volcano. A week later there's a pile in the clearing the size of a hut, steaming and human-like. ***PLOP.*** The cave tribe finds it and makes it a shrine."],
+  s: ["kiss", "gulp", "gurgle", "plop"], end: { t: "Snack-Sized", pred: "regina", hint: "Freeze" } },
+
+dr_end_run: { w: "The jungle", in: 1, p: [
+  "You run. She's faster than anything. The ground shakes with every stride. She knocks you down with her snout and pins you under one huge clawed foot and roars in your face.",
+  "Then she drops her hips. Her swollen cloaca presses down over you, hot and slick and opening. ***SHLLLLORRRP.*** She squats, groaning, and pulls you up inside her, inch by inch.",
+  "She stomps back to her clearing with a belly even rounder than before and lies down in the mud, satisfied. ***Grrrrooorgl.***"],
+  s: ["struggle", "struggle", "squelch", "gurgle"], end: { t: "Run", pred: "regina", hint: "Run" } },
+
+dr_end_sex: { w: "The clearing", in: 1, p: [
+  "She finishes eating and lies down, heavy, belly up, and lets out a rumble. You creep closer. You put both hands on her huge scaly belly and rub. She rumbles louder. Her tail thumps. Her cloaca, huge and swollen, is right there, and it's wet.",
+  "You fuck a tyrannosaur. You have to climb onto her tail to do it. She groans like an earthquake, and her whole body shudders when she cums, and you're so small and she's so huge that her cloaca opens and pulls you in after your own cock, hips, chest, ***SHLLLORRRP***, until you're curled up inside her, pulsing with her.",
+  "She keeps you there, in the warm dark, for a long time. She's in no hurry. Neither, it turns out, are you."],
+  s: ["plap", "cum", "squelch", "gurgle"], end: { t: "Rex Rub", pred: "regina", hint: "Rub her belly" } },
+
+dr_end_safe: { w: "The clearing", in: 1, p: [
+  "You hold out your hand. Slowly. Regina freezes. Then she pushes her huge nose into your palm, very gently, and huffs. Her eye half closes.",
+  "You stroke her snout for an hour. She lies down and rolls on her side, and you rub her belly, and she rumbles like a mountain. Later she swallows you so carefully, and you sleep inside her, warm and safe. At dawn she coughs you into the ferns. She follows you everywhere now. Nothing in the jungle comes near you."],
+  s: ["kiss", "gulp", "gurgle", "belch"], end: { t: "Pet Rex", pred: "regina", hint: "Hold out your hand", safe: 1 } },
+
+/* --- Raptor pack --- */
+dn_raptor: { w: "The ferns", p: [
+  "You hide in the ferns. Bad idea. Chirping. Clicking. They're talking. Three raptors slink in around you: lean, feathered, man-sized, with sickle claws on their feet. The alpha is Sickle, a futa raptor, bigger than the rest, striped red and black, with a thick red cock sliding out of her slit as she sniffs you. Fern and Ash circle behind.",
+  "Sickle clicks. They're planning. You can hear them planning."],
+  c: [["Back against a tree", "dr2_end_pack"], ["Try to outsmart them", "dr2_end_trap"], ["Kneel and bow your head to the alpha", "dr2_end_safe"], ["Back", "dn_hub"]] },
+
+dr2_end_pack: { w: "The ferns", in: 1, p: [
+  "You back against a tree. That's what they wanted. Fern and Ash pin your arms and Sickle walks up slow, cock throbbing, and takes you against the trunk while the others chirp encouragement. ***PLAP PLAP PLAP.***",
+  "Then they share you. Fern takes your legs, Ash your head, ***GLLK... GLLK...***, and Sickle, as alpha, bites her way between them and steals the whole meal with one huge gulp. ***GULP.*** She sits with a belly bigger than both her packmates, preening.",
+  "In the morning she leaves a pile the size of the whole pack. ***PLOP.*** She sits on top of it."],
+  s: ["struggle", "plap", "plap", "gulp", "gulp", "plop"], end: { t: "Clever Girls", pred: "raptors", hint: "Back against a tree" } },
+
+dr2_end_trap: { w: "The ferns", in: 1, p: [
+  "You throw your broken watch one way and run the other. It works for about four seconds. Then Ash comes at you from the side you didn't check.",
+  "She knocks you down and holds you for Sickle, and Sickle's cock opens over your head. ***SHLLRRK.*** She pumps you down it, ***glrrk glrrk glrrk***, into balls that swell huge and round under her tail. ***SHLORP.*** She chirps smugly at you through them."],
+  s: ["struggle", "squelch", "slosh"], end: { t: "Flanked", pred: "raptors", hint: "Try to outsmart them" } },
+
+dr2_end_safe: { w: "The ferns", in: 1, p: [
+  "You kneel and bow your head to Sickle. The ferns go silent. She tilts her head. Then she presses her snout against the top of your head, and clicks, soft. Pack.",
+  "They curl up around you, warm and feathery. Sickle takes you as her mate that night, careful, and then holds you in her belly, safe, with Fern and Ash curled up against her. At dawn she lets you out. You run with the pack now."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Pack", pred: "raptors", hint: "Bow to the alpha", safe: 1 } },
+
+/* --- Nile, spinosaurus --- */
+dn_spino: { w: "The river", p: [
+  "The river is wide and brown and steaming. A huge sail rises out of the water, and then the rest of her: Nile, a female spinosaurus, long crocodile jaws, a heavy round belly, powerful clawed arms. And further out, a long neck rises from the deep water: Nessa, a plesiosaur, smooth and grey, flippers lazily paddling. They're both watching you."],
+  c: [["Cross on the rocks", "ds_end_snatch"], ["Wade in", "ds_end_drowned"], ["Swim out to the plesiosaur", "ds_end_ness"], ["Sit on the bank and wait with Nile", "ds_end_safe"], ["Back", "dn_hub"]] },
+
+ds_end_snatch: { w: "The river", in: 1, p: [
+  "You hop rock to rock. Halfway across, her jaws snap up out of the water and close around you like a fish. ***SPLOOSH.*** She tosses you once, twice, and swallows you in one long slide down her throat. ***GLLLLRRRK.***",
+  "She sinks back into the river with a belly so round she floats belly-up, sail sticking out like a flag. In the morning she hauls out on the bank and leaves a huge, steaming, human-like pile. ***PLOP.***"],
+  s: ["struggle", "gulp", "gurgle", "plop"], end: { t: "Catch of the Day", pred: "nile", hint: "Cross on the rocks" } },
+
+ds_end_drowned: { w: "The river", in: 1, p: [
+  "You wade in. She's under the water in an instant, wrapping her arms around you and pulling you down. In the brown dark she fucks you, holding your breath for you with her jaws around your head, until you cum.",
+  "Then her slit opens over you and she sinks down onto you, and you go up into her, into a womb that holds you while she floats lazily in the river. ***Shllorrp.***"],
+  s: ["struggle", "plap", "cum", "squelch", "gurgle"], end: { t: "Undertow", pred: "nile", hint: "Wade in" } },
+
+ds_end_ness: { w: "The deep water", in: 1, p: [
+  "You swim out to the plesiosaur. Nessa lowers her long neck and looks you in the eye, then wraps her neck around you and pulls you against her smooth grey body. She's huge. She's slick. She rolls, and you're under her, and she presses her slit against your cock and rides you, slow and floating, in the warm deep water.",
+  "When you cum she shivers, and her long neck curls around and her head comes close, and her mouth opens. She swallows you down that long, long neck, slowly, a bulge sliding all the way down to her round belly. ***Glk... glk... glk... GULP.*** She floats out into the open sea, very pleased."],
+  s: ["plap", "cum", "gulp", "gulp", "gurgle"], end: { t: "Long Neck", pred: "nile", hint: "Swim to the plesiosaur" } },
+
+ds_end_safe: { w: "The river", in: 1, p: [
+  "You sit on the bank and wait. Nile watches you for a long time. Then she hauls out of the river and lies down beside you in the mud, and rests her long jaw across your lap. You stroke it. She falls asleep.",
+  "Later she swallows you gently and floats all night with you safe in her belly. At dawn she lets you out on the bank. She waits there for you every day."],
+  s: ["gulp", "gurgle"], end: { t: "Riverbank", pred: "nile", hint: "Wait with her", safe: 1 } },
+
+/* --- Trixie & Bronte, herbivores --- */
+dn_trike: { w: "The plain", p: [
+  "Tall grass to the horizon, and a herd grazing in it. Closest is Trixie, a female triceratops the size of a truck, with a huge frill, three long horns, a heavy round body and a big wide rump. Behind her, over the trees, a long neck rises into the sky: Bronte, a futa brachiosaur so tall she blocks out the sun, her enormous cock swinging under her like a tree trunk.",
+  "They're plant-eaters. Supposedly. Trixie looks at you, snorts, and turns around, lifting her stubby tail."],
+  c: [["Accept Trixie's invitation", "dt_end_trike"], ["Climb Bronte's leg", "dt_end_bronte"], ["Pet Trixie's frill", "dt_end_safe"], ["Back", "dn_hub"]] },
+
+dt_end_trike: { w: "The plain", in: 1, p: [
+  "You walk up behind her. Her cloaca is swollen and dripping and huge. You fuck her in the tall grass, holding onto her tail, while she grunts and stamps and the herd watches, unbothered.",
+  "When she cums, she backs up hard. And opens. ***SHLLLLORRRP.*** Her cunt swallows you whole, all of you, up into her, and she goes right back to grazing with you inside her.",
+  "Plant-eaters have long, slow, miserable guts. You find that out. It takes days. ***GRRRRRROOOOOORGL.*** Then she lifts her tail in the middle of the plain and leaves you there in a mountainous, human-like heap. ***PLOP. PLOP. PLOP.*** The cave tribe uses it as a landmark."],
+  s: ["plap", "cum", "squelch", "gurgle", "plop"], end: { t: "Herbivore, Supposedly", pred: "trixie", hint: "Accept her invitation" } },
+
+dt_end_bronte: { w: "The plain", in: 1, p: [
+  "You climb Bronte's leg. It takes forever. You reach her belly, and her huge cock hangs right next to you, thick as a tree trunk and throbbing. She makes a sound like a foghorn. The tip opens. Wide enough to walk into. ***SHLLLLRRRRK.***",
+  "It takes you in, and pulls, and you slide down a cock as long as a bus, ***glrrrrrk... glrrrrrk...***, all the way into balls the size of boulders. ***SHLORP.*** They hardly even sag.",
+  "She goes back to eating treetops. Days later she breeds the whole herd with you, in a flood that floods the plain."],
+  s: ["squelch", "gulp", "slosh", "cum"], end: { t: "Tree Trunk", pred: "trixie", hint: "Climb Bronte" } },
+
+dt_end_safe: { w: "The plain", in: 1, p: [
+  "You reach up and pet Trixie's frill. She stops grazing. Her eyes half close. She leans into your hand, rumbling, and then lies down in the grass so you can reach more.",
+  "Later, she lets you climb onto her back and carries you across the plain. That night she gently takes you into her mouth and swallows you, and keeps you safe in her warm, rumbling belly, and lets you out at dawn. The herd adopts you. You ride Trixie everywhere."],
+  s: ["gulp", "gurgle"], end: { t: "Frill", pred: "trixie", hint: "Pet her frill", safe: 1 } },
+
+/* --- Skye, pterodactyl --- */
+dn_ptera: { w: "The cliff nests", p: [
+  "You climb up the cliff to the nests. Perched there is Skye, a huge female pterodactyl, wings folded like a cloak, a long crest, a long beak with a stretchy throat pouch that wobbles. She looks at you with sharp, clever eyes. Then her wings snap open."],
+  c: [["Duck", "dp_end_carried"], ["Stand your ground", "dp_end_pouch"], ["Offer her a fish from the river", "dp_end_safe"], ["Back", "dn_hub"]] },
+
+dp_end_carried: { w: "Above the jungle", in: 1, p: [
+  "You duck. She grabs you anyway, talons around your shoulders, and you're airborne, over the jungle, the volcano, the river, the whole prehistoric world spread out below you.",
+  "She lands on a peak and tosses you into the air and catches you in her beak. ***GLLK.*** You slide into her throat pouch, stretching it into a huge wobbling sack, and then she tips her head back and gulps you down. ***GULP.***"],
+  s: ["struggle", "gulp", "gulp", "gurgle"], end: { t: "Airlifted", pred: "skye", hint: "Duck" } },
+
+dp_end_pouch: { w: "The cliff nests", in: 1, p: [
+  "You stand your ground. She lands on you, pins you, and rubs her slit against you, rough, until you're hard, and rides you on the edge of the cliff, wings flapping, shrieking when she cums.",
+  "Then she scoops you up in her beak like a pelican with a fish, and you're in her pouch, stretched tight around you. She flies around showing you off. Then she swallows. ***GLLLRK.***"],
+  s: ["plap", "cum", "gulp", "gurgle"], end: { t: "Pouched", pred: "skye", hint: "Stand your ground" } },
+
+dp_end_safe: { w: "The cliff nests", in: 1, p: [
+  "You hold up a fish. She takes it from your hand, delicately. Then she nudges you for more. She tucks you under her huge wing, warm, and keeps you there through the night. Later she scoops you gently into her pouch and holds you there, safe, while she sleeps. You ride with her every day now."],
+  s: ["gulp"], end: { t: "Wingspan", pred: "skye", hint: "Offer a fish", safe: 1 } },
+
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
-  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"], ["🦃 Thanksgiving: home with Mom, your sisters and the fun aunt", "k_start"], ["🎓 Gullet University: first day on the prey track", "u_start"], ["🛸 Abducted: a saucer studying human digestibility", "ab_start"], ["🚀 The Station: night shift on Kessa-9", "st_start"], ["🪐 Crash Landing: stranded on a jungle planet", "cr_start"], ["🍽️ The Galactic Diner: you're the exotic Earth special", "gd_start"], ["🤖 The Android Lab: test subject for pred androids", "an_start"], ["👾 The Hive: a derelict ship full of something", "hv_start"], ["🎖️ Boot Camp: ration corps recruit at Fort Maw", "bc_start"], ["🏔️ The Ski Lodge: snowed in with the Halvorsens", "sl_start"], ["🐎 The Wild Herd: lost on the steppe with sapient horses", "wh_start"], ["🛰️ Lethal Company: one day left to make quota, and the monsters are girls", "lc_start"]] },
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"], ["🦃 Thanksgiving: home with Mom, your sisters and the fun aunt", "k_start"], ["🎓 Gullet University: first day on the prey track", "u_start"], ["🛸 Abducted: a saucer studying human digestibility", "ab_start"], ["🚀 The Station: night shift on Kessa-9", "st_start"], ["🪐 Crash Landing: stranded on a jungle planet", "cr_start"], ["🍽️ The Galactic Diner: you're the exotic Earth special", "gd_start"], ["🤖 The Android Lab: test subject for pred androids", "an_start"], ["👾 The Hive: a derelict ship full of something", "hv_start"], ["🎖️ Boot Camp: ration corps recruit at Fort Maw", "bc_start"], ["🏔️ The Ski Lodge: snowed in with the Halvorsens", "sl_start"], ["🐎 The Wild Herd: lost on the steppe with sapient horses", "wh_start"], ["🛰️ Lethal Company: one day left to make quota, and the monsters are girls", "lc_start"], ["🦖 One Million Years B.C.: a time machine drops you among cavewomen and dinosaurs", "dn_start"]] },
 
 f_start: { w: "Hollis Farm", p: [
   "Your car died two miles back. The only light for miles is Hollis Farm. The farmhouse lights are on, and there's a note tacked to the barn door in looping handwriting: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers. — Maggie*",
@@ -3236,12 +3407,12 @@ function drawStats() {
 }
 function go(id) {
   const n = N[id]; if (!n) return;
-  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start", "k_start", "u_start", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "bc_start", "sl_start", "wh_start", "lc_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start", "k_start", "u_start", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "bc_start", "sl_start", "wh_start", "lc_start", "dn_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
   if (id === "menu") hush();
   if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
   VISITED[id] = 1;
   $("#where").textContent = n.w || "";
-  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "bc_start", "sl_start", "wh_start", "bc_hub", "sl_hub", "wh_hub", "lc_start", "lc_hub", "lc_in", "lc_out", "menu"].includes(id)) $("#text").innerHTML = "";
+  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "bc_start", "sl_start", "wh_start", "bc_hub", "sl_hub", "wh_hub", "lc_start", "lc_hub", "lc_in", "lc_out", "dn_start", "dn_hub", "menu"].includes(id)) $("#text").innerHTML = "";
   const first = $("#text").children.length;
   n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
   if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
@@ -3263,7 +3434,7 @@ function go(id) {
 // which endings a choice can still lead to (for the ✓ mark once all are seen)
 const RC = {};
 function reach(id, seen = new Set()) {
-  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "bc_start", "sl_start", "wh_start", "bc_hub", "sl_hub", "wh_hub", "lc_start", "lc_hub", "lc_in", "lc_out", "menu"].includes(id)) return out; seen.add(id);
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "bc_start", "sl_start", "wh_start", "bc_hub", "sl_hub", "wh_hub", "lc_start", "lc_hub", "lc_in", "lc_out", "dn_start", "dn_hub", "menu"].includes(id)) return out; seen.add(id);
   const n = N[id]; if (!n) return out; if (n.end) out.add(id);
   for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
   return (RC[id] = out);
