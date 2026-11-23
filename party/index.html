@@ -188,12 +188,12 @@ const PREDS = {
   longclaw:{ n: "Longclaw", k: "Sonic · anthro owl" },
   magmadon:{ n: "Magmadon", k: "Titan · fire" },
   ratcicle:{ n: "Ratcicle", k: "Titan · ice" },
-  sludge:{ n: "Sludge", k: "Titan · swamp" },
-  spike: { n: "Spike", k: "Titan · spikes" },
+  sludge:{ n: "Sludge", k: "Titan · living slime" },
+  spike: { n: "Spike", k: "Titan · porcupine-wolf" },
   snipe: { n: "Snipe", k: "Titan · quills" },
   grimly:{ n: "Grimly", k: "Titan · futa ghost" },
   shellaphant:{ n: "Shellaphant", k: "Titan · futa" },
-  stench:{ n: "Stench", k: "Titan · space skunk" },
+  stench:{ n: "Stench", k: "Titan · skunk-bird" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -2818,10 +2818,10 @@ lg_end_safe: { w: "Longclaw's cliff", in: 1, p: [
 ti_start: { w: "Wumpa Island · The wilds", p: [
   "You washed up on Wumpa Island after a storm, and you've spent all morning walking the wilds: jungle, volcano slopes, frozen peaks, a reeking swamp. Somewhere along the way you started seeing the titans.",
   "Big mutants. Wild ones, now; nobody's controlling them anymore. They wander the island doing whatever they like. And every single one of them has noticed you."],
-  c: [["The volcano (Magmadon)", "ti_magma"], ["The frozen peaks (Ratcicle)", "ti_rat"], ["The swamp (Sludge)", "ti_sludge"], ["The canyon (Spike)", "ti_spike"], ["The cliffs (Snipe)", "ti_snipe"], ["The haunted ruins (Grimly)", "ti_grim"], ["The jungle clearing (Shellaphant)", "ti_shell"], ["The crash site (Stench)", "ti_stench"]] },
+  c: [["The volcano (Magmadon)", "ti_magma"], ["The frozen peaks (Ratcicle)", "ti_rat"], ["The swamp (Sludge)", "ti_sludge"], ["The canyon (Spike)", "ti_spike"], ["The cliffs (Snipe)", "ti_snipe"], ["The haunted ruins (Grimly)", "ti_grim"], ["The jungle clearing (Shellaphant)", "ti_shell"], ["The old lab (Stench)", "ti_stench"]] },
 
 ti_hub: { w: "The wilds", p: ["The island rumbles. Something stomps in the distance. Where now?"],
-  c: [["The volcano", "ti_magma"], ["The frozen peaks", "ti_rat"], ["The swamp", "ti_sludge"], ["The canyon", "ti_spike"], ["The cliffs", "ti_snipe"], ["The ruins", "ti_grim"], ["The jungle clearing", "ti_shell"], ["The crash site", "ti_stench"], ["Build a raft and leave", "ti_leave"]] },
+  c: [["The volcano", "ti_magma"], ["The frozen peaks", "ti_rat"], ["The swamp", "ti_sludge"], ["The canyon", "ti_spike"], ["The cliffs", "ti_snipe"], ["The ruins", "ti_grim"], ["The jungle clearing", "ti_shell"], ["The old lab", "ti_stench"], ["Build a raft and leave", "ti_leave"]] },
 
 ti_leave: { w: "The sea", p: ["You lash together a raft and paddle out. On the shore, eight titans gather and watch you go. One of them waves a big floating hand.",
   "You make it home. You dream about the island every night."], end: { t: "Raft", pred: "none", hint: "Build a raft" } },
@@ -2866,31 +2866,31 @@ tir_end_safe: { w: "The frozen peaks", in: 1, p: [
 
 /* --- Sludge --- */
 ti_sludge: { w: "The swamp", p: [
-  "The swamp reeks. In the middle of it squats Sludge: a huge, bulky, green toad-like titan, slick and mottled, with long powerful arms, a wide flat mouth and a thick, round, slimy belly. She's sitting in the mud like a queen, and her long tongue flicks out, tasting the air. Tasting you."],
+  "The swamp reeks. In the middle of it, something huge and green rises out of the muck: Sludge, a titan made entirely of slime. No bones, no skin, just a hulking, wobbling, translucent green body in a big brutish shape, with long arms that drip and pool, a wide gooey mouth, and a heavy, sloshing belly where you can see half-dissolved things floating. She ripples as she looks at you. Everything about her drips."],
   c: [["Get closer", "tis_end_tongue"], ["Throw a rock at her", "tis_end_sat"], ["Sit in the mud with her", "tis_end_safe"], ["Back", "ti_hub"]] },
 
 tis_end_tongue: { w: "The swamp", in: 1, p: [
-  "You step closer. ***THWIP.*** Her tongue shoots out and wraps around your whole body, slick and sticky, and reels you in. It licks you all over first, inside your clothes, around your cock, until you cum. Then it yanks you into her wide mouth. ***GLLLRK.***",
-  "She swallows you in one big slimy gulp, like a toad with a fly, and you land in a hot, sloshing, slimy gut. ***Glorrrp.*** She settles deeper into the mud, belly huge, and croaks happily.",
-  "Later she leaves a whole person's worth of thick, human-like shit on the bank. ***PLOP.***"],
-  s: ["squelch", "cum", "gulp", "gurgle", "plop"], end: { t: "Fly", pred: "sludge", hint: "Get closer" } },
+  "You step closer. Her arm stretches out, impossibly long, a rope of green slime that wraps around your waist and reels you in. It flows into your clothes, over your cock, warm and slick, squeezing and rippling until you cum into her.",
+  "Then she just pulls you in. Not into a mouth; into her. Your body sinks into her slime chest like into warm jelly, ***SHLLLLORRRP***, and you're floating inside her, suspended in green, watching the swamp through her wobbling body. Her belly swells around you. ***Glorrrp.***",
+  "The tingling starts slow and gets warmer. She settles into the mud, rippling happily, while you dissolve. Later she leaves a whole person's worth of thick, human-like shit on the bank, squeezed out of her bottom like anyone else. ***PLOP.***"],
+  s: ["squelch", "cum", "squelch", "gurgle", "plop"], end: { t: "Absorbed", pred: "sludge", hint: "Get closer" } },
 
 tis_end_sat: { w: "The swamp", in: 1, p: [
-  "You throw a rock. It bounces off her belly. She turns, slow, and hops, and lands on you. ***SPLOOSH.*** You're under a giant, slimy toad titan in the mud. She wiggles her huge rear down onto your face, and her slick hole opens and swallows you up. ***SHLLLORRRP.*** She sits there in the swamp, round and smug."],
-  s: ["struggle", "squelch", "gurgle"], end: { t: "Squashed", pred: "sludge", hint: "Throw a rock" } },
+  "You throw a rock. It sinks into her with a wet ***SHLUP*** and she absorbs it. She turns, slow, and flows toward you like a wave and crashes over you. ***SPLOOSH.*** You're inside a titan made of slime, rolling in her, and she squeezes you everywhere at once. She settles back into the swamp with you floating in her middle, smug and wobbling."],
+  s: ["struggle", "squelch", "gurgle"], end: { t: "Swamped", pred: "sludge", hint: "Throw a rock" } },
 
 tis_end_safe: { w: "The swamp", in: 1, p: [
-  "You sit down in the mud beside her. She looks at you. Then she leans over and gives your cheek a slow, slimy lick. You make love in the warm mud. She swallows you gently and you sleep in her cool, sloshing belly while the frogs sing. In the morning she lets you out. She waits for you in the swamp every day."],
-  s: ["kiss", "plap", "gulp"], end: { t: "Mud Bath", pred: "sludge", hint: "Sit with her", safe: 1 } },
+  "You sit down in the mud beside her. She looks at you. Then a soft tendril of slime reaches out and strokes your cheek, cool and gentle. You make love in the warm mud, her slime body flowing all over you, holding you. Then she draws you inside her, gently, and holds you there all night, cool and safe, like floating in a warm pool. In the morning she lets you out. She waits for you in the swamp every day."],
+  s: ["kiss", "squelch", "squelch"], end: { t: "Mud Bath", pred: "sludge", hint: "Sit with her", safe: 1 } },
 
 /* --- Spike --- */
 ti_spike: { w: "The canyon", p: [
-  "Spike prowls the canyon: a muscular, wolf-like titan covered in sandy spikes, with a toothy grin, big clawed hands and an old N belt she's never bothered to take off. She's restless. She's hunting. She circles you, sniffing, grinning wider every lap."],
+  "Spike prowls the canyon: a muscular porcupine-wolf titan, a wolf's snout and toothy grin, big clawed hands, and a thick coat of sandy porcupine quills bristling all down her back and arms. She's restless. She's hunting. She circles you, sniffing, grinning wider every lap."],
   c: [["Stand still", "tsp_end_maul"], ["Run", "tsp_end_chase"], ["Offer to scratch between her spikes", "tsp_end_safe"], ["Back", "ti_hub"]] },
 
 tsp_end_maul: { w: "The canyon", in: 1, p: [
-  "You stand still. She pounces, knocks you flat, and mounts you right there in the dust, rough and growling, careful only to keep her spikes off you. ***PLAP PLAP PLAP.*** When she cums she howls at the canyon walls.",
-  "Then she swallows you, headfirst, in big rough gulps. ***GLLRK. GLRK. GULP.*** Her flat belly bulges out between her spikes. She lies down in the sun to digest, very pleased."],
+  "You stand still. She pounces, knocks you flat, and mounts you right there in the dust, rough and growling, careful only to keep her quills off you. ***PLAP PLAP PLAP.*** When she cums she howls at the canyon walls.",
+  "Then she swallows you, headfirst, in big rough gulps. ***GLLRK. GLRK. GULP.*** Her flat belly bulges out between her quills. She lies down in the sun to digest, very pleased."],
   s: ["plap", "plap", "cum", "gulp", "gurgle"], end: { t: "Pounced", pred: "spike", hint: "Stand still" } },
 
 tsp_end_chase: { w: "The canyon", in: 1, p: [
@@ -2898,8 +2898,8 @@ tsp_end_chase: { w: "The canyon", in: 1, p: [
   s: ["struggle", "gulp", "gurgle", "plop"], end: { t: "Run Down", pred: "spike", hint: "Run" } },
 
 tsp_end_safe: { w: "The canyon", in: 1, p: [
-  "\"Bet you can't reach between those spikes.\" You reach out, carefully, and scratch the itchy spot between two of them. Spike freezes. Then she melts, and leans into it, and her leg thumps. You make love carefully. She keeps you safe in her belly overnight and lets you out in the morning. She follows you like a big spiky dog now."],
-  s: ["kiss", "plap", "gulp"], end: { t: "Itchy Spot", pred: "spike", hint: "Scratch between her spikes", safe: 1 } },
+  "You reach out, carefully, and scratch the itchy spot between two of her quills. Spike freezes. Then she melts, and leans into it, and her leg thumps. You make love carefully. She keeps you safe in her belly overnight and lets you out in the morning. She follows you like a big quilly dog now."],
+  s: ["kiss", "plap", "gulp"], end: { t: "Itchy Spot", pred: "spike", hint: "Scratch between her quills", safe: 1 } },
 
 /* --- Snipe --- */
 ti_snipe: { w: "The cliffs", p: [
@@ -2958,23 +2958,26 @@ tse_end_safe: { w: "The jungle clearing", in: 1, p: [
   s: ["kiss", "plap", "squelch", "slosh"], end: { t: "Wumpa", pred: "shellaphant", hint: "Offer a fruit", safe: 1 } },
 
 /* --- Stench --- */
-ti_stench: { w: "The crash site", p: [
-  "A little UFO is smoking in a crater. Climbing out of it is Stench: a purple skunk-bird titan with a big yellow beak, a huge fluffy white tail, a space helmet bubble, headphones, a puffy silver spacesuit and a ray gun. She points it at you. \"Earth specimen,\" she says, through the helmet. \"Hold still.\"",
-  "The ray gun has a SHRINK setting. You can see the label."],
-  c: [["Hold still", "tst_end_shrink"], ["Run", "tst_end_tail"], ["Help her fix her ship", "tst_end_safe"], ["Back", "ti_hub"]] },
+ti_stench: { w: "The old lab", p: [
+  "In a wrecked lab at the edge of the jungle, something is stuck: Stench, a purple skunk-bird titan with a yellow beak and a huge fluffy white tail, trapped in a puffy silver spacesuit someone bolted her into, a bubble helmet over her head and a ray gun welded to one glove. She's a mutant made to be controlled; she was never meant to choose anything. She's not very bright. She is very, very uncomfortable.",
+  "She's been in that suit for weeks. You can see her sweating through the bubble. The air around her is thick with her musk, hot and heavy and animal, leaking out of every seam. She sees you, and whimpers, and paws at the helmet's latch with a clumsy glove."],
+  c: [["Help her out of the suit", "tst_end_safe"], ["Mess with the ray gun", "tst_end_shrink"], ["Open just the back of the suit", "tst_end_tail"], ["Back", "ti_hub"]] },
 
-tst_end_shrink: { w: "The crash site", in: 1, p: [
-  "You hold still. ***ZAP.*** You shrink. And shrink. Until you're the size of her hand. She picks you up, pops her helmet open, and looks at you, beak grinning. \"Specimen collected.\"",
-  "She drops you into her beak. ***Gluk.*** Tiny you slides down a skunk-bird's long throat into her belly, and she taps her helmet shut, and pats her slightly round tummy through the spacesuit. Her ship takes off. You're going to space. In her stomach."],
-  s: ["gulp", "gurgle"], end: { t: "Specimen", pred: "stench", hint: "Hold still" } },
+tst_end_shrink: { w: "The old lab", in: 1, p: [
+  "You fiddle with the ray gun on her glove. It goes off. ***ZAP.*** You shrink. And shrink. Until you're the size of her hand.",
+  "Stench stares at tiny you, confused. She picks you up. She sniffs you. Then, because she's a hungry, simple creature and you're very small, she pops the helmet's mouth flap and drops you into her beak. ***Gluk.*** You slide down her long throat into a belly hot and sweaty with weeks of being trapped in a suit, and she pats her tummy through the silver fabric, satisfied, and lies down to nap."],
+  s: ["gulp", "gurgle"], end: { t: "Shrunk", pred: "stench", hint: "Mess with the ray gun" } },
 
-tst_end_tail: { w: "The crash site", in: 1, p: [
-  "You run. She turns around, lifts that enormous fluffy tail, and sprays a cloud of skunk musk right at you. ***PSSSSSSHHH.*** You collapse, dizzy and drunk on it and rock hard. She waddles over, unzips the back of her spacesuit, and sits on your face. Her musky hole opens and pulls you in. ***SHLLLORRRP.*** She zips back up and flies off."],
-  s: ["fart", "squelch", "gurgle"], end: { t: "Musked", pred: "stench", hint: "Run" } },
+tst_end_tail: { w: "The old lab", in: 1, p: [
+  "You only manage to get the back of the suit open. Her huge fluffy tail bursts out with a waft of musk so thick it knocks you to your knees. Weeks of sweat, trapped and stewing. Your head swims. You're rock hard and dizzy and stupid with it.",
+  "Stench wiggles her freed rear, delighted, and backs it right up against your face. She's soaked with sweat under there, and her hole is hot and musky, and it opens, and she sits. ***SHLLLORRRP.*** You go up a sweaty skunk-bird's ass, drunk on her musk the whole way. She waddles off, happier, half out of the suit, with a big round bulge in her middle."],
+  s: ["struggle", "squelch", "gurgle"], end: { t: "Musk-Drunk", pred: "stench", hint: "Open only the back" } },
 
-tst_end_safe: { w: "The crash site", in: 1, p: [
-  "\"Need help with the ship?\" Stench lowers the ray gun. \"...You understand engines?\" You don't. You help anyway. You make love in the cockpit while the repairs cool. She shrinks you, just a little, and swallows you gently, and you sleep in her belly while she flies around the island. In the morning she lets you out and gives you a ride home."],
-  s: ["kiss", "plap", "gulp"], end: { t: "Co-Pilot", pred: "stench", hint: "Help fix her ship", safe: 1 } },
+tst_end_safe: { w: "The old lab", in: 1, p: [
+  "You undo the helmet first. A wave of hot, trapped musk rolls out, and Stench gasps cool air like she's been underwater for weeks. You work on the suit. Bolts, zips, buckles. It takes an hour. When it finally peels off her, she's soaked, every feather and every bit of fur slick with sweat, steaming, and she smells incredible.",
+  "She makes a sound like crying and wraps her wings around you. She doesn't have words for thank you. She shows you instead: she nuzzles you, licks your face, presses her hot, sweaty body against you until you're both slick with it, and you make love on the lab floor, her musk everywhere, her big tail curled around you.",
+  "After, she swallows you very carefully and curls up on the discarded suit with you safe and warm in her belly, purring in a funny skunk way. In the morning she lets you out. She follows you everywhere. She will not let you put a shirt on her ever again."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Free", pred: "stench", hint: "Help her out of the suit", safe: 1 } },
 
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
