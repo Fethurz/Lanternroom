@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Last Call</title>
+<meta name="theme-color" content="#140e1c">
+<link rel="icon" href="../icons/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+:root{--bg:#140e1c;--surface:#1f1729;--surface2:#2a2036;--line:#3a2e48;--text:#f2e8dc;--dim:#b3a5b8;--accent:#e8a95b;--ink:#24160a;--sfx:#9be07a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font:17px/1.6 "Atkinson Hyperlegible",system-ui,sans-serif}
+body{background:radial-gradient(120% 60% at 50% 0%,#2c1830 0%,var(--bg) 65%) fixed;min-height:100vh}
+h1,h2{font-family:"Young Serif",Georgia,serif;font-weight:400;margin:0}
+button{font:inherit;color:inherit;border:0;cursor:pointer}
+.wrap{max-width:760px;margin:0 auto;padding:16px 16px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:6px 0 14px}
+.top h1{font-size:26px;color:var(--accent)}
+.pill{font-size:13px;color:var(--dim);background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:4px 12px}
+.btn{min-height:40px;padding:8px 16px;border-radius:12px;background:var(--surface2);border:1px solid var(--line)}
+.btn.primary{background:linear-gradient(180deg,#f2bd76,#d9913f);color:var(--ink);border-color:#f2bd76;font-weight:700}
+#text p{margin:0 0 14px}
+#text p.new{animation:fade .5s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}}
+.say{color:var(--accent)}
+.sx{color:var(--sfx);font-weight:700;font-style:italic;cursor:pointer}
+.where{font-family:"Young Serif",serif;color:var(--accent);font-size:15px;letter-spacing:.04em;text-transform:uppercase;margin:4px 0 10px}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+#choices{display:grid;gap:8px;margin-top:8px}
+.ch{text-align:left;padding:11px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);min-height:44px}
+.ch:hover{border-color:var(--accent)}
+.ch small{color:var(--dim);font-size:12px;margin-left:6px}
+.ch.seen::after{content:" ✓";color:var(--dim);font-size:12px}
+.end{border:1px solid var(--accent);border-radius:16px;padding:14px 16px;margin:6px 0 14px;background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.end h2{color:var(--accent);font-size:21px}
+.end .who{color:var(--dim);font-size:13px}
+.gal{display:grid;gap:14px}
+.gp{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.gp h2{font-size:19px}.gp .k{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+.slots{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.sl{font-size:13px;padding:5px 10px;border-radius:10px;background:var(--surface2);border:1px solid var(--line);color:var(--dim)}
+.sl.on{color:var(--text);border-color:var(--accent)}
+.hidden{display:none!important}
+.credit{color:var(--dim);font-size:12px;text-align:center;margin-top:30px}
+@media (min-width:900px){html,body{font-size:19px}.wrap{max-width:860px;padding-top:28px}.top h1{font-size:32px}.gal{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>Last Call</h1><div class="row"><button class="btn" id="gBtn">Endings <span id="gN"></span></button></div></div>
+  <div id="game">
+    <div class="stats" id="stats"></div>
+    <div class="where" id="where"></div>
+    <div id="text"></div>
+    <div id="choices"></div>
+  </div>
+  <div id="gallery" class="hidden"></div>
+  <p class="credit">Some sound assets from Jeschke. Every character is an adult. Fiction only.</p>
+</div>
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+/* ---------- sounds from the Lanternroom library ---------- */
+const SND = {};
+const MAP = { gulp: [["j","swallow"]], gurgle: [["j","bubbles"],["j","churn"]], belch: [["j","gas"]], struggle: [["j","struggle"]],
+  slosh: [["j","cumbub"]], squelch: [["j","squelch"]], crack: [["x","crack"]], cum: [["x","cum"]], plap: [["x","plap"]],
+  gag: [["x","gag"]], fart: [["x","fart"]], plop: [["x","shit"]], kiss: [["x","kiss"]], loop: [["x","loop_vore"]] };
+(async () => {
+  const base = { j: "../sounds/jeschke/", x: "../sounds/extra/" }, man = {};
+  for (const k in base) { try { const m = await (await fetch(base[k] + "manifest.json")).json(); man[k] = m.files.map(f => ({ t: f.t, u: base[k] + f.p, d: f.d })); } catch { man[k] = []; } }
+  for (const [key, src] of Object.entries(MAP)) SND[key] = src.flatMap(([k, t]) => man[k].filter(f => f.t === t && (key === "loop" || f.d < 7)));
+})();
+const LIVE = new Set(); let LOOP = null;
+function play(k, v = .85) { const p = SND[k]; if (!p || !p.length) return; const a = new Audio(pick(p).u); a.volume = v; LIVE.add(a); a.onended = () => LIVE.delete(a); a.play().catch(() => {}); return a; }
+function loop(on) { if (on && !LOOP) { LOOP = play("loop", .3); if (LOOP) LOOP.loop = true; } if (!on && LOOP) { LOOP.pause(); LOOP = null; } }
+function hush() { LIVE.forEach(a => a.pause()); LIVE.clear(); LOOP = null; }
+
+/* ---------- the guests ---------- */
+const PREDS = {
+  thane: { n: "Thane", k: "Lion jock · anthro" },
+  viv:   { n: "Vivian", k: "Python futa · anthro" },
+  marla: { n: "Marla", k: "Hyena glutton · anthro" },
+  duke:  { n: "Duke", k: "Great Dane · feral" },
+  none:  { n: "Nobody", k: "You made it home" }
+};
+
+/* ---------- the story ----------
+ node: { w: place, p: [paragraphs], s: [sounds], set: {stat: +n}, c: [[label, go, cond?]], end: {t, pred, hint}, in: inside? }
+ ***Word*** = a sound word; {gulp} after it picks the recording (else the node's sounds play). */
+const N = {
+start: { w: "The front door", p: [
+  "Dex's place is already thumping when you get there. Bass through the walls, red lights in the windows, a smell of weed and spilled beer and something else under it. Something animal. Musk.",
+  "You told yourself one drink. You told yourself you'd leave by midnight. Nobody at this party gives a shit what you told yourself.",
+  "Inside, the crowd is half humans, half fur and scales, everyone already wasted. Someone grabs your ass on the way past and you don't even see who."],
+  c: [["Head for the kitchen and get a drink", "kitchen"], ["Squeeze into the living room", "living"], ["Join the bathroom line", "bathline"], ["Slip out to the backyard", "yard"]] },
+
+hub: { w: "The hallway", p: ["The party roars on around you. Your face is hot. Somewhere a glass breaks and everyone cheers. Where now?"],
+  c: [["The kitchen", "kitchen"], ["The living room", "living"], ["The bathroom line", "bathline"], ["The backyard", "yard"], ["Fuck this, go home", "home", s => s.drinks < 3]] },
+
+home: { w: "Outside", p: ["You stumble out into the cold air, still sober enough to find your car keys. Behind you, the party howls on. You'll never know who you would have ended up inside tonight.",
+  "Your dick is hard the whole drive home."], end: { t: "Lightweight", pred: "none", hint: "Leave early" } },
+
+/* ===== MARLA: the kitchen ===== */
+kitchen: { w: "The kitchen", p: [
+  "The kitchen is a disaster of red cups and pizza boxes, and in the middle of it, sitting ON the counter, is Marla. Spotted hyena, six and a half feet of her, tits spilling out of a crop top two sizes too small, and a gut so fat and round it rests on her thighs like a beanbag.",
+  "She's eating a whole sheet cake with her hands. She looks up at you, licks frosting off her muzzle, and cackles.",
+  "\"Fresh meat! C'mere, cutie. You look thirsty.\""],
+  set: { drinks: 1 },
+  c: [["Take the drink she offers", "m_drink"], ["Challenge her to a chugging contest", "m_contest"], ["Ask about her belly", "m_belly"], ["Back away", "hub"]] },
+
+m_drink: { w: "The kitchen", p: [
+  "It's purple and it tastes like cough syrup and gasoline. You drink it anyway. Marla watches you over the rim of her own cup the whole time, grinning with way too many teeth.",
+  "\"Good boy,\" she purrs, and slaps her gut. It wobbles and gurgles loud enough to hear over the music. ***Grrrrrooorgl.*** \"Ugh. Still hungry. I'm always fuckin' hungry.\""],
+  s: ["gurgle"], set: { drinks: 1 },
+  c: [["Another one", "m_drunk"], ["Rub her belly for her", "m_rub"], ["Get out of there", "hub"]] },
+
+m_drunk: { w: "The kitchen floor", p: [
+  "Three drinks later you're on the kitchen floor and you don't remember sitting down. Marla is squatting over you, her massive thighs either side of your head, her pussy dripping through a pair of soaked panties right above your face.",
+  "\"Aw, someone can't hold his liquor.\" She giggles and drops her weight. ***Squelch.*** Wet fat hyena cunt smothers your mouth and nose. You can't breathe. She grinds.",
+  "\"Lick, sweetie. Make it worth my while, and maybe I'll just fuck you instead of eating you.\""],
+  s: ["squelch"], set: { drinks: 2 },
+  c: [["Lick like your life depends on it", "m_end_used"], ["Shove her off", "m_end_gulped"]] },
+
+m_end_used: { w: "The kitchen floor", in: 1, p: [
+  "You lick. You lick until your jaw aches and your face is soaked, until she's howling and grinding and squirting all over your face. ***Splrrt.*** And then, panting, she lifts off you, looks down, and laughs.",
+  "\"Mm. That was great.\" She grabs you by the ankles. \"I lied, by the way.\"",
+  "She doesn't eat you with her mouth. She shoves your feet against her sloppy, gaping cunt and SQUATS. ***Shllorrrp.*** Her pussy swallows you to the knees, the hips, the chest, wet walls milking you upward in greedy pulses while she plays with her clit and cackles.",
+  "Your face is the last to go. The last thing you see is the kitchen ceiling and her huge tits heaving. Then hot pink darkness, squeezing, and a womb that clenches shut behind you. ***Glorp.***",
+  "Marla's gut sags lower than ever. She pats it, grabs another slice of cake, and goes back to the party. Nobody notices you're gone."],
+  s: ["cum", "squelch", "gurgle"], end: { t: "Licked In", pred: "marla", hint: "Do as she says" } },
+
+m_end_gulped: { w: "The kitchen floor", in: 1, p: [
+  "You shove her thigh. It's like shoving a car. Marla just laughs harder, rolls off, and pins your arms with one hand.",
+  "\"Rude.\" Her jaws open. Hyena jaws. Bone-crushing jaws, wide enough for your whole head. ***GLLRK.*** She bites down on your shoulders, gulps, and your face is shoved into her slimy throat.",
+  "She swallows you like a sausage, ***GLRK… GULP… GULP***, slurping you down in big greedy gulps, the bulge of you squeezing down past her tits until you drop into her gut. ***Glorrrp.***",
+  "Her already huge belly stretches out over her thighs and onto the floor. She lies back on the tiles, belches so loud people in the living room cheer, ***BWWOOOOAAARRP***, and starts massaging you in.",
+  "The acid in there is ready for you. She's had a whole sheet cake as an appetiser. You're the main course. By the time the party winds down, she's snoring on the kitchen floor, one hand on a fat, soft, gurgling gut that used to be you."],
+  s: ["gulp", "gulp", "belch", "crack"], end: { t: "Main Course", pred: "marla", hint: "Fight her off" } },
+
+m_contest: { w: "The kitchen", p: [
+  "\"A CONTEST?\" Marla shrieks with delight and slams two jugs of jungle juice on the counter. \"Loser does whatever the winner says. ANYTHING.\"",
+  "You chug. She chugs faster. Her throat works, ***gluk gluk gluk***, and her belly visibly swells, sloshing. She slams the empty jug down while you're still on your first half and BELCHES right in your face. ***HRRRAAAAAAP.*** It's hot and sweet and it reeks of booze and half-digested cake."],
+  s: ["gulp", "belch"], set: { drinks: 2 },
+  c: [["Accept your loss", "m_end_breast"], ["Cheat: tip her jug over", "m_end_shit"]] },
+
+m_end_breast: { w: "The kitchen", in: 1, p: [
+  "\"I win!\" Marla yanks her crop top up and her tits flop free, fat and dark-nippled and enormous. She grabs your head and shoves your face into one. \"Suck.\"",
+  "You suck. Milk floods your mouth, thick and warm. She moans, and her nipple keeps spreading, stretching, opening, until your whole face is sucked inside the tit. ***Shlorrrp.***",
+  "\"Oh fuck yes,\" she groans, squeezing her tit with both hands like she's stuffing a sausage, cramming you deeper. Your shoulders go in. Your arms. Your kicking legs. ***Glorp.*** Her right breast swells to the size of a beach ball, sloshing with milk and you.",
+  "She cups it, jiggles it, and you slosh around in the warm milky dark. ***Shloshh.*** \"Gonna be so fuckin' perky tomorrow,\" she giggles. You melt into creamy milk by morning. Her tits are a cup size bigger. She's thrilled."],
+  s: ["squelch", "slosh", "slosh"], end: { t: "Milked Down", pred: "marla", hint: "Lose the drinking contest" } },
+
+m_end_shit: { w: "The kitchen", in: 1, p: [
+  "You tip her jug. Jungle juice splashes everywhere. The kitchen goes quiet. Marla stops laughing.",
+  "\"Cheater,\" she says, very softly, and swallows you headfirst. ***GLLLRK.*** No savouring this time: fast, rough gulps, her hands shoving your legs in after you, and then you're folded up in her stomach in a soup of jungle juice and cake.",
+  "She digests you fast and mean, rubbing her gut and talking shit the whole time. ***Grrrnch… gllrrrbl…*** \"Should've just lost, babe.\"",
+  "By two a.m. there's no you left in her belly. She's on the toilet upstairs, door wide open, grunting, and what's left of you comes out of her fat ass in heavy, wet, steaming logs. ***Fffrrt… plop… PLOP.*** She wipes, flushes, and goes back downstairs for more cake."],
+  s: ["gulp", "crack", "fart", "plop"], end: { t: "Sore Loser", pred: "marla", hint: "Cheat" } },
+
+m_belly: { w: "The kitchen", p: [
+  "\"This?\" She grabs a double handful of her gut and hefts it. ***Gwrrrorgl.*** \"Three people this month, babe. Wanna make it four?\"",
+  "You think she's joking. Then something in her belly kicks. A hand print presses out from inside, then drags down and goes limp."],
+  s: ["struggle"],
+  c: [["Rub her belly", "m_rub"], ["Run", "hub"]] },
+
+m_rub: { w: "The kitchen", p: [
+  "You put your hands on her gut. It's hot, tight and heaving. Marla moans like you've grabbed her pussy, and leans back on the counter to let you work. ***Gllrrrbl.***",
+  "\"Fuck, yeah, harder. You're good at this.\" Her hand finds the back of your neck. She pulls your face down onto her belly button. Her gut gurgles right against your cheek, and you can hear somebody in there crying."],
+  s: ["gurgle"],
+  c: [["Keep rubbing", "m_end_belly"], ["Pull away", "m_end_gulped"]] },
+
+m_end_belly: { w: "The kitchen", in: 1, p: [
+  "You keep rubbing. Harder. Lower. Marla's breathing gets ragged, her tail thumping the cabinets, and then she grabs your head with both hands.",
+  "\"You love it so much? Get in.\" She opens wide and stuffs you in, ***GLLK, GLLK, GULP***, swallowing you down to join whoever's already in there. You land on someone. They're soft. Too soft. Half gone.",
+  "She rubs both of you from the outside, slow, the way you rubbed her. ***Grrrooooorgl.*** It's the last thing you feel: her hands moving over you through her gut, lovingly, while the acid takes you apart.",
+  "She makes it five that month."],
+  s: ["gulp", "gurgle", "crack"], end: { t: "Belly Rub", pred: "marla", hint: "Worship the belly" } },
+
+/* ===== THANE: the living room ===== */
+living: { w: "The living room", p: [
+  "The living room is a sweatbox of bodies. In the middle of the couch sits Thane, a lion anthro so big the couch sags under him, letterman jacket open over a chest like a brick wall. He's got two girls on his lap and a beer in each hand.",
+  "When he sees you, he dumps the girls on the floor. \"Yo. You. New guy. C'mere.\"",
+  "The crotch of his shorts is huge. Not hard yet. Just huge."],
+  c: [["Sit next to him", "t_sit"], ["Play beer pong against his team", "t_pong"], ["Ignore him and dance", "t_dance"], ["Back out", "hub"]] },
+
+t_sit: { w: "The couch", p: [
+  "He throws one massive arm around your shoulders and drags you into his side. He smells like sweat, beer and that musk you smelled at the door. It's him. It's coming off him in waves.",
+  "\"You smell good,\" he rumbles, and licks the side of your face, slow and rough, like he's tasting a steak. His other hand drops into your lap and squeezes. \"Real good.\""],
+  c: [["Let him", "t_lap"], ["Push his hand away", "t_end_forced"]] },
+
+t_lap: { w: "The couch", p: [
+  "His hand rubs. His shorts tent, and keep tenting. When he tugs them down, his cock slaps against his abs, a thick, barbed lion dick as long as your forearm, already dripping.",
+  "\"Suck it,\" he says, like he's ordering a beer, and pushes your head down."],
+  c: [["Suck", "t_end_cockvore"], ["Climb on it", "t_end_breed"]] },
+
+t_end_cockvore: { w: "The couch", in: 1, p: [
+  "You suck. He groans, fists your hair and starts fucking your face, the whole couch creaking. ***Glk. Glk. Glk.*** Drool runs down your chin.",
+  "\"Fuck, your mouth's tiny. Bet the rest of you fits, though.\" He pulls out, presses the flared tip to your forehead, and his slit gapes. ***SHLLRRK.*** It sucks your whole head in.",
+  "The room sees. The room cheers. He stands up, cock jutting out with you hanging off the end, and starts stroking you down it in long, slow pulls, the bulge of your shoulders sliding toward his balls. ***Glrrk… glrrk…***",
+  "You drop into his sack with a fat wet ***SHLORP*** and it balloons between his thighs. He sits back down, legs spread wide so everyone can see his huge, sloshing balls squirming with you inside, and cracks another beer.",
+  "Later, upstairs, he blows you out over some girl's tits in thick ropes of lion cum. ***SPLRRT. SPLRRT.*** She thinks it's the best night of her life."],
+  s: ["gag", "squelch", "slosh", "cum"], end: { t: "Load", pred: "thane", hint: "Go down on him" } },
+
+t_end_breed: { w: "The couch", in: 1, p: [
+  "You straddle him. He laughs and yanks your pants down himself, then drives you down onto his barbed cock in one brutal thrust. ***PLAP.*** You scream. The barbs rake you inside. He doesn't care.",
+  "He fucks you in front of the whole party, bouncing you on his dick like a toy, ***plap plap plap***, until he roars and floods you so full your belly swells. Cum pours out around his cock.",
+  "\"Fuck. Good hole.\" He lifts you off by the throat, still dripping, and looks at you like he's deciding something. Then he opens his mouth. ***GLLLRK.***",
+  "He swallows you on the couch, one hand jerking off his still-hard cock as you slide down. ***GULP.*** You land in his stomach, cum leaking out of you into his acid. ***Glorrp.*** His abs bulge out round, and he rubs them as he cums again all over himself.",
+  "He spends the rest of the party on the couch with a fat, gurgling gut, burping and grinning. ***Hrrrrp.*** \"Fucked and fed. Best party all year.\""],
+  s: ["plap", "plap", "cum", "gulp", "belch"], end: { t: "Fucked and Fed", pred: "thane", hint: "Ride him" } },
+
+t_end_forced: { w: "The couch", in: 1, p: [
+  "You shove his hand off. Thane's grin doesn't move. His grip on your shoulder does. It tightens until something pops.",
+  "\"Nah,\" he says, and flips you face-down over the couch arm. Your pants are ripped down. His cock jams into your ass dry, ***PLAP***, and he fucks you hard enough to move the couch across the floor. Nobody stops him. People film it.",
+  "When he's done, he rolls you over, still dripping his cum, and stuffs you in his mouth feet-first like a burrito. ***GLLK… GLLK… GULP.*** You claw at his tongue. He just swallows harder.",
+  "In his gut you're mashed against the beers and the burgers. ***Grrrnch.*** He pats you. \"Shoulda just said yes, bitch.\"",
+  "He never even gets off the couch."],
+  s: ["plap", "plap", "gulp", "crack"], end: { t: "No Means Lunch", pred: "thane", hint: "Say no" } },
+
+t_pong: { w: "The beer pong table", p: [
+  "Thane's on the other team. Every time he sinks a cup, he makes eye contact and licks his lips. \"Loser gets eaten,\" he says. Everyone laughs. He doesn't."],
+  set: { drinks: 1 },
+  c: [["Try to win", "t_pong_win"], ["Throw the game on purpose", "t_end_willing"]] },
+
+t_pong_win: { w: "The beer pong table", p: [
+  "You sink your last cup. The table erupts. Thane stares at the ball floating in the beer, then at you. Then he grins.",
+  "\"Damn. You won.\" He walks around the table, way too close. \"So I guess you get to pick how I eat you.\"",
+  "Two of his teammates grab your arms."],
+  c: [["\"Not at all\"", "t_end_forced"], ["\"…Slowly\"", "t_end_willing"]] },
+
+t_end_willing: { w: "Thane's room", in: 1, p: [
+  "He carries you upstairs over his shoulder like a keg and kicks his door shut. He strips you, lays you on his bed and licks you all over, every inch, groaning, rough tongue scraping your nipples, your cock, your hole. ***Shlrrp.***",
+  "\"You taste so fuckin' good.\" He takes your feet in his mouth and sucks them in. Then your calves. Then your knees. Slow, like you asked. ***Glk… glk… glk…*** He jerks himself off the whole time, staring up at you.",
+  "Your hips go in. He moans around you and cums on the sheets. Your chest. Your shoulders. You're looking down his throat, at your own body squeezed into a bulge in his neck. ***GULP.***",
+  "You land in his stomach and it's hot and tight and so loud. ***Glorrrrp. Grrrooorgl.*** He lies on his back, hands behind his head, and lets you squirm. \"Take your time,\" he rumbles. \"You're not going anywhere.\"",
+  "He's right."],
+  s: ["kiss", "gulp", "cum", "gulp", "gurgle"], end: { t: "Slowly", pred: "thane", hint: "Lose on purpose" } },
+
+t_dance: { w: "The living room", p: [
+  "You dance. Bodies grind against you on every side, and then one of them is fur, and big, and his hands are on your hips. Thane. He's grinding his huge, hard cock against your ass through his shorts, in time with the bass.",
+  "\"Can't ignore me, baby,\" he growls in your ear. The music's so loud nobody hears you."],
+  c: [["Grind back", "t_end_breed"], ["Try to get away", "t_end_forced"]] },
+
+/* ===== VIVIAN: the bathroom ===== */
+bathline: { w: "The bathroom line", p: [
+  "The line for the bathroom snakes down the hall. At the front of it, leaning on the door frame, is a python anthro in a tight black dress, coils of thick tail pooling on the carpet. Vivian. Her eyes are gold and slit, and they spiral.",
+  "\"Long wait,\" she hisses, smiling. \"I could let you skip ahead. If you share the room with me.\"",
+  "There's a bulge in her dress. A big one. It twitches when she looks at you."],
+  c: [["Say yes", "v_room"], ["Look into her eyes", "v_hypno"], ["Wait your turn", "v_wait"], ["Leave the line", "hub"]] },
+
+v_room: { w: "The bathroom", p: [
+  "She locks the door. Her tail coils around your legs before you've even turned around, and squeezes. Not hard. Just enough to say: you're not leaving.",
+  "She pulls her dress up. Her cock is thick, ribbed, purple-grey and glistening, with a pair of heavy balls under it. And behind them, her pussy, wet and swollen.",
+  "\"Pick one,\" she whispers. \"I'm feeling generous.\""],
+  c: [["Her cock", "v_end_cv"], ["Her pussy", "v_end_unbirth"]] },
+
+v_end_cv: { w: "The bathroom", in: 1, p: [
+  "\"Good choice.\" Her coils tighten and lift you right off the floor, upside down, face level with her cock. She rubs the tip over your lips, then your eyes, then your forehead. Then her slit stretches open around your head. ***SHLLRRK.***",
+  "She jerks herself off with you inside the shaft, hissing in pleasure, coils pumping you down inch by inch. ***Glrrk… glrrk… glrrk.*** Through the walls of her cock you can hear the line outside banging on the door.",
+  "You plop into her balls. ***SHLORP.*** They swell huge and heavy between her thighs, sloshing with hot musky cum, and she sits on the edge of the tub and squeezes them, moaning. ***Shlosh. Shlosh.***",
+  "She doesn't keep you long. Ten minutes later she's cumming into the toilet in thick white ropes, ***SPLRRT***, what's left of you swirling away with a ***flush***, and she's opening the door with a smile for the next person in line."],
+  s: ["squelch", "slosh", "slosh", "cum"], end: { t: "Flushed", pred: "viv", hint: "Pick her cock" } },
+
+v_end_unbirth: { w: "The bathroom", in: 1, p: [
+  "Her pussy opens like a flower when your face touches it, hot and impossibly stretchy. ***Shlrrrp.*** Her coils push you in. She's moaning so loud the line outside goes quiet.",
+  "Your shoulders squeeze through. Your chest. Her inner walls ripple, sucking, and her cock throbs above you, drooling precum onto your back as you go in. ***Glorrp.***",
+  "Then you're curled up in her womb, tight and hot and pulsing in time with her heartbeat. She sinks down into her coils on the bathroom floor, rubbing the round swell of her belly.",
+  "\"Mmm. You're staying,\" she murmurs. \"I'll keep you a long time.\" She's lying. Her womb starts squeezing an hour later, soft and slow, and keeps squeezing until there's nothing left to squeeze. ***Glrrbl.***"],
+  s: ["squelch", "squelch", "gurgle"], end: { t: "Unbirthed", pred: "viv", hint: "Pick her pussy" } },
+
+v_hypno: { w: "The bathroom line", p: [
+  "Her eyes spiral. Gold rings, slowly turning, and the music gets very far away. Your cock is hard. You don't know why. You don't care.",
+  "\"Thaaat's it,\" she purrs. \"Who do you belong to?\""],
+  c: [["\"You\"", "v_end_hypno"], ["Fight it", "v_end_crush"]] },
+
+v_end_hypno: { w: "The bathroom", in: 1, p: [
+  "\"Good boy.\" She leads you into the bathroom by your cock. You strip because she tells you to. You kneel because she tells you to. You suck her off because she tells you to, slow and sloppy, and you love it.",
+  "\"Now crawl inside me,\" she says, and unhinges her jaw. Wide. Wider. Wide enough for a person. And you crawl in. You do it yourself. You put your own head down her throat and wriggle forward while she just holds still and moans. ***Glk… glk…***",
+  "She coils up in the tub with a huge lump in her middle and her hand on her cock. ***Glorrp.*** You're still hard in there. Still happy. Still hypnotised. She keeps you that way the whole time you dissolve."],
+  s: ["gag", "gulp", "gurgle"], end: { t: "Good Boy", pred: "viv", hint: "Give in to her eyes" } },
+
+v_end_crush: { w: "The bathroom line", in: 1, p: [
+  "You tear your eyes away. Vivian hisses, and her coils are around you in a heartbeat, around your arms, your chest, your throat. People in the line just watch.",
+  "She squeezes until you can't breathe. ***Krrk.*** Something in your ribs gives. Then she swallows you, slow and rhythmic, her jaw walking over you. ***Glllk. Glllk.*** You're still alive when you hit her stomach, but only just.",
+  "She goes back to leaning on the door frame with a person-shaped bulge in her middle and smiles at the next guy in line."],
+  s: ["struggle", "crack", "gulp"], end: { t: "Constricted", pred: "viv", hint: "Resist her eyes" } },
+
+v_wait: { w: "The bathroom line", p: [
+  "You wait. Vivian goes in alone. Muffled moans, a long wet slurp, a gulp, and when she comes out ten minutes later, her belly is round and squirming and the guy who was in front of you isn't anywhere.",
+  "\"Your turn,\" she smiles, and holds the door open for you."],
+  c: [["Go in", "v_room"], ["Leave the line", "hub"]] },
+
+/* ===== DUKE: the backyard ===== */
+yard: { w: "The backyard", p: [
+  "It's quieter out here. A couple making out by the fence. A hot tub nobody's using. And on the patio, watching you with dark, very intelligent eyes, the biggest Great Dane you've ever seen. Dex's dog, Duke. Taller than you when he stands. Heavy balls swinging between his legs.",
+  "He doesn't bark. He just tilts his head and looks you up and down, and you get the very clear feeling he knows exactly what he wants and that it's you."],
+  c: [["Pet him", "d_pet"], ["Get in the hot tub", "d_tub"], ["Back inside", "hub"]] },
+
+d_pet: { w: "The backyard", p: [
+  "You scratch behind his ears. He leans into it. Then he gets up, walks behind you, and shoves his nose right between your ass cheeks through your jeans, snuffling hard.",
+  "When you turn around, his red cock is sliding out of his sheath, long and pointed and dripping. His tail wags slow. His eyes say: *Get on your knees.*"],
+  c: [["Get on your knees", "d_end_knot"], ["Run back inside", "d_end_chase"]] },
+
+d_end_knot: { w: "The backyard", in: 1, p: [
+  "You get on your hands and knees in the grass. Duke mounts you immediately, front legs locking around your waist, and his cock hunts and stabs until it finds your hole and rams in. ***PLAP.***",
+  "He fucks like an animal because he is one. Fast, frantic, hips a blur, ***plap plap plap plap***, the knot at the base swelling until he shoves it in with one huge thrust and you scream. ***Shlorp.*** Locked. Hot dog cum pumps into you and keeps pumping.",
+  "When the knot finally slides out, ***pop***, he turns around and licks his mess off you. Then he licks your face. Then he opens his jaws over your head.",
+  "***GLLRK.*** He gulps you down in big rough swallows, shaking his head to work you deeper. ***GULP. GULP.*** You land in his stomach in a heap with your ass still full of his cum. His belly drags in the grass. He trots to his dog bed, flops down and sighs, perfectly content. ***Hrrrrp.***"],
+  s: ["plap", "plap", "cum", "gulp", "belch"], end: { t: "Good Dog", pred: "duke", hint: "Kneel for him" } },
+
+d_end_chase: { w: "The backyard", in: 1, p: [
+  "You make it three steps. He's on you, two hundred pounds of dog slamming you face-first into the grass. He doesn't bother being gentle. He rips your jeans with his teeth, mounts you, and fucks you right there while you scream into the dirt. ***PLAP PLAP PLAP.***",
+  "Nobody comes. The music's too loud. The couple by the fence watches and laughs.",
+  "When he's done, he doesn't wait for the knot to go down. He turns, still tied to you, and starts eating you feet-first, dragging you off his own cock and down his throat in one long, wet slurp. ***GLLLRRK.*** Your fingers claw at the lawn. Then they're gone too.",
+  "In the morning, Dex lets him out to do his business, and Duke squats in the corner of the yard and grunts out a thick, wet pile with a few of your bones sticking out of it. ***Plrrt. Plop.*** Dex doesn't look closely. He never does."],
+  s: ["plap", "plap", "gulp", "crack", "plop"], end: { t: "Fetch", pred: "duke", hint: "Run from him" } },
+
+d_tub: { w: "The hot tub", p: [
+  "The water's hot. Your head swims. Duke pads over and sits on the edge, watching you. Then he steps in, huge and heavy, water sloshing over the sides, and stands over you.",
+  "His cock is out, bobbing in the steam right in front of your face. His balls are right there too, fat and full, almost touching your lips."],
+  c: [["Lick his balls", "d_end_balls"], ["Climb out", "d_end_chase"]] },
+
+d_end_balls: { w: "The hot tub", in: 1, p: [
+  "You lick. They're hot and heavy and they taste like musk. He growls, low and pleased, and his cock throbs. Precum drips into the water.",
+  "Then his cock pushes against your face. Not into your mouth. Over it. The pointed tip opens and swallows your head. ***SHLRRK.*** He humps, and his sheath swallows your shoulders. He humps again. ***Glrrk.***",
+  "He's fucking himself onto you. Every thrust pulls you deeper down his shaft, the hot tub water churning around his legs, until you slide all the way into his balls. ***SHLORP.*** They swell huge, fat and drooping almost to the water.",
+  "He steps out of the tub with his balls swinging heavy between his legs, sloshing with every step. ***Shlosh. Shlosh.*** Later, he humps a pillow on the patio and spills you all over it in a hot, thick flood."],
+  s: ["kiss", "squelch", "slosh", "cum"], end: { t: "Hot Tub", pred: "duke", hint: "Get in the water" } }
+};
+const ENDS = Object.entries(N).filter(([, v]) => v.end).map(([k, v]) => ({ k, ...v.end }));
+
+/* ---------- state ---------- */
+let SEEN = {}; try { SEEN = JSON.parse(localStorage.getItem("lastcall1") || "{}"); } catch {}
+const saveSeen = () => { try { localStorage.setItem("lastcall1", JSON.stringify(SEEN)); } catch {} };
+let ST = { drinks: 0 }, VISITED = {};
+
+function fmt(t) {
+  return esc(t).replace(/"([^"]+)"/g, "<span class='say'>“$1”</span>")
+    .replace(/\*\*\*(.+?)\*\*\*/g, "<span class='sx'>$1</span>").replace(/\*(.+?)\*/g, "<i>$1</i>");
+}
+function drawStats() {
+  const d = ST.drinks, label = d === 0 ? "Sober" : d < 3 ? "Buzzed" : d < 5 ? "Drunk" : "Wasted";
+  $("#stats").innerHTML = `<span class="pill">🍹 ${label}</span>`;
+  const n = ENDS.filter(e => SEEN[e.k]).length; $("#gN").textContent = `${n}/${ENDS.length}`;
+}
+function go(id) {
+  const n = N[id]; if (!n) return;
+  if (id === "start") { ST = { drinks: 0 }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
+  VISITED[id] = 1;
+  $("#where").textContent = n.w || "";
+  if (id === "start" || id === "hub") $("#text").innerHTML = "";
+  const first = $("#text").children.length;
+  n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
+  if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
+  loop(!!n.in);
+  if (n.end) {
+    const isNew = !SEEN[id]; SEEN[id] = Date.now(); saveSeen();
+    const pr = PREDS[n.end.pred];
+    $("#text").insertAdjacentHTML("beforeend", `<div class="end"><div class="who">${esc(pr.n)} · ${esc(pr.k)}</div><h2>${isNew ? "New ending: " : "Ending: "}${esc(n.end.t)}</h2></div>`);
+    $("#choices").innerHTML = `<button class="ch" data-go="start">↺ Back to the party (start over)</button><button class="ch" data-gal>See all endings</button>`;
+  } else {
+    const opts = (n.c || []).filter(c => !c[2] || c[2](ST));
+    $("#choices").innerHTML = opts.map(([t, to]) => {
+      const done = Object.keys(SEEN).some(k => reach(to).has(k));
+      return `<button class="ch ${allDone(to) ? "seen" : ""}" data-go="${to}">${esc(t)}</button>`; }).join("");
+  }
+  drawStats();
+  const el = $("#text").children[first]; if (el && first > 0) el.scrollIntoView({ behavior: "smooth", block: "start" }); else scrollTo({ top: 0, behavior: "smooth" });
+}
+// which endings a choice can still lead to (for the ✓ mark once all are seen)
+const RC = {};
+function reach(id, seen = new Set()) {
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || id === "hub" || id === "start") return out; seen.add(id);
+  const n = N[id]; if (!n) return out; if (n.end) out.add(id);
+  for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
+  return (RC[id] = out);
+}
+const allDone = to => { const r = reach(to); return r.size > 0 && [...r].every(k => SEEN[k]); };
+
+function gallery(show) {
+  $("#game").classList.toggle("hidden", show); $("#gallery").classList.toggle("hidden", !show);
+  if (!show) return;
+  const byPred = {}; ENDS.forEach(e => (byPred[e.pred] = byPred[e.pred] || []).push(e));
+  $("#gallery").innerHTML = `<button class="btn" data-back style="margin-bottom:14px">‹ Back to the party</button><div class="gal">` +
+    Object.entries(byPred).map(([p, es]) => `<div class="gp"><div class="k">${esc(PREDS[p].k)}</div><h2>${esc(PREDS[p].n)} · ${es.filter(e => SEEN[e.k]).length}/${es.length}</h2>
+      <div class="slots">${es.map(e => `<span class="sl ${SEEN[e.k] ? "on" : ""}">${SEEN[e.k] ? esc(e.t) : "? " + esc(e.hint)}</span>`).join("")}</div></div>`).join("") + "</div>";
+  scrollTo({ top: 0 });
+}
+document.addEventListener("click", e => {
+  const s = e.target.closest(".sx"); if (s) { play(pick(["gurgle", "gulp", "belch", "slosh"])); return; }
+  const g = e.target.closest("[data-go]"); if (g) { gallery(false); go(g.dataset.go); return; }
+  if (e.target.closest("[data-gal]") || e.target.closest("#gBtn")) return gallery(true);
+  if (e.target.closest("[data-back]")) return gallery(false);
+});
+go("start");
+</script>
+</body>
+</html>
