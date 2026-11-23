@@ -117,6 +117,7 @@ const PREDS = {
   s1471: { n: "SCP-1471-A", k: "MalO · Foundation" },
   s682:  { n: "SCP-682", k: "Hard-to-Destroy Reptile · Foundation" },
   s939:  { n: "SCP-939", k: "With Many Voices · Foundation" },
+  s953:  { n: "SCP-953", k: "Kitsune · Foundation" },
   s999:  { n: "SCP-999", k: "The Tickle Monster · Foundation" },
   sadako:{ n: "Sadako", k: "The cursed tape · ghost" },
   none:  { n: "Nobody", k: "You got away" }
@@ -819,14 +820,14 @@ vc_end_safe: { w: "The Boss Lair", in: 1, p: [
 x_start: { w: "Site-19 · D-Class Briefing", p: [
   "Orange jumpsuit. A number stencilled on your chest. A clipboard-holding researcher who won't look you in the eye. \"Congratulations, D-9341. You've been selected for testing.\"",
   "\"Today you'll be interacting with several anomalies. Each test is fully authorised and absolutely safe.\" She pauses. \"Please sign here. And here. And here, in case you're not recovered.\"",
-  "Four test chambers. Four files. You get to pick the order."],
-  c: [["SCP-1471: an app on a phone", "x_1471"], ["SCP-682: the Hard-to-Destroy Reptile", "x_682"], ["SCP-939: With Many Voices", "x_939"], ["SCP-999: the Tickle Monster", "x_999"]] },
+  "Five test chambers. Five files. You get to pick the order."],
+  c: [["SCP-1471: an app on a phone", "x_1471"], ["SCP-682: the Hard-to-Destroy Reptile", "x_682"], ["SCP-939: With Many Voices", "x_939"], ["SCP-999: the Tickle Monster", "x_999"], ["SCP-953: the kitsune", "x_953"]] },
 
 x_hub: { w: "Site-19 · Corridor", p: ["The intercom crackles. *\"D-9341, proceed to your next test.\"* A guard nudges you with his rifle. Where now?"],
-  c: [["SCP-1471", "x_1471"], ["SCP-682", "x_682"], ["SCP-939", "x_939"], ["SCP-999", "x_999"], ["Fake a seizure and get sent to medical", "x_leave"]] },
+  c: [["SCP-1471", "x_1471"], ["SCP-682", "x_682"], ["SCP-939", "x_939"], ["SCP-999", "x_999"], ["SCP-953", "x_953"], ["Fake a seizure and get sent to medical", "x_leave"]] },
 
 x_leave: { w: "Site-19 · Medical", p: ["You fake a seizure. It's a bad performance. The medic sees right through it, but she's on her lunch break, so she signs a form and sends you back to your cell.",
-  "*Incident report: D-9341 failed to complete testing. Reassigned.* Tomorrow you're scheduled for 1471, 682, 939 and 999 again."],
+  "*Incident report: D-9341 failed to complete testing. Reassigned.* Tomorrow you're scheduled for 1471, 682, 939, 953 and 999 again."],
   end: { t: "Reassigned", pred: "none", hint: "Get out of testing" } },
 
 /* --- SCP-1471 --- */
@@ -908,11 +909,48 @@ x939_end_pack: { w: "Containment Chamber 939", in: 1, p: [
   s: ["struggle", "plap", "plap", "gulp", "gurgle", "plop"], end: { t: "With Many Voices", pred: "s939", hint: "Stay silent" } },
 
 x939_end_safe: { w: "Containment Chamber 939", in: 1, p: [
-  "\"I'm here,\" you say. \"I'm not anyone you ate. I'm just me.\" The voice stops. Something big comes out of the dark, slow, red, eyeless, sniffing.",
-  "It speaks. In your voice. \"Just me.\" Then in its own: a low, rough, real voice nobody's ever heard. \"...Hello.\"",
-  "You talk to it all day. When the lights go off, it curls up around you, warm, and then very carefully swallows you, and holds you in its belly all night, purring in a dozen different voices, all of them happy.",
-  "In the morning it lets you out. *INCIDENT REPORT 939-79: SCP-939-12 has stopped using mimicry around D-9341. It speaks to it in its own voice. Researchers are not sure what that means.*"],
-  s: ["kiss", "gulp", "gurgle"], end: { t: "Its Own Voice", pred: "s939", hint: "Answer it honestly", safe: 1 } },
+  "\"I'm here,\" you say. \"I'm not anyone you ate. I'm just me.\" The voice stops. Something big comes out of the dark, slow, red, eyeless, sniffing. It doesn't lunge. It's an animal, a predator, but it's listening, head cocked, and it understands more than it should.",
+  "It has no voice of its own. It never did. So it gives you back yours, soft: \"Just me.\" And then it pushes its huge head into your hands like a dog.",
+  "You sit with it all day, scratching under its jaw while it rumbles. When the lights go off, it curls up around you, warm, and then very carefully swallows you, and holds you in its belly all night, rumbling, its big red body curled tight around itself.",
+  "In the morning it lets you out. *INCIDENT REPORT 939-79: SCP-939-12 no longer uses its victims' voices around D-9341. It only ever repeats D-9341's own words back, gently, mostly \"just me\". Researchers are not sure what that means.*"],
+  s: ["kiss", "gulp", "gurgle"], end: { t: "Just Me", pred: "s939", hint: "Answer it honestly", safe: 1 } },
+
+/* --- SCP-953 --- */
+x_953: { w: "Containment Chamber 953", p: [
+  "*SCP-953 is a polymorphic humanoid resembling the kitsune of Korean and Japanese folklore. In humanoid form it presents as an extremely attractive woman. It feeds on humans. It is cunning, vain, and cruel. It has nine tails.*",
+  "The chamber is furnished like an expensive hotel suite. She's lounging on a chaise in a silk robe that's mostly open: tall, impossibly beautiful, black hair, golden eyes, and behind her, nine huge fluffy fox tails fanning out across the floor.",
+  "\"Ah. They sent me dinner,\" she purrs. \"And it's cute. How thoughtful.\" She pats the chaise next to her."],
+  c: [["Sit with her", "x953_end_seduce"], ["Refuse and back toward the door", "x953_end_fox"], ["Compliment her tails, sincerely", "x953_end_safe"], ["Leave the chamber", "x_hub"]] },
+
+x953_end_seduce: { w: "Containment Chamber 953", in: 1, p: [
+  "You sit. She's in your lap before you've settled, kissing you, her robe falling open, her tails wrapping around your legs and arms, soft and warm and holding you down.",
+  "She rides you on the chaise, slow and smug, golden eyes on your face the whole time. \"You're delicious,\" she sighs, and when you cum she laughs softly and leans down, and her jaw opens far, far wider than a woman's. ***GLLK.***",
+  "She swallows you while she's still sitting on your cock, gulp by gulp, ***GLRK... GLRK... GULP...***, her tails stuffing your legs in after you, and her flat stomach swells out round and heavy under her silk robe. ***Glorrrp.***",
+  "*INCIDENT REPORT 953-22: D-9341 was not recovered. SCP-953 requested a larger robe. Request denied. SCP-953 was later observed on the chamber's toilet, unhurried, reading a magazine, while producing a human-volume quantity of waste that overflowed the fixture. She complained about the plumbing.*"],
+  s: ["kiss", "plap", "cum", "gulp", "gurgle", "plop"], end: { t: "Dinner Is Served", pred: "s953", hint: "Sit with her" } },
+
+x953_end_fox: { w: "Containment Chamber 953", in: 1, p: [
+  "You back toward the door. Her smile disappears. \"Rude.\" And she changes. Her body stretches, fur pours over her skin, her face lengthens into a muzzle, and then there's a fox in the room the size of a horse, nine tails lashing, golden eyes burning.",
+  "She pounces. Pins you to the floor. Her tongue drags across your face, slow and wet, tasting you. Then her jaws close around your shoulders and she lifts you and swallows you like a fox swallowing a rabbit, ***GLLLRK... GULP***, shaking her head to work you down.",
+  "Her belly sags low between her legs. She circles three times and curls up on the chaise, tails wrapped around her stuffed gut. ***Grrrnch.*** You hear her laughing, deep and smug, through the walls of her stomach.",
+  "*INCIDENT REPORT 953-23: D-9341 was not recovered. SCP-953 has asked whether the next one can \"be rude too\".*"],
+  s: ["struggle", "gulp", "gulp", "gurgle", "plop"], end: { t: "Nine Tails", pred: "s953", hint: "Refuse her" } },
+
+x953_end_safe: { w: "Containment Chamber 953", in: 1, p: [
+  "\"Your tails are beautiful,\" you say. And you mean it. She stops. Nobody compliments her tails. They compliment her face, her body, her eyes, everything she grows to lure them. Never the part of her that's real.",
+  "She lets you touch them. You brush them for an hour. Somewhere in there she starts purring, and then she's kissing you, and then you're tangled in her tails on the floor, making love, her golden eyes soft.",
+  "She swallows you after, very gently, and curls up with all nine tails wrapped around her round belly, keeping you warm. In the morning she lets you out. \"Come back tomorrow,\" she says. \"Bring the brush.\"",
+  "*INCIDENT REPORT 953-24: SCP-953 has not attempted to consume D-9341 since. It has requested D-9341 for daily \"grooming\". Approved, pending further incidents.*"],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Grooming Duty", pred: "s953", hint: "Compliment her tails", safe: 1 } },
+
+sk_end_stuck: { w: "Your apartment", in: 1, p: [
+  "Her hands come out first, then her head, hair dripping, then her shoulders and her heavy tits squeezing through the screen. Then she stops. She pushes. She doesn't move.",
+  "Her belly is stuck. It's HUGE: a big, round, sloshing, overstuffed gut full of every viewer who's ever watched the tape, and it's wedged in the TV frame like a cork in a bottle. Her wet white dress is stretched over it so tight it's see-through. ***Grrrrrooooorgl.***",
+  "She wriggles. She shoves. She claws at your carpet with both hands. The TV rocks on its stand. Her gut squishes and bulges against the edges of the screen, ***Shlosh... shlosh...***, and she lets out a long, low, furious, embarrassed groan through her hair.",
+  "You can't help it. You laugh. Her head snaps up. Then she grabs your ankle and pulls, and drags you right up to her face, and her mouth opens, and keeps opening. ***GLLK.*** She can't get out of the TV. But she can still eat. ***GLRK... GLRK... GULP.***",
+  "And now she's even fatter. She's REALLY stuck now. She hangs half out of your TV all night with a belly even bigger than before, groaning, sloshing, kicking her legs somewhere inside the static, until finally, near dawn, with a huge wet ***POP***, she squeezes through and lands on your carpet like a beached whale. ***SHLOSH.***",
+  "She lies there panting for a while. Then she squats right there on the carpet and pushes out everyone she's eaten this week, and you with them, an absolutely colossal, steaming mountain of shit taller than the TV. ***FFFFRRRRRRT... PLOP... PLOP... PLOP... PLOP.*** Then she crawls back into the screen, slimmer, and it fits fine. She glares at you from the static on her way in, like it's your fault."],
+  s: ["slosh", "gurgle", "struggle", "gulp", "gulp", "slosh", "fart", "plop"], end: { t: "Stuck", pred: "sadako", hint: "Watch her come through" } },
 
 /* --- SCP-999 --- */
 x_999: { w: "Containment Chamber 999", p: [
@@ -967,7 +1005,7 @@ sk_run: { w: "The city · Day 7", p: [
 sk_wait: { w: "Your apartment · Day 7", p: [
   "You turn on the TV. You sit on the floor in front of it. You wait. At midnight the static clears and there's the well, and the hand, and then she's climbing out, crawling across the carpet toward you, slow, jerking, dripping.",
   "She stops right in front of you. Her hair hangs over her face. She's waiting too. For you to scream. You don't."],
-  c: [["Pull her hair back and kiss her", "sk_end_safe"], ["Let her take you", "sk_end_swallow"]] },
+  c: [["Pull her hair back and kiss her", "sk_end_safe"], ["Let her take you", "sk_end_swallow"], ["Wait... she seems to be stuck", "sk_end_stuck"]] },
 
 sk_end_swallow: { w: "Your apartment", in: 1, p: [
   "You open your arms. She tilts her head. Then she crawls into them, cold and wet and heavy, and wraps her arms around you, and starts swallowing you. ***GLLK.*** Slowly. Your head first, her hair falling over you both.",
