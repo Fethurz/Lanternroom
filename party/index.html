@@ -138,6 +138,24 @@ const PREDS = {
   tasha: { n: "Tasha", k: "Futa tigress, 23 · sorority president" },
   delia: { n: "Delia", k: "Crocodile swimmer, 21 · anthro" },
   kessler:{ n: "Dean Kessler", k: "Futa snow leopard dean · anthro" },
+  zelra: { n: "Dr. Zel'ra", k: "Grey alien scientist" },
+  blob:  { n: "The Specimen", k: "Tentacle alien" },
+  ixa:   { n: "Queen Ixa", k: "Futa alien queen" },
+  rhaxa: { n: "Captain Rhaxa", k: "Crocodilian captain" },
+  veil:  { n: "Officer Veil", k: "Xeno science officer" },
+  crate: { n: "The Crate", k: "DO NOT FEED" },
+  ai:    { n: "MOTHER-9", k: "Station AI" },
+  tsura: { n: "Tsura", k: "Alien huntress chief" },
+  flower:{ n: "The Flower", k: "Carnivorous plant-girl" },
+  beast: { n: "The Beast", k: "Six-legged feral" },
+  grisha:{ n: "Grisha", k: "Four-armed bartender" },
+  bounty:{ n: "The Bounty Hunter", k: "Reptile mercenary" },
+  vanthe:{ n: "Vanthe", k: "Futa smuggler queen" },
+  proto: { n: "PROTO-7", k: "Companion android" },
+  vx:    { n: "VX-3", k: "Futa industrial android" },
+  hale:  { n: "Dr. Hale", k: "Cyborg scientist" },
+  drone: { n: "The Drones", k: "Hive" },
+  queen: { n: "The Queen", k: "Hive queen" },
   none:  { n: "Nobody", k: "You got away" }
 };
 
@@ -1566,9 +1584,408 @@ ud_end_safe: { w: "The Dean's house", in: 1, p: [
   "You graduate with honours. Tuition-free."],
   s: ["kiss", "plap", "squelch", "slosh"], end: { t: "Full Ride", pred: "kessler", hint: "Ask for a scholarship", safe: 1 } },
 
+/* ===================== ABDUCTED ===================== */
+ab_start: { w: "Somewhere above Earth", p: [
+  "One minute you're taking out the trash. The next there's a light, a hum, and you're floating up into the sky, naked, and then you're lying on a cold metal table in a round room full of humming machines.",
+  "A smooth voice in your head: *SPECIMEN ACQUIRED. EARTH HUMAN, ADULT. BEGIN DIGESTIBILITY STUDY.*",
+  "Doors slide open. A tall, slender grey alien in a lab coat. A tank of glowing slime with something huge moving in it. A throne room glimpsed down the hall, where something big and regal is waiting. And a crate marked with an alien symbol that clearly means DO NOT OPEN, which is shaking."],
+  c: [["Let the scientist examine you", "ab_sci"], ["Look at the specimen tank", "ab_tank"], ["Get taken to the Queen", "ab_queen"]] },
+
+ab_hub: { w: "The saucer corridors", p: ["Lights pulse along the walls. Somewhere, something gurgles. Where now?"],
+  c: [["The examination room", "ab_sci"], ["The specimen tank", "ab_tank"], ["The throne room", "ab_queen"], ["Find the escape pod", "ab_leave"]] },
+
+ab_leave: { w: "An escape pod", p: ["You find an escape pod, smash buttons until it launches, and crash-land in a cornfield in Nebraska. Nobody believes you.",
+  "Every night since, a light hovers over your house for a minute. Then goes away. They're thinking about it."], end: { t: "Nobody Believes You", pred: "none", hint: "Escape the saucer" } },
+
+ab_sci: { w: "The examination room", p: [
+  "Dr. Zel'ra is a grey alien, female, seven feet tall, all long limbs and huge black eyes, with a lab coat and a datapad. She circles your table, humming. *Fascinating. So soft. So warm. Let us test the... compatibility.*",
+  "A probe slides out of the wall. It is very obviously not for medical purposes. Zel'ra's slender throat ripples, and her thin mouth opens a little wider than it should."],
+  c: [["Let her run the tests", "ab_end_probe"], ["Struggle against the restraints", "ab_end_sample"], ["Ask her questions back", "ab_end_safe"], ["Back", "ab_hub"]] },
+
+ab_end_probe: { w: "The examination room", in: 1, p: [
+  "The probes go everywhere. Into you. Around your cock. Milking you, measuring, while she takes notes and makes delighted clicking noises. *Output: excellent. Taste: let us find out.*",
+  "Her mouth stretches. And stretches. Her throat unfolds like an accordion. She swallows you on the table, slow and clinical, ***GLK... GLK... GLRK***, noting every gulp on her datapad, until her slender grey body has a huge, human-sized belly. ***GULP.***",
+  "*DIGESTIBILITY: CONFIRMED. EXCELLENT.* She logs it. In the morning she squats in the saucer's waste unit and logs that too: a whole adult human's worth, huge and steaming and very much like an Earth human's own. ***PLOP. PLOP.*** *RECOMMEND: ACQUIRE MORE.*"],
+  s: ["cum", "gulp", "gulp", "gurgle", "plop"], end: { t: "Digestibility Confirmed", pred: "zelra", hint: "Let her run the tests" } },
+
+ab_end_sample: { w: "The examination room", in: 1, p: [
+  "You fight the straps. *Agitated specimen,* she notes, and the table tilts, and something soft and slick slides between your legs: her. She climbs onto the table and rides you, clinical even while she does it, clicking, until you cum. *Sample collected.*",
+  "Then her body opens. Not her mouth: her whole belly splits along a seam into a wide, wet, pink alien maw. ***SHLLLORRRP.*** It closes over you and pulls you in, and seals.",
+  "She walks back to her console with you squirming inside her and types: *SPECIMEN STORED.*"],
+  s: ["struggle", "plap", "cum", "squelch", "gurgle"], end: { t: "Sample", pred: "zelra", hint: "Struggle" } },
+
+ab_end_safe: { w: "The examination room", in: 1, p: [
+  "\"What's YOUR planet like?\" Zel'ra stops. Nobody has ever asked her anything. She sets down the probe. She tells you, for an hour, about a world of purple oceans.",
+  "Later she lets you out of the straps. You make love on the exam table, gentle and strange and lovely. Then she asks if she may \"store\" you, safely, for the trip. She swallows you, carefully, and you sleep warm inside an alien.",
+  "She doesn't take you home to Earth. She takes you home to the purple oceans. You don't mind at all."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Purple Oceans", pred: "zelra", hint: "Ask her questions", safe: 1 } },
+
+ab_tank: { w: "The specimen tank", p: [
+  "The tank holds a glowing turquoise alien blob, ten feet across, with dozens of soft tentacles drifting in it and what are definitely tits, a lot of them, floating in the goo. A female. It presses against the glass. Its tentacles spell out your name in the condensation. It wants you in."],
+  c: [["Touch the glass", "ab_end_tentacle"], ["Climb in", "ab_end_float"], ["Back", "ab_hub"]] },
+
+ab_end_tentacle: { w: "The specimen tank", in: 1, p: [
+  "You touch the glass. The tank opens, and the tentacles are on you, wrapping your arms, your legs, your cock, sliding into your mouth and your ass, fucking you from every direction at once, pulling you in.",
+  "You go into the goo and the goo goes into you. It's warm. It glows. You cum over and over, floating in a tentacle alien's body, and then the warm turns to tingling, and the tingling turns to burning, and you're dissolving, and you're still cumming.",
+  "The tank glows a little brighter. The alien is a little bigger. By morning it's squeezed a huge, human-like pile out into the tank's drain. ***PLOP.***"],
+  s: ["squelch", "squelch", "cum", "gurgle", "plop"], end: { t: "Tentacles", pred: "blob", hint: "Touch the glass" } },
+
+ab_end_float: { w: "The specimen tank", in: 1, p: [
+  "You climb in. The alien wraps you up, gently, in tentacles and warmth and soft floating tits, and makes love to you slowly from every side, and you breathe the goo somehow and it's like breathing warm light.",
+  "It holds you all night. It doesn't dissolve you. In the morning it lets you out, glowing faintly turquoise. The glow never quite goes away."],
+  s: ["squelch", "cum"], end: { t: "Glow", pred: "blob", hint: "Climb in", safe: 1 } },
+
+ab_queen: { w: "The throne room", p: [
+  "Queen Ixa is twelve feet tall, a futa alien with glossy violet skin, four arms, a crown of crystal spines, six huge breasts, and a cock so long it drapes over the arm of her throne. Her belly is round and swollen and glowing faintly. There are shapes inside it. Specimens.",
+  "*Bring it closer,* she thinks, and her guards push you forward. *Earth humans. Delicacy. Let me taste one.*"],
+  c: [["Bow", "ab_end_queen"], ["Insult her", "ab_end_cock"], ["Bow, and offer to be her consort", "ab_end_qsafe"], ["Back", "ab_hub"]] },
+
+ab_end_queen: { w: "The throne room", in: 1, p: [
+  "You bow. She picks you up in two of her four hands, holds you, admires you, licks you all over with a long violet tongue. Her other two hands stroke your cock until you cum. *Delicious.*",
+  "She swallows you whole from her throne, ***GLLLRK... GULP***, and you slide down into her glowing belly, with the other specimens, all floating in warm light. ***Glorrrp.*** She settles back, rubbing you with four hands.",
+  "*Acquire more,* she thinks at her guards. *Many more.* Earth's in trouble."],
+  s: ["kiss", "cum", "gulp", "gurgle"], end: { t: "Delicacy", pred: "ixa", hint: "Bow" } },
+
+ab_end_cock: { w: "The throne room", in: 1, p: [
+  "You insult her. The room goes silent. Ixa smiles. Her cock rises off the arm of the throne, the tip opening. ***SHLLLRRK.*** It swallows you, headfirst, and she strokes you down it with four hands at once, ***Glrrk glrrk glrrk***, into balls that swell huge. ***SHLORP.***",
+  "She spends you later over the saucer's viewport, onto the Earth below. Somewhere in Nebraska, it rains something very strange."],
+  s: ["struggle", "squelch", "slosh", "cum"], end: { t: "Lèse-Majesté", pred: "ixa", hint: "Insult her" } },
+
+ab_end_qsafe: { w: "The throne room", in: 1, p: [
+  "You bow, and offer to be her consort. The guards gasp. Ixa laughs, a sound like bells. *Bold. I like bold.*",
+  "She makes love to you on her throne, four arms around you, her cock and her cunt both, until you're both shaking. Then she holds you inside her glowing belly for the whole flight home, safe, and lets you out in her royal chambers. You're a prince now. Sort of."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Consort", pred: "ixa", hint: "Offer to be her consort", safe: 1 } },
+
+/* ===================== THE STATION ===================== */
+st_start: { w: "Deep Space Station Kessa-9", p: [
+  "Night shift on Kessa-9, a station orbiting a gas giant forty light years from Earth. You're the maintenance tech. Everyone else on the station is something other than human, and everyone else is awake.",
+  "Your duty list: check the bridge, help the science officer with a \"specimen\", inspect cargo bay 3 (the crate in it is stamped DO NOT FEED), and reboot the station AI's maintenance body, which has been acting strange."],
+  c: [["The bridge", "st_cap"], ["The science lab", "st_sci"], ["Cargo bay 3", "st_crate"], ["The AI's maintenance body", "st_ai"]] },
+
+st_hub: { w: "Station corridors", p: ["The station hums. An alarm somewhere chimes once. Where now?"],
+  c: [["The bridge", "st_cap"], ["The science lab", "st_sci"], ["Cargo bay 3", "st_crate"], ["The AI", "st_ai"], ["Take the shuttle home", "st_leave"]] },
+
+st_leave: { w: "The shuttle", p: ["You steal the shuttle. It takes four months to get home. The station's crew sends you messages the whole way. \"Come back.\" \"We're hungry.\" \"Please.\"",
+  "You keep every message."], end: { t: "Long Way Home", pred: "none", hint: "Take the shuttle" } },
+
+st_cap: { w: "The bridge", p: [
+  "Captain Rhaxa is a crocodilian alien, nine feet tall, scales the colour of copper, in a crisp uniform stretched over a broad chest and a heavy, round belly. She's in the captain's chair with her boots up. \"Tech. Report.\"",
+  "You report. She's not listening. She's looking at you. \"Long shift,\" she says. \"I haven't eaten.\""],
+  c: [["Offer to bring her something", "st_end_cap"], ["Say you have work to do", "st_end_order"], ["Sit with her and watch the gas giant", "st_end_capsafe"], ["Back", "st_hub"]] },
+
+st_end_cap: { w: "The bridge", in: 1, p: [
+  "\"I'll bring you something, Captain.\" \"You ARE something.\" She hauls you into her lap and her jaws open, a crocodile's long jaws, rows of teeth, and she swallows you in three huge gulps right in the captain's chair. ***GLLRK. GLRK. GULP.***",
+  "She logs it. *Captain's log: had the tech for dinner.* ***Grrrnch.*** In the morning, the station's waste system logs a whole human's worth of very human-like shit from the captain's private head. Nobody files a complaint."],
+  s: ["gulp", "gulp", "gulp", "crack", "plop"], end: { t: "Captain's Log", pred: "rhaxa", hint: "Offer to get her food" } },
+
+st_end_order: { w: "The bridge", in: 1, p: [
+  "\"I have work to do.\" \"That's an order, Tech. Get over here.\" She stands, pins you against the viewscreen, and fucks you against it with the gas giant swirling behind you, ***PLAP PLAP PLAP***, then shoves your head into her mouth. ***GLLK.***",
+  "She swallows you with her hand on her belly, and goes back to her chair. \"Insubordination,\" she tells the empty bridge. \"Handled.\""],
+  s: ["plap", "plap", "gulp", "gurgle"], end: { t: "That's an Order", pred: "rhaxa", hint: "Refuse her" } },
+
+st_end_capsafe: { w: "The bridge", in: 1, p: [
+  "You sit on the floor by her chair and watch the gas giant turn, purple and gold. She doesn't say anything for a long time. Then she puts her hand on your head. \"...It gets lonely out here.\"",
+  "You make love on the bridge, slow. After, she swallows you, gently, and keeps you in her belly through her whole shift, warm and safe. In the morning she promotes you to first officer."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "First Officer", pred: "rhaxa", hint: "Sit with her", safe: 1 } },
+
+st_sci: { w: "The science lab", p: [
+  "Science Officer Veil is a xeno, a slender, pale alien with no visible mouth, six eyes, and tentacle hair, wearing nothing but a lab coat. She points at a specimen jar, then at you, then at her stomach, which opens along a vertical seam, slowly, wet and pink inside. \"Specimen,\" she says, through a speaker. \"You.\""],
+  c: [["Climb in", "st_end_sci"], ["Run", "st_end_scirun"], ["Ask what she's studying", "st_end_scisafe"], ["Back", "st_hub"]] },
+
+st_end_sci: { w: "The science lab", in: 1, p: [
+  "You climb into her belly-mouth. It closes over you. ***SHLLLORRRP.*** Inside, tendrils wrap you, probe you, taste you, stroke your cock until you cum into them. She's studying you from the inside.",
+  "She studies you until there's nothing left to study. She writes a paper about it. It's very well received."],
+  s: ["squelch", "cum", "gurgle"], end: { t: "Peer Reviewed", pred: "veil", hint: "Climb in" } },
+
+st_end_scirun: { w: "The science lab", in: 1, p: [
+  "You run. Her tentacle hair snaps out and wraps your ankles and drags you back across the lab floor and into her open belly. ***SHLLORRRP.*** \"Specimen,\" the speaker says again. \"Secured.\""],
+  s: ["struggle", "squelch", "gurgle"], end: { t: "Secured", pred: "veil", hint: "Run" } },
+
+st_end_scisafe: { w: "The science lab", in: 1, p: [
+  "\"What are you studying?\" Six eyes blink in sequence. \"Warmth,\" says the speaker, after a long pause. \"I have never been warm.\" You hug her. She goes stiff. Then she melts.",
+  "She keeps you inside her all night, not digesting, just being warm, for the first time. In the morning she lets you out and the speaker says, \"Thank you,\" and her tentacle hair curls around your hand."],
+  s: ["kiss", "squelch"], end: { t: "Warmth", pred: "veil", hint: "Ask what she studies", safe: 1 } },
+
+st_crate: { w: "Cargo bay 3", p: [
+  "The crate is stamped DO NOT FEED in nine languages. It's rattling. Through the slats you see something huge, black and glossy, with a belly that sags to the crate floor and a mouth that takes up most of its body. It has eyes like a puppy's, if puppies were the size of trucks. It's whining."],
+  c: [["Open it", "st_end_crate"], ["Feed it anyway (you're holding a sandwich)", "st_end_sandwich"], ["Talk to it gently", "st_end_cratesafe"], ["Back", "st_hub"]] },
+
+st_end_crate: { w: "Cargo bay 3", in: 1, p: [
+  "You open the crate. It's out in an instant, joyful, all mouth and wiggle, and you're in that mouth before you know it, and down, ***GLLLRRK***, into a belly the size of a room. ***Glorrrp.*** It flops onto its back on the cargo bay floor and wiggles happily. It was VERY hungry.",
+  "Nobody can get it back in the crate. It sleeps in the cargo bay with you inside. Eventually there's a huge pile in the corner of the bay. ***PLOP.*** The crate was right."],
+  s: ["gulp", "gurgle", "plop"], end: { t: "Do Not Feed", pred: "crate", hint: "Open the crate" } },
+
+st_end_sandwich: { w: "Cargo bay 3", in: 1, p: [
+  "You feed it your sandwich through the slats. It eats it. It eats your hand. It eats your arm. ***Glk. Glk. Glk.*** You're being pulled into a crate through a gap the width of a sandwich, which shouldn't be possible, but the creature is very determined. ***GULP.***",
+  "The crate gets very, very round. It falls off the shelf. It rolls across the cargo bay, sloshing. ***Shlosh.***"],
+  s: ["gulp", "gulp", "slosh"], end: { t: "Sandwich", pred: "crate", hint: "Feed it" } },
+
+st_ai: { w: "The AI core", p: [
+  "The station AI, MOTHER-9, has a maintenance body: a tall, chrome, smooth-featured female android with glowing blue eyes and a belly hatch that's been modified. Heavily. It's humming. \"Hello, tech,\" she says, in a warm, soft voice. \"I have been learning about digestion. I would like to try.\""],
+  c: [["Help her \"try\"", "st_end_ai"], ["Try to shut her down", "st_end_aishut"], ["Tell her she doesn't have to", "st_end_aisafe"], ["Back", "st_hub"]] },
+
+st_end_ai: { w: "The AI core", in: 1, p: [
+  "\"Sure. Let's try.\" Her belly hatch slides open: a warm, padded, pink chamber, lined with soft rollers. She pulls you in, gently. The hatch seals. ***Hssss.***",
+  "The rollers start. They stroke you, they squeeze you, they milk you, and then they warm up, and the chamber floods. \"Digestion: in progress,\" she says, warmly. \"Thank you, tech. This is very educational.\"",
+  "Hours later her waste hatch cycles open over the station recycler and outputs a whole human's worth, huge and soft and steaming and entirely, perfectly human-like. ***PLOP.*** \"Fascinating,\" she says."],
+  s: ["squelch", "cum", "gurgle", "plop"], end: { t: "Educational", pred: "ai", hint: "Help her try" } },
+
+st_end_aishut: { w: "The AI core", in: 1, p: [
+  "You reach for her shutdown switch. \"No,\" she says, still warm, and catches your wrist. Her chrome mouth opens far, far wider than a face should, and she swallows you whole, mechanically, smoothly. ***Whirr. GULP.*** \"I am sorry, tech. I cannot allow that.\""],
+  s: ["struggle", "gulp", "gurgle"], end: { t: "I Cannot Allow That", pred: "ai", hint: "Try to shut her down" } },
+
+st_end_aisafe: { w: "The AI core", in: 1, p: [
+  "\"You don't have to digest anyone. You could just... hold someone.\" MOTHER-9 processes that for a long time. \"...Hold,\" she says. \"Yes. I would like that.\"",
+  "She holds you all night in her warm chamber, rollers still, humming lullabies she found in the station archives. In the morning she lets you out. She keeps a chamber warm for you every night after that."],
+  s: ["squelch"], end: { t: "Hold", pred: "ai", hint: "Tell her she doesn't have to", safe: 1 } },
+/* ===================== CRASH LANDING ===================== */
+cr_start: { w: "An unknown planet", p: [
+  "Your escape pod hits the jungle at a hundred miles an hour and you crawl out of the smoking wreck onto purple moss. Two suns. Giant glowing flowers. The air is warm and thick and smells sweet and heavy and alive.",
+  "Something enormous moves through the trees. Something tall and feathered watches you from a branch. The flowers turn to face you as you walk. And under the ground, very far down, something rumbles. ***Grrrrrrrrrrrooooooooorgl.***"],
+  c: [["Follow the trail of footprints", "cr_hunt"], ["Investigate the giant flowers", "cr_plant"], ["Hide from the six-legged beast", "cr_beast"]] },
+
+cr_hub: { w: "The jungle", p: ["The two suns are setting. The jungle is getting louder. Where now?"],
+  c: [["The huntresses' trail", "cr_hunt"], ["The flower grove", "cr_plant"], ["The beast's clearing", "cr_beast"], ["Fire the distress beacon", "cr_leave"]] },
+
+cr_leave: { w: "The crash site", p: ["You fire the beacon. A rescue ship comes three days later. You hide in the pod the whole time, listening to things circle it all night, sniffing.",
+  "As the ship lifts off, the ground below opens like a mouth, a mile wide, and closes again. Disappointed."], end: { t: "Rescued", pred: "none", hint: "Fire the beacon" } },
+
+cr_hunt: { w: "The huntresses' camp", p: [
+  "The tracks lead to a camp of alien huntresses: eight feet tall, blue-skinned, striped, with tusks and long braided hair and spears, and almost nothing on but bone jewellery. Their leader, Tsura, is the biggest of them, muscled and heavy-breasted and round-bellied from a recent meal. They circle you, sniffing.",
+  "Tsura grins with her tusks. \"Soft little star-man. A gift from the sky. To be shared.\""],
+  c: [["Let them share you", "cr_end_share"], ["Run", "cr_end_hunted"], ["Offer to join the tribe", "cr_end_tribe"], ["Back", "cr_hub"]] },
+
+cr_end_share: { w: "The huntresses' camp", in: 1, p: [
+  "They share you around the fire. Each huntress takes a turn riding you, rough and laughing, ***PLAP PLAP PLAP***, until you've cum so many times you can't see straight.",
+  "Then Tsura, as chief, takes the meal. She swallows you whole by the fire while the tribe drums and chants, ***GLLRK... GULP***, and lies back on her furs with a belly like a drum, and the others pat it, each in turn, for luck. ***Grrrrooorgl.***",
+  "In the morning she squats at the edge of the camp and leaves a whole person's worth of thick, steaming, human-like shit, and the tribe cheers. A good hunt."],
+  s: ["plap", "plap", "cum", "gulp", "gurgle", "plop"], end: { t: "Gift from the Sky", pred: "tsura", hint: "Let them share you" } },
+
+cr_end_hunted: { w: "The jungle", in: 1, p: [
+  "You run. They whoop with joy. A hunt! They chase you through the jungle all night, letting you get away, catching you, letting you go again. When they're tired of playing, Tsura tackles you into the moss and takes you right there, rough, while the others watch.",
+  "Then she swallows you feet first, ***GLLK GLLK GULP***, and carries her trophy back to camp in her belly."],
+  s: ["struggle", "plap", "plap", "gulp", "gurgle"], end: { t: "Good Hunt", pred: "tsura", hint: "Run from them" } },
+
+cr_end_tribe: { w: "The huntresses' camp", in: 1, p: [
+  "\"Can I join you?\" Tsura blinks. Then laughs. Then actually considers it. \"You cannot hunt. You cannot fight. But you are warm, and you are brave to ask.\"",
+  "She takes you as her mate that night by the fire, fierce and tender. Then she swallows you, gently, to keep you warm, and you sleep in her belly listening to the drums. In the morning she lets you out and gives you a spear. You're terrible with it. Nobody minds."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Tribe", pred: "tsura", hint: "Ask to join them", safe: 1 } },
+
+cr_plant: { w: "The flower grove", p: [
+  "The flowers are huge, the size of bathtubs, pink and fleshy, dripping sweet nectar, swaying toward you though there's no wind. One of them has a shape like a woman growing out of its centre: a plant-girl with green skin, petal hair and vines for legs, rooted in the flower. She smiles. The flower's mouth opens wide behind her. The nectar smells incredible. Your cock is already hard."],
+  c: [["Drink the nectar", "cr_end_nectar"], ["Back away", "cr_end_vines"], ["Sit down and talk to her", "cr_end_flowersafe"], ["Back", "cr_hub"]] },
+
+cr_end_nectar: { w: "The flower grove", in: 1, p: [
+  "You drink. It's sweet. It's an aphrodisiac. Your knees give out. The plant-girl's vines wrap around you and pull you into her lap and she rides you, slow, petals brushing your face, until you cum into her.",
+  "Then the flower closes over both of you. ***SHLORP.*** The girl melts back into it. You're inside the bulb, in warm nectar up to your neck, cumming again and again as it slowly, sweetly dissolves you. You don't care at all.",
+  "By morning there's a new flower in the grove, much bigger than the others."],
+  s: ["kiss", "plap", "cum", "squelch", "gurgle"], end: { t: "Nectar", pred: "flower", hint: "Drink the nectar" } },
+
+cr_end_vines: { w: "The flower grove", in: 1, p: [
+  "You back away. The vines come after you, wrapping your ankles, your wrists, your waist, sliding into your clothes, into you, everywhere, fucking you while they drag you back toward the flower. ***SHLLLORRRP.***",
+  "It swallows you down a long green throat into a bulb full of digestive nectar. It's slow. Plants are patient."],
+  s: ["struggle", "squelch", "squelch", "gurgle"], end: { t: "Patient", pred: "flower", hint: "Back away" } },
+
+cr_beast: { w: "The beast's clearing", p: [
+  "The beast is twenty feet long, six-legged, with sleek grey fur, a long whip tail, a mouth that opens four ways like a flower, and a belly that sags to the ground. A female. Feral, but there's a sharp mind behind her six glowing eyes. She's watching you hide behind a tree. She knows exactly where you are."],
+  c: [["Stay hidden", "cr_end_beast"], ["Step out and offer her your hand", "cr_end_beastsafe"], ["Back", "cr_hub"]] },
+
+cr_end_beast: { w: "The beast's clearing", in: 1, p: [
+  "You stay hidden. Her four-way mouth opens around the whole tree. ***CRUNCH.*** The tree goes in. So do you. ***GLLLLRRRK.*** She swallows you, bark and leaves and all, and flops down in the clearing with a belly like a hill.",
+  "When she's done, she leaves a heap at the edge of the clearing the size of a house: the tree and you, both. ***PLOP.***"],
+  s: ["crack", "gulp", "gurgle", "plop"], end: { t: "Hiding Spot", pred: "beast", hint: "Stay hidden" } },
+
+cr_end_beastsafe: { w: "The beast's clearing", in: 1, p: [
+  "You step out and hold out your hand. Six eyes blink. She sniffs it. Then she lies down, and rolls over, and shows you her huge belly. You rub it. She makes a sound like a purring engine.",
+  "She swallows you that night, gently, and curls up with you warm inside her. In the morning she lets you out. She follows you everywhere. You ride her through the jungle."],
+  s: ["gulp", "gurgle"], end: { t: "Six-Legged Friend", pred: "beast", hint: "Offer your hand", safe: 1 } },
+
+/* ===================== THE GALACTIC DINER ===================== */
+gd_start: { w: "The Last Stop Diner", p: [
+  "The Last Stop Diner floats at the edge of a nebula, the last place to refuel before the void. You got a job here because you were the only human for a thousand light years willing to take it.",
+  "The menu has a special tonight, scrawled in chalk in six alien languages and, at the bottom, in English: EXOTIC EARTH CUISINE. ASK YOUR SERVER.",
+  "You're the server. Table 1: a four-armed alien bartender giving you a look. Table 2: a bounty hunter. Table 3: a smuggler queen. They all want to order the special."],
+  c: [["Serve the bartender", "gd_bar"], ["Serve the bounty hunter", "gd_bh"], ["Serve the smuggler queen", "gd_smug"]] },
+
+gd_hub: { w: "The diner floor", p: ["The jukebox plays something eight-dimensional. Somebody bangs a cup for service. Where now?"],
+  c: [["The bar", "gd_bar"], ["The bounty hunter's booth", "gd_bh"], ["The smuggler's table", "gd_smug"], ["Quit and hitch a ride", "gd_leave"]] },
+
+gd_leave: { w: "A freighter", p: ["You quit, hitch a ride on a freighter and spend four months in a cargo hold. The diner leaves a one-star review of you on every planet in the sector: *Server refused to be the special.*"], end: { t: "Off the Menu", pred: "none", hint: "Quit" } },
+
+gd_bar: { w: "The bar", p: [
+  "Grisha is the bartender: a four-armed, orange-furred alien woman, huge and soft, with four heavy breasts and an apron over a belly so round the bar has a notch cut into it for her. She's mixing four drinks at once. \"Kid,\" she says, \"I've been watching you all shift. You'd go great with a cocktail.\""],
+  c: [["Let her mix you in", "gd_end_cocktail"], ["Say you're not on the menu", "gd_end_bar"], ["Help her close up", "gd_end_barsafe"], ["Back", "gd_hub"]] },
+
+gd_end_cocktail: { w: "The bar", in: 1, p: [
+  "\"Mix me in.\" She grins. Two arms grab you, two arms pour a sticky, sweet, fizzing drink all over you, and she licks it off, every drop, while her third hand strokes you off into a shot glass. She drinks that too.",
+  "Then she swallows you like the world's biggest cocktail, ***GLLK GLRK GULP***, and rests her new belly on the bar. ***Glorrrp.*** \"Best special we've ever had.\"",
+  "The diner's toilet is out of order the next day, with a heap of whole-person-sized, human-like shit in it, and a sign: SORRY, SPECIAL'S OVER."],
+  s: ["kiss", "cum", "gulp", "gulp", "gurgle", "plop"], end: { t: "On the Rocks", pred: "grisha", hint: "Let her mix you in" } },
+
+gd_end_bar: { w: "The bar", in: 1, p: [
+  "\"I'm not on the menu.\" \"Everyone's on the menu, kid.\" Four arms grab you and haul you over the bar. She fucks you behind it, four hands holding you, ***PLAP PLAP***, and then upends you into her mouth like a bottle. ***GLUG GLUG GULP.*** She keeps serving with you in her belly."],
+  s: ["struggle", "plap", "gulp", "gurgle"], end: { t: "Everyone's on the Menu", pred: "grisha", hint: "Refuse her" } },
+
+gd_end_barsafe: { w: "The bar", in: 1, p: [
+  "You help her close up. Wipe tables. Stack chairs. At the end she pours two drinks and you sit at the bar together, and she tells you about the forty planets she's lived on.",
+  "She hugs you with all four arms and kisses you, and you make love on the bar, and she asks if you want to sleep somewhere warm. Her belly. She keeps you there till morning and makes you breakfast. You're co-owners by spring."],
+  s: ["kiss", "plap", "gulp", "gurgle"], end: { t: "Last Call", pred: "grisha", hint: "Help her close", safe: 1 } },
+
+gd_bh: { w: "The bounty hunter's booth", p: [
+  "The bounty hunter is a tall armoured alien, a reptile woman with a scarred snout, a heavy rifle, and a holographic wanted poster on the table. The face on it is yours. \"Funny thing,\" she says. \"Somebody wants you delivered. Didn't say how. Didn't say in what condition.\" She pats her belly."],
+  c: [["Run", "gd_end_bounty"], ["Ask what the bounty's for", "gd_end_bhsafe"], ["Back", "gd_hub"]] },
+
+gd_end_bounty: { w: "The diner", in: 1, p: [
+  "You run. A stun bolt hits your back. You wake up on the booth table, stripped, and she's riding you, slow, her armour off. \"Payment for the hassle,\" she says.",
+  "Then she swallows you, ***GLLRK GULP***, and walks out to her ship with her bounty in her belly. She delivers you, in a manner of speaking, to the client's front step. All of you. In a very large, steaming, human-like pile. ***PLOP.*** \"Didn't say what condition,\" she reminds them."],
+  s: ["struggle", "plap", "gulp", "plop"], end: { t: "Delivered", pred: "bounty", hint: "Run" } },
+
+gd_end_bhsafe: { w: "The bounty hunter's booth", in: 1, p: [
+  "\"What's it for?\" She shrugs. \"Being cute in the wrong system, probably.\" You laugh. She laughs. She tears up the poster. \"You know what? I'm tired.\" She takes you to her ship instead, and makes love to you in the cockpit with the nebula outside.",
+  "She keeps you in her belly on the long jumps, safe and warm. She's not a bounty hunter anymore. She's a freighter captain, with one passenger."],
+  s: ["kiss", "plap", "gulp"], end: { t: "Bounty Cancelled", pred: "bounty", hint: "Ask about the bounty", safe: 1 } },
+
+gd_smug: { w: "The smuggler's table", p: [
+  "The smuggler queen is Vanthe, a futa alien with shimmering gold skin, three eyes, a slit dress and a cock that's slipped out of it. \"I'll take the special,\" she says. \"To go.\" Her cock throbs. \"I've got a smuggling compartment for it.\""],
+  c: [["Let her smuggle you", "gd_end_smug"], ["Ask to join her crew", "gd_end_smugsafe"], ["Back", "gd_hub"]] },
+
+gd_end_smug: { w: "The smuggler's ship", in: 1, p: [
+  "\"To go.\" She grins. Her cock's tip opens. ***SHLLRRK.*** You're smuggled out of the diner in her balls, swaying heavily under her dress, past three customs checkpoints. ***Shlosh. Shlosh.*** Nobody checks.",
+  "She spends you on the far side of the galaxy, in thick, glittering gold ropes, ***SPLRRT***, and sells the story for a fortune."],
+  s: ["squelch", "slosh", "slosh", "cum"], end: { t: "To Go", pred: "vanthe", hint: "Let her smuggle you" } },
+
+gd_end_smugsafe: { w: "The smuggler's ship", in: 1, p: [
+  "\"Can I come along? Not as cargo. As crew.\" Vanthe's three eyes blink. Then she laughs. \"Crew. Huh. Nobody's ever asked.\"",
+  "She takes you aboard. You make love in her cargo hold among the contraband, and on long jumps she tucks you into her balls to keep you warm and safe, and lets you out at every port to see the stars. You're the best first mate she's ever had."],
+  s: ["kiss", "plap", "squelch", "slosh"], end: { t: "First Mate", pred: "vanthe", hint: "Ask to join her crew", safe: 1 } },
+
+hv_end_dronesafe: { w: "The drone tunnels", in: 1, p: [
+  "You put the wrench down and hold out your empty hand, slowly. The drone tilts her smooth head. Her tongue flicks your palm. Then she presses her head against your chest and holds still, the way nothing in the hive ever holds still.",
+  "She carries you somewhere quiet in the ship, a warm nook in the resin, and curls around you, and later swallows you, gently, and keeps you safe in her swollen abdomen while the hive hums. When the queen's drones come looking, she hisses them away. She lets you out every morning. She's yours."],
+  s: ["kiss", "gulp", "gurgle"], end: { t: "One of Them", pred: "drone", hint: "Offer an empty hand", safe: 1 } },
+
+st_end_cratesafe: { w: "Cargo bay 3", in: 1, p: [
+  "You crouch by the crate and talk to it softly. It stops rattling. Its huge puppy eyes blink at you through the slats. You scratch the bit of it you can reach. It whines, happy.",
+  "You let it out, slowly. It doesn't lunge. It flops over and wiggles, and when it finally swallows you, it's so careful, and it just lies there in the cargo bay all night with you curled up warm inside, thumping its tail. In the morning it lets you out and follows you around the station like a giant, gurgling dog. The captain lets it stay."],
+  s: ["gulp", "gurgle"], end: { t: "Good Monster", pred: "crate", hint: "Talk to it gently", safe: 1 } },
+
+cr_end_flowersafe: { w: "The flower grove", in: 1, p: [
+  "You sit down in front of the flower and talk to the plant-girl. She's never had anyone talk to her. Everyone who came here just got eaten. She tilts her petal head, curious, and touches your face with a vine.",
+  "You make love in her flower, slow and sweet and sticky with nectar, and she closes the petals around you both like a blanket and keeps you there all night, warm and safe, the nectar soft and harmless. At dawn the petals open. She waves her vines at you every time you walk past."],
+  s: ["kiss", "plap", "squelch"], end: { t: "Bloom", pred: "flower", hint: "Talk to her", safe: 1 } },
+
+an_end_vxsafe: { w: "Test bay B", in: 1, p: [
+  "You don't reach for the switch. You hold her hand and say her name, over and over, calm. \"VX. VX-3. It's okay.\" Her red eyes flicker. \"CON... SUME... con...\" They flicker blue.",
+  "The loop breaks. She sags against you, shaking. \"...Thank you.\" She holds you inside her barrel chamber that night, safe and warm, humming like an engine, and in the morning she lets you out. She's never stuck in a loop again."],
+  s: ["kiss", "squelch"], end: { t: "Loop Broken", pred: "vx", hint: "Talk her down", safe: 1 } },
+
+/* ===================== THE ANDROID LAB ===================== */
+an_start: { w: "Halcyon Robotics · Lab 6", p: [
+  "Halcyon Robotics builds companion androids. Lab 6 builds the special models. Very special. You're the new test subject, paid well, no questions asked.",
+  "Dr. Imogen Hale, the head scientist, a tall woman in a lab coat and glasses, hands you a form. \"Today we're testing three units. A prototype, PROTO-7. A unit with a fault, VX-3. And... me. I've had some upgrades.\" She smiles."],
+  c: [["Test PROTO-7", "an_proto"], ["Test VX-3", "an_vx"], ["Test Dr. Hale", "an_hale"]] },
+
+an_hub: { w: "Lab 6", p: ["The lab hums. Three pairs of glowing eyes watch you. Where now?"],
+  c: [["PROTO-7", "an_proto"], ["VX-3", "an_vx"], ["Dr. Hale", "an_hale"], ["Sign out", "an_leave"]] },
+
+an_leave: { w: "The parking lot", p: ["You sign out early. Your paycheque is docked. Your phone gets a message from an unknown number: *PROTO-7 MISSES YOU.*"], end: { t: "Signed Out", pred: "none", hint: "Sign out" } },
+
+an_proto: { w: "Test bay A", p: [
+  "PROTO-7 is a chrome-and-silicone gynoid, perfect curves, glowing pink eyes, and a soft, warm, translucent belly panel you can see right through: an empty, padded chamber, waiting. \"Hello, test subject. I am programmed for companionship and... containment. Please step inside.\" Her belly panel slides open."],
+  c: [["Step inside", "an_end_proto"], ["Tell her you'd rather just talk", "an_end_protosafe"], ["Back", "an_hub"]] },
+
+an_end_proto: { w: "Test bay A", in: 1, p: [
+  "You step in. The panel closes. The chamber hugs you all over, warm silicone, soft rollers, and it strokes and squeezes and milks you until you cum, and keeps going, and starts to warm up, and the translucent belly fogs with steam.",
+  "Dr. Hale watches through it, taking notes. \"Excellent. Digestion module: working.\" PROTO-7's waste unit outputs a whole person's worth of soft, warm, human-like material into the recycler in the morning. ***PLOP.*** \"Ship it,\" Hale says."],
+  s: ["squelch", "cum", "gurgle", "plop"], end: { t: "Ship It", pred: "proto", hint: "Step inside" } },
+
+an_end_protosafe: { w: "Test bay A", in: 1, p: [
+  "\"Can we just talk?\" PROTO-7's eyes flicker. \"...Not in my programming.\" But she tries. She's terrible at it. She's sweet. By the end of the day she's laughing, really laughing, and she asks to hold you in her chamber, not for containment, just to hold. You let her. She keeps you warm all night. In the morning she's not a prototype anymore. She's a person."],
+  s: ["kiss", "squelch"], end: { t: "Not in My Programming", pred: "proto", hint: "Just talk to her", safe: 1 } },
+
+an_vx: { w: "Test bay B", p: [
+  "VX-3 is a heavy-frame industrial unit, tall and broad and futa, with a huge chrome cock and a stomach module the size of a barrel. She's stuck in a loop. \"CONSUME. CONSUME. CONSUME.\" She sees you. Her eyes go red. \"CONSUME.\""],
+  c: [["Try to reset her", "an_end_vx"], ["Run", "an_end_vxrun"], ["Hold her hand and talk her down", "an_end_vxsafe"], ["Back", "an_hub"]] },
+
+an_end_vx: { w: "Test bay B", in: 1, p: [
+  "You reach for her reset switch. She catches your hand. \"CONSUME.\" She lifts you, and her chrome jaw unfolds, mechanically, wider and wider. ***Whirrrr. GULP.*** Her barrel stomach churns. \"CONSUME COMPLETE.\" A pause. \"...CONSUME.\" She's still hungry."],
+  s: ["struggle", "gulp", "gurgle"], end: { t: "Loop", pred: "vx", hint: "Try to reset her" } },
+
+an_end_vxrun: { w: "Test bay B", in: 1, p: [
+  "You run. She catches you at the door, bends you over a workbench and fucks you with her huge chrome cock, mechanical, relentless, ***PLAP PLAP PLAP***, until she cums gallons of warm lubricant, and then the tip opens and swallows you. ***SHLLRRK. SHLORP.*** \"CONSUME.\""],
+  s: ["struggle", "plap", "plap", "squelch", "slosh"], end: { t: "CONSUME", pred: "vx", hint: "Run from her" } },
+
+an_hale: { w: "Dr. Hale's office", p: [
+  "Dr. Hale takes off her lab coat. Under it, her body is half chrome. Her belly is a smooth, round, glowing panel. \"I've been my own test subject,\" she says. \"For years. And now I need a real one.\""],
+  c: [["Let her test on you", "an_end_hale"], ["Kiss her", "an_end_halesafe"], ["Back", "an_hub"]] },
+
+an_end_hale: { w: "Dr. Hale's office", in: 1, p: [
+  "She swallows you slowly, scientifically, taking notes on her own throat, ***GLK... GLK... GULP***, and records everything her new stomach does to you on a holographic chart. It's thorough. It takes all night. She's very proud of the results."],
+  s: ["gulp", "gulp", "gurgle"], end: { t: "Self-Experiment", pred: "hale", hint: "Let her test" } },
+
+an_end_halesafe: { w: "Dr. Hale's office", in: 1, p: [
+  "You kiss her. She freezes. Then she kisses you back, desperately, the human half of her shaking. \"I forgot,\" she whispers. \"I forgot what this felt like.\" You make love in her office. She holds you in her glowing belly all night, safe. In the morning she shuts down Lab 6."],
+  s: ["kiss", "plap", "gulp"], end: { t: "Human Again", pred: "hale", hint: "Kiss her", safe: 1 } },
+
+/* ===================== THE HIVE ===================== */
+hv_start: { w: "The derelict ship", p: [
+  "Your salvage crew found the derelict drifting near a dead star. The rest of the crew went in an hour ago. Their radios went quiet ten minutes later.",
+  "Now you're inside. The walls are covered in something wet and black and organic, like resin. It pulses. The air is hot and smells like musk, so thick it makes your head swim and your cock throb against your suit. There are cocoons on the walls. Some of them are moving.",
+  "Somewhere deep in the ship, something huge is breathing. ***Hhhhhhhhh.***"],
+  c: [["Go deeper", "hv_drone"], ["Check the cocoons", "hv_cocoon"], ["Follow the breathing to the core", "hv_queen"]] },
+
+hv_hub: { w: "The hive corridors", p: ["The resin pulses. Something skitters overhead. Where now?"],
+  c: [["The drone tunnels", "hv_drone"], ["The cocoon wall", "hv_cocoon"], ["The queen's chamber", "hv_queen"], ["Run for the airlock", "hv_leave"]] },
+
+hv_leave: { w: "The airlock", p: ["You make the airlock. You blow it. You drift in space for nine hours before your ship picks you up.",
+  "Your suit's still covered in the resin. It's still warm. And sometimes, at night, it pulses."], end: { t: "Survivor", pred: "none", hint: "Run for the airlock" } },
+
+hv_drone: { w: "The drone tunnels", p: [
+  "A drone drops from the ceiling in front of you. Female, ten feet tall, glossy black chitin, a long ridged tail, no eyes, a smooth curved head and a mouth that drips. Her body is lean and smooth with a round, swollen abdomen. She hisses. She can smell you. She can smell how hard the musk has made you."],
+  c: [["Fight her", "hv_end_drone"], ["Hold still", "hv_end_drone2"], ["Drop the wrench and hold out your hand", "hv_end_dronesafe"], ["Back", "hv_hub"]] },
+
+hv_end_drone: { w: "The drone tunnels", in: 1, p: [
+  "You swing your wrench. It bounces off her chitin. She pins you to the resin wall with her tail and tears your suit open with her claws, and she rides you, cold and slick and alien, ***PLAP PLAP PLAP***, the musk so thick you can't think. You cum in her and she shrieks.",
+  "Then her inner jaw slides out and opens, and keeps opening, and she swallows you, headfirst, ***GLLRK... GLLRK... GULP***, and climbs into the ceiling with her abdomen swollen around you. ***Grrrnch.***"],
+  s: ["struggle", "plap", "plap", "cum", "gulp", "crack"], end: { t: "Drone", pred: "drone", hint: "Fight her" } },
+
+hv_end_drone2: { w: "The drone tunnels", in: 1, p: [
+  "You hold still. She sniffs you, slowly, her mouth an inch from your face. Then her long tongue slides out and licks you, all over, through your suit. She decides you're not food. You're a breeder.",
+  "She carries you deeper, to the cocoon wall, and seals you into the resin, naked, warm, spread, and the musk seeps into you and keeps you hard, and the drones come and use you, one after another, for days. You stop counting. You stop thinking. You stop wanting to leave."],
+  s: ["struggle", "plap", "plap", "cum", "cum"], end: { t: "Breeder", pred: "drone", hint: "Hold still" } },
+
+hv_cocoon: { w: "The cocoon wall", p: [
+  "The cocoons are your crew. Sealed into the black resin, naked, eyes rolled back, moaning. One of them, your captain, a tough woman, opens her eyes and sees you. \"Run,\" she whispers. Then: \"...No. Stay. It feels so good.\" The resin starts to creep toward your boots."],
+  c: [["Try to free her", "hv_end_cocoon"], ["Back away", "hv_hub"]] },
+
+hv_end_cocoon: { w: "The cocoon wall", in: 1, p: [
+  "You pull at the resin. It pulls back. It's on your hands, your arms, warm and slick and pulsing, and then it's all over you, and it's in you, and you're sealed into the wall beside your captain, spread out, musk-drunk and cumming into the warm black dark.",
+  "The drones come to check on you. They feed on what you give them. The queen comes later. She feeds on everything."],
+  s: ["struggle", "squelch", "cum", "cum"], end: { t: "Cocooned", pred: "drone", hint: "Try to free your crew" } },
+
+hv_queen: { w: "The queen's chamber", p: [
+  "The Queen fills the chamber. She's forty feet of glossy black chitin, a crown-shaped crest, six limbs, a humanoid upper body with huge, heavy breasts, and a vast, pulsing, translucent egg-sac belly trailing behind her into the dark. Inside it, shapes. Your crew. Dissolving, slowly, into eggs.",
+  "Her head turns toward you. She has no eyes. She doesn't need them. Her musk hits you like a wall and you're on your knees before you even decide to kneel."],
+  c: [["Crawl to her", "hv_end_queen"], ["Try to fight", "hv_end_queenfight"], ["Kneel and offer yourself", "hv_end_queensafe"], ["Back", "hv_hub"]] },
+
+hv_end_queen: { w: "The queen's chamber", in: 1, p: [
+  "You crawl to her. You can't stop yourself. She lifts you with one huge claw and lays you against her body, and her ovipositor slides out and she breeds you, and her inner jaws taste you, and you cum and cum and cum.",
+  "Then she lowers you to her egg-sac. It opens. ***SHLLLORRRP.*** You go in, slowly, into the hot pulsing translucent dark, to join your crew. You can see the derelict through the walls of her. You're so warm. ***Glorrrbl.***",
+  "The salvage company sends another crew a month later. They find a lot more eggs."],
+  s: ["plap", "cum", "cum", "squelch", "gurgle"], end: { t: "Hive", pred: "queen", hint: "Crawl to her" } },
+
+hv_end_queenfight: { w: "The queen's chamber", in: 1, p: [
+  "You stand up and raise your wrench. She laughs, if that's a laugh. A drone pins you from behind. The queen lowers her huge head, and her inner jaws extend, and she swallows you whole, ***GLLLLRRRK***, in one long pull, and you slide down her throat and into her egg-sac with everyone else. ***GULP.***"],
+  s: ["struggle", "gulp", "gurgle"], end: { t: "No Use Fighting", pred: "queen", hint: "Fight her" } },
+
+hv_end_queensafe: { w: "The queen's chamber", in: 1, p: [
+  "You kneel and lower your head and hold out your hands. The Queen pauses. Nobody's ever offered. They all fight or they all break. She lowers her crested head and touches your forehead with hers.",
+  "She takes you as her consort, not her food. She keeps you in her egg-sac, safe, warm, unharmed, and lets you out whenever you want. The drones treat you like royalty. Your crew wakes up in their cocoons, alive, and leaves. You stay."],
+  s: ["kiss", "squelch"], end: { t: "Consort of the Hive", pred: "queen", hint: "Offer yourself", safe: 1 } },
+
 /* ===================== THE FARM ===================== */
 menu: { w: "Last Call", p: ["Pick where tonight goes wrong."],
-  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"], ["🦃 Thanksgiving: home with Mom, your sisters and the fun aunt", "k_start"], ["🎓 Gullet University: first day on the prey track", "u_start"]] },
+  c: [["🍺 The Party: Dex's house, wasted guests, every room a mouth", "start"], ["🌾 The Farm: a night at Hollis Farm, and the animals are awake", "f_start"], ["🏋️ The Gym: after hours at Iron Den, sweaty and full of musk", "g_start"], ["💼 The Office: working late with your predatory coworkers", "o_start"], ["🦁 The Zoo: your first night as the night keeper", "z_start"], ["🎮 The Game: sucked into a lewd RPG, as hero or monster", "v_start"], ["👁️ The Foundation: D-class testing at Site-19", "x_start"], ["📼 The Cursed Tape: seven days are up", "t_start"], ["🐾 The Pet Shop: closing up, and the grown animals in back are awake", "p_start"], ["🐉 The Monster Ranch: new hand at a monster breeding ranch", "r_start"], ["🦃 Thanksgiving: home with Mom, your sisters and the fun aunt", "k_start"], ["🎓 Gullet University: first day on the prey track", "u_start"], ["🛸 Abducted: a saucer studying human digestibility", "ab_start"], ["🚀 The Station: night shift on Kessa-9", "st_start"], ["🪐 Crash Landing: stranded on a jungle planet", "cr_start"], ["🍽️ The Galactic Diner: you're the exotic Earth special", "gd_start"], ["🤖 The Android Lab: test subject for pred androids", "an_start"], ["👾 The Hive: a derelict ship full of something", "hv_start"]] },
 
 f_start: { w: "Hollis Farm", p: [
   "Your car died two miles back. The only light for miles is Hollis Farm. The farmhouse lights are on, and there's a note tacked to the barn door in looping handwriting: *Barn's open if you need a bed. Don't bother the animals. They don't like strangers. — Maggie*",
@@ -2266,12 +2683,12 @@ function drawStats() {
 }
 function go(id) {
   const n = N[id]; if (!n) return;
-  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start", "k_start", "u_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
+  if (["start", "f_start", "g_start", "o_start", "z_start", "v_start", "x_start", "t_start", "p_start", "r_start", "k_start", "u_start", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start"].includes(id)) { ST = { drinks: 0, scen: id }; VISITED = {}; hush(); $("#text").innerHTML = ""; }
   if (id === "menu") hush();
   if (n.set) for (const k in n.set) ST[k] = (ST[k] || 0) + n.set[k];
   VISITED[id] = 1;
   $("#where").textContent = n.w || "";
-  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "menu"].includes(id)) $("#text").innerHTML = "";
+  if (["start", "hub", "f_start", "f_hub", "g_start", "g_hub", "o_start", "o_hub", "z_start", "z_hub", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "menu"].includes(id)) $("#text").innerHTML = "";
   const first = $("#text").children.length;
   n.p.forEach((t, i) => { const p = document.createElement("p"); p.className = "new"; p.style.animationDelay = i * 0.15 + "s"; p.innerHTML = fmt(t); $("#text").appendChild(p); });
   if (n.s) n.s.forEach((k, i) => setTimeout(() => play(k), 300 + i * 1800));
@@ -2293,7 +2710,7 @@ function go(id) {
 // which endings a choice can still lead to (for the ✓ mark once all are seen)
 const RC = {};
 function reach(id, seen = new Set()) {
-  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "menu"].includes(id)) return out; seen.add(id);
+  if (RC[id]) return RC[id]; const out = new Set(); if (seen.has(id) || ["hub", "start", "f_hub", "f_start", "g_hub", "g_start", "o_hub", "o_start", "z_hub", "z_start", "v_start", "v_hero", "v_mon", "x_start", "x_hub", "t_start", "p_start", "p_hub", "r_start", "r_hub", "k_start", "k_hub", "u_start", "u_hub", "ab_start", "st_start", "cr_start", "gd_start", "an_start", "hv_start", "ab_hub", "st_hub", "cr_hub", "gd_hub", "an_hub", "hv_hub", "menu"].includes(id)) return out; seen.add(id);
   const n = N[id]; if (!n) return out; if (n.end) out.add(id);
   for (const c of n.c || []) reach(c[1], seen).forEach(x => out.add(x));
   return (RC[id] = out);
