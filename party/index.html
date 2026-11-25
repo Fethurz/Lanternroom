@@ -3750,6 +3750,8 @@ d_end_balls: { w: "The hot tub", in: 1, p: [
   "He's fucking himself onto you. Every thrust pulls you deeper down his shaft, the hot tub water churning around his legs, until you slide all the way into his balls. ***SHLORP.*** They swell huge, fat and drooping almost to the water.",
   "He steps out of the tub with his balls swinging heavy between his legs, sloshing with every step. ***Shlosh. Shlosh.*** Later, he humps a pillow on the patio and spills you all over it in a hot, thick flood."],
   s: ["kiss", "squelch", "slosh", "cum"], end: { t: "Hot Tub", pred: "duke", hint: "Get in the water" } }
+};
+const ENDS = Object.entries(N).filter(([, v]) => v.end).map(([k, v]) => ({ k, ...v.end }));
 
 /* ---------- state ---------- */
 let SEEN = {}; try { SEEN = JSON.parse(localStorage.getItem("lastcall1") || "{}"); } catch {}
